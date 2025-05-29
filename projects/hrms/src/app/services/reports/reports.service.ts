@@ -88,9 +88,9 @@ export class ReportsService {
   getWfhReports(request: IWfhReportRequest) {
     let params = new HttpParams();
   
-    if (request.employeeId) { params = params.set('employeeId', request.employeeId);}
+    if (request.employeeId) { params = params.set('EmployeeId', request.employeeId);}
     if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
-    if (request.TeamManagerSnadId) {params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId); }
+    // if (request.TeamManagerSnadId) {params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId); }
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);
@@ -103,12 +103,12 @@ export class ReportsService {
   getInactiveReports(request: IInactiveReportRequest) {
     let params = new HttpParams();
   
-    if (request.FusionEmpId) {
-      params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.employeeId) {
+      params = params.set('EmployeeId', request.employeeId);
     }
 
-    if (request.TeamManagerSnadId) {
-      params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
+    if (request.teamManagerID) {
+      params = params.set('teamManagerID', request.teamManagerID);
     }
   
     if(request.LeaveName) {
@@ -153,8 +153,8 @@ export class ReportsService {
   getYearlyReports(request: IYearlyReportRequest) {
     let params = new HttpParams();
     
-    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
-    if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
+    if (request.employeeId) params = params.set('EmployeeId', request.employeeId);
+    if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
     if (request.EntitlementYear) params = params.set('EntitlementYear', request.EntitlementYear);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
   

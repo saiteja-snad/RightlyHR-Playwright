@@ -573,9 +573,9 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/calendar':
+      case '/calendar-view':
         if (this.rbac.allowedToAccess('Calendar.view')) {
-          return (route = '/calendar');
+          return (route = '/calendar-view');
         }
         break;
 

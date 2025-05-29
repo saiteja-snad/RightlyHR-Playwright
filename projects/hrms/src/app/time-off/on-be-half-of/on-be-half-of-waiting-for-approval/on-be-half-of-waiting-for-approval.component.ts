@@ -55,14 +55,14 @@ export class OnBeHalfOfWaitingForApprovalComponent {
   constructor(private http: HttpService, private authService: AuthService) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {
+      if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
         if (this.cadidateEmployeeId != null) {
           this.getDataByLPID();
         }
-        this.http.resetTriggerSignal();
+        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }
@@ -82,7 +82,7 @@ export class OnBeHalfOfWaitingForApprovalComponent {
       next: (response: any) => {
           if (Array.isArray(response)) {
             this.waitingForApprovalLeaves = response.filter(
-              (item) => item.status === 'Waiting for Approval'
+              (item) => item.status.toLowerCase() === 'waiting for approval'
             );
           } else {
             console.error('Invalid response format');

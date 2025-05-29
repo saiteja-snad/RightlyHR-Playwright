@@ -54,7 +54,11 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Sidebar</th>
+                            <th class="custom-header" colspan="5"> <input type="checkbox" #selectall
+                                    (change)="toggleSelectAll(sidebarFields, selectall?.checked, isSidebarCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(sidebarFields)"
+                                    [indeterminate]="isSomeSelected(sidebarFields)"
+                                    [disabled]="!roleToFilter?.id" class="check-box-selectall"> Settings Sidebar</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -82,7 +86,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Fields</th>
+                            <th colspan="5" class="custom-header">
+
+
+                                <input type="checkbox" #selectAllEmployee
+                                    (change)="toggleSelectAll(employeeFields, selectAllEmployee?.checked, isemployeeCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeFields)"
+                                    [indeterminate]="isSomeSelected(employeeFields)"
+                                    [disabled]="!roleToFilter?.id">Employee Fields
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -120,7 +132,14 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Employee Job Fields</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllsettingsemployee
+                                    (change)="toggleSelectAll(settingsEmployeeJobFields, selectAllsettingsemployee?.checked, isSettingsEmployeeJobCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsEmployeeJobFields)"
+                                    [indeterminate]="isSomeSelected(settingsEmployeeJobFields)"
+                                    [disabled]="!roleToFilter?.id">
+                                Settings Employee Job Fields
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -154,7 +173,14 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Employee Personal Fields</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingsemployeepersonal
+                                    (change)="toggleSelectAll(settingsEmployeePersonalFields, selectAllsettingsemployeepersonal?.checked, isSettingsEmployeePersonalCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsEmployeePersonalFields)"
+                                    [indeterminate]="isSomeSelected(settingsEmployeePersonalFields)"
+                                    [disabled]="!roleToFilter?.id">Settings Employee Personal Fields
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Salutation' || per.fields === 'Status' || 
@@ -183,7 +209,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Manage Shifts Tab</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingsmangeshits
+                                    (change)="toggleSelectAll(settingsManageShiftsTabFields, selectAllsettingsmangeshits?.checked, isSettingsManageShiftsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsManageShiftsTabFields)"
+                                    [indeterminate]="isSomeSelected(settingsManageShiftsTabFields)"
+                                    [disabled]="!roleToFilter?.id">
+                                Settings Manage Shifts Tab
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -210,7 +244,13 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Manage Policies Tab</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllsettingpolices
+                                    (change)="toggleSelectAll(settingsManagePoliciesTabFields, selectAllsettingpolices?.checked, isSettingsManagePoliciesCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsManagePoliciesTabFields)"
+                                    [indeterminate]="isSomeSelected(settingsManagePoliciesTabFields)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">Settings Manage Policies Tab
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -237,7 +277,16 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Manage Holidays Tab</th>
+                            <th colspan="5" class="custom-header">
+
+
+                                <input type="checkbox" #selectAllsettingholidays
+                                    (change)="toggleSelectAll(settingsManageHolidaysTab, selectAllsettingholidays?.checked, isSettingsManageHolidaysCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsManageHolidaysTab)"
+                                    [indeterminate]="isSomeSelected(settingsManageHolidaysTab)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">
+                                Settings Manage Holidays Tab
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -264,7 +313,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Manage Weekends Tab</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingweekends
+                                    (change)="toggleSelectAll(settingsManageWeekendsTab, selectAllsettingweekends?.checked, isSettingsManageWeekendsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsManageWeekendsTab)"
+                                    [indeterminate]="isSomeSelected(settingsManageWeekendsTab)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">
+                                Settings Manage Weekends Tab
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -291,7 +348,14 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Expense Configuration Tab</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingexpenses
+                                    (change)="toggleSelectAll(settingsManageExpenseTab, selectAllsettingexpenses?.checked, isSettingsManageExpensesCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsManageExpenseTab)"
+                                    [indeterminate]="isSomeSelected(settingsManageExpenseTab)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">Settings Expense Configuration Tab
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -319,7 +383,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Manage DST Tab</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingdst
+                                    (change)="toggleSelectAll(settingsManageDSTTab, selectAllsettingdst?.checked, isSettingsManageDSTCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsManageDSTTab)"
+                                    [indeterminate]="isSomeSelected(settingsManageDSTTab)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">
+                                Settings Manage DST Tab
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -346,7 +418,13 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Time Off</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingleves
+                                    (change)="toggleSelectAll(timeoffSettingsFields, selectAllsettingleves?.checked, istimeoffSettingsCheckboxDisabled.bind(this))"
+                                    [indeterminate]="isSomeSelected(timeoffSettingsFields)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">Settings Time Off
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -374,7 +452,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Time Off Leave Category Tabs</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingtimeoffleave
+                                    (change)="toggleSelectAll(leaveCategoryTabsFields, selectAllsettingtimeoffleave?.checked, isleaveCategoryCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(leaveCategoryTabsFields)"
+                                    [indeterminate]="isSomeSelected(leaveCategoryTabsFields)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">Settings Time Off Leave Category
+                                Tabs
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -401,7 +487,16 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings TimeOff Attendece Eligibility Criteria</th>
+                            <th colspan="5" class="custom-header">
+
+
+                                <input type="checkbox" #selectAllsettingattendece
+                                    (change)="toggleSelectAll(attendanceEligibilityFields, selectAllsettingattendece?.checked, isattendanceEligibilityCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(attendanceEligibilityFields)"
+                                    [indeterminate]="isSomeSelected(attendanceEligibilityFields)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">
+                                Settings TimeOff Attendece Eligibility Criteria
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -431,7 +526,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Assest Configuration</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingassets
+                                    (change)="toggleSelectAll(settingsAssetConfigurationFields, selectAllsettingassets?.checked, isSettingsAssetConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsAssetConfigurationFields)"
+                                    [indeterminate]="isSomeSelected(settingsAssetConfigurationFields)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">
+                                Settings Assest Configuration
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Vendor Details' || per.fields === 'Asset Catagory' || 
@@ -457,7 +560,17 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Settings Dynamic Forms</th>
+                            <th colspan="5" class="custom-header">
+
+
+
+                                <input type="checkbox" #selectAllsettingdynamicfroms
+                                    (change)="toggleSelectAll(settingsDynamicFormsFields, selectAllsettingdynamicfroms?.checked, isDynamicFormsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(settingsDynamicFormsFields)"
+                                    [indeterminate]="isSomeSelected(settingsDynamicFormsFields)"
+                                    [disabled]="!roleToFilter?.id" class="me-2 mt-2">
+                                Settings Dynamic Forms
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Active Forms' || per.fields === 'Inactive Forms' || 
@@ -515,7 +628,15 @@
                         </ng-container>
 
                         <tr>
-                            <th colspan="5" class="custom-header">Expenses Type</th>
+                            <th colspan="5" class="custom-header">
+
+                                <input type="checkbox" #selectAllsettingexpensestype
+                                    (change)="toggleSelectAll(expensesTypeFields, selectAllsettingexpensestype?.checked, isExpensesTypeCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(expensesTypeFields)"
+                                    [indeterminate]="isSomeSelected(expensesTypeFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Expenses Type
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -544,7 +665,14 @@
 
                         <!-- Side Bar Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Side Bar Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllsidebars
+                                    (change)="toggleSelectAll(sidebarTabsFields, selectAllsidebars?.checked, issideCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(sidebarTabsFields)"
+                                    [indeterminate]="isSomeSelected(sidebarTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Side Bar Tabs
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Dashboard' 
@@ -577,7 +705,13 @@
 
                         <!-- Expenses Module -->
                         <tr>
-                            <th colspan="5" class="custom-header">Expenses Module</th>
+                            <th colspan="5" class="custom-header">
+                                  <input type="checkbox" #selectAllexpenestabs
+                                    (change)="toggleSelectAll(expensesModuleTabs, selectAllexpenestabs?.checked, issideCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(expensesModuleTabs)"
+                                    [indeterminate]="isSomeSelected(expensesModuleTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Expenses Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Expenses Module'">
@@ -603,7 +737,13 @@
 
                         <!-- Expenses Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Expenses Module Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                  <input type="checkbox" #selectAllexpensestabs
+                                    (change)="toggleSelectAll(expensesModuleTabs, selectAllexpensestabs?.checked, isexpensesdActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(expensesModuleTabs)"
+                                    [indeterminate]="isSomeSelected(expensesModuleTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                               Expenses Module Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Draft Tab' || per.fields === 'Approved Tab'|| per.fields === 'Pending Tab' || 
@@ -631,7 +771,12 @@
 
                         <!-- IT Support Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">It Support Module</th>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectAllitsupportmodule
+                                    (change)="toggleSelectAll(itSupportModule, selectAllitsupportmodule?.checked, isItSupportActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(itSupportModule)"
+                                    [indeterminate]="isSomeSelected(itSupportModule)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">It Support Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -659,7 +804,13 @@
 
                         <!-- IT Support Module Team Tickets Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Team Tickets Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                
+                                   <input type="checkbox" #selectAllteamtickets
+                                    (change)="toggleSelectAll(TeamTicketsTabs, selectAllteamtickets?.checked, isItSupportteamActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(TeamTicketsTabs)"
+                                    [indeterminate]="isSomeSelected(TeamTicketsTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Team Tickets Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -688,7 +839,12 @@
 
                         <!-- Holidays Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Holidays Module</th>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectAllholidaystabs
+                                    (change)="toggleSelectAll(HolidaysModule, selectAllholidaystabs?.checked, isHolidaysActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(HolidaysModule)"
+                                    [indeterminate]="isSomeSelected(HolidaysModule)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Holidays Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -715,7 +871,12 @@
 
                         <!-- Org Hierarchy Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Org Hierarchy Module</th>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectAllorghieretabs
+                                    (change)="toggleSelectAll(OrgHierarchyModule, selectAllorghieretabs?.checked, isOrgHierarchyActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(OrgHierarchyModule)"
+                                    [indeterminate]="isSomeSelected(OrgHierarchyModule)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Org Hierarchy Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Organization Hierarchy - HR' || per.fields === 'Organization Hierarchy - TM'
@@ -744,7 +905,12 @@
 
                         <!-- Desk Allocation Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Desk Allocation Module</th>
+                            <th colspan="5" class="custom-header">
+                                  <input type="checkbox" #selectAlldesktabs
+                                    (change)="toggleSelectAll(deskAllocationModuleFields, selectAlldesktabs?.checked, isdekActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(deskAllocationModuleFields)"
+                                    [indeterminate]="isSomeSelected(deskAllocationModuleFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2"> Desk Allocation Module</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -773,7 +939,12 @@
 
                         <!-- Desk Allocation All Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Desk Allocation All Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectAlldeskalltabs
+                                    (change)="toggleSelectAll(deskAllocationAllTabActions, selectAlldeskalltabs?.checked, isdeskallActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(deskAllocationAllTabActions)"
+                                    [indeterminate]="isSomeSelected(deskAllocationAllTabActions)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Desk Allocation All Tab Actions</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -803,7 +974,12 @@
 
                         <!-- Desk Allocation Available Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Desk Allocation Available Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                  <input type="checkbox" #selectAllavailabletabs
+                                    (change)="toggleSelectAll(deskAllocationAvailableTabActions, selectAllavailabletabs?.checked, isdeskavilableActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(deskAllocationAvailableTabActions)"
+                                    [indeterminate]="isSomeSelected(deskAllocationAvailableTabActions)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2"> Desk Allocation Available Tab Actions</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Available Request for Allocation' || per.fields === 'Available Inactive desk' || per.fields === 'Available Schedule for Maintenance'
@@ -830,7 +1006,12 @@
 
                         <!-- Desk Allocation Allocated Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Desk Allocation Allocated Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectAlldeskallocationtabs
+                                    (change)="toggleSelectAll(deskAllocationAllocatedTabActions, selectAlldeskallocationtabs?.checked, isdeskallocationActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(deskAllocationAllocatedTabActions)"
+                                    [indeterminate]="isSomeSelected(deskAllocationAllocatedTabActions)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Desk Allocation Allocated Tab Actions</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -857,7 +1038,12 @@
 
                         <!-- Desk Allocation Under Maintenance Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Desk Allocation Under Maintenance Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectAllundermaintencetabs
+                                    (change)="toggleSelectAll(deskAllocationUnderMaintenanceTabActions, selectAllundermaintencetabs?.checked, isdeskundermaintanceDisabled.bind(this))"
+                                    [checked]="isAllSelected(deskAllocationUnderMaintenanceTabActions)"
+                                    [indeterminate]="isSomeSelected(deskAllocationUnderMaintenanceTabActions)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Desk Allocation Under Maintenance Tab Actions</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -884,7 +1070,12 @@
 
                         <!-- Desk Allocation Inactive Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Desk Allocation Inactive Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectAllinactivedesktabs
+                                    (change)="toggleSelectAll(deskAllocationInactiveTabActions, selectAllinactivedesktabs?.checked, isdeskinactiveDisabled.bind(this))"
+                                    [checked]="isAllSelected(deskAllocationInactiveTabActions)"
+                                    [indeterminate]="isSomeSelected(deskAllocationInactiveTabActions)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Desk Allocation Inactive Tab Actions</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -938,7 +1129,12 @@
 
                         <!-- Time Off Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Time Off Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectAlltimeofftabs
+                                    (change)="toggleSelectAll(timeOffTabsFields, selectAlltimeofftabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(timeOffTabsFields)"
+                                    [indeterminate]="isSomeSelected(timeOffTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Time Off Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -968,7 +1164,12 @@
 
                         <!-- Time Off Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Time Off Module Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectAlltimeoffsubtabs
+                                    (change)="toggleSelectAll(timeOffModuleSubTabs, selectAlltimeoffsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(timeOffModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(timeOffModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Time Off Module Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Time Off)' 
@@ -999,7 +1200,12 @@
 
                         <!-- WFH Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">WFH Module Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                    <input type="checkbox" #selectwfhsubtabs
+                                    (change)="toggleSelectAll(WFHModuleSubTabs, selectwfhsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(WFHModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(WFHModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">WFH Module Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1055,7 +1261,12 @@
 
                         <!-- Comp Off Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Comp Off Module Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                    <input type="checkbox" #selectAllcompoffsubtabs
+                                    (change)="toggleSelectAll(compOffModuleSubTabs, selectAllcompoffsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(compOffModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(compOffModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Comp Off Module Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1086,7 +1297,12 @@
 
                         <!-- Permissions Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Permissions Module Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallpermissionssubtabs
+                                    (change)="toggleSelectAll(permissionsModuleSubTabs, selectallpermissionssubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(permissionsModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(permissionsModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Permissions Module Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1116,7 +1332,12 @@
 
                         <!-- Regularization Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Regularization Module Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallregularizationsubtabs
+                                    (change)="toggleSelectAll(regularizationModuleSubTabs, selectallregularizationsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(regularizationModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(regularizationModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Regularization Module Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1147,29 +1368,51 @@
 
                         <!-- On Behalf Of Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">On Behalf Of Module Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                               <input type="checkbox" #selectallonbeofsubtabs
+                                    (change)="toggleSelectAll(onBehalfOfModuleSubTabs, selectallonbeofsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(onBehalfOfModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(onBehalfOfModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">  On Behalf Of Module Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Waiting For Approval (On Behalf Of)' 
                                             || per.fields === 'Approved (On Behalf Of)'  || per.fields === 'Request On Behalf Button'
-                                            || per.fields === 'Rejected (On Behalf Of)' || per.fields === 'Processed (On Behalf Of)' || per.fields === 'Cancelled (On Behalf Of)'">
-                            <td class="text-align-center">{{ per.fields }}</td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
-                                    (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
-                            </td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
-                            </td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
-                            </td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
-                            </td>
-                        </tr>
+                                            || per.fields === 'Rejected (On Behalf Of)' || per.fields === 'Processed (On Behalf Of)' ">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                        [disabled]="true">
+                                </td>
+                            </tr>
                         </ng-container>
+
+
+
+                        <!-- Attendance Module Tabs -->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectallattendance
+                                    (change)="toggleSelectAll(attendanceModuleSubTabs, selectallattendance?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(attendanceModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(attendanceModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Attendance
+                              
+                            </th>
+                        </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Request Regularization' 
                                             || per.fields === 'Request Leave'  || per.fields === 'Attendance Select Employee For Manager'
@@ -1198,7 +1441,12 @@
 
                         <!-- Global Permission Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Global Permission</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectgobalsubtabs
+                                    (change)="toggleSelectAll(globalPermissionModuleSubTabs, selectgobalsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(globalPermissionModuleSubTabs)"
+                                    [indeterminate]="isSomeSelected(globalPermissionModuleSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Global Permission</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Global Permissions' 
@@ -1227,7 +1475,12 @@
 
                         <!-- Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approvals Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                              <input type="checkbox" #selectallpendingapproval
+                                    (change)="toggleSelectAll(pendingApprovalsSubTabs, selectallpendingapproval?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalsSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalsSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">   Pending Approvals Sub Tabs</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1259,7 +1512,12 @@
 
                         <!-- Time Off Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Time Off</th>
+                            <th colspan="5" class="custom-header">
+                                   <input type="checkbox" #selectallpremissionsfortimeoff
+                                    (change)="toggleSelectAll(pendingApprovalTimeOffSubTabs, selectallpremissionsfortimeoff?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalTimeOffSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalTimeOffSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Time Off</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1288,7 +1546,12 @@
 
                         <!-- WFH Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval WFH</th>
+                            <th colspan="5" class="custom-header">
+                               <input type="checkbox" #selectallpremissionsforwfh
+                                    (change)="toggleSelectAll(pendingApprovalWFHSubTabs, selectallpremissionsforwfh?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalWFHSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalWFHSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2"> Pending Approval WFH</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1316,7 +1579,12 @@
 
                         <!-- CompOff Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Comp Off</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsforcompoff
+                                    (change)="toggleSelectAll(pendingApprovalCompOffSubTabs, selectallpremissionsforcompoff?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalCompOffSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalCompOffSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Comp Off</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1345,7 +1613,12 @@
 
                         <!-- Permission Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Permission</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissions
+                                    (change)="toggleSelectAll(pendingApprovalPermissionSubTabs, selectallpremissions?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalTimeOffSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalTimeOffSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Permission</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1374,7 +1647,12 @@
 
                         <!-- Regularization Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Regularization</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsforregularization
+                                    (change)="toggleSelectAll(pendingApprovalRegularizationSubTabs, selectallpremissionsforregularization?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalRegularizationSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalRegularizationSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Regularization</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1403,7 +1681,12 @@
 
                         <!-- Seperation Request Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Separation Requests</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsforseparation
+                                    (change)="toggleSelectAll(pendingApprovalSeparationRequestsSubTabs, selectallpremissionsforseparation?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalSeparationRequestsSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalSeparationRequestsSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Separation Requests</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1431,7 +1714,12 @@
 
                         <!-- Recall Requests Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Recall Requests</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsforrecall
+                                    (change)="toggleSelectAll(pendingApprovalRecallRequestsSubTabs, selectallpremissionsforrecall?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalRecallRequestsSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalRecallRequestsSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Recall Requests</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1514,7 +1802,12 @@
 
                         <!-- Claims and Expenses Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Claims and Expenses</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsforexpenses
+                                    (change)="toggleSelectAll(pendingApprovalClaimsAndExpensesSubTabs, selectallpremissionsforexpenses?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalClaimsAndExpensesSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalClaimsAndExpensesSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Claims and Expenses</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1542,7 +1835,12 @@
 
                         <!-- Desk Requests Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Pending Approval Desk Requests</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsfordesk
+                                    (change)="toggleSelectAll(pendingApprovalDeskRequestsSubTabs, selectallpremissionsfordesk?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pendingApprovalDeskRequestsSubTabs)"
+                                    [indeterminate]="isSomeSelected(pendingApprovalDeskRequestsSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Pending Approval Desk Requests</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1598,7 +1896,12 @@
 
                         <!-- On Behalf Of  Approvals Pending Approvals Module Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">On Behalf Of Approvals</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectallpremissionsallforonbehalf
+                                    (change)="toggleSelectAll(onBehalfOfApprovalsSubTabs, selectallpremissionsallforonbehalf?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(onBehalfOfApprovalsSubTabs)"
+                                    [indeterminate]="isSomeSelected(onBehalfOfApprovalsSubTabs)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">On Behalf Of Approvals</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"

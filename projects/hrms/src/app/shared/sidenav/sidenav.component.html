@@ -9,7 +9,7 @@
             </li>
             }
             <!--Employee Management-->
-            <li class="nav-item menu-item-clear" routerLinkActive="active-nav-link" (click)="resetDropdown()">
+            <li class="nav-item menu-item-clear" (click)="resetDropdown()" [ngClass]="{ 'active': ActiveRoute() }">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees

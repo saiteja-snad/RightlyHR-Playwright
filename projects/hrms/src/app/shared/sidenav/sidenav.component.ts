@@ -196,4 +196,9 @@ export class SidenavComponent implements OnInit {
   updateFilteredModules(): void {
     this.filteredModules = this.modules.filter(m => m.route !== this.selectedDropdownModule?.route);
   }
+
+  ActiveRoute(): boolean {
+    const activeRoutes = ['/employee-management', '/letters', '/invite-user'];
+    return activeRoutes.some(route => this.router.url.startsWith(route));
+  }
 }

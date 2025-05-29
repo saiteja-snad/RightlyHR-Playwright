@@ -279,6 +279,28 @@ pendingCount = 0;
       this.getCompOffRequest(this.empinfo.employeeId);
     }
   }
+
+  selectedEmployeewfhId: any = null;
+  selectedCompoffEmployeeControl = new FormBuilder().control(''); // Add this property
+
+clearWFHData() {
+  this.selectedCompoffEmployeeControl.reset(); // Reset dropdown
+ this.http.setEmployeeIdCompOff(null);
+  // Clear counts and list
+ this.ProcessedCount=0;
+    this.rejectedCount=0;
+    this.ApprovedCount=0;
+    this.pendingCount=0;
+    this.compOff = [];
+
+  // Show apply button again
+  this.disaplyapplybutton = true;
+
+  // Optionally load default employee data
+  if (this.empinfo?.employeeId) {
+    this.getCompOffRequest(this.empinfo.employeeId);
+  }
+}
   getCompOffRequest(employeeId?: any) {
 
     let empId = employeeId;

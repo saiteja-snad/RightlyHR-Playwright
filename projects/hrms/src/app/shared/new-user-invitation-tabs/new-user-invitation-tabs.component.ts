@@ -9,21 +9,18 @@ import { RbacService } from '../../services/rbac.service';
   imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './new-user-invitation-tabs.component.html',
   styleUrl: './new-user-invitation-tabs.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class NewUserInvitationTabsComponent {
   navTabs: any[] = [
-    { label: 'Active Employees', link: '/admin/active-new-user', permission: { feature: 'Dashboard Active Invite New User', action: 'view' }},
-    { label: 'Active Trainees', link: '/admin/prospective-new-user', permission: { feature: 'Dashboard Trainee Active Invite New User', action: 'view' }},
+    { label: 'Active Employees', link: '/invite-user/active',icon:'/employee-data/active-employees-icon.png', permission: { feature: 'Dashboard Active Invite New User', action: 'view' } },
+    { label: 'Active Trainees', link: '/invite-user/trainees',icon:'/employee-data/active-trainee-icon.png', permission: { feature: 'Dashboard Trainee Active Invite New User', action: 'view' } },
   ];
 
-  constructor(
-    private rbac: RbacService,
-    private accessNav: AccessNavigationService
-  ) {}
+  constructor(private rbac: RbacService) { }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.navTabs = this.navTabs.filter(
       (tab) =>
         tab.permission &&
@@ -34,6 +31,4 @@ export class NewUserInvitationTabsComponent {
         )
     );
   }
-
-  
 }

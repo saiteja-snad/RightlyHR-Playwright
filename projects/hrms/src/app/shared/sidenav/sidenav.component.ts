@@ -9,9 +9,10 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/reports-main-tabs.component";
 import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component";
+import { EmployeeManagementTabsComponent } from "../Employee-management-content/employee-management-tabs/employee-management-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ReportsMainTabsComponent, SettingsMainHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ReportsMainTabsComponent, SettingsMainHeaderTabsComponent, EmployeeManagementTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -194,5 +195,10 @@ export class SidenavComponent implements OnInit {
 
   updateFilteredModules(): void {
     this.filteredModules = this.modules.filter(m => m.route !== this.selectedDropdownModule?.route);
+  }
+
+  ActiveRoute(): boolean {
+    const activeRoutes = ['/employee-management', '/letters', '/invite-user'];
+    return activeRoutes.some(route => this.router.url.startsWith(route));
   }
 }

@@ -206,17 +206,17 @@ export class YearlySummaryReportComponent {
 
     // Only include filters if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+      request.employeeId = formValue.employee.employeeId;
     }
 
     // Employee filter
     if (formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+      request.employeeId = formValue.employee.employeeId;
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.teamManagerID;
     }
 
     // Leave category
@@ -263,6 +263,7 @@ export class YearlySummaryReportComponent {
 
   clearAllFilters(): void {
     this.yearlyReportForm.reset();
+    this.filteredYearlyRecord = [];
   }
 
   exportToExcelYearly(): void {

@@ -217,7 +217,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       request.employeeId = ids;  // The selected employee IDs are set here
     }
     
-    if (formValue.employee?.employeeId) {
+    if (formValue.employee?.employeeId !== 'all') {
       request.employeeId = formValue.employee.employeeId;
     }
 
@@ -233,7 +233,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     }
 
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.employeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Only include filters if not "All Employees"
@@ -262,6 +262,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.wfhReportForm.reset();
+    this.filteredWfhRecord = [];
   }
 
   formatDate(date: Date): string {

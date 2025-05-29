@@ -1,20 +1,4 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-      
-        <div class="heading-content">
-            <div class="commpoment-name cursor" (click)="naviagte()">Dashboard<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Probation Extension Letter</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
-            </div>
-        </div>
-    </div>
-
-   <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
-
     <!--letter content-->
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">

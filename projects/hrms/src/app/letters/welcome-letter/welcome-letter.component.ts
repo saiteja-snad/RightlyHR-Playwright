@@ -3,53 +3,46 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { HttpService } from '../../services/http.service';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './welcome-letter.model';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-welcome-letter',
-  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './welcome-letter.component.html',
   styleUrl: './welcome-letter.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class WelcomeLetterComponent {
-  moduleinfo : string = '';
   subscription!: Subscription;
   bankloanLetterData = {} as any;
   bankLoanTemplate: any | string | ArrayBuffer | null = null;
   bankLoanFile!: File;
-
   employeeForm!: FormGroup;
-  
   employeeDetails: IEmployeeDetails[] = [];
   selectedEmployee!: IEmployeeDetails;
   selectedEmployeeJobDetails!: IEmployeeJobDetails;
   signatureAuthorityDetails: IEmployeeSignatures[] = [];
   selectedAuthority!: IEmployeeSignatures;
-
   employeeFullname!: string;
   herOrHimdata!: string;
   hisOrHerdata!: string;
   date!: string;
   jobErrorMessage!: string;
-  spinnerLoader= false;
+  spinnerLoader = false;
   authorityFullName!: string;
 
   constructor(
-    private http: HttpService, 
-    private router: Router, 
+    private http: HttpService,
+    private router: Router,
     private fb: FormBuilder,
     private conformationPopup: OpenModalService
   ) { }
@@ -58,10 +51,8 @@ export class WelcomeLetterComponent {
     this.initializeForm();
     this.getEmployees();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
-  
+
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
@@ -69,25 +60,6 @@ export class WelcomeLetterComponent {
       authorityid: [null, Validators.required],
       jobValid: [false, Validators.requiredTrue]
     });
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/welcome-letter': MODULE_INFOS.WELCOME_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getEmployees() {
@@ -115,7 +87,7 @@ export class WelcomeLetterComponent {
       next: (data: any) => {
         this.signatureAuthorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() 
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim()
         }));
       },
       error: (error: any) => {
@@ -124,11 +96,9 @@ export class WelcomeLetterComponent {
     });
   }
 
-  onClickEmployee(event: any){
-    this.selectedEmployee= event.value;
-
+  onClickEmployee(event: any) {
+    this.selectedEmployee = event.value;
     this.employeeFullname = `${this.selectedEmployee.firstName || ''} ${this.selectedEmployee.middleName || ''} ${this.selectedEmployee.lastName || ''}`;
-
     if (this.selectedEmployee.gender == 'Male') {
       this.hisOrHerdata = 'his'
       this.herOrHimdata = 'him'
@@ -141,7 +111,6 @@ export class WelcomeLetterComponent {
       this.hisOrHerdata = 'his/her'
       this.herOrHimdata = 'him/her'
     }
-
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
 
@@ -151,11 +120,11 @@ export class WelcomeLetterComponent {
         if (!data || data.length === 0) {
           this.jobErrorMessage = 'No job details found for this employee.';
           this.employeeForm.get('jobValid')?.setValue(false);
-        } else if(!this.selectedEmployee.workEmail){
-            this.jobErrorMessage= 'Missing workEmail for this employee';
+        } else if (!this.selectedEmployee.workEmail) {
+          this.jobErrorMessage = 'Missing workEmail for this employee';
         }
-         else {
-          let res = data.reverse()[0];  
+        else {
+          let res = data.reverse()[0];
           this.selectedEmployeeJobDetails = res;
           this.jobErrorMessage = '';
           this.employeeForm.get('jobValid')?.setValue(true);
@@ -168,31 +137,27 @@ export class WelcomeLetterComponent {
   }
 
   onclickDesignation(event: any) {
-    this.selectedAuthority= event.value;
+    this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName
         ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
         : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
-    } 
+    }
   }
 
   async postBankLoanLetterFormSubmit(f: FormGroup) {
-    this. spinnerLoader= true;
+    this.spinnerLoader = true;
     const data = f.value;
     let fileName = '';
-
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
       fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_WelcomeLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
-      return; 
+      return;
     }
-
     data.dateofbankloan = this.formatDate(data.dateofbankloan);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
-
     const pdfContent = document.getElementById('pdfContent');
-
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
@@ -203,8 +168,7 @@ export class WelcomeLetterComponent {
         pdf.save(fileName);
         const blob = pdf.output('blob');
         let d: Date = new Date()
-        this.bankLoanFile = new File([blob],fileName,{type: 'application/pdf',});
-
+        this.bankLoanFile = new File([blob], fileName, { type: 'application/pdf', });
         this.uploadBankLoanLetter();
       });
     }
@@ -233,14 +197,14 @@ export class WelcomeLetterComponent {
         this.conformationPopup.openSuccessModal('Welcome Letter Generated Successfully')
       },
       error: (err: any) => {
-        this.spinnerLoader= false;
-        this.conformationPopup.openErrorModal(err.error.message? err.error.message: 'Failed to send Welcome Letter');
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal(err.error.message ? err.error.message : 'Failed to send Welcome Letter');
       },
       complete: () => {
         setTimeout(() => {
           this.router.navigate(['/admin/dashboard']);
         }, 2000)
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.employeeForm.reset();
       }
     });

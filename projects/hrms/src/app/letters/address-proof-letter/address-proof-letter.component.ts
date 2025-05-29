@@ -1,30 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal, NgbModalConfig, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-letter-model';
 import { IAuthority } from '../../Interfaces/letters-model';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
-
-
-
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })
@@ -34,13 +28,10 @@ export class AddressProofLetterComponent {
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
   ];
-
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
-  moduleinfo : string = '';
   employeeForm!: FormGroup;
   selectedEmployee: any;
   subscription!: Subscription;
@@ -70,17 +61,16 @@ export class AddressProofLetterComponent {
   Status: any;
   address = {} as IAddress;
   addressFlag = false;
-  addressErrorMessage = ''; 
-  spinnerLoader= false;
+  addressErrorMessage = '';
+  spinnerLoader = false;
   lastSelectedEmployeeId: string | null = null;
 
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
     private router: Router,
-    config: NgbModalConfig, 
     private fb: FormBuilder,
-    private conformationPopup: OpenModalService, 
+    private conformationPopup: OpenModalService,
   ) { }
 
   ngOnInit(): void {
@@ -105,29 +95,7 @@ export class AddressProofLetterComponent {
       ? this.employeeaddress.employeeAddresses.map((addr: { type: string }) => ({
         label: addr.type === 'C' ? 'Current Address' : 'Permanent Address',
         value: addr.type
-      })): [];
-
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/address-proof-letter': MODULE_INFOS.ADDRESS_PROOF_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+      })) : [];
   }
 
   addressOptions = [
@@ -156,7 +124,7 @@ export class AddressProofLetterComponent {
       state: [''],
       country: [''],
       zipCode: [''],
-      authorityName: [''],                    
+      authorityName: [''],
       authorityDesignation: ['']
     });
   }
@@ -165,7 +133,7 @@ export class AddressProofLetterComponent {
     if (!selectedEmployee || typeof selectedEmployee !== 'object' || !selectedEmployee.hasOwnProperty('employeeId')) {
       return;
     }
-  
+
     // If employee has changed, reset the dependent fields
     if (this.lastSelectedEmployeeId && this.lastSelectedEmployeeId !== selectedEmployee.employeeId) {
       this.employeeForm.patchValue({
@@ -179,12 +147,12 @@ export class AddressProofLetterComponent {
         control?.markAsUntouched();
         control?.updateValueAndValidity();
       });
-    
+
     }
-  
+
     // Update the last selected employeeId
     this.lastSelectedEmployeeId = selectedEmployee.employeeId;
-  
+
     this.fusionEmpId = selectedEmployee.employeeId;
     this.addressLetterData = {};
 
@@ -198,7 +166,7 @@ export class AddressProofLetterComponent {
 
     let selectedAddress = this.addressLetterData.address || {};
     if (!selectedAddress || Object.keys(selectedAddress).length === 0) {
-     console.log('No address found for the selected type.');
+      console.log('No address found for the selected type.');
     }
 
     this.employeeForm.patchValue({
@@ -332,7 +300,7 @@ export class AddressProofLetterComponent {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() 
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim()
         }));
       },
       error: (error: any) => {
@@ -361,24 +329,23 @@ export class AddressProofLetterComponent {
         },
       });
   }
+  
   //get Job Details by empployeeid
   getJobdetails(Employee: any) {
     if (!Employee || !Employee.employeeId) {
       console.warn("Invalid employee for job details:", Employee);
       return;
     }
-
     this.subscription = this.http
       .getData(`JobDetails/${Employee.employeeId}`)
       .subscribe({
         next: (data: any) => {
-
           if (data && data.length > 0) {
-            let res = data.reverse()[0]; 
+            let res = data.reverse()[0];
             this.employeeJobDetails = res;
 
             Employee.jobRole = res.jobRole;
-            Employee.workLocation = res.location; 
+            Employee.workLocation = res.location;
 
             this.employeeForm.patchValue({
               jobRole: Employee.jobRole || 'Not Available',
@@ -386,14 +353,14 @@ export class AddressProofLetterComponent {
           } else {
             console.warn("No job details found for employeeId:", Employee.employeeId);
             this.employeeForm.patchValue({
-              jobRole: 'Not Available', 
+              jobRole: 'Not Available',
             });
           }
         },
         error: (reason: any) => {
           console.error("Error fetching job details:", reason);
           this.employeeForm.patchValue({
-            jobRole: 'Not Available', 
+            jobRole: 'Not Available',
           });
         },
       });
@@ -409,12 +376,10 @@ export class AddressProofLetterComponent {
   }
 
   async postAddressLetterFormSubmit(f: FormGroup) {
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const data = await this.addressLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
-
-
     const pdfContent = document.getElementById('pdfContent');
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
@@ -428,45 +393,34 @@ export class AddressProofLetterComponent {
         const blob = pdf.output('blob');
         let d: Date = new Date()
         this.addressFile = new File(
-          [blob],
-          fileName,
-          {
-            type: 'application/pdf',
-          }
+          [blob], fileName, { type: 'application/pdf', }
         );
-
         this.uploadAddressLetter();
-
       });
     }
   }
 
   uploadAddressLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Address Proof Letters/${this.addressLetterData.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.addressFile
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.conformationPopup.openSuccessModal('Address Proof Letter Generated Successfully');
-            setTimeout(()=>{
-              this.navigateDashboard();
-            }, 2000)
-          }
-        },
-        error: (reason: any) => {
-          this.spinnerLoader= false;
-          this.conformationPopup.openErrorModal('file upload  is failed');
-        },
-        complete: ()=>{
-          this.spinnerLoader= false;
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.addressFile).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.conformationPopup.openSuccessModal('Address Proof Letter Generated Successfully');
+          setTimeout(() => {
+            this.navigateDashboard();
+          }, 2000)
         }
-      });
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal('file upload  is failed');
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
   }
+
   //to fromat Date
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);

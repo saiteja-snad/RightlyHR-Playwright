@@ -522,7 +522,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
       {
         label: 'Active',
         sublabel: 'Employees',
-        count: this.Active,
+        count: this.employeesStatusCount.statusWiseCount.find((item)=> item.status === 'Active Employees'),
         icon: '/employee-data/active-employees-icon.png',
         employeementTypeColor: '#F9D339',
         permission: {
@@ -612,20 +612,14 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     const backgroundColors = this.cardItems.map(
       (item) => item.employeementTypeColor
     );
-    this.totalEmployeesCount =
-      this.ACTDATA +
-      this.Active +
-      this.Inactive +
-      this.Trainee +
-      this.traineeactive +
-      this.traineeInactive;
+    this.totalEmployeesCount = this.employeesStatusCount.totalCount
     this.EmployeeInfoData = {
       datasets: [
         {
           data: [
-            this.ACTDATA,
             this.Active,
             this.Inactive,
+            this.ACTDATA,
             this.Trainee,
             this.traineeactive,
             this.traineeInactive,

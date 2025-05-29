@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators ,MinLengthValidator} from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
@@ -16,22 +16,18 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, LettersTabComponent, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
-    LettersheaderComponent, DateformatPipe, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
+    LettersheaderComponent, DateformatPipe, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
 
 export class OfferLetterComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
   currentDate = moment();
   isIssuedDateValid = true;
   isExpiryDateValid = true;
@@ -121,11 +117,12 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   confirmation_Msg: any;
   data_Storing = {} as any;
   ApprovalLoader = false;
-issuedDatevalidate:any;
-startDatevalidate:any;
-expiryDatevalidate:any;
+  issuedDatevalidate: any;
+  startDatevalidate: any;
+  expiryDatevalidate: any;
+
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService,public formvalidators:FormValidationService
+    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService
     // private _userAcessService: UserAccessService,
   ) { this.initializeForm(); }
 
@@ -142,12 +139,6 @@ expiryDatevalidate:any;
     this.getEmployeeId();
     this.getAllWorkLocation();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
   }
 
   initializeForm() {
@@ -170,9 +161,9 @@ expiryDatevalidate:any;
       jobRoleDetails: [{ value: null, disabled: true }],
       esic: [null, Validators.required],
       pf: [null, Validators.required],
-      amount: ['', [Validators.required, Validators.min(0),Validators.maxLength(10),Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      amount: ['', [Validators.required, Validators.min(0), Validators.maxLength(10), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: [{ value: null, disabled: true }, [Validators.required, Validators.min(0),Validators.maxLength(10),Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      variablePayAmount: [{ value: null, disabled: true }, [Validators.required, Validators.min(0), Validators.maxLength(10), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
@@ -184,25 +175,6 @@ expiryDatevalidate:any;
     },
       { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
     );
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/offer-letter': MODULE_INFOS.OFFER_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   onclickCTC(Value: any) {
@@ -264,7 +236,7 @@ expiryDatevalidate:any;
       const issuedDate = control.get('offerIssuedDate')?.value;
       const expiryDate = control.get('offerExpiryDate')?.value;
       const dateOfJoiningDate = control.get('dateOfJoining')?.value;
-       this.expiryDatevalidate=moment(dateOfJoiningDate).format('YYYY-MM-DD')
+      this.expiryDatevalidate = moment(dateOfJoiningDate).format('YYYY-MM-DD')
       if (!issuedDate || !expiryDate) {
         return null; // Don’t validate if one of the dates is missing
       }
@@ -277,7 +249,7 @@ expiryDatevalidate:any;
     return (control: AbstractControl): ValidationErrors | null => {
       const issuedDate = control.get('offerIssuedDate')?.value;
       const dateOfJoiningDate = control.get('dateOfJoining')?.value;
-       this.startDatevalidate=moment(issuedDate).format('YYYY-MM-DD')
+      this.startDatevalidate = moment(issuedDate).format('YYYY-MM-DD')
       if (!issuedDate || !dateOfJoiningDate) {
         return null; // Don’t validate if one of the dates is missing
       }
@@ -461,7 +433,6 @@ expiryDatevalidate:any;
       this.prospectiveEmpData.Copys = formValues.Copys,
       this.prospectiveEmpData.offerExpiryDate = formValues.offerExpiryDate
     this.prospectiveEmpData.note = formValues.note
-   
   }
 
   //employeeid validation to check we have the mail already exist or not
@@ -514,7 +485,7 @@ expiryDatevalidate:any;
               if (this.prospectiveEmpData.amount) {
                 this.ctcCalculation();
               }
-              if(this.prospectiveEmpData.isVariablePay){
+              if (this.prospectiveEmpData.isVariablePay) {
                 this.employeeForm.get('variablePayAmount')?.enable();
               }
             }
@@ -531,7 +502,7 @@ expiryDatevalidate:any;
       this.resetInputFields();
     }
   }
-  
+
   //function to format the date
   formatDate(date: any) {
     return date?.split('T')[0];
@@ -640,13 +611,13 @@ expiryDatevalidate:any;
       // if (Input) {
       //   Input.value = 'false';
       // }
-     
+
       const esicControl = this.employeeForm?.get('esic');
-      if (esicControl && esicControl.value!==false) {
+      if (esicControl && esicControl.value !== false) {
         esicControl.setValue(false, { emitEvent: false });
       }
-      
-      
+
+
     }
     //===================================================================================================================================
 
@@ -697,12 +668,12 @@ expiryDatevalidate:any;
       // if (Input) {
       //   Input.value = 'false';
       // }
-     
+
       const esicControl = this.employeeForm?.get('esic');
-      if (esicControl && esicControl.value!==false) {
+      if (esicControl && esicControl.value !== false) {
         esicControl.setValue(false, { emitEvent: false });
       }
-      
+
     }
 
     //==================================================================================================================================
@@ -853,21 +824,21 @@ expiryDatevalidate:any;
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
-    this.prospectiveEmpData.empstatus = 'Prospective',
-    this.prospectiveEmpData.emailaddress = data.personalEmail,
-    this.prospectiveEmpData.contactnumber = parseInt(data.phoneNumber),
-    this.prospectiveEmpData.emailId = this.employeeaddress.emailId,
-    this.prospectiveEmpData.fusionEmpId = data.fusionPlusEmpId,
-    this.prospectiveEmpData.insurance = this.employeeaddress.insurance,
-    this.prospectiveEmpData.generateOffer = true,
-    this.prospectiveEmpData.pf = this.employeeForm.get('pf')?.value,
-    this.prospectiveEmpData.esic = this.employeeForm.get('esic')?.value,
-    this.prospectiveEmpData.dob = this.employeeaddress.dob,
-    this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
-    this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
-    this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
-    this.prospectiveEmpData.substatus = 'Offer Letter Generated',
-    this.prospectiveEmpData.password = this.employeeaddress.password
+      this.prospectiveEmpData.empstatus = 'Prospective',
+      this.prospectiveEmpData.emailaddress = data.personalEmail,
+      this.prospectiveEmpData.contactnumber = parseInt(data.phoneNumber),
+      this.prospectiveEmpData.emailId = this.employeeaddress.emailId,
+      this.prospectiveEmpData.fusionEmpId = data.fusionPlusEmpId,
+      this.prospectiveEmpData.insurance = this.employeeaddress.insurance,
+      this.prospectiveEmpData.generateOffer = true,
+      this.prospectiveEmpData.pf = this.employeeForm.get('pf')?.value,
+      this.prospectiveEmpData.esic = this.employeeForm.get('esic')?.value,
+      this.prospectiveEmpData.dob = this.employeeaddress.dob,
+      this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
+      this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
+      this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
+      this.prospectiveEmpData.substatus = 'Offer Letter Generated',
+      this.prospectiveEmpData.password = this.employeeaddress.password
     this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
     this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
@@ -1136,7 +1107,7 @@ expiryDatevalidate:any;
       isDelete: false,
       notificationDate: currentDate,
       notificationType: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName ?? ''} 
-      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? '' } 
+      requested you for the approval of the offer letter of employee ${this.prospectiveEmpData?.firstName} ${this.prospectiveEmpData?.middleName ?? ''} 
       ${this.prospectiveEmpData?.lastName} Offer Letter`,
       empId: loggedInUser.employeeId,
     };

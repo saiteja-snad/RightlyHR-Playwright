@@ -1,26 +1,4 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
-
-    <div class="heading-content">
-      <div class="commpoment-name cursor" (click)="navigateDashboard()">Dashboard<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-      <div class="component-header"> {{'Prospective Trainees'|translate}}</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div>
-    </div>
-    @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){
-    <div class="d-flex">
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
-        <i class="bi bi-plus me-2"></i>{{'Add Prospective Trainee'| translate}}</button>
-    </div>
-    }
-  </div>
-
-
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
-
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>

@@ -2,22 +2,33 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
-import { filter, Subscription } from 'rxjs';
+import { filter, forkJoin, Observable, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { MODULE_INFOS } from '../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Carousel } from 'primeng/carousel';
 import { ChartModule } from 'primeng/chart';
+import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee, IOrgHolidaysHeader, Permission } from '../../Interfaces/dashboard.modal';
+import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel, ChartModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    DocumentHistoryLayoutComponent,
+    TranslateModule,
+    NgbPopoverModule,
+    Carousel,
+    ChartModule,
+    DateformatPipe
+],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class DashboardComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -36,6 +47,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   trackByFn(index: number, item: any): number {
     return index;
   }
+  greetingMessage = ''
   cardItems: any[] = [];
   eventItems: any[] = [];
   EmployeeInfoData: any;
@@ -44,46 +56,84 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentTime: Date = new Date();
   iconPath: string = '';
   private intervalId: any;
+  currentMonth!: number;
+  currentYear!: number;
+  currentDay!: number;
+  birthDaysData: IBirthDaysData[] = [];
+  anniversariesData: IAnniversariesData[] = [];
+  newJoineesData: INewJoinee[] = [];
+  attendanceData!:AttendanceResponse; 
+  punchPairs = [] as IdayLogs[];
+  logsDuration!: string;
+  selectedDate!: Date;
+  permissions_list:Permission[] = [];
+  regularization_list:Permission[] = [];
+  marriageAnniversaryData:IMarriageAnniversary[] = [];
+  employeesStatusCount:EmployeeStatusCount = {} as EmployeeStatusCount;
 
-  constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef,
-    public rbac: RbacService) { }
+
+  constructor(
+    private router: Router,
+    private http: HttpService,
+    private cdr: ChangeDetectorRef,
+    public rbac: RbacService,
+    public modalService: NgbModal,
+  ) {}
 
   ngOnInit(): void {
-    this.employeedata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.fetchData();
+    this.employeedata = JSON.parse(
+      localStorage.getItem('rightlyHrUser') || '{}'
+    );
+    this.currentYear = new Date().getFullYear(); // e.g., 2025
+    this.currentMonth = new Date().getMonth() + 1; // 1 (Jan) to 12 (Dec)
+    this.currentDay = new Date().getDate();
+    // this.fetchData();
     this.cardItems = this.cardItems.filter(
       (tab) =>
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
     );
-    this.eventsData();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.setIconBasedOnTime();
     this.intervalId = setInterval(() => {
       this.currentTime = new Date();
     }, 1000);
+    this.getAttendenceLogsOfLoginedUser(
+      this.employeedata.employeeId,
+      this.currentYear,
+      this.currentMonth,
+      this.currentDay
+    );
+    this.loadEvents();
+    this.getEmployeeStatusCount();
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      this.updateModuleInfo();
-    });
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/admin/dashboard': MODULE_INFOS.DASHBOARD_MODULE_INFO
+      '/admin/dashboard': MODULE_INFOS.DASHBOARD_MODULE_INFO,
     };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
+      url.includes(route)
+    );
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   //function for prospective employee
-  eventsData() {
+  quotationsData() {
     this.subscription = this.http.getData(`EmployeeData/Quotation`).subscribe({
       next: (data: any) => {
         const shuffled = data.sort(() => 0.5 - Math.random());
@@ -93,20 +143,81 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  //function for to get the Employees count based on the status
+  getEmployeeStatusCount() {
+  this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
+    next: (data: any) => {
+      this.employeesStatusCount = data.data as EmployeeStatusCount;
+      console.log(this.employeesStatusCount);
+
+      // Reset counts
+      this.Active = 0;
+      this.Inactive = 0;
+      this.ACTDATA = 0;
+      this.PROBDATA = 0;
+      this.traineeactive = 0;
+      this.traineeInactive = 0;
+      this.Trainee = 0;
+
+      const statusList = this.employeesStatusCount?.statusWiseCount;
+
+      if (Array.isArray(statusList)) {
+        for (const statusItem of statusList) {
+          switch (statusItem.status) {
+            case 'Active Employees':
+              this.Active = statusItem.count;
+              break;
+            case 'Inactive Employees':
+              this.Inactive = statusItem.count;
+              break;
+            case 'Prospective Employees':
+              this.ACTDATA = statusItem.count;
+              break;
+            case 'Probation Employees':
+              this.PROBDATA = statusItem.count;
+              break;
+            case 'Active Trainees':
+              this.traineeactive = statusItem.count;
+              break;
+            case 'Inactive Trainees':
+              this.traineeInactive = statusItem.count;
+              break;
+            case 'Prospective Trainees':
+              this.Trainee = statusItem.count;
+              break;
+          }
+        }
+      } else {
+        console.warn('statusWiseCount is not an array:', statusList);
+      }
+
+      this.updateCardItems();  // Update cards
+      // this.initChart();     // Call this here if needed
+
+    },
+    error: (reason) => console.log(reason),
+  });
+}
+
+
   setIconBasedOnTime() {
     const hour = new Date().getHours();
 
     if (hour >= 5 && hour < 12) {
       // Morning
+      this.greetingMessage = 'Good Morning';
       this.iconPath = '/dashboard-icon/morning-icon.png';
     } else if (hour >= 12 && hour < 16) {
       // Afternoon
+      this.greetingMessage = 'Good Afternoon';
       this.iconPath = '/dashboard-icon/afternoon-icon.png';
     } else if (hour >= 16 && hour < 19) {
       // Evening
+      this.greetingMessage = 'Good Evening';
       this.iconPath = '/dashboard-icon/sunset-icon.png';
     } else {
       // Night
+      this.greetingMessage = 'Good Evening';
       this.iconPath = '/dashboard-icon/night-icon.png';
     }
   }
@@ -122,75 +233,223 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.probationemployees();
   }
 
+  loadEvents() {
+      forkJoin([
+      this.http.getData(
+        `Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`
+      ) as Observable<IBirthDaysData[]>,
+      this.http.getData(
+        `Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`
+      ) as Observable<IAnniversariesData[]>,
+      this.http.getData(
+        `Employeedata/Newjoinee?year=${this.currentYear}&months=${this.currentMonth}`
+      ) as Observable<INewJoinee[]>,
+      this.http.getData(
+        `Employeedata/ActiveEmployeeMarriageAnniversary?months=${this.currentMonth}`
+      ) as Observable<IMarriageAnniversary[]>
+      ,
+    ]).subscribe(
+      ([birthdays, anniversaries, newJoinees,marriageAnniversary]) => {
+        const today = new Date();
+        const todayDay = today.getDate();
+        const todayMonth = today.getMonth(); // 0-based
+
+        const birthDayEvents = birthdays
+          .filter((b) => {
+            const dob = new Date(b.dob);
+            return dob.getDate() === todayDay && dob.getMonth() === todayMonth;
+          })
+          .map((b) => ({
+            type: 'Birthday',
+            name: this.getFullName({
+              firstName: b.firstName,
+              middleName: b.middleName,
+              lastName: b.lastName,
+            }),
+            date: b.dob,
+          }));
+
+        const anniversaryEvents = anniversaries
+          .filter((a) => {
+            const doj = new Date(a.dateOfJoining);
+            return doj.getDate() === todayDay && doj.getMonth() === todayMonth;
+          })
+          .map((a) => ({
+            type: 'Work Anniversary',
+            name: this.getFullName({
+              firstName: a.firstName,
+              middleName: a.middleName,
+              lastName: a.lastName,
+            }),
+            yearCount: a.anniversaryYearCount,
+            date: a.dateOfJoining,
+          }));
+
+
+        const marriageAnniversariesEvent = marriageAnniversary
+          .filter((a) => {
+            const doj = new Date(a.marriedDate);
+            return doj.getDate() === todayDay && doj.getMonth() === todayMonth;
+          })
+          .map((a) => ({
+            type: 'Marriage Anniversary',
+            name: this.getFullName({
+              firstName: a.firstName,
+              middleName: a.middleName,
+              lastName: a.lastName,
+            }),
+            date: a.marriedDate,
+          }));
+
+        const todayString = today.toISOString().split('T')[0];
+
+        const newJoineeEvents = newJoinees
+          .filter((n) => n.dateOfJoining?.split('T')[0] === todayString)
+          .map((n) => ({
+            type: 'New Joinee',
+            name: this.getFullName({
+              firstName: n.firstName,
+              middleName: n.middleName,
+              lastName: n.lastName,
+            }),
+            doj: n.dateOfJoining,
+          }));
+
+        const events = [
+          ...birthDayEvents,
+          ...anniversaryEvents,
+          ...newJoineeEvents,
+          ...marriageAnniversariesEvent
+        ];
+
+        if (events.length) {
+          this.eventItems = events;
+        } else {
+          this.quotationsData();
+        }
+      },
+      (err: any) => {
+        console.error(err);
+        this.quotationsData();
+      }
+    );
+}
+
+getFullName(b: { firstName: string; middleName?: string; lastName: string }): string {
+  return [b.firstName, b.middleName, b.lastName]
+    .filter(Boolean) // removes undefined or empty strings
+    .join(' ');
+}
+
+
+ openModalLarge(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
+  }
+
+  dayLogsData(
+    Value: any,
+    date: Date,
+    totalduration: any,
+    permissions: any,
+    regularizations: any
+  ) {
+    this.logsDuration = totalduration;
+    this.selectedDate = date;
+    this.permissions_list = permissions;
+    this.regularization_list = regularizations;
+    if (Value) {
+      this.punchPairs = Value;
+    } else {
+      this.punchPairs = [];
+    }
+  }
+
+
   //function for prospective employee
   empdata() {
-    this.subscription = this.http.getData(`Employeedata/ProspectiveEmployees`).subscribe({
-      next: (data: any) => {
-        this.ACTDATA = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/ProspectiveEmployees`)
+      .subscribe({
+        next: (data: any) => {
+          this.ACTDATA = data.length;
+          this.updateCardItems();
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   //   function for active Employees
   activeEmpData() {
-    this.subscription = this.http.getData(`v2/Employeedata/ActiveEmployeesData`).subscribe({
-      next: (data: any) => {
-        this.Active = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`v2/Employeedata/ActiveEmployeesData`)
+      .subscribe({
+        next: (data: any) => {
+          this.Active = data.length;
+          this.updateCardItems();
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   // function for Inactive Employees
   InActiveEmpData() {
-    this.subscription = this.http.getData(`Employeedata/InactiveEmployees`).subscribe({
-      next: (data: any) => {
-        this.Inactive = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/InactiveEmployees`)
+      .subscribe({
+        next: (data: any) => {
+          this.Inactive = data.length;
+          this.updateCardItems();
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   //  function for prospective employee
   empdataTrainee() {
-    this.subscription = this.http.getData(`Employeedata/TrainingEmployees`).subscribe({
-      next: (data: any) => {
-        let actdat = data.filter((ele: any) => {
-          if (ele.empstatus === 'Trainee Prospective') {
-            return ele;
-          }
-        });
-        this.Trainee = actdat.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/TrainingEmployees`)
+      .subscribe({
+        next: (data: any) => {
+          let actdat = data.filter((ele: any) => {
+            if (ele.empstatus === 'Trainee Prospective') {
+              return ele;
+            }
+          });
+          this.Trainee = actdat.length;
+          this.updateCardItems();
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   //  function for Active Trainee employee
   empdataTraineeActive(status: string) {
-    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
-      next: (data: any) => {
-        this.traineeactive = data.length;
-        this.updateCardItems();
-      },
-      error: (reason: any) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/TraineeActiveEmployees/${status}`)
+      .subscribe({
+        next: (data: any) => {
+          this.traineeactive = data.length;
+          this.updateCardItems();
+        },
+        error: (reason: any) => console.log(reason),
+      });
   }
 
   //  function for InActive Trainee employee
   empdataTraineeInActive(status: string) {
-    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
-      next: (data: any) => {
-        this.traineeInactive = data.length;
-        this.updateCardItems();
-      },
-      error: (reason: any) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/TraineeActiveEmployees/${status}`)
+      .subscribe({
+        next: (data: any) => {
+          this.traineeInactive = data.length;
+          this.updateCardItems();
+        },
+        error: (reason: any) => console.log(reason),
+      });
   }
 
   // function to get getjobList Current Openings
@@ -224,13 +483,38 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   probationemployees() {
-    this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
-      next: (data: any) => {
-        this.PROBDATA = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
+    this.subscription = this.http
+      .getData(`ProbationFlow/getProbationEmployeesStatus`)
+      .subscribe({
+        next: (data: any) => {
+          this.PROBDATA = data.length;
+          this.updateCardItems();
+        },
+        error: (reason) => console.log(reason),
+      });
+  }
+
+  getAttendenceLogsOfLoginedUser(
+    empId: number,
+    currentYear: number,
+    currentMonth: number,
+    currentDay: number
+  ) {
+    this.subscription = this.http
+      .getData(
+        `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.attendanceData = data;
+          console.log(this.attendanceData);
+        },
+        error: (reason) => console.log(reason),
+      });
+  }
+
+  navigateToAttendance() {
+    this.router.navigate(['/attendance']);
   }
 
   updateCardItems() {
@@ -241,7 +525,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
         employeementTypeColor: '#F9D339',
-        permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Active Employees Card',
+          action: 'view',
+        },
       },
       {
         label: 'Inactive',
@@ -250,7 +537,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
         employeementTypeColor: '#E54288',
-        permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Inactive Employees Card',
+          action: 'view',
+        },
       },
       {
         label: 'Prospective',
@@ -259,7 +549,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
         employeementTypeColor: '#03A9F4',
-        permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Prospective Employees Card',
+          action: 'view',
+        },
       },
       {
         label: 'Probation',
@@ -268,7 +561,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',
         employeementTypeColor: '#FF2E22',
-        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Probation Employees Card',
+          action: 'view',
+        },
       },
 
       {
@@ -278,7 +574,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
         employeementTypeColor: '#0B3A83',
-        permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Active Trainees Card',
+          action: 'view',
+        },
       },
       {
         label: 'Inactive',
@@ -287,7 +586,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.traineeInactive,
         icon: '/employee-data/inactive-trainee-icon.png',
         employeementTypeColor: '#1064CA',
-        permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Inactive Trainees Card',
+          action: 'view',
+        },
       },
       {
         label: 'Prospective',
@@ -296,7 +598,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         count: this.Trainee,
         icon: '/employee-data/prospective-trainee-icon.png',
         employeementTypeColor: '#53D33A',
-        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+        permission: {
+          feature: 'Dashboard Prospective Trainee Card',
+          action: 'view',
+        },
       },
     ];
     // this.filterTabsByRbac();
@@ -304,16 +609,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initChart() {
-    const backgroundColors = this.cardItems.map(item => item.employeementTypeColor);
-    this.totalEmployeesCount = this.ACTDATA + this.Active + this.Inactive + this.Trainee + this.traineeactive + this.traineeInactive;
+    const backgroundColors = this.cardItems.map(
+      (item) => item.employeementTypeColor
+    );
+    this.totalEmployeesCount =
+      this.ACTDATA +
+      this.Active +
+      this.Inactive +
+      this.Trainee +
+      this.traineeactive +
+      this.traineeInactive;
     this.EmployeeInfoData = {
       datasets: [
         {
-          data: [this.ACTDATA, this.Active, this.Inactive, this.Trainee, this.traineeactive, this.traineeInactive, this.PROBDATA],
+          data: [
+            this.ACTDATA,
+            this.Active,
+            this.Inactive,
+            this.Trainee,
+            this.traineeactive,
+            this.traineeInactive,
+            this.PROBDATA,
+          ],
           backgroundColor: backgroundColors,
           borderWidth: 0,
-        }
-      ]
+        },
+      ],
     };
     this.EmployeeInfoDataOptions = {
       cutout: '70%',
@@ -321,7 +642,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   filterTabsByRbac(): void {
-    this.cardItems = this.cardItems.filter(tab => {
+    this.cardItems = this.cardItems.filter((tab) => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
@@ -332,6 +653,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
+    }
+
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

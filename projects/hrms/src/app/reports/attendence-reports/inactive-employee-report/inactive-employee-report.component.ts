@@ -244,7 +244,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
     const request: IInactiveReportRequest = {};
 
-    if (formValue.employee?.fusionEmpId) {
+    if (formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
 

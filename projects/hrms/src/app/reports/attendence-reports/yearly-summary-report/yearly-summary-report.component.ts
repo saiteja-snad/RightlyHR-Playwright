@@ -205,22 +205,22 @@ export class YearlySummaryReportComponent {
 
     // Only include filters if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.employeeId !== 'all') {
-      request.employeeId = formValue.employee.employeeId;
+      request.employeeId = formValue?.employee?.employeeId;
     }
 
     // Employee filter
-    if (formValue.employee?.employeeId !== 'all') {
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.teamManagerID = formValue.manager.teamManagerID;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Leave category
     if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
+      request.LeaveName = formValue?.leaveCategory?.value;
     }
 
     // Year

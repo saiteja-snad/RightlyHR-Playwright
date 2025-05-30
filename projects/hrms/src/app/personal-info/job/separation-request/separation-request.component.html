@@ -33,6 +33,7 @@
           <th class="text-center">{{'Approver History'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
+          @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
           @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
           empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
           && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
@@ -40,6 +41,7 @@
           'trainee inactive' )){
           <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
           }
+        }
         </tr>
       </thead>
       <tbody>

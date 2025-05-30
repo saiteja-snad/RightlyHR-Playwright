@@ -307,31 +307,11 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       this.disaplyapplybutton=false;
       this.getDataPermissions(employeedId);
     }else{
+      this.http.setEmployeeIdPermission(null);
       this.disaplyapplybutton=true;
       this.getDataPermissions(this.empinfo.employeeId);
     }
   }
-  selectedEmployeewfhId: any = null;
-  selectedPermissionEmployeeControl = new FormBuilder().control(''); // Add this property
-  clearWFHData() {
-  this.selectedPermissionEmployeeControl.reset(); // Reset dropdown
- this.http.setEmployeeIdPermission(null);
-  // Clear counts and list
-  this.ProcessedCount=0;
-    this.rejectedCount=0;
-    this.ApprovedCount=0;
-    this.pendingCount=0;
-    this.permissions = [];
-
-  // Show apply button again
-  this.disaplyapplybutton = true;
-
-  // Optionally load default employee data
-  if (this.empinfo?.employeeId) {
-   this.getDataPermissions(this.empinfo.employeeId);
-  }
-}
-
   getDataPermissions(EmployeeId?: number) {
     let empId =EmployeeId
     this.subscription = this.http.getData(`RegularizationRequests/${empId}`).subscribe({

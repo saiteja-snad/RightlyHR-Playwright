@@ -193,8 +193,8 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
   params = addParamIfExists(params, 'sublocation', this.subLocationId);
   params = addParamIfExists(params, 'department', this.departmentId);
   params = addParamIfExists(params, 'subdepartment', this.teamId);
-  params = addParamIfExists(params, 'fromDate', '2025-05-01'); // ensure these are bound in component
-  params = addParamIfExists(params, 'toDate', '2025-05-30'); // ensure these are bound in component
+  // params = addParamIfExists(params, 'fromDate', '2025-05-01');
+  // params = addParamIfExists(params, 'toDate', '2025-05-30'); 
   // params = addParamIfExists(params, 'pageNumber', this.first);
   // params = addParamIfExists(params, 'pageSize', this.rows);
 

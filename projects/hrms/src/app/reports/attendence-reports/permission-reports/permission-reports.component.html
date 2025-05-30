@@ -13,14 +13,14 @@
       <form autocomplete="off" [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Permission Report - Generate.view')){
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          <button type="button" class="clear-all-btn" [disabled]="!permissionReportForm.get('employee')?.value" (click)="clearAllFilters()">
             Clear All
           </button>
           <!-- Date Range -->
           <div class="d-flex align-items-center gap-2">
             <div>
               <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
                 placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'"
                 [endKey]="'endDate'" readonly />
             </div>
@@ -30,7 +30,7 @@
           @if(rbac.allowedToAccess('Attendance All Employees List(Permission).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="true"
+              <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
                 formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
                 filterPlaceholder="Search employee">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -43,7 +43,7 @@
           @if(rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="teamManagerDetails" [filter]="true" [showClear]="true" optionLabel="fullName"
+              <p-select [options]="teamManagerDetails" [filter]="true" optionLabel="fullName"
                 filterBy="fullName" filterBy="fullName" formControlName="manager" placeholder="Please select manager"
                 class="form-select custom-select" filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -57,7 +57,7 @@
          && !rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
+              <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName"
                 filterBy="fullName" formControlName="team" placeholder="Please select employee"
                 class="form-select custom-select" filterPlaceholder="Search employee" (onChange)="onClick($event)">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>

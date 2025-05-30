@@ -101,7 +101,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
-      form.get('dateRange')?.value || form.get('team')?.value
+      form.get('dateRange')?.value ||
+      form.get('team')?.value
     );
   }
 
@@ -165,6 +166,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
   clearAllFilters() { 
     this.permissionReportForm.reset();
+    this.filteredPermissionData = [];
   }
 
   formatDate(date: Date): string {
@@ -179,11 +181,12 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
   generatePermissionReport(): void {
+    debugger
     this.spinnerLoader1 = true;
     this.isLoading = true;
   
     const formValue = this.permissionReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
   
     const noFilterProvided =
       !formValue.employee &&
@@ -206,10 +209,13 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.employeeId = ids;  // The selected employee IDs are set here
     }
     // Apply leave category if selected
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee?.employeeId;
+    }
+  
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
-  
     // Apply date range if provided
     if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
       const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
@@ -219,8 +225,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
     
    //Apply my team
-    if(formValue.team){
-      request.teamManagerEmpID =formValue.team.teamManagerEmpID;
+    if(formValue.manager){
+      request.teamManagerId = formValue.manager.employeeId;
     }
 
     // Only include employee filter if not "All Employees"

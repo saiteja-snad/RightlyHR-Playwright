@@ -1403,7 +1403,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Waiting For Approval (On Behalf Of)' 
                                             || per.fields === 'Approved (On Behalf Of)'  || per.fields === 'Request On Behalf Button'
-                                            || per.fields === 'Rejected (On Behalf Of)' || per.fields === 'Processed (On Behalf Of)' ">
+                                            || per.fields === 'Rejected (On Behalf Of)' || per.fields === 'Processed (On Behalf Of)' || per.fields === 'Cancelled (On Behalf Of)' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

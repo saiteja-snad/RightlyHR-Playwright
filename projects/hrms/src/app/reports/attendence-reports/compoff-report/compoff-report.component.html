@@ -12,7 +12,10 @@
     <form autocomplete="off" [formGroup]="compoffReportForm" (ngSubmit)="generateCompoffReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="!compoffReportForm.get('employee')?.value" (click)="clearAllFilters()">
+        <button type="reset" class="clear-all-btn" [disabled]="
+          !compoffReportForm.get('employee')?.value &&
+          !compoffReportForm.get('dateRange')?.value &&
+          !compoffReportForm.get('manager')?.value " (click)="clearAllFilters()">
           Clear All
         </button>
   

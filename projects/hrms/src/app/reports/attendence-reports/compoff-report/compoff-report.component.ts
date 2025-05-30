@@ -78,13 +78,8 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+  localeOptions: any;
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
 
   constructor(
     private authService: AuthService,
@@ -96,6 +91,12 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.initializeForm();
     this.loggedInUser = this.authService.getToken();
     this.getEmployeeId();
@@ -139,14 +140,19 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.compoffReportForm.reset();
+    this.filteredCompoffRecord = [];
   }
 
   get isCompOffGenerateDisabled(): boolean {
-    const form = this.compoffReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.compoffReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value || form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 

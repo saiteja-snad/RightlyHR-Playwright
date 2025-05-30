@@ -82,23 +82,25 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     ],
   };
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
+
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router
   ) { }
+  localeOptions: any;
 
   ngOnInit(): void {
+    this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getEmployeeId();
@@ -143,10 +145,13 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  clearAllFilters(): void {
+clearAllFilters(): void {
     this.LeaveReportForm.reset();
+    console.log('Form values after reset:', this.LeaveReportForm.value);
+    console.log('isLeaveGenerateDisabled:', this.isLeaveGenerateDisabled);
     this.filteredleaveRecord = [];
-  }
+}
+
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
@@ -218,15 +223,17 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const form = this.LeaveReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.LeaveReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value ||
-      form.get('leaveCategory')?.value ||
-      form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
-  }
+}
 
   generateleaveReport(): void {
     this.spinnerLoader1 = true;
@@ -460,10 +467,10 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       });
   }
 
-  isAnyFilterApplied(): boolean {
-    const form = this.LeaveReportForm.value;
-    return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
-  }
+  // isAnyFilterApplied(): boolean {
+  //   const form = this.LeaveReportForm.value;
+  //   return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
+  // }
  navigation(){
     this.router.navigate(['/reports']);
   }

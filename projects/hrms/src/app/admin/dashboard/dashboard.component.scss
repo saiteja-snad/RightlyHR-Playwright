@@ -134,7 +134,9 @@
         .total-leave-balance-graph-content {
             width: 100%;
             display: flex;
+            gap: 1rem;
             align-items: center;
+            padding-top: 0.75rem;
 
             li {
                 height: 1.125rem;

@@ -397,7 +397,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.cardItems = [
       {
         label: 'Active',
-        sublabel: 'Employees',
         link: '/employee-management/active-employees',
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
@@ -406,7 +405,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Inactive',
-        sublabel: 'Employees',
         link: '/employee-management/inactive-employees',
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
@@ -415,7 +413,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Prospective',
-        sublabel: 'Employees',
         link: '/employee-management/prospective-employees',
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
@@ -424,7 +421,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Probation',
-        sublabel: 'Employees',
         link: '/employee-management/probation-employees',
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',
@@ -433,8 +429,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
 
       {
-        label: 'Active',
-        sublabel: 'Trainees',
+        label: 'Active Trainees',
         link: '/employee-management/active-interns',
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
@@ -442,8 +437,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
       {
-        label: 'Inactive',
-        sublabel: 'Trainees',
+        label: 'Inactive Trainees',
         link: '/employee-management/inactive-interns',
         count: this.traineeInactive,
         icon: '/employee-data/inactive-trainee-icon.png',
@@ -451,8 +445,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
       {
-        label: 'Prospective',
-        sublabel: 'Trainees',
+        label: 'Prospective Trainees',
         link: '/employee-management/prospective-interns',
         count: this.Trainee,
         icon: '/employee-data/prospective-trainee-icon.png',

@@ -23,9 +23,8 @@
         <div class="header-profile-dropdown-content">
             <div class="dropdown">
                 <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div>
-                        <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
-                        </p>
+                    <div class="text-end">
+                        <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}</p>
                         <p class="m-0 job-role">{{jobRole}}</p>
                     </div>
                     <div>
@@ -50,13 +49,15 @@
                             <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                                 {{empdata?.lastName}}
                             </p>
+                            <p class="name m-0 mb-1">({{empdata?.fusionEmpId}})</p>
                             <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
                             <p class="sub-text m-0 mb-1">{{jobRole}}</p>
+                            <div class="border-bottom"></div>
                             <div class="mb-2">
                                 <a class="profile-btn" [routerLink]="['/myinfo/personal/basic-info']">View Profile</a>
                             </div>
                             <button class="custom-btn btn-primary" (click)="openlogoutModal()">
-                                <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-2">Logout
+                                <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-1">Logout
                             </button>
                         </div>
                     </div>

@@ -45,7 +45,7 @@
             <td>
               <ng-container *ngIf="item.requiresAcknowledgment">
                 <ng-container *ngIf="item.acknowledged; else showAcknowledge">
-                  Acknowledged
+                  Yes
                 </ng-container>
                 <ng-template #showAcknowledge>
                   <button class="btn btn-primary btn-sm" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
@@ -54,7 +54,7 @@
                 </ng-template>
               </ng-container>
               <ng-container *ngIf="!item.requiresAcknowledgment">
-                -
+                N/A
               </ng-container>
             </td>
           </tr>

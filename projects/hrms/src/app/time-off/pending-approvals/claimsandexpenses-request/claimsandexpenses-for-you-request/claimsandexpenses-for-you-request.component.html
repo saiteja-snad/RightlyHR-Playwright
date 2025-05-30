@@ -44,7 +44,7 @@
             <td class="text-center">
               <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
                 <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon" />
+                  <app-info-icon />
                 </a>
               </div>
               <ng-template #NA>N/A</ng-template>

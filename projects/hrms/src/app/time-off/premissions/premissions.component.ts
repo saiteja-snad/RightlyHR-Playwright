@@ -307,6 +307,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       this.disaplyapplybutton=false;
       this.getDataPermissions(employeedId);
     }else{
+      this.http.setEmployeeIdPermission(null);
       this.disaplyapplybutton=true;
       this.getDataPermissions(this.empinfo.employeeId);
     }

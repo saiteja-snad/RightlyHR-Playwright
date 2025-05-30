@@ -11,9 +11,11 @@ import { CommonModule } from '@angular/common';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule,ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -87,11 +89,11 @@ export class RegularizationComponent {
     if (employeedId) {
       this.getPermission(employeedId);
     } else {
+       this.http.setEmployeeIdRegularization(null);
       this.getPermission(this.emp.employeeId);
     }
   }
-
-  getPermission(employeedId?: any) {
+ getPermission(employeedId?: any) {
     // let empId = this.empinfo.employeeId
     // console.log(empId);
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({

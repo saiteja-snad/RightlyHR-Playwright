@@ -11,9 +11,10 @@ import { AuthService } from '../../../services/auth.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-leaves-rejected',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './leaves-rejected.component.html',
   styleUrl: './leaves-rejected.component.scss'
 })
@@ -44,9 +45,9 @@ export class LeavesRejectedComponent {
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,) { }
 
   ngOnInit(): void {
-    this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
+    // this.loggedinuser = this.authService.getToken();
+    // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    // this.getDataByLPID();
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
@@ -55,11 +56,30 @@ export class LeavesRejectedComponent {
         // Example: this.loadEmployeeDetails(id);
         this.getDataByLPID();
       }
+      else{
+   this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getDataByEMPLPID();
+      }
     });
   }
 
   getDataByLPID() {
-    let empid =  this.empdata.employeeId ?? this.selectempid;
+    let empid =  this.empdata.employeeId;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.lpdata = response.filter(item => item.status === 'Rejected');
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
+
+    getDataByEMPLPID() {
+    let empid =   this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

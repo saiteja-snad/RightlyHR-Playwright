@@ -10,7 +10,6 @@ import { Subject, BehaviorSubject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
-import { WfhsearchfilterPipe } from '../../../Pipes/wfhsearchfilter.pipe';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
@@ -18,15 +17,15 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { environment } from '../../../../environments/environment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
-import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { Table, TableModule } from 'primeng/table';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-wfh',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
-    ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent],
+    ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './wfh.component.html',
   styleUrl: './wfh.component.scss'
 })
@@ -83,6 +82,7 @@ export class WfhComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+          this.wfhsSelects  = [];
         }
         this.http.resetTriggerSignal();
       }
@@ -276,7 +276,7 @@ bulkapprove(approverPopup: any) {
   }
 
    openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
+     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {

@@ -49,7 +49,7 @@
                         @if(trn.entity?.comments != null && trn.entity?.comments != '') {
                         <div>
                             <a type="button" (click)="commentsFunction(trn.entity?.comments,commentspopup)">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                <app-info-icon />
                             </a>
                         </div>
                         }@else {

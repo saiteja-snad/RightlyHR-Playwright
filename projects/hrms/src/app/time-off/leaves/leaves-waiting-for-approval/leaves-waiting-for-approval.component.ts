@@ -17,9 +17,10 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-leaves-waiting-for-approval',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './leaves-waiting-for-approval.component.html',
   styleUrl: './leaves-waiting-for-approval.component.scss'
 })

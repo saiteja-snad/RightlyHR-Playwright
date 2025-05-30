@@ -973,7 +973,9 @@ export class OnBeHalfOfComponent {
       enddate: Value.enddate,
       startdate: Value.startdate,
       currentApprover: this.empdata.employeeId.toString(),
-      appliedDate: this.leaveFormData.date
+      appliedDate: this.leaveFormData.date,
+      comments: this.leaveFormData.notes,
+      categoryName : this.selectedleave.category.name,
     }
     //Third Step is to send the email and attachment to Directreportee
     this.subscription = this.http.postdata(`CustomEmail/LeaveConfirmationToEmp`, emaildetails).subscribe({

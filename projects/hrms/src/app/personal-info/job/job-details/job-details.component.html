@@ -29,11 +29,8 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
+                    @if(canAccess('update','job') || canAccess('delete','job')|| canAccess('view','separation')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
-                    @if(canAccess('update','job') ||
-                    canAccess('delete','job')|| canAccess('view','separation')||(employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
                      <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
@@ -113,9 +110,7 @@
                         </td>
                       
 
-                        @if(canAccess('update','job') ||
-                        canAccess('delete','job') ||  canAccess('view','separation')   ){
-                      
+                        @if(canAccess('update','job') || canAccess('delete','job') ||  canAccess('view','separation')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){

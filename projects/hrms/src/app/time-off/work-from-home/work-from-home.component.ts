@@ -145,6 +145,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       this.getWorkfromhomeRequest(employeedId);
       this.getWFHBalance(employeedId);
     } else {
+      this.http.setEmployeeIdWFH(null);
       this.disaplyapplybutton = true;
       this.getWorkfromhomeRequest(this.empinfo.employeeId);
       this.getWFHBalance(this.empinfo.employeeId);
@@ -217,7 +218,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         },
       });
   }
-
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
 

@@ -275,6 +275,7 @@ pendingCount = 0;
       this.disaplyapplybutton=false;
       this.getCompOffRequest(employeedId);
     }else{
+      this.http.setEmployeeIdCompOff(null);
       this.disaplyapplybutton=true;
       this.getCompOffRequest(this.empinfo.employeeId);
     }

@@ -33,6 +33,7 @@
           <th class="text-center">{{'Approver History'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
+          @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
           @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
           empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
           && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
@@ -40,6 +41,7 @@
           'trainee inactive' )){
           <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
           }
+        }
         </tr>
       </thead>
       <tbody>
@@ -62,7 +64,7 @@
           <td class="text-center">
             @if(item.description){
             <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
-              <i class="bi bi-info-circle-fill"></i>
+              <app-info-icon />
             </div>
             }
             @else {
@@ -74,7 +76,7 @@
           <td class="text-center">
             @if(item.approvers && item.approvers.length > 0;){
             <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
-              <i class="bi bi-info-circle-fill"></i>
+              <app-info-icon />
             </div>
             }
             @else{

@@ -394,7 +394,7 @@
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
-              formControlName="noticeperiodAllowedType" class="custom-select w-100">
+              formControlName="noticeperiodAllowedType" class="custom-select w-100"  appendTo="body">
             </p-select>
           </div>
           <div class="error-msg"
@@ -427,7 +427,7 @@
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
-              formControlName="isProbationAllowed" class="custom-select w-100">
+              formControlName="isProbationAllowed" class="custom-select w-100" appendTo="body">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('isProbationAllowed')?.invalid && 
@@ -461,6 +461,7 @@
     </div>
   </form>
 </div>
+
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>

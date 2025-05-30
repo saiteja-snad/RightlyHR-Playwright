@@ -19,10 +19,11 @@ import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-comp-off-entitlement',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
-    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent],
+    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './comp-off-entitlement.component.html',
   styleUrl: './comp-off-entitlement.component.scss'
 })
@@ -76,6 +77,7 @@ export class CompOffEntitlementComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+          this.leavesselect = [];
         }
         this.http.resetTriggerSignal(); // Reset after handling
       }
@@ -90,6 +92,7 @@ export class CompOffEntitlementComponent {
       this.getAllPendingApprovals();
     } else {
       this.leaves.next([]);
+      this.leavesselect = [];
     }
     this.intializeApproveForm();
   }
@@ -124,7 +127,7 @@ export class CompOffEntitlementComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openApproveModal(content: any, request: AttendanceRequest) {

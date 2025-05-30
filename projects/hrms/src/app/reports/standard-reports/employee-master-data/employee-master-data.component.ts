@@ -194,20 +194,62 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.createReportLog("Employee Master Data")
   }
 
-  exportTableToExcel(tableId: string, name?: string) {
+ 
+
+ exportTableToExcel(tableId: string, name?: string) {
     let { sheetName, fileName } = this.getFileName(name);
     let targetTableElm = document.getElementById(tableId);
-    let wb = XLSX.utils.table_to_book(targetTableElm, <XLSX.Table2SheetOpts>{
-      sheet: sheetName
+    
+    // First convert the table to a worksheet
+    let ws = XLSX.utils.table_to_sheet(targetTableElm, <XLSX.Table2SheetOpts>{
+      sheet: sheetName,
     });
-
+    
+    // Convert headers to uppercase and ensure they are properly formatted
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    
+    // Format header row (first row) with bold font
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
+      if (ws[cellAddress]) {
+        // Convert to uppercase
+        ws[cellAddress].v = ws[cellAddress].v.toString().toUpperCase();
+        ws[cellAddress].w = ws[cellAddress].v;
+        
+        // Add bold style to header
+        ws[cellAddress].s = { font: { bold: true } };
+      }
+    }
+    
+    // Create a new workbook with the formatted worksheet
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    
+    // Write the file
     XLSX.writeFile(wb, `${fileName}.xlsx`);
+    
+    // Also return the array buffer for upload
     let arrayBuffer = XLSX.write(wb, {
       bookType: 'xlsx',
       type: 'array',
     });
+    return { arrayBuffer, fileName };
+}
 
-    return { arrayBuffer, fileName }
+
+    // Function to convert headers to uppercase
+  private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
+      let cell = ws[cellAddress];
+
+      if (cell && cell.v) {
+        cell.v = cell.v.toString().toUpperCase(); 
+        cell.w = cell.v; 
+      }
+    }
   }
 
   getFileName(name: string | undefined) {
@@ -283,6 +325,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => { 
         this.modal.openSuccessModal('Employee Master Data downlaoded successfully');
+        this.spinnerLoader2  =  false;
       },
       error: (err) => {
         this.spinnerLoader2= false;

@@ -19,6 +19,7 @@
                 </tr>
             </thead>
             <tbody>
+                 @if(getProbationRequestDetails.length > 0) {
                 @for (probation of getProbationRequestDetails; track $index) {
                 <tr>
                     <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
@@ -29,7 +30,7 @@
                     <td>
                         @if(probation.approvers && probation.approvers.length > 0;){
                         <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
-                            <i class="bi bi-info-circle-fill"></i>
+                            <app-info-icon />
                         </div>
                         } @else {
                         <div>-</div>
@@ -74,6 +75,13 @@
                         }
                     </td>
                 }
+                </tr>
+                }
+                } @else {
+                <tr class="table-placeholder">
+                    <td colspan="8">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
                 </tr>
                 }
             </tbody>

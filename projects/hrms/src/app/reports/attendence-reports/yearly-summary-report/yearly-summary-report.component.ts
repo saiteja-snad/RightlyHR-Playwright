@@ -185,9 +185,8 @@ export class YearlySummaryReportComponent {
   generateYearlyReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
     const formValue = this.yearlyReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
     // Check if no filter is provided
     const noFilterProvided =
       !formValue.employee &&
@@ -205,23 +204,23 @@ export class YearlySummaryReportComponent {
     const request: IYearlyReportRequest = {};
 
     // Only include filters if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.employeeId = formValue.employee.employeeId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId !== 'all') {
+      request.employeeId = formValue?.employee?.employeeId;
     }
 
     // Employee filter
-    if (formValue.employee?.fusionEmpId) {
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.teamManagerID = formValue.manager.teamManagerID;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Leave category
     if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
+      request.LeaveName = formValue?.leaveCategory?.value;
     }
 
     // Year

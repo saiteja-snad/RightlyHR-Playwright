@@ -179,8 +179,13 @@ export class EmployeOffBoardingComponent {
           console.log(res);
           this.successstatus = 'Employee Inactived successfully';
           this.conformationPopup.openSuccessModal(this.successstatus)
-          this.router.navigate(['/admin/inactive-employees']);
-          this.InactiveEmail(this.empinfo.employeeId);
+          if (this.empinfo.empstatus === 'Inactive') {
+            this.router.navigate(['/admin/inactive-employees']);
+          }
+          else if (this.empinfo.empstatus === 'Trainee Inactive') {
+            this.router.navigate(['/admin/inactive-interns']);
+          }
+          //this.InactiveEmail(this.empinfo.employeeId);
         },
         error: (err: any) => {
           console.log(err);

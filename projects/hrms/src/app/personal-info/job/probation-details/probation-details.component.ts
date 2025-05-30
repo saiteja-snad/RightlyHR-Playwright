@@ -13,10 +13,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-probation-details',
   standalone: true,
-  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule],
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })

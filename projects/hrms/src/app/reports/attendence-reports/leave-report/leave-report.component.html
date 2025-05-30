@@ -10,10 +10,16 @@
       </div>
     </div>
 
-    <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()">
+    <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()" *ngIf="LeaveReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="!LeaveReportForm.get('employee')?.value" (click)="clearAllFilters()">
+        <button type="button" class="clear-all-btn" [disabled]="
+  !LeaveReportForm.get('employee')?.value &&
+  !LeaveReportForm.get('dateRange')?.value &&
+  !LeaveReportForm.get('manager')?.value &&
+  !LeaveReportForm.get('leaveCategory')?.value &&
+  !LeaveReportForm.get('team')?.value
+" (click)="clearAllFilters()">
           Clear All
         </button>
 
@@ -86,7 +92,7 @@
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Leave Report - Generate.view')){
           <button type="submit" class="custom-btn btn-secondary "
-            [disabled]="isLeaveGenerateDisabled || !isAnyFilterApplied()">
+            [disabled]="isLeaveGenerateDisabled ">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>

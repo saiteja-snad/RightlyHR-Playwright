@@ -3,7 +3,7 @@
     <!--header-->
     
          <div class="heading-content">
-      <div class="commpoment-name">Attandance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name">Attendance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">WFH Report</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -12,7 +12,11 @@
     <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('WFH Report - Generate.view')){
-          <button type="button" class="clear-all-btn" [disabled]="!wfhReportForm.get('employee')?.value" (click)="clearAllFilters()">
+          <button type="reset" class="clear-all-btn"  [disabled]="
+            !wfhReportForm.get('dateRange')?.value &&
+            !wfhReportForm.get('employee')?.value &&
+            !wfhReportForm.get('manager')?.value  &&
+            !wfhReportForm.get('team')?.value" (click)="clearAllFilters()">
             Clear All
           </button>
 

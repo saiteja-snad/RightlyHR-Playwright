@@ -55,13 +55,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+  localeOptions: any;
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
 
   constructor(
     private authService: AuthService,
@@ -73,6 +68,12 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getAllEmployees();
@@ -97,12 +98,15 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
   get isPermissionGenerateDisabled(): boolean {
-    const form = this.permissionReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.permissionReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value ||
-      form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 
@@ -181,7 +185,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
   generatePermissionReport(): void {
-    debugger
     this.spinnerLoader1 = true;
     this.isLoading = true;
   

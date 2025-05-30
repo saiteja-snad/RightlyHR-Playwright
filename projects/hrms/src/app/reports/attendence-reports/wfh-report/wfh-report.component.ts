@@ -76,13 +76,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     ],
   };
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
-
+  localeOptions: any;
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -93,6 +87,12 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getEmployeeId();
@@ -116,11 +116,15 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   }
 
   get isWFHGenerateDisabled(): boolean {
-    const form = this.wfhReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.wfhReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value || form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 

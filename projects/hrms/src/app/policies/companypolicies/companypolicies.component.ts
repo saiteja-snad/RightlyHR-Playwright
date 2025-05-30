@@ -193,6 +193,7 @@ export class CompanypoliciesComponent {
         this.Policies = response;
         this.filteredpolicy = response.map((policy: any) => policy.orgPolicyItems);
         this.orgPolicyItemsArray = [].concat(...this.filteredpolicy);
+        console.log(this.orgPolicyItemsArray);
       },
       error: (reason: any) => {
         this.loading = false;

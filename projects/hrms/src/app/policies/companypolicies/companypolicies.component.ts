@@ -188,7 +188,7 @@ export class CompanypoliciesComponent {
       Applicableyear: this.selectedYear,
       employeeId: this.empinfo.employeeId
     };
-    this.subscription = this.http.getDataWithQueryParams(`orgPolicies/getpolicybylocation`, policies).subscribe({
+    this.subscription = this.http.getDataWithQueryParams(`v2/orgPolicies/getpolicybylocation`, policies).subscribe({
       next: (response: any) => {
         this.loading = false
         this.Policies = response;

@@ -283,7 +283,7 @@ export class PermissionsComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {

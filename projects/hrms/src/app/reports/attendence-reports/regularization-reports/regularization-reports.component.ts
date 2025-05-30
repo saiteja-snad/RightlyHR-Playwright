@@ -56,13 +56,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     ],
   };
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
-
+  localeOptions: any;
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -73,6 +67,12 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getAllEmployees();

@@ -55,13 +55,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+  localeOptions: any;
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
 
   constructor(
     private authService: AuthService,
@@ -73,6 +68,12 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getAllEmployees();

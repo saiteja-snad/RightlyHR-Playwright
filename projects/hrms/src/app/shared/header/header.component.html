@@ -38,12 +38,12 @@
                         <div class="image-content">
                             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
                                 class="profile-image">
-                            <!-- <div class="edit-icon-content">
+                            <div class="edit-icon-content">
                             <label for="formFile" class="form-label">
                             <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>
                             <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
-                                (change)="chooseNewProfile($event)">
-                        </div> -->
+                                (change)="chooseNewProfileHeader($event)">
+                        </div>
                         </div>
                         <div class="data-content">
                             <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}

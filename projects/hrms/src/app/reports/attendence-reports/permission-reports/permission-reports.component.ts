@@ -413,6 +413,10 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       },
     });
 }
+ navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

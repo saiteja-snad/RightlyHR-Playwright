@@ -1,0 +1,20 @@
+.reports-content {
+   
+    width: 100%;
+    height: calc(100vh - 8.5rem);
+    overflow: auto;
+    padding: 1rem;
+    min-width: 600px;
+    border-radius: 0.5rem;
+    background-color: #FFFFFF;
+
+    .custom-card-reports {
+
+        border: 0.97px solid #CBD7E2;
+
+        background: linear-gradient(95.64deg, rgba(255, 255, 255, 0.2) -11.57%, rgba(11, 58, 131, 0.2) 100.11%);
+
+
+
+    }
+}

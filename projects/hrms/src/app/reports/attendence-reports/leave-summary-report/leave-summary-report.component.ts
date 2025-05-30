@@ -402,6 +402,10 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+   navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

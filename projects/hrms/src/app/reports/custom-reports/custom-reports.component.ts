@@ -773,6 +773,9 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
       return dateString;
     }
   }
+ navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

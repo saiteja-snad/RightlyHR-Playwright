@@ -72,7 +72,11 @@
             }
             <!--Reports-->
             @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/reports')">
+                 <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/reports');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/reports')">
+                  <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
+            </li>
+            <!-- <li class="nav-item" [class.active-nav-link]="isActiveRoute('/reports')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
@@ -81,7 +85,7 @@
                         <app-reports-main-tabs />
                     </ul>
                 </div>
-            </li>
+            </li> -->
             }
             <!--Selected Item form the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"

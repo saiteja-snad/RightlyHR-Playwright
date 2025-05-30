@@ -136,6 +136,7 @@ export class CompanypoliciesComponent {
   onViewAttachement(url: any, name: any, selectedItem : any) {
     this.viewPolicyname = name;
     this.selectedItem = selectedItem;
+    this.ackCheckboxChecked = false;
     const lowerUrl = url?.toLowerCase();
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
@@ -217,21 +218,9 @@ export class CompanypoliciesComponent {
       next: (response: any) => {
         console.log(response);
         this.loading = false;
-        // const modalElement = document.getElementById('successhide');
-        // if (modalElement) {
-        //   modalElement.classList.add('show');
-        //   modalElement.style.display = 'block';
-        //   modalElement.removeAttribute('aria-hidden');
-        //   modalElement.setAttribute('aria-modal', 'true');
-        //   // this.Message = 'Policy Acknowledged successfully';
-        // }
         this.confirmation.openSuccessModal('Policy Acknowledged successfully');
         selectedItem.acknowledged = true;
         this.getjobDetails();
-        // setTimeout(() => {
-        //   modalElement!.style.display = 'none';
-        //   modalElement!.classList.remove('show');
-        // }, 2000);
       },
       error: (reason: any) => console.log(reason)
     });

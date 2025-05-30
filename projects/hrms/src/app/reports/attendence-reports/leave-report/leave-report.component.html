@@ -13,7 +13,13 @@
     <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="!LeaveReportForm.get('employee')?.value" (click)="clearAllFilters()">
+        <button type="reset" class="clear-all-btn" [disabled]="
+  !LeaveReportForm.get('employee')?.value &&
+  !LeaveReportForm.get('dateRange')?.value &&
+  !LeaveReportForm.get('manager')?.value &&
+  !LeaveReportForm.get('leaveCategory')?.value &&
+  !LeaveReportForm.get('team')?.value
+" (click)="clearAllFilters()">
           Clear All
         </button>
 

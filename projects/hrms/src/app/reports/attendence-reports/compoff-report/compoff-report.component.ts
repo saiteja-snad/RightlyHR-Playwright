@@ -139,6 +139,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.compoffReportForm.reset();
+    this.filteredCompoffRecord = [];
   }
 
   get isCompOffGenerateDisabled(): boolean {

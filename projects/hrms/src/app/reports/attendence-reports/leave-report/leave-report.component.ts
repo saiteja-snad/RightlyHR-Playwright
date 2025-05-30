@@ -82,23 +82,25 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     ],
   };
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
+
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router
   ) { }
+  localeOptions: any;
 
   ngOnInit(): void {
+    this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getEmployeeId();

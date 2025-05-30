@@ -12,23 +12,53 @@
     </div>
     <div>
     </div>
-    <div class="d-flex align-items-center gap-2">
-      <!-- <div class="d-flex gap-2 align-item-center custom-p-select-content w-100">
-        <label for="location" class="form-label custom-label text-nowrap m-0 p-2">Locations</label>
-           <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
-                [filter]="true" filterBy="jobLocationName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Location"
-                  class="custom-select w-100">
-              </p-select>
-      </div> -->
-  <div>
+     <div>
     @if(rbac.allowedToAccess('Request Global Permission Button.view')){
     <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Request Global Permission</button>
     }
   </div>
-    </div>
-    
   </div>
-
+  <!-- filters data -->
+  <!-- <div class="d-flex align-items-center gap-2 mb-3">
+      <div class="d-flex gap-2 align-item-center custom-p-select-content w-50">
+        <label for="location" class="form-label custom-label text-nowrap m-0 p-2">Locations</label>
+           <p-select [options]="jobLocationDropDownData" [(ngModel)]="locationId" (onChange)="getSubLocationByid(locationId)" optionValue="id" optionLabel="jobLocationName"
+                [filter]="true" filterBy="jobLocationName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Location"
+                  class="custom-select w-100">
+              </p-select>
+      </div>
+       <div class="d-flex gap-2 align-item-center custom-p-select-content w-50">
+        <label for="sub location" class="form-label custom-label text-nowrap m-0 p-2">Sub Locations</label>
+           <p-select [options]="subLocationsDropdown" optionValue="id" [(ngModel)]="subLocationId" optionLabel="jobSubLocationName" (onChange)="getSubLocationByid(locationId)"
+                [filter]="true" filterBy="jobSubLocationName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Sub Location"
+                  class="custom-select w-100">
+              </p-select>
+      </div>
+       <div class="d-flex gap-2 align-item-center custom-p-select-content w-50">
+        <label for="deparment" class="form-label custom-label text-nowrap m-0 p-2">Departments</label>
+           <p-select [options]="departmentDetails" optionValue="sno" [(ngModel)]="departmentId" optionLabel="departmentName" (onChange)="getTeamData(departmentId)"
+                [filter]="true" filterBy="departmentName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Department"
+                  class="custom-select w-100">
+              </p-select>
+      </div>
+       <div class="d-flex gap-2 align-item-center custom-p-select-content w-50">
+        <label for="team" class="form-label custom-label text-nowrap m-0 p-2">Teams</label>
+           <p-select [options]="teamDetails" optionValue="subdepartmentId" [(ngModel)]="teamId" optionLabel="subdepartmentName" (onChange)="getSubLocationByid(locationId)"
+                [filter]="true" filterBy="subdepartmentName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Team"
+                  class="custom-select w-100">
+              </p-select>
+      </div>
+        <div class="d-flex align-items-center  gap-2 w-50">
+              <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
+                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                placeholder="Please select date" [(ngModel)]="dateRange" [startKey]="'startDate'"
+                [endKey]="'endDate'" readonly />
+            </div>
+      <div>
+        <button type="button" class="custom-btn btn-primary" (click)="getAllGlobalPermissions()" >Generate</button>
+      </div>
+ 
+    </div> -->
 
 
   <!--Module Information-->

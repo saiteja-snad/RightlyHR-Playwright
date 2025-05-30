@@ -11,6 +11,7 @@ import { AllEmployeesHeaderComponent } from "../../shared/Employee-management-co
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveEmployeeComponent } from '../prospective-employees/add-prospective-employee/add-prospective-employee.component';
 import { AddProspectiveInternComponent } from '../prospective-interns/add-prospective-intern/add-prospective-intern.component';
+import { EmployeeStatusCount } from '../../Interfaces/dashboard.modal';
 @Component({
   selector: 'app-employee-management-layout',
   imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent],
@@ -40,11 +41,11 @@ export class EmployeeManagementLayoutComponent {
   EmployeeInfoData: any;
   EmployeeInfoDataOptions: any;
   totalEmployeesCount: any;
+  employeesStatusCount: EmployeeStatusCount = {} as EmployeeStatusCount;
 
   constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
   ngOnInit(): void {
-    this.fetchData();
     this.cardItems = this.cardItems.filter(
       (tab) =>
         tab.permission &&
@@ -52,102 +53,55 @@ export class EmployeeManagementLayoutComponent {
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.getEmployeeStatusCount();
   }
 
-  fetchData() {
-    this.empdata();
-    this.activeEmpData();
-    this.InActiveEmpData();
-    this.empdataTrainee();
-    this.empdataTraineeActive('Trainee Active');
-    this.empdataTraineeInActive('Trainee Inactive');
-    this.getjobList();
-    this.probationemployees();
-  }
-
-  // function for prospective employee
-  empdata() {
-    this.subscription = this.http.getData(`Employeedata/ProspectiveEmployees`).subscribe({
+  //function for to get the Employees count based on the status
+  getEmployeeStatusCount() {
+    this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
       next: (data: any) => {
-        this.ACTDATA = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
-  }
-
-  // function for active Employees
-  activeEmpData() {
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
-      next: (data: any) => {
-        this.Active = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
-  }
-
-  // function for Inactive Employees
-  InActiveEmpData() {
-    this.subscription = this.http.getData(`Employeedata/InactiveEmployees`).subscribe({
-      next: (data: any) => {
-        this.Inactive = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
-  }
-
-  // function for prospective employee
-  empdataTrainee() {
-    this.subscription = this.http.getData(`Employeedata/TrainingEmployees`).subscribe({
-      next: (data: any) => {
-        let actdat = data.filter((ele: any) => {
-          if (ele.empstatus === 'Trainee Prospective') {
-            return ele;
+        this.employeesStatusCount = data.data as EmployeeStatusCount;
+        this.Active = 0;
+        this.Inactive = 0;
+        this.ACTDATA = 0;
+        this.PROBDATA = 0;
+        this.traineeactive = 0;
+        this.traineeInactive = 0;
+        this.Trainee = 0;
+        const statusList = this.employeesStatusCount?.statusWiseCount;
+        if (Array.isArray(statusList)) {
+          for (const statusItem of statusList) {
+            switch (statusItem.status) {
+              case 'Active Employees':
+                this.Active = statusItem.count;
+                break;
+              case 'Inactive Employees':
+                this.Inactive = statusItem.count;
+                break;
+              case 'Prospective Employees':
+                this.ACTDATA = statusItem.count;
+                break;
+              case 'Probation Employees':
+                this.PROBDATA = statusItem.count;
+                break;
+              case 'Active Trainees':
+                this.traineeactive = statusItem.count;
+                break;
+              case 'Inactive Trainees':
+                this.traineeInactive = statusItem.count;
+                break;
+              case 'Prospective Trainees':
+                this.Trainee = statusItem.count;
+                break;
+            }
           }
-        });
-        this.Trainee = actdat.length;
+        } else {
+          console.warn('statusWiseCount is not an array:', statusList);
+        }
         this.updateCardItems();
+
       },
       error: (reason) => console.log(reason),
-    });
-  }
-
-  // function for Active Trainee employee
-  empdataTraineeActive(status: string) {
-    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
-      next: (data: any) => {
-        this.traineeactive = data.length;
-        this.updateCardItems();
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
-
-  // function for InActive Trainee employee
-  empdataTraineeInActive(status: string) {
-    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
-      next: (data: any) => {
-        this.traineeInactive = data.length;
-        this.updateCardItems();
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
-
-  // function to get getjobList Current Openings
-  getjobList() {
-    this.subscription = this.http.getData(`JobPosting`).subscribe({
-      next: (data: any) => {
-        this.jobdata = data;
-        this.filtredActivedata = this.filterJobsByStatus(this.active).reverse();
-        this.activeCount = this.getStatusCount(this.active);
-        this.updateCardItems();
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
     });
   }
 
@@ -164,16 +118,6 @@ export class EmployeeManagementLayoutComponent {
       }
       return count;
     }, 0);
-  }
-
-  probationemployees() {
-    this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
-      next: (data: any) => {
-        this.PROBDATA = data.length;
-        this.updateCardItems();
-      },
-      error: (reason) => console.log(reason),
-    });
   }
 
   updateCardItems() {
@@ -249,7 +193,7 @@ export class EmployeeManagementLayoutComponent {
 
   initChart() {
     const backgroundColors = this.cardItems.map(item => item.employeementTypeColor);
-    this.totalEmployeesCount = this.ACTDATA + this.Active + this.Inactive + this.Trainee + this.traineeactive + this.traineeInactive;
+    this.totalEmployeesCount = this.employeesStatusCount?.totalCount;
     this.EmployeeInfoData = {
       datasets: [
         {

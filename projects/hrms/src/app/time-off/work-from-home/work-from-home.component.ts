@@ -145,6 +145,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       this.getWorkfromhomeRequest(employeedId);
       this.getWFHBalance(employeedId);
     } else {
+      this.http.setEmployeeIdWFH(null);
       this.disaplyapplybutton = true;
       this.getWorkfromhomeRequest(this.empinfo.employeeId);
       this.getWFHBalance(this.empinfo.employeeId);
@@ -217,29 +218,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         },
       });
   }
-  selectedEmployeewfhId: any = null;
-  selectedWFHEmployeeControl = new FormBuilder().control(''); // Add this property
-
-clearWFHData() {
-  this.selectedWFHEmployeeControl.reset(); // Reset dropdown
- this.http.setEmployeeIdWFH(null);
-  // Clear counts and list
-  this.ProcessedCount = 0;
-  this.rejectedCount = 0;
-  this.ApprovedCount = 0;
-  this.pendingCount = 0;
-  this.Workfromhome = [];
-
-  // Show apply button again
-  this.disaplyapplybutton = true;
-
-  // Optionally load default employee data
-  if (this.empinfo?.employeeId) {
-    this.getWorkfromhomeRequest(this.empinfo.employeeId);
-    this.getWFHBalance(this.empinfo.employeeId);
-  }
-}
-
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
 

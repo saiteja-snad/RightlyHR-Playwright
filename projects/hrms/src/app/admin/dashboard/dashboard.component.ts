@@ -384,6 +384,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.attendanceData = data;
         },
         error: (reason) => {
+          this.attendanceData = {} as AttendanceResponse
           this.attendanceLoader = false;
         },
       });

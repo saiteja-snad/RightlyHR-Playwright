@@ -165,6 +165,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
   clearAllFilters() { 
     this.permissionReportForm.reset();
+    this.filteredPermissionData = [];
   }
 
   formatDate(date: Date): string {

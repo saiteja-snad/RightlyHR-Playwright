@@ -218,7 +218,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     }
     
     if (formValue.employee?.employeeId !== 'all') {
-      request.employeeId = formValue.employee.employeeId;
+      request.employeeId = formValue?.employee?.employeeId;
     }
 
     if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {

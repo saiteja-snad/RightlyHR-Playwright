@@ -165,6 +165,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
 
   clearAllFilters() { 
     this.regularizationReportForm.reset();
+    this.filteredRegularizationData = [];
   }
 
   formatDate(date: Date): string {

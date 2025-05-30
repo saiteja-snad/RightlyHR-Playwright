@@ -89,29 +89,11 @@ export class RegularizationComponent {
     if (employeedId) {
       this.getPermission(employeedId);
     } else {
+       this.http.setEmployeeIdRegularization(null);
       this.getPermission(this.emp.employeeId);
     }
   }
-selectedEmployeewfhId: any = null;
-selectedregEmployeeControl = new FormControl(null); ; // Add this property
-  clearWFHData() {
-  this.selectedregEmployeeControl.reset(); // Reset dropdown
-
-  // Clear counts and list
-  this.ProcessedCount = 0;
-    this.rejectedCount = 0;
-    this.ApprovedCount = 0;
-    this.pendingCount = 0;
-    this.regularize = [];
-
-
-
-  // Optionally load default employee data
-  if (this.emp.employeeId) {
-   this.getPermission(this.emp.employeeId);
-  }
-}
-  getPermission(employeedId?: any) {
+ getPermission(employeedId?: any) {
     // let empId = this.empinfo.employeeId
     // console.log(empId);
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({

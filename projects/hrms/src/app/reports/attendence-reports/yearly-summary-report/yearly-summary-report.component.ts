@@ -209,13 +209,13 @@ export class YearlySummaryReportComponent {
     }
 
     // Employee filter
-    if (formValue.employee?.employeeId !== 'all') {
-      request.employeeId = formValue?.employee?.employeeId;
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.employeeId;
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.teamManagerID = formValue?.manager?.teamManagerID;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Leave category

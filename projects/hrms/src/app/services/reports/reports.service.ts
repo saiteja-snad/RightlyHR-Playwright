@@ -233,7 +233,7 @@ export class ReportsService {
     let params = new HttpParams();
 
     if (request.employeeId) params = params.set('employeeId', request.employeeId);
-    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
+    // if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) { params = params.set('StartDate', request.StartDate);
        params = params.set('EndDate', request.EndDate);
@@ -246,7 +246,7 @@ export class ReportsService {
     let params = new HttpParams();
 
     if (request.employeeId) params = params.set('employeeId', request.employeeId);
-    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
+    // if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);

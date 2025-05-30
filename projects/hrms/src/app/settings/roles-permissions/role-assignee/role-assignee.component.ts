@@ -152,7 +152,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     };
     this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
       next: (data: any) => {
-        this.modal.openSuccessModal('Assignee Added Successfully');
+        this.modal.openSuccessModal('Assignee added successfully');
       },
       error: (err: any) => {
         const msg = err.error.Message? err.error.Message : 'Assignee Assignment Failed'
@@ -178,7 +178,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     this.http.postdata('FusionUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Assignee Removed Successfully');
+        this.modal.openSuccessModal('Assignee removed successfully');
       },
       error: (err: any) => {
         this.modalService.dismissAll();

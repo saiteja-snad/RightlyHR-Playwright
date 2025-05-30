@@ -19,10 +19,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-separation-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule,
-    DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
+    DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss'
 })

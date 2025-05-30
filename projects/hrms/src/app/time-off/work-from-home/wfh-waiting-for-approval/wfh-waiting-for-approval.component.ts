@@ -20,6 +20,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { SignalsService } from '../../../services/signals.service';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-wfh-waiting-for-approval',
@@ -34,7 +35,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-  ],
+    InfoIconComponent
+],
   templateUrl: './wfh-waiting-for-approval.component.html',
   styleUrl: './wfh-waiting-for-approval.component.scss',
 })

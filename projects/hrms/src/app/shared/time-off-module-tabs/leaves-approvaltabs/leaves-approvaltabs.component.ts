@@ -52,19 +52,23 @@ export class LeavesApprovaltabsComponent {
       // Use the new employee ID here
       this.id = id;
       // Example: this.loadEmployeeDetails(id);
-       this.getDataByLPID();
+       this.getDataByLPempID();
+    }else{
+        this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getDataByLPID();
     }
   });
   // this.getDataByLPID();
-    this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
+    // this.loggedinuser = this.authService.getToken();
+    // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    // this.getDataByLPID();
     this.getAllTeamLeaveBalance();
     this.getAllTeamLeaveSummary();
   }
 
   getDataByLPID() {
-    let empid = this.id || this.empdata.employeeId;
+    let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
@@ -89,6 +93,34 @@ export class LeavesApprovaltabsComponent {
     });
   }
 
+
+
+
+   getDataByLPempID() {
+    let empid = this.id;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          const waiting = response.filter(item => item.status === 'Waiting for Approval');
+          const approved = response.filter(item => item.status === 'Approved');
+          const rejected = response.filter(item => item.status === 'Rejected');
+          const processed = response.filter(item => item.status === 'Processed');
+          const cancelled = response.filter(item => item.status === 'Cancelled');
+          this.waitingForApprovalCount = waiting.length;
+          this.approvedCount = approved.length;
+          this.rejectedCount = rejected.length;
+          this.processedCount = processed.length;
+          this.cancelCount=cancelled.length
+          this.updateStatusTabs();
+        } else {
+          console.error('Invalid response format');
+        }
+      },
+      error: (reason: any) => {
+        console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
+      }
+    });
+  }
   getAllTeamLeaveBalance() {
     const employeeId = this.empdata.employeeId;
     let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;

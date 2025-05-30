@@ -183,6 +183,29 @@ export class LeavesComponent {
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
+selectedEmployeeId: any = null; // bound to the dropdown
+
+clearAll() {
+  this.selectedEmployeeId = null; // Reset the dropdown
+  this.http.setEmployeeIdTimeoff(null);
+  // Reset all counts and data
+  this.waitingforapprovalCount = 0;
+  this.rejectedCount = 0;
+  this.approvedCount = 0;
+  this.processedCount = 0;
+  this.cancelledCount = 0;
+  this.lpdata = [];
+
+  // Show apply button again
+  this.disaplyapplybutton = true;
+
+  // Load default employee's data if needed
+  if (this.empdata?.employeeId) {
+    this.getLeavesData(this.empdata.employeeId);
+    this.getDataByLPID(this.empdata.employeeId);
+    this.getCategoryDetails();
+  }
+}
 
    getDataByLPID(employeeId:any) {
     let empid = employeeId;

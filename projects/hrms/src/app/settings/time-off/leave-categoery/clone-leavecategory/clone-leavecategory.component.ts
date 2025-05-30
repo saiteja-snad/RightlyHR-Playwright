@@ -1,23 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-
 @Component({
   selector: 'app-clone-leavecategory',
-  imports: [CommonModule,Select,ReactiveFormsModule],
+  imports: [CommonModule, Select, ReactiveFormsModule],
   templateUrl: './clone-leavecategory.component.html',
-  styleUrl: './clone-leavecategory.component.scss'
+  styleUrl: './clone-leavecategory.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class CloneLeavecategoryComponent {
-  
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -27,40 +25,32 @@ export class CloneLeavecategoryComponent {
   publishedCategories: any[] = [];
   postOrgPloicyDetailsArray: [] = [];
   leaveCategoryType: any[] = [
-    {label : 'General', value : 1},
-    {label : 'Flexible', value : 0}
+    { label: 'General', value: 1 },
+    { label: 'Flexible', value: 0 }
   ];
   genderDetails: any[] = [
-    {label : 'All', value : 0},
-    {label : 'Male', value : 1},
-    {label : 'Female', value : 2},
+    { label: 'All', value: 0 },
+    { label: 'Male', value: 1 },
+    { label: 'Female', value: 2 },
   ];
   marriedDetails: any[] = [
-    {label : 'All', value : 0},
-    {label : 'Married', value : 1},
-    {label : 'Unmarried', value : 2},
+    { label: 'All', value: 0 },
+    { label: 'Married', value: 1 },
+    { label: 'Unmarried', value: 2 },
   ];
-
   global: any[] = [
-    {label : 'Yes', value : true},
-    {label : 'No', value : false}
+    { label: 'Yes', value: true },
+    { label: 'No', value: false }
   ];
- shiftsArray =  [ ] as any [];
- updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
+  shiftsArray = [] as any[];
+  updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
-
-  constructor(private fb: FormBuilder,private http: HttpService,private confirmation: OpenModalService,private router: Router,private modalService: NgbModal) {
-    
-
-    
-    
-  }
+  constructor(private fb: FormBuilder, private http: HttpService, private router: Router, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-     this.intializeForm();
+    this.intializeForm();
     this.updatecloneLeaveCategoryData = JSON.parse(localStorage.getItem('cloneleavecategory') ?? '{}');
     this.patchFormValues(this.updatecloneLeaveCategoryData);
-    console.log(this.updatecloneLeaveCategoryData);
     this.setupDependentFieldListeners();
     this.jobLocationList();
     this.getOrgLeavesCategories();
@@ -68,7 +58,6 @@ export class CloneLeavecategoryComponent {
     for (let year = currentYear; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
     }
- 
   }
 
   intializeForm() {
@@ -114,8 +103,6 @@ export class CloneLeavecategoryComponent {
     });
   }
 
-
-
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
@@ -126,13 +113,13 @@ export class CloneLeavecategoryComponent {
         this.getSubLocationByid(this.updatecloneLeaveCategoryData.locationID)
       }
     })
-  } 
+  }
 
   getSubLocationByid(locationID: any) {
-    console.log(locationID);
     this.leavePolicyForm.patchValue({
       subLocation: null,
-      shiftId: null});
+      shiftId: null
+    });
     let sublocid = locationID?.id ?? this.updatecloneLeaveCategoryData.locationID
     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${sublocid}`).subscribe({
       next: (data: any) => {
@@ -149,12 +136,14 @@ export class CloneLeavecategoryComponent {
       }
     })
   }
-  navigate(){
+
+  navigate() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory'])
   }
+
   subloactionid(id?: any) {
-      const sublocationId = this.subLocationsDropdown?.find((c: any) => parseInt(c.id) === parseInt(id));
-      this.getShiftBYid(sublocationId);
+    const sublocationId = this.subLocationsDropdown?.find((c: any) => parseInt(c.id) === parseInt(id));
+    this.getShiftBYid(sublocationId);
   }
 
   getShiftBYid(Values: any) {
@@ -180,18 +169,17 @@ export class CloneLeavecategoryComponent {
   }
 
   getOrgLeavesCategories() {
-      this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
-        next: (responseData: any) => {
-          this, responseData.orgcategory
-          console.log(responseData);
-          this.postOrgPloicyDetailsArray = responseData as [];
-          this.publishedCategories = responseData.filter((x: any) => x.status === 'Published');
-        },
-        error: error => {
-          console.error(error);
-        }
-      });
-    }
+    this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
+      next: (responseData: any) => {
+        this, responseData.orgcategory
+        this.postOrgPloicyDetailsArray = responseData as [];
+        this.publishedCategories = responseData.filter((x: any) => x.status === 'Published');
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+  }
 
   private dependentRequiredValidator(controlName: string) {
     return (control: AbstractControl) => {
@@ -204,7 +192,7 @@ export class CloneLeavecategoryComponent {
   }
 
   private setupDependentFieldListeners() {
-    this.leavePolicyForm?.get('futureDatesAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('futureDatesAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('futureDatesAllowedDays');
       if (value) {
         daysControl?.enable();
@@ -217,7 +205,7 @@ export class CloneLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm?.get('pastDateAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('pastDateAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('pastDatesAllowedDays');
       if (value) {
         daysControl?.enable();
@@ -229,7 +217,8 @@ export class CloneLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-    this.leavePolicyForm?.get('carryForwardAllowed')?.valueChanges.subscribe((value :any) => {
+
+    this.leavePolicyForm?.get('carryForwardAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('carryForwardAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -242,7 +231,7 @@ export class CloneLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm?.get('encashAllowedType')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('encashAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('encashAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -255,7 +244,7 @@ export class CloneLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -268,7 +257,7 @@ export class CloneLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('probationDays');
       if (value) {
         daysControl?.enable();
@@ -280,8 +269,6 @@ export class CloneLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-
-     
   }
 
   restrictInputValidator(control: AbstractControl) {
@@ -298,9 +285,6 @@ export class CloneLeavecategoryComponent {
     // Implement your input restriction logic
     return null;
   }
-
-
- 
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
@@ -335,7 +319,7 @@ export class CloneLeavecategoryComponent {
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays
     });
-    this.setupDependentFieldListeners(); 
+    this.setupDependentFieldListeners();
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm?.get('futureDatesAllowed')?.updateValueAndValidity();
     this.leavePolicyForm?.get('pastDateAllowed')?.updateValueAndValidity();
@@ -348,7 +332,6 @@ export class CloneLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm;
-    console.log('Form Data:', formData);
     // let payload = {
     //   applicableYear: this.leavePolicyForm.value.applicableYear,
     //   locationID: this.leavePolicyForm.value.locationID.id,
@@ -385,7 +368,6 @@ export class CloneLeavecategoryComponent {
     //   addedDate : new Date(),
     //   lastModifiedDate : new Date()
     // };
-
     // this.http.postdata('OrgLeavesCategories', payload).subscribe({
     //   next: (data: any) => {
     //     this.confirmation.openSuccessModal('Leave Category added successfully');
@@ -394,19 +376,21 @@ export class CloneLeavecategoryComponent {
     //   },
     //   error: (err: any) => {
     //     console.log(err);
-        
     //     this.confirmation.openErrorModal(err.error.message);
     //   }
     // });
   }
-  resetForm(content:any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+
+  resetForm(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.leavePolicyForm.reset();
   }
-  cancel(){
+
+  cancel() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
   }
-  closepopup(){
+
+  closepopup() {
     this.modalService.dismissAll();
   }
 }

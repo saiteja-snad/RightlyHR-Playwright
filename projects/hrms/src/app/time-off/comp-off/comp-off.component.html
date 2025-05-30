@@ -1,18 +1,31 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
           <div class="heading-content">
-            <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">{{'Comp-Off'|translate}}</div>
            <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
         </div>
         <div class="d-flex align-items-center gap-3">
+             <button type="button" class="clear-all-btn" (click)="clearWFHData()">Clear All</button>
             <label class="form-label custom-label m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" class="form-select custom-select"
+                <!-- <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" class="form-select custom-select"
                     name="myteamemployees" placeholder="Select Employee Name" [filter]="true" required (onChange)="onCheckemployee($event.value)">
-                </p-select>
+                </p-select> -->
+                <p-select 
+      [options]="getEmployeeInfo" 
+      optionLabel="fullName" 
+      optionValue="employeeId" 
+      class="form-select custom-select"
+      name="myteamemployees" 
+      placeholder="Select Employee Name" 
+      [filter]="true" 
+      [formControl]="selectedCompoffEmployeeControl"
+      required 
+      (onChange)="onCheckemployee($event.value)">
+    </p-select>
             </div>
             <div *ngIf="disaplyapplybutton">
                 @if(rbac.allowedToAccess('Request Comp Off Button.view')){

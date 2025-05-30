@@ -4,7 +4,7 @@
   <div class="component-header-content">
 
     <div class="heading-content">
-      <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Global Permissions</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -108,7 +108,7 @@
             <div>
               <span *ngIf="item.employeeIds.length > 0; else emp">
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{getEmployeeNames(item.employeeIds)}}</p>
@@ -123,7 +123,7 @@
             <div>
               <span *ngIf="item.meta;else res">
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{item.meta}}</p>

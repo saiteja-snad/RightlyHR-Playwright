@@ -1,0 +1,144 @@
+.graph-grid {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+
+    .p-tablist-tab-list {
+        background-color: transparent !important;
+    }
+
+    // total leave summary
+    .total-leave-balance-graph-content {
+        width: 21rem;
+        padding: 0.75rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid #DCE3E9;
+        background-color: var(--white-color);
+        display: flex;
+        align-items: center;
+
+        li {
+            height: 1.125rem;
+        }
+
+        li:last-child {
+            .employee-type-text:last-child {
+                margin-bottom: 0rem;
+            }
+        }
+
+        .chart-content {
+            position: relative;
+            width: max-content;
+            height: max-content;
+
+            .total-count-content {
+                position: absolute;
+                top: 50%;
+                left: 35%;
+                text-align: center;
+
+                .count {
+                    font-weight: 700;
+                    font-size: 16px;
+                    color: #0F358A;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+
+                .total-count-text {
+                    font-weight: 400;
+                    font-size: 10px;
+                    color: #999999;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+            }
+        }
+
+        canvas {
+            width: 120px !important;
+            height: 120px !important;
+        }
+
+        .bi-circle-fill {
+            font-size: 8px;
+        }
+
+        .employee-type-text {
+            font-weight: 400;
+            font-size: 10px;
+            letter-spacing: 0%;
+            color: #747474;
+        }
+    }
+
+    //scrollable buttons stylings
+    .p-tablist-tab-list {
+        background: none !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem 0.5rem !important;
+    }
+
+    .p-tab-active {
+        background: none !important;
+        border: 0rem !important;
+    }
+
+    .p-tablist-nav-button {
+        box-shadow: none !important;
+    }
+
+    .p-tablist-active-bar {
+        background: none !important;
+    }
+
+    .p-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .employee-category-container {
+        width: calc(100% - 21rem);
+
+        .active-nav-link {
+            box-shadow: 0px 0px 10px 0px #0B3A8340;
+        }
+
+        .employee-category-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 13.5rem !important;
+            padding: 1rem 0.75rem;
+            border: 1px solid #DCE3E9 !important;
+            border-radius: 0.625rem;
+            margin: 0.25rem;
+
+            .icon {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            .content-text {
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 18px;
+                letter-spacing: 0%;
+                text-align: center;
+                color: #222222;
+                text-wrap: wrap;
+            }
+        }
+    }
+}
+
+.custom-table-content {
+    height: calc(100dvh - 23.5rem);
+}

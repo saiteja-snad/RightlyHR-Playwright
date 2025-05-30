@@ -11,9 +11,11 @@ import { CommonModule } from '@angular/common';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule,ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -90,7 +92,25 @@ export class RegularizationComponent {
       this.getPermission(this.emp.employeeId);
     }
   }
+selectedEmployeewfhId: any = null;
+selectedregEmployeeControl = new FormControl(null); ; // Add this property
+  clearWFHData() {
+  this.selectedregEmployeeControl.reset(); // Reset dropdown
 
+  // Clear counts and list
+  this.ProcessedCount = 0;
+    this.rejectedCount = 0;
+    this.ApprovedCount = 0;
+    this.pendingCount = 0;
+    this.regularize = [];
+
+
+
+  // Optionally load default employee data
+  if (this.emp.employeeId) {
+   this.getPermission(this.emp.employeeId);
+  }
+}
   getPermission(employeedId?: any) {
     // let empId = this.empinfo.employeeId
     // console.log(empId);

@@ -30,6 +30,7 @@ import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-permissions',
   imports: [
@@ -43,7 +44,8 @@ import { SignalsService } from '../../../services/signals.service';
     ReactiveFormsModule,
     TranslateModule,
     TableModule,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    InfoIconComponent
 ],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
@@ -101,6 +103,7 @@ export class PermissionsComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+          this.permissionsselects = [];
         }
         this.http.resetTriggerSignal();
       }
@@ -280,7 +283,7 @@ export class PermissionsComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {

@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-on-be-half-of-waiting-for-approval',
   imports: [
@@ -21,7 +22,8 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
     DropdownModule,
     DateformatPipe,
     NoDataFoundComponent,
-  ],
+    InfoIconComponent
+],
   templateUrl: './on-be-half-of-waiting-for-approval.component.html',
   styleUrl: './on-be-half-of-waiting-for-approval.component.scss',
 })
@@ -55,14 +57,14 @@ export class OnBeHalfOfWaitingForApprovalComponent {
   constructor(private http: HttpService, private authService: AuthService) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {
+      if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(
           localStorage.getItem('onbehalfof') as string
         );
         if (this.cadidateEmployeeId != null) {
           this.getDataByLPID();
         }
-        this.http.resetTriggerSignal();
+        this.http.onBehalfOfTriggerSignal.set(false);
       }
     });
   }
@@ -82,7 +84,7 @@ export class OnBeHalfOfWaitingForApprovalComponent {
       next: (response: any) => {
           if (Array.isArray(response)) {
             this.waitingForApprovalLeaves = response.filter(
-              (item) => item.status === 'Waiting for Approval'
+              (item) => item.status.toLowerCase() === 'waiting for approval'
             );
           } else {
             console.error('Invalid response format');

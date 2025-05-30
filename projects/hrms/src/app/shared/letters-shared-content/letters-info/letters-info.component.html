@@ -1,0 +1,11 @@
+<div class="heading-content">
+    <div class="component-header">{{componentname | translate}}</div>
+    <div>
+        <img src="/icons/moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+    </div>
+</div>
+
+<!--Module Information-->
+<ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+</ng-template>

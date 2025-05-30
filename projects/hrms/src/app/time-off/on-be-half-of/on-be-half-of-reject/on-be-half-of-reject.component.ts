@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -10,9 +10,10 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-on-be-half-of-reject',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule,TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './on-be-half-of-reject.component.html',
   styleUrl: './on-be-half-of-reject.component.scss'
 })
@@ -41,7 +42,19 @@ export class OnBeHalfOfRejectComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService,private modalService: NgbModal, ) { }
+  constructor(private http: HttpService, private authService: AuthService,private modalService: NgbModal, ) { 
+    effect(() => {
+      if (this.http.onBehalfOfTriggerSignal()) {
+        this.cadidateEmployeeId = parseInt(
+          localStorage.getItem('onbehalfof') as string
+        );
+        if (this.cadidateEmployeeId != null) {
+          this.getDataByLPID();
+        }
+        this.http.onBehalfOfTriggerSignal.set(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -55,7 +68,7 @@ export class OnBeHalfOfRejectComponent {
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
-          this.rejectedLeaves = response.filter(item => item.status === 'Rejected');
+          this.rejectedLeaves = response.filter(item => item.status.toLowerCase() === 'rejected');
           let pendingCount = this.rejectedLeaves.length;
         } else {
           console.error("Invalid response format");

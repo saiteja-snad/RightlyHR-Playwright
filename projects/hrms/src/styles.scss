@@ -37,6 +37,7 @@
     --header-background-color: #FFFFFF;
     --btn-header-color: #0B3A83;
     --notification-border-color: #CFE0F5;
+    --header-info-border-color: #dae4f4;
     // header colors ends
 
     //sidebar colors
@@ -137,10 +138,9 @@ body {
 //header stylings starts
 .header-main-container {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     background-color: var(--header-background-color);
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -151,23 +151,12 @@ body {
     overflow: hidden;
     border: 1px solid var(--side-nav-background-color);
     background-color: var(--side-nav-background-color);
-    padding-top: 1rem;
-
-    .sidenav-header {
-        border-bottom: 1px solid var(--white-color);
-        padding: 1.25rem 0rem;
-    }
-
-    .logo-img {
-        width: 3.25rem;
-        height: 2rem;
-    }
 
     .sidnav-main-content {
         width: 100%;
-        height: calc(100dvh - 10.75rem);
+        height: calc(100dvh - 9rem);
         overflow-y: auto;
-        padding: 1rem 0.25rem;
+        padding: 1rem 0.25rem 0rem;
         position: relative;
     }
 
@@ -177,13 +166,12 @@ body {
         align-items: center;
         font-size: var(--fontsize10);
         font-weight: 700;
-        line-height: 20px;
         letter-spacing: -2%;
         border-radius: 0.3rem;
         color: var(--side-nav-item-color);
         cursor: pointer;
-        padding: 0.3rem;
-        margin-bottom: 0.75rem;
+        padding: 0.625rem 0.3rem;
+        margin-bottom: 0.25rem;
     }
 
     .active-nav-link {
@@ -212,7 +200,7 @@ body {
     .main-menu-icon {
         width: 1rem;
         height: 1rem;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
     }
 
     .powered-by-image {
@@ -239,6 +227,10 @@ body {
             border: none !important;
             text-align: center;
             padding: 0.75rem !important;
+        }
+
+        .custom-employee-dropdown {
+            transform: translate(18px, -85px) !important;
         }
 
         .dropdown-menu-icon {
@@ -515,10 +507,10 @@ body {
         background: linear-gradient(180deg, #FFFFFF 0%, #D8E2F2 100%);
     }
 
-    .border-bottom {
+    .tabs-border-bottom {
         width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, #F4F4F4 8.64%, #A5B8D7 57.28%, #F4F4F4 92.5%);
+        height: 1px;
+        background: linear-gradient(90deg, #FFFFFF 8.64%, #94B1DE 50.32%, #FFFFFF 92.5%);
     }
 
     .nav-item:last-child {
@@ -579,6 +571,7 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    align-items: center;
 
     .commpoment-name {
         font-weight: 400;
@@ -595,13 +588,9 @@ body {
     }
 
     .popover {
-      
         --bs-popover-max-width: 25rem !important;
         --bs-popover-border-color: var(--module-info-bg);
-        width: 25rem !important;
-
-   
-       
+        width: 25rem !important; 
     }
 
     .bs-popover-bottom>.popover-arrow::after {
@@ -727,7 +716,6 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
-
 // scroll bar stylings ends
 
 // button stylings
@@ -988,16 +976,9 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
-
 // Select Styling 
 
 // table stylings
-.custom-data-content-container {
-    background-color: var(--white-color);
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-}
-
 .custom-table-content {
     width: 100%;
     height: calc(100dvh - 10rem);
@@ -1141,7 +1122,7 @@ select:focus {
 .main-letter-content {
     .letter-fields-content {
         width: 27rem;
-        height: calc(100dvh - 14.5rem);
+        height: calc(100dvh - 12rem);
         overflow-x: hidden;
         overflow-y: auto;
     }
@@ -1149,7 +1130,7 @@ select:focus {
     .letter-data-content {
         width: 100%;
         flex: 1;
-        height: calc(100dvh - 14.5rem);
+        height: calc(100dvh - 12rem);
         overflow: auto;
 
         .letter-sub-data-content {
@@ -1319,7 +1300,7 @@ select:focus {
 //My Info Stylings
 .user-profile-content {
     width: 20rem;
-    height: calc(100dvh - 11.5rem);
+    height: calc(100dvh - 9rem);
     border: 1px solid #CCDAEC;
     background-color: var(--white-color);
     border-radius: 0.5rem;
@@ -1329,7 +1310,7 @@ select:focus {
 
 .myinfo-main-content {
     width: calc(100% - 20rem);
-    height: calc(100dvh - 11.5rem);
+    height: calc(100dvh - 9rem);
     overflow-y: auto;
     border: 1px solid #CCDAEC;
     border-radius: 0.5rem;
@@ -1621,8 +1602,9 @@ input[type="file"] {
     }
 
     .popup-header-border {
-        border-bottom: 3px solid transparent;
-        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%, #858585 50.67%, var(--white-color) 108.91%);
+        border-bottom: 1.5px solid transparent;
+        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
+         #94B1DE 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }

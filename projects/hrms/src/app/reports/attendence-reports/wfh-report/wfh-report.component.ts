@@ -217,7 +217,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       request.employeeId = ids;  // The selected employee IDs are set here
     }
     
-    if (formValue.employee?.employeeId !== 'all') {
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
 

@@ -552,7 +552,7 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
         else if (field === 'Work Email') data[field] = user.workEmail;
-        else if (field === 'Home Email') data[field] = user.emailaddress;
+        else if (field === 'Personal Email') data[field] = user.emailaddress;
         // Emergency Contact 1
         else if (field === 'Name(contact1)') data[field] = user.emergencyName;
         else if (field === 'Email(contact1)') data[field] = user.emailId;

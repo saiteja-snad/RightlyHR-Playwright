@@ -36,8 +36,8 @@
           </td>
           <td>{{item.status}}</td>
           <td class="text-center">
-            @if(isBeforeToday(item.startdate)){
-              
+            <!-- @if(isBeforeToday(item.startdate)){ -->
+               @if(permissionForLoggedInUser && isBeforeToday(item.startdate)){
             <div class="dropdown">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>

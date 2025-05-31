@@ -42,7 +42,9 @@ export class PhonebookComponent {
             workPhone: emp.workPhone || 'N/A',
             contactNumber: emp.contactnumber || 'N/A',
             profileUrl: 'images/alternate.png', // default; we'll replace it below
-            originalProfileUrl: profilePath, // for download use
+            originalProfileUrl: profilePath,
+            mobilePhoneCountryCode: this.extractCountryCode(emp.mobilePhoneCountryCode),
+            workPhoneCountryCode: this.extractCountryCode(emp.workPhoneCountryCode)
           };
         });
 
@@ -56,6 +58,11 @@ export class PhonebookComponent {
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
+  // extractdata
+extractCountryCode(value: string): string {
+  const match = value?.match(/\(\+?\d+\)/);
+  return match ? match[0].replace(/[()]/g, '') + ' ' : '';
+}
 
   // Download the image blob and assign it to the specific employee
   downloadAndSetProfileImage(emp: any) {

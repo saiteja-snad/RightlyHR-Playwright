@@ -17,7 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class UpdateLeavecategoryComponent {
-  leavePolicyForm: FormGroup;
+  leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
   jobLocationDropDownData: any[] = [];
@@ -47,7 +47,24 @@ export class UpdateLeavecategoryComponent {
   updateLeaveCategoryData = {} as Iorgcategoryleaves
 
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router, private modalService: NgbModal,) {
-    this.leavePolicyForm = this.fb.group({
+   
+  }
+
+  ngOnInit(): void {
+    this.intializeForm();
+    this.updateLeaveCategoryData = JSON.parse(localStorage.getItem('updateleavecategory') ?? '{}');
+    this.jobLocationList();
+    this.patchFormValues(this.updateLeaveCategoryData);
+    this.setupDependentFieldListeners();
+    this.getOrgLeavesCategories();
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 10; year--) {
+      this.years.push({ label: year.toString(), value: year });
+    }
+  }
+
+  intializeForm(){
+     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
       locationID: [undefined, Validators.required],
@@ -70,35 +87,23 @@ export class UpdateLeavecategoryComponent {
       isApplicableProRataLeave: [undefined, Validators.required],
       // Future Dates
       futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [undefined, [this.dependentRequiredValidator('futureDatesAllowed')]],
+      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed')]],
       // Past Dates
       pastDateAllowed: [undefined, Validators.required],
-      pastDatesAllowedDays: [undefined, [this.dependentRequiredValidator('pastDateAllowed')]],
+      pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
       // Carry Forward
       carryForwardAllowed: [undefined, Validators.required],
-      carryForwardAllowedValue: [undefined, [this.dependentRequiredValidator('carryForwardAllowed')]],
+      carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed')]],
       // Encash
       encashAllowedType: [undefined, Validators.required],
-      encashAllowedValue: [undefined, [this.dependentRequiredValidator('encashAllowedType')]],
+      encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType')]],
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [undefined, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
+      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [undefined, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
-  }
-
-  ngOnInit(): void {
-    this.updateLeaveCategoryData = JSON.parse(localStorage.getItem('updateleavecategory') ?? '{}');
-    this.jobLocationList();
-    this.patchFormValues(this.updateLeaveCategoryData);
-    this.setupDependentFieldListeners();
-    this.getOrgLeavesCategories();
-    const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
-      this.years.push({ label: year.toString(), value: year });
-    }
   }
 
   OnClickLocation(id: any) {

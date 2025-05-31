@@ -141,6 +141,7 @@ body {
     padding: 0.5rem 0.75rem;
     background-color: var(--header-background-color);
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -720,6 +721,7 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
+
 // scroll bar stylings ends
 
 // button stylings
@@ -1938,6 +1940,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1956,6 +1959,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -2266,5 +2270,94 @@ input[type=number]::-webkit-outer-spin-button {
         font-weight: 500;
         font-size: 10px;
         color: #222222;
+    }
+}
+
+
+.custom-reportes-sub-tabs-content {
+    padding: 1rem;
+    cursor: pointer;
+
+    .reportes-header-content {
+
+        .icon-header {
+            width: 3rem;
+            height: 3rem;
+
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 18px;
+            letter-spacing: 0%;
+            color: #222222;
+
+        }
+
+        .sub-text {
+
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 100%;
+            letter-spacing: 1%;
+            color: #9C9C9D;
+        }
+
+
+    }
+
+    .custom-reports-content {
+        display: flex;
+        gap: 1.5rem;
+
+
+        .custom-reports {
+            width: 16rem;
+            min-height: 6.5rem;
+            border: 0.97px solid #CBD7E2;
+            border-radius: 0.61rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+            background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            cursor: pointer;
+
+
+            .icon {
+                width: 1rem;
+                height: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .tab-label {
+                font-weight: 600;
+                font-size: 10px;
+                letter-spacing: 0%;
+                line-height: 100%;
+                color: #555353;
+            }
+
+            .tab-desc {
+                font-weight: 400;
+                font-size: 7px;
+                line-height: 100%;
+                letter-spacing: 1%;
+                color: #ACACAD;
+
+            }
+
+            &.active,
+            &.active-nav-link {
+                border: 2px solid #00b2ff;
+                background: #eaf8ff;
+                box-shadow: 0 4px 16px 0 rgba(0, 178, 255, 0.08);
+            }
+        }
     }
 }

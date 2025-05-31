@@ -3,7 +3,7 @@
     <!--header-->
     
          <div class="heading-content">
-      <div class="commpoment-name">Attendance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">WFH Report</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -106,11 +106,7 @@
   </ng-template>
 
   
-  <div class="d-flex gap-3 w-100">
-    <div class="component-left-tabs-container">
-      <app-attandace-report-tabs />
-    </div>
-    <div class="component-right-content">
+
       @if(isLoading){
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -158,5 +154,3 @@
       </div>
       }
     </div>
-  </div>
-</div>

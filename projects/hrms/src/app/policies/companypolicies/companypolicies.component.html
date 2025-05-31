@@ -98,7 +98,7 @@
       </div>
       <!-- Acknowledge Footer -->
       <div class="modal-footer justify-content-between bg-white px-4 py-3 border-top"
-        *ngIf="selectedItem?.requiresAcknowledgment && selectedItem?.acknowledged">
+        *ngIf="selectedItem?.requiresAcknowledgment && !selectedItem?.acknowledged">
         <form [formGroup]="ackForm" class="d-flex justify-content-between w-100 align-items-center">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="ackCheckbox" formControlName="acknowledged" />

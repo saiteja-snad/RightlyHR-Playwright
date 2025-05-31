@@ -97,7 +97,7 @@ export class CompanypoliciesComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true });
+    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true , backdrop : 'static', keyboard : false});
   }
 
   private handleImage(url: string) {

@@ -25,10 +25,15 @@ export class TimeOffRequestTabsComponent {
   navTabs = computed(() => {
     const moduleId=environment.leavesModuleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
-    return [
+    const allTabs =[
       { label: 'For You ', link: 'for-you', count:data?.forYou ?? 0, permission: { feature: 'For You (Time Off)', action: 'view' }},
       { label: 'For Your Role', link: 'for-your-role', count:data?.forYourRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }}
     ];
+    return allTabs.filter(
+    tab =>
+      tab.permission &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+  );
   });
 
   ngOnInit(): void {

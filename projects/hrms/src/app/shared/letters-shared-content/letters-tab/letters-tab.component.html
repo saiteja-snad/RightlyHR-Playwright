@@ -1,13 +1,11 @@
-<div class="component-nav-tabs-container card px-2">
-    <p-tabs value="0" scrollable>
-        <p-tablist>
-            <ng-container *ngFor="let tab of navTabs">
-                <p-tab [value]="tab.link">
-                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                        {{ tab.label }}
-                    </a>
-                </p-tab>
-            </ng-container>
-        </p-tablist>
-    </p-tabs>
+<div class="custom-letter-tabs">
+    <ul *ngFor="let tab of navTabs" class="tabs-list-content">
+        <li [routerLink]="tab.link" class="list-item">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <img [src]="tab.icon" alt="Icon" class="icon">
+                <div class="label-name">{{ tab.label }}</div>
+            </div>
+            <p class="subject-text m-0">{{tab.subject}}</p>
+        </li>
+    </ul>
 </div>

@@ -13,18 +13,15 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
-  
-
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 
 @Component({
   selector: 'app-role-assignee',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent,
+     NoDataFoundComponent, TranslateModule, NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None

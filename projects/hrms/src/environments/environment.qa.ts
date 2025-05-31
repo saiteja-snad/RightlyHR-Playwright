@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  ApiUrl: 'https://rightlyhrnewversionapi.rightlyhr.com/api/',
+  ApiUrl: 'https://snadqaapi.onpremise.snadhr.com/api/',
   webSocketUrl: 'ws://rightlyhrnewversionapi.rightlyhr.com',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   modules: [

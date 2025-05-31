@@ -1,77 +1,101 @@
-.blood-bank-content {
+.custom-component-right-content {
+    height: calc(100vh - 11.5rem);
 
-    width: 100%;
-    height: calc(100vh - 8.5rem);
-    overflow: auto;
-    padding: 1rem;
-    min-width: 600px;
-    border-radius: 0.5rem;
-    background-color: #FFFFFF;
+    .cards-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.25rem;
+    }
 
+    .blood-bank-card {
+        width: 26rem;
+        height: max-content;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+        border: 1px solid #DCE3E9;
+
+        .blood-group {
+            background: #EA362C1A;
+            font-weight: 700;
+            font-size: var(--fontsize14);
+            color: #EA362C;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .name {
+            font-weight: 600;
+            font-size: var(--fontsize13);
+            color: #181817;
+        }
+
+        .email {
+            font-weight: 400;
+            font-size: var(--fontsize10);
+            color: var(--primary-color);
+        }
+    }
 }
 
-.cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-
-    .blood-bank-cards {
-        width: 26rem;
-        height: 3.87rem;
-        border: 0.97px solid #CBD7E2;
-        border-radius: 0.61rem;
-        padding: 1.05rem 0.61rem;
-        box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
-        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-        flex-direction: column;
-        justify-content: center;
-        cursor: pointer;
-
-        .blood-group-name {
-            width: 2.313rem;
-            height: 2.313rem;
-            border-radius: 0.438rem;
-            background: #EA362C1A;
-            color: #EA362C;
 
 
-        }
+.blood-bank-cards {
 
-        .name-text {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 37px;
-            font-weight: 700;
-            font-size: 14px;
-            line-height: 100%;
-            letter-spacing: 0%;
-            text-transform: capitalize;
+    border: 0.97px solid #CBD7E2;
+    border-radius: 0.61rem;
+    padding: 1.05rem 0.61rem;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
 
-        }
-
-        .sub-content {
-
-            line-height: 100%;
-            letter-spacing: 0%;
-
-            .name {
-                font-weight: 600;
-                font-size: 12px;
-                color: #181817;
-            }
-
-            .email-text {
-                font-weight: 400;
-                font-size:11px;
-                color: #0B3A83;
-            }
-
-            .icon-colour {
-                color: #989898;
-            }
-        }
+    .blood-group-name {
+        width: 2.313rem;
+        height: 2.313rem;
+        border-radius: 0.438rem;
+        background: #EA362C1A;
+        color: #EA362C;
 
 
     }
+
+    .name-text {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 37px;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-transform: capitalize;
+
+    }
+
+    .sub-content {
+
+        line-height: 100%;
+        letter-spacing: 0%;
+
+        .name {
+            font-weight: 600;
+            font-size: 12px;
+            color: #181817;
+        }
+
+        .email-text {
+            font-weight: 400;
+            font-size: 11px;
+            color: #0B3A83;
+        }
+
+        .icon-colour {
+            color: #989898;
+        }
+    }
+
+
 }

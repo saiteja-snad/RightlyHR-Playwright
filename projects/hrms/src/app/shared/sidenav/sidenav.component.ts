@@ -65,11 +65,12 @@ export class SidenavComponent implements OnInit {
       route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' }
     },
     {
-      label: 'Blood Bank', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
+
+      label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
       route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' }
     },
     {
-      label: 'Phone Book', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
+      label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
       route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' }
     },
 

@@ -1,0 +1,27 @@
+.settings-sub-tabs-card {
+    width: 20rem;
+    height: 6rem;
+    padding: 0.625rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    border: 1px solid #CBD7E2;
+    border-radius: 0.625rem;
+
+    .icon {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .label-name {
+        font-weight: 600;
+        font-size: var(--fontsize12);
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: #555353;
+    }
+
+    .subject-text {
+        font-weight: 400;
+        font-size: var(--fontsize10);
+        color: #ACACAD;
+    }
+}

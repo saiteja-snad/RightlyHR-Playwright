@@ -77,9 +77,9 @@
                 <p class="count m-0 p-0">{{totalEmployeesCount}}</p>
               </div>
             </div>
-            <div class="d-flex flex-wrap gap-3 align-items-center">
+            <div class="row row-cols-md-2">
               @for (item of cardItems; track $index) {
-              <div [ngStyle]="{ 'border-left': '4px solid ' + item.employeementTypeColor }" class="ps-2">
+              <div [ngStyle]="{ 'border-left': '4px solid ' + item.employeementTypeColor }" class="mb-2">
                 <div class="employee-type-text">{{ item.label }}</div>
               </div>
               }

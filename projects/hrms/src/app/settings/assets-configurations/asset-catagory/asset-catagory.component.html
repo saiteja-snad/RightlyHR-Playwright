@@ -3,7 +3,7 @@
     <div class="mb-3">
         <form autocomplete="off" [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)"
             *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
-            <div class="custom-settings-add-input input-group w-50">
+            <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter asset category"
                     aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory"
                     (keypress)="formValidation.restrictInput($event)">

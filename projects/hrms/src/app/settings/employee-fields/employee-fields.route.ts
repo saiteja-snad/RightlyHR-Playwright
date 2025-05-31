@@ -1,8 +1,5 @@
 import { Route, } from '@angular/router';
-import { SettingsPersonalTabsComponent } from '../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component';
-import { SettingsJobTabsComponent } from '../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component';
 import { PermissionsGuard } from '../../guards/permissions.guard';
-
 
 export default [
     // { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },

@@ -22,6 +22,7 @@ import { InviteUserLayoutComponent } from "../../invite-new-user/invite-user-lay
 import { LettersLayoutComponent } from "../../letters/letters-layout/letters-layout.component";
 import { BloodBankComponent } from "../../blood-bank/blood-bank/blood-bank.component";
 import { PhonebookComponent } from "../../phonebook/phonebook/phonebook.component";
+import { ContactDirectoryComponent } from "../../contact-directory/contact-directory/contact-directory.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -49,4 +50,5 @@ export default [
     { path: 'letters', component: LettersLayoutComponent, loadChildren: () => import('../../letters/letters.route') },
     { path: 'blood-bank', component: BloodBankComponent, canActivate: [MsalGuard] },
      { path: 'phonebook', component: PhonebookComponent, canActivate: [MsalGuard] },
+      { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [MsalGuard] },
 ] as Route[];

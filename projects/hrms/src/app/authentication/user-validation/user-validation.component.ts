@@ -6,14 +6,13 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { MsalService } from '@azure/msal-angular';
 import { AccessNavigationService } from '../../services/access-navigation.service';
-
-
 @Component({
   selector: 'app-user-validation',
   imports: [FormsModule, CommonModule],
   templateUrl: './user-validation.component.html',
   styleUrl: './user-validation.component.scss'
 })
+
 export class UserValidationComponent {
   subscription!: Subscription;
   name!: string
@@ -28,12 +27,11 @@ export class UserValidationComponent {
   async ngOnInit() {
     await this.postLogin();
   }
+
   async postLogin() {
     await this._msalService.instance.initialize();
-
-  //  const loginResponse = await this._msalService.instance.loginRedirect();
+    //  const loginResponse = await this._msalService.instance.loginRedirect();
     //console.log(loginResponse.accessToken);
-    
     const account = this._msalService.instance.getAllAccounts()[0];
     if (account) {
       this._msalService.instance.setActiveAccount(account);
@@ -42,15 +40,14 @@ export class UserValidationComponent {
     }
     const response = await this._msalService.instance.acquireTokenSilent({
       account: account,
-
       scopes: ['user.read'],
     });
     const token = response.accessToken;
     //console.log(token);
-
     this.name = account?.name as string;
     this.getUserDetails(account?.username);
   }
+
   getUserDetails(email: string) {
     this.subscription = this.http.getUserDetails(email).subscribe({
       next: (response: any) => {
@@ -59,7 +56,6 @@ export class UserValidationComponent {
           localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
           localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
           localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
-
           setTimeout(() => {
             if (response.roles.length <= 0) {
               this.router.navigate(['/unauthorized']);
@@ -78,23 +74,22 @@ export class UserValidationComponent {
 
         } else {
           const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
-              if (route) {
-                this.router.navigate([route]);
-              }
-              else {
-                this.router.navigate(['/unauthorized']);
-              }
+          if (route) {
+            this.router.navigate([route]);
+          }
+          else {
+            this.router.navigate(['/unauthorized']);
+          }
         }
       },
       error: (err) => {
-        console.log(err);
         const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
-              if (route) {
-                this.router.navigate([route]);
-              }
-              else {
-                this.router.navigate(['/unauthorized']);
-              }
+        if (route) {
+          this.router.navigate([route]);
+        }
+        else {
+          this.router.navigate(['/unauthorized']);
+        }
       },
     });
   }

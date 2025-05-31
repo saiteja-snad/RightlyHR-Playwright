@@ -1,0 +1,42 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    padding: 1rem;
+    overflow: hidden;
+    background-color: #FFFFFF;
+
+    .login-content {
+        position: relative;
+        width: 100%;
+        flex: 1;
+        background-image: url('/images/login-bg.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #FFFFFF;
+    }
+
+    .welcome-text {
+        font-weight: 600;
+        font-size: 36px;
+        line-height: 100%;
+        letter-spacing: 4%;
+        text-align: center;
+    }
+
+    .powerby-content {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 44%;
+
+        .powered-by-image {
+            width: 12rem;
+            height: 3rem;
+        }
+    }
+}

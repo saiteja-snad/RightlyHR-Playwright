@@ -1,27 +1,10 @@
 <div class="custom-main-component-container">
     <!--header-->
-    <div class="mb-3">
-          <div class="heading-content">
-            <div class="commpoment-name">Settings<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Roles</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
-            </div>
-        </div>
+    <div class="component-header-content pt-2">
+        <app-settings-header />
     </div>
-    <!--Module Information-->
-    <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
-
-
-    <!--tabs content-->
-    <div class="mb-3">
-        <app-settings-role-permissions-module-tabs />
-    </div>
-
-    <div class="custom-setting-right-content p-3">
+    
+    <div class="custom-setting-right-content">
         <!-- Add Input-->
         <div class="mb-4">
             <form autocomplete="off" [formGroup]="roleForm" (ngSubmit)="onSubmit()">

@@ -1,0 +1,71 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content pt-2">
+        <div class="component-header">Settings</div>
+    </div>
+
+    <div class="custom-component-right-content">
+        <div class="custom-letter-tabs">
+            <ul class="tabs-list-content">
+                <!--Employee Fields-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/main-menu-icons/Employee-Fields-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Employee Fields</div>
+                    </div>
+                    <p class="subject-text mb-3">{{settingEmployeefieldsModule}}</p>
+                    <div>
+                        <app-settings-employee-fields-module-tabs />
+                    </div>
+                </li>
+
+                <!--Employee Fields-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/main-menu-icons/Roles-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Roles & Permissions</div>
+                    </div>
+                    <p class="subject-text mb-3">{{settingRolesPermissionsModule}}</p>
+                    <div>
+                        <app-settings-role-permissions-module-tabs />
+                    </div>
+                </li>
+
+                <!--Time Off-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/main-menu-icons/Time-off-settings-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Time Off</div>
+                    </div>
+                    <p class="subject-text mb-3">{{settingTimeOffModule}}</p>
+                    <div>
+                        <app-settings-time-off-tabs />
+                    </div>
+                </li>
+
+                <!--Time Off-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Asset Configuration</div>
+                    </div>
+                    <p class="subject-text mb-3">{{settingAssetsConfigurationModule}}</p>
+                    <div>
+                        <app-settings-assets-configurations-tabs />
+                    </div>
+                </li>
+
+                <!--Dynamic Forms-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/main-menu-icons/Dynamic-Form-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Dynamic Forms</div>
+                    </div>
+                    <p class="subject-text mb-3">{{settingDynamicFormsModule}}</p>
+                    <div>
+                        <app-setting-dynamic-forms-tabs />
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

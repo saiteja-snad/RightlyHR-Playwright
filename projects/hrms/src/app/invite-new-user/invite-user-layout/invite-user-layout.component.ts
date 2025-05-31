@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NewUserInvitationTabsComponent } from "../../shared/new-user-invitation-tabs/new-user-invitation-tabs.component";
-
 @Component({
   selector: 'app-invite-user-layout',
   imports: [CommonModule, RouterModule, NewUserInvitationTabsComponent],
@@ -11,5 +10,9 @@ import { NewUserInvitationTabsComponent } from "../../shared/new-user-invitation
 })
 
 export class InviteUserLayoutComponent {
-
+  constructor(public router: Router) { }
+  
+  navigateEmployeeManagement() {
+    this.router.navigate(['/employee-management']);
+  }
 }

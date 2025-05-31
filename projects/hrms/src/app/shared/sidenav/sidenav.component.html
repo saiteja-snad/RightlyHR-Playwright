@@ -9,15 +9,9 @@
             </li>
             }
             <!--Employee Management-->
-            <li class="nav-item menu-item-clear" (click)="resetDropdown()" [ngClass]="{ 'active': ActiveRoute() }">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
-                    </div>
-                    <ul class="dropdown-menu custom-employee-dropdown">
-                        <app-employee-management-tabs />
-                    </ul>
-                </div>
+            <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
+                [ngClass]="{ 'active': ActiveRoute() }">
+                <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
             </li>
             <!--My Info-->
             <!-- @if(this.rbac.allowedToAccess('My Info.view')){
@@ -39,8 +33,7 @@
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png"
-                            alt="Icon" class="main-menu-icon">Time-Off
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">Time-Off
                     </div>
                     <ul class="dropdown-menu">
                         <app-time-off-tabs />
@@ -52,8 +45,7 @@
             @if(this.rbac.allowedToAccess('Policies.view')){
             <li class="nav-item menu-item-clear" [routerLink]="['/policies']" (click)="resetDropdown()"
                 routerLinkActive="active-nav-link" #policies="routerLinkActive">
-                <img src="main-menu-icons/policies.png"
-                    alt="Icon" class="main-menu-icon">Policies
+                <img src="main-menu-icons/policies.png" alt="Icon" class="main-menu-icon">Policies
             </li>
             }
             <!--Calendar-->
@@ -107,15 +99,9 @@
                 </div>
             </li>
             @if(this.rbac.allowedToAccess('Settings Icon.view')){
-            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/settings')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-gear gear-icon"></i>Settings
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-settings-main-header-tabs />
-                    </ul>
-                </div>
+            <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/settings"
+                routerLinkActive="active-nav-link">
+                <i class="bi bi-gear gear-icon"></i>Settings
             </li>
             }
         </ul>

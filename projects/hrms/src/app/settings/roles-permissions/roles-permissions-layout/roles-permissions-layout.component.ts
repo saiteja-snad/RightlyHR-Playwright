@@ -3,7 +3,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 @Component({
   selector: 'app-roles-permissions-layout',
-  imports: [CommonModule, RouterModule,],
+  imports: [CommonModule, RouterModule],
   templateUrl: './roles-permissions-layout.component.html',
   styleUrl: './roles-permissions-layout.component.scss',
   encapsulation:ViewEncapsulation.None

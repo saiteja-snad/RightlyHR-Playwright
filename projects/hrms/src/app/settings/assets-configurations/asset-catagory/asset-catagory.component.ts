@@ -28,7 +28,7 @@ export class AssetCatagoryComponent {
 
   constructor(
     public router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService, public formValidation: FormValidationService, public rbac: RbacService ) { }
+    private http: HttpService, public formValidation: FormValidationService, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -127,18 +127,20 @@ export class AssetCatagoryComponent {
       console.log("Asset Form is invalid.");
     }
   }
- //update close  button click open delet pop up dailog add vender
- openaddmodal(content:any){
-  this.modalService.open(content, { centered: true, backdrop: 'static' });
-}
-//no button click close the  dailog add vender
-cleardata(){
- this.assetCategorydataForm.reset()
-  this.modalService.dismissAll();
-}
- 
+
+  //update close  button click open delet pop up dailog add vender
+  openaddmodal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  
+  //no button click close the  dailog add vender
+  cleardata() {
+    this.assetCategorydataForm.reset()
+    this.modalService.dismissAll();
+  }
+
   opendelete(content: any, data: any) {
-    this.assetCategorydata.reset(); 
+    this.assetCategorydata.reset();
     this.assetdataid = data?.id
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

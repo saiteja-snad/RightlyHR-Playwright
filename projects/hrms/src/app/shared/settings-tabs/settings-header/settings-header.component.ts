@@ -29,6 +29,7 @@ export class SettingsHeaderComponent implements OnInit {
 
   ComponentnameDisplay() {
     const url = this.router.url;
+    // Employee Fields
     if (url.startsWith('/settings/employee-fields/personal')) {
       this.moduleName = 'Employee Fields';
       this.componentName = 'Personal';
@@ -69,10 +70,8 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Employee Fields';
       this.componentName = 'No Due Clearance';
     }
-    else if (url.startsWith('/settings/roles-permissions/roles')) {
-      this.moduleName = 'Roles-Permissions';
-      this.componentName = 'Roles';
-    }
+
+    // Roles & Permissions
     else if (url.startsWith('/settings/roles-permissions/roles')) {
       this.moduleName = 'Roles-Permissions';
       this.componentName = 'Roles';
@@ -84,6 +83,60 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/roles-permissions/role-assignee')) {
       this.moduleName = 'Roles-Permissions';
       this.componentName = 'Assignee';
+    }
+
+    // Time Off
+    else if (url.startsWith('/settings/timeoff-configurations/leave-categoery')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'leave Categoery';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/leave-allocation')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'leave Allocation';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/flexible-leave-allocation')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Flexible Leave Allocation';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/eligibility-criterias')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Eligibility Criteria';
+    }
+    else if (url.startsWith('/settings/timeoff-configurations/load-entitlements')) {
+      this.moduleName = 'Time Off';
+      this.componentName = 'Load Entitlements';
+    }
+
+    // Assets Configuration
+    else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
+      this.moduleName = 'Assets Configuration';
+      this.componentName = 'Vendor Details';
+    }
+    else if (url.startsWith('/settings/assets-configuration/asset-catagory')) {
+      this.moduleName = 'Assets Configuration';
+      this.componentName = 'Asset Category';
+    }
+    else if (url.startsWith('/settings/assets-configuration/asset-subcatagory')) {
+      this.moduleName = 'Assets Configuration';
+      this.componentName = 'Asset Sub Category';
+    }
+
+    //Dynamic Forms
+    else if (url.startsWith('/settings/dynamic-forms/active-forms')) {
+      this.moduleName = 'Dynamic Forms';
+      this.componentName = 'Active Forms';
+    }
+    else if (url.startsWith('/settings/dynamic-forms/inactive-forms')) {
+      this.moduleName = 'Dynamic Forms';
+      this.componentName = 'Inactive Forms';
+    }
+    else if (url.startsWith('/settings/dynamic-forms/draft-forms')) {
+      this.moduleName = 'Dynamic Forms';
+      this.componentName = 'Draft Forms';
+    }
+    else if (url.startsWith('/settings/dynamic-forms/form-settings')) {
+      this.moduleName = 'Dynamic Forms';
+      this.componentName = 'Forms Settings';
     }
   }
 

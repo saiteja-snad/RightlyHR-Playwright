@@ -1,12 +1,6 @@
 <div class="custom-main-component-container">
     <div class="component-header-content pt-2">
-        <div class="heading-content">
-            <div class="component-header">Blood Bank</div>
-            <!-- <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
-            </div> -->
-        </div>
+        <div class="component-header">Blood Bank</div>
     </div>
 
     <div class="input-group custom-search mb-3">
@@ -17,6 +11,12 @@
 
     <div class="custom-component-right-content">
         <div class="cards-container">
+            @if (shimmer) {
+            <div>
+                <p-skeleton width="26rem" height="5rem" borderRadius="12px" />
+            </div>
+            }
+            @else {
             <div class="blood-bank-card" *ngFor="let item of filteredBloodDetails()">
                 <ng-container *ngIf="item.bloodGroup">
                     <div class="d-flex align-items-center gap-2">
@@ -24,8 +24,8 @@
                             <p class="name-text m-0">{{ item.bloodGroup }}</p>
                         </div>
                         <div>
-                            <div class="name text-truncate mb-1">{{ item.firstName }} {{ item.middleName || '' }} {{
-                                item.lastName }}
+                            <div class="name text-truncate mb-1">
+                                {{ item.firstName }} {{ item.middleName || '' }} {{ item.lastName }}
                             </div>
                             <div class="email text-truncate">
                                 <i class="bi bi-envelope icon-colour me-1"></i>{{ item.workEmail || 'N/A' }}
@@ -34,6 +34,7 @@
                     </div>
                 </ng-container>
             </div>
+            }
         </div>
     </div>
 </div>

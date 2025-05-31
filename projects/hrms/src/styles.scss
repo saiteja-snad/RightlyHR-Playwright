@@ -2362,3 +2362,8 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
 }
+
+// shimmer color
+.p-skeleton {
+    background: #ECF1F5 !important;
+}

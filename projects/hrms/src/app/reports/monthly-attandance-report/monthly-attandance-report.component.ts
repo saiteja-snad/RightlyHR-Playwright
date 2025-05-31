@@ -135,6 +135,10 @@ export class MonthlyAttandanceReportComponent {
       this.router.navigate([uri])
     });
   }
+   navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   close() {
     this.redirectTo(this.router.url);

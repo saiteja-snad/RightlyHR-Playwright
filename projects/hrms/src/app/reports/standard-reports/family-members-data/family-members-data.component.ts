@@ -36,18 +36,18 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     DataLoaderContentComponent,
     ModuleInformationComponent,
     NgbPopoverModule
-],
+  ],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',
 })
 export class FamilyMembersDataComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   empStatusList: string[] = ['All Employees', 'Active', 'Inactive'];
   reportForm!: FormGroup;
   dataload = false;
-  spinnerLoader1= false;
-  spinnerLoader2= false;
-  disableBtn= false;
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -63,8 +63,8 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     this.initializeForm();
     // this.getFamilyDetails();
 
-    this.reportForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.reportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     })
 
     this.updateModuleInfo();
@@ -77,28 +77,28 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/reports/standard-reports/family-data': MODULE_INFOS.STANDARD_REPORTS_FAMILY_MEMBERS_DATA_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-  
+
   getFamilyDetails(status?: string) {
     this.dataload = true;
-    this.spinnerLoader1= true;
+    this.spinnerLoader1 = true;
 
     const queryParams = new URLSearchParams();
     const endpoint = status
@@ -112,15 +112,15 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
           this.familydata = data as IFamilyDetails[];
         },
         error: (err: any) => {
-          this.spinnerLoader1= false;
+          this.spinnerLoader1 = false;
           this.dataload = false;
-          this.disableBtn= true;
+          this.disableBtn = true;
           this.familydata = [];
         },
-        complete: ()=>{
-          this.spinnerLoader1= false;
+        complete: () => {
+          this.spinnerLoader1 = false;
           this.dataload = false;
-          this.disableBtn= false;
+          this.disableBtn = false;
         }
       });
   }
@@ -133,7 +133,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   }
 
   exportAsExcelFile(): void {
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {
       employeeId: 'EMPLOYEE ID',
@@ -329,7 +329,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       SheetNames: ['data'],
     };
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
     this.modal.openSuccessModal('Family Members data downloaded successfully');
   }
 
@@ -342,7 +342,9 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       fileName,
     };
   }
-
+  navigation() {
+    this.router.navigate(['/reports']);
+  }
   getColumnWidth(data: any[], columnName: string): number {
     // Find the maximum width of data in the column
     const maxWidth = data.reduce((max: number, record: any) => {

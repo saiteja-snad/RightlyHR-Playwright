@@ -555,6 +555,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management',
     'Holidays',
     'Attendance',
+    'Blood Bank'
 
   ];
   expensesModuleTabs = [

@@ -68,6 +68,7 @@ export const MODULE_INFOS = {
     HOLIDAYS_MODULE_INFO : "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",
 
     //Reports Module Standard Reports Module Info
+    STANDARD_REPORTS_MODULE_INFO: "Get a clear view of employee data across the organization. Access ready-made reports on joining details, job locations, family info, compensation, and more — all in one place for easy export and analysis.", 
     STANDARD_REPORTS_EMPLOYEE_MASTER_DATA_MODULE_INFO : "The Employee Master Data Reports page allows generation and export of comprehensive Employee Master Data based on selected date ranges and employee status. It displays detailed employee information including personal, contact, educational, statutory, banking, and job-related details for accurate HR recordkeeping.",
     STANDARD_REPORTS_JOB_LOCATION_WISE_DATA_MODULE_INFO : "The Job Location Wise Data report lists employees filtered by job location and joining date. It includes personal details, contact numbers, and placeholders for job-related information such as role, shift, and department, allowing generation and export of structured job allocation data.",
     STANDARD_REPORTS_BRANCH_LOCATION_WISE_DATA_MODULE_INFO : "The Branch Location Wise Data report enables generation of employee information based on selected branch locations. It filters records by branch code and joining date, helping HR teams organize, export, and analyze employee distribution across different office branches.",
@@ -77,6 +78,7 @@ export const MODULE_INFOS = {
     CUSTOM_REPORTS_MODULE_INFO : "The Custom Reports section enables users to generate employee reports by selecting specific fields from Personal, Job. Reports can be filtered, customized, and exported for analysis or documentation.",
 
     //Attendance Reports Module Info
+    ATTENDANCE_REPORTS_MODULE_INFO : "Get a complete view of employee attendance reports, including leave, comp off, WFH, permissions, and absences. Helps track availability, ensure compliance, and support workforce planning.",
     ATTENDANCE_LEAVE_REPORTS_MODULE_INFO : "Displays detailed information on all leave applications submitted by employees, including types of leave, start and end dates, number of days availed, department, reporting manager, and approval status.",
     ATTENDANCE_LEAVE_SUMMARY_REPORTS_MODULE_INFO : "Provides a summarized view of leave balances and leave availed by employees across various leave types. Useful for tracking total entitlement, usage, and remaining balance for each employee.",
     ATTENDANCE_COMP_OFF_REPORTS_MODULE_INFO : "Shows compensatory off records for employees who have worked beyond normal working hours or on holidays. Includes applied dates, approved days, and usage status.",

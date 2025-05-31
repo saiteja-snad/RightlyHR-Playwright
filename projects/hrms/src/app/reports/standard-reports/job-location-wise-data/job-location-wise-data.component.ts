@@ -307,6 +307,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       fileName
     }
   }
+ navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
     const range = XLSX.utils.decode_range(ws['!ref']!);

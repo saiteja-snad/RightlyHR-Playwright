@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../services/rbac.service';
-
 @Component({
   selector: 'app-holiday-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -14,8 +13,14 @@ import { RbacService } from '../../services/rbac.service';
 export class HolidayTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'Public Holidays', link: '/holidays/public-holidays', icon:'/holidays/public-holidays-icon.png' , permission: { feature: 'Public Holidays Tab', action: 'view' } },
-    { label: 'Optional Holidays', link: '/holidays/optional-holidays', icon:'/holidays/optional-holidays-icon.png' ,permission: { feature: 'Optional Holidays Tab', action: 'view' } },
+    {
+      label: 'Public Holidays', link: '/holidays/public-holidays', icon: '/holidays/optional-holidays-icon.png',
+      permission: { feature: 'Public Holidays Tab', action: 'view' }
+    },
+    {
+      label: 'Optional Holidays', link: '/holidays/optional-holidays', icon: '/holidays/public-holidays-icon.png',
+      permission: { feature: 'Optional Holidays Tab', action: 'view' }
+    },
   ];
 
   constructor(public rbac: RbacService) { }

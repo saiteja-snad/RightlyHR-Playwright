@@ -1,6 +1,6 @@
 <div class="custom-sub-tabs-container">
   <ul class="nav flex-column">
-    <li class="nav-item" *ngFor="let tab of navLinks">
+    <li class="nav-item" *ngFor="let tab of filteredTabs">
       <div class="nav-link" [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
         <div class="d-flex gap-1">{{ tab.label }} ({{ tab.count ?? 0 }})</div>

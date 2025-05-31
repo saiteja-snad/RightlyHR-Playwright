@@ -119,9 +119,10 @@
                         <ng-template #noComments>-</ng-template>
                     </td>
                     @if(!multiSelect){
-                    <td class="text-center">
-                        @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
+                         @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
                         rbac.allowedToAccess('For Role (Time Off).delete'))){
+                    <td class="text-center">
+                       
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -156,8 +157,8 @@
                                 </li>
                             </ul>
                         </div>
-                        }
                     </td>
+                    }
                     }
                 </tr>
                 <!-- } -->

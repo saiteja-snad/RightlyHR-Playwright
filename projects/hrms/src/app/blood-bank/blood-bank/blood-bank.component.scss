@@ -13,11 +13,11 @@
 .cards-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.25rem;
 
     .blood-bank-cards {
 
-        width: 17.42rem;
+        width: 26rem;
         height: 3.87rem;
         border: 0.97px solid #CBD7E2;
         border-radius: 0.61rem;
@@ -64,7 +64,7 @@
 
             .email-text {
                 font-weight: 400;
-                font-size: 9px;
+                font-size:11px;
                 color: #0B3A83;
             }
 

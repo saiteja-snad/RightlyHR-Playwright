@@ -5,11 +5,11 @@
         </div>
     </div>
 
-    <div class="custom-card p-2 mb-3" *ngFor="let item of contactData">
+    <div class="custom-card p-2 mb-3"  >
         <div>
-            <p class="header">{{item.departmentName}}</p>
+            <p class="header">{{contactData[0]?.departmentName }}</p>
         </div>
-        <div class="cards-container">
+        <div class="cards-container" *ngFor="let item of contactData">
             <div class="phone-book-cards">
                 <div class="d-flex gap-2 p-2">
                     <div class="d-flex justify-content-center align-items-center">

@@ -22,12 +22,18 @@ export class ContactDirectoryComponent {
     this.getContactData();
   }
   getContactData() {
-    this.subscription = this.http.getData(`ContactDirectory`).subscribe({
-      next: (data: any) => {
-        this.contactData = data;
-        console.log('contactData', this.contactData);
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
-    });
-  }
+  this.subscription = this.http.getData(`ContactDirectory`).subscribe({
+    next: (data: any) => {
+      this.contactData = data.map((emp: any) => ({
+        name: emp.name || '',
+        emailid: emp.emailid || '',
+        contactNumber: emp.contactNumber || '',
+        departmentName: emp.departmentName || '',
+        profileUrl: emp.profileUrl || 'assets/images/alternate.png'
+      }));
+    },
+    error: (err) => console.error('API error:', err),
+  });
+}
+
 }

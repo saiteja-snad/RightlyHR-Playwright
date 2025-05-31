@@ -59,6 +59,10 @@ export class SidenavComponent implements OnInit {
     {
       label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
+    },
+       {
+      label: 'Blood Bank', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
+      route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' }
     }
   ];
   columnsPerRow = 3;

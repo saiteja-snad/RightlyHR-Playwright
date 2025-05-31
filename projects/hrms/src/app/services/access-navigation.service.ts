@@ -582,6 +582,12 @@ export class AccessNavigationService {
         }
         break;
 
+          case '/blood-bank':
+        if (this.rbac.allowedToAccess('Blood Bank.view')) {
+          return (route = '/blood-bank');
+        }
+        break;
+
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {

@@ -21,3 +21,16 @@ export interface ICreateSubDir {
   mainDir: string;
   subDirName: string;
 }
+
+export interface DocumentData {
+  id: number;
+  empId?: number;
+  documentType?: string;
+  referenceNumber?: string;
+  submittedDate?: string;
+  documentUrl?: string;
+  status?: string;
+  rejectedBy?: string;
+  reason?: string;
+  referenceId?: string;
+}

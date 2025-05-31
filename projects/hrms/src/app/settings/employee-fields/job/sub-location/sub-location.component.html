@@ -11,6 +11,7 @@
                     <tr>
                         <th>Location</th>
                         <th>Sub Location</th>
+                        <th>Address</th>
                         <th class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || 
                         rbac.allowedToAccess('Sub Location.delete')">Action<span class="text-lowercase">(S)</span></th>
                     </tr>
@@ -20,8 +21,19 @@
                         <tr *ngFor="let subloc of SubLocationdetails">
                             <td>{{subloc.jobLocationName}}</td>
                             <td>{{subloc.jobSubLocationName}}</td>
+                            <td>
+                                <div>
+                                    <a type="button" [ngbPopover]="addresss">
+                                        <app-info-icon />
+                                    </a>
+                                    <ng-template #addresss>
+                                        <p class="mb-0">{{subloc.address}} </p>
+                                    </ng-template>
+                                </div>
+                            </td>
+                                                            
                             <td class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || 
-                                                        rbac.allowedToAccess('Sub Location.delete')">
+                                                                                rbac.allowedToAccess('Sub Location.delete')">
                                 <div class="dropdown">
                                     <span type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -99,7 +111,26 @@
                             {{ 'Field cannot start with a space' | translate }}
                      </div>
                 </div>
-
+                 <!--Address field-->
+                 <div class="mb-3">
+                    <label for="AddAddress" class="form-label custom-label mb-2">
+                        {{ 'Address' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" formControlName="AddAddress"
+                        placeholder=" Please enter address" 
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101"/>
+                    <div *ngIf="AddForm.get('AddAddress')?.touched && AddForm.get('AddAddress')?.invalid" class="error-msg">
+                        <div *ngIf="AddForm.get('AddAddress')?.errors?.['required']">
+                            {{ 'Address is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="AddForm.get('AddAddress')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
+                    </div>
+                    <div *ngIf="AddForm.get('AddAddress')?.errors?.['pattern']" class="error-msg">
+                            {{ 'Field cannot start with a space' | translate }}
+                     </div>
+                </div>
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
@@ -172,7 +203,27 @@
                             {{ 'Field cannot start with a space' | translate }}
                      </div>
                 </div>
-
+                <!-- Address Field -->
+                 <div class="mb-3">
+                    <label for="UpdateAddress" class="form-label custom-label mb-2">
+                        {{ 'Address' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" formControlName="UpdateAddress"
+                        placeholder="Please enter address" 
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101"/>
+                    <!-- Sub Location Validation Error -->
+                    <div *ngIf="updateForm.get('UpdateAddress')?.touched && updateForm.get('UpdateAddress')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('UpdateAddress')?.errors?.['required']">
+                            {{ 'Address is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('UpdateAddress')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
+                    </div>
+                     <div *ngIf="updateForm.get('UpdateAddress')?.errors?.['pattern']" class="error-msg">
+                            {{ 'Field cannot start with a space' | translate }}
+                     </div>
+                </div>
                 <!-- Modal Footer with Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">

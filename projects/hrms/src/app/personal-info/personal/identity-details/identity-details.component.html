@@ -28,7 +28,7 @@
                     <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
                         <tr *ngFor="let identityDetails of getIdentitydetails | async">
                             <td>{{ identityDetails.identityType }}</td>
-                            <td>{{ identityDetails.identityNumber }}</td>
+                            <td>{{ identityDetails.identityNumber ? identityDetails.identityNumber : '-' }}</td>
                             <td>
                                 <span *ngIf="identityDetails.attachment;else noData" class="download-text"
                                     (click)="onSelectIdentityAttachmentDownload(identityDetails)">

@@ -182,7 +182,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         this.formemailsfornodue.clear();
         this.modalService.dismissAll();
         this.getNodueClearance();
-        this.conformationPopup.openSuccessModal('No Due Request Raised Successfully');
+        this.conformationPopup.openSuccessModal('No due request raised successfully');
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal('reason.error.Message');
@@ -452,7 +452,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.recallreason.reset();
-          this.conformationPopup.openSuccessModal('Recall Request raised successfully');
+          this.conformationPopup.openSuccessModal('Recall request raised successfully');
           this.fetchSeparationDetails();
         }
       },
@@ -508,7 +508,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.earlyReleivingform.reset();
-          this.conformationPopup.openSuccessModal('Early Relieving Request raised successfully');
+          this.conformationPopup.openSuccessModal('Early relieving request raised successfully');
           this.fetchSeparationDetails();
         }
       },

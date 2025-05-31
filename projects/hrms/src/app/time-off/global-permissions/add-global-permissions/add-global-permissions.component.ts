@@ -93,6 +93,11 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       control?.updateValueAndValidity();
     }
   }
+  
+  openModal() {
+    this.requestForm.reset();
+    this.wasEmployeeDropdownTouched = false;
+  }
 
   initalizingForm() {
     this.requestForm = this.fb.group({

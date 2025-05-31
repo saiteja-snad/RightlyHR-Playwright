@@ -3,9 +3,6 @@
     <div>
       <p class="popup-heading mb-0">{{'Add Global Permission'| translate}}</p>
     </div>
-    <div>
-      <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-    </div>
   </div>
 
   <div class="custom-main-popup-content">
@@ -59,10 +56,16 @@
           <div class="mb-3">
             <label for="employees" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
-              <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
-                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees" [resetFilterOnHide]="true"
+              <!-- <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
+                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees" [resetFilterOnHide]="true" 
                 formControlName="selectedOptions" class="custom-select w-100" [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`">
-              </p-multiSelect>
+              </p-multiSelect> -->
+              <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
+                formControlName="selectedOptions" class="custom-select w-100" placeholder="Select Employees" [filter]="true"
+                [resetFilterOnHide]="true" [showClear]="true" (onPanelHide)="onEmployeeDropdownTouched()"
+                (onClear)="onEmployeeDropdownTouched()"
+                [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`" />
+
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">

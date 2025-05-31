@@ -63,7 +63,9 @@
               }
               @else{-}
             </td>
+            @if(rbac.allowedToAccess('For You (Recall Requests).update') || rbac.allowedToAccess('For You (Recall Requests).delete')) {
             <td class="text-center">
+              @if(rbac.allowedToAccess('For You (Recall Requests).update') || rbac.allowedToAccess('For You (Recall Requests).delete')) {
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -76,7 +78,7 @@
                   </li>
                   }
                 }
-                @if(rbac.allowedToAccess('For You (Recall Requests).update')) {
+                @if(rbac.allowedToAccess('For You (Recall Requests).delete')) {
                   @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
                   (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
                   <li (click)="openModal(rejectmodal);handleRequest(item)">
@@ -93,7 +95,9 @@
                 }
                 </ul>
               </div>
+              }
             </td>
+            }
             }
           </tr>
           <tr *ngIf="filteredData.length === 0">

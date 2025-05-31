@@ -8,7 +8,7 @@
         <th class="text-center">{{'Reason' | translate}}</th>
         <th>{{'Applied Date' | translate }}</th>
         <th>{{'Status' | translate }}</th>
-        <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+        <th class="text-center">{{"Action" | translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="waitingForApprovalWFHs!.length > 0; else noDataTemplate">
@@ -36,7 +36,8 @@
             <td>{{ wfhRequest.requestedDate | dateformat }}</td>
             <td>{{ wfhRequest.status }}</td>
             <td class="text-center">
-              @if(isBeforeToday(wfhRequest.startTime)){
+              <!-- @if(isBeforeToday(wfhRequest.startTime)){ -->
+                 @if(permissionForLoggedInUser && isBeforeToday(wfhRequest.startTime)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -48,7 +49,8 @@
                 </ul>
               </div>
               }@else {
-                {{"NA"}}
+                -
+                <!-- {{"NA"}} -->
               }
             </td>
           </tr>

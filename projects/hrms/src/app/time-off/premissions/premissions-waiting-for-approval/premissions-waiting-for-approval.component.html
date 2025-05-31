@@ -5,12 +5,12 @@
       <thead>
         <th>{{'Requested Date' | translate}}</th>
         <th>{{'Permission Date'| translate}}</th>
-        <th>{{'Duration(In Hours)'| translate}}</th>
+        <th>Duration(In<span class="text-lowercase"> hrs)</span></th> 
         <th class="text-center">{{'Reason'| translate}}</th>
         <!-- <th>Rejected Reason</th> -->
         <th>{{'Permission Type'| translate}}</th>
         <th>{{'Status'| translate}}</th>
-        <th class="text-center">{{'Action'| translate}}<span class="text-lowercase">{{'(s)' | translate}}</span></th>
+        <th class="text-center">{{'Action'| translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
@@ -31,7 +31,8 @@
             <td>{{permissionRequest.type}}</td>
             <td>{{permissionRequest.status}}</td>
             <td class="text-center">
-              @if(isBeforeToday(permissionRequest.requestedDate)){
+              <!-- @if(isBeforeToday(permissionRequest.requestedDate)){ -->
+              @if(permissionForLoggedInUser && isBeforeToday(permissionRequest.requestedDate)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -43,7 +44,8 @@
                 </ul>
               </div>
               }@else {
-                {{"NA"}}
+                -
+                <!-- {{"NA"}} -->
               }
             </td>
           </tr>

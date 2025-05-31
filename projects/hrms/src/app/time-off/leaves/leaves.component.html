@@ -13,19 +13,12 @@
 
 
         <div class="d-flex align-items-center gap-3">
-           <button type="button" class="clear-all-btn" (click)="clearAll()">
-  Clear All
-</button>
-
-            <label class="form-label custom-label m-0">{{'My Team'| translate}}</label>
+            <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
-                <!-- <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" name="myteamemployees"
-                    placeholder="Select Employee Name" [filter]="true" class="form-select custom-select"
+                <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true"optionValue="employeeId" name="myteamemployees"
+                    placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
                     [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
-                </p-select> -->
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" name="myteamemployees"placeholder="Select Employee Name" 
-                [filter]="true" class="form-select custom-select"[autoDisplayFirst]="false" required [(ngModel)]="selectedEmployeeId"(onChange)="onCheckemployee($event.value)">
-                </p-select>
+                </p-select>             
             </div>
             <div *ngIf="disaplyapplybutton">
                 @if (rbac.allowedToAccess('Request Leave Button.view')) {

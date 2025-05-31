@@ -205,7 +205,7 @@ export class YearlySummaryReportComponent {
 
     // Only include filters if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.employeeId !== 'all') {
-      request.employeeId = formValue.employee.employeeId;
+      request.employeeId = formValue?.employee?.employeeId;
     }
 
     // Employee filter
@@ -220,7 +220,7 @@ export class YearlySummaryReportComponent {
 
     // Leave category
     if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
+      request.LeaveName = formValue?.leaveCategory?.value;
     }
 
     // Year

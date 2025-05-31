@@ -470,7 +470,7 @@ export class DeskManagementComponent {
     this.isToggled = false;
   }
   initChart() {
-    const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
+    const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour );
     const backgroundColors = chartTabs.map(item => item.backgroundcolour);
 
     this.deskData = {

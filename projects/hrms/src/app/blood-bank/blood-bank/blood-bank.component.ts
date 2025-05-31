@@ -19,25 +19,11 @@ export class BloodBankComponent {
     searchTerm: any = '';
    constructor(public router: Router,
     private http: HttpService, public formValidation: FormValidationService,) { }
-// bloodBankData = [
-//   {
-//     bloodGroup: 'AB',
-//     name: 'vamsi',
-//     email: 'ssharanya.mandalajisnaddevelopers.com'
-//   },
-//   // Add more objects as needed
-//   {
-//     bloodGroup: 'O+',
-//     name: 'Rahul',
-//     email: 'rahul@example.com'
-//   }
-// ];
-
 
   ngOnInit(): void {
     this.getBloodbank();
-
   }
+
   getBloodbank(){
     this.subscription = this.http.getData(`EmployeeData/ActiveEmployees`).subscribe({
       next: (data: any) => {
@@ -53,16 +39,14 @@ filteredBloodDetails() {
     .filter((item: any) => item.bloodGroup) // show only with blood group
     .filter((item: any) => {
       if (!this.searchTerm) return true;
-
       const term = this.searchTerm.toLowerCase();
       const fullName = `${item.firstName} ${item.middleName || ''} ${item.lastName}`.toLowerCase();
       const email = item.workEmail?.toLowerCase() || '';
       const bloodGroup = item.bloodGroup?.toLowerCase() || '';
-
       return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
     });
 
-  // ✅ Sort alphabetically by full name
+  // Sort alphabetically by full name
   return filtered.sort((a: any, b: any) => {
     const nameA = `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase();
     const nameB = `${b.firstName} ${b.middleName || ''} ${b.lastName}`.toLowerCase();

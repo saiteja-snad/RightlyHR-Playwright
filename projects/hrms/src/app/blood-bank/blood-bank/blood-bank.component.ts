@@ -36,13 +36,24 @@ export class BloodBankComponent {
   
 filteredBloodDetails() {
   const filtered = this.bloodBankData
-    .filter((item: any) => item.bloodGroup) // show only with blood group
+    .filter((item: any) => item.bloodGroup) // show only items with a blood group
     .filter((item: any) => {
       if (!this.searchTerm) return true;
-      const term = this.searchTerm.toLowerCase();
-      const fullName = `${item.firstName} ${item.middleName || ''} ${item.lastName}`.toLowerCase();
-      const email = item.workEmail?.toLowerCase() || '';
-      const bloodGroup = item.bloodGroup?.toLowerCase() || '';
+
+      const term = this.searchTerm.toLowerCase().trim();
+
+      // Clean and normalize name fields
+      const firstName = item.firstName?.toLowerCase().trim() || '';
+      const middleName = item.middleName?.toLowerCase().trim() || '';
+      const lastName = item.lastName?.toLowerCase().trim() || '';
+
+      // Combine full name
+      const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+
+      // Prepare other searchable fields
+      const email = item.workEmail?.toLowerCase().trim() || '';
+      const bloodGroup = item.bloodGroup?.toLowerCase().trim() || '';
+
       return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
     });
 
@@ -55,3 +66,6 @@ filteredBloodDetails() {
 }
 
 }
+
+
+

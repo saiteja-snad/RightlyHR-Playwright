@@ -21,19 +21,32 @@ export class ContactDirectoryComponent {
   ngOnInit(): void {
     this.getContactData();
   }
-  getContactData() {
-  this.subscription = this.http.getData(`ContactDirectory`).subscribe({
+getContactData() {
+  this.subscription = this.http.getData('ContactDirectory').subscribe({
     next: (data: any) => {
-      this.contactData = data.map((emp: any) => ({
-        name: emp.name || '',
-        emailid: emp.emailid || '',
-        contactNumber: emp.contactNumber || '',
-        departmentName: emp.departmentName || '',
-        profileUrl: emp.profileUrl || 'assets/images/alternate.png'
-      }));
+       console.log('Grouped Contact Data-1', data);
+      // Group contacts by department
+      const groupedData: any[] = [];
+
+      data.forEach((item: { departmentName: any; }) => {
+        let deptGroup = groupedData.find(group => group.department === item.departmentName);
+        if (!deptGroup) {
+          deptGroup = {
+            department: item.departmentName,
+            employees: []
+          };
+          groupedData.push(deptGroup);
+        }
+        deptGroup.employees.push(item);
+      });
+
+      this.contactData = groupedData;
+      console.log('Grouped Contact Data', this.contactData);
     },
-    error: (err) => console.error('API error:', err),
+    error: (reason) => console.error('Error fetching contact data:', reason),
   });
 }
+
+
 
 }

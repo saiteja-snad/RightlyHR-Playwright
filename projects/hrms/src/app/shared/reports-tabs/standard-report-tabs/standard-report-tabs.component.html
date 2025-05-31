@@ -1,26 +1,11 @@
-<div class="custom-reportes-sub-tabs-content">
-
-  <div class="reportes-header-content">
-    <div class="d-flex gap-2">
-      <img src='/reports-icons/Standard-reports-icon.png' alt="Icon" class="icon-header mb-2" />
-      <div class="main-header">Standard Reports</div>
+<div class="d-flex gap-3 align-items-center flex-wrap">
+    <div *ngFor="let tab of filteredTabs;">
+        <div class="settings-sub-tabs-card" [routerLink]="tab.route">
+            <div class="d-flex gap-2 align-items-center mb-2">
+                <img [src]="tab.icon" alt="Icon" class="icon">
+                <div class="label-name">{{ tab.label }}</div>
+            </div>
+            <div class="subject-text">{{tab.description}}</div>
+        </div>
     </div>
-    <div>
-      <p class="sub-text">In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden
-        hue on the vibrant landscape. In a world where creativity knows no bounds, the sun rises over the horizon,
-        casting a golden hue on the vibrant landscape. </p>
-    </div>
-  </div>
-
-  <div class="custom-reports-content">
-    <div class="custom-reports" *ngFor="let tab of filteredTabs" [routerLink]="[tab.route]"
-      routerLinkActive="active-nav-link" #rla="routerLinkActive" [class.active]="rla.isActive">
-      <div class="d-flex gap-2 mb-3">
-        <img [src]="tab.icon" alt="Icon" class="icon mb-2" />
-        <div class="tab-label">{{ tab.label }}</div>
-      </div>
-      <div class="tab-desc">{{ tab.description }}</div>
-    </div>
-  </div>
-
 </div>

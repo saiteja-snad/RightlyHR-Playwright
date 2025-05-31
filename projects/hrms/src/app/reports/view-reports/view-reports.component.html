@@ -31,6 +31,18 @@
                 </li>
 
                 <!--Time Off-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Policy Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{policyReportModuleReports}}</p>
+                    <div>
+                        <app-policy-reports-tabs />
+                    </div>
+                </li>
+
+                <!--Time Off-->
                 <li class="list-item" [routerLink]="['/reports/custom-reports']">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/reports-icons/Custom-Reports-icon.png" alt="Icon" class="icon">
@@ -47,6 +59,12 @@
                     </div>
                     <p class="subject-text mb-3">{{monthlyAttendanceReports}}</p>
                 </li>
+
+
+                
+                
+
+                
             </ul>
         </div>
     </div>

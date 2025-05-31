@@ -1,11 +1,11 @@
-<div class="custom-sub-tabs-container">
-    <ul class="nav flex-column">
-      <li class="nav-item" *ngFor="let tab of filteredTabs">
-        <div class="nav-link" [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
-          <img [src]="tab.icon" alt="Icon" class="icon mb-2">
-          <div class="d-flex">{{ tab.label }}</div>
-        </div>
-        <div class="tabs-border-bottom"></div>
-      </li>
-    </ul>
+<div class="d-flex gap-3 align-items-center flex-wrap">
+  <div *ngFor="let tab of filteredTabs;">
+      <div class="settings-sub-tabs-card" [routerLink]="tab.route">
+          <div class="d-flex gap-2 align-items-center mb-2">
+              <img [src]="tab.icon" alt="Icon" class="icon">
+              <div class="label-name">{{ tab.label }}</div>
+          </div>
+          <div class="subject-text">{{tab.description}}</div>
+      </div>
   </div>
+</div>

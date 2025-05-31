@@ -182,7 +182,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ];
 
   export const POLICY_REPORTS_TABS = [
-      { route: '/reports/policy-reports/policy-acknowledgement-report', permission: 'Policy Acknowledgement Report.view' }
+      { route: '/reports/policy-reports/policy-acknowledgment-report', permission: 'Policy Acknowledgement Report.view' }
   ];
   
   export const ASSEST_ALLOCATION_TABS = [

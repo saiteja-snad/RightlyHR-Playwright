@@ -38,24 +38,39 @@ export class BloodBankComponent implements OnInit {
     });
     this.shimmer = false;
   }
+  
+filteredBloodDetails() {
+  const filtered = this.bloodBankData
+    .filter((item: any) => item.bloodGroup) // show only items with a blood group
+    .filter((item: any) => {
+      if (!this.searchTerm) return true;
 
-  filteredBloodDetails() {
-    const filtered = this.bloodBankData
-      .filter((item: any) => item.bloodGroup) // show only with blood group
-      .filter((item: any) => {
-        if (!this.searchTerm) return true;
-        const term = this.searchTerm.toLowerCase();
-        const fullName = `${item.firstName} ${item.middleName || ''} ${item.lastName}`.toLowerCase();
-        const email = item.workEmail?.toLowerCase() || '';
-        const bloodGroup = item.bloodGroup?.toLowerCase() || '';
-        return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
-      });
+      const term = this.searchTerm.toLowerCase().trim();
 
-    // Sort alphabetically by full name
-    return filtered.sort((a: any, b: any) => {
-      const nameA = `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase();
-      const nameB = `${b.firstName} ${b.middleName || ''} ${b.lastName}`.toLowerCase();
-      return nameA.localeCompare(nameB);
+      // Clean and normalize name fields
+      const firstName = item.firstName?.toLowerCase().trim() || '';
+      const middleName = item.middleName?.toLowerCase().trim() || '';
+      const lastName = item.lastName?.toLowerCase().trim() || '';
+
+      // Combine full name
+      const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+
+      // Prepare other searchable fields
+      const email = item.workEmail?.toLowerCase().trim() || '';
+      const bloodGroup = item.bloodGroup?.toLowerCase().trim() || '';
+
+      return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
     });
-  }
+
+  // Sort alphabetically by full name
+  return filtered.sort((a: any, b: any) => {
+    const nameA = `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase();
+    const nameB = `${b.firstName} ${b.middleName || ''} ${b.lastName}`.toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
 }
+
+}
+
+
+

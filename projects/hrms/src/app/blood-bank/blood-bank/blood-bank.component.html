@@ -8,32 +8,32 @@
             </div> -->
         </div>
     </div>
-    <div>
-        <div class="input-group custom-search mb-2">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchTerm" class="form-control custom-search-input"
-      placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">  
-        </div>
+
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchTerm" class="form-control custom-search-input"
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
     </div>
-    <div class="blood-bank-content">
-       <div class="cards-container ">
-         <div class="blood-bank-cards" *ngFor="let item of filteredBloodDetails()">
-             <ng-container *ngIf="item.bloodGroup">
-            <div class="d-flex gap-2" >
-                <div class="blood-group-name">
-                    <p class="name-text m-0">{{ item.bloodGroup }}</p>
-                </div>
-                <div class="sub-content">
-                     <div class="name mb-1">{{ item.firstName }} {{ item.middleName || '' }} {{ item.lastName }}</div>
-                    <div class="email-text">
-                        <i class="bi bi-envelope icon-colour me-1"></i>
-                        {{ item.workEmail || 'N/A' }}
+
+    <div class="custom-component-right-content">
+        <div class="cards-container">
+            <div class="blood-bank-card" *ngFor="let item of filteredBloodDetails()">
+                <ng-container *ngIf="item.bloodGroup">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="blood-group">
+                            <p class="name-text m-0">{{ item.bloodGroup }}</p>
+                        </div>
+                        <div>
+                            <div class="name text-truncate mb-1">{{ item.firstName }} {{ item.middleName || '' }} {{
+                                item.lastName }}
+                            </div>
+                            <div class="email text-truncate">
+                                <i class="bi bi-envelope icon-colour me-1"></i>{{ item.workEmail || 'N/A' }}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </ng-container>
             </div>
-            </ng-container>
         </div>
-       </div>
     </div>
 </div>

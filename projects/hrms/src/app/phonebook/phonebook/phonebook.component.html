@@ -12,42 +12,44 @@
         <div class="input-group custom-search mb-2">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                     class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search Here"
-                aria-label="Username" aria-describedby="basic-addon1">
+            <input type="search" class="form-control custom-search-input" placeholder="Search here"
+                [(ngModel)]="searchphone" aria-label="Username" aria-describedby="basic-addon1">
         </div>
     </div>
     <div class="phone-book-content">
-        <div class="cards-container ">
-            <div class="phone-book-cards">
-                <div class="d-flex gap-2 mb-1 p-2">
-                    <div>
-                        <img src="images/alternate.png" alt="profile" class="profile-icon">
-                    </div>
-                    <div>
-                        <p class="name pt-2 m-0">Srisharanya Mandaloji 
-                            <span class="employe-number me-1"> (SD12345)</span>
-                        </p>
-                    </div>
-                </div>
-                <div class="sub-content p-3">
-                    <p class="label-text mb-2"><span class="bi bi-person-vcard me-1"></span> <span
-                            class="me-1">Designation</span>:
-                        <span class="name-text me-1">UI/UX designer</span>
-                    </p>
-                    <p class="label-text mb-2"> <span class="bi bi-envelope  me-1"></span> <span class="me-1">Work
-                            Email</span>:
-                        <span class="name-text me-1 text-truncate "> ssuuuucccuuharanya.com</span>
-                    </p>
-                    <p class="label-text mb-2"> <span class="bi bi-telephone me-1"></span> <span
-                            class="me-1">work</span>:
-                        <span class="number-text me-1">99998888888</span>
-                    </p>
-                    <p class="label-text mb-2"> <span class="bi bi-telephone me-1"></span> <span
-                            class="me-1">Personal</span>:
-                        <span class="number-text me-1">99998888888</span>
-                    </p>
-                </div>
-            </div>
-        </div>
+       <div class="cards-container" *ngIf="filteredPhoneDetails().length">
+  <div class="phone-book-cards" *ngFor="let emp of filteredPhoneDetails()">
+    <!-- use emp.fullName, emp.jobRole, etc. -->
+    <div class="d-flex gap-2 mb-1 p-2">
+      <div>
+        <img [src]="emp.profileUrl" alt="profile" class="profile-icon">
+      </div>
+      <div>
+        <p class="name pt-2 m-0">{{ emp.fullName }}
+          <span class="employe-number me-1">({{ emp.employeeId }})</span>
+        </p>
+      </div>
     </div>
+    <div class="sub-content p-3">
+      <p class="label-text mb-2">
+        <span class="bi bi-person-vcard me-1"></span> 
+        <span class="name-text me-1">{{ emp.jobRole }}</span>
+      </p>
+      <p class="label-text mb-2">
+        <span class="bi bi-envelope me-1"></span> 
+        <span class="name-text me-1 text-truncate">{{ emp.workEmail }}</span>
+      </p>
+      <p class="label-text mb-2">
+        <span class="bi bi-telephone me-1"></span> Work:
+        <span class="number-text me-1">{{ emp.workPhone }}</span>
+      </p>
+      <p class="label-text mb-2">
+        <span class="bi bi-telephone me-1"></span> Personal:
+        <span class="number-text me-1">{{ emp.contactNumber }}</span>
+      </p>
+    </div>
+  </div>
 </div>
+
+
+    </div>

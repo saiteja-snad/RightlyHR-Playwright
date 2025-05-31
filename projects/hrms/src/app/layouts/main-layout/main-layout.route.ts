@@ -21,6 +21,7 @@ import { EmployeeManagementLayoutComponent } from "../../admin/employee-manageme
 import { InviteUserLayoutComponent } from "../../invite-new-user/invite-user-layout/invite-user-layout.component";
 import { LettersLayoutComponent } from "../../letters/letters-layout/letters-layout.component";
 import { BloodBankComponent } from "../../blood-bank/blood-bank/blood-bank.component";
+import { PhonebookComponent } from "../../phonebook/phonebook/phonebook.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -47,4 +48,5 @@ export default [
     { path: 'invite-user', component: InviteUserLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../invite-new-user/invite-user.route') },
     { path: 'letters', component: LettersLayoutComponent, loadChildren: () => import('../../letters/letters.route') },
     { path: 'blood-bank', component: BloodBankComponent, canActivate: [MsalGuard] },
+     { path: 'phonebook', component: PhonebookComponent, canActivate: [MsalGuard] },
 ] as Route[];

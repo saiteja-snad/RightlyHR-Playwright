@@ -214,6 +214,7 @@ export const permissionsData = [
   { fields: 'Holidays', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },

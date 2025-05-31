@@ -431,6 +431,10 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
         },
       });
   }
+   navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

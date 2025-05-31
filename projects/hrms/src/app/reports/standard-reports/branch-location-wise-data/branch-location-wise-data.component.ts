@@ -41,12 +41,12 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     DataLoaderContentComponent,
     ModuleInformationComponent,
     NgbPopoverModule
-],
+  ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
 })
 export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   empinfo = {} as IJob;
   reportForm!: FormGroup;
   familydata = [] as IFamilyDetails[];
@@ -76,7 +76,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   spinnerLoader1 = false;
   dataload = false;
-  disableBtn= false;
+  disableBtn = false;
 
   constructor(
     private fb: FormBuilder,
@@ -92,8 +92,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.getBranchLocations();
 
-    this.reportForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.reportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     })
 
     this.updateModuleInfo();
@@ -107,53 +107,53 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/reports/standard-reports/branch-data': MODULE_INFOS.STANDARD_REPORTS_BRANCH_LOCATION_WISE_DATA_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getBranchLocations() {
     this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.branchLocations = res;
-            console.log(this.branchLocations)
-            if (this.branchLocations.length > 0) {
-              this.branchLocations.unshift({
-                sno: -1,
-                branchCode: 'All',
-                branchLocation1: 'All Branch Locations',
-                isDeleted: false,
-              });
+      next: (res: any) => {
+        if (res) {
+          this.branchLocations = res;
+          console.log(this.branchLocations)
+          if (this.branchLocations.length > 0) {
+            this.branchLocations.unshift({
+              sno: -1,
+              branchCode: 'All',
+              branchLocation1: 'All Branch Locations',
+              isDeleted: false,
+            });
 
-              this.reportForm.patchValue({
-                location: 'All',
-              });
-            }
+            this.reportForm.patchValue({
+              location: 'All',
+            });
           }
-        },
-        error: (err) => { }
-      });
+        }
+      },
+      error: (err) => { }
+    });
   }
 
   onSubmit(form: FormGroup) {
     this.dataload = true;
     this.spinnerLoader1 = true;
-    
+
     if (form.valid) {
       const formData = form.value;
       const request: IStandardReportRequest = {
@@ -174,12 +174,12 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
           error: (err: any) => {
             this.spinnerLoader1 = false;
             this.dataload = false;
-            this.disableBtn= true;
+            this.disableBtn = true;
           },
           complete: () => {
             this.spinnerLoader1 = false;
             this.dataload = false;
-            this.disableBtn= false;
+            this.disableBtn = false;
           }
         });
     }
@@ -245,6 +245,9 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
         }
       });
   }
+  navigation() {
+    this.router.navigate(['/reports']);
+  }
 
   createReportLog(reportName: string) {
     const req = {
@@ -266,7 +269,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.spinnerLoader = false;
-         }
+        }
       });
   }
 
@@ -295,8 +298,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       let cell = ws[cellAddress];
 
       if (cell && cell.v) {
-        cell.v = cell.v.toString().toUpperCase(); 
-        cell.w = cell.v; 
+        cell.v = cell.v.toString().toUpperCase();
+        cell.w = cell.v;
       }
     }
   }

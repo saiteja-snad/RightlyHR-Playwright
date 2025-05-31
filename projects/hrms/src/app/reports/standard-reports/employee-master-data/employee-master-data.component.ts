@@ -261,6 +261,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       fileName
     };
   };
+  navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   uploadReports(reportsData: any, fileName: string) {
     const reportFile = new File(

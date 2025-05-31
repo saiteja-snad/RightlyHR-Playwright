@@ -1,0 +1,53 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content pt-2">
+        <div class="component-header">Settings</div>
+    </div>
+
+    <div class="custom-component-right-content">
+        <div class="custom-letter-tabs">
+            <ul class="tabs-list-content">
+                <!--Employee Fields-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/Standard-reports-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Standard Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{standardReports}}</p>
+                    <div>
+                        <app-standard-report-tabs />
+                    </div>
+                </li>
+
+                <!--Employee Fields-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Attendance Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{attendanceReports}}</p>
+                    <div>
+                        <app-attandace-report-tabs />
+                    </div>
+                </li>
+
+                <!--Time Off-->
+                <li class="list-item" [routerLink]="['/reports/custom-reports']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/Custom-Reports-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Custom Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{customReports}}</p>
+                </li>
+
+                <!--Time Off-->
+                <li class="list-item" [routerLink]="['/reports/monthly-attandance-reports']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/Monthly-Attendance-Report-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Monthly Attendance Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{monthlyAttendanceReports}}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

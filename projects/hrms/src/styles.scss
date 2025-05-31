@@ -141,6 +141,7 @@ body {
     padding: 0.5rem 0.75rem;
     background-color: var(--header-background-color);
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -535,6 +536,7 @@ body {
     height: calc(100dvh - 10rem);
     overflow-y: auto;
     border-radius: 0.5rem;
+    padding: 1rem;
     background-color: var(--white-color);
     border: 1px solid var(--border-color);
 }
@@ -720,6 +722,7 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
+
 // scroll bar stylings ends
 
 // button stylings
@@ -999,7 +1002,8 @@ select:focus {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1608,7 +1612,7 @@ input[type="file"] {
     .popup-header-border {
         border-bottom: 1.5px solid transparent;
         border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
-        #94B1DE 50.67%, var(--white-color) 108.91%);
+                #94B1DE 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }
@@ -1938,6 +1942,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1956,6 +1961,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -2267,4 +2273,243 @@ input[type=number]::-webkit-outer-spin-button {
         font-size: 10px;
         color: #222222;
     }
+}
+
+
+.custom-reportes-sub-tabs-content {
+    padding: 1rem;
+    cursor: pointer;
+
+    .reportes-header-content {
+
+        .icon-header {
+            width: 3rem;
+            height: 3rem;
+
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 18px;
+            letter-spacing: 0%;
+            color: #222222;
+
+        }
+
+        .sub-text {
+
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 100%;
+            letter-spacing: 1%;
+            color: #9C9C9D;
+        }
+
+
+    }
+
+    .custom-reports-content {
+        display: flex;
+        gap: 1.5rem;
+
+
+        .custom-reports {
+            width: 16rem;
+            min-height: 6.5rem;
+            border: 0.97px solid #CBD7E2;
+            border-radius: 0.61rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+            background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            cursor: pointer;
+
+
+            .icon {
+                width: 1rem;
+                height: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .tab-label {
+                font-weight: 600;
+                font-size: 10px;
+                letter-spacing: 0%;
+                line-height: 100%;
+                color: #555353;
+            }
+
+            .tab-desc {
+                font-weight: 400;
+                font-size: 7px;
+                line-height: 100%;
+                letter-spacing: 1%;
+                color: #ACACAD;
+
+            }
+
+            &.active,
+            &.active-nav-link {
+                border: 2px solid #00b2ff;
+                background: #eaf8ff;
+                box-shadow: 0 4px 16px 0 rgba(0, 178, 255, 0.08);
+            }
+        }
+    }
+}
+
+
+
+
+.graph-grid {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+
+    .p-tablist-tab-list {
+        background-color: transparent !important;
+    }
+
+    // total leave summary
+    .total-leave-balance-graph-content {
+        width: 21rem;
+        padding: 0.75rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid #DCE3E9;
+        background-color: var(--white-color);
+        display: flex;
+        align-items: center;
+
+        li {
+            height: 1.125rem;
+        }
+
+        li:last-child {
+            .employee-type-text:last-child {
+                margin-bottom: 0rem;
+            }
+        }
+
+        .chart-content {
+            position: relative;
+            width: max-content;
+            height: max-content;
+
+            .total-count-content {
+                position: absolute;
+                top: 50%;
+                left: 35%;
+                text-align: center;
+
+                .count {
+                    font-weight: 700;
+                    font-size: 16px;
+                    color: #0F358A;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+
+                .total-count-text {
+                    font-weight: 400;
+                    font-size: 10px;
+                    color: #999999;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+            }
+        }
+
+        canvas {
+            width: 120px !important;
+            height: 120px !important;
+        }
+
+        .bi-circle-fill {
+            font-size: 8px;
+        }
+
+        .employee-type-text {
+            font-weight: 400;
+            font-size: 10px;
+            letter-spacing: 0%;
+            color: #747474;
+        }
+    }
+
+    //scrollable buttons stylings
+    .p-tablist-tab-list {
+        background: none !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem 0.5rem !important;
+    }
+
+    .p-tab-active {
+        background: none !important;
+        border: 0rem !important;
+    }
+
+    .p-tablist-nav-button {
+        box-shadow: none !important;
+    }
+
+    .p-tablist-active-bar {
+        background: none !important;
+    }
+
+    .p-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .employee-category-container {
+        width: calc(100% - 21rem);
+
+        .active-nav-link {
+            box-shadow: 0px 0px 10px 0px #0B3A8340;
+        }
+
+        .employee-category-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 13.5rem !important;
+            padding: 1rem 0.75rem;
+            border: 1px solid #DCE3E9 !important;
+            border-radius: 0.625rem;
+            margin: 0.25rem;
+
+            .icon {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            .content-text {
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 18px;
+                letter-spacing: 0%;
+                text-align: center;
+                color: #222222;
+                text-wrap: wrap;
+            }
+        }
+    }
+}
+
+// shimmer color
+.p-skeleton {
+    background: #ECF1F5 !important;
+
 }

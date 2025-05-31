@@ -49,7 +49,7 @@
 
       @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view') || this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view') ){
       <div class="dropdown">
-        <button type="button" class="custom-btn btn-primary px-5" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="custom-btn btn-primary px-5" data-bs-toggle="dropdown" [disabled]="data.length === 0" aria-expanded="false">
           {{'Export'|translate}}
         </button>
         <ul class="dropdown-menu custom-dropdown-menu">

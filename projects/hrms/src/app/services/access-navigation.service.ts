@@ -61,7 +61,7 @@ import {
   providedIn: 'root',
 })
 export class AccessNavigationService {
-  constructor(private rbac: RbacService) {}
+  constructor(private rbac: RbacService) { }
 
   navigateToAccessedHeaderRoute(actualRoute: string): string {
     let route = '';
@@ -182,15 +182,15 @@ export class AccessNavigationService {
         }
 
         // if (this.rbac.allowedToAccess('Roles Module.view')) {
-          for (const item of SETTINGS_ROLES_TABS) {
-            if ('permission' in item && item.permission) {
-              if (this.rbac.allowedToAccess(item.permission)) {
-                return item.route;
-              }
-            } else {
+        for (const item of SETTINGS_ROLES_TABS) {
+          if ('permission' in item && item.permission) {
+            if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
+          } else {
+            return item.route;
           }
+        }
         // }
 
         if (this.rbac.allowedToAccess('Settings Timeoff Module.view')) {
@@ -266,6 +266,9 @@ export class AccessNavigationService {
         break;
 
       case '/reports':
+        if (this.rbac.allowedToAccess('Reports.view')) {
+          return '/reports';
+        }
         if (this.rbac.allowedToAccess('Standard Reports.view')) {
           for (const item of STANDARD_REPORTS_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -588,6 +591,24 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/blood-bank':
+        if (this.rbac.allowedToAccess('Blood Bank.view')) {
+          return (route = '/blood-bank');
+        }
+        break;
+
+      case '/contacts-directory':
+        if (this.rbac.allowedToAccess('Contacts Directory.view')) {
+          return (route = '/contacts-directory');
+        }
+        break;
+
+      case '/phonebook':
+        if (this.rbac.allowedToAccess('Phone Book.view')) {
+          return (route = '/phonebook');
+        }
+        break;
+
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
@@ -599,7 +620,7 @@ export class AccessNavigationService {
         break;
 
       case '/personalinfo':
-         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ')|| this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+        if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') || this.rbac.allowedToAccess('My Info Personal Tab.view')) {
           for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -630,7 +651,7 @@ export class AccessNavigationService {
         //   return (route = '/personalinfo/team-members');
         // }
 
-        
+
 
         if (
           this.rbac.allowedToAccess('Employee Info Onboard Request Tab.view')
@@ -644,7 +665,7 @@ export class AccessNavigationService {
           return route = '/admin/dashboard'
         }
         break;
-      
+
       case '/admin/active-new-user':
         if (this.rbac.allowedToAccess('Invite New User.view')) {
           for (const item of INVITE_NEW_USER_TABS) {
@@ -654,7 +675,7 @@ export class AccessNavigationService {
           }
         }
         break;
-      
+
     }
     return route;
   }
@@ -682,13 +703,13 @@ export class AccessNavigationService {
         }
         break;
       case '/myinfo/documents':
-      if( this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-        for (const item of MY_INFO_DOCUMENTS_ROUTES) {
-          if (this.rbac.allowedToAccess(item.permission)) {
-            return item.route;
+        if (this.rbac.allowedToAccess('My Info Documents Tab.view')) {
+          for (const item of MY_INFO_DOCUMENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
           }
         }
-      }
         break;
       case '/myinfo/team/my-team-members':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
@@ -788,7 +809,7 @@ export class AccessNavigationService {
         break;
 
       case '/settings/company-settings':
-          return '/settings/company-settings';
+        return '/settings/company-settings';
         break;
       case '/settings/timeoff-configurations':
         for (const item of SETTINGS_TIMEOFF_TABS) {
@@ -1411,36 +1432,36 @@ export class AccessNavigationService {
           return (route = '/time-off/pending-approvals/probation-request');
         }
         break;
-        
+
       case '/personalinfo/personal':
-      if ((this.rbac.allowedToAccess('Employee Info Personal Tab.view ')|| this.rbac.allowedToAccess('My Info Personal Tab.view') )) {
-        for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
-          if (this.rbac.allowedToAccess(item.permission)) {
-            return item.route;
+        if ((this.rbac.allowedToAccess('Employee Info Personal Tab.view ') || this.rbac.allowedToAccess('My Info Personal Tab.view'))) {
+          for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
           }
         }
-      }
-      break;
+        break;
 
-    case '/personalinfo/job':
-      if (this.rbac.allowedToAccess('Employee Info Job Tab.view')|| this.rbac.allowedToAccess('My Info Job Tab.view')) {
-        for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
-          if (this.rbac.allowedToAccess(item.permission)) {
-            return item.route;
+      case '/personalinfo/job':
+        if (this.rbac.allowedToAccess('Employee Info Job Tab.view') || this.rbac.allowedToAccess('My Info Job Tab.view')) {
+          for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
           }
         }
-      }
-      break;
+        break;
 
-    case '/personalinfo/documents':
-      if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') || this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-        for (const item of EMPLOYEE_INFO_DOCUMENTS_ROUTES) {
-          if (this.rbac.allowedToAccess(item.permission)) {
-            return item.route;
+      case '/personalinfo/documents':
+        if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') || this.rbac.allowedToAccess('My Info Documents Tab.view')) {
+          for (const item of EMPLOYEE_INFO_DOCUMENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
           }
         }
-      }
-      break;
+        break;
 
       case '/reports/policy-reports' :
         if(this.rbac.allowedToAccess('Policy Reports.view')){

@@ -177,7 +177,7 @@ DateValidator(): ValidatorFn {
                 console.log(data);
                 this.modalService.dismissAll();
                 this.getData.getEducation.set(true);
-                this.openPopup.openSuccess("Education Details updated successfully");
+                this.openPopup.openSuccess("Education details updated successfully");
                 this.educationForm.reset();
               },
               error: (reason: any) => {
@@ -193,7 +193,7 @@ DateValidator(): ValidatorFn {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.getData.getEducation.set(true);
-          this.openPopup.openSuccess("Education Details updated successfully");
+          this.openPopup.openSuccess("Education details updated successfully");
           this.educationForm.reset();
         },
         error: (reason: any) => {

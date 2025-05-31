@@ -187,7 +187,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line2<span
-                                class="text-danger"></span></label>
+                                class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input"  (input)="onCurrentAddressChange()"  id="currentAddressLine2" [maxLength]="100"
                             formControlName="addressLine2" placeholder="Please enter address line 2" autocomplete="off">
                         <div *ngIf="personalDetailsForm.get('currentAddress.addressLine2')?.invalid && personalDetailsForm.get('currentAddress.addressLine2')?.touched"
@@ -271,7 +271,7 @@
                     </div>
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2
-                            <span class="text-danger"></span></label>
+                            <span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="permanentAddressLine2" [maxLength]="100"
                             formControlName="addressLine2" (input)="onCurrentAddressChange()" placeholder="Please enter address line 2" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine2')?.invalid && personalDetailsForm.get('permanentAddress.addressLine2')?.touched"

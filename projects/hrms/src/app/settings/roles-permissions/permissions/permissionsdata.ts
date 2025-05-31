@@ -655,7 +655,7 @@ export const permissionsData = [
 { fields: 'Dashboard Generate Documents Appointment Letter', View: false, Update: false, Create: false, Delete: false },
 { fields: 'Dashboard Generate Documents Trainee Offer Letter', View: false, Update: false, Create: false, Delete: false },
 { fields: 'Dashboard Generate Documents Trainee Appointment Letter', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Dashboard Generate Documents Welcome Letter', View: false, Update: false, Create: false, Delete: false },
+// { fields: 'Dashboard Generate Documents Welcome Letter', View: false, Update: false, Create: false, Delete: false },
 
 //Active Letters
 { fields: 'Address Proof Letter', View: false, Update: false, Create: false, Delete: false },

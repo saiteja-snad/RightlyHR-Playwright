@@ -16,6 +16,7 @@ import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DocumentData } from '../../../Interfaces/document.model';
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
@@ -241,6 +242,18 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     modal.dismiss();
     this.rejectDocument.reset();
   }
+
+ get shouldShowActionColumn(): boolean {
+  if (!this.documentData) return false;
+  const docs: DocumentData[] = this.documentData.value; // get the current value from BehaviorSubject
+  return docs.some((data: DocumentData) => 
+    data.status !== 'Verified' &&
+    data.status !== 'Rejected' &&
+    data.status === 'Submitted' &&
+    !!data.documentUrl
+  );
+}
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

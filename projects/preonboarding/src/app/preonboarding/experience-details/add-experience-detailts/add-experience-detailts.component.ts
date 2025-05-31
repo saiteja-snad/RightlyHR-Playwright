@@ -194,7 +194,7 @@ DateValidator(): ValidatorFn {
       this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.openPopup.openSuccess("Experience Details added successfully");
+          this.openPopup.openSuccess("Experience details added successfully");
           this.getData.getExperience.set(true);
           this.experienceForm.reset();
         },

@@ -1,17 +1,11 @@
-<div class="component-nav-tabs-container card px-2">
-    <p-tabs value="0" scrollable>
-        <p-tablist>
-            <ng-container *ngFor="let tab of navTabs;">
-                <p-tab [value]="tab.link">
-                    <!-- <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                        {{ tab.label }}
-                    </a> -->
-                    <a (click)="navigateToAccessedRoute(tab.link)" [class.active-nav-link]="isActiveRoute(tab.link)"
-                    class="nav-link">
-                        {{ tab.label }}
-                    </a>
-                </p-tab>
-            </ng-container>
-        </p-tablist>
-    </p-tabs>
+<div class="d-flex gap-3 align-items-center flex-wrap">
+    <div *ngFor="let tab of navTabs;">
+        <div class="settings-sub-tabs-card" [routerLink]="tab.link">
+            <div class="d-flex gap-2 align-items-center mb-2">
+                <img [src]="tab.icon" alt="Icon" class="icon">
+                <div class="label-name">{{ tab.label }}</div>
+            </div>
+            <div class="subject-text">{{tab.subjectText}}</div>
+        </div>
+    </div>
 </div>

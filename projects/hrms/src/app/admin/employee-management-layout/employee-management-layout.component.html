@@ -4,16 +4,22 @@
             <app-all-employees-header />
         </div>
 
-        <div>
-            @if(this.rbac.allowedToAccess('Add Prospective Employee.view') && this.router.url === '/employee-management/prospective-employees'){
+        <div class="d-flex align-items-center gap-2">
+            @if(this.rbac.allowedToAccess('Add Prospective Employee.view') && 
+            this.router.url === '/employee-management/prospective-employees'){
             <div>
-                <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">{{'Add Prospective Employee'| translate}}</button>
+                <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
+                    {{'Add Prospective Employee'| translate}}</button>
             </div>}
-            @if(this.rbac.allowedToAccess('Add Prospective Trainee.view') && this.router.url === '/employee-management/prospective-interns'){
+            @if(this.rbac.allowedToAccess('Add Prospective Trainee.view') && 
+            this.router.url ==='/employee-management/prospective-interns'){
             <div class="d-flex">
-                <button type="button" class="custom-btn btn-primary" (click)="openAddProspectiveIntern()">{{'Add Prospective Trainee'| translate}}</button>
+                <button type="button" class="custom-btn btn-primary" (click)="openAddProspectiveIntern()">
+                    {{'Add Prospective Trainee'| translate}}</button>
             </div>
             }
+            <button class="custom-btn btn-primary" routerLink="/letters">{{'Generate Documents'|translate}}</button>
+            <button class="custom-btn btn-primary" routerLink="/invite-user">{{'Invite User'|translate}}</button>
         </div>
     </div>
 

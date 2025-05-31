@@ -11,9 +11,9 @@
 
     </div>
 
-    <div class="custom-card p-2">
+    <div class="custom-card p-2 mb-3" *ngFor="let item of contactData">
         <div>
-            <p class="header">H.R</p>
+            <p class="header">{{item.departmentName}}</p>
         </div>
         <div class="cards-container  ">
             <div class="phone-book-cards">
@@ -22,13 +22,13 @@
                         <img src="images/alternate.png" alt="profile" class="profile-icon">
                     </div>
                     <div>
-                        <p class="name pt-2 mb-2">Srisharanya Mandaloji
+                        <p class="name pt-2 mb-2">{{item.name}}
 
                         </p>
-                        <p class="label-text mb-2"> <span class="bi bi-envelope  me-1"></span> ssuuuucccuuharanya.com
+                        <p class="label-text mb-2"> <span class="bi bi-envelope  me-1"></span> {{item.emailid}}
 
                         </p>
-                        <p class="label-text m-0"> <span class="bi bi-telephone me-1"></span> 99998888888
+                        <p class="label-text m-0"> <span class="bi bi-telephone me-1"></span> {{item.contactNumber}}
                         </p>
 
                     </div>
@@ -41,7 +41,7 @@
 
     </div>
 
-      <div class="custom-card p-2">
+    <div class="custom-card p-2 mb-3">
         <div>
             <p class="header">IT Support</p>
         </div>
@@ -68,9 +68,9 @@
         </div>
 
 
-        
+
     </div>
-      <div class="custom-card p-2">
+    <div class="custom-card p-2">
         <div>
             <p class="header">Accounts</p>
         </div>
@@ -97,6 +97,6 @@
         </div>
 
 
-        
+
     </div>
 </div>

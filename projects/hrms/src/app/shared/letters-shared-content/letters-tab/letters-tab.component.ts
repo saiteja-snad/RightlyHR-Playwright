@@ -16,7 +16,7 @@ export class LettersTabComponent {
     { label: 'Appointment Letter', link: '/letters/appointment-letter', permission: { feature: 'Dashboard Generate Documents Appointment Letter', action: 'view' } },
     { label: 'Trainee Offer Letter', link: '/letters/trainee-offer-letter', permission: { feature: 'Dashboard Generate Documents Trainee Offer Letter', action: 'view' } },
     { label: 'Trainee Appointment Letter', link: '/letters/trainee-appointment-letter', permission: { feature: 'Dashboard Generate Documents Trainee Appointment Letter', action: 'view' } },
-    { label: 'Welcome Letter', link: '/letters/welcome-letter', permission: { feature: 'Dashboard Generate Documents Welcome Letter', action: 'view' } },
+    // { label: 'Welcome Letter', link: '/letters/welcome-letter', permission: { feature: 'Dashboard Generate Documents Welcome Letter', action: 'view' } },
     { label: 'Bank Loan Letter', link: '/letters/bank-loan-letter', permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' } },
     { label: 'Address Proof Letter', link: '/letters/address-proof-letter', permission: { feature: 'Dashboard Generate Documents Appointment Letter', action: 'view' } },
     { label: 'Apprisal Letter', link: '/letters/apprisal-letter', permission: { feature: 'Dashboard Generate Documents Trainee Offer Letter', action: 'view' } },

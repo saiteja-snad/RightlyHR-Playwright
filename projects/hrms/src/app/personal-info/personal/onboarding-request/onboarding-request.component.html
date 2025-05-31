@@ -9,13 +9,16 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>{{'DOCUMENT TYPE'|translate}}</th>
-                    <th>{{'DOCUMENT NUMBER'|translate}}</th>
-                    <th>{{'SUBMITTED DATE'|translate}}</th>
-                    <th>{{'DOCUMENT'|translate}}</th>
-                    <th>{{'STATUS'|translate}}</th>
-                    @if(rbac.allowedToAccess('Employee Info Documents Verification.update') 
-                    || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
+                    <th>{{'Document Type'|translate}}</th>
+                    <th>{{'Document Number'|translate}}</th>
+                    <th>{{'Submitted Date'|translate}}</th>
+                    <th>{{'Document'|translate}}</th>
+                    <th>{{'Status'|translate}}</th>
+                    @if(
+                    (rbac.allowedToAccess('Employee Info Documents Verification.update')
+                    || rbac.allowedToAccess('Employee Info Documents Verification.delete'))
+                    && shouldShowActionColumn
+                    ){
                     <th>{{'ACTION'|translate}}</th>}
                 </tr>
             </thead>

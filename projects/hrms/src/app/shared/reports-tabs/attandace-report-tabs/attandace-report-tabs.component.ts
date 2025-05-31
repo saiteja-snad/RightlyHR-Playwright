@@ -13,15 +13,15 @@ import { RbacService } from '../../../services/rbac.service';
 export class AttandaceReportTabsComponent {
   filteredTabs: any[] = [];
   navTabs = [
-    { label: 'Leave Report', route: '/reports/attendence-reports/leave-report', icon:'/time-off-icon/leaves-icon.png',  permission: { feature: 'Leave Report', action: 'view' } },
-    { label: 'Leave Summary Report', route: '/reports/attendence-reports/leave-summary-report', icon:'/time-off-icon/Leave-summary-report-icon.png', permission: { feature: 'Leave Summary Report', action: 'view' } },
-    { label: 'Comp Off Report', route: '/reports/attendence-reports/compoff-report', icon:'/time-off-icon/comp-off.png', permission: { feature: 'Comp Off Report', action: 'view' } },
-    { label: 'WFH Report', route: '/reports/attendence-reports/wfh-report', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'WFH Report', action: 'view' } },
+    { label: 'Leave Report', route: '/reports/attendence-reports/leave-report', icon:'/time-off-icon/leaves-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.',  permission: { feature: 'Leave Report', action: 'view' } },
+    { label: 'Leave Summary Report', route: '/reports/attendence-reports/leave-summary-report', icon:'/time-off-icon/Leave-summary-report-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Leave Summary Report', action: 'view' } },
+    { label: 'Comp Off Report', route: '/reports/attendence-reports/compoff-report', icon:'/time-off-icon/comp-off.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Comp Off Report', action: 'view' } },
+    { label: 'WFH Report', route: '/reports/attendence-reports/wfh-report', icon:'/time-off-icon/WFH-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'WFH Report', action: 'view' } },
     // { label: 'Absent Report', route: '/reports/attendence-reports/absent-report',permission: { feature: 'Absent Report', action: 'view' } },
-    { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report', icon:'/time-off-icon/Inactive-employee-report-icon.png', permission: { feature: 'Inactive Empolyee Report', action: 'view' } },
-    { label: 'Yearly Summary Report', route: '/reports/attendence-reports/yearly-summary-report', icon:'/time-off-icon/Yearly-summary-report-icon.png', permission: { feature: 'Yearly Summary Report', action: 'view' } },
-    { label: 'Permission Report', route: '/reports/attendence-reports/permission-report', icon:'/time-off-icon/permissions-icon.png', permission: { feature: 'Permission Report', action: 'view' } },
-    { label: 'Regularization Report', route: '/reports/attendence-reports/regularization-report', icon:'/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Report', action: 'view' } },
+    { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report', icon:'/time-off-icon/Inactive-employee-report-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Inactive Empolyee Report', action: 'view' } },
+    { label: 'Yearly Summary Report', route: '/reports/attendence-reports/yearly-summary-report', icon:'/time-off-icon/Yearly-summary-report-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Yearly Summary Report', action: 'view' } },
+    { label: 'Permission Report', route: '/reports/attendence-reports/permission-report', icon:'/time-off-icon/permissions-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Permission Report', action: 'view' } },
+    { label: 'Regularization Report', route: '/reports/attendence-reports/regularization-report', icon:'/time-off-icon/regularization-icon.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Regularization Report', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }

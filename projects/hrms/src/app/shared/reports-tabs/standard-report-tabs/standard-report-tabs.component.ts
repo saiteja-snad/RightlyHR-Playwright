@@ -14,10 +14,10 @@ import { RbacService } from '../../../services/rbac.service';
 export class StandardReportTabsComponent {
   filteredTabs: any[] = [];
   navTabs = [
-    { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data', icon:'/it-support-icons/employee-icon.png', permission: { feature: 'Employee Master Data', action: 'view' } },
-    { label: 'Job Location Wise Data', route: '/reports/standard-reports/job-data', icon:'/images/jobdetailes.png', permission: { feature: 'Job Location Wise Data', action: 'view' }, },
-    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data', icon:'/images/address.png', permission: { feature: 'Branch Location Wise Data', action: 'view' } },
-    { label: 'Family Members Data', route: '/reports/standard-reports/family-data', icon:'/images/family.png', permission: { feature: 'Family Members Data', action: 'view' } },
+    { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data', icon:'/reports-icons/employee.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.',  permission: { feature: 'Employee Master Data', action: 'view' } },
+    { label: 'Job Location Wise Data', route: '/reports/standard-reports/job-data', icon:'/reports-icons/job.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Job Location Wise Data', action: 'view' }, },
+    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data', icon:'/reports-icons/location.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Branch Location Wise Data', action: 'view' } },
+    { label: 'Family Members Data', route: '/reports/standard-reports/family-data', icon:'/reports-icons/family.png',description:'In a world where creativity knows no bounds, the sun rises over the horizon, casting a golden hue on the vibrant landscape.', permission: { feature: 'Family Members Data', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }

@@ -18,6 +18,7 @@ export class ReportsMainTabsComponent implements OnInit {
     { label: 'Custom Reports', link: '/reports/custom-reports',icon:'/reports-icons/Custom-Reports-icon.png', permission: { feature: 'Custom Reports', action: 'view' } },
     { label: 'Attendance Reports', link: '/reports/attendence-reports',icon:'/reports-icons/attendance-Report-icon.png', permission: { feature: 'Attendance Reports', action: 'view' } },
     { label: 'Monthly Attendance Report', link: '/reports/monthly-attandance-reports',icon:'/reports-icons/Monthly-Attendance-Report-icon.png', permission: { feature: 'Monthly Attendance Reports', action: 'view' } },
+    { label: 'Policy Reports', link: '/reports/policy-reports',icon:'/reports-icons/Monthly-Attendance-Report-icon.png', permission: { feature: 'Policy Reports', action: 'view' } }
   ];
   columnsPerRow = 3;
 

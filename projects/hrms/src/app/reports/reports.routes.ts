@@ -1,5 +1,6 @@
 import { Route, } from '@angular/router';
 import { PermissionsGuard } from '../guards/permissions.guard';
+import { PolicyAcknowledgementReportComponent } from './policy-reports/policy-acknowledgement-report/policy-acknowledgement-report.component';
 
 export default [
     // { path: '', redirectTo: '/reports/standard-reports', pathMatch: 'full' },
@@ -28,4 +29,9 @@ export default [
         ]
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
+    {
+        path: 'policy-reports', children:[
+            {path: 'policy-acknowledgment-report', component : PolicyAcknowledgementReportComponent}
+        ]
+    },
 ] as Route[];

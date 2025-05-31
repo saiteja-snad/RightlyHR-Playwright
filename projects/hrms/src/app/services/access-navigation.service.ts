@@ -54,6 +54,7 @@ import {
   EMPLOYEE_INFO_DOCUMENTS_ROUTES,
   MY_INFO_DOCUMENTS_ROUTES,
   MY_INFO_TEAM_MEMBERS,
+  POLICY_REPORTS_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -287,6 +288,14 @@ export class AccessNavigationService {
 
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
           return (route = '/reports/monthly-attandance-reports');
+        }
+
+        if(this.rbac.allowedToAccess('Policy Reports.view')){
+          for(const item of POLICY_REPORTS_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route;
+            }
+          }
         }
         break;
 
@@ -1433,8 +1442,16 @@ export class AccessNavigationService {
       }
       break;
 
-
-
+      case '/reports/policy-reports' :
+        if(this.rbac.allowedToAccess('Policy Reports.view')){
+          for(const item of POLICY_REPORTS_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              console.log(item.route);
+              return item.route;
+            }
+          }
+        }
+        break;
     }
 
     return route;

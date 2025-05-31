@@ -98,12 +98,15 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
   get isPermissionGenerateDisabled(): boolean {
-    const form = this.permissionReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.permissionReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value ||
-      form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 

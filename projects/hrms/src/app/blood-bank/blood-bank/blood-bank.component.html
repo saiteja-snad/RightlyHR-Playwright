@@ -1,12 +1,6 @@
 <div class="custom-main-component-container">
     <div class="component-header-content pt-2">
-        <div class="heading-content">
-            <div class="component-header">Blood Blank</div>
-            <!-- <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
-            </div> -->
-        </div>
+        <div class="component-header">Blood Blank</div>
     </div>
 
     <div class="input-group custom-search mb-3">
@@ -24,8 +18,8 @@
                             <p class="name-text m-0">{{ item.bloodGroup }}</p>
                         </div>
                         <div>
-                            <div class="name text-truncate mb-1">{{ item.firstName }} {{ item.middleName || '' }} {{
-                                item.lastName }}
+                            <div class="name text-truncate mb-1">
+                                {{ item.firstName }} {{ item.middleName || '' }} {{ item.lastName }}
                             </div>
                             <div class="email text-truncate">
                                 <i class="bi bi-envelope icon-colour me-1"></i>{{ item.workEmail || 'N/A' }}

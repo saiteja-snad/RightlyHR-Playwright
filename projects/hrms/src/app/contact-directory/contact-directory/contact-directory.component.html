@@ -5,29 +5,38 @@
     </div>
   </div>
 
-  <div class="custom-card p-2 mb-3">
-    <div *ngFor="let dept of contactData" class="mb-4">
-      <p class="fw-bold fs-5 text-capitalize">{{ dept.department }}</p>
+  <div class="contact-directory-content">
+    <div class="department-card mb-3" *ngFor="let dept of contactData">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="img-content">
+          <img src="/main-menu-icons/contact-directory-color-icon.png" alt="Icon" class="contact-img">
+        </div>
+        <div>
+          <p class="department-name text-capitalize m-0">{{ dept.department }}</p>
+        </div>
+      </div>
 
-      <div class="cards-container" *ngFor="let item of dept.employees">
-        <div class="phone-book-cards">
-          <div class="d-flex gap-2 p-2">
-            <div class="d-flex justify-content-center align-items-center">
-              <img [src]="item.profileUrl" (error)="item.profileUrl = 'images/alternate.png'" alt="profile" class="profile-icon">
+      <div class="d-flex flex-wrap gap-3 align-items-center">
+        <div class="contact-card" *ngFor="let item of dept.employees">
+          <div class="d-flex justify-content-center align-items-center gap-3">
+            <div>
+              <img [src]="item.profileUrl" (error)="item.profileUrl = 'images/alternate.png'" alt="profile"
+                class="profile-icon">
             </div>
             <div>
-              <p class="name pt-2 mb-2">{{item.name}}</p>
-              <p class="label-text mb-2">
-                <span class="bi bi-envelope me-1"></span> {{item.emailid}}
+              <p class="name m-0 mb-1">{{item.name}}</p>
+              <p class="label-text text-truncate m-0 mb-1">
+                <span class="bi bi-envelope me-2"></span>
+                <span class="link-text ms-1">{{item.emailid}}</span>
               </p>
-              <p class="label-text m-0">
-                <span class="bi bi-telephone me-1"></span> {{item.contactNumber}}
+              <p class="label-text text-truncate m-0 mb-1">
+                <span class="bi bi-telephone me-2"></span>
+                <span class="link-text ms-1"><u>{{item.contactNumber}}</u></span>
               </p>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>

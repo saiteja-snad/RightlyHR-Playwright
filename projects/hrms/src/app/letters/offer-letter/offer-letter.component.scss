@@ -29,3 +29,54 @@ input:focus {
 .spinner-border {
     --bs-spinner-border-width: 0.35rem !important;
 }
+
+ .letter-data-content {
+        width: 100%;
+        flex: 1;
+        height: calc(100dvh - 8.25rem);
+        overflow: auto;
+
+        .letter-sub-data-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            min-width: 280mm;
+        }
+
+        .letter-page-content {
+            height: 380mm;
+            width: 270mm;
+            padding-top: 10rem !important;
+            position: relative;
+            background-image: url('/images/snad-letter-bg.jpg');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            overflow: hidden;
+
+            .letter-page-sub-content {
+                padding: 1.5rem 5rem;
+                font-size: var(--fontsize16) !important;
+                color: #000000;
+            }
+
+            .letter-footer {
+                width: 270mm;
+              
+                position: absolute;
+                bottom: 0px;
+                padding: 0.625rem;
+
+                .company-name {
+                    font-size: var(--fontsize14);
+                    font-weight: 600;
+                }
+
+                .company-address {
+                    font-size: var(--fontsize12);
+                    font-weight: 500;
+                }
+            }
+        }
+    }

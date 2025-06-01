@@ -1,20 +1,32 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <div class="heading-content">
-      <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-      <div class="component-header">Team Leave Balance</div>
+      <div class="commpoment-name" (click)="navigation()">Reports<span class="ms-1"><i
+            class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">Org Leave Balance</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
       </div>
     </div>
-
-    <div class="d-flex align-items-center flex-wrap gap-3">
-      <label class="form-label custom-label m-0">Year</label>
-      <div class="d-flex align-items-center gap-2">
+    <div class="d-flex gap-3 flex-wrap">
+      <div class="d-flex align-items-center gap-3">
+        <label class="form-label custom-label m-0">Select Manager</label>
         <div class="custom-p-select-content">
-          <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
-            placeholder="Select year" class="form-select custom-select" (onChange)="onSelectYear($event)">
+          <p-select [options]="employeeiddetails" [(ngModel)]="selectedEmployeeId" optionValue="employeeId"
+            optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
+            placeholder="Please select manager" (onChange)="Onclick($event)" class="custom-select w-100">
           </p-select>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <label class="form-label custom-label m-0">Year</label>
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
+              placeholder="Select year" class="form-select custom-select" (onChange)="onSelectYear($event)">
+            </p-select>
+          </div>
         </div>
       </div>
     </div>
@@ -26,12 +38,8 @@
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-  <div class="d-flex w-100 gap-3">
-    <div class="component-left-tabs-container">
-      <app-leaves-approvaltabs />
-    </div>
-
-    <div class="component-right-content">
+ 
+      @if(displaytable){
       <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
           <i class="bi bi-search"></i>
@@ -51,13 +59,13 @@
 
       <ng-template #maincontent>
         <div class="custom-accordian-data-content">
-          <p-accordion [value]="filteredTeamLeaveBalance[0].employeeBasicDetails.employeeId">
+          <p-accordion [value]="filteredTeamLeaveBalance[0]?.employeeBasicDetails?.employeeId">
             @if(filteredTeamLeaveBalance.length > 0) {
             @for (employee of filteredTeamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index)
             {
             <p-accordion-panel [value]="employee.employeeBasicDetails.employeeId">
-              <p-accordion-header><span>
-                  <span class="text-capitalize">{{ employee.employeeBasicDetails.employeeName }}</span>
+              <p-accordion-header>
+                <span><span class="text-capitalize">{{ employee.employeeBasicDetails.employeeName }}</span>
                   ({{ employee.employeeBasicDetails.snadEmployeeId }})</span>
               </p-accordion-header>
               <p-accordion-content>
@@ -96,15 +104,21 @@
               </p-accordion-content>
             </p-accordion-panel>
             }
-            }@else {
+            }
+            @else {
             <app-no-data-found></app-no-data-found>
             }
           </p-accordion>
         </div>
       </ng-template>
+      }
+      @else {
+      <div class="custom-compoent-data-loader">
+        <app-no-data-found></app-no-data-found>
+      </div>
+      }
     </div>
-  </div>
-</div>
+
 
 <!--Attendance Logs popup-->
 <ng-template #leavesModal let-modal>

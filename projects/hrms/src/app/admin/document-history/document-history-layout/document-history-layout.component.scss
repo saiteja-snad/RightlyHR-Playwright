@@ -6,10 +6,12 @@
     }
 }
 
-.custom-table-content {
-    height: calc(100dvh - 25.5rem);
+.component-left-tabs-container{
+    height: calc(100vh - 22rem);
+    min-height: 55vh;
 }
 
-.component-left-tabs-container{
-    height: calc(100vh - 22.75rem);
+.custom-table-content {
+    height: calc(100dvh - 24.75rem);
+    min-height: 50vh;
 }

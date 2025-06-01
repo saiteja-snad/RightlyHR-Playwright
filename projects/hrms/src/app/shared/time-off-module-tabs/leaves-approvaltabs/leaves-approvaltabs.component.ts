@@ -192,26 +192,7 @@ export class LeavesApprovaltabsComponent {
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
         icon: '/time-off-icon/cancelled-icon.png'
       },
-      {
-        label: 'Team Leave balance',
-        link: '/time-off/leaves/team-leave-balance',
-        count: this.teamLeaveBalanceCount,
-        permission: { feature: 'Team Leave Balance (Time Off)', action: 'view' },
-        icon:'/time-off-icon/team-leave-balance-icon.png',
-      },
-      {
-        label: 'Team Leave Summary',
-        link: '/time-off/leaves/team-leave-summary',
-        count: this.teamLeaveSummaryCount,
-         permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
-         icon:'/time-off-icon/team-leave-summary-icon.png',
-      },
-      {
-        label: 'Org Leave Balance',
-        link: '/time-off/leaves/org-leave-balance',
-        permission: { feature: 'Org Leave Balance', action: 'view' },
-        icon:'/time-off-icon/Org-Leave-Balance-icon.png',
-      },
+     
     ];
     this.statusTabs = this.statusTabs.filter(
       (tab) =>

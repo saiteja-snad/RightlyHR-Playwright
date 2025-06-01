@@ -2,19 +2,19 @@ import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { Select } from 'primeng/select';
-import { HttpService } from '../../../services/http.service';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { IEmployeeLeaveData } from '../leaves.model';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
-import { LeavesApprovaltabsComponent } from '../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
-import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { LeavesApprovaltabsComponent } from '../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { FormControl, FormsModule } from '@angular/forms';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
-import { AuthService } from '../../../services/auth.service';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { IEmployeeLeaveData } from '../../time-off/leaves/leaves.model';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../services/auth.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import { HttpService } from '../../services/http.service';
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-org-leave-balance',
@@ -212,7 +212,9 @@ export class OrgLeaveBalanceComponent {
       return name.includes(term) || fusionId.includes(term);
     });
   }
-
+  navigation() {
+    this.router.navigate(['/reports']);
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -236,10 +236,8 @@ export const permissionsData = [
   { fields: 'Rejected (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Leave Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Team Leave Balance (Time Off)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Team Leave Balance Summary (Time Off)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Org Leave Balance (Time Off)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Org Leave Balance', View: false, Update: false, Create: false, Delete: false },
+ 
+
 
   //Work From Home Sub Tabs Section
   { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
@@ -377,6 +375,10 @@ export const permissionsData = [
   { fields: 'Attendance reports', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Monthly Attendance Reports', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Policy Reports', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Leave Balance', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Leave Balance Summary', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Org Leave Balance', View: false, Update: false, Create: false, Delete: false },
+
 
   //Standard Reports Section
   { fields: 'Employee Master Data', View: false, Update: false, Create: false, Delete: false },

@@ -134,9 +134,10 @@
         .total-leave-balance-graph-content {
             width: 100%;
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             align-items: center;
-            padding-top: 0.75rem;
+            justify-content: center;
+            padding-top: 1rem;
 
             li {
                 height: 1.125rem;
@@ -174,8 +175,8 @@
             }
 
             canvas {
-                width: 120px !important;
-                height: 120px !important;
+                width: 100px !important;
+                height: 100px !important;
             }
 
             .bi-circle-fill {

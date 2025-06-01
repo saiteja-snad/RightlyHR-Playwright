@@ -1,0 +1,240 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+
+        <div class="heading-content">
+            <div class="commpoment-name" (click)="navigation()">Reports<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Team Leave Summary</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
+        <div class="d-flex align-items-center flex-wrap gap-3">
+            <label class="form-label custom-label m-0" for="">Month</label>
+            <div class="custom-p-select-content">
+                <p-select [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
+                    (onChange)="onSelectMonth($event)" optionLabel="name" class="custom-select">
+                </p-select>
+            </div>
+
+            <label class="form-label custom-label m-0">Year</label>
+            <div class="custom-p-select-content">
+                <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
+                    placeholder="Select year" class="form-select custom-select" (onChange)="onSelectYear($event)">
+                </p-select>
+            </div>
+        </div>
+    </div>
+
+    <!--Module Information-->
+
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
+
+
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+            (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
+    </div>
+
+    <ng-container *ngIf="dataload; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <th>Employee Name</th>
+                    <th>Leaves</th>
+                    <th>WFH</th>
+                    <th>Permissions</th>
+                    <th>Regularization</th>
+                </thead>
+                <tbody>
+                    @if(filteredTeamLeaveSummary.length > 0) {
+                    @for (employee of filteredTeamLeaveSummary; track employee.employeeId) {
+                    <tr>
+                        <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
+                        <td>
+                            <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
+                                *ngIf="(employee.leaves?.length || 0) > 0; else noLeaves"
+                                (click)="openPopup(leavesModal, employee, 'leaves')">
+                                {{ employee.leaves.length || 0 }}
+                            </span>
+                            <ng-template #noLeaves>{{ employee.leaves.length || 0 }}</ng-template>
+                        </td>
+                        <td>
+                            <span [ngClass]="{ 'clickable-text': (employee.wfh.length || 0) > 0 }"
+                                *ngIf="(employee.wfh?.length || 0) > 0; else noWfh"
+                                (click)="openPopup(wfhModal, employee, 'wfh')">
+                                {{ employee.wfh.length || 0 }}
+                            </span>
+                            <ng-template #noWfh>{{ employee.wfh.length || 0 }}</ng-template>
+                        </td>
+                        <td>
+                            <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
+                                *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
+                                (click)="openPopup(permissionModal, employee, 'permissions')">
+                                {{ calculateDuration(employee.permissions)}} Hr(s)
+                            </span>
+                            <ng-template #noPermission>{{ calculateDuration(employee.permissions)}}
+                                Hr(s)</ng-template>
+                        </td>
+                        <td>
+                            <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
+                                *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
+                                (click)="openPopup(permissionModal, employee, 'regularization')">
+                                {{ calculateDuration(employee.regularization)}} Hr(s)
+                            </span>
+                            <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
+                                Hr(s)</ng-template>
+                        </td>
+                    </tr>
+                    }
+                    }@else {
+                    <tr class="table-placeholder">
+                        <app-no-data-found></app-no-data-found>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+
+
+</div>
+
+<!--Leaves popup-->
+<ng-template #leavesModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="6" class="custom-popup-header">{{ selectedEmployee.employeeName }}
+                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
+                            </tr>
+                            <tr>
+                                <th>Category</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Availing</th>
+                                <th>Duration (In Days)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of popupData">
+                                <td class="log-time">{{ item.categoryName }}</td>
+                                <td class="log-time">{{ item.startdate | dateformat }}</td>
+                                <td class="log-time">{{ item.enddate | dateformat }}</td>
+                                <td class="log-time">{{ item.durationType || '-' }}</td>
+                                <td class="log-time">{{ item.duration }}</td>
+                                <td class="log-time">{{ item.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- WFH modal -->
+<ng-template #wfhModal let-modal>
+    <div class="custom-main-popup-container">
+        <div class="custom-main-popup-content" ngbAutofocus>
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="5" class="custom-popup-header">{{ selectedEmployee.employeeName }}
+                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
+                            </tr>
+                            <tr>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Availing</th>
+                                <th>Duration (In Days)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of popupData">
+                                <td class="log-time">{{ item.startTime | dateformat }}</td>
+                                <td class="log-time">{{ item.endTime | dateformat }}</td>
+                                <td class="log-time">{{ item.durationTypeValue || '-' }}</td>
+                                <td class="log-time">{{ item.duration }}</td>
+                                <td class="log-time">{{ item.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Permission & Regularization Modal-->
+<ng-template #permissionModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="4" class="custom-popup-header">{{ selectedEmployee.employeeName }}
+                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
+                            </tr>
+                            <tr>
+                                <th>Requested Date</th>
+                                @if(popupType === 'Permission(s)') {
+                                <th>Permission Type</th>
+                                }@else {
+                                <th>Regularization Type</th>
+                                }
+                                <th>Duration (In Hrs)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of popupData">
+                                <td class="log-time">{{ item.requestedDate | dateformat }}</td>
+                                <td class="log-time">{{ item.type || '-' }}</td>
+                                <td class="log-time">{{ item.duration }}</td>
+                                <td class="log-time">{{ item.status }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

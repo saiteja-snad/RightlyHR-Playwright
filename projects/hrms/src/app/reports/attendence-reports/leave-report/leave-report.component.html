@@ -1,9 +1,10 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!-- Header -->
-  
-         <div class="heading-content">
-      <div class="commpoment-name">Attendance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+
+    <div class="heading-content">
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i
+            class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Leave Report</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -27,9 +28,8 @@
         <div class="d-flex align-items-center gap-2">
           <div>
             <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
-              placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'"
-              readonly />
+              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" placeholder="Please select date"
+              formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
           </div>
         </div>
 
@@ -38,8 +38,8 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-               formControlName="employee" placeholder="Please select employee"
-              class="form-select custom-select" filterPlaceholder="Search employee">
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -51,9 +51,9 @@
         @if(rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName"
-              filterBy="fullName" formControlName="manager" placeholder="Please select manager"
-              class="form-select custom-select" filterPlaceholder="Search manager">
+            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+              filterPlaceholder="Search manager">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -62,13 +62,14 @@
         }
 
         <!--My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees List(Leaves).view')
+        @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees
+        List(Leaves).view')
         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName"
-              filterBy="fullName" formControlName="team" placeholder="Please select employee"
-              class="form-select custom-select" filterPlaceholder="Search employee" (onChange)="onClick($event)">
+            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee" (onChange)="onClick($event)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
             </p-select>
@@ -78,9 +79,9 @@
         <!-- Leave Category -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label"
-              filterBy="label" formControlName="leaveCategory" placeholder="Select leave category"
-              class="form-select custom-select" filterPlaceholder="Search leave type">
+            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label" filterBy="label"
+              formControlName="leaveCategory" placeholder="Select leave category" class="form-select custom-select"
+              filterPlaceholder="Search leave type">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
               <ng-template let-employee #item>{{ employee.label }}</ng-template>
             </p-select>
@@ -101,7 +102,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
+          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report -
+          Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filteredleaveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
@@ -117,69 +119,62 @@
     </form>
   </div>
 
- <!--Module Information-->
+  <!--Module Information-->
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
 
-  <div class="d-flex gap-3 w-100">
-    <div class="component-left-tabs-container">
-      <app-attandace-report-tabs />
-    </div>
 
-    <div class="component-right-content">
-      @if (isLoading) {
-      <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
-      </div>
-      }@else {
-      <div class="custom-table-content">
-        <table id="leaveReportTable" class="w-100">
-          <thead>
-            <th>Employee ID</th>
-            <th>Employee Name</th>
-            <th>Department</th>
-            <th>Team Manager</th>
-            <th>Location</th>
-            <th>Sub Location</th>
-            <th>Shift</th>
-            <th>Leave Type</th>
-            <th>Leave Start Date</th>
-            <th>Leave End Date</th>
-            <th>Availed</th>
-            <th>Applied Date</th>
-            <th>Days</th>
-          </thead>
-          <tbody>
-            @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
-            <tr>
-              <app-no-data-found></app-no-data-found>
-            </tr>
-            }
-            @else {
-            @for (record of filteredleaveRecord; track $index) {
-            <tr>
-              <td>{{ record.fusionEmpId ?? '-' }}</td>
-              <td>{{ record.employeeName ?? '-' }}</td>
-              <td>{{ record.department ?? '-' }}</td>
-              <td>{{ record.teamManagerName ?? '-' }}</td>
-              <td>{{ record.location ?? '-' }}</td>
-              <td>{{ record.sublocation ?? '-' }}</td>
-              <td>{{ record.shift ?? '-' }}</td>
-              <td>{{ record.leaveType ?? '-' }}</td>
-              <td>{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>
-              <td>{{ record.enddate ? (record.enddate | date: 'dd-MMM-yyyy') : '-' }}</td>
-              <td>{{ record.availed ?? '-'}}</td>
-              <td>{{ record.appliedDate| date: 'dd-MMM-yyyy' : '-'}}</td>
-              <td>{{ record.days ?? '-' }}</td>
-            </tr>
-            }
-            }
-          </tbody>
-        </table>
-      </div>
-      }
-    </div>
+  @if (isLoading) {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
   </div>
+  }@else {
+  <div class="custom-table-content">
+    <table id="leaveReportTable" class="w-100">
+      <thead>
+        <th>Employee ID</th>
+        <th>Employee Name</th>
+        <th>Department</th>
+        <th>Team Manager</th>
+        <th>Location</th>
+        <th>Sub Location</th>
+        <th>Shift</th>
+        <th>Leave Type</th>
+        <th>Leave Start Date</th>
+        <th>Leave End Date</th>
+        <th>Availed</th>
+        <th>Applied Date</th>
+        <th>Days</th>
+      </thead>
+      <tbody>
+        @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+        <tr>
+          <app-no-data-found></app-no-data-found>
+        </tr>
+        }
+        @else {
+        @for (record of filteredleaveRecord; track $index) {
+        <tr>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.teamManagerName ?? '-' }}</td>
+          <td>{{ record.location ?? '-' }}</td>
+          <td>{{ record.sublocation ?? '-' }}</td>
+          <td>{{ record.shift ?? '-' }}</td>
+          <td>{{ record.leaveType ?? '-' }}</td>
+          <td>{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>
+          <td>{{ record.enddate ? (record.enddate | date: 'dd-MMM-yyyy') : '-' }}</td>
+          <td>{{ record.availed ?? '-'}}</td>
+          <td>{{ record.appliedDate| date: 'dd-MMM-yyyy' : '-'}}</td>
+          <td>{{ record.days ?? '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+  </div>
+  }
 </div>

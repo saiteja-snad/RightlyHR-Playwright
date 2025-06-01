@@ -14,6 +14,7 @@ import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDays
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -31,6 +32,7 @@ import { Skeleton } from 'primeng/skeleton';
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class DashboardComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -397,7 +399,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateCardItems() {
     this.cardItems = [
       {
-        label: 'Active',
+        label: 'Active Employees',
         link: '/employee-management/active-employees',
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
@@ -405,7 +407,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
-        label: 'Inactive',
+        label: 'Inactive Employees',
         link: '/employee-management/inactive-employees',
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
@@ -413,7 +415,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
-        label: 'Prospective',
+        label: 'Prospective Employees',
         link: '/employee-management/prospective-employees',
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
@@ -421,7 +423,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
-        label: 'Probation',
+        label: 'Probation Employees',
         link: '/employee-management/probation-employees',
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',

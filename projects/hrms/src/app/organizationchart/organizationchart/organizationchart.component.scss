@@ -70,4 +70,12 @@
             border-start-end-radius: 0rem !important;
         }
     }
+    
+}
+.no-data-content{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    top:50px
 }

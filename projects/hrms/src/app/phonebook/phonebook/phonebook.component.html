@@ -1,0 +1,48 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content pt-2">
+    <div class="component-header">Phone Book</div>
+  </div>
+
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search here" [(ngModel)]="searchphone"
+      aria-label="Username" aria-describedby="basic-addon1">
+  </div>
+
+  <div class="custom-component-right-content">
+    <div *ngIf="filteredPhoneDetails().length" class="phone-book-content">
+      <div class="phone-book-card" *ngFor="let emp of filteredPhoneDetails()">
+        <div class="profile-content">
+          <div>
+            <img [src]="emp.profileUrl" alt="profile" class="profile-icon">
+          </div>
+          <div>
+            <p class="name text-truncate m-0">{{ emp.fullName }}<span class="employe-number ms-1">({{ emp.employeeId }})</span></p>
+          </div>
+        </div>
+        <div class="data-content">
+          <p class="label-text text-truncate mb-2">
+            <span class="bi bi-person-vcard me-2"></span>
+            <span>Designation:</span>
+            <span class="link-text ms-1">{{ emp.jobRole }}</span>
+          </p>
+          <p class="label-text text-truncate mb-2">
+            <span class="bi bi-envelope me-2"></span>
+            <span>Work Email:</span>
+            <span class="link-text ms-1">{{ emp.workEmail }}</span>
+          </p>
+          <p class="label-text text-truncate mb-2">
+            <span class="bi bi-telephone me-2"></span>
+            <span>Work:</span>
+            <span class="link-text ms-1"><u>{{emp.workPhoneCountryCode}}{{ emp.workPhone }}</u></span>
+          </p>
+          <p class="label-text text-truncate mb-2">
+            <span class="bi bi-telephone me-2"></span>
+            <span>Personal:</span>
+            <span class="link-text ms-1"><u>{{emp.mobilePhoneCountryCode}}{{ emp.contactNumber }}</u></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

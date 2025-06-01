@@ -364,7 +364,7 @@ export class AppointmentLetterComponent {
     };
     this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Appointment Letter Generated Successfully')
+        this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(()=>{
           this.navigateDashboard();
         }, 2000);
@@ -407,7 +407,7 @@ export class AppointmentLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully');
+        this.conformationPopup.openSuccessModal('Email sent successfully');
       },
       error: (err: any) => {
         this.spinnerLoader= false;

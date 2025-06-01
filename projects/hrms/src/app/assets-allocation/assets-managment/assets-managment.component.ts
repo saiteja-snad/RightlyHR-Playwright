@@ -13,12 +13,13 @@ import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { ChartModule } from 'primeng/chart';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule,NgbPopoverModule, FormsModule, ModuleInformationComponent],
+  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class AssetsManagmentComponent {
@@ -51,8 +52,10 @@ export class AssetsManagmentComponent {
   collectionSize = 100;
   minpurchesDate: any;
   maxpurchesDate: any;
+  assetData: any;
+  assetDataOptions: any;
 
-  constructor(private readonly fb: FormBuilder, private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
+  constructor(private readonly fb: FormBuilder, public http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
     public formValidation: FormValidationService, public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
@@ -79,10 +82,10 @@ export class AssetsManagmentComponent {
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', permission: { feature: 'Asset Management - Available', action: 'view' } },
-      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
-      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
-      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#25BBFF', permission: { feature: 'Asset Management - Available', action: 'view' } },
+      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#FCD643', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
+      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF338A', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
+      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#338DF8', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
     ];
     // Filter navTabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab =>
@@ -93,7 +96,7 @@ export class AssetsManagmentComponent {
 
   initialform() {
     this.assetForm = this.fb.group({
-      assetModel: [null, [Validators.required, Validators.maxLength(20),Validators.pattern(/^[^\s].*$/)]],
+      assetModel: [null, [Validators.required, Validators.maxLength(20), Validators.pattern(/^[^\s].*$/)]],
       assetCategory: [null, Validators.required],
       assetSubCategory: [{ value: null, disabled: true }, Validators.required],
       assetID: [null],
@@ -327,23 +330,23 @@ export class AssetsManagmentComponent {
   //       },
   //     });
   // }
-onassetsubcategory() {
-  this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
-  this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
-  this.assetForm.get('assetSubCategory')?.enable();
+  onassetsubcategory() {
+    this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
+    this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
+    this.assetForm.get('assetSubCategory')?.enable();
 
-  const selectedId = this.assetForm.get('assetCategory')?.value.id;
+    const selectedId = this.assetForm.get('assetCategory')?.value.id;
 
-  this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data: any) => {
-        this.assetSubCategory = data;
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
-}
+    this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.assetSubCategory = data;
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
+  }
 
   getAssetCatData(data: any) {
     return this.assetCategorys.find((t) => parseInt(data) === t.id)?.name
@@ -407,65 +410,39 @@ onassetsubcategory() {
     });
   }
 
-  // getSubLocationByid(selectedLocation: any): void {
-  //   this.assetForm.get('subLocationId')?.enable()
-  //   if (selectedLocation && selectedLocation.id) {
-  //     this.subscription = this.http
-  //       .getData(
-  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
-  //       )
-  //       .subscribe({
-  //         next: (data: any) => {
-  //           if (data.length === 0) {
-  //             this.subLocationsDropdown = []; // Reset if no sub-locations are found
-  //           } else {
-  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-  //           }
-  //           // Reset the sub-location selection in the form
-  //           this.assetForm.patchValue({ subLocation: null });
-  //         },
-  //         error: (err: any) => {
-  //           this.subLocationsDropdown = []; // Reset on error
-  //           this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
-  //         },
-  //       });
-  //   } else {
-  //     this.subLocationsDropdown = []; // Reset if no location is selected
-  //   }
-  // }
-getSubLocationByid(selectedLocation: any): void {
-  this.assetForm.get('subLocationId')?.enable();
+  getSubLocationByid(selectedLocation: any): void {
+    this.assetForm.get('subLocationId')?.enable();
 
-  if (selectedLocation && selectedLocation.id) {
-    this.subscription = this.http
-      .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`)
-      .subscribe({
-        next: (data: any) => {
-          if (data.length === 0) {
+    if (selectedLocation && selectedLocation.id) {
+      this.subscription = this.http
+        .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`)
+        .subscribe({
+          next: (data: any) => {
+            if (data.length === 0) {
+              this.subLocationsDropdown = [];
+            } else {
+              this.subLocationsDropdown = data.jobSubLocations;
+            }
+
+            // Reset and make subLocationId required
+            this.assetForm.get('subLocationId')?.setValue(null);
+            this.assetForm.get('subLocationId')?.setValidators([Validators.required]);
+            this.assetForm.get('subLocationId')?.markAsTouched(); // Force show error immediately
+            this.assetForm.get('subLocationId')?.updateValueAndValidity();
+          },
+          error: (err: any) => {
             this.subLocationsDropdown = [];
-          } else {
-            this.subLocationsDropdown = data.jobSubLocations;
-          }
-
-          // Reset and make subLocationId required
-          this.assetForm.get('subLocationId')?.setValue(null);
-          this.assetForm.get('subLocationId')?.setValidators([Validators.required]);
-          this.assetForm.get('subLocationId')?.markAsTouched(); // Force show error immediately
-          this.assetForm.get('subLocationId')?.updateValueAndValidity();
-        },
-        error: (err: any) => {
-          this.subLocationsDropdown = [];
-          this.assetForm.get('subLocationId')?.setValue(null);
-          this.assetForm.get('subLocationId')?.markAsTouched();
-        },
-      });
-  } else {
-    this.subLocationsDropdown = [];
-    this.assetForm.get('subLocationId')?.setValue(null);
-    this.assetForm.get('subLocationId')?.clearValidators();
-    this.assetForm.get('subLocationId')?.updateValueAndValidity();
+            this.assetForm.get('subLocationId')?.setValue(null);
+            this.assetForm.get('subLocationId')?.markAsTouched();
+          },
+        });
+    } else {
+      this.subLocationsDropdown = [];
+      this.assetForm.get('subLocationId')?.setValue(null);
+      this.assetForm.get('subLocationId')?.clearValidators();
+      this.assetForm.get('subLocationId')?.updateValueAndValidity();
+    }
   }
-}
 
   postassets(formdata: FormGroup) {
     if (formdata.valid) {
@@ -611,6 +588,7 @@ getSubLocationByid(selectedLocation: any): void {
         this.http.setallocatedAssetCount(allocateCount);
         this.http.setundermatinaceAssetCount(undermaintenceCount);
         this.http.setinactiveSubjectAssetCount(inactiveCount);
+        this.initChart();
       },
       error: (error) => {
         console.error('Error fetching count:', error);
@@ -628,6 +606,33 @@ getSubLocationByid(selectedLocation: any): void {
     this.modalService.dismissAll();
     this.isToggledWarranty = false
     this.isToggledamc = false
+  }
+
+  initChart() {
+    const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
+    const backgroundColors = chartTabs.map(item => item.backgroundcolour);
+
+    this.assetData = {
+      datasets: [
+        {
+          data: [
+
+            this.http.avilableassetCountSubject.value ?? 0,
+            this.http.allocatedassetCountSubject.value ?? 0,
+            this.http.undermatinaceassetCountSubject.value ?? 0,
+            this.http.inactiveaceassetCountSubject.value ?? 0,
+
+          ],
+          backgroundColor: backgroundColors,
+          borderWidth: 0,
+        }
+      ]
+    };
+
+
+    this.assetDataOptions = {
+      cutout: '70%',
+    };
   }
 
   ngOnDestroy(): void {

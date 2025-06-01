@@ -1,0 +1,58 @@
+.custom-component-right-content {
+    height: calc(100vh - 11.5rem);
+
+    .phone-book-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .phone-book-card {
+        width: 25rem;
+        height: max-content;
+        border-radius: 0.625rem;
+        border: 1px solid #DCE3E9;
+        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+
+        .profile-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid #DCE3E9;
+        }
+
+        .profile-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+        }
+
+        .name {
+            font-weight: 600;
+            font-size: var(--fontsize14);
+            text-transform: capitalize;
+        }
+
+        .employe-number {
+            font-weight: 400;
+            font-size: var(--fontsize12);
+        }
+
+        .data-content {
+            padding: 0.75rem;
+        }
+
+        .label-text {
+            font-weight: 400;
+            font-size: var(--fontsize12);
+            text-transform: capitalize;
+            vertical-align: middle;
+            align-items: center;
+        }
+
+        .link-text {
+            color: var(--primary-color);
+        }
+    }
+}

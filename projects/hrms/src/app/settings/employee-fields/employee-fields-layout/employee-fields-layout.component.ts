@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { SettingsPersonalTabsComponent } from "../../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component";
 import { SettingsJobTabsComponent } from "../../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component";
 import { SettingsExpenesConfigurtionsTabsComponent } from "../../../shared/settings-expenes-configurtions-tabs/settings-expenes-configurtions-tabs.component";
@@ -10,15 +9,15 @@ import { ManageDstTabsComponent } from "../../../shared/settings-tabs/manage-dst
 import { SettingsManageShitsTabsComponent } from "../../../shared/settings-tabs/settings-manage-shits-tabs/settings-manage-shits-tabs.component";
 import { SettingsManageHolidaysTabsComponent } from "../../../shared/settings-tabs/settings-manage-holidays-tabs/settings-manage-holidays-tabs.component";
 import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-tabs/settings-manage-policies-tabs/settings-manage-policies-tabs.component";
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { filter } from 'rxjs';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-employee-fields-layout',
-  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
+  imports: [CommonModule, RouterModule, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
     SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent,
-    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent,NgbPopoverModule],
+    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

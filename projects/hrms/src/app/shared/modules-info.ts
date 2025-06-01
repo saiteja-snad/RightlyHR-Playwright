@@ -1,5 +1,6 @@
 export const MODULE_INFOS = {
     //Settings Employee Fields Module Info
+    SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO : "Define and manage core employee data sections such as personal details, job info, documents, and policies. Central hub for configuring fields that shape the employee profile structure.",
     SETTINGS_PERSONAL_INFO_MODULE_INFO : "This section allows configuration of dropdown values like Salutation, Status, Gender, Marital Status, Degree, Visa Type, Identity Type, Relationship, and Bank Names. It ensures standardization and consistency across employee profile creation and HR processes.",
     SETTINGS_JOB_INFO_MODULE_INFO : "This section is used to define and manage job-related dropdowns such as Job Role, Job Type, Department, Team, Grade, Pay Type, Location, and others related to employment structure. It standardizes employment details including probation, compensation, onboarding, and exit-related attributes to ensure consistency across HR records.",
     SETTINGS_DOCUMENTS_INFO_MODULE_INFO : "This section allows to Configure and manage all document types including employee documents, appraisal/promotion letters, and organization policies. Ensures structured document collection, verification, and seamless compliance across the employee lifecycle.",
@@ -12,11 +13,13 @@ export const MODULE_INFOS = {
     SETTINGS_NO_DUE_CLEARANCE_MODULE_INFO : "Set up department-wise clearance responsibilities by assigning employee names and roles to ensure smooth offboarding. This module helps define which managers or HR personnel must clear dues before an employee exits the organization.",
 
     //Settings Roles Module Info
+    SETTINGS_ROLES_PERMISSIONS_MODULE_INFO : "Define user roles and assign permissions to control access across modules. Manage role hierarchies and streamline data security through role-based access.",
     SETTINGS_ROLES_MODULE_INFO : "Define organizational roles like HR, Manager, or Employee and associate them with specific responsibilities. Roles serve as the base for access and approval structures.",
     SETTINGS_ROLES_PERMISSION_MODULE_INFO : "Assign module access and specific actions like create, edit, or view to each role. This ensures users only see and perform tasks allowed for their role.",
     SETTINGS_ROLES_ASSIGNEE_MODULE_INFO : "Map employees to their appropriate roles so they inherit the correct permissions. This mapping ensures system-level access is accurately controlled.",
 
     //Settings Time off Module Info
+    SETTINGS_TIME_OFF_MODULE_INFO : "Manage employee leave lifecycle from application to approval, including comp-offs, permissions, and regularization. Enables smooth tracking, manager actions, and real-time balance visibility.", 
     SETTINGS_LEAVE_CATEGORY_MODULE_INFO : "Create leave types such as Sick Leave, Paid Leave, and Casual Leave and set rules like carry-forward or accrual. Categories are used in the employee leave application interface.",
     SETTINGS_LEAVE_ALLOCATION_MODULE_INFO : "Configure yearly leave entitlements by selecting year, location, sub-location, shift, and category. Allocate specific leave days to various grades to standardize time-off across departments and roles.",
     SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO : "Assign personalized leave days by selecting year, location, sub-location, shift, category, and employee. This module allows tailoring leave entitlements at the individual employee level for greater flexibility and control.",
@@ -25,9 +28,16 @@ export const MODULE_INFOS = {
 
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO : "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
-    
+    SETTINGS_ASSET_CONFIGURATION_VENDOR_DETAILS:"Manage and track vendor information for all your assets in one place. Easily view contact details, status, and addresses for seamless vendor coordination.",
+    SETTINGS_ASSET_CONFIGURATION_ASSET_CATEGORY:"Create and organize categories like Hardware or Software to manage your assets better. Helps in easy tracking and reporting of asset types.",
+    SETTINGS_ASSET_CONFIGURATION_ASSET_SUB_CATEGORY:"Define detailed subcategories under each asset type like Desktop, Windows, or Mouse. Makes asset tracking more specific and organized.",
+
     //Settings Dynamic Forms Module Info
     SETTINGS_DYNAMIC_FORMS_MODULE_INFO : "This module displays a categorized list of forms under Active, Inactive, and Draft statuses for PMS, allowing admins to search, view, and manage form configurations. Each form lists its module, name, creator, last updater, and current status for easy tracking and control.",
+    SETTINGS_DYNAMIC_FORMS_ACTIVE_FORMS : "Create and manage customizable forms for various modules like PMS and Probation. Control fields, workflows, and visibility to streamline data collection across teams.",
+    SETTINGS_DYNAMIC_FORMS_INACTIVE_FORMS : "Design, manage, and reuse custom forms for modules like PMS. Inactive forms to maintain clean workflows without losing past data.",
+    SETTINGS_DYNAMIC_FORMS_DRAFT_FORMS : "Design and manage custom forms for any module with ease. Track them by status Draft—to build, pause, or finalize forms at your pace.",
+    SETTINGS_DYNAMIC_FORMS_FORM_SETTINGS : "Customize form scoring with flexible rating scales for performance reviews, feedback, or assessments. Define rating types, ranges, and apply them to any section within your dynamic forms.",
 
     //Expenses Module Info
     EXPENSES_MODULE_INFO : "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
@@ -58,6 +68,7 @@ export const MODULE_INFOS = {
     HOLIDAYS_MODULE_INFO : "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",
 
     //Reports Module Standard Reports Module Info
+    STANDARD_REPORTS_MODULE_INFO: "Get a clear view of employee data across the organization. Access ready-made reports on joining details, job locations, family info, compensation, and more — all in one place for easy export and analysis.", 
     STANDARD_REPORTS_EMPLOYEE_MASTER_DATA_MODULE_INFO : "The Employee Master Data Reports page allows generation and export of comprehensive Employee Master Data based on selected date ranges and employee status. It displays detailed employee information including personal, contact, educational, statutory, banking, and job-related details for accurate HR recordkeeping.",
     STANDARD_REPORTS_JOB_LOCATION_WISE_DATA_MODULE_INFO : "The Job Location Wise Data report lists employees filtered by job location and joining date. It includes personal details, contact numbers, and placeholders for job-related information such as role, shift, and department, allowing generation and export of structured job allocation data.",
     STANDARD_REPORTS_BRANCH_LOCATION_WISE_DATA_MODULE_INFO : "The Branch Location Wise Data report enables generation of employee information based on selected branch locations. It filters records by branch code and joining date, helping HR teams organize, export, and analyze employee distribution across different office branches.",
@@ -67,6 +78,7 @@ export const MODULE_INFOS = {
     CUSTOM_REPORTS_MODULE_INFO : "The Custom Reports section enables users to generate employee reports by selecting specific fields from Personal, Job. Reports can be filtered, customized, and exported for analysis or documentation.",
 
     //Attendance Reports Module Info
+    ATTENDANCE_REPORTS_MODULE_INFO : "Get a complete view of employee attendance reports, including leave, comp off, WFH, permissions, and absences. Helps track availability, ensure compliance, and support workforce planning.",
     ATTENDANCE_LEAVE_REPORTS_MODULE_INFO : "Displays detailed information on all leave applications submitted by employees, including types of leave, start and end dates, number of days availed, department, reporting manager, and approval status.",
     ATTENDANCE_LEAVE_SUMMARY_REPORTS_MODULE_INFO : "Provides a summarized view of leave balances and leave availed by employees across various leave types. Useful for tracking total entitlement, usage, and remaining balance for each employee.",
     ATTENDANCE_COMP_OFF_REPORTS_MODULE_INFO : "Shows compensatory off records for employees who have worked beyond normal working hours or on holidays. Includes applied dates, approved days, and usage status.",

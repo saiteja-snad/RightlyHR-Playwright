@@ -8,9 +8,10 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-time-off-layout',
-  imports: [RouterModule, CommonModule, SettingsTimeOffTabsComponent, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, CommonModule, SettingsTimeOffTabsComponent, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent, ModuleInformationComponent, NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './time-off-layout.component.html',
   styleUrl: './time-off-layout.component.scss',
   encapsulation:ViewEncapsulation.None

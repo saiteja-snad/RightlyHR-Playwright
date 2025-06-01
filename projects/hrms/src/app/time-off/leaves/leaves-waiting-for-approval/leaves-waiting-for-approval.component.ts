@@ -35,6 +35,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   lpdata = [] as Ilpid[];
   cancelForm!: FormGroup;
   selectedFields = {} as any;
+  permissionForLoggedInUser: boolean = true;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -132,6 +133,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
   getDataByLPID() {
     let empid = this.empdata.employeeId;
+    this.permissionForLoggedInUser = true;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
@@ -147,6 +149,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
 
   getDataByLPEMPID() {
     let empid = this.selectempid;
+    this.permissionForLoggedInUser = false;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

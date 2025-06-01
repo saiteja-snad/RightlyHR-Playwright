@@ -16,6 +16,7 @@ import { IPolicyAcknowledgementReports } from './policy-acknowledgement-report';
 import * as XLSX from 'xlsx';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-policy-acknowledgement-report',
@@ -27,7 +28,10 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     ReactiveFormsModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent, DateformatPipe],
+    ModuleInformationComponent, 
+    DateformatPipe,
+    NgbPopoverModule
+  ],
   templateUrl: './policy-acknowledgement-report.component.html',
   styleUrl: './policy-acknowledgement-report.component.scss'
 })
@@ -359,6 +363,7 @@ clearDropdowns(keys: string[]) {
 
           this.policyAcknowledgementReports = data;
           this.isReportGenerated = Array.isArray(data) && data.length > 0;
+          this.isLoading = false;
         },
         error: (error: any) => {
           console.error('Error fetching leave records', error);
@@ -381,6 +386,11 @@ clearDropdowns(keys: string[]) {
       form.get('acknowledged')?.value
     );
   }
+
+  showClearAllButton(): boolean {
+  const controls = this.policyAcknowledgementReport.controls;
+  return Object.keys(controls).some(key => controls[key].value);
+}
 
   clearAllFilters(): void {
     this.policyAcknowledgementReport.reset();
@@ -510,9 +520,9 @@ clearDropdowns(keys: string[]) {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Policy Acknowledgement');
 
+    const selectedPolicyId = this.policyAcknowledgementReport.get('policy')?.value;
     const selectedPolicy = this.policyItemsData.find(
-      (p: { id: number; policyName: string }) =>
-        p.id === Number(this.policyData.policy)
+      (p: { id: number; policyName: string }) => p.id === Number(this.policyAcknowledgementReport.get('policy')?.value)
     );
     console.log('Selected Policy:', selectedPolicy);
     const policyName =

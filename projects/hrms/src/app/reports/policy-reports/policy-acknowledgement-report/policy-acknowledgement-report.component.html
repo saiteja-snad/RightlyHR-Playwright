@@ -1,33 +1,34 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div class="component-header" (click)="navigation()">Reports</div>
-
+         <div class="heading-content">
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">Policy Acknowledgement Report</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
         <form autocomplete="off" [formGroup]="policyAcknowledgementReport" (ngSubmit)="generatePolicyAckReport()">
             <div class="d-flex align-items-center gap-3 flex-wrap">
-                <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+                <button *ngIf="showClearAllButton()" type="button" class="clear-all-btn mt-4" (click)="clearAllFilters()">
                     Clear All
                 </button>
 
                 <!--Year Dropdown-->
-                <div>
+                <div class="year-width">
                     <label for="year" class="form-label custom-label mb-2">
                         {{ "Year" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="yearDetails" optionLabel="year" [filter]="false" [showClear]="false"
+                        <p-select [options]="yearDetails" optionLabel="year"
                             class="form-select custom-select" formControlName="year" placeholder="Please select year">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
                         </p-select>
                     </div>
-                    <div *ngIf="policyAcknowledgementReport.get('year')?.touched && policyAcknowledgementReport.get('year')?.hasError('required')"
-                        class="error-msg">
-                        {{'Year is required'|translate}}
-                    </div>
                 </div>
 
                 <!--Location Dropdown-->
-                <div>
+                <div class="location-width">
                     <label for="location" class="form-label custom-label mb-2">
                         {{ "Location" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -37,14 +38,10 @@
                             class="form-select custom-select" (onChange)="onLocationChange($event.value)">
                         </p-select>
                     </div>
-                    <div *ngIf="policyAcknowledgementReport.get('location')?.touched && policyAcknowledgementReport.get('location')?.hasError('required')"
-                        class="error-msg">
-                        {{'Location is required' | translate}}
-                    </div>
                 </div>
 
                 <!--Sub-Location Dropdown-->
-                <div>
+                <div >
                     <label for="subLocation" class="form-label custom-label mb-2">
                         {{ "Sub Location" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -54,14 +51,10 @@
                             (onChange)="onSubLocationChange($event.value)" class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div *ngIf="policyAcknowledgementReport.get('subLocation')?.touched && policyAcknowledgementReport.get('subLocation')?.hasError('required')"
-                        class="error-msg">
-                        {{'Sub Location is required' | translate}}
-                    </div>
                 </div>
 
                 <!--Shift Dropdown-->
-                <div>
+                <div >
                     <label for="shift" class="form-label custom-label mb-2">
                         {{ "Shift" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -70,14 +63,10 @@
                             formControlName="shift" placeholder="Please select shift" class="form-select custom-select" (onChange)="onShiftChange($event.value)">
                         </p-select>
                     </div>
-                    <div *ngIf="policyAcknowledgementReport.get('shift')?.touched && policyAcknowledgementReport.get('shift')?.hasError('required')"
-                        class="error-msg">
-                        {{'Shift is required' | translate}}
-                    </div>
                 </div>
 
                 <!--Policy Dropdown-->
-                <div class="d-flex align-items-center gap-2">
+                <div >
                     <label for="shift" class="form-label custom-label mb-2">
                         {{ "Policy Name" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -86,31 +75,22 @@
                             formControlName="policy" placeholder="Please select policy name" class="form-select custom-select" (change)="onShiftChange($event.target)">
                         </p-select>
                     </div>
-                    <div *ngIf="policyAcknowledgementReport.get('policy')?.touched && policyAcknowledgementReport.get('policy')?.hasError('required')"
-                        class="error-msg">
-                        {{'Policy is required' | translate}}
-                    </div>
                 </div>
 
                 <!--Status Dropdown-->
-                <div class="d-flex align-items-center gap-2">
+                <div >
                      <label for="shift" class="form-label custom-label mb-2">
                         {{ "Acknowledged Status" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="AcknoeledgementOptions" optionLabel="label" formControlName="acknowledged"
-                            placeholder="Please select status" class="form-select custom-select" [showClear]="true"
-                            resetFilterOnHide="true">
+                            placeholder="Please select status" class="form-select custom-select">
                         </p-select>
-                    </div>
-                     <div *ngIf="policyAcknowledgementReport.get('policy')?.touched && policyAcknowledgementReport.get('policy')?.hasError('required')"
-                        class="error-msg">
-                        {{'Policy is required' | translate}}
                     </div>
                 </div>
 
                 <!-- Buttons -->
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 mt-4">
                     <button type="submit" class="custom-btn btn-secondary"
                         [disabled]="policyAcknowledgementReport.invalid || spinnerLoader1">
                         @if(spinnerLoader1){
@@ -138,10 +118,10 @@
         </form>
     </div>
 
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+     <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
     @if(isLoading){
     <div class="custom-compoent-data-loader">

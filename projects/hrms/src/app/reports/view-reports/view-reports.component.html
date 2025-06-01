@@ -34,7 +34,7 @@
                 </li>
                 }
 
-                @if(rbac.allowedToAccess('')){}
+                @if(rbac.allowedToAccess('Policy Acknowledgement Report.view')){
                 <!--Policy Reports-->
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -46,7 +46,7 @@
                         <app-policy-reports-tabs />
                     </div>
                 </li>
-
+                }
                 <!--Time Off-->
                 <!--Custom Reports-->
                 @if(rbac.allowedToAccess('Custom Reports.view')){

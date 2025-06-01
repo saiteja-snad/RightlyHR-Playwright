@@ -12,14 +12,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
-import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, PmsSettingsTabsComponent, PmsTabsComponent, ItsuporrtHeaderTabsComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    PmsSettingsTabsComponent,
+    PmsTabsComponent,
+  ],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
 })
-
 export class HeaderComponent implements OnInit, OnDestroy {
   empinfo: any;
   imageUrl: any;
@@ -27,25 +31,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   jobRole: any;
   profilePic: any;
-  img: any
+  img: any;
   spinnerLoader = false;
   @ViewChild('logoutpopup') logoutpopup: any;
-  
-  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer, public rbac: RbacService,
-   private authService: AuthService, private modalservie: NgbModal, private conformationPopup: OpenModalService, private accessNav: AccessNavigationService) { }
+
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    private sanitizer: DomSanitizer,
+    public rbac: RbacService,
+    private authService: AuthService,
+    private modalservie: NgbModal,
+    private conformationPopup: OpenModalService,
+    private accessNav: AccessNavigationService
+  ) {}
 
   ngOnInit(): void {
-
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getEmployeeId()
-    this.getJobDetails()
+    this.getEmployeeId();
+    this.getJobDetails();
     this.http.profliepicadd$.subscribe(() => {
       this.getEmployeeId();
     });
   }
 
-
-    goToAccessibleRoute(actualRoute: string) {
+  goToAccessibleRoute(actualRoute: string) {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
@@ -54,43 +64,47 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  
-
   onSelectprofilePicDownload(employee: any) {
     if (employee.profileUrl) {
-      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl).subscribe({
-        next: (res: any) => {
-          let blob = new Blob([res['body']], { type: 'image/png' });
-          let objectURL = URL.createObjectURL(blob);
-          this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-        },
-        error: (reason) => {
-          //console.log(reason),
-        }
-      });
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl)
+        .subscribe({
+          next: (res: any) => {
+            let blob = new Blob([res['body']], { type: 'image/png' });
+            let objectURL = URL.createObjectURL(blob);
+            this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          },
+          error: (reason) => {
+            //console.log(reason),
+          },
+        });
     }
   }
 
   getEmployeeId() {
     let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data;
-        this.imageUrl = this.empdata.profileUrl;
-        this.onSelectprofilePicDownload(this.empdata);
-      },
-      error: reason => console.log(reason)
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.empdata = data;
+          this.imageUrl = this.empdata.profileUrl;
+          this.onSelectprofilePicDownload(this.empdata);
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   getJobDetails() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        let jobdetails = data
-        this.jobRole = jobdetails[0]?.jobRole
-      }
-    })
+    this.subscription = this.http
+      .getData(`JobDetails/Empname/${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          let jobdetails = data;
+          this.jobRole = jobdetails[0]?.jobRole;
+        },
+      });
   }
 
   chooseNewProfileHeader(event: any) {
@@ -100,12 +114,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       const maxSize = 1024 * 1024; // 1MB
       if (!allowedTypes.includes(file.type)) {
-        this.conformationPopup.openErrorModal('Invalid file type. Only PNG, JPG, and JPEG are allowed.');
+        this.conformationPopup.openErrorModal(
+          'Invalid file type. Only PNG, JPG, and JPEG are allowed.'
+        );
         input.value = '';
         return;
       }
       if (file.size > maxSize) {
-        this.conformationPopup.openErrorModal('Please choose a file smaller than 1MB.');
+        this.conformationPopup.openErrorModal(
+          'Please choose a file smaller than 1MB.'
+        );
         input.value = '';
         return;
       }
@@ -117,9 +135,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onProfilepicSelectedheader(img: any) {
     let file = img;
-    let d: Date = new Date()
-    this.profilePic = this.renameFile(file, `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`)
-    this.postUploadprofilePicheader()
+    let d: Date = new Date();
+    this.profilePic = this.renameFile(
+      file,
+      `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`
+    );
+    this.postUploadprofilePicheader();
   }
 
   private renameFile(originalFile: File, newName: string) {
@@ -131,24 +152,36 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   postUploadprofilePicheader() {
     let filePath = `/Profilepics/${this.empinfo.employeeId}`;
-    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.empinfo.employeeId = this.empinfo.employeeId
-          this.empinfo.profileUrl = data.path;
-          this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
-            next: (data: any) => {
-              this.http.setprofileDetails()
-              this.conformationPopup.openSuccessModal('Profile picture updated successfully')
-              this.getEmployeeId();
-            },
-            error: (reason: any) => {
-              this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')
-            },
-          });
-        }
-      },
-    });
+    this.subscription = this.http
+      .uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filePath,
+        this.profilePic
+      )
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.empinfo.employeeId = this.empinfo.employeeId;
+            this.empinfo.profileUrl = data.path;
+            this.subscription = this.http
+              .postdata('Employeedata/UPDATER', this.empinfo)
+              .subscribe({
+                next: (data: any) => {
+                  this.http.setprofileDetails();
+                  this.conformationPopup.openSuccessModal(
+                    'Profile picture updated successfully'
+                  );
+                  this.getEmployeeId();
+                },
+                error: (reason: any) => {
+                  this.conformationPopup.openErrorModal(
+                    reason.error.message || 'Profile picture update failed'
+                  );
+                },
+              });
+          }
+        },
+      });
   }
 
   isActive(route: string): boolean {
@@ -190,7 +223,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onLogout() {
     this.authService.removeToken();
     localStorage.clear();
-    window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
+    window.location.href =
+      'https://login.microsoftonline.com/common/oauth2/v2.0/logout';
   }
 
   close() {
@@ -205,7 +239,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.router.url.includes(link);
   }
 
-   ngOnDestroy() {
+  ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

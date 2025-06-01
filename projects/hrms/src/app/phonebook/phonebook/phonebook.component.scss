@@ -1,9 +1,9 @@
 .custom-component-right-content {
-    height: calc(100vh - 11.5rem);
+    height: calc(100vh - 12.75rem);
 
     .phone-book-content {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr));
         gap: 1rem;
     }
 

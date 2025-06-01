@@ -4,9 +4,7 @@
     <div class="heading-content">
       <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Inactive Employee Report</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div>
+    
     </div>
 
     <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
@@ -92,10 +90,7 @@
     </form>
   </div>
 
-  <!--Module Information-->
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
+
 
 
       @if (isLoading) {

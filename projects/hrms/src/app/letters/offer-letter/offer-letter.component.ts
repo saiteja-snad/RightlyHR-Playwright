@@ -188,7 +188,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5']; // IDs of the content elements to be converted to PDF
+    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5','pdfContent6']; // IDs of the content elements to be converted to PDF
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;

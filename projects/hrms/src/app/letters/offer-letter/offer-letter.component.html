@@ -441,7 +441,7 @@
                   {{prospectiveEmpData.lastName}},</p>
               </div>
 
-              <p>Congratulations and Welcome to RightlyHR!!!</p>
+              <p>Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
 
               <p>Further to your application for employment with us, and the subsequent selection process, we are
                 delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
@@ -449,13 +449,12 @@
                   || 0)}}</b> per annum.
               </p>
 
-              <p>RightlyHR is formed as an INDIAN Spin-off of RightlyHR, a
+              <p>SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of SNAD Developers India Pvt Ltd, a
                 US based organization for providing Software Development and Services to various IT Organizations across
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p>Your reporting location will be <b> RightlyHR, Vijaya Krishna Towers, Floor#16,
-                  Madhava Reddy Colony, Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would
+              <p>Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining would
                   be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
 
               <p>
@@ -521,7 +520,7 @@
                   <div class="hard-copy-letter"></div>
                 </ng-template>
                 <ul class="bullet">
-                  <li class="mb-3">Information pertaining to RightlyHR operations and intellectual property
+                  <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
@@ -569,7 +568,7 @@
 
                 <p>We wish you a long, rewarding and fulfilling career experience and look
                   forward to having you on board with us. Please visit our website <a href="" target="_blank"
-                    rel="noopener noreferrer">www.rightlyhr.com</a>
+                    rel="noopener noreferrer"> www.snaddevelopers.com</a>
                   for more information about our Company. </p>
 
                 <p>All other detailed terms and conditions of your employment will be specified
@@ -607,7 +606,7 @@
                 </ng-template>
                 <div>
                   <p>Yours Sincerely,</p>
-                  <p class="mb-5 letter-sub-header">For RightlyHR </p>
+                  <p class="mb-5 letter-sub-header">For SNAD Developers India Pvt Ltd </p>
                   <div class="stamp"></div>
                   <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
@@ -655,7 +654,7 @@
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
                 <div class="mb-1">
-                  <div class="box"></div> Acceptance copies of RightlyHR. duly signed offer Letter.
+                  <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.
                 </div>
                 <div class="mb-1">
                   <div class="mb-3">
@@ -918,12 +917,55 @@
                 <!-- table end -->
                 <p class="letter-sub-header mb-1 mt-2">Note: {{prospectiveEmpData.note}}</p>
                 <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
-                  Award Program will be made available to you upon joining RightlyHR. Please note: RightlyHR reserves
+                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note: SNAD Developers India Pvt Ltd reserves
                   the
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                   any time.
                 </p>
                 <p class="mb-0">Additional Details Related to Salary Structure: </p>
+                <ol class="list-style-none mb-0">
+                  <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
+                    deductions.</li>
+                  <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
+                  <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave
+                    Travel Allowance.</li>
+                  <li class="mb-1"><span>d)</span> All eligible employees as per the respective policies of the Company
+                    will be covered under
+                    the Group Medical Coverage Policy and Group Covid policy. </li>
+                  <li class="mb-1"><span>e)</span> All the above benefits are as per the Company’s policies, which are
+                    subjective to change from time
+                    to time. Further salary, allowances, any alteration in salary structure and other payments/benefits
+                    will be governed by The Company’s rules as well as statutory provisions in force from time to time
+                    and subject to deduction of appropriate taxes as applicable under government norms. </li>
+                  <li class="mb-1"><span>f)</span> While the other terms and conditions of your appointment
+                    remain unchanged, please do take note that as per the current Company’s Separation Policy, if you
+                    resign from the services of the company,
+                    you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period. </li>
+                  <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
+                    number of dependents; the respective amount will be deducted from your monthly salary. </li>
+                </ol>
+                <p class="letter-sub-header"><span>Note</span>: The above compensation package is strictly confidential
+                  between you and the Company and should not be discussed with anyone nor divulged to anyone in any
+                  manner
+                  whatsoever.</p>
+              </div>
+            </div>
+            <div class="letter-footer">
+              <app-letter-footer />
+            </div>
+          </div>
+
+            <div class="letter-page-content my-4" id="pdfContent6">
+            <div class="letter-page-sub-content">
+              <div class="pt-2">
+                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                  <app-lettersheader />
+                </div>
+                <ng-template #doc>
+                  <div class="hard-copy-letter"></div>
+                </ng-template>
+               
+                <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-0">
                   <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
                     deductions.</li>

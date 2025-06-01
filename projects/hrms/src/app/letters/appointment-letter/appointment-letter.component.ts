@@ -285,7 +285,7 @@ export class AppointmentLetterComponent {
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
     const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6', 'pdfContent7',
-      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12', 'pdfContent13'];
+      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12', ];
 
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;

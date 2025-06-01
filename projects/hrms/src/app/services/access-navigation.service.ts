@@ -587,12 +587,19 @@ export class AccessNavigationService {
           return (route = '/blood-bank');
         }
         break;
-        
+
+      case '/contacts-directory':
+        if (this.rbac.allowedToAccess('Contacts Directory.view')) {
+          return (route = '/contacts-directory');
+        }
+        break;
+
       case '/phonebook':
         if (this.rbac.allowedToAccess('Phone Book.view')) {
           return (route = '/phonebook');
         }
         break;
+
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {

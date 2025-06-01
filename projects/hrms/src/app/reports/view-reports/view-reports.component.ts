@@ -4,6 +4,7 @@ import { StandardReportTabsComponent } from "../../shared/reports-tabs/standard-
 import { AttandaceReportTabsComponent } from "../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { PolicyReportsTabsComponent } from "../../shared/reports-tabs/policy-reports-tabs/policy-reports-tabs.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-view-reports',
   imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent],
@@ -20,4 +21,6 @@ export class ViewReportsComponent {
   teamLeaveBalance = MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_BALANCE_MODULE_INFO;
   teamLeaveSummary = MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_SUMMARY_MODULE_INFO;
   teamLeaveSummaryModuleInfo = MODULE_INFOS.TIME_OFF_LEAVES_ORG_LEAVE_BALANCE_MODULE_INFO;
+
+   constructor(public rbac:RbacService){}
 }

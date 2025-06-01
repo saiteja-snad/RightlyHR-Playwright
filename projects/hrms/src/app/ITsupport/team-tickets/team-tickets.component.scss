@@ -1,9 +1,11 @@
 .component-left-tabs-container {
-    height: calc(100vh - 12rem);
+    min-height: 50vh;
+    height: calc(100vh - 11.5rem);
 }
 
 .custom-table-content {
-    height: calc(100vh - 15.25rem);
+    min-height: 45vh;
+    height: calc(100vh - 14.75rem);
 }
 
 .component-right-content {

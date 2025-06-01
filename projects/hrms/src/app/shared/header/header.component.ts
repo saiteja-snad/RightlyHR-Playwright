@@ -44,7 +44,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
 
   onSelectprofilePicDownload(employee: any) {
     if (employee.profileUrl) {

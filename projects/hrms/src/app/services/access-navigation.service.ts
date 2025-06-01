@@ -937,17 +937,34 @@ export class AccessNavigationService {
           }
         }
         break;
-      case '/settings/assets-configuration':
-        if (
-          this.rbac.allowedToAccess(
-            'Assets Management Configuration Module.view'
-          )
-        ) {
-          for (const item of SETTINGS_ASSEST_CONFIGURATION_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
+      // case '/settings/assets-configuration':
+      //   if (
+      //     this.rbac.allowedToAccess(
+      //       'Assets Management Configuration Module.view'
+      //     )
+      //   ) {
+      //     for (const item of SETTINGS_ASSEST_CONFIGURATION_TABS) {
+      //       if (this.rbac.allowedToAccess(item.permission)) {
+      //         return item.route;
+      //       }
+      //     }
+      //   }
+      //   break;
+      case '/settings/assets-configuration/vendor-detiles':
+        if (this.rbac.allowedToAccess('Vendor Details.view')) {
+          return '/settings/assets-configuration/vendor-detiles';
+        }
+        break;
+
+      case '/settings/assets-configuration/asset-catagory':
+        if (this.rbac.allowedToAccess('Asset Catagory.view')) {
+          return '/settings/assets-configuration/asset-catagory';
+        }
+        break;
+
+      case '/settings/assets-configuration/asset-subcatagory':
+        if (this.rbac.allowedToAccess('Asset Sub Catagory.view')) {
+          return '/settings/assets-configuration/asset-subcatagory';
         }
         break;
 
@@ -1444,7 +1461,10 @@ export class AccessNavigationService {
         break;
 
       case '/personalinfo/personal':
-        if ((this.rbac.allowedToAccess('Employee Info Personal Tab.view ') || this.rbac.allowedToAccess('My Info Personal Tab.view'))) {
+        if (
+          this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||
+          this.rbac.allowedToAccess('My Info Personal Tab.view')
+        ) {
           for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1454,7 +1474,10 @@ export class AccessNavigationService {
         break;
 
       case '/personalinfo/job':
-        if (this.rbac.allowedToAccess('Employee Info Job Tab.view') || this.rbac.allowedToAccess('My Info Job Tab.view')) {
+        if (
+          this.rbac.allowedToAccess('Employee Info Job Tab.view') ||
+          this.rbac.allowedToAccess('My Info Job Tab.view')
+        ) {
           for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -1464,7 +1487,10 @@ export class AccessNavigationService {
         break;
 
       case '/personalinfo/documents':
-        if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') || this.rbac.allowedToAccess('My Info Documents Tab.view')) {
+        if (
+          this.rbac.allowedToAccess('Employee Info Documents Tab.view') ||
+          this.rbac.allowedToAccess('My Info Documents Tab.view')
+        ) {
           for (const item of EMPLOYEE_INFO_DOCUMENTS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;

@@ -2003,7 +2003,7 @@ input[type=number]::-webkit-outer-spin-button {
 .custom-p-multi-select-table {
     .p-datatable-table-container {
         width: 100%;
-        height: calc(100vh - 19.625rem);
+        height: calc(100vh - 15.5rem);
         overflow: auto;
         background-color: var(--white-color);
         border: 1px solid var(--table-main-content-border-color);
@@ -2347,9 +2347,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-
-
-
 .graph-grid {
     display: flex;
     align-items: center;
@@ -2384,12 +2381,12 @@ input[type=number]::-webkit-outer-spin-button {
             position: relative;
             width: max-content;
             height: max-content;
+            display: flex;
+            justify-content: center;
 
             .total-count-content {
                 position: absolute;
                 top: 50%;
-                left: 35%;
-                text-align: center;
 
                 .count {
                     font-weight: 700;
@@ -2494,5 +2491,40 @@ input[type=number]::-webkit-outer-spin-button {
 // shimmer color
 .p-skeleton {
     background: #ECF1F5 !important;
+}
 
+//Sub Tab latest Design CSS
+.cards-grid-container {
+    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 1rem;
+}
+
+.settings-sub-tabs-card {
+    width: 20rem;
+    height: 8.75rem;
+    padding: 0.625rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    border: 1px solid #CBD7E2;
+    border-radius: 0.625rem;
+
+    .icon {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .label-name {
+        font-weight: 600;
+        font-size: var(--fontsize12);
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: #555353;
+    }
+
+    .subject-text {
+        font-weight: 400;
+        font-size: var(--fontsize10);
+        color: #ACACAD;
+    }
 }

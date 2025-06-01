@@ -1049,14 +1049,15 @@
                         <!-- Desk Allocation Allocated Tabs Actions -->
                         <tr>
                             <th colspan="5" class="custom-header">
-                                <div class="d-flex gap-2 align-items-center"></div>
-                                <input type="checkbox" #selectAlldeskallocationtabs
-                                    (change)="toggleSelectAll(deskAllocationAllocatedTabActions, selectAlldeskallocationtabs?.checked, isdeskallocationActionDisabled.bind(this))"
-                                    [checked]="isAllSelected(deskAllocationAllocatedTabActions)"
-                                    [indeterminate]="isSomeSelected(deskAllocationAllocatedTabActions)"
-                                    [disabled]="!roleToFilter?.id">
-                                <diV>Desk Allocation Allocated Tab
-                                    Actions</diV>
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectAlldeskallocationtabs
+                                        (change)="toggleSelectAll(deskAllocationAllocatedTabActions, selectAlldeskallocationtabs?.checked, isdeskallocationActionDisabled.bind(this))"
+                                        [checked]="isAllSelected(deskAllocationAllocatedTabActions)"
+                                        [indeterminate]="isSomeSelected(deskAllocationAllocatedTabActions)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <diV>Desk Allocation Allocated Tab
+                                        Actions</diV>
+                                </div>
             </div>
             </th>
             </tr>

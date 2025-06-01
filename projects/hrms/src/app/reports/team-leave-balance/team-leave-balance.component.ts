@@ -1,30 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Select } from 'primeng/select';
-import { LeavesApprovaltabsComponent } from "../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
+import { LeavesApprovaltabsComponent } from '../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
+import { IEmployeeLeaveData } from '../../time-off/leaves/leaves.model';
 import { AccordionModule } from 'primeng/accordion';
-import { filter, Subject, takeUntil } from 'rxjs';
-import { HttpService } from '../../../services/http.service';
-import { IEmployeeLeaveData } from '../leaves.model';
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { FormsModule } from '@angular/forms';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
+import { HttpService } from '../../services/http.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import { filter, Subject, takeUntil } from 'rxjs';
+import { MODULE_INFOS } from '../../shared/modules-info';
+
 
 @Component({
   selector: 'app-team-leave-balance',
-  imports: [CommonModule, Select, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './team-leave-balance.component.html',
   styleUrl: './team-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   teamLeaveBalance: IEmployeeLeaveData[] = [];
   loggedInUser: any;
   selectedYear: number | undefined;
@@ -62,21 +63,21 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
     this.getAllTeamLeaveBalance();
   }
 
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
+
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/leaves/team-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_BALANCE_MODULE_INFO
     };
-  
+
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -149,6 +150,10 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
       const fusionId = item.employeeBasicDetails.snadEmployeeId?.toLowerCase() || '';
       return name.includes(term) || fusionId.includes(term);
     });
+  }
+
+  navigation() {
+    this.router.navigate(['/reports']);
   }
 
   ngOnDestroy(): void {

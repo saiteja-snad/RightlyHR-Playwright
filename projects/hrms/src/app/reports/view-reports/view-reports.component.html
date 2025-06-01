@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="component-header-content pt-2">
-        <div class="component-header">Settings</div>
+        <div class="component-header">Reports</div>
     </div>
 
     <div class="custom-component-right-content">
@@ -46,6 +46,32 @@
                         <div class="label-name">Monthly Attendance Reports</div>
                     </div>
                     <p class="subject-text mb-3">{{monthlyAttendanceReports}}</p>
+                </li>
+
+                <!--Time Off-->
+                <li class="list-item" [routerLink]="['/reports/team-leave-balance']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/time-off-icon/team-leave-balance-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Team Leave Balance</div>
+                    </div>
+                    <p class="subject-text mb-3">{{teamLeaveBalance}}</p>
+                </li>
+
+                <!--Time Off-->
+                <li class="list-item" [routerLink]="['/reports/team-leave-summary']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/time-off-icon/team-leave-summary-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Team Leave Summary</div>
+                    </div>
+                    <p class="subject-text mb-3">{{teamLeaveSummary}}</p>
+                </li>
+
+                <li class="list-item" [routerLink]="['/reports/org-leave-balance']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/time-off-icon/Org-Leave-Balance-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Org Leave Balance</div>
+                    </div>
+                    <p class="subject-text mb-3">{{teamLeaveSummaryModuleInfo}}</p>
                 </li>
             </ul>
         </div>

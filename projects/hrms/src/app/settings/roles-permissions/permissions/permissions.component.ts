@@ -651,9 +651,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Rejected (Time Off)',
     'Request Leave Button',
     'Cancelled (Time Off)',
-    'Org Leave Balance',
-    'Team Leave Balance Summary (Time Off)',
-    'Team Leave Balance (Time Off)'
+  
   ];
 
   // ////////
@@ -762,7 +760,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Standard Reports',
     'Custom Reports',
     'Attendance reports',
-    'Monthly Attendance Reports'
+    'Monthly Attendance Reports',
+      'Org Leave Balance',
+    'Team Leave Balance Summary',
+    'Team Leave Balance'
   ];
   standardReportsTabsFields = [
     'Employee Master Data',

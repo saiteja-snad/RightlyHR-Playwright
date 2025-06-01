@@ -7,30 +7,30 @@
       <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}} {{this.employeedata.lastName}}</div>
     </div>
 
-    <div class="row">
+    <div class="row gap-3">
       <!--Time Display-->
-      <div class="col-md-3">
-        <div class="gesture-text mb-3">Have a nice day at work</div>
+      <div class="col">
         <div class="content-card present-day-content">
+          <div class="gesture-text mb-3">Have a nice day at work</div>
           <div class="day-date-content">
-            <div>
-              <img [src]="iconPath" alt="Icon" class="icon">
-            </div>
-            <div class="pt-2">
-              <div class="time mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div>
-              <div class="date">{{ currentTime | date: 'MMMM d, y' }}</div>
-            </div>
+              <div>
+                <img [src]="iconPath" alt="Icon" class="icon">
+              </div>
+              <div class="pt-2">
+                <div class="time mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div>
+                <div class="date">{{ currentTime | date: 'MMMM d, y' }}</div>
+              </div>
           </div>
         </div>
       </div>
 
       <!--Attendance Display-->
       @if(this.rbac.allowedToAccess('Attendance.view') && attendanceData?.data?.attendanceData?.length){
-      <div class="col-md-3">
+      <div class="col">
         @if(!attendanceLoader ){
         <div class="content-card attendance-content">
           <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
-          <div class="d-flex justify-content-center gap-3 pt-4 mt-2">
+          <div class="d-flex justify-content-center gap-3 pt-5 mt-2">
             <div>
               <img src="/dashboard-icon/log-icon.png" alt="Icon" class="icon">
             </div>
@@ -64,7 +64,7 @@
       }
 
       <!--Employee List Display-->
-      <div class="col-md-3">
+      <div class="col">
         @if(!chartLoader ){
         <div class="content-card employees-list-content">
           <div class="all-text">All Employees</div>
@@ -78,8 +78,13 @@
             </div>
             <div class="row row-cols-md-2">
               @for (item of cardItems; track $index) {
-              <div [ngStyle]="{ 'border-left': '4px solid ' + item.employeementTypeColor }" class="mb-2">
-                <div class="employee-type-text">{{ item.label }}</div>
+              <div class="col">
+                <div [ngStyle]="{ 'border-left': '4px solid ' + item.employeementTypeColor }" [routerLink]="item.link"
+                  class="mb-2 ps-2 cursor">
+                  <div class="employee-type-text">
+                    <p class="m-0">{{ item.label }} ({{ item.count }})</p>
+                  </div>
+                </div>
               </div>
               }
             </div>
@@ -91,7 +96,7 @@
       </div>
 
       <!--Events Display-->
-      <div class="col-md-3">
+      <div class="col">
         @if(!eventsLoader){
         <div class="content-card events-content">
           <div class="celebration-img">

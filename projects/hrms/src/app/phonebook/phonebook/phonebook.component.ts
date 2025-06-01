@@ -59,28 +59,20 @@ export class PhonebookComponent {
     });
   }
   // extractdata
-// extractCountryCode(value: string): string {
-//   if (!value) return '';
-//   // Ensure there's a "+" and append space at the end for display
-//   return value.startsWith('+') ? value + ' ' : '+' + value + ' ';
-// }
-extractCountryCode(value: string): string {
-  if (!value) return '';
-
-  // Case 1: Matches pattern like "Albania (+355)" or just "(+355)"
-  const match = value.match(/\(\+?\d+\)/);
-  if (match) {
-    return match[0].replace(/[()]/g, '') + ' ';
+  extractCountryCode(value: string): string {
+    if (!value) return '';
+    // Case 1: Matches pattern like "Albania (+355)" or just "(+355)"
+    const match = value.match(/\(\+?\d+\)/);
+    if (match) {
+      return match[0].replace(/[()]/g, '') + ' ';
+    }
+    // Case 2: If it’s already in +355 format or just 355
+    const cleaned = value.trim();
+    if (/^\+?\d+$/.test(cleaned)) {
+      return cleaned.startsWith('+') ? cleaned + ' ' : '+' + cleaned + ' ';
+    }
+    return '';
   }
-
-  // Case 2: If it’s already in +355 format or just 355
-  const cleaned = value.trim();
-  if (/^\+?\d+$/.test(cleaned)) {
-    return cleaned.startsWith('+') ? cleaned + ' ' : '+' + cleaned + ' ';
-  }
-
-  return '';
-}
 
   // Download the image blob and assign it to the specific employee
   downloadAndSetProfileImage(emp: any) {
@@ -98,16 +90,14 @@ extractCountryCode(value: string): string {
 
   filteredPhoneDetails() {
     if (!this.phonebookData) return [];
-    const term = this.searchphone?.toLowerCase() || '';
+    const term = this.searchphone?.toLowerCase().trim().replace(/\s+/g, ' ') || '';
     return this.phonebookData
-      .filter((emp: { fullName: string; jobRole: string; }) => {
-        return (
-          emp.fullName.toLowerCase().includes(term) ||
-          emp.jobRole.toLowerCase().includes(term)
-        );
+      .filter((emp: any) => {
+        const fullName = `${emp.firstName || ''} ${emp.middleName || ''} ${emp.lastName || ''}`
+          .toLowerCase().trim().replace(/\s+/g, ' '); // normalize multiple spaces to single
+        const jobRole = emp.jobRole?.toLowerCase() || '';
+        return (fullName.includes(term) || jobRole.includes(term));
       })
-      .sort((a: { fullName: string; }, b: { fullName: any; }) => a.fullName.localeCompare(b.fullName));
+      .sort((a: any, b: any) => a.fullName.localeCompare(b.fullName));
   }
-
-
 }

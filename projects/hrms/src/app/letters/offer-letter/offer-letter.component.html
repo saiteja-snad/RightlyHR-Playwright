@@ -287,6 +287,13 @@
         </div>
 
         <div class="mb-3">
+              <label for="sublocation" class="form-label custom-label mb-2">Address
+                <span class="error-msg">*</span></label>
+              <input type="text" class="form-control custom-input" formControlName="address"
+                 [readonly]="true" autocomplete="off" placeholder="Address">
+        </div>
+
+        <div class="mb-3">
           <label class="form-label custom-label mb-2">Offer Issued Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
             [min]="issuedDatevalidate" placeholder="Please enter offer issued date" (click)="pathValuesFuction()"
@@ -454,9 +461,9 @@
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p>Your reporting location will be <b> RightlyHR, Vijaya Krishna Towers, Floor#16,
-                  Madhava Reddy Colony, Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would
-                  be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
+              <p>Your reporting location will be <strong>SNAD Developers India Pvt Ltd,
+                      {{prospectiveEmpData.address}}. Your date of joining would
+                  be {{prospectiveEmpData.dateOfJoining | dateformat}}.</strong></p>
 
               <p>
                 Your respective <b>Cost to Company</b> as applicable has been detailed in Annexure 2 of

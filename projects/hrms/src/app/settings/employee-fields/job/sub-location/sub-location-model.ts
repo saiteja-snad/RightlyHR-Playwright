@@ -3,4 +3,5 @@ export interface subLocationData {
     jobSubLocationName: string,
     isDeleted: boolean,
     id?: number;
+    address?: string;
 }

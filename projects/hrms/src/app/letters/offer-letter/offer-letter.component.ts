@@ -166,6 +166,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       variablePayAmount: [{ value: null, disabled: true }, [Validators.required, Validators.min(0), Validators.maxLength(10), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
+      address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
       Copys: [null, Validators.required],
@@ -227,7 +228,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.generatingEmployeeId = this.prospectiveEmpData.empId;
     this.loading = false
     this.disableFieldsForApproval = false;
-    this.conformationPopup.openSuccessModal('Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Offer letter generated successfully');
   }
 
   //function to validate the offer expiry date and offer issued date
@@ -461,6 +462,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
                 variablePayAmount: this.prospectiveEmpData?.variablePayAmount,
                 locationId: this.prospectiveEmpData?.locationId,
                 JobSubLocationName: this.prospectiveEmpData?.sublocationId,
+                address: this.prospectiveEmpData?.address,
                 offerIssuedDate: this.formatDate(this.prospectiveEmpData?.offerIssuedDate),
                 dateOfJoining: this.formatDate(this.prospectiveEmpData?.dateOfJoining),
                 Copys: this.prospectiveEmpData?.copys,
@@ -481,6 +483,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
               }
               this.prospectiveEmpData.jobLocationName = data.checkofferletter.workLocation;
               this.prospectiveEmpData.jobSubLocationName = data.checkofferletter.subLocation;
+              this.prospectiveEmpData.address= data.checkofferletter.address;
               this.getSubLocationByid(this.prospectiveEmpData?.locationId);
               if (this.prospectiveEmpData.amount) {
                 this.ctcCalculation();
@@ -1085,7 +1088,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/offerManagerEmail`, emaildetails).subscribe({
       next: (data: any) => {
         this.Approvednotification();
-        this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
+        this.conformationPopup.openSuccessModal('Request for approval sent successfully');
         this.ApprovalLoader = false;
       },
       error: (err: any) => {

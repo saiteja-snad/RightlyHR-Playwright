@@ -142,12 +142,14 @@
         <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
           {{'Cancel' | translate}}
         </button>
+        @if(!hidePublishCloneButtons){
         <button type="button" class="custom-btn clone-btn px-5" (click)="clonePolicy1()">
           {{'Clone' | translate}}
         </button>
         <button type="button" class="custom-btn publish-btn px-5" (click)="publish()">
           {{'Publish' | translate}}
         </button>
+        }
         <button type="submit" class="custom-btn btn-primary px-5" [disabled]="this.policies.invalid">
           {{'Update' | translate}}
         </button>

@@ -104,6 +104,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       acknowledged : [false],
       notification : [false],
     });
+    this.hidePublishCloneButtons = true;
     this.policies.push(policyGroup);
   }
 

@@ -402,14 +402,14 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content" id="pdfContent1">
+          <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
-              <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+              <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                 <app-lettersheader />
               </div>
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
-              </ng-template>
+              </ng-template> -->
               <div class="letter-div">
                 <div class="text-center mb-5">
                   <p class="letter-header">OFFER LETTER</p>
@@ -511,21 +511,16 @@
                 </li>
               </ol>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2">
+          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
-                  <app-lettersheader />
-                </div>
-                <ng-template #doc>
-                  <div class="hard-copy-letter"></div>
-                </ng-template>
+               
                 <ul class="bullet">
                   <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
@@ -596,21 +591,19 @@
                     target="_blank" rel="noopener noreferrer"> hr&#64;snaddevelopers.com</a></p>
               </div>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+       
           </div>
 
           <!--page-3-->
-          <div class="letter-page-content my-4" id="pdfContent3">
+          <div class="letter-page-content my-4" id="pdfContent3"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
-                </ng-template>
+                </ng-template> -->
                 <div>
                   <p>Yours Sincerely,</p>
                   <p class="mb-5 letter-sub-header">For SNAD Developers India Pvt Ltd </p>
@@ -641,21 +634,21 @@
                 </div>
               </div>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
 
           <!--page-4-->
-          <div class="letter-page-content my-4" id="pdfContent4">
+          <div class="letter-page-content my-4" id="pdfContent4"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
-                </ng-template>
+                </ng-template> -->
                 <p class="letter-header text-center mb-4">ANNEXURE - 1</p>
                 <p class="letter-sub-header">Documents / Information required to be submitted on the day of joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
@@ -730,21 +723,19 @@
                 </div>
               </div>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-5-->
-          <div class="letter-page-content my-4" id="pdfContent5">
+          <div class="letter-page-content my-4" id="pdfContent5"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
-                </ng-template>
+                </ng-template> -->
                 <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
                 <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
                 <div class="row">
@@ -929,48 +920,18 @@
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                   any time.
                 </p>
-                <p class="mb-0">Additional Details Related to Salary Structure: </p>
-                <ol class="list-style-none mb-0">
-                  <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
-                    deductions.</li>
-                  <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
-                  <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave
-                    Travel Allowance.</li>
-                  <li class="mb-1"><span>d)</span> All eligible employees as per the respective policies of the Company
-                    will be covered under
-                    the Group Medical Coverage Policy and Group Covid policy. </li>
-                  <li class="mb-1"><span>e)</span> All the above benefits are as per the Company’s policies, which are
-                    subjective to change from time
-                    to time. Further salary, allowances, any alteration in salary structure and other payments/benefits
-                    will be governed by The Company’s rules as well as statutory provisions in force from time to time
-                    and subject to deduction of appropriate taxes as applicable under government norms. </li>
-                  <li class="mb-1"><span>f)</span> While the other terms and conditions of your appointment
-                    remain unchanged, please do take note that as per the current Company’s Separation Policy, if you
-                    resign from the services of the company,
-                    you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period. </li>
-                  <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
-                    number of dependents; the respective amount will be deducted from your monthly salary. </li>
-                </ol>
-                <p class="letter-sub-header"><span>Note</span>: The above compensation package is strictly confidential
-                  between you and the Company and should not be discussed with anyone nor divulged to anyone in any
-                  manner
-                  whatsoever.</p>
+                
               </div>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
 
-            <div class="letter-page-content my-4" id="pdfContent6">
+            <div class="letter-page-content my-4" id="pdfContent6"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
-                  <app-lettersheader />
-                </div>
-                <ng-template #doc>
-                  <div class="hard-copy-letter"></div>
-                </ng-template>
+       
                
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-0">
@@ -1000,9 +961,9 @@
                   whatsoever.</p>
               </div>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

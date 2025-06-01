@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component} from '@angular/core';
+import { Component, ViewEncapsulation} from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -19,7 +19,8 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../l
   selector: 'app-relieving-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './relieving-letter.component.html',
-  styleUrl: './relieving-letter.component.scss'
+  styleUrl: './relieving-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class RelievingLetterComponent {

@@ -143,14 +143,9 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content" id="pdfContent1">
+          <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content">
-              <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+              
 
               <!-- start of letter -->
               <div class="mb-2 mt-2">
@@ -371,21 +366,13 @@
               </div>
             </div>
 
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2">
+          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content">
-              <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
-                <!-- <app-letterhead></app-letterhead> -->
-              </div>
-
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+          
 
               <p class="letter-sub-header mt-4 pt-4"><b>Note:</b></p>
               
@@ -422,9 +409,7 @@
               </div>
             </div>
 
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
         </div>
       </div>

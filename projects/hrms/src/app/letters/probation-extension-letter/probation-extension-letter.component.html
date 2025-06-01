@@ -103,14 +103,14 @@
         <div class="card letter-data-content p-4">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent">
+                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="soft-copy-letter">
+                            <!-- <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
-                            </ng-template>
+                            </ng-template> -->
 
                             <div class="d-flex justify-content-between mb-3">
                                 <div>
@@ -194,9 +194,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="letter-footer">
+                        <!-- <div class="letter-footer">
                             <app-letter-footer />
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

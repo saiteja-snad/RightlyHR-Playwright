@@ -1124,7 +1124,6 @@ select:focus {
         }
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
@@ -1153,7 +1152,8 @@ select:focus {
             height: 380mm;
             width: 270mm;
             position: relative;
-            background-image: url('/images/sand-watermaker.png');
+            background-image: url('/images/snad-footer.png');
+            background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
             box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -1251,7 +1251,9 @@ select:focus {
 }
 
 .soft-copy-letter {
-    margin-bottom: 2rem;
+    background-image: url('/images/snad-letter-bg.jpg') !important;
+    padding-top: 10rem !important;
+    // margin-bottom: 2rem;
 }
 
 .list-style-none {

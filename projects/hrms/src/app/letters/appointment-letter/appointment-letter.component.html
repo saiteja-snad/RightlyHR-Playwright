@@ -181,14 +181,9 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content my-4" id="pdfContent1">
+          <div class="letter-page-content my-4" id="pdfContent1"  [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+           
               <div class="text-center letter-header mb-3">Appointment letter</div>
               <div class="d-flex justify-content-end mb-3">Date: {{ employeeForm.get('appointmentdate')?.value |
                 dateformat }}</div>
@@ -267,20 +262,13 @@
 
               </div>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2">
+          <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+            
 
               <p class="letter-sub-header">3. Right to Transfer/Depute:</p>
               <p> As part of your duties’, you may be required to travel outside of the Company's premises. Pursuant
@@ -347,25 +335,14 @@
               </div>
 
 
-
-
-
-
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-3-->
-          <div class="letter-page-content my-4" id="pdfContent3">
+          <div class="letter-page-content my-4" id="pdfContent3" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="mb-5">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+             
 
               <div>
                 <p class="letter-sub-header">9. Information and security:</p>
@@ -435,20 +412,13 @@
 
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+          
           </div>
 
           <!--page-4-->
-          <div class="letter-page-content my-4" id="pdfContent4">
+          <div class="letter-page-content my-4" id="pdfContent4" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+         
 
               <div>
                 <p><b>a)</b> Own or operate a business in competition with the business of the Company.</p>
@@ -514,20 +484,13 @@
 
               </div>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+         
           </div>
 
           <!--page-5-->
-          <div class="letter-page-content my-4" id="pdfContent5">
+          <div class="letter-page-content my-4" id="pdfContent5" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+           
               <p class="letter-sub-header">17. Retirement:</p>
               <p>The age of retirement from the Company shall be on attainment of fifty-eight
                 (58) years of age. For this purpose, the date of birth considered will be as per the certificate of
@@ -592,20 +555,13 @@
               </div>
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-6-->
-          <div class="letter-page-content my-4" id="pdfContent6">
+          <div class="letter-page-content my-4" id="pdfContent6" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+            
               <ol style="list-style: upper-roman;" start="8">
                 <li>Are accused or convicted of any criminal offense: </li>
                 <li>Are reported to be on an unauthorized absence for more than ten (10) days.</li>
@@ -675,21 +631,13 @@
               </div>
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+            
           </div>
 
           <!--page-7-->
-          <div class="letter-page-content my-4" id="pdfContent7">
+          <div class="letter-page-content my-4" id="pdfContent7" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc"
-                class="soft-copy-lettermb-5">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+          
               <div>
                 <p class="letter-sub-header">23. Invention Assignment and Confidentiality Agreement:</p>
                 <p>
@@ -775,20 +723,13 @@
               </div>
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+          
           </div>
 
           <!--page-8-->
-          <div class="letter-page-content my-4" id="pdfContent8">
+          <div class="letter-page-content my-4" id="pdfContent8" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+           
               <p>
                 <b>f) Amendment & Waiver:</b> The terms of this Appointment Letter
                 may not be amended or revised except by an instrument in writing signed by both parties. No waiver
@@ -843,19 +784,13 @@
               </div>
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+          
           </div>
 
-          <div class="letter-page-content my-4" id="pdfContent9">
+          <div class="letter-page-content my-4" id="pdfContent9" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+             
+         
               <div class="letter-header text-center mb-3">Annexure A</div>
 
               <div class="letter-sub-header text-center mb-3">Non-Disclosure Agreement and Invention Assignment
@@ -944,19 +879,12 @@
               </p>
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
           <!--page-9-->
-          <div class="letter-page-content my-4" id="pdfContent10">
+          <div class="letter-page-content my-4" id="pdfContent10" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+             
 
               <p class="letter-sub-header">2.Definition of Developments:</p>
 
@@ -1055,20 +983,13 @@
 
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-10-->
-          <div class="letter-page-content my-4" id="pdfContent11">
+          <div class="letter-page-content my-4" id="pdfContent11" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+            
               <p>
                 <b>j)</b>
                 The Receiving Party shall not, during his/her Engagement with the Company or otherwise, use or
@@ -1149,20 +1070,13 @@
 
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+            
           </div>
 
           <!--page-11-->
-          <div class="letter-page-content my-4" id="pdfContent12">
+          <div class="letter-page-content my-4" id="pdfContent12" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+            
               <p>
                 <b>f)</b>
                 Inventions, if any, patented or unpatented, made by the Receiving Party prior to the commencement of
@@ -1235,19 +1149,12 @@
               </p>
 
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+        
           </div>
 
-          <div class="letter-page-content my-4" id="pdfContent12">
+          <div class="letter-page-content my-4" id="pdfContent12" [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+          
 
               <p class="letter-sub-header">8. Remedies: </p>
               <p>
@@ -1314,9 +1221,7 @@
 
               <p class="letter-sub-header">Date :</p>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+          
           </div>
         </div>
       </div>

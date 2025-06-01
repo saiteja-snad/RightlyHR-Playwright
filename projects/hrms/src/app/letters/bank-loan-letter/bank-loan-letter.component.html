@@ -90,16 +90,9 @@
         <div class="card letter-data-content p-4">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent">
+                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
                         <div class="letter-page-sub-content">
 
-                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-lettersheader></app-lettersheader>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
 
                             <div class="py-3 text-end">
                                 <span class="letter-sub-header">Date: </span>
@@ -146,9 +139,7 @@
                                 <p>{{selectedAuthority.designation}}</p>
                             </div>
                         </div>
-                        <div class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                      
                     </div>
                 </div>
             </div>

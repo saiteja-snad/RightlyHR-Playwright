@@ -176,6 +176,10 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     this.modalService.open(AddGlobalPermissionsComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
+  openmodal(contant:any) {
+    this.modalService.open(contant, { centered: true, backdrop: 'static', });
+  }
+
   //function to get the globalpermissions details
   getAllGlobalPermissions() {
     let params = new HttpParams();
@@ -206,10 +210,12 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
   }
 
   //function to get the values 
-  getEmployeeNames(employeeIds: any[]): string {
-    return employeeIds.map(emp => `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''} 
-      ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''}`.trim()).join(',\n'); // Join with line breaks for each employee
-  }
+ selectedEmployees: any[] = [];
+
+getEmployeeNames(employeeIds: any[]): void {
+  // Assuming employeeIds is an array of employee objects
+  this.selectedEmployees = employeeIds;
+}
 
   ngOnDestroy(): void {
     if (this.subscription) {

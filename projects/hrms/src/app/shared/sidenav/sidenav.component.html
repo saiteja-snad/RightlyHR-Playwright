@@ -41,6 +41,20 @@
                 </div>
             </li>
             }
+
+                  <!--Time Off-->
+            @if(this.rbac.allowedToAccess('IT Support.view')){
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/it-support')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="main-menu-icons/it-support.png" alt="Icon" class="main-menu-icon">IT Support
+                    </div>
+                    <ul class="dropdown-menu">
+                    <app-itsuporrt-header-tabs/>
+                    </ul>
+                </div>
+            </li>
+            }
             <!--Policies-->
             @if(this.rbac.allowedToAccess('Policies.view')){
             <li class="nav-item menu-item-clear" [routerLink]="['/policies']" (click)="resetDropdown()"

@@ -1177,8 +1177,7 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Time Off)' 
                                                 || per.fields === 'Approved (Time Off)' || per.fields === 'Processed (Time Off)' 
-                                                || per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' || per.fields === 'Cancelled (Time Off)'|| per.fields === 'Org Leave Balance'
-                                                || per.fields === 'Team Leave Balance Summary (Time Off)' || per.fields === 'Team Leave Balance (Time Off)' 
+                                                || per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' || per.fields === 'Cancelled (Time Off)'
                                                 ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -1964,7 +1963,9 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Standard Reports'  || per.fields === 'Custom Reports' 
-                                            || per.fields === 'Attendance reports' || per.fields === 'Monthly Attendance Reports' ">
+                                            || per.fields === 'Attendance reports' || per.fields === 'Monthly Attendance Reports' 
+                                            || per.fields === 'Org Leave Balance'
+                                                || per.fields === 'Team Leave Balance Summary' || per.fields === 'Team Leave Balance' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

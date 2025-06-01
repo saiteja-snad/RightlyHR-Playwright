@@ -291,6 +291,16 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
           return (route = '/reports/monthly-attandance-reports');
         }
+
+        if (this.rbac.allowedToAccess('Team Leave Balance.view')) {
+          return (route = '/reports/team-leave-balance');
+        }
+        if (this.rbac.allowedToAccess('Team Leave Summary.view')) {
+          return (route = '/reports/team-leave-summary');
+        }
+        if (this.rbac.allowedToAccess('Org Leave Balance.view')) {
+          return (route = '/reports/org-leave-balance');
+        }
         break;
 
       case '/assets-management':

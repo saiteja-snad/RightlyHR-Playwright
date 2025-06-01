@@ -31,6 +31,8 @@ export class MyInfoPersonalTabsComponent implements OnInit {
       { label: 'Team Members', link: '/myinfo/personal/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } }
     ];
     this.filterTabsByRbac();
+    console.log(this.filteredTabs);
+    
   }
 
   filterTabsByRbac(): void {

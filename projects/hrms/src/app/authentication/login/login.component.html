@@ -1,19 +1,38 @@
-<div class="login-main-container">
-  <!-- login page card starts -->
-  <div class="login-card">
-    <div class="d-flex flex-column justify-content-center text-center w-100">
-      <div class="mb-5">
-        <img src="/logos/white-logo.png" alt="Logo" class="company-logo">
-      </div>
-      <div class="mb-4">
-        <img src="/logos/logos-microsoft-icon.png" alt="Microsoft Logo" class="microsoft-logo">
-      </div>
-      <div>
-        <a (click)="goToUserValidate()" class="link-text">Login In with Microsoft Account</a>
-      </div>
+<div class="login-container">
+  <div class="login-left-content">
+    <div class="carousel-content">
+      <p-carousel [value]="carouselItems" [numVisible]="1" [numScroll]="1" showNavigators="false" [circular]="true"
+        [autoplayInterval]="3000">
+        <ng-template let-item #item>
+          <div class="carousel-text">{{item.subject}}</div>
+        </ng-template>
+      </p-carousel>
+    </div>
+    <div class="powerby-content">
+      <img src="/images/prowerby-image.png" alt="Powered By Image" class="powered-by-image">
     </div>
   </div>
-  <!--card ends-->
+
+  <div class="login-right-content">
+    <!-- login page card starts -->
+    <div class="login-card">
+      <div class="d-flex flex-column justify-content-center text-center w-100">
+        <div class="mb-5">
+          <img src="/logos/SNAD-horizontal-logo.png" alt="Logo" class="company-logo">
+        </div>
+        <div class="mb-5">
+          <img src="/logos/logos-microsoft-icon.png" alt="Microsoft Logo" class="microsoft-logo">
+        </div>
+        <div>
+          <a (click)="goToUserValidate()" class="link-text">Login In with Microsoft Account</a>
+        </div>
+      </div>
+    </div>
+    <!--card ends-->
+    <div class="copy-right-content">
+      <p class="copy-right-text m-0">Copy rights reserved by &#64;Snad Developers Inc. 2024</p>
+    </div>
+  </div>
 </div>
 
 <ng-template #successhide let-model>

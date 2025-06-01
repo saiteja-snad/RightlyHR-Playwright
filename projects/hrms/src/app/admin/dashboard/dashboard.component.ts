@@ -14,6 +14,7 @@ import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDays
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -31,6 +32,7 @@ import { Skeleton } from 'primeng/skeleton';
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class DashboardComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;

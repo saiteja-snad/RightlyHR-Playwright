@@ -59,9 +59,27 @@ export class PhonebookComponent {
     });
   }
   // extractdata
+// extractCountryCode(value: string): string {
+//   if (!value) return '';
+//   // Ensure there's a "+" and append space at the end for display
+//   return value.startsWith('+') ? value + ' ' : '+' + value + ' ';
+// }
 extractCountryCode(value: string): string {
-  const match = value?.match(/\(\+?\d+\)/);
-  return match ? match[0].replace(/[()]/g, '') + ' ' : '';
+  if (!value) return '';
+
+  // Case 1: Matches pattern like "Albania (+355)" or just "(+355)"
+  const match = value.match(/\(\+?\d+\)/);
+  if (match) {
+    return match[0].replace(/[()]/g, '') + ' ';
+  }
+
+  // Case 2: If it’s already in +355 format or just 355
+  const cleaned = value.trim();
+  if (/^\+?\d+$/.test(cleaned)) {
+    return cleaned.startsWith('+') ? cleaned + ' ' : '+' + cleaned + ' ';
+  }
+
+  return '';
 }
 
   // Download the image blob and assign it to the specific employee

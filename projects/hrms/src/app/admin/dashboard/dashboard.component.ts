@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { filter, forkJoin, Observable, Subscription } from 'rxjs';
@@ -14,6 +14,7 @@ import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDays
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -31,6 +32,7 @@ import { Skeleton } from 'primeng/skeleton';
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class DashboardComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -79,7 +81,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private http: HttpService,
-    private cdr: ChangeDetectorRef,
     public rbac: RbacService,
     public modalService: NgbModal,
   ) { }
@@ -118,11 +119,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
@@ -227,38 +226,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loadEvents() {
     this.eventsLoader = true;
     forkJoin([
-      this.http.getData(
-        `Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`
-      ) as Observable<IBirthDaysData[]>,
-      this.http.getData(
-        `Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`
-      ) as Observable<IAnniversariesData[]>,
-      this.http.getData(
-        `Employeedata/Newjoinee?year=${this.currentYear}&months=${this.currentMonth}`
-      ) as Observable<INewJoinee[]>,
-      this.http.getData(
-        `Employeedata/ActiveEmployeeMarriageAnniversary?months=${this.currentMonth}`
-      ) as Observable<IMarriageAnniversary[]>
-      ,
+      this.http.getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`) as Observable<IBirthDaysData[]>,
+      this.http.getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`) as Observable<IAnniversariesData[]>,
+      this.http.getData(`Employeedata/Newjoinee?year=${this.currentYear}&months=${this.currentMonth}`) as Observable<INewJoinee[]>,
+      this.http.getData(`Employeedata/ActiveEmployeeMarriageAnniversary?months=${this.currentMonth}`) as Observable<IMarriageAnniversary[]>,
     ]).subscribe(
       ([birthdays, anniversaries, newJoinees, marriageAnniversary]) => {
         const today = new Date();
         const todayDay = today.getDate();
         const todayMonth = today.getMonth(); // 0-based
-        const birthDayEvents = birthdays
-          .filter((b) => {
-            const dob = new Date(b.dob);
-            return dob.getDate() === todayDay && dob.getMonth() === todayMonth;
-          })
-          .map((b) => ({
-            type: 'Birthday',
-            name: this.getFullName({
-              firstName: b.firstName,
-              middleName: b.middleName,
-              lastName: b.lastName,
-            }),
-            date: b.dob,
-          }));
+        const birthDayEvents = birthdays.filter((b) => {
+          const dob = new Date(b.dob);
+          return dob.getDate() === todayDay && dob.getMonth() === todayMonth;
+        }).map((b) => ({
+          type: 'Birthday',
+          name: this.getFullName({
+            firstName: b.firstName,
+            middleName: b.middleName,
+            lastName: b.lastName,
+          }),
+          date: b.dob,
+        }));
         const anniversaryEvents = anniversaries
           .filter((a) => {
             const doj = new Date(a.dateOfJoining);
@@ -397,7 +385,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateCardItems() {
     this.cardItems = [
       {
-        label: 'Active Employees',
+        label: 'Active',
         link: '/employee-management/active-employees',
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
@@ -405,7 +393,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
-        label: 'Inactive Employees',
+        label: 'Inactive',
         link: '/employee-management/inactive-employees',
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
@@ -413,7 +401,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
-        label: 'Prospective Employees',
+        label: 'Prospective',
         link: '/employee-management/prospective-employees',
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
@@ -421,7 +409,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
-        label: 'Probation Employees',
+        label: 'Probation',
         link: '/employee-management/probation-employees',
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',

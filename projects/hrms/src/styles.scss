@@ -223,6 +223,7 @@ body {
             width: 325px !important;
             min-height: 225px !important;
             max-height: 325px !important;
+            overflow-y: auto;
             border-radius: 0.625rem !important;
             box-shadow: 0px 0px 20px 0px #00000066;
             border: none !important;
@@ -1505,24 +1506,6 @@ input[type="file"] {
 //pagenation stylings
 
 // login components stylings
-.login-main-container {
-    width: 100%;
-    height: calc(100dvh - 2rem);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--white-color);
-
-    .welcome-text {
-        font-size: 2rem;
-        font-weight: 600;
-    }
-
-    .content-text {
-        font-size: 2.25rem;
-        font-weight: 500;
-    }
-}
 
 // login components stylings
 
@@ -2020,7 +2003,7 @@ input[type=number]::-webkit-outer-spin-button {
 .custom-p-multi-select-table {
     .p-datatable-table-container {
         width: 100%;
-        height: calc(100vh - 19.625rem);
+        height: calc(100vh - 15.5rem);
         overflow: auto;
         background-color: var(--white-color);
         border: 1px solid var(--table-main-content-border-color);
@@ -2364,9 +2347,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-
-
-
 .graph-grid {
     display: flex;
     align-items: center;
@@ -2401,12 +2381,12 @@ input[type=number]::-webkit-outer-spin-button {
             position: relative;
             width: max-content;
             height: max-content;
+            display: flex;
+            justify-content: center;
 
             .total-count-content {
                 position: absolute;
                 top: 50%;
-                left: 35%;
-                text-align: center;
 
                 .count {
                     font-weight: 700;

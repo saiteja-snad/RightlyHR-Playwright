@@ -1,18 +1,18 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { LeavesApprovaltabsComponent } from "../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { LeavesApprovaltabsComponent } from '../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { HttpService } from '../../../services/http.service';
-import { filter, Subject, takeUntil } from 'rxjs';
-import { ITeamLeaveSummary } from '../leaves.model';
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { NgbModal ,NgbPopoverModule} from '@ng-bootstrap/ng-bootstrap';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
+import { ITeamLeaveSummary } from '../../time-off/leaves/leaves.model';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { filter, Subject, takeUntil } from 'rxjs';
+import { HttpService } from '../../services/http.service';
 import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 
 @Component({
@@ -164,6 +164,9 @@ export class TeamLeaveSummaryComponent {
   calculateDuration(entries: any[]): number {
     if (!entries || !Array.isArray(entries)) return 0;
     return entries.reduce((sum, item) => sum + parseFloat(item.duration || 0), 0);
+  }
+    navigation() {
+    this.router.navigate(['/reports']);
   }
 
   ngOnDestroy(): void {

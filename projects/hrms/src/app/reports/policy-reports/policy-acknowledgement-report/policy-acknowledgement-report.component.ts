@@ -181,7 +181,7 @@ clearDropdowns(keys: string[]) {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/reports/policy-reports/policy-acknowledgment-report': MODULE_INFOS.ATTENDANCE_ABSENT_REPORTS_MODULE_INFO
+      '/reports/policy-reports/policy-acknowledgment-report': MODULE_INFOS.POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
@@ -204,53 +204,19 @@ clearDropdowns(keys: string[]) {
     
     }
 
-        onLocationChange(locationId: any) {
-      if (locationId) {
-        this.getSubLocationByid(locationId);
-        // this.policyAcknowledgementReport.get('subLocation')?.enable();
-        // this.policyAcknowledgementReport.get('shift')?.disable();
-        // this.policyAcknowledgementReport.get('subLocation')?.markAsTouched();
-      } else {
-        // this.jobLocationDropDownData = [];
-        // this.subLocationsDropdown=[];
-        // this.policyAcknowledgementReport.get('subLocation')?.disable();
-        // this.policyAcknowledgementReport.get('shift')?.disable();
-      }
-    }
-
-
    getSubLocationByid(selectedLocation: any): void {
       if (selectedLocation && selectedLocation.id) {
-          // Reset subLocation and shift fields when location changes
-      // this.policiesForm.patchValue({
-      //   subLocation: null,
-      //   shift: null
-      // });
-      // this.subLocationsDropdown = [];
-      // this.shiftDropdown = [];
         this.subscription = this.http
           .getData(
             `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
           )
           .subscribe({
             next: (data: any) => {
-              if (data.length === 0) {
-            //     this.subLocationsDropdown = [];
-            //      this.shiftDropdown = []; 
-            //      this.policiesForm.get('subLocation')?.enable();
-            // this.policiesForm.get('shift')?.disable();
-              } else {
-                this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+                this.subLocationsDropdown = data.jobSubLocations;
                  this.shiftDropdown = []; 
-                // this.policiesForm.get('subLocation')?.enable();
-                // this.policiesForm.get('shift')?.disable();
-              }
-
             },
             error: (error: any) => {
-             if (error.error) {
-            // this.confirmation.openErrorModal(error.error.Message);
-          }
+              console.log(error?.error?.Message);
             },
           });
       } else {
@@ -260,28 +226,9 @@ clearDropdowns(keys: string[]) {
       }
     }
 
-    onSubLocationChange(subLocationId: any) {
-      if (subLocationId) {
-        this.getShiftBYid(subLocationId);
-        // this.policiesForm.get('shift')?.enable();
-        //  this.shiftDropdown = []; 
-        //  this.policiesForm.get('shift')?.markAsTouched();
-      } else {
-        // this.subLocationsDropdown=[];
-        //  this.shiftDropdown = []; 
-        // this.policiesForm.get('shift')?.disable();
-      }
-    }
-
-
       getShiftBYid(selectedSubLocation: any): void {
       const formValue = this.policyAcknowledgementReport.value;
       if (selectedSubLocation && selectedSubLocation) {
-                // Reset subLocation and shift fields when location changes
-      // this.policyAcknowledgementReport.patchValue({
-      //   shift: null
-      // });
-      // this.shiftDropdown = [];
         const locationId = formValue.location?.id
         const subLocationId = selectedSubLocation
   
@@ -293,15 +240,13 @@ clearDropdowns(keys: string[]) {
             next: (data: any) => {
   
               if (data.length === 0) {
-                this.shiftDropdown = []; // Reset if no shifts are found
-                // this.isShiftAvailable = false;
+                this.shiftDropdown = [];
               } else {
                  
                 this.shiftDropdown = [].concat(
                   ...data.map((element: any) => element.orgShiftsItems)
                   
-                ); // Flatten the shift data
-                // this.isShiftAvailable = false;
+                );
               }
             },
             error: (err: any) => {
@@ -313,14 +258,6 @@ clearDropdowns(keys: string[]) {
         this.shiftDropdown = []; // Reset if no sub-location is selected
       }
     }
-
-    onShiftChange(selectedShift: any): void {
-    // console.log('Selected Shift:', selectedShift);
-    // this.selectedShiftId = selectedShift.value;
-    // this.policyData.policy = undefined;
-    // this.policyData.acknowledged = undefined;
-    this.getpolicys();
-  }
 
   getpolicys() {
     const { location, subLocation, shift, year } = this.policyAcknowledgementReport.value;

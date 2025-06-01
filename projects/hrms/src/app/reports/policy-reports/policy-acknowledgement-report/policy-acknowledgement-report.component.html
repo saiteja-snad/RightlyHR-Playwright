@@ -35,7 +35,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName"
                             formControlName="location" placeholder="Please select location"
-                            class="form-select custom-select" (onChange)="onLocationChange($event.value)">
+                            class="form-select custom-select" (onChange)="getSubLocationByid($event.value)">
                         </p-select>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
                             formControlName="subLocation" placeholder="Please select sub location"
-                            (onChange)="onSubLocationChange($event.value)" class="form-select custom-select">
+                            (onChange)="getShiftBYid($event.value)" class="form-select custom-select">
                         </p-select>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id"
-                            formControlName="shift" placeholder="Please select shift" class="form-select custom-select" (onChange)="onShiftChange($event.value)">
+                            formControlName="shift" placeholder="Please select shift" class="form-select custom-select" (onChange)="getpolicys()">
                         </p-select>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="policyItemsData" optionLabel="policyName" optionValue="id"
-                            formControlName="policy" placeholder="Please select policy name" class="form-select custom-select" (change)="onShiftChange($event.target)">
+                            formControlName="policy" placeholder="Please select policy name" class="form-select custom-select">
                         </p-select>
                     </div>
                 </div>

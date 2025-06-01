@@ -32,6 +32,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   updatePoliciesData: any;
   subLocationsDropdown: any = [];
   empinfo: any;
+  initialPoliciesState: any;
   yearDetails = [
     { name: '2024', value: 2024 },
     { name: '2025', value: 2025 },
@@ -89,6 +90,11 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       );
     });
     // this.addPolicyRow();
+
+    this.policies.valueChanges.subscribe(() => {
+    const currentState = JSON.stringify(this.policies.getRawValue());
+    this.hidePublishCloneButtons = currentState !== this.initialPoliciesState;
+});
   }
 
   get policies(): FormArray {
@@ -237,38 +243,8 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   }
 
   publish() {
-    const formValue = this.policyForm.value;
-    const payload = {
-      locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
-      subLocationId:
-        formValue.subLocation?.id ?? this.updatePoliciesData.subLocationId,
-      applicableyear:
-        formValue.year?.value ?? this.updatePoliciesData.applicableyear,
-      addedby:
-        parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
-      addedDate: new Date().toISOString() ?? this.updatePoliciesData.addedDate,
-      status: 'Published',
-      authorizedDate:
-        new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
-      authorizedstatus: 'string',
-      shiftID: formValue.shift?.id ?? this.updatePoliciesData.shiftID,
-      id: this.updatePoliciesData.id,
-      orgPolicyItems: formValue.policies.map((item: any) => ({
-        PolicyName: item.policyName,
-        PolicyAttachment:
-          item.policyNewFile && item.policyNewFile !== ''
-            ? item.policyNewFile
-            : item.policyFile,
-        PolicyDescription: item.policyDescription,
-        requiresAcknowledgment : item.acknowledged,
-        sendEmailNotification: item.notification,
-        sendPushNotification : false,
-        sendNotification: item.notification,
-        Status: 'Published',
-        // holidayColor: 'string',
-        HeaderID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
-      })),
-    };
+    this.initialPoliciesState = JSON.stringify(this.policies.getRawValue());
+    this.hidePublishCloneButtons = false;
     let publishItem = {
       Category: 'policies',
       refentityId: this.updatePoliciesData.orgPolicyItems[0].headerID

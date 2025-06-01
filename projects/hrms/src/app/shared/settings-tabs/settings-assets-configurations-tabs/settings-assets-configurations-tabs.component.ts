@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { MODULE_INFOS } from '../../modules-info';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 @Component({
   selector: 'app-settings-assets-configurations-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -14,14 +15,7 @@ import { MODULE_INFOS } from '../../modules-info';
 export class SettingsAssetsConfigurationsTabsComponent {
   public navTabs: any[] = [];
 
-  constructor(public rbac: RbacService) {
-    this.navTabs = this.allTabs.filter(tab =>
-      tab.permission &&
-      tab.permission.feature &&
-      tab.permission.action &&
-      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
-  }
+
 
   allTabs = [
     {
@@ -46,4 +40,33 @@ export class SettingsAssetsConfigurationsTabsComponent {
       subjectText: MODULE_INFOS.SETTINGS_ASSET_CONFIGURATION_ASSET_SUB_CATEGORY,
     }
   ];
+
+  constructor(
+    public rbac: RbacService,
+    private router: Router,
+    private accessNav: AccessNavigationService
+  ) { }
+
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac(): void {
+    this.navTabs = this.allTabs.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    });
+  }
+
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
 }

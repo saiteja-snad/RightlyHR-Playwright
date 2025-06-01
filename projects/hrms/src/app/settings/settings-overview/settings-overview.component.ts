@@ -6,6 +6,7 @@ import { SettingsRolePermissionsModuleTabsComponent } from "../../shared/setting
 import { SettingsTimeOffTabsComponent } from "../../shared/settings-tabs/settings-time-off-tabs/settings-time-off-tabs.component";
 import { SettingsAssetsConfigurationsTabsComponent } from "../../shared/settings-tabs/settings-assets-configurations-tabs/settings-assets-configurations-tabs.component";
 import { SettingDynamicFormsTabsComponent } from "../../shared/settings-tabs/setting-dynamic-forms-tabs/setting-dynamic-forms-tabs.component";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-settings-overview',
@@ -21,4 +22,6 @@ export class SettingsOverviewComponent {
   settingTimeOffModule = MODULE_INFOS.SETTINGS_TIME_OFF_MODULE_INFO;
   settingAssetsConfigurationModule = MODULE_INFOS.SETTINGS_ASSET_CONFIGURATION_MODULE_INFO;
   settingDynamicFormsModule = MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO;
+
+  constructor(public rbac:RbacService){}
 }

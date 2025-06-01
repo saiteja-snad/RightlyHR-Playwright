@@ -226,7 +226,7 @@ export class AddProspectiveInternComponent {
           this.result = res.employeeData;
           console.log(this.result);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Prospective Trainee Created Successfully');
+          this.conformationPopup.openSuccessModal('Prospective trainee created successfully');
           this.http.activeTabSubject.next(this.result.employeeId);
           // this.isLoading = false;
           if (this.result.employeeId != null) {

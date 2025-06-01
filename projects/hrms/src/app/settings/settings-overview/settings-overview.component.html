@@ -7,6 +7,7 @@
         <div class="custom-letter-tabs">
             <ul class="tabs-list-content">
                 <!--Employee Fields-->
+                @if(rbac.allowedToAccess('Employee Fields Module.view')){
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/main-menu-icons/Employee-Fields-icon.png" alt="Icon" class="icon">
@@ -17,8 +18,9 @@
                         <app-settings-employee-fields-module-tabs />
                     </div>
                 </li>
-
-                <!--Employee Fields-->
+                }
+                @if(rbac.allowedToAccess('Roles.view')){
+                <!--Roles & Permissions-->
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/main-menu-icons/Roles-icon.png" alt="Icon" class="icon">
@@ -29,7 +31,8 @@
                         <app-settings-role-permissions-module-tabs />
                     </div>
                 </li>
-
+               }
+               @if(rbac.allowedToAccess('Settings Timeoff Module.view')){
                 <!--Time Off-->
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -41,8 +44,9 @@
                         <app-settings-time-off-tabs />
                     </div>
                 </li>
-
-                <!--Time Off-->
+               }
+               @if(rbac.allowedToAccess('Assets Management Configuration Module.view')){
+                <!--Asset Configuration-->
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/main-menu-icons/Asset-configuration-icon.png" alt="Icon" class="icon">
@@ -53,7 +57,8 @@
                         <app-settings-assets-configurations-tabs />
                     </div>
                 </li>
-
+              }
+               @if(rbac.allowedToAccess('Dynamic Forms Module.view')){
                 <!--Dynamic Forms-->
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
@@ -65,6 +70,7 @@
                         <app-setting-dynamic-forms-tabs />
                     </div>
                 </li>
+            }
             </ul>
         </div>
     </div>

@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import {  FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {  Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import { IInactiveReportRequest, IWfhReportRequest } from '../../../Interfaces/reports.model';
+import { IInactiveReportRequest, } from '../../../Interfaces/reports.model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { AttandaceReportTabsComponent } from '../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component';
 import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,21 +16,26 @@ import { SelectModule } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {  Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-inactive-employee-report',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent,NgbPopoverModule],
+    DropdownModule,
+    SelectModule,
+    TranslateModule,
+    ReactiveFormsModule,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+  ],
   templateUrl: './inactive-employee-report.component.html',
-  styleUrl: './inactive-employee-report.component.scss'
+  styleUrl: './inactive-employee-report.component.scss',
 })
 export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -86,7 +90,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     { value: 9, name: 'September' },
     { value: 10, name: 'October' },
     { value: 11, name: 'November' },
-    { value: 12, name: 'December' }
+    { value: 12, name: 'December' },
   ];
 
   constructor(
@@ -96,7 +100,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router
-  ) { }
+  ) {}
 
   getParsedEmployee(event: Event): any {
     const target = event.target as HTMLSelectElement;
@@ -109,8 +113,6 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getTeam();
     this.getInactiveReports();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -123,7 +125,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
     this.inactiveReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
-    })
+    });
   }
 
   get isLeaveGenerateDisabled(): boolean {
@@ -136,25 +138,6 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     );
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/inactive-employee-report': MODULE_INFOS.ATTENDANCE_INACTIVE_EMPLOYEE_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
-
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
@@ -165,15 +148,17 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
             };
           });
 
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
+            ...employeedata,
           ];
         },
         error: (reason: any) => {
@@ -191,7 +176,13 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
             this.teamdetails = data.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+                fullName: `${
+                  employee.fusionEmployeeId
+                    ? employee.fusionEmployeeId + ' - '
+                    : ''
+                }${employee.firstName} ${
+                  employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
               };
             });
           }
@@ -206,17 +197,19 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     this.subscription = this.reportsService.getInactiveReports({}).subscribe({
       next: (res: any) => {
         this.extractUniqueYearlyFilters(res);
-      }
+      },
     });
   }
 
   uniqueLeaveCategory: any[] = [];
   extractUniqueYearlyFilters(data: any[]): void {
-    const uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
-  
-    this.uniqueLeaveCategory = uniqueLeaveCategory.map(category => ({
+    const uniqueLeaveCategory = Array.from(
+      new Set(data.map((item: any) => item.leaveType))
+    ).filter(Boolean);
+
+    this.uniqueLeaveCategory = uniqueLeaveCategory.map((category) => ({
       label: category,
-      value: category
+      value: category,
     }));
   }
 
@@ -255,9 +248,8 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
     // Manager full name
     if (formValue.manager) {
-      request.teamManagerID  = formValue.manager.employeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
-
 
     // Only include employee filter if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
@@ -279,7 +271,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
         this.spinnerLoader1 = false;
         this.disableBtn = false;
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -312,7 +304,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       leaveType: 'LEAVE TYPE',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
-      balanced: 'BALANCED'
+      balanced: 'BALANCED',
     };
 
     // Define new sequence
@@ -326,21 +318,27 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       'LEAVE TYPE',
       'ENTITLED',
       'AVAILED',
-      'BALANCED'
+      'BALANCED',
     ];
 
     // Function to format date in dd-MMM-yyyy format
     const formatDate = (dateString: string): string => {
       const date = new Date(dateString);
-      const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
+      const options = {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      } as const;
       return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
     };
 
     // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredInactiveRecord.map(record => {
+    const modifiedData = this.filteredInactiveRecord.map((record) => {
       const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
+      NEW_SEQUENCE.forEach((columnName) => {
+        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(
+          (key) => HEADER_MAPPINGS[key] === columnName
+        );
         if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
           let value = record[originalColumnName];
           if (originalColumnName === 'appliedDate' && value) {
@@ -358,13 +356,19 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
 
     // Merge cells for Inactive Employees Report row from A1 to K1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
+    ws['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } },
+    ];
 
     // Add Inactive Employees Report row
-    XLSX.utils.sheet_add_aoa(ws, [['INACTIVE EMPLOYEES REPORT']], { origin: 'A1' });
+    XLSX.utils.sheet_add_aoa(ws, [['INACTIVE EMPLOYEES REPORT']], {
+      origin: 'A1',
+    });
 
     // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
+    const headerRow = NEW_SEQUENCE.map(
+      (columnName) => HEADER_MAPPINGS[columnName]
+    );
     XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
 
     // Add data rows
@@ -372,14 +376,23 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
     // Apply styles to Inactive Employees Report row
     const absentReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    absentReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
+    absentReportCell.s = {
+      font: { bold: true },
+      alignment: { horizontal: 'center' },
+      fill: { bgColor: { rgb: 'FFFF00' } },
+    };
     ws['A1'] = absentReportCell; // Assign the styled cell back to the worksheet
 
     // Apply styles to column headers
     NEW_SEQUENCE.forEach((columnName, index) => {
       const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
       const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
+      cell.s = {
+        font: { bold: true },
+        alignment: { horizontal: 'center' },
+        fill: { bgColor: { rgb: '0000FF' } },
+        fontColor: { rgb: 'FFFFFF' },
+      };
       ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
     });
 
@@ -387,7 +400,16 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     NEW_SEQUENCE.forEach((columnName, index) => {
       let columnWidth = this.getColumnWidth(modifiedData, columnName);
       // Increase the width for 'EMPLOYEE ID', 'DEPARTMENT', 'ENTITLED', 'AVAILED', and 'BALANCED' columns
-      if (['EMPLOYEE ID', 'DEPARTMENT', 'ENTITLED', 'APPLIED DATE', 'BALANCED', 'SUB LOCATION'].includes(columnName)) {
+      if (
+        [
+          'EMPLOYEE ID',
+          'DEPARTMENT',
+          'ENTITLED',
+          'APPLIED DATE',
+          'BALANCED',
+          'SUB LOCATION',
+        ].includes(columnName)
+      ) {
         columnWidth += 5; // Increase width by 5
       }
       ws['!cols'] = ws['!cols'] || [];
@@ -411,7 +433,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
- navigation(){
+  navigation() {
     this.router.navigate(['/reports']);
   }
 

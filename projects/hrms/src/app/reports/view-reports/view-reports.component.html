@@ -6,7 +6,8 @@
     <div class="custom-component-right-content">
         <div class="custom-letter-tabs">
             <ul class="tabs-list-content">
-                <!--Employee Fields-->
+                <!--Standard Reports-->
+                @if(rbac.allowedToAccess('Standard Reports.view')){
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/reports-icons/Standard-reports-icon.png" alt="Icon" class="icon">
@@ -17,8 +18,10 @@
                         <app-standard-report-tabs />
                     </div>
                 </li>
+                }
 
-                <!--Employee Fields-->
+                <!--Attendance Reports-->
+                @if(rbac.allowedToAccess('Attendance reports.view')){
                 <li class="list-item">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="icon">
@@ -29,8 +32,10 @@
                         <app-attandace-report-tabs />
                     </div>
                 </li>
+                }
 
-                <!--Time Off-->
+                <!--Custom Reports-->
+                @if(rbac.allowedToAccess('Custom Reports.view')){
                 <li class="list-item" [routerLink]="['/reports/custom-reports']">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/reports-icons/Custom-Reports-icon.png" alt="Icon" class="icon">
@@ -38,8 +43,10 @@
                     </div>
                     <p class="subject-text mb-3">{{customReports}}</p>
                 </li>
+                }
 
-                <!--Time Off-->
+                <!--Monthly Attendance Reports-->
+                @if(rbac.allowedToAccess('Monthly Attendance Reports.view')){
                 <li class="list-item" [routerLink]="['/reports/monthly-attandance-reports']">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/reports-icons/Monthly-Attendance-Report-icon.png" alt="Icon" class="icon">
@@ -47,8 +54,10 @@
                     </div>
                     <p class="subject-text mb-3">{{monthlyAttendanceReports}}</p>
                 </li>
+                }
 
-                <!--Time Off-->
+                <!--Team Leave Balance-->
+                @if(rbac.allowedToAccess('Team Leave Balance.view')){
                 <li class="list-item" [routerLink]="['/reports/team-leave-balance']">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/time-off-icon/team-leave-balance-icon.png" alt="Icon" class="icon">
@@ -56,8 +65,10 @@
                     </div>
                     <p class="subject-text mb-3">{{teamLeaveBalance}}</p>
                 </li>
+                }
 
-                <!--Time Off-->
+                <!--Team Leave Summary-->
+                @if(rbac.allowedToAccess('Team Leave Balance Summary.view')){
                 <li class="list-item" [routerLink]="['/reports/team-leave-summary']">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/time-off-icon/team-leave-summary-icon.png" alt="Icon" class="icon">
@@ -65,7 +76,9 @@
                     </div>
                     <p class="subject-text mb-3">{{teamLeaveSummary}}</p>
                 </li>
-
+                }
+                <!-- Org Leave Balance -->
+                @if(rbac.allowedToAccess('Org Leave Balance.view')){
                 <li class="list-item" [routerLink]="['/reports/org-leave-balance']">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <img src="/time-off-icon/Org-Leave-Balance-icon.png" alt="Icon" class="icon">
@@ -73,6 +86,7 @@
                     </div>
                     <p class="subject-text mb-3">{{teamLeaveSummaryModuleInfo}}</p>
                 </li>
+                }
             </ul>
         </div>
     </div>

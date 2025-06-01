@@ -1,6 +1,6 @@
 <div class="d-flex gap-3 align-items-center flex-wrap">
     <div *ngFor="let tab of navTabs;">
-        <div class="settings-sub-tabs-card" [routerLink]="tab.link">
+        <div class="settings-sub-tabs-card" (click)="navigateToAccessedRoute(tab.link)">
             <div class="d-flex gap-2 align-items-center mb-2">
                 <img [src]="tab.icon" alt="Icon" class="icon">
                 <div class="label-name">{{ tab.label }}</div>

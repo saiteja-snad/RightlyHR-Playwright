@@ -5,9 +5,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ItsuporrtHeaderTabsComponent } from "../../shared/itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 @Component({
   selector: 'app-team-tickets',
-  imports: [RouterModule, ItsupportCompomentTabsComponent,NgbPopoverModule, ModuleInformationComponent],
+  imports: [RouterModule, ItsupportCompomentTabsComponent, NgbPopoverModule, ModuleInformationComponent, ItsuporrtHeaderTabsComponent],
   templateUrl: './team-tickets.component.html',
   styleUrl: './team-tickets.component.scss',
   encapsulation:ViewEncapsulation.None,

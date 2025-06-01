@@ -2003,7 +2003,7 @@ input[type=number]::-webkit-outer-spin-button {
 .custom-p-multi-select-table {
     .p-datatable-table-container {
         width: 100%;
-        height: calc(100vh - 19.625rem);
+        height: calc(100vh - 15.5rem);
         overflow: auto;
         background-color: var(--white-color);
         border: 1px solid var(--table-main-content-border-color);
@@ -2347,9 +2347,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-
-
-
 .graph-grid {
     display: flex;
     align-items: center;
@@ -2384,12 +2381,12 @@ input[type=number]::-webkit-outer-spin-button {
             position: relative;
             width: max-content;
             height: max-content;
+            display: flex;
+            justify-content: center;
 
             .total-count-content {
                 position: absolute;
                 top: 50%;
-                left: 35%;
-                text-align: center;
 
                 .count {
                     font-weight: 700;

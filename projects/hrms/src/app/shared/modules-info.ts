@@ -93,8 +93,8 @@ export const MODULE_INFOS = {
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO : "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 
      //Reports Module Standard Reports Module Info
-     POLICY_REPORTS_MODULE_INFO: "Get a clear view of employee data across the organization. Access ready-made reports on joining details, job locations, family info, compensation, and more — all in one place for easy export and analysis.", 
-     POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO : "The Employee Master Data Reports page allows generation and export of comprehensive Employee Master Data based on selected date ranges and employee status. It displays detailed employee information including personal, contact, educational, statutory, banking, and job-related details for accurate HR recordkeeping.",
+     POLICY_REPORTS_MODULE_INFO: "Get a comprehensive overview of policy development across departments. Easily filter and track which policies were assigned to whom and when.", 
+     POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO : "Monitor employee compliance by tracking who acknowledgedwhich policies ans when. Userful for audits, policy rollout tracking, and ensuring accountability across teams.",
     //Calendar Module Info 
     CALENDAR_MODULE_INFO : "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 

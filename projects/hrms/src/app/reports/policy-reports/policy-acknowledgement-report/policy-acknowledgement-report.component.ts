@@ -50,7 +50,8 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
   selectedShiftId: any;
   policyData = {} as any;
   policyItemsData: any;
-  yearDetails: any[] = [];
+  yearDetails: number[] = [];
+  currentYear: number = new Date().getFullYear();
   jobLocationDropDownData: any = [];
   subLocationsDropdown: any = [];
   shiftDropdown: any[] = [];
@@ -72,8 +73,10 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
 
  ngOnInit(): void {
   this.initializeForm();
+  this.getAllYears();
   this.updateModuleInfo();
   this.initiateUpdateModuleInfo();
+  this.getjobLocationList();
  }
 
  initializeForm() {
@@ -99,7 +102,7 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
       policy: null,
       acknowledged: null
     }, { emitEvent: false });
-    this.clearDropdowns(['jobLocationDropDownData', 'subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
+    // this.clearDropdowns(['jobLocationDropDownData', 'subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
   });
 
   this.policyAcknowledgementReport.get('location')?.valueChanges.subscribe(() => {
@@ -109,8 +112,8 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
       policy: null,
       acknowledged: null
     }, { emitEvent: false });
-    this.clearDropdowns(['subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
-    this.getSubLocationByid();
+    // this.clearDropdowns(['subLocationsDropdown', 'shiftDropdown', 'policyItemsData']);
+    // this.getSubLocationByid();
   });
 
   this.policyAcknowledgementReport.get('subLocation')?.valueChanges.subscribe(() => {
@@ -119,8 +122,8 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
       policy: null,
       acknowledged: null
     }, { emitEvent: false });
-    this.clearDropdowns(['shiftDropdown', 'policyItemsData']);
-    this.getShiftBYid();
+    // this.clearDropdowns(['shiftDropdown', 'policyItemsData']);
+    // this.getShiftBYid();
   });
 
   this.policyAcknowledgementReport.get('shift')?.valueChanges.subscribe(() => {
@@ -128,8 +131,8 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
       policy: null,
       acknowledged: null
     }, { emitEvent: false });
-    this.clearDropdowns(['policyItemsData']);
-    this.getpolicys();
+    // this.clearDropdowns(['policyItemsData']);
+    // this.getpolicys();
   });
 
   this.policyAcknowledgementReport.get('policy')?.valueChanges.subscribe(() => {
@@ -137,13 +140,13 @@ export class PolicyAcknowledgementReportComponent implements OnInit, OnDestroy{
       acknowledged: null
     }, { emitEvent: false });
   });
-
-  const currentYear = new Date().getFullYear();
-  this.yearDetails = this.generateYears(currentYear - 1, currentYear + 1).map(year => ({
-    label: year.toString(),
-    value: year
-  }));
 }
+
+getAllYears() {
+      for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+        this.yearDetails.push(i);
+      }
+    }
 
 clearDropdowns(keys: string[]) {
   keys.forEach((key) => {
@@ -182,56 +185,137 @@ clearDropdowns(keys: string[]) {
   }
 
   getjobLocationList() {
-    this.subscription = this.http
-      .getData(`JobLocation/getAllLocations`)
-      .subscribe({
-        next: (locations: any) => {
-          this.jobLocationDropDownData = locations;
-        },
-      });
-  }
-
-  getSubLocationByid(): void {
-    const locationId = this.policyAcknowledgementReport.get('location')?.value;
-    if (locationId) {
-      this.subscription = this.http
-        .getData(
-          `JobLocation/sub-location-by-joblocation/${locationId}`
-        )
-        .subscribe({
-          next: (data: any) => {
-            console.log('Sub Locations:', data);
-            this.subLocationsDropdown = data.jobSubLocations;
-          },
-          error: (error: any) => {
-            if (error.error) {
-            }
-          },
-        });
-    } else {
-      this.subLocationsDropdown = [];
-    this.policyAcknowledgementReport.get('subLocation')?.setValue(null);
+      this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      next: (locations: any) => {
+        this.jobLocationDropDownData = locations;
+  
+        // Fetch sub-locations for each location
+        const subLocationRequests = locations.map((location: { id: any; }) =>
+          this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`)
+        );
+  
+        
+      }
+    });
+    
     }
-  }
 
-  getShiftBYid(): void {
+        onLocationChange(locationId: any) {
+      if (locationId) {
+        this.getSubLocationByid(locationId);
+        // this.policyAcknowledgementReport.get('subLocation')?.enable();
+        // this.policyAcknowledgementReport.get('shift')?.disable();
+        // this.policyAcknowledgementReport.get('subLocation')?.markAsTouched();
+      } else {
+        // this.jobLocationDropDownData = [];
+        // this.subLocationsDropdown=[];
+        // this.policyAcknowledgementReport.get('subLocation')?.disable();
+        // this.policyAcknowledgementReport.get('shift')?.disable();
+      }
+    }
 
-      const locationId = this.policyAcknowledgementReport.get('location')?.value;
-      const subLocationId = this.policyAcknowledgementReport.get('subLocation')?.value;
-      this.subscription = this.http
-        .getData(
-          `orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`
-        )
-        .subscribe({
-          next: (data: any) => {
-            console.log('Shifts:', data);
-            this.shiftDropdown = [].concat(
-              ...data.map((element: any) => element.orgShiftsItems)
-            );
-            console.log(this.shiftDropdown);
-          },
-          error: (err: any) => {},
-        });
+
+   getSubLocationByid(selectedLocation: any): void {
+      if (selectedLocation && selectedLocation.id) {
+          // Reset subLocation and shift fields when location changes
+      // this.policiesForm.patchValue({
+      //   subLocation: null,
+      //   shift: null
+      // });
+      // this.subLocationsDropdown = [];
+      // this.shiftDropdown = [];
+        this.subscription = this.http
+          .getData(
+            `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+          )
+          .subscribe({
+            next: (data: any) => {
+              if (data.length === 0) {
+            //     this.subLocationsDropdown = [];
+            //      this.shiftDropdown = []; 
+            //      this.policiesForm.get('subLocation')?.enable();
+            // this.policiesForm.get('shift')?.disable();
+              } else {
+                this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+                 this.shiftDropdown = []; 
+                // this.policiesForm.get('subLocation')?.enable();
+                // this.policiesForm.get('shift')?.disable();
+              }
+
+            },
+            error: (error: any) => {
+             if (error.error) {
+            // this.confirmation.openErrorModal(error.error.Message);
+          }
+            },
+          });
+      } else {
+        this.subLocationsDropdown = [];
+        this.shiftDropdown = [];
+        
+      }
+    }
+
+    onSubLocationChange(subLocationId: any) {
+      if (subLocationId) {
+        this.getShiftBYid(subLocationId);
+        // this.policiesForm.get('shift')?.enable();
+        //  this.shiftDropdown = []; 
+        //  this.policiesForm.get('shift')?.markAsTouched();
+      } else {
+        // this.subLocationsDropdown=[];
+        //  this.shiftDropdown = []; 
+        // this.policiesForm.get('shift')?.disable();
+      }
+    }
+
+
+      getShiftBYid(selectedSubLocation: any): void {
+      const formValue = this.policyAcknowledgementReport.value;
+      if (selectedSubLocation && selectedSubLocation) {
+                // Reset subLocation and shift fields when location changes
+      // this.policyAcknowledgementReport.patchValue({
+      //   shift: null
+      // });
+      // this.shiftDropdown = [];
+        const locationId = formValue.location?.id
+        const subLocationId = selectedSubLocation
+  
+        this.subscription = this.http
+          .getData(
+            `orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`
+          )
+          .subscribe({
+            next: (data: any) => {
+  
+              if (data.length === 0) {
+                this.shiftDropdown = []; // Reset if no shifts are found
+                // this.isShiftAvailable = false;
+              } else {
+                 
+                this.shiftDropdown = [].concat(
+                  ...data.map((element: any) => element.orgShiftsItems)
+                  
+                ); // Flatten the shift data
+                // this.isShiftAvailable = false;
+              }
+            },
+            error: (err: any) => {
+              console.error('Error fetching shift data:', err);
+              this.shiftDropdown = []; // Reset on error
+            },
+          });
+      } else {
+        this.shiftDropdown = []; // Reset if no sub-location is selected
+      }
+    }
+
+    onShiftChange(selectedShift: any): void {
+    // console.log('Selected Shift:', selectedShift);
+    // this.selectedShiftId = selectedShift.value;
+    // this.policyData.policy = undefined;
+    // this.policyData.acknowledged = undefined;
+    this.getpolicys();
   }
 
   getpolicys() {
@@ -239,7 +323,7 @@ clearDropdowns(keys: string[]) {
 
     this.subscription = this.http
       .getData(
-       `v2/orgPolicies/getpolicybylocation?locationId=${location}&subLocationId=${subLocation}&shiftId=${shift}&Applicableyear=${year}`
+       `v2/orgPolicies/getpolicybylocation?locationId=${location.id}&subLocationId=${subLocation}&shiftId=${shift}&Applicableyear=${year}`
       )
       .subscribe({
         next: (response: any) => {
@@ -259,14 +343,15 @@ clearDropdowns(keys: string[]) {
   }
 
   generatePolicyAckReport() {
-    this.spinnerLoader1 = true;
+    // this.spinnerLoader1 = true;
     this.isLoading = true;
 
     const { policy, acknowledged } = this.policyAcknowledgementReport.value;
+    console.log(acknowledged);
 
     this.subscription = this.http
       .getData(
-        `Reports/PolicyAcknowledgeReports?policyId=${policy}&acknowledged=${acknowledged}`
+        `Reports/PolicyAcknowledgeReports?policyId=${policy}&acknowledged=${acknowledged.value}`
       )
       .subscribe({
         next: (data: any) => {

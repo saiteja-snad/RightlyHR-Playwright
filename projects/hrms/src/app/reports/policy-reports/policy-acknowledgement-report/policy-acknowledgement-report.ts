@@ -23,5 +23,24 @@ export interface IPolicyAcknowledgementReports {
     subLocation: any;
     shift: any;
   }
+
+  export interface JobSubLocation {
+  id: number;
+  jobLocationId: number;
+  jobSubLocationName: string;
+  isDeleted: boolean;
+}
+
+export interface JobLocation {
+  id: number;
+  jobLocationName: string;
+  isDeleted: boolean;
+  subLocations: JobSubLocation[];
+}
+
+export interface JobLocationDropdownOption {
+  label: string;
+  value: JobLocation;
+}
   
   

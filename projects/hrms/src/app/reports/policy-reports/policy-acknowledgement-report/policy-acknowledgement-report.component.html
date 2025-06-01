@@ -1,1 +1,151 @@
-<p>policy-acknowledgement-report works!</p>
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div class="component-header" (click)="navigation()">Reports</div>
+
+        <form autocomplete="off" [formGroup]="policyAcknowledgementReport" (ngSubmit)="generatePolicyAckReport()">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+                    Clear All
+                </button>
+
+                <!--Year Dropdown-->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="yearDetails" optionLabel="label" formControlName="year"
+                            placeholder="Please select year" class="form-select custom-select" [showClear]="true" inputId="year" resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!--Location Dropdown-->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="jobLocationDropDownData" optionLabel="label" formControlName="location"
+                            placeholder="Please select location" class="form-select custom-select" [showClear]="true" (change)="getSubLocationByid()" resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!--Sub-Location Dropdown-->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="subLocationsDropdown" optionLabel="label" formControlName="subLocation"
+                            placeholder="Please select sub location" class="form-select custom-select" [showClear]="true" (change)="getShiftBYid()" resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!--Shift Dropdown-->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="shiftDropdown" optionLabel="label" formControlName="shift"
+                            placeholder="Please select shift" class="form-select custom-select" [showClear]="true" (change)="getpolicys()" resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!--Policy Dropdown-->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="policyItemsData" optionLabel="label" formControlName="policy"
+                            placeholder="Please select policy" class="form-select custom-select" [showClear]="true" resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!--Status Dropdown-->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="AcknoeledgementOptions" optionLabel="label" formControlName="acknowledged"
+                            placeholder="Please select status" class="form-select custom-select" [showClear]="true"
+                            resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="custom-btn btn-secondary"
+                        [disabled]="policyAcknowledgementReport.invalid || spinnerLoader1">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>Loading...</span>
+                        }@else {
+                        <span>Generate</span>
+                        }
+                    </button>
+                
+                
+                    <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPolicyAck()"
+                        [disabled]="!isReportGenerated || spinnerLoader2">
+                        @if(spinnerLoader2){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>Loading...</span>
+                        }@else {
+                        <span>Export</span>
+                        }
+                    </button>
+                
+                </div>
+
+            </div>
+        </form>
+        </div>
+        
+        <!--Module Information-->
+        <div>
+            <app-module-information [moduleInfo]="moduleinfo" />
+        </div>
+
+    @if(isLoading){
+    <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>
+    }@else{
+    <div class="custom-table-content">
+        <table class="content w-100">
+            <thead>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Team</th>
+                <th>Team Manager</th>
+                <th>WorkEmail</th>
+                <th>Location</th>
+                <th>SubLocation</th>
+                <th>Shift</th>
+                <th>Source</th>
+                <th>Acknowledged</th>
+                <th>Acknowledged Date</th>
+                <th>PolicyName</th>
+            </thead>
+            <tbody>
+                @if (policyAcknowledgementReports && policyAcknowledgementReports.length > 0) {
+                <tr *ngFor="let record of policyAcknowledgementReports">
+                    <td>{{record?.fusionEmpId ?? '-'}}</td>
+                    <td>{{record?.employeeName ?? '-'}}</td>
+                    <td>{{record?.department ?? '-'}}</td>
+                    <td>{{record?.subdepartment ?? '-'}}</td>
+                    <td>{{record?.teamManagerName ?? '-'}}</td>
+                    <td>{{record?.workEmail ?? '-'}}</td>
+                    <td>{{record?.location ?? '-'}}</td>
+                    <td>{{record?.subLocation ?? '-'}}</td>
+                    <td>{{record?.shift ?? '-'}}</td>
+                    <td>{{record?.source ?? '-'}}</td>
+                    <td>
+                        {{ record?.acknowledged === true ? 'Yes' : record?.acknowledged === false ? 'No' : '-' }}
+                    </td>
+                    <td>{{record?.acknowledgedDate ? (record.acknowledgedDate | dateformat) : '-' }}</td>
+                    <td>{{record?.policyName ?? '-'}}</td>
+
+                </tr>
+                }@else {
+                <tr>
+                    <app-no-data-found></app-no-data-found>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

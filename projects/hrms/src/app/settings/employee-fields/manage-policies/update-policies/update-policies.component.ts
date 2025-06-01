@@ -268,8 +268,12 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
         HeaderID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
       })),
     };
+    let publishItem = {
+      Category: 'policies',
+      refentityId: this.updatePoliciesData.orgPolicyItems[0].headerID
+    }
     this.subscription = this.http
-      .postdata('orgPolicies/Update', payload)
+      .postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem })
       .subscribe({
         next: (response: any) => {
           this.confirmation.openSuccessModal('Policies published successfully');

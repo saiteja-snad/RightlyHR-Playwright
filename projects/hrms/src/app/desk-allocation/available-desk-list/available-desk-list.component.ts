@@ -330,7 +330,7 @@ export class AvailableDeskListComponent {
         },
         error: (error) => {
           const errormessage = error?.error?.Message
-          this.conformationPopup.openErrorModal(errormessage || 'Error occurred during assignment.')
+          this.conformationPopup.openErrorModal(errormessage || 'Employee already has a desk allocated')
         }
       });
     } else {

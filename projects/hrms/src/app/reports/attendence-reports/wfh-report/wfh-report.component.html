@@ -81,7 +81,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('WFH Report - Generate.view') && rbac.allowedToAccess('WFH Report - Export.view')){
+            @if(rbac.allowedToAccess('WFH Report - Generate.view') 
+            && rbac.allowedToAccess('WFH Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()"
               [disabled]="filteredWfhRecord.length === 0 || disableBtn">
               @if(spinnerLoader2){

@@ -73,7 +73,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view') && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
+            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')
+             && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredYearlyRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -125,11 +126,11 @@
               <td>{{ record.location ?? '-' }}</td>
               <td>{{ record.subLocation ?? '-' }}</td>
               <td>{{ record.shift ?? '-' }}</td>
-              <td>{{ record.entitlementYear ? record.entitlementYear : '-' }}</td>
+              <td>{{ record.year ? record.year : '-' }}</td>
               <td>{{ record.leaveType ?? '-' }}</td>
               <td>{{ record.entitled ?? '-' }}</td>
               <td>{{ record.availed ?? '-' }}</td>
-              <td>{{ record.balanced ?? '-' }}</td>
+              <td>{{ record.balance ?? '-' }}</td>
             </tr>
             }
             } @else {

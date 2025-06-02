@@ -67,7 +67,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Leave Summary Report - Generate.view') && rbac.allowedToAccess('Leave Summary Report - Export.view')){
+            @if(rbac.allowedToAccess('Leave Summary Report - Generate.view') 
+            && rbac.allowedToAccess('Leave Summary Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filterlvsumRecord.length === 0 || disableBtn">
               @if(spinnerLoader2){

@@ -35,7 +35,8 @@
                         }
                     </button>
                     }
-                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') && rbac.allowedToAccess('Family Members Data - Export.view')){
+                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') 
+                    && rbac.allowedToAccess('Family Members Data - Export.view')){
                     <button type="button" class="custom-btn btn-primary"
                         [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
                         @if(spinnerLoader2){

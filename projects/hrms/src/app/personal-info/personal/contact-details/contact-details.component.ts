@@ -125,9 +125,9 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         this.employedata = data;
         this.patchForm(data);
         this.loading = false;
-        this.selectedworkcoutrycode.set(data.workphonecountryflag);
+        this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
     
-        this.selectedpersonalnumbercode.set(data.contactnumbercountryflag);
+        this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
        
       },
       error: (reason) =>{

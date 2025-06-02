@@ -209,9 +209,11 @@ export class YearlySummaryReportComponent {
         // Extract the year from startDate and add it to each record
         this.filteredYearlyRecord = data.map((record: any) => {
           const startDate = new Date(record.startDate);  // Assuming startDate is in a valid format
+          const yearFromStartDate = startDate.getFullYear();
           return {
             ...record,
-            year: startDate.getFullYear()  // Add the year as a new field
+            // year: startDate.getFullYear()  // Add the year as a new field
+            year : record.year || yearFromStartDate
           };
         });
 

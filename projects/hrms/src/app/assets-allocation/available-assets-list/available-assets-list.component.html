@@ -667,7 +667,7 @@
             <div
               *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
               class="error-msg">
-              Sub location is required.
+              Sub Location is required.
             </div>
           </div>
 
@@ -815,7 +815,7 @@
             <label for="vendordetailes" class="form-label custom-label mb-2">Contact Name<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input"
-              (keypress)="formValidation.restrictInput($event)" placeholder="Contact Name" />
+              (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePaste($event)" placeholder="Contact Name" />
             <div
               *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
               <div class="error-msg">Contact Name is required</div>
@@ -828,15 +828,15 @@
             <input type="text" formControlName="contactnumber" class="form-control custom-input"
               (keypress)="formValidation.restrictAlphabets($event)" placeholder="Contact Number" maxlength="15"
               minlength="10" />
-            <div
-              *ngIf="undermainteenceForm.get('contactnumber')?.invalid && undermainteenceForm.get('contactnumber')?.touched">
-              <div class="error-msg">Contact Number is required</div>
+            <div class="error-msg"
+              *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['required'] && undermainteenceForm.get('contactnumber')?.touched">
+              Contact Number is required
             </div>
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="error-msg">
-              Contact Number cannot exceed 10 to 15 digits
+              Contact Number must be 10 to 15 digits
             </div>
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['minlength']" class="error-msg">
-              Contact Number cannot exceed 10 to 15 digits
+              Contact Number must be 10 to 15 digits
             </div>
             <!-- Pattern error for Mobile number length -->
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']" class="error-msg">

@@ -665,7 +665,7 @@
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(releaseassets)">
         No
       </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="model.dismiss()">
+      <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
         Yes
       </button>
     </div>
@@ -838,6 +838,9 @@
             <input type="text" formControlName="pervessublocation" class="form-control custom-input"
               placeholder="Enter Sub Location" />
           </div>
+          <div *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched" class="error-msg">
+  Sub Location is required.
+</div>
 
           <div class="col-md-6 mb-3">
             <label for="location" class="form-label custom-label mb-2">Transfer Location<span
@@ -865,7 +868,7 @@
             <div
               *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
               class="error-msg">
-              Sub location is required.
+              Sub Location is required.
             </div>
           </div>
 
@@ -898,7 +901,8 @@
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary"
               (click)="openModal(tranferconformation)">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
+            <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button> -->
+             <button type="submit" class="custom-btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
           </div>
         </div>
       </form>
@@ -1024,17 +1028,20 @@
             <label for="vendor" class="form-label custom-label mb-2">Contact Number<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="contactnumber" class="form-control custom-input"
-              placeholder="Contact Number" maxlength="15" minlength="10" (paste)="formValidation.validatePaste($event)"
+              placeholder="Contact Number" maxlength="15" minlength="10" (paste)="formValidation.validatePaste($event)"(paste)="formValidation.validatePaste($event)"
               (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off" />
-            <div
-              *ngIf="undermainteenceForm.get('contactnumber')?.invalid && undermainteenceForm.get('contactnumber')?.touched">
-              <div class="error-msg">Contact Number is required</div>
+            <div class="error-msg"
+              *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['required'] && undermainteenceForm.get('contactnumber')?.touched">
+              Contact Number is required
+            </div>
+            <div class="error-msg" *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['minlength'] ">
+              Contact Number must be 10 to 15 digits
             </div>
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="error-msg">
-              Contact Number cannot exceed 10 digits
+              Contact Number must be 10 to 15 digits
             </div>
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
-              AMC vendor Contact is not valid
+              Contact Number  is not valid
             </div>
           </div>
 

@@ -98,6 +98,9 @@ export class AllocatedAssetsListComponent {
   empinfo = {} as any
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+    this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+     this.http.assetsUpdateLocationId(this.selectedLocationId); 
     this.getFilteredData();
     this.getassetsCategory()
     this.getjobLocationList()
@@ -337,7 +340,28 @@ allZeroesIfMaxLength(): ValidatorFn {
     this.loading = true;
     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
       next: (res: any) => {
-        this.assetslist.next(res.items);
+         let items = res.items;
+    // Frontend filtering by assigned person's name (if searchQuery exists)
+ if (this.searchQuery && this.searchQuery.trim().length > 0) {
+  const lowerSearch = this.searchQuery.toLowerCase().trim();
+
+  items = items.filter((item: any) => {
+    const assignedTo = item.assignedTo;
+    if (!assignedTo) return false;
+
+    const firstName = assignedTo.firstName?.trim() || '';
+    const middleName = assignedTo.middleName?.trim() || '';
+    const lastName = assignedTo.lastName?.trim() || '';
+
+    // Build full name and normalize spacing
+    const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').toLowerCase();
+
+    // Match full or partial name
+    return fullName.includes(lowerSearch);
+  });
+}
+
+       this.assetslist.next(items);
         this.loading = false;
         this.collectionSize = res.totalCount;
       },

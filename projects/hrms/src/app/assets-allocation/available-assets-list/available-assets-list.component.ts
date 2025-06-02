@@ -98,6 +98,9 @@ export class AvailableAssetsListComponent {
   empinfo = {} as any
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+     this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+     this.http.assetsUpdateLocationId(this.selectedLocationId); 
     this.getFilteredData();
     this.getassetsCategory()
     this.getjobLocationList()
@@ -555,7 +558,7 @@ allZeroesIfMaxLength(): ValidatorFn {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15),Validators.pattern("[0-9]+$"), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -645,7 +648,7 @@ allZeroesIfMaxLength(): ValidatorFn {
       this.undermainteenceForm.get('vendorname')?.enable();
       this.undermainteenceForm.get('contactnumber')?.enable();
       this.undermainteenceForm.get('vendorname')?.setValidators([Validators.required]);
-      this.undermainteenceForm.get('contactnumber')?.setValidators([Validators.required]);;
+      this.undermainteenceForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.pattern("[0-9]+$"), Validators.minLength(10), this.allZeroesIfMaxLength()]);
 
 
     } else {
@@ -1347,6 +1350,8 @@ resetupdateassiginform(){
   this.assetForm.reset();
    this.modalService.dismissAll();
 }
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

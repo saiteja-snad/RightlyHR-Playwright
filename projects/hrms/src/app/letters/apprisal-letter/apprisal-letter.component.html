@@ -143,14 +143,9 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content" id="pdfContent1">
+          <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content">
-              <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>
-              </div>
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+              
 
               <!-- start of letter -->
               <div class="mb-2 mt-2">
@@ -173,7 +168,7 @@
               <p class="letter-sub-header">Dear {{appraisalData.firstName}} {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
               <p>We are pleased to present you with this appraisal letter on behalf of
-                RightlyHR. We want to extend our gratitude for your dedication and substantial
+                SNAD Developers India Pvt Ltd. We want to extend our gratitude for your dedication and substantial
                 contributions to the organization. Your hard work and commitment have made a significant impact on our
                 success.</p>
 
@@ -371,21 +366,13 @@
               </div>
             </div>
 
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2">
+          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content">
-              <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
-                <!-- <app-letterhead></app-letterhead> -->
-              </div>
-
-              <ng-template #doc>
-                <div class="hard-copy-letter"></div>
-              </ng-template>
+          
 
               <p class="letter-sub-header mt-4 pt-4"><b>Note:</b></p>
               
@@ -405,7 +392,7 @@
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
 
-              <p class="letter-sub-header pt-4"><b>for RightlyHR</b></p>
+              <p class="letter-sub-header pt-4"><b>for SNAD Developers India Pvt Ltd</b></p>
 
               <div class="pb-4">
                 <span class="letter-signature">{{appraisalData.authorityName}}</span><br>
@@ -422,9 +409,7 @@
               </div>
             </div>
 
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
         </div>
       </div>

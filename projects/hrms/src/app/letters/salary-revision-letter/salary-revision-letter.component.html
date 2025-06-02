@@ -102,14 +102,9 @@
             <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content my-4" id="pdfContent1">
+                    <div class="letter-page-content my-4" id="pdfContent1"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="appraisalData.Documenttype; else doc" class="soft-copy-letter">
-                                <app-lettersheader></app-lettersheader>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                           
                             <div class="letter-header text-center">Salary Revision Letter</div>
                             <div class="text-end my-3"><span class="letter-sub-header">Date: </span>
                                 {{appraisalData.dateofAppraisal| dateformat}}
@@ -153,25 +148,20 @@
                                 remain
                                 unchanged. </p>
                             <p>Yours sincerely, </p><br>
-                            <p class="letter-sub-header mb-5">for RightlyHR</p>
+                            <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
                             <p class="letter-signature pt-3">{{appraisalData.authorityName}}</p>
                             <p class="letter-sub-header" *ngIf="!appraisalData.authorityName">Authorized Signatory,</p>
                             <p class="letter-sub-header">{{appraisalData.authorityName}}</p>
                             <p class="letter-sub-header">{{authorityDesignation}}</p>
                         </div>
-                        <div class="letter-footer">
+                        <!-- <div class="letter-footer">
                             <app-letter-footer />
-                        </div>
+                        </div> -->
                     </div>
 
-                    <div class="letter-page-content my-4" id="pdfContent2">
+                    <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
-                                <app-lettersheader></app-lettersheader>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                           
                             <div class="letter-header text-center mb-3">CONFIDENTIAL</div>
                             <div class="letter-header text-center">Annexure – A</div>
 
@@ -387,7 +377,7 @@
                                 </li>
                             </ul>
                             <!-- end of second table -->
-                            <p class="letter-sub-header">for RightlyHR</p>
+                            <p class="letter-sub-header">for SNAD Developers India Pvt Ltd</p>
                             <div class="img-space "></div>
                             <div class="d-flex justify-content-between">
                                 <div>
@@ -406,9 +396,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="letter-footer">
+                        <!-- <div class="letter-footer">
                             <app-letter-footer />
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

@@ -66,3 +66,27 @@ textarea:focus {
 .border-box {
     border: 1px solid #000;
 }
+.letter-data-content {
+    width: 100%;
+
+    .letter-page-content {
+        height: 380mm;
+        width: 270mm;
+        padding-top: 6.5% !important;
+        position: relative;
+        background-image: url('/images/snad-letter-bg.jpg') !important;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        overflow: hidden;
+
+        .letter-page-sub-content {
+            padding: 1.25rem 3.75rem;
+            font-size: var(--fontsize14);
+            color: #000000;
+        }
+
+
+    }
+}

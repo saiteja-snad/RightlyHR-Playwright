@@ -329,8 +329,8 @@ export class AvailableDeskListComponent {
           this.selectedEmployee = null;
         },
         error: (error) => {
-          console.log('Error:', error);
-          this.conformationPopup.openErrorModal(error.error.message || 'Error occurred during assignment.')
+          const errormessage = error?.error?.Message
+          this.conformationPopup.openErrorModal(errormessage || 'Error occurred during assignment.')
         }
       });
     } else {

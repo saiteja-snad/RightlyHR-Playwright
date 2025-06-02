@@ -61,22 +61,6 @@ input:focus {
                 color: #000000;
             }
 
-            .letter-footer {
-                width: 270mm;
-              
-                position: absolute;
-                bottom: 0px;
-                padding: 0.625rem;
-
-                .company-name {
-                    font-size: var(--fontsize14);
-                    font-weight: 600;
-                }
-
-                .company-address {
-                    font-size: var(--fontsize12);
-                    font-weight: 500;
-                }
-            }
+           
         }
     }

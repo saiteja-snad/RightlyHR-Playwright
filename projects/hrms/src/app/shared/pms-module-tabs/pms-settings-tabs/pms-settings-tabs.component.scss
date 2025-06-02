@@ -1,0 +1,46 @@
+// header Nav Tabs stylings
+.header-module-tabs-container {
+    .nav-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 400;
+        font-size: var(--fontsize15);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        padding: 0rem 1rem 0.5rem !important;
+    }
+
+    .nav-tab-active {
+        border-bottom: 0.25rem solid var(--navtab-item-color);
+        font-weight: 700;
+    }
+
+    a {
+        color: var(--primary-color) !important;
+
+        &:hover {
+            color: var(--primary-color) !important;
+        }
+
+        &:focus {
+            color: var(--primary-color) !important;
+        }
+    }
+
+    .active-nav-link {
+        border-bottom: 0.25rem solid var(--navtab-item-color);
+        font-weight: 700;
+    }
+
+    .p-tablist-tab-list {
+        gap: 0rem !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem !important;
+        border: none !important;
+        transition: none !important;
+    }
+}

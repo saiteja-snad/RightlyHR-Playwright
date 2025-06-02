@@ -5,13 +5,13 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            @if(this.rbac.allowedToAccess('Add Prospective Employee.view') && 
+            @if(this.rbac.allowedToAccess('Add Prospective Employee.view') &&
             this.router.url === '/employee-management/prospective-employees'){
             <div>
                 <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
                     {{'Add Prospective Employee'| translate}}</button>
             </div>}
-            @if(this.rbac.allowedToAccess('Add Prospective Trainee.view') && 
+            @if(this.rbac.allowedToAccess('Add Prospective Trainee.view') &&
             this.router.url ==='/employee-management/prospective-interns'){
             <div class="d-flex">
                 <button type="button" class="custom-btn btn-primary" (click)="openAddProspectiveIntern()">
@@ -45,20 +45,17 @@
         </div>
 
         <div class="employee-category-container">
-            <p-tabs scrollable>
-                <p-tablist>
-                    @for (item of cardItems; track $index) {
-                    <p-tab>
-                        <div class="card employee-category-card" [routerLink]="[item.link]"
-                            routerLinkActive="active-nav-link">
-                            <img [src]="item.icon" alt="Icon" class="icon mb-3">
-                            <p class="content-text m-0">{{ item.label }}</p>
-                            <p class="content-text m-0">{{item.sublabel}} ({{ item.count }})</p>
-                        </div>
-                    </p-tab>
-                    }
-                </p-tablist>
-            </p-tabs>
+            <div class="cards-grid-container">
+                @for (item of cardItems; track $index) {
+                <div class="employees-category-card"  [routerLink]="[item.link]" routerLinkActive="active-nav-link">
+                    <div class="accent-bar" [style.background]="item.employeementTypeColor"></div>
+                    <div class="w-100 text-center py-1">
+                        <p class="label-name mb-2">{{ item.label }} {{item.sublabel}}</p>
+                        <p class="count-text m-0">{{ item.count }}</p>
+                    </div>
+                </div>
+                }
+            </div>
         </div>
     </div>
 

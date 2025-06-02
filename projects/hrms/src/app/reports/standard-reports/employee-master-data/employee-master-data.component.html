@@ -44,8 +44,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Employee Master Data - Generate.view') && rbac.allowedToAccess('Employee Master Data
-          - Export.view') ){
+          @if(rbac.allowedToAccess('Employee Master Data - Generate.view') 
+            && rbac.allowedToAccess('Employee Master Data - Export.view') ){
           <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn"
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">
             @if(spinnerLoader2){
@@ -198,18 +198,18 @@
             <td>{{ emp.dob ? (emp.dob | dateformat) : '-' }}</td>
             <td>{{ emp.bloodGroup || '-' }}</td>
             <!-- <td>{{ emp.secondaryLanguage || '-' }}</td> -->
-            <td>{{ emp.currentaddressline1 || '-' }}</td>
-            <td>{{ emp.currentaddressline2 || '-' }}</td>
-            <td>{{ emp.currentcity || '-' }}</td>
-            <td>{{ emp.currentstate || '-' }}</td>
-            <td>{{ emp.currentcountry || '-' }}</td>
-            <td>{{ emp.currentzipcode || '-' }}</td>
-            <td>{{ emp.permanentaddressline1 || '-' }}</td>
-            <td>{{ emp.permanentaddressline2 || '-' }}</td>
-            <td>{{ emp.permanentcity || '-' }}</td>
-            <td>{{ emp.permanentstate || '-' }}</td>
-            <td>{{ emp.permanentcountry || '-' }}</td>
-            <td>{{ emp.permanentzipcode || '-' }}</td>
+            <td>{{ emp.currentAddressLine1 || '-' }}</td>
+            <td>{{ emp.currentAddressLine2 || '-' }}</td>
+            <td>{{ emp.currentCity || '-' }}</td>
+            <td>{{ emp.currentState || '-' }}</td>
+            <td>{{ emp.currentCountry || '-' }}</td>
+            <td>{{ emp.currentZipCode || '-' }}</td>
+            <td>{{ emp.permanentAddressLine1 || '-' }}</td>
+            <td>{{ emp.permanentAddressLine2 || '-' }}</td>
+            <td>{{ emp.permanentCity || '-' }}</td>
+            <td>{{ emp.permanentState || '-' }}</td>
+            <td>{{ emp.permanentCountry || '-' }}</td>
+            <td>{{ emp.permanentZipCode || '-' }}</td>
             <td>{{ emp.workPhone || '-' }}</td>
             <td>{{ emp.contactnumber || '-' }}</td>
             <td>{{ emp.workEmail || '-' }}</td>

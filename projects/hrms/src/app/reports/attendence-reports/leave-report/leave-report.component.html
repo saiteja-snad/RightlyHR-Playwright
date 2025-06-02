@@ -99,7 +99,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
+          @if(rbac.allowedToAccess('Leave Report - Generate.view') 
+          && rbac.allowedToAccess('Leave Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filteredleaveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){

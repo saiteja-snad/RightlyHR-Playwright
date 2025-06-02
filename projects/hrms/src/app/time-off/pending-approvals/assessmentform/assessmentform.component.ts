@@ -717,7 +717,7 @@ export class AssessmentformComponent {
   //function to get the form answers
   getFormDetails(Value: any) {
     this.subscription = this.http
-      .getData(`ProbationFlow/getFormResponseByFormId/1?employeeId=${Value}`)
+      .getData(`ProbationFlow/getFormResponseByFormId/0?employeeId=${Value}`)
       .subscribe({
         next: (response: any) => {
           console.log(response);

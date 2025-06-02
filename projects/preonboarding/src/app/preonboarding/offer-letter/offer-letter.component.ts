@@ -213,7 +213,7 @@ export class OfferLetterComponent implements OnInit {
         this.loadingcircle = false;
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
-        this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
+        this.confiramtionpopups.openSuccess('Offer letter rejected successfully');
         
        
         
@@ -453,7 +453,7 @@ export class OfferLetterComponent implements OnInit {
     this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
-        this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
+        this.confiramtionpopups.openSuccess('Offer letter accepted successfully');
         this.loadingcircle = false;
         this.getOfferLetterDetails();
       },

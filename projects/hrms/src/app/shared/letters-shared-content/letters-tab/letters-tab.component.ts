@@ -34,20 +34,20 @@ export class LettersTabComponent {
       subject: MODULE_INFOS.TRAINEE_OFFER_LETTER_MODULE_INFO,
       permission: { feature: 'Dashboard Generate Documents Trainee Offer Letter', action: 'view' }
     },
-    {
-      label: 'Trainee Appointment Letter',
-      link: '/letters/trainee-appointment-letter',
-      icon: '/letters-icon/trainee-appointment-letter.png',
-      subject: MODULE_INFOS.TRAINEE_APPOINTMENT_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Trainee Appointment Letter', action: 'view' }
-    },
-    {
-      label: 'Welcome Letter',
-      link: '/letters/welcome-letter',
-      icon: '/letters-icon/welcome-letter-icon.png',
-      subject: MODULE_INFOS.WELCOME_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Welcome Letter', action: 'view' }
-    },
+    // {
+    //   label: 'Trainee Appointment Letter',
+    //   link: '/letters/trainee-appointment-letter',
+    //   icon: '/letters-icon/trainee-appointment-letter.png',
+    //   subject: MODULE_INFOS.TRAINEE_APPOINTMENT_LETTER_MODULE_INFO,
+    //   permission: { feature: 'Dashboard Generate Documents Trainee Appointment Letter', action: 'view' }
+    // },
+    // {
+    //   label: 'Welcome Letter',
+    //   link: '/letters/welcome-letter',
+    //   icon: '/letters-icon/welcome-letter-icon.png',
+    //   subject: MODULE_INFOS.WELCOME_LETTER_MODULE_INFO,
+    //   permission: { feature: 'Dashboard Generate Documents Welcome Letter', action: 'view' }
+    // },
     {
       label: 'Bank Loan Letter',
       link: '/letters/bank-loan-letter',

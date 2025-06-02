@@ -139,7 +139,7 @@ export class AllAssetsListComponent {
       amcstartdate: [{ value: null, disabled: true }],
       amcenddate: [{ value: null, disabled: true }],
       locationId: [{ value: null, disabled: true }],
-       subLocationId: [{ value: null, disabled: true }, Validators.required],
+       subLocationId: [{ value: null,disabled:true},Validators.required],
       vendorname: [{ value: null, disabled: true }, []],
       contactnumber: [{ value: null, disabled: true }, []]
     }, {
@@ -487,8 +487,11 @@ onassetsubcategory() {
   //     this.subLocationsDropdown = []; // Reset if no location is selected
   //   }
   // }
+
+
   getSubLocationByid(selectedLocation: any): void {
   this.locationfromdata.get('subLocationId')?.enable();
+  this.assetForm.get('subLocationId')?.enable()
   this.locationfromdata.get('subLocationId')?.setValue(null);
   this.locationfromdata.get('subLocationId')?.markAsTouched();
   this.locationfromdata.get('subLocationId')?.updateValueAndValidity();
@@ -1533,6 +1536,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Active Successfully ');
+            this.getcount(null, null,this.Status);
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
         },
         error: (err) => {

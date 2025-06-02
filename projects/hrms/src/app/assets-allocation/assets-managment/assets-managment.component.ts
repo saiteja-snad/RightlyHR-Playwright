@@ -571,36 +571,13 @@ export class AssetsManagmentComponent {
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
     params.append('status', status);
-    // this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
-    //   next: (data: any) => {
-    //     const totalCount = data.totalCount || 0;
-    //     this.http.setAssetCount(totalCount);
-    //     const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
-    //     const availableData = statusCounts.find((item: any) => item.status === "Available");
-    //     const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
-    //     const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
-    //     const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
-    //     const availableCount = availableData?.count || 0;
-    //     const allocateCount = allocateData?.count || 0;
-    //     const inactiveCount = inactivedata?.count || 0;
-    //     const undermaintenceCount = undermaintence?.count || 0;
-    //     this.http.setavilableAssetCount(availableCount);
-    //     this.http.setallocatedAssetCount(allocateCount);
-    //     this.http.setundermatinaceAssetCount(undermaintenceCount);
-    //     this.http.setinactiveSubjectAssetCount(inactiveCount);
-    //     this.initChart();
-    //   },
-    //   error: (error) => {
-    //     console.error('Error fetching count:', error);
-    //   }
-    // });
+   
+  
   this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
     next: (data: any) => {
   const totalCount = data.totalCount || 0;
   this.http.setAssetCount(totalCount);
-
   const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
-
   const availableCount = statusCounts.find((item: any) => item.status === "Available")?.count || 0;
   const allocateCount = statusCounts.find((item: any) => item.status === "Allocated")?.count || 0;
   const inactiveCount = statusCounts.find((item: any) => item.status === "Inactive")?.count || 0;
@@ -611,7 +588,7 @@ export class AssetsManagmentComponent {
   this.http.setundermatinaceAssetCount(undermaintenceCount);
   this.http.setinactiveSubjectAssetCount(inactiveCount);
 
-  // 🔁 Move chart initialization here
+  // Move chart initialization here
   setTimeout(() => this.initChart(), 0);
 },
   });
@@ -629,32 +606,6 @@ export class AssetsManagmentComponent {
     this.isToggledamc = false
   }
 
-  // initChart() {
-  //   const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
-  //   const backgroundColors = chartTabs.map(item => item.backgroundcolour);
-
-  //   this.assetData = {
-  //     datasets: [
-  //       {
-  //         data: [
-
-  //           this.http.avilableassetCountSubject.value ?? 0,
-  //           this.http.allocatedassetCountSubject.value ?? 0,
-  //           this.http.undermatinaceassetCountSubject.value ?? 0,
-  //           this.http.inactiveaceassetCountSubject.value ?? 0,
-
-  //         ],
-  //         backgroundColor: backgroundColors,
-  //         borderWidth: 0,
-  //       }
-  //     ]
-  //   };
-
-
-  //   this.assetDataOptions = {
-  //     cutout: '70%',
-  //   };
-  // }
 initChart(): void {
   combineLatest([
     this.http.avilableassetCountSubject,

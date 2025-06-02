@@ -838,9 +838,6 @@
             <input type="text" formControlName="pervessublocation" class="form-control custom-input"
               placeholder="Enter Sub Location" />
           </div>
-          <div *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched" class="error-msg">
-  Sub Location is required.
-</div>
 
           <div class="col-md-6 mb-3">
             <label for="location" class="form-label custom-label mb-2">Transfer Location<span
@@ -865,11 +862,11 @@
                 formControlName="subLocationId" placeholder="Please select sub location"
                 class="form-select custom-select"></p-select>
             </div>
-            <div
-              *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
+            <div *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
               class="error-msg">
               Sub Location is required.
             </div>
+
           </div>
 
           <div class="col-12">

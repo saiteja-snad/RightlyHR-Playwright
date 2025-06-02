@@ -374,6 +374,7 @@ export const permissionsData = [
   { fields: 'Custom Reports', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance reports', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Monthly Attendance Reports', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Policy Reports', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Leave Balance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Leave Balance Summary', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Org Leave Balance', View: false, Update: false, Create: false, Delete: false },
@@ -400,6 +401,10 @@ export const permissionsData = [
 
   // Monthly Attendance Reports Section
   { fields: 'Monthly Attendance Reports - Generate', View: false, Update: false, Create: false, Delete: false },
+
+  //Policy Reports Section
+  { fields: 'Policy Acknowledgement Report', View: false, Update: false, Create: false, Delete: false },
+
 
   // Attendance Reports Section
   { fields: 'Attendance All Employees List(Leaves)', View: false, Update: false, Create: false, Delete: false },

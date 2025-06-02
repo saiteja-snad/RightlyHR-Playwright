@@ -1,6 +1,6 @@
 <div class="custom-main-component-container w-100">
   <div class="d-flex justify-content-between align-items-center mb-3">
-       <div class="heading-content">
+    <div class="heading-content">
       <div class="commpoment-name cursor" (click)="Cancel()">Manage Policies<span class="ms-1"><i
             class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">{{'Add Policies'| translate}}</div>
@@ -26,11 +26,12 @@
               <ng-template let-year #item>{{ year }}</ng-template>
             </p-select>
           </div>
-          <div *ngIf="policiesForm.get('year')?.touched && policiesForm.get('year')?.hasError('required')" class="error-msg">
+          <div *ngIf="policiesForm.get('year')?.touched && policiesForm.get('year')?.hasError('required')"
+            class="error-msg">
             {{'Year is required'|translate}}
           </div>
         </div>
-  
+
         <!-- Location -->
         <div>
           <label for="location" class="form-label custom-label mb-2">
@@ -47,7 +48,7 @@
             {{'Location is required' | translate}}
           </div>
         </div>
-  
+
         <!-- Sub Location -->
         <div>
           <label for="subLocation" class="form-label custom-label mb-2">
@@ -64,22 +65,24 @@
             {{'Sub Location is required' | translate}}
           </div>
         </div>
-  
+
         <!-- Shift -->
         <div>
           <label for="shift" class="form-label custom-label mb-2">
             {{ "Shift" | translate }}<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"  (onChange)="onShiftChange($event.value)"
-              placeholder="Please select shift" class="form-select custom-select">
+            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"
+              (onChange)="onShiftChange($event.value)" placeholder="Please select shift"
+              class="form-select custom-select">
             </p-select>
           </div>
-          <div *ngIf="policiesForm.get('shift')?.touched && policiesForm.get('shift')?.hasError('required')" class="error-msg">
+          <div *ngIf="policiesForm.get('shift')?.touched && policiesForm.get('shift')?.hasError('required')"
+            class="error-msg">
             {{'Shift is required' | translate}}
           </div>
         </div>
-  
+
         <div class="pt-4 mt-1">
           <button type="button" class="custom-btn btn-primary px-4" (click)="addMomentRow()">
             <i class="bi bi-plus me-2"></i>{{'Add New' | translate}}
@@ -87,13 +90,14 @@
         </div>
       </div>
       <!-- Add New Button aligned right -->
-  
+
       <div formArrayName="policies" class="pt-3">
         <div *ngFor="let policy of policies.controls; let i = index" [formGroupName]="i"
           class="card custom-background-card p-3 mb-3">
           <div class="d-flex gap-3">
             <div class="w-100">
-              <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
+              <label class="form-label custom-label">{{'Policy Name' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyName" class="form-control custom-input w-100"
                 placeholder="Please enter policy name" maxlength="50"
                 (keydown)="formValidations.restrictInput($event)" />
@@ -108,30 +112,44 @@
                   class="text-danger">*</span></label>
               <input type="file" formControlName="policyFile" class="form-control custom-input w-100 px-0"
                 (change)="onReactiveFileChange($event, i)" accept=".pdf,image/*" />
-              <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')" class="error-msg">
+              <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')"
+                class="error-msg">
                 {{'Attachment is required'|translate}}
               </div>
             </div>
 
+            <!-- Description moved here -->
             <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <label class="form-label custom-label">{{'Description' | translate}}<span class="text-danger">*</span></label>
-                </div>
-                <div>
-                  <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
-                    class="btn p-0 border-0 bg-transparent">
-                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
-                  </button>
-                </div>
-              </div>
-            
+              <label class="form-label custom-label">{{'Description' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
-                placeholder="Please enter description" maxlength="50" (keydown)="formValidations.restrictInitialSpace($event)" />
-              <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
+                placeholder="Please enter description" maxlength="50"
+                (keydown)="formValidations.restrictInitialSpace($event)" />
+              <div
+                *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
                 class="error-msg">
                 {{'Policy Description is required'|translate}}
               </div>
+            </div>
+
+            <!-- Acknowledgement Toggle -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+              <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
+                </div>
+              <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+            </div>
+
+            <!-- Email Notification Toggle + Delete Button -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+                <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
+                  class="btn p-0 border-0 bg-transparent">
+                  <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                </button>
+              </div>
+              <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
             </div>
           </div>
         </div>

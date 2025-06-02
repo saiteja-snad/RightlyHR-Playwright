@@ -242,21 +242,21 @@
             <td>{{ emp.accountNo || '-' }}</td>
             <td>{{ emp.ifscCode || '-' }}</td>
             <td>{{ emp.offerSentDate ? (emp.offerSentDate | dateformat) : '-' }}</td>
-            <td>{{ emp.offersentby || '-' }}</td>
+            <td>{{ emp.offerSentBy || '-' }}</td>
             <td>{{ emp.offerSentStatus || '-' }}</td>
             <td>{{ emp.appointmentSentDate ? (emp.appointmentSentDate | dateformat) : '-' }}</td>
-            <td>{{ emp.appointmentsentby || '-' }}</td>
+            <td>{{ emp.appointmentSentBy || '-' }}</td>
             <td>{{ emp.appointmentSentStatus || '-' }}</td>
             <td>{{ emp.probationEndDate ? (emp.probationEndDate | dateformat) : '-' }}</td>
             <td>{{ emp.probationStatus || '-' }}</td>
             <td>{{ emp.branchcode || '-' }}</td>
             <td>{{ emp.noticePeriod || '-' }}</td>
             <td>{{ emp.backgroundCheckStatus || '-' }}</td>
-            <td>{{ emp.salaryhold || '-' }}</td>
+            <td>{{ emp.salaryHold || '-' }}</td>
             <td>{{ emp.pt || '-' }}</td>
-            <td>{{ emp.esicapplicable || '-' }}</td>
-            <td>{{ emp.pfapplicable || '-' }}</td>
-            <td>{{ emp.healthinsurance || '-' }}</td>
+            <td>{{ emp.esicApplicable || '-' }}</td>
+            <td>{{ emp.pfApplicable || '-' }}</td>
+            <td>{{ emp.healthInsurance || '-' }}</td>
             <td>{{ emp.lastworkingday ? (emp.lastworkingday | dateformat) : '-' }}</td>
             <td>{{ emp.eligibleforrehire || '-' }}</td>
             <td>{{ emp.termreasonoffboard || '-' }}</td>
@@ -264,16 +264,16 @@
             <td>{{ emp.jobType || '-' }}</td>
             <td>{{ emp.gradeName || '-' }}</td>
             <!-- <td>{{ emp.jobGrade || '-' }}</td> -->
-            <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | dateformat) : '-' }}</td>
+            <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | dateformat) : '-' }}</td>
             <td>{{ emp.jobRole || '-' }}</td>
             <td>{{ emp.departmentName || '-' }}</td>
             <td>{{ emp.subdepartment_name || '-' }}</td>
-            <td>{{ emp.teammanager}}</td>
-            <td>{{ emp.reportingmanager || '-' }}</td>
-            <td>{{ emp.joblocationname || '-' }}</td>
-            <td>{{ emp.jobsublocationname || '-' }}</td>
-            <td>{{ emp.shiftname || '-' }}</td>
-            <td>{{ emp.shiftcode || '-' }}</td>
+            <td>{{ emp.teamManager ? emp.teamManager : '-'}}</td>
+            <td>{{ emp.reportingManager || '-' }}</td>
+            <td>{{ emp.jobLocationName || '-' }}</td>
+            <td>{{ emp.jobSubLocationName || '-' }}</td>
+            <td>{{ emp.shiftName || '-' }}</td>
+            <td>{{ emp.shiftCode || '-' }}</td>
             <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | dateformat) : '-' }}</td>
             <td>{{ emp.overtimeeligibility || '-' }}</td>
             <td>{{ emp.reason || '-' }}</td>

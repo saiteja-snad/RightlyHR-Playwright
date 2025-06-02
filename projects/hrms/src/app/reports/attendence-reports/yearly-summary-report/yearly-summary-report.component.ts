@@ -257,7 +257,7 @@ export class YearlySummaryReportComponent {
       entitlementYear: 'YEAR',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
-      balanced: 'BALANCED'
+      balance: 'BALANCE'
     };
 
     // Define new sequence
@@ -273,7 +273,7 @@ export class YearlySummaryReportComponent {
       'YEAR',
       'ENTITLED',
       'AVAILED',
-      'BALANCED'
+      'BALANCE'
     ];
 
     // Modify data with renamed headers and new sequence

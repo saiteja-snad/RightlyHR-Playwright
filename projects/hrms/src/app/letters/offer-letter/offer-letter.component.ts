@@ -169,7 +169,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null, Validators.required],
+      Copys: [null],
       offerExpiryDate: ['', Validators.required],
       note: ['', [Validators.maxLength(250)]],
       authorityid: [null, Validators.required]

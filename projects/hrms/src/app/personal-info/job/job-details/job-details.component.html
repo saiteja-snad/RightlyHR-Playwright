@@ -115,10 +115,8 @@
                           @if (first && showSaperationDots ) {
 
                         @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation') ){
-                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
-                        !=='trainee inactive' )){
+                        @if(employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
+                        !=='trainee inactive' ){
                         <td class="text-center">
                           
                             <div class="dropdown">

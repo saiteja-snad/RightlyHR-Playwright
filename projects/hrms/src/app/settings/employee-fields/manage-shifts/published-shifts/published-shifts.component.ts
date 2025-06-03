@@ -51,6 +51,26 @@ export class PublishedShiftsComponent {
   }
 
   cloneshiftsPolicy1(id: any): void {
+    const shift = this.shiftsData.find((item: any) => item.id == id);
+     const transformedShift = {
+    id: shift.id,
+    year: shift.applicableyear,
+    location: shift.locationId,
+    subLocation: shift.subLocationId,
+    shifts: shift.orgShiftsItems.map((item: any) => ({
+      shiftCode: item.code,
+      shiftName: item.shiftName,
+      color: item.color,
+      startTime: item.shiftStartTime,
+      endTime: item.shiftEndTime,
+      gracePeriod: item.allowedGracePeriod,
+      latesAllowed: item.latesAllowed,
+      breakTime: item.allowedBreakTime,
+      halfDayMinHrs: item.halfDayMinHrs,
+      fullDayMinHrs: item.fullDayMinHrs
+    }))
+  };
+    localStorage.setItem('clonedShiftData', JSON.stringify(transformedShift));
     this.router.navigate(['/settings/employee-fields/cloneshifts', id]);
   }
 

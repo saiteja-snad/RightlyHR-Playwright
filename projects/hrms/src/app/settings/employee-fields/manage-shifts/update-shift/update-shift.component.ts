@@ -323,10 +323,10 @@ ngOnInit(): void {
   }
 
   publish() {
-    console.log(this.shiftForm);
+    console.log(this.shiftForm.value);
     let publishItem = {
       Category: 'shifts',
-      refentityId: this.shiftForm.value.shifts[0].headerID
+      refentityId: this.shiftForm.value.id
     }
     this.subscription = this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).subscribe({
       next: (respnose: any) => {

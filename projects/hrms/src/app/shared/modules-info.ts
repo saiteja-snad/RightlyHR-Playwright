@@ -92,6 +92,9 @@ export const MODULE_INFOS = {
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO : "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 
+     //Reports Module Standard Reports Module Info
+     POLICY_REPORTS_MODULE_INFO: "Get a comprehensive overview of policy development across departments. Easily filter and track which policies were assigned to whom and when.", 
+     POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO : "Monitor employee compliance by tracking who acknowledged which policies and when. Useful for audits, policy rollout tracking, and ensuring accountability across teams.",
     //Calendar Module Info 
     CALENDAR_MODULE_INFO : "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 

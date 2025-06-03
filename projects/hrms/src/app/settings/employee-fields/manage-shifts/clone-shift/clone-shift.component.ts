@@ -17,6 +17,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
   templateUrl: './clone-shift.component.html',
   styleUrl: './clone-shift.component.scss'
 })
+
 export class CloneShiftComponent {
   @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;

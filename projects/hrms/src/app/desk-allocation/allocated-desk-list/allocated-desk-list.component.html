@@ -29,8 +29,7 @@
           <th>Sub Location</th>
           <th>Desk Status</th>
           <th>Approver</th>
-          @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release
-          Desk.view') ||
+          @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
           rbac.allowedToAccess('Allocated View Desk Details.view')){
           <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
           }
@@ -45,8 +44,7 @@
               <td>{{ desk.subLocation?.jobSubLocationName }}</td>
               <td>{{ desk.deskStatus }}</td>
               <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
-              @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release
-              Desk.view') ||
+              @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
               rbac.allowedToAccess('Allocated View Desk Details.view')){
               <td class="text-center">
                 <div class="dropdown">
@@ -91,25 +89,7 @@
         </tbody>
       </table>
     </div>
-    <div class="pagination-content" *ngIf="((desklist | async) ?? []).length > 0">
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-        <div class="d-flex align-items-center gap-3 p-2">
-          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-            (ngModelChange)="onPageSizeChange($event)">
-            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-            </option>
-          </select>
-          <span class="pagination-label text-nowrap">
-            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
-            collectionSize }}
-          </span>
-        </div>
-        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-          (onPageChange)="onPageChange($event)"></p-paginator>
-      </div>
-    </div>
   </ng-template>
-
 </div>
 
 <ng-template #reallcatedeskmodal let-modal>
@@ -118,7 +98,6 @@
       <div class="pt-2">
         <p class="popup-heading mb-0">Reallocate Desk</p>
       </div>
-
     </div>
 
     <div class="custom-main-popup-content">
@@ -172,7 +151,6 @@
             </div>
           </div>
         </div>
-
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
             (click)="openallocationModal(confirmationpopup)">Cancel</button>

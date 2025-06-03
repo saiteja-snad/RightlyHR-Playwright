@@ -1264,8 +1264,8 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Time Off)' 
                                                 || per.fields === 'Approved (Time Off)' || per.fields === 'Processed (Time Off)' 
-                                                || per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' || per.fields === 'Cancelled (Time Off)'
-                                                ">
+                                                || per.fields === 'Rejected (Time Off)' || per.fields === 'Request Leave Button' 
+                                                || per.fields === 'Cancelled (Time Off)' || per.fields === 'My Team (Time Off)'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1305,7 +1305,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Waiting For Approval (WFH)' 
                                                 || per.fields === 'Approved (WFH)' || per.fields === 'Processed (WFH)' || per.fields==='Cancel (WFH)'
-                                                || per.fields === 'Rejected (WFH)' || per.fields === 'Request WFH Button' ">
+                                                || per.fields === 'Rejected (WFH)' || per.fields === 'Request WFH Button' || per.fields ==='My Team (WFH)' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1371,7 +1371,8 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Waiting For Approval (Comp Off)' 
                                                 || per.fields === 'Approved (Comp Off)' || per.fields === 'Processed (Comp Off)' 
-                                                || per.fields === 'Rejected (Comp Off)' || per.fields === 'Request Comp Off Button' ">
+                                                || per.fields === 'Rejected (Comp Off)' || per.fields === 'Request Comp Off Button'
+                                                || per.fields === 'My Team (Comp Off)' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1414,7 +1415,8 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Waiting For Approval (Permissions)' 
                                             || per.fields === 'Approved (Permissions)'  ||per.fields==='Cancel (Permissions)'
-                                            || per.fields === 'Rejected (Permissions)' || per.fields === 'Request Permission Button' ">
+                                            || per.fields === 'Rejected (Permissions)' || per.fields === 'Request Permission Button'
+                                            || per.fields === 'My Team (Permissions)' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1453,9 +1455,9 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Waiting For Approval (Regularization)' 
-                                            || per.fields === 'Approved (Regularization)'  
-                                            || per.fields === 'Rejected (Regularization)' || per.fields === 'Processed (Regularization)' ">
+                                *ngIf="per.fields === 'Waiting For Approval (Regularization)'  || per.fields === 'Approved (Regularization)'  
+                                            || per.fields === 'Rejected (Regularization)' || per.fields === 'Processed (Regularization)' 
+                                            || per.fields === 'My Team (Regularization)'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1475,8 +1477,6 @@
                                 </td>
                             </tr>
                         </ng-container>
-
-
 
                         <!-- On Behalf Of Module Tabs -->
                         <tr>

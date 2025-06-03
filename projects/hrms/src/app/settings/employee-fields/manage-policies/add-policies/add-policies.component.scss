@@ -1,0 +1,24 @@
+::ng-deep .custom-toggle.p-inputswitch {
+  width: 36px;
+  height: 20px;
+}
+
+::ng-deep .custom-toggle.p-inputswitch .p-inputswitch-slider {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+::ng-deep .custom-toggle.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background-color: #007bff !important; /* Blue when ON */
+}
+
+::ng-deep .custom-toggle.p-inputswitch .p-inputswitch-slider:before {
+  width: 14px;
+  height: 14px;
+  top: 3px;
+  left: 3px;
+}
+
+::ng-deep .custom-toggle.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
+  transform: translateX(16px); /* Adjust for smaller width */
+}

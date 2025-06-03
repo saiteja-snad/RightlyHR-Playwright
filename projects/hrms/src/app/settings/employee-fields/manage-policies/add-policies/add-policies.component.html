@@ -107,17 +107,6 @@
               </div>
             </div>
 
-            <div class="w-100">
-              <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span
-                  class="text-danger">*</span></label>
-              <input type="file" formControlName="policyFile" class="form-control custom-input w-100 px-0"
-                (change)="onReactiveFileChange($event, i)" accept=".pdf,image/*" />
-              <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')"
-                class="error-msg">
-                {{'Attachment is required'|translate}}
-              </div>
-            </div>
-
             <!-- Description moved here -->
             <div class="w-100">
               <label class="form-label custom-label">{{'Description' | translate}}<span
@@ -132,24 +121,36 @@
               </div>
             </div>
 
+            
+            <div class="w-100">
+              <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span
+                  class="text-danger">*</span></label>
+              <input type="file" formControlName="policyFile" class="form-control custom-input w-100 px-0"
+                (change)="onReactiveFileChange($event, i)" accept=".pdf,image/*" />
+              <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')"
+                class="error-msg">
+                {{'Attachment is required'|translate}}
+              </div>
+            </div>
+
             <!-- Acknowledgement Toggle -->
             <div class="w-100">
               <div class="d-flex justify-content-between">
               <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
                 </div>
-              <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+              <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" class="custom-toggle"/>
             </div>
 
             <!-- Email Notification Toggle + Delete Button -->
             <div class="w-100">
               <div class="d-flex justify-content-between">
-                <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                <label class="form-label custom-label">{{'Email Notification Required' | translate}}</label>
                 <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
                   class="btn p-0 border-0 bg-transparent">
                   <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
                 </button>
               </div>
-              <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
+              <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" class="custom-toggle"/>
             </div>
           </div>
         </div>

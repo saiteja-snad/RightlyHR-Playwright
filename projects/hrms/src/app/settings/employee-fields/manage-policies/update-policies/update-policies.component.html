@@ -84,6 +84,19 @@
               </div>
             </div>
         
+            <!-- Description moved here -->
+            <div class="w-100">
+              <label class="form-label custom-label">{{'Description' | translate}}<span
+                  class="text-danger">*</span></label>
+              <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
+                placeholder="Please enter description" maxlength="50"
+                (keydown)="formValidations.restrictInitialSpace($event)" />
+              <div
+                *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
+                class="error-msg">
+                {{'Policy Description is required'|translate}}
+              </div>
+            </div>
         
             <div class="w-100">
               <label class="form-label custom-label">
@@ -98,20 +111,6 @@
               <ng-template #newPopContent>
                 <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
               </ng-template>
-            </div>
-        
-            <!-- Description moved here -->
-            <div class="w-100">
-              <label class="form-label custom-label">{{'Description' | translate}}<span
-                  class="text-danger">*</span></label>
-              <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
-                placeholder="Please enter description" maxlength="50"
-                (keydown)="formValidations.restrictInitialSpace($event)" />
-              <div
-                *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
-                class="error-msg">
-                {{'Policy Description is required'|translate}}
-              </div>
             </div>
 
             <!-- Acknowledgement Toggle -->

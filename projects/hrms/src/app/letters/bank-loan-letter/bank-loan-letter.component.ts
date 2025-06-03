@@ -122,7 +122,10 @@ export class BankLoanLetterComponent {
   onClickEmployee(event: any){
     this.selectedEmployee= event.value;
 
-    this.employeeFullname = this.selectedEmployee.firstName + ' ' + this.selectedEmployee.middleName + ' ' + this.selectedEmployee.lastName;
+    this.employeeFullname = this.selectedEmployee.firstName + 
+    (this.selectedEmployee.middleName ? ' ' + this.selectedEmployee.middleName : '') + 
+    ' ' + this.selectedEmployee.lastName;
+
 
     if (this.selectedEmployee.gender == 'Male') {
       this.hisOrHerdata = 'his'

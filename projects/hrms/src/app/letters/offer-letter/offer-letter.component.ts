@@ -472,7 +472,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
                 phoneNumber: this.prospectiveEmpData?.phoneNumber
               })
               this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value;
-              this.selectedCountryCode = this.prospectiveEmpData?.contactnumbercountryflag;
+              this.selectedCountryCode = this.prospectiveEmpData?.contactNumberCountryFlag;
               this.loadingCode = false;
               this.getEmployeeAddress(data.checkofferletter.empId);
               if (this.prospectiveEmpData.approver) {

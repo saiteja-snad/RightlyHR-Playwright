@@ -99,7 +99,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
+          @if(rbac.allowedToAccess('Leave Report - Generate.view') 
+          && rbac.allowedToAccess('Leave Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filteredleaveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
@@ -155,7 +156,7 @@
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.teamManagerName ?? '-' }}</td>
           <td>{{ record.location ?? '-' }}</td>
-          <td>{{ record.sublocation ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
           <td>{{ record.shift ?? '-' }}</td>
           <td>{{ record.leaveType ?? '-' }}</td>
           <td>{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>

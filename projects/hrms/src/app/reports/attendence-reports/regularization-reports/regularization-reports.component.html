@@ -81,7 +81,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Regularization Report - Generate.view') && rbac.allowedToAccess('Regularization Report - Export.view')){
+            @if(rbac.allowedToAccess('Regularization Report - Generate.view')
+             && rbac.allowedToAccess('Regularization Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelAttendanceRegularization()"
               [disabled]="filteredRegularizationData.length == 0 || disableBtn">
               @if(spinnerLoader2){

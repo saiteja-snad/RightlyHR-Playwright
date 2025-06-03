@@ -45,7 +45,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Custom Reports - Generate.view') && rbac.allowedToAccess('Custom Reports - Export.view')){
+          @if(rbac.allowedToAccess('Custom Reports - Generate.view') 
+          && rbac.allowedToAccess('Custom Reports - Export.view')){
           <button type="button" class="custom-btn btn-primary"
             [disabled]="selectedData.length == 0 || hasPendingChanges ||   disableBtn" (click)="generateExcel()">
             @if(spinnerLoader2){

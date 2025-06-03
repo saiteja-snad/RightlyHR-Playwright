@@ -97,6 +97,9 @@ export class AllAssetsListComponent {
   empinfo = {} as any
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+       this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+     this.http.assetsUpdateLocationId(this.selectedLocationId); 
     this.getFilteredData();
     this.getassetsCategory();
     this.getjobLocationList();
@@ -136,7 +139,7 @@ export class AllAssetsListComponent {
       amcstartdate: [{ value: null, disabled: true }],
       amcenddate: [{ value: null, disabled: true }],
       locationId: [{ value: null, disabled: true }],
-      subLocationId: [{ value: null, disabled: true }],
+       subLocationId: [{ value: null,disabled:true},Validators.required],
       vendorname: [{ value: null, disabled: true }, []],
       contactnumber: [{ value: null, disabled: true }, []]
     }, {
@@ -350,24 +353,37 @@ export class AllAssetsListComponent {
       first: pagenum,
       rows: pagesize,
       searchQuery: this.searchQuery,
-      locationid: locationid,
-      status: Assetsstatus,
+      locationid: this.selectedLocationId,
+      status: this.selectedSubLocationId,
       sublocationid: sublocationid
     };
-    this.loading = true;
-    this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
-      next: (res: any) => {
-        this.assetslist.next(res.items);
-        this.loading = false;
-        this.collectionSize = res.totalCount;
-      },
-      error: (error: any) => {
-        this.loading = false;
-        console.error('Error fetching assets:', error);
-        this.loading = false
+     this.loading = true;
+     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
+       next: (res: any) => {
+        let items = res.items;
+    // Frontend filtering by assigned person's name (if searchQuery exists)
+    if (this.searchQuery && this.searchQuery.trim().length > 0) {
+      const lowerSearch = this.searchQuery.toLowerCase();
+      items = items.filter((item: any) => {
+        const assignedTo = item.assignedTo;
+        if (!assignedTo) return false;
 
-      }
-    });
+        // Match full name or parts of it
+        const fullName = `${assignedTo.firstName} ${assignedTo.middleName || ''} ${assignedTo.lastName || ''}`.toLowerCase();
+        return fullName.includes(lowerSearch);
+      });
+    }
+
+    this.assetslist.next(items);
+    this.loading = false;
+    this.collectionSize = res.totalCount;
+  },
+  error: (error: any) => {
+    this.loading = false;
+    console.error('Error fetching assets:', error);
+  }
+});
+
   }
   getvendor() {
     this.http.getData('AssetVendor').pipe(takeUntil(this.destroy$)).subscribe({
@@ -442,35 +458,62 @@ onassetsubcategory() {
       });
   }
 
-  getSubLocationByid(selectedLocation: any): void {
-    this.locationfromdata.get('subLocationId')?.enable()
-    this.assetForm.get('subLocationId')?.enable()
-    if (selectedLocation && selectedLocation.id) {
-      this.subscription = this.http
-        .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
-        )
-        .subscribe({
-          next: (data: any) => {
-            console.log('Sub Location Data:', data);
+  // getSubLocationByid(selectedLocation: any): void {
+  //   this.locationfromdata.get('subLocationId')?.enable()
+  //   this.assetForm.get('subLocationId')?.enable()
+  //   if (selectedLocation && selectedLocation.id) {
+  //     this.subscription = this.http
+  //       .getData(
+  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+  //       )
+  //       .subscribe({
+  //         next: (data: any) => {
+  //           console.log('Sub Location Data:', data);
 
-            if (data.length === 0) {
-              this.subLocationsDropdown = []; // Reset if no sub-locations are found
-            } else {
-              this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-            }
-            this.assetForm.patchValue({ subLocation: null });
-          },
-          error: (err: any) => {
-            console.error('Error fetching sub-location data:', err);
-            this.subLocationsDropdown = []; // Reset on error
-            this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
-          },
-        });
-    } else {
-      this.subLocationsDropdown = []; // Reset if no location is selected
-    }
+  //           if (data.length === 0) {
+  //             this.subLocationsDropdown = []; // Reset if no sub-locations are found
+  //           } else {
+  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+  //           }
+  //           this.assetForm.patchValue({ subLocation: null });
+  //         },
+  //         error: (err: any) => {
+  //           console.error('Error fetching sub-location data:', err);
+  //           this.subLocationsDropdown = []; // Reset on error
+  //           this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
+  //         },
+  //       });
+  //   } else {
+  //     this.subLocationsDropdown = []; // Reset if no location is selected
+  //   }
+  // }
+
+
+  getSubLocationByid(selectedLocation: any): void {
+  this.locationfromdata.get('subLocationId')?.enable();
+  this.assetForm.get('subLocationId')?.enable()
+  this.locationfromdata.get('subLocationId')?.setValue(null);
+  this.locationfromdata.get('subLocationId')?.markAsTouched();
+  this.locationfromdata.get('subLocationId')?.updateValueAndValidity();
+
+  if (selectedLocation && selectedLocation.id) {
+    this.subscription = this.http
+      .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Sub Location Data:', data);
+          this.subLocationsDropdown = data.jobSubLocations || [];
+        },
+        error: (err: any) => {
+          console.error('Error fetching sub-location data:', err);
+          this.subLocationsDropdown = [];
+        },
+      });
+  } else {
+    this.subLocationsDropdown = [];
   }
+}
+
   getToday(): string {
     return new Date().toISOString().split('T')[0]
   }
@@ -669,7 +712,7 @@ allZeroesIfMaxLength(): ValidatorFn {
       this.undermainteenceForm.get('vendorname')?.enable();
       this.undermainteenceForm.get('contactnumber')?.enable();
       this.undermainteenceForm.get('vendorname')?.setValidators([Validators.required]);
-      this.undermainteenceForm.get('contactnumber')?.setValidators([Validators.required]);;
+     this.undermainteenceForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.pattern("[0-9]+$"), Validators.minLength(10), this.allZeroesIfMaxLength()]);
 
 
     } else {
@@ -1493,6 +1536,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Active Successfully ');
+            this.getcount(null, null,this.Status);
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
         },
         error: (err) => {

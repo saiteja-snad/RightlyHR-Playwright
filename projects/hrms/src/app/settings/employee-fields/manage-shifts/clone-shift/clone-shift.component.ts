@@ -55,10 +55,40 @@ export class CloneShiftComponent {
     this.geAllLocations();
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     const shiftId = this.route.snapshot.paramMap.get('id');
-    if (shiftId) {
-      this.getShiftById(shiftId);
-    }
+    const clonedShiftData = localStorage.getItem('clonedShiftData');
+   if (shiftId && clonedShiftData) {
+    const parsedData = JSON.parse(clonedShiftData);
+    this.patchShiftForm(parsedData); // patch form using the same method
   }
+  }
+
+  patchShiftForm(data: any): void {
+  this.shiftForm.patchValue({
+    year: data.year,
+    location: '',
+    id: '',
+    subLocation: ''
+  });
+
+  const shiftArray = this.shiftForm.get('shifts') as FormArray;
+  shiftArray.clear();
+  (data.shifts || []).forEach((item: any) => {
+    shiftArray.push(this.fb.group({
+      shiftCode: [item.shiftCode || '', Validators.required],
+      shiftName: [item.shiftName || '', Validators.required],
+      color: [item.color || '#000000'],
+      startTime: [item.startTime || '', Validators.required],
+      endTime: [item.endTime || '', Validators.required],
+      gracePeriod: [item.gracePeriod || 0, Validators.required],
+      latesAllowed: [item.latesAllowed || 0, Validators.required],
+      breakTime: [item.breakTime || 0, Validators.required],
+      halfDayMinHrs: [item.halfDayMinHrs || 0, Validators.required],
+      fullDayMinHrs: [item.fullDayMinHrs || 0, Validators.required],
+    }));
+  });
+
+}
+
 
   Cancel() {
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });

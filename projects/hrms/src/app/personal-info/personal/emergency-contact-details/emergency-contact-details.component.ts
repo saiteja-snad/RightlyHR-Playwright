@@ -112,8 +112,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
         this.employedata = data;
         this.patchForm(data);
         this.loading = false;
-        this.selectedemergencycoutrycode.set(data.emergencynumbercountryflag);
-        this.selectedemergency1coutrycode.set(data.emergencyphonecountryflag);
+        this.selectedemergencycoutrycode.set(data.emergencyNumberCountryFlag);
+        this.selectedemergency1coutrycode.set(data.emergencyPhoneCountryFlag);
        
       },
       error: (reason) => console.error('Error fetching employee data:', reason),

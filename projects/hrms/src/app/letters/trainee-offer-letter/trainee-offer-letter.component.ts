@@ -499,7 +499,7 @@ export class TraineeOfferLetterComponent {
               this.disableFields = false; // User clicked "OK," enable fields
               this.traineeEmpData = data.checkofferletter;
               console.log(this.traineeEmpData);
-              this.selectedCountryCode = this.traineeEmpData?.contactnumbercountryflag;
+              this.selectedCountryCode = this.traineeEmpData?.contactNumberCountryFlag;
               this.loadingCode = false;
               this.traineeEmpData.note = this.traineeEmpData.note;
               this.patchForm(this.traineeEmpData);

@@ -78,8 +78,8 @@ export class EmergencyContactDetailsComponent {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data as Ipersonal;
-        this.selectedCountryCode?.set(this.empdata.emergencynumbercountryflag);
-        this.selectedCountryCode1?.set(this.empdata.emergencyphonecountryflag);
+        this.selectedCountryCode?.set(this.empdata.emergencyNumberCountryFlag);
+        this.selectedCountryCode1?.set(this.empdata.emergencyPhoneCountryFlag);
         this.patchForm();
         this.loading = false;
       },

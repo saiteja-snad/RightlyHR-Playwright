@@ -98,6 +98,9 @@ export class AvailableAssetsListComponent {
   empinfo = {} as any
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+     this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+     this.http.assetsUpdateLocationId(this.selectedLocationId); 
     this.getFilteredData();
     this.getassetsCategory()
     this.getjobLocationList()
@@ -135,7 +138,7 @@ export class AvailableAssetsListComponent {
       amcstartdate: [{ value: null, disabled: true }],
       amcenddate: [{ value: null, disabled: true }],
       locationId: [{ value: null, disabled: true }],
-      subLocationId: [{ value: null, disabled: true }],
+      subLocationId: [{ value: null, disabled: true },Validators.required],
       vendorname: [{ value: null, disabled: true }, []],
       contactnumber: [{ value: null, disabled: true }, []]
     }, {
@@ -407,35 +410,63 @@ allZeroesIfMaxLength(): ValidatorFn {
       });
   }
 
-  getSubLocationByid(selectedLocation: any): void {
-    this.locationfromdata.get('subLocationId')?.enable()
-    this.assetForm.get('subLocationId')?.enable()
-    if (selectedLocation && selectedLocation.id) {
-      this.subscription = this.http
-        .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
-        )
-        .subscribe({
-          next: (data: any) => {
-            console.log('Sub Location Data:', data);
+  // getSubLocationByid(selectedLocation: any): void {
+  //   this.locationfromdata.get('subLocationId')?.enable()
+  //   this.assetForm.get('subLocationId')?.enable()
+  //   if (selectedLocation && selectedLocation.id) {
+  //     this.subscription = this.http
+  //       .getData(
+  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+  //       )
+  //       .subscribe({
+  //         next: (data: any) => {
+  //           console.log('Sub Location Data:', data);
 
-            if (data.length === 0) {
-              this.subLocationsDropdown = []; // Reset if no sub-locations are found
-            } else {
-              this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-            }
-            this.assetForm.patchValue({ subLocation: null });
-          },
-          error: (err: any) => {
-            console.error('Error fetching sub-location data:', err);
-            this.subLocationsDropdown = []; // Reset on error
-            this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
-          },
-        });
-    } else {
-      this.subLocationsDropdown = []; // Reset if no location is selected
-    }
+  //           if (data.length === 0) {
+  //             this.subLocationsDropdown = []; // Reset if no sub-locations are found
+  //           } else {
+  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+  //           }
+  //           this.assetForm.patchValue({ subLocation: null });
+  //         },
+  //         error: (err: any) => {
+  //           console.error('Error fetching sub-location data:', err);
+  //           this.subLocationsDropdown = []; // Reset on error
+  //           this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
+  //         },
+  //       });
+  //   } else {
+  //     this.subLocationsDropdown = []; // Reset if no location is selected
+  //   }
+  // }
+
+  getSubLocationByid(selectedLocation: any): void {
+  this.locationfromdata.get('subLocationId')?.enable();
+  this.assetForm.get('subLocationId')?.enable()
+  this.locationfromdata.get('subLocationId')?.setValue(null);
+  this.locationfromdata.get('subLocationId')?.markAsTouched();
+  this.locationfromdata.get('subLocationId')?.updateValueAndValidity();
+
+  if (selectedLocation && selectedLocation.id) {
+    this.subscription = this.http
+      .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Sub Location Data:', data);
+          this.subLocationsDropdown = data.jobSubLocations || [];
+        },
+        error: (err: any) => {
+          console.error('Error fetching sub-location data:', err);
+          this.subLocationsDropdown = [];
+        },
+      });
+  } else {
+    this.subLocationsDropdown = [];
   }
+}
+
+
+
   getToday(): string {
     return new Date().toISOString().split('T')[0]
   }
@@ -555,7 +586,7 @@ allZeroesIfMaxLength(): ValidatorFn {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15),Validators.pattern("[0-9]+$"), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -645,7 +676,7 @@ allZeroesIfMaxLength(): ValidatorFn {
       this.undermainteenceForm.get('vendorname')?.enable();
       this.undermainteenceForm.get('contactnumber')?.enable();
       this.undermainteenceForm.get('vendorname')?.setValidators([Validators.required]);
-      this.undermainteenceForm.get('contactnumber')?.setValidators([Validators.required]);;
+      this.undermainteenceForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.pattern("[0-9]+$"), Validators.minLength(10), this.allZeroesIfMaxLength()]);
 
 
     } else {
@@ -1347,6 +1378,8 @@ resetupdateassiginform(){
   this.assetForm.reset();
    this.modalService.dismissAll();
 }
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

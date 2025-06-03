@@ -25,8 +25,8 @@
                     <th>Asset Sub Category</th>
                     <th>Serial Number</th>
                     <th>Asset Status</th>
-                    <th>Allocated To</th>
-                    <th>Asset ID</th>
+                    <!-- <th>Allocated To</th>
+                    <th>Asset ID</th> -->
                     <th>Location </th>
                     <th>Sub Location </th>
                     @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') ||
@@ -42,7 +42,7 @@
                             <td>{{ asset.assetSubCategory }}</td>
                             <td>{{ asset.serialNumber }}</td>
                             <td>{{ asset.status }}</td>
-                            <td>
+                            <!-- <td>
                                 <ng-container *ngIf="asset.assignedTo; else unassigned">
                                     {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
                                     asset.assignedTo.lastName }}
@@ -51,7 +51,7 @@
                                     N/A
                                 </ng-template>
                             </td>
-                            <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
+                            <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td> -->
                             <td>{{ asset.locationName }}</td>
                             <td>{{ asset?.sublocationName || 'N/A' }}</td>
                             @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') ||

@@ -16,11 +16,15 @@
 }
 
 .custom-component-left-content {
-    height: calc(100vh - 8.5rem);
+    height: calc(100vh - 9rem);
     padding: 1rem;
 }
 
 .custom-setting-right-content {
-    height: calc(100vh - 8.5rem);
+    height: calc(100vh - 9rem);
     padding: 1rem;
+}
+
+.custom-table-content{
+    height: calc(100vh - 15rem);
 }

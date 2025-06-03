@@ -8,13 +8,13 @@ import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-
 @Component({
   selector: 'app-view-shift',
   imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TabsModule, TranslateModule],
   templateUrl: './view-shift.component.html',
   styleUrl: './view-shift.component.scss'
 })
+
 export class ViewShiftComponent {
   @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;

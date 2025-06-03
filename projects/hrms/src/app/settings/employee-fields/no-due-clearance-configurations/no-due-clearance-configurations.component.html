@@ -1,23 +1,20 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">No Due Clearance</span></div>
-    <div class="custom-add-btn cursor" (click)="openModal(addnodue)"
-      *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.create')">
-      <i class="bi bi-plus plus-icon me-1"></i>Add New
-    </div>
+  <div class="component-header-content">
+    <div><span class="component-header">No Due Clearance</span></div>
+    <button class="custom-btn btn-primary px-5" (click)="openModal(addnodue)"
+      *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.create')">Add New
+    </button>
   </div>
 
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Department/Employee Manager</th>
-          <th>Employee Name</th>
-          <th>Role Name</th>
-          @if(rbac.allowedToAccess('NoDue Clearance Tab.update') || rbac.allowedToAccess('NoDue Clearance Tab.delete')){
-          <th class="text-center">Action</th>
-          }
-        </tr>
+        <th>Department/Employee Manager</th>
+        <th>Employee Name</th>
+        <th>Role Name</th>
+        @if(rbac.allowedToAccess('NoDue Clearance Tab.update') || rbac.allowedToAccess('NoDue Clearance Tab.delete')){
+        <th class="text-center">Action</th>
+        }
       </thead>
       <tbody>
         @if (noDueList.length > 0) {
@@ -56,14 +53,12 @@
               </ul>
             </div>
           </td>
-        }
+          }
         </tr>
         }
         } @else {
         <tr>
-          <td colspan="3">
-            <app-no-data-found></app-no-data-found>
-          </td>
+          <app-no-data-found />
         </tr>
         }
       </tbody>
@@ -77,9 +72,6 @@
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Add No Due Approver</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
 
@@ -108,8 +100,8 @@
             <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="departmentList" optionLabel="departmentName" filter="departmentName"
-              filterBy="departmentName" resetFilterOnHide="true" class="form-select custom-select" formControlName="department"
-              placeholder="Please select department">
+              filterBy="departmentName" resetFilterOnHide="true" class="form-select custom-select"
+              formControlName="department" placeholder="Please select department">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.departmentName }}</ng-template>
               <ng-template let-dept #item>{{ dept.departmentName }}</ng-template>
             </p-select>
@@ -149,8 +141,9 @@
             <span class="text-danger">*</span></label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect formControlName="employee" [options]="usersList" name="user" id="user" optionLabel="fullName"
-              placeholder="Select employee" resetFilterOnHide="true" field="selectedUser" class="form-select custom-select"
-              [selectedItemsLabel]="customLabelTemplate" (ngModelChange)="selectedUserDetails($event)">
+              placeholder="Select employee" resetFilterOnHide="true" field="selectedUser"
+              class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate"
+              (ngModelChange)="selectedUserDetails($event)">
               <ng-template let-user pTemplate="item">
                 <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
               </ng-template>
@@ -170,8 +163,8 @@
         <div class="mb-3">
           <label for="dispatcher" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="roles" resetFilterOnHide="true" optionLabel="name" filter="name" filterBy="name" formControlName="role"
-              placeholder="Please select role" class="form-select custom-select">
+            <p-select [options]="roles" resetFilterOnHide="true" optionLabel="name" filter="name" filterBy="name"
+              formControlName="role" placeholder="Please select role" class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
               <ng-template let-dept #item>{{ dept.name }}</ng-template>
             </p-select>
@@ -191,8 +184,9 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="managerOptions" resetFilterOnHide="true" optionLabel="label" formControlName="managerType"
-              placeholder="Please select employee manager" value="selectedOption.value" class="form-select custom-select">
+            <p-select [options]="managerOptions" resetFilterOnHide="true" optionLabel="label"
+              formControlName="managerType" placeholder="Please select employee manager" value="selectedOption.value"
+              class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
               <ng-template let-option #item>{{ option.label }}</ng-template>
             </p-select>
@@ -205,8 +199,10 @@
         </div>
         }
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(cancelpopup)">{{'Cancel' | translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="noDueForm.invalid">{{'Add' | translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(cancelpopup)">{{'Cancel' |
+            translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="noDueForm.invalid">{{'Add' |
+            translate}}</button>
         </div>
       </form>
     </div>
@@ -219,9 +215,6 @@
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Update No Due Approver</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
 
@@ -248,8 +241,8 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Department <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="departmentList" resetFilterOnHide="true" optionLabel="departmentName" filter="departmentName"
-              formControlName="Updatedepartment" placeholder="Please select department"
+            <p-select [options]="departmentList" resetFilterOnHide="true" optionLabel="departmentName"
+              filter="departmentName" formControlName="Updatedepartment" placeholder="Please select department"
               class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.departmentName }}</ng-template>
               <ng-template let-dept #item>{{ dept.departmentName }}</ng-template>
@@ -282,10 +275,10 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Employee <span class="text-danger">*</span></label>
           <div class="custom-p-multiSelect-content">
-            <p-multiSelect formControlName="Updateemployee" resetFilterOnHide="true" [options]="usersList" optionLabel="fullName"
-              placeholder="Select employee" field="selectedUser" class="form-select custom-select"
-              [selectedItemsLabel]="customLabelTemplate">
-              <ng-template let-user pTemplate="item">{{ user.firstName }} {{ user.middleName }} 
+            <p-multiSelect formControlName="Updateemployee" resetFilterOnHide="true" [options]="usersList"
+              optionLabel="fullName" placeholder="Select employee" field="selectedUser"
+              class="form-select custom-select" [selectedItemsLabel]="customLabelTemplate">
+              <ng-template let-user pTemplate="item">{{ user.firstName }} {{ user.middleName }}
                 {{ user.lastName }}</ng-template>
             </p-multiSelect>
           </div>
@@ -303,8 +296,8 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="roles" resetFilterOnHide="true" optionLabel="name" filter="name" filterBy="name" formControlName="role"
-              placeholder="Please select role" class="form-select custom-select">
+            <p-select [options]="roles" resetFilterOnHide="true" optionLabel="name" filter="name" filterBy="name"
+              formControlName="role" placeholder="Please select role" class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
               <ng-template let-role #item>{{ role.name }}</ng-template>
             </p-select>
@@ -322,8 +315,9 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="managerOptions" resetFilterOnHide="true"optionLabel="label" field="value" formControlName="managerType"
-              placeholder="Please select employee manager" class="form-select custom-select">
+            <p-select [options]="managerOptions" resetFilterOnHide="true" optionLabel="label" field="value"
+              formControlName="managerType" placeholder="Please select employee manager"
+              class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
               <ng-template let-option #item>{{ option.label }}</ng-template>
             </p-select>
@@ -338,14 +332,15 @@
         }
         <!-- Footer -->
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(cancelpopup)">{{'Cancel' | translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="updateDueForm.invalid">{{'Update' | translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(cancelpopup)">{{'Cancel' |
+            translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="updateDueForm.invalid">{{'Update' |
+            translate}}</button>
         </div>
       </form>
     </div>
   </div>
 </ng-template>
-
 
 <ng-template #cancelpopup let-model>
   <div class="result-popup-content" ngbAutofocus>

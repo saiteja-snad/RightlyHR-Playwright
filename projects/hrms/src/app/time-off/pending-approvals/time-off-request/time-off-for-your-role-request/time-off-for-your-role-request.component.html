@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     @if (selectedProducts && selectedProducts.length > 0 && multiSelect) {
     <div class="component-header-content">
-        <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
+        <div class="component-sub-header">Selected Records: {{selectedProducts.length}}</div>
         <div class="d-flex justify-content-end gap-3 mb-3">
             <!-- @if (canBulkApprove()) {
                 @if(rbac.allowedToAccess('For Role (Time Off).update')){
@@ -56,7 +56,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" (ngModelChange)="onSearchChange()"
             placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
@@ -75,11 +75,11 @@
                     <th>Applied Date</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Approver Comments</th>
+                    <th class="text-center">Reason</th>
+                    <th class="text-center">Approver Comments</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
                     rbac.allowedToAccess('For Role (Time Off).delete'))){
-                    <th>Action<span class="text-lowercase">(s)</span></th>
+                    <th>Action</th>
                     }
                 </tr>
             </ng-template>
@@ -92,18 +92,18 @@
                     <td>
                         <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{item.entity.leavefusionempId}}</td>
-                    <td>{{item.entity.employeeName}}</td>
-                    <td>{{item.entity.leaveCategoryName}}</td>
-                    <td>{{item.entity.leaveDuration}}</td>
-                    <td>{{item.entity.leaveDurationType}}</td>
-                    <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
-                    <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
-                    <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
+                    <td>{{item.entity?.leavefusionempId}}</td>
+                    <td>{{item.entity?.employeeName}}</td>
+                    <td>{{item.entity?.leaveCategoryName}}</td>
+                    <td>{{item.entity?.leaveDuration}}</td>
+                    <td>{{item.entity?.leaveDurationType}}</td>
+                    <td class="text-nowrap">{{item.entity?.appliedDate | dateformat}}</td>
+                    <td class="text-nowrap">{{item.entity?.leaveStartDate | dateformat}}</td>
+                    <td class="text-nowrap">{{item.entity?.leaveEndDate | dateformat}}</td>
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{item.entity.leaveDescription}}</p>
@@ -111,28 +111,29 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        <div *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
-                            <div type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
-                                <i class="bi bi-info-circle-fill"></i>
+                        <div *ngIf="item.entity?.leaveApproverComments[0]?.comments?.trim(); else noComments">
+                            <div type="button" (click)="comments(item.entity?.leaveApproverComments, commentspopup)">
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #noComments>-</ng-template>
                     </td>
                     @if(!multiSelect){
-                    <td class="text-center">
-                        @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
+                         @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
                         rbac.allowedToAccess('For Role (Time Off).delete'))){
+                    <td class="text-center">
+                       
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </span>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li>
+                                <!-- <li>
                                     <a class="dropdown-item"
                                         *ngIf="item.approvalHeader.currentapprovalStage == item.approvalHeader.finalapprovalStage"
                                         (click)="checkLeaveBalance(item,checkbalancepopup)">
                                         <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
-                                </li>
+                                </li> -->
 
                                 <li>
                                     <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
@@ -156,8 +157,8 @@
                                 </li>
                             </ul>
                         </div>
-                        }
                     </td>
+                    }
                     }
                 </tr>
                 <!-- } -->
@@ -216,7 +217,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">Leave Balance</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
@@ -284,7 +285,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Reason is required
+                        Approve reason is required
                     </div>
                 </div>
             </div>
@@ -328,7 +329,7 @@
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                         Reason is required
+                         Reject reason is required
                     </div>
                 </div>
             </div>

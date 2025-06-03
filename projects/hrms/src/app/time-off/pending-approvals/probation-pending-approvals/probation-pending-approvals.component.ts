@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -44,6 +45,7 @@ export class ProbationPendingApprovalsComponent {
   subscription!: Subscription;
   probationDetails = [] as any;
   probationExtensionDuration!: number;
+  probationExtensionTimes!: number;
   searchValue: any;
   LOGIN: any;
   totalRecords = 100;
@@ -132,8 +134,11 @@ export class ProbationPendingApprovalsComponent {
     });
     this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
   }
-
+openModalView(){
+  this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
+}
   openview() {
+    this.modalService.dismissAll();
     this.modalService.open(this.assessmentForm, { centered: true, backdrop: 'static', size: 'xl' });
   }
 
@@ -168,6 +173,7 @@ export class ProbationPendingApprovalsComponent {
   }
 
   getComments(value: any) {
+    console.log(value);
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.meta);
@@ -183,7 +189,8 @@ export class ProbationPendingApprovalsComponent {
   }
 
   getProbationExtendDays() {
-    const ProbationExtensionId: number = 2;
+    const ProbationExtensionId=environment.ProbationExtensionId;
+    const extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
@@ -192,6 +199,11 @@ export class ProbationPendingApprovalsComponent {
             return ele.configValueId === ProbationExtensionId;
           });
           this.probationExtensionDuration = duration.noOfDays;
+              let extendTimes = data.find((ele: any) => {
+            return ele.configValueId === extensionPeriodTimes;
+          });
+          this.probationExtensionTimes = extendTimes.noOfDays;
+          console.log(this.probationExtensionTimes);
         },
       });
   }
@@ -264,11 +276,14 @@ export class ProbationPendingApprovalsComponent {
 
   issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
-    if (!Value || !Value.trim()) {
-      this.issubmitdiable = true;
+       const trimmedValue = Value?.trim();
+     const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+
+    if (!trimmedValue || startsWithSpecialChar) {
+    this.issubmitdiable = true;
     } else {
-      this.issubmitdiable = false;
-    }
+    this.issubmitdiable = false;
+     }
   }
 
   letters(event: KeyboardEvent): boolean {
@@ -279,14 +294,20 @@ export class ProbationPendingApprovalsComponent {
     return true;
   }
 
-  getBlockedFutureDate(lastWorkingDate: string): string {
+  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
+     if(extendedDate){
+      lastWorkingDate = extendedDate;
+    }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
 
-  getBlockedFutureDateupto(startDate: string, duration: number): string {
+  getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
+      if(extendedDate){
+      startDate = extendedDate;
+    }
     const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
     // Add the duration (e.g., 90 days) to the start date
     const futureDate = startDateObj.add(duration, 'days');
@@ -305,7 +326,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation Request Processed Successfully';
+      successMessage = 'Probation request processed successfully';
     }
     if (this.selectedData.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -313,7 +334,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation Request Rejected Successfully';
+      successMessage = 'Probation request rejected successfully';
     }
     if (this.selectedData.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -322,7 +343,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation Extended Processed Successfully';
+      successMessage = 'Probation extended successfully';
     }
     let requestBody = {
       status: 'Processed',

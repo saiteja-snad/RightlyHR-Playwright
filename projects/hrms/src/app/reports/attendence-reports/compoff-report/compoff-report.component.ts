@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { AttandaceReportTabsComponent } from '../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component';
 import * as XLSX from 'xlsx';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -19,9 +18,8 @@ import { ICompoffDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import {  Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-compoff-report',
@@ -29,13 +27,12 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     NgxDaterangepickerBootstrapDirective,
     CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent,
     DropdownModule,
     SelectModule,
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent
+
 ],
   templateUrl: './compoff-report.component.html',
   styleUrl: './compoff-report.component.scss'
@@ -76,13 +73,8 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+  localeOptions: any;
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
 
   constructor(
     private authService: AuthService,
@@ -94,13 +86,17 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.initializeForm();
     this.loggedInUser = this.authService.getToken();
     this.getEmployeeId();
     this.getTeam();
     this.getMyTeam();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -116,35 +112,22 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     })
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/compoff-report': MODULE_INFOS.ATTENDANCE_COMP_OFF_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
 
   clearAllFilters(): void {
     this.compoffReportForm.reset();
+    this.filteredCompoffRecord = [];
   }
 
   get isCompOffGenerateDisabled(): boolean {
-    const form = this.compoffReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.compoffReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value || form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 
@@ -240,10 +223,10 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     }
 
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
-  // Only include filters if not "All Employees"
+   // Only include filters if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
@@ -423,6 +406,10 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
         },
       });
   }
+   navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

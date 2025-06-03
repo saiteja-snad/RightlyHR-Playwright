@@ -12,6 +12,8 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-wfh-rejected',
@@ -23,7 +25,9 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     DropdownModule,
     DateformatPipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    TranslateModule,
+    InfoIconComponent
 ],
   templateUrl: './wfh-rejected.component.html',
   styleUrl: './wfh-rejected.component.scss',

@@ -12,10 +12,11 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-under-maintenance-desk-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule, DropdownModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, TranslateModule, PaginatorModule, DropdownModule, DataLoaderContentComponent],
   templateUrl: './under-maintenance-desk-list.component.html',
   styleUrl: './under-maintenance-desk-list.component.scss'
 })
@@ -29,16 +30,19 @@ export class UnderMaintenanceDeskListComponent {
   deskid: any
   selectedAsset!: any
   deskiteamid: any;
-  first :any= 1;
-  rows:any = 10;
-  totalRecords = 100;
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-  
+
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading = false
   selectedSubLocationId: any
@@ -72,8 +76,8 @@ export class UnderMaintenanceDeskListComponent {
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
 
-        this.getAllDesks(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
-        this.getcount(Value, this.selectedSubLocationId, this.Status);   
+        this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
+        this.getcount(Value, this.selectedSubLocationId, this.Status);
       }
     })
   }
@@ -82,8 +86,8 @@ export class UnderMaintenanceDeskListComponent {
   getAllDesks(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Deskstatus: any) {
 
     const params = {
-      first: pagenum,
-      rows: pagesize,
+      page: pagenum,
+      pageSize: pagesize,
       locationid: locationid,
       sublocationid: sublocationid,
       status: Deskstatus,
@@ -91,7 +95,7 @@ export class UnderMaintenanceDeskListComponent {
 
     };
     this.loading = true
-    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery)
+    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -100,7 +104,7 @@ export class UnderMaintenanceDeskListComponent {
           this.desklist.next(data.items)
           this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
           // Update the collection size (total records) for pagination
-          this.totalRecords = data.totalRecords;
+          this.collectionSize = data.totalRecords;
 
         },
         error: (error: any) => {
@@ -115,28 +119,38 @@ export class UnderMaintenanceDeskListComponent {
 
       });
   }
-    onRowsChange() {
-      this.first = 1;
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-    
-    }
-    onPageChange(event: PaginatorState) {
-      this.first = event.first;
-      this.rows = event.rows;
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-    
-  
-    }
+  onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+  }
+
+  // Called when first size changes
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+  }
+
 
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
 
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
 
     if (event === '') {
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
   }
 
@@ -192,9 +206,9 @@ export class UnderMaintenanceDeskListComponent {
       next: (res) => {
         console.log(res);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as Active Successfully')
-        // this.getAllDesks(this.first, this.rows);
-        this.getAllDesks(this.first, this.rows, null, null, this.Status)
+        this.conformationPopup.openSuccessModal('Desk marked as available successfully')
+        // this.getAllDesks(this.page, this.pageSize);
+        this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
         this.getcount(null, null, this.Status);
       },
       error: (error) => {

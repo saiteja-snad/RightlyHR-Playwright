@@ -12,7 +12,7 @@
                         <th>Letter Type</th>
                         <th>Employees</th>
                         <th class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
-                        rbac.allowedToAccess('Signature Authority.delete')">Action(S)</th>
+                        rbac.allowedToAccess('Signature Authority.delete')">Action<span class="text-lowercase">(S)</span></th>
                     </tr>
                 </thead>
                 <tbody>

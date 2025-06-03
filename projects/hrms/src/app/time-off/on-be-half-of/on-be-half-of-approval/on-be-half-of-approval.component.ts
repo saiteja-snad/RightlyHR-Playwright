@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
@@ -10,9 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-on-be-half-of-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './on-be-half-of-approval.component.html',
   styleUrl: './on-be-half-of-approval.component.scss'
 })
@@ -40,7 +41,17 @@ export class OnBeHalfOfApprovalComponent {
   }
 
   constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService,) {
-
+    effect(() => {
+      if (this.http.onBehalfOfTriggerSignal()) {
+        this.cadidateEmployeeId = parseInt(
+          localStorage.getItem('onbehalfof') as string
+        );
+        if (this.cadidateEmployeeId != null) {
+          this.getDataByLPID();
+        }
+        this.http.onBehalfOfTriggerSignal.set(false);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -48,7 +59,6 @@ export class OnBeHalfOfApprovalComponent {
     this.cadidateEmployeeId =parseInt(localStorage.getItem('onbehalfof') as string) ;
     if(this.cadidateEmployeeId){
       this.getDataByLPID();
-
     }
   }
 
@@ -57,7 +67,7 @@ export class OnBeHalfOfApprovalComponent {
       next: (response: any) => {
         console.log(response)
         if (Array.isArray(response)) {
-          this.approvedLeaves = response.filter(item => item.status === 'Approved');
+          this.approvedLeaves = response.filter(item => item.status.toLowerCase() === 'approved');
           let pendingCount = this.approvedLeaves.length;
         } else {
           console.error("Invalid response format");

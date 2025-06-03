@@ -11,10 +11,12 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-allocated-desk-list',
-  imports: [CommonModule, Select, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, FormsModule, PaginatorModule,FormsModule, NoDataFoundComponent,TranslateModule, DataLoaderContentComponent],
   templateUrl: './allocated-desk-list.component.html',
   styleUrl: './allocated-desk-list.component.scss'
 })
@@ -49,7 +51,17 @@ export class AllocatedDeskListComponent {
   deskiteamid: any;
   page = 1;
   pageSize = 10;
-  collectionSize = 100;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  totalRecords = 0;
+
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
   desktype = new BehaviorSubject<any[]>([])
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading = false
@@ -185,26 +197,35 @@ export class AllocatedDeskListComponent {
       });
   }
 
-
-  onPageChange(newPage: number) {
-    console.log('Page changed to:', this.page);
-    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+  onRowsChange() {
+    this.page = 1;        
+    this.first = 0; 
+    this.getAllDesks(this.page, this.pageSize, null,null,this.Status);
   }
 
-  // Called when page size changes
+  onPageChange(event: any) {
+     this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+  }
+
+  // Called when first size changes
   onPageSizeChange(newPageSize: number) {
-    console.log('Page size changed to:', newPageSize);
-    console.log(this.page)
-    this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+     this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
   }
 
-  onSearchChange(event: any) {
+
+ onSearchChange(event: any) {
     if (event !== '' && event.length >= 1) {
       this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
-
     if (event === '') {
-      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId,this.Status);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
   }
 
@@ -360,7 +381,7 @@ export class AllocatedDeskListComponent {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
           ///this.updatedeskallowcation(this.assiginForm)
-          this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+        this.getAllDesks(this.page, this.pageSize, null, null, null);
           this.reassiginForm.reset();
           this.reassiginForm.get('employeeName')?.reset()
           this.reassiginForm.get('approvid')?.reset()
@@ -434,7 +455,7 @@ export class AllocatedDeskListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
-          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+          this.getAllDesks(this.page, this.pageSize, null, null, null);
 
 
         },

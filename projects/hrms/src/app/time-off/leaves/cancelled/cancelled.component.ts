@@ -11,10 +11,11 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-cancelled',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './cancelled.component.html',
   styleUrl: './cancelled.component.scss'
 })
@@ -44,22 +45,39 @@ export class CancelledComponent implements OnInit,OnDestroy{
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-   // this.getDataByLPID();
+    // this.loggedinuser = this.authService.getToken();
+    // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    // this.getDataByLPID();
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
         console.log('Updated employee ID:', id);
         // Example: this.loadEmployeeDetails(id);
-        this.getDataByLPID();
+        this.getDataByEMPLPID();
+      }else{
+        this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getDataByLPID();
       }
     });
   }
 
   getDataByLPID() {
-    let empid =  this.selectempid || this.empdata.employeeId;
+    let empid =  this.empdata.employeeId;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.lpdata = response.filter(item => item.status === 'Cancelled');
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
+   getDataByEMPLPID() {
+    let empid =  this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

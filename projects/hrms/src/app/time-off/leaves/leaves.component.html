@@ -1,26 +1,38 @@
 <div class="custom-main-component-container">
     @if(router.url !== '/time-off/leaves/team-leave-balance' && router.url !== '/time-off/leaves/team-leave-summary'
     && router.url !== '/time-off/leaves/org-leave-balance'){
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0">Leave Balance</p>
-        </div>
-        <div class="d-flex gap-3">
-            <label class="form-label custom-label mt-3">{{'My Team'| translate}}</label>
-            <div class="custom-p-select-content">               
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"name="myteamemployees" 
-                    placeholder="Select Employee Name"  [filter]="true" [virtualScroll]="false"
-                    [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
-                </p-select>
+    <div class="component-header-content">
+       
+          <div class="heading-content">
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Leave Balance'|translate}}</div>
+           <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
-              <div *ngIf="disaplyapplybutton">
-            @if (rbac.allowedToAccess('Request Leave Button.view')) {
-            <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">
-                <i class="bi bi-plus"></i>Request Leave</button>
-            }
+        </div>
+
+
+        <div class="d-flex align-items-center gap-3">
+            <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
+            <div class="custom-p-select-content">
+                <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true"optionValue="employeeId" name="myteamemployees"
+                    placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                    [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
+                </p-select>             
+            </div>
+            <div *ngIf="disaplyapplybutton">
+                @if (rbac.allowedToAccess('Request Leave Button.view')) {
+                <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">Request Leave</button>
+                }
             </div>
         </div>
     </div>
+
+    
+   <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo"  />
+    </ng-template>
 
     @if (rbac.allowedToAccess('Time Off Module.view')) {
     <div class="graph-grid w-100 mb-3">
@@ -156,10 +168,10 @@
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
                             Start Date is required
                         </div>
-                        <div class="error-msg"
+                        <!-- <div class="error-msg"
                             *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
                             Please select optional holiday
-                        </div>
+                        </div> -->
                         <div class="error-msg" *ngIf="(isHolidaySelected || isNonOptionalHolidaySelected)">
                             Selected date is a holiday
                         </div>
@@ -171,6 +183,9 @@
                         </div>
                         <div class="error-msg" *ngIf="!isstimeoffValid && leaveForm.get('startdate')?.value">
                             The start date must be after the date of joining.
+                        </div>
+                        <div class="error-msg">
+                            {{startDateErrorMessage}}
                         </div>
                     </div>
 
@@ -197,12 +212,15 @@
                         <div class="error-msg" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
                             End Date is less than Start Date
                         </div>
-                        <div class="error-msg"
+                        <!-- <div class="error-msg"
                             *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('enddate')?.value">
                             Please select optional holiday
-                        </div>
+                        </div> -->
                         <div class="error-msg" *ngIf="isHolidaySelectedEndate">
                             Selected date is a holiday
+                        </div>
+                        <div class="error-msg">
+                            {{endDateErrorMessage}}
                         </div>
                     </div>
                 </div>
@@ -259,13 +277,14 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Reason For Leave'| translate}}<span
                                 class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" [maxlength]="250" formControlName="reason"
-                            placeholder="Please enter reason"></textarea>
-                        <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
+                        <textarea class="form-control custom-input" [maxlength]="250" [minlength]="10"  formControlName="reason"
+                            placeholder="Please enter reason" (input)="formsValidation.validateInput(leaveForm.get('reason'))"></textarea>
+                        <div class="textarea-count-text" >{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
                         <div class="error-msg"
-                            *ngIf="(leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched)">
+                            *ngIf="(leaveForm.get('reason')?.touched && leaveForm.get('reason')?.errors?.['required'])">
                             Reason is required
                         </div>
+                        <div class="error-msg" *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.errors?.['minlength']">Reason must be atleast 10 characters</div>
                     </div>
 
                     <div *ngIf="dateDifference &&  isDayTypeselected">
@@ -292,7 +311,7 @@
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected || disableSubmitButton || !isstimeoffValid || isWeekOffSelectedEndate || 
-                        isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate || !issEndDategreater || !startdatevalid || 
+                        isHolidaySelectedEndate || this.startDateErrorMessage || this.endDateErrorMessage || !issEndDategreater || !startdatevalid || 
                         isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > 
                         remainingLeaves) ) || isLoading">
                         <span *ngIf="!isLoading">{{'Submit'| translate}}</span>
@@ -311,7 +330,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

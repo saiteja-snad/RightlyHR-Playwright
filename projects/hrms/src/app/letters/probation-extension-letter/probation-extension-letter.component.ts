@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
@@ -15,14 +15,17 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployee } from '../probation-confirmation-letter/probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './probation-extension-letter.component.html',
-  styleUrl: './probation-extension-letter.component.scss'
+  styleUrl: './probation-extension-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ProbationExtensionLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   employeedetails :IEmployee[]=[];
   probationExtensionLetterData = {} as any;
@@ -33,16 +36,15 @@ export class ProbationExtensionLetterComponent {
   loading: boolean = false;
   Status: any;
   probationExtensionForm!: FormGroup;
-
   enableBtn= false;
   spinnerLoader= false;
   releaseLoader= false;
-
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
   todayDate!: string;
+  lastSelectedEmployeeId: number | null = null;
 
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
@@ -129,7 +131,32 @@ export class ProbationExtensionLetterComponent {
   }
 
   onClickEmployee(event: any){
-    const empId= event.value.employeeId;
+    const newlySelectedEmployee = event?.value;
+    if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
+      return;
+    }
+    // Reset dependent fields if employee changes
+    if (
+      this.lastSelectedEmployeeId &&
+      this.lastSelectedEmployeeId !== newlySelectedEmployee.employeeId
+    ) {
+      this.probationExtensionForm.patchValue({
+        issuedDate: null,
+        Documenttype: null,
+        authorityid: null,
+      });
+
+      ['issuedDate', 'Documenttype', 'authorityid'].forEach((controlName) => {
+        const control = this.probationExtensionForm.get(controlName);
+        control?.markAsPristine();
+        control?.markAsUntouched();
+        control?.updateValueAndValidity();
+      });
+    }
+
+    this.lastSelectedEmployeeId = newlySelectedEmployee.employeeId;
+
+    const empId = event.value.employeeId;
     this.getProbationRequest(empId);
     this.pathValuesFuction();
   }
@@ -153,7 +180,6 @@ export class ProbationExtensionLetterComponent {
     this.probationExtensionLetterData.authorityName = formValues.authorityid?.fullName,
     this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
     this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
-
   }
 
   async postProbationExtensionLetterFormSubmit() {
@@ -181,6 +207,7 @@ export class ProbationExtensionLetterComponent {
         this.uploadprobationextentionLetter();
       });
     }
+    this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
   }
 
   //function to get the separation request details
@@ -191,10 +218,9 @@ export class ProbationExtensionLetterComponent {
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
-
         this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails.probationExtendedDate
-        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate, this.getProbationDetails.probationExtendedDate)
-      
+        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate,
+           this.getProbationDetails.probationExtendedDate)
       }
     })
   }
@@ -206,7 +232,9 @@ export class ProbationExtensionLetterComponent {
         if (data) {
           this.enableBtn= true;
           this.postProbationDetails(data.path);
+          // this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
         }
+        
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -220,6 +248,7 @@ export class ProbationExtensionLetterComponent {
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
+    debugger
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,

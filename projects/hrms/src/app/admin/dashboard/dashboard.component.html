@@ -1,59 +1,130 @@
 @if(rbac.allowedToAccess('Dashboard.view')){
 <div class="custom-main-component-container">
-  <div class="component-header-content">
-    @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')
-    || this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view' )
-    || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view' )
-    || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view' )
-    || this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view' )
-    || this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view' )
-    || this.rbac.allowedToAccess('Dashboard Probation Employees Card.view' )
-    || this.rbac.allowedToAccess('Dashboard Inactive Trainees Card.view' )
-    || this.rbac.allowedToAccess('Dashboard Prospective Trainee Card.view' )
-    || this.rbac.allowedToAccess('Dashboard Inactive Employees Card.view' )
-    || this.rbac.allowedToAccess('Dashboard Prospective Employees Card.view' )){
-    <div>
-      <p class="component-header mb-0">{{'Dashboard'| translate}}</p>
-    </div>}
-    <div class="d-flex gap-3">
-      @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')){
-      <button type="button" class="custom-btn btn-secondary">Current Openings</button>
-      }
-      @if(this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view' ) ||
-      this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view' )
-      || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view' ) ||
-      this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view' )
-      || this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view' )){
-      <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
-      }
+  <!--Dashboard main Section-->
+  <div class="dashboard-diplay-section">
+    <div class="welcome-text d-flex align-items-center gap-1 mb-3">
+      <div>{{greetingMessage}},</div>
+      <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}} {{this.employeedata.lastName}}</div>
     </div>
-  </div>
 
-  <!--Employee Details card-->
-  <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-4">
-    <div class="col" *ngFor="let item of cardItems; trackBy: trackByFn">
-      <div class="card employee-details-card cursor w-100 mb-3" [routerLink]="[item.link]">
-        <div class="d-flex align-items-center gap-3">
-          <div class="card profile-card"
-            [ngStyle]="{'background-color': item.backgroundColor, 'color': item.profileColor}">
-            <i class="bi bi-person"></i>
-          </div>
-          <div>
-            <p class="label text-nowrap mb-2">{{ item.label }}</p>
-            <p class="count mb-0">{{ item.count }}</p>
+    <div class="row gap-3">
+      <!--Time Display-->
+      <div class="col">
+        <div class="content-card present-day-content">
+          <div class="gesture-text mb-3">Have a nice day at work</div>
+          <div class="day-date-content">
+              <div>
+                <img [src]="iconPath" alt="Icon" class="icon">
+              </div>
+              <div class="pt-2">
+                <div class="time mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div>
+                <div class="date">{{ currentTime | date: 'MMMM d, y' }}</div>
+              </div>
           </div>
         </div>
       </div>
+
+      <!--Attendance Display-->
+      @if(this.rbac.allowedToAccess('Attendance.view') && attendanceData?.data?.attendanceData?.length){
+      <div class="col">
+        @if(!attendanceLoader ){
+        <div class="content-card attendance-content">
+          <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
+          <div class="d-flex justify-content-center gap-3 pt-5 mt-2">
+            <div>
+              <img src="/dashboard-icon/log-icon.png" alt="Icon" class="icon">
+            </div>
+            <div>
+              <div class="date mb-2">{{ attendanceData.data.attendanceData[0].date | date: 'MMMM d, y' }}</div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="start-end-time-text">First In: <span class="time">{{ attendanceData.data.attendanceData[0].firstLogin ?
+                (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-' }}</span></div>
+                <div class="start-end-time-text">Last Out: <span class="time"> {{ attendanceData.data.attendanceData[0].lastLogout ? 
+                (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-' }} </span></div>
+                @if( attendanceData.data.attendanceData[0].status !== 'WFH' && attendanceData.data.attendanceData[0].status !== 'Leave'
+                && attendanceData.data.attendanceData[0].status !== 'Absent'){
+                <div>
+                  <img src="/dashboard-icon/info.png" alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes);
+                  dayLogsData(attendanceData.data.attendanceData[0].biometricLogs,attendanceData.data.attendanceData[0].date,
+                  attendanceData.data.attendanceData[0].duration.biometricDuration,attendanceData.data.attendanceData[0].permissions,
+                  attendanceData.data.attendanceData[0].regularizations)">
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center">
+            <button class="custom-btn btn-primary" (click)="navigateToAttendance()">View Attendance</button>
+          </div>
+        </div>
+        }@else {
+        <p-skeleton height="11rem" />
+        }
+      </div>
+      }
+
+      <!--Employee List Display-->
+      <div class="col">
+        @if(!chartLoader ){
+        <div class="content-card employees-list-content">
+          <div class="all-text">All Employees</div>
+          <div class="total-leave-balance-graph-content">
+            <div class="chart-content">
+              <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions"
+                class="doughnut-chart" />
+              <div class="total-count-content">
+                <p class="count m-0 p-0">{{totalEmployeesCount}}</p>
+              </div>
+            </div>
+            <div class="row row-cols-md-2">
+              @for (item of cardItems; track $index) {
+              <div class="col">
+                <div [ngStyle]="{ 'border-left': '4px solid ' + item.employeementTypeColor }" [routerLink]="item.link"
+                  class="mb-2 ps-2 cursor">
+                  <div class="employee-type-text">
+                    <p class="m-0">{{ item.label }} ({{ item.count }})</p>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        }@else {
+        <p-skeleton height="11rem" />
+        }
+      </div>
+
+      <!--Events Display-->
+      <div class="col">
+        @if(!eventsLoader){
+        <div class="content-card events-content">
+          <div class="celebration-img">
+            <img src="/dashboard-icon/celebration-icon.png" alt="Icon" class="icon">
+          </div>
+          <div class="carousel-content">
+            <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false" [circular]="true"
+              [autoplayInterval]="3000">
+              <ng-template let-event pTemplate="item">
+                <div class="event-name">
+                  <ng-container [ngSwitch]="event.type">
+                    <span *ngSwitchCase="'Birthday'">{{ event.name }} <br>{{'Celebrating Birthday today...'| translate}}</span>
+                    <span *ngSwitchCase="'Work Anniversary'">{{ event.name }} <br>{{'Celebrating Work Anniversary today...'| translate}}</span>
+                    <span *ngSwitchCase="'New Joinee'">{{ event.name }} <br>{{'Welcome Onboard...'| translate}}</span>
+                    <span *ngSwitchCase="'Marriage Anniversary'">{{ event.name }} <br>{{'Celebrating their Marriage Anniversary today...'| translate}}</span>
+                    <span *ngSwitchDefault>{{ event.quotationname }}</span>
+                  </ng-container>
+                </div>
+              </ng-template>
+            </p-carousel>
+          </div>
+        </div>
+        }@else {
+        <p-skeleton height="11rem" />
+        }
+      </div>
     </div>
   </div>
-
-  <!--Document History-->
-  @if(rbac.allowedToAccess('Documents History Offer Letter.view') || rbac.allowedToAccess('Documents History AppointmentLetter.view')
-  || rbac.allowedToAccess('Documents History Trainee Offer Letter.view') || rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
-  <div class="mb-3">
-    <p class="component-header mb-0">{{'Document History' | translate}}</p>
-  </div>
-  }
 
   <!--Document History Content-->
   <div class="Document-history-content">
@@ -61,3 +132,94 @@
   </div>
 </div>
 }
+
+
+<!--Attendance Logs popup-->
+<ng-template #punchintimes let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Attendance Logs'| translate}} ({{selectedDate|dateformat}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content">
+      @if(punchPairs.length>0){
+      <div class="popup-table-wrapper">
+        <div class="popup-table-content">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3" class="custom-popup-header">{{'Biometric Logs'| translate}}</th>
+              </tr>
+              <tr>
+                <th>{{'In' | translate}}</th>
+                <th>{{'Out' | translate}}</th>
+                <th>{{'Duration' |translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of punchPairs">
+                <td class="log-time">{{ log.in }}</td>
+                <td class="log-time">{{ log.out }}</td>
+                <td class="duration-time">{{ log.duration }}</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="popup-td">{{'Total Duration:' | translate}} <b>{{ logsDuration }}</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+      @if(permissions_list.length>0){
+      <div class="popup-table-wrapper">
+        <div class="popup-table-content">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3" class="custom-popup-header">{{'Permission(s)'| translate}}</th>
+              </tr>
+              <tr>
+                <th>{{'Type'| translate}}</th>
+                <th>{{'Duration'| translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of permissions_list">
+                <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                <td class="duration-time">{{ log.duration ? log.duration + ' HR(s)' : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+      @if(regularization_list.length>0){
+      <div class="popup-table-wrapper">
+        <div class="popup-table-content">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3" class="custom-popup-header">{{'Regularization(s)'| translate}}</th>
+              </tr>
+              <tr>
+                <th>{{'Type'| translate}}</th>
+                <th>{{'Duration'| translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of regularization_list">
+                <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</ng-template>

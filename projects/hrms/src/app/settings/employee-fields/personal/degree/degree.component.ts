@@ -41,14 +41,14 @@ this.degreeFrom = this.fb.group({
      degree: [null,  [
       
         Validators.required,
-        this.formValidations.maxCharactersValidator(51)
+        this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)
       ]]
       });
       this.updateForm = this.fb.group({
         degreeName: ["",  
           [
             Validators.required,
-            this.formValidations.maxCharactersValidator(51)
+            this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)
           ]]
       });
       this.getdegree();

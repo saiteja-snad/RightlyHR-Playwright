@@ -1,20 +1,22 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">Events</p>
+    <div class="heading-content">
+      <div class="component-header">Events</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
     </div>
     @if(this.rbac.allowedToAccess('Events(Upcoming Events).create')){
     <div>
-      <a type="button" class="custom-add-btn" (click)="openAddProspective()">
-        <i class="bi bi-plus me-1"></i>Add Event</a>
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">Add Event</button>
     </div>
     }
   </div>
 
-  <!--tabs content-->
-  <!-- <div class="my-4">
-    <app-events-tabs />
-  </div> -->
+  <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
   <ng-container *ngIf="(getEventsData$ | async) === null; else maincontent">
     <ng-template #loadingSpinner>
@@ -31,7 +33,7 @@
   <ng-template #maincontent>
     <div class="custom-events-main-content">
       <!--Todays Events-->
-      <div class="card events-section-card mb-4" *ngIf="todaysEvents.length > 0">
+      <div class="card events-section-card  mb-3" *ngIf="todaysEvents.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Today's Events</p>
         </div>
@@ -51,7 +53,8 @@
                       }}</p>
                   </div>
                 </div>
-                @if(rbac.allowedToAccess('Events(Upcoming Events).update') || rbac.allowedToAccess('Events(Upcoming Events).delete')){
+                @if(rbac.allowedToAccess('Events(Upcoming Events).update') || 
+                rbac.allowedToAccess('Events(Upcoming Events).delete')){
                 <div class="dropdown">
                   <a data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -83,7 +86,7 @@
       </div>
 
       <!--Upcoming Events-->
-      <div class="card events-section-card mb-4" *ngIf="(getEventsData$ | async)?.length > 0">
+      <div class="card events-section-card" *ngIf="(getEventsData$ | async)?.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Custom Events</p>
         </div>
@@ -102,7 +105,8 @@
                     }}</p>
                 </div>
               </div>
-              @if(rbac.allowedToAccess('Events(Upcoming Events).update') || rbac.allowedToAccess('Events(Upcoming Events).delete')){
+              @if(rbac.allowedToAccess('Events(Upcoming Events).update') || 
+              rbac.allowedToAccess('Events(Upcoming Events).delete')){
               <div class="dropdown">
                 <a class="dropdown-click" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -175,7 +179,8 @@
             <label for="title" class="form-label custom-label mb-2">Event Title<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="title" placeholder="Please enter event title"
-              formControlName="eventTitle"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              formControlName="eventTitle"
+              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
             <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['required']"> Event Title is
               required.</div>
             <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['maxlength']">
@@ -186,7 +191,8 @@
             <label for="description" class="form-label custom-label mb-2">Event Description<span
                 class="text-danger">*</span></label>
             <textarea class="form-control custom-input" formControlName="eventMessage"
-              placeholder="Please enter description" maxlength="250" id="description"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"></textarea>
+              placeholder="Please enter description" maxlength="250" id="description"
+              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"></textarea>
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
               Event Description is requied
             </div>
@@ -208,7 +214,7 @@
         </div>
 
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="customEventupdateForm.invalid || spinnerLoader">
             @if (spinnerLoader) {

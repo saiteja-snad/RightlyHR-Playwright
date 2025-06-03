@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -12,11 +12,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-update-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
   templateUrl: './update-leavecategory.component.html',
-  styleUrl: './update-leavecategory.component.scss'
+  styleUrl: './update-leavecategory.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class UpdateLeavecategoryComponent {
-  leavePolicyForm: FormGroup;
+  leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
   jobLocationDropDownData: any[] = [];
@@ -45,8 +46,25 @@ export class UpdateLeavecategoryComponent {
   shiftsArray = [] as any[];
   updateLeaveCategoryData = {} as Iorgcategoryleaves
 
-  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router,private modalService: NgbModal,) {
-    this.leavePolicyForm = this.fb.group({
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router, private modalService: NgbModal,) {
+   
+  }
+
+  ngOnInit(): void {
+    this.intializeForm();
+    this.updateLeaveCategoryData = JSON.parse(localStorage.getItem('updateleavecategory') ?? '{}');
+    this.jobLocationList();
+    this.patchFormValues(this.updateLeaveCategoryData);
+    this.setupDependentFieldListeners();
+    this.getOrgLeavesCategories();
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 10; year--) {
+      this.years.push({ label: year.toString(), value: year });
+    }
+  }
+
+  intializeForm(){
+     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
       locationID: [undefined, Validators.required],
@@ -69,35 +87,23 @@ export class UpdateLeavecategoryComponent {
       isApplicableProRataLeave: [undefined, Validators.required],
       // Future Dates
       futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [undefined, [this.dependentRequiredValidator('futureDatesAllowed')]],
+      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed')]],
       // Past Dates
       pastDateAllowed: [undefined, Validators.required],
-      pastDatesAllowedDays: [undefined, [this.dependentRequiredValidator('pastDateAllowed')]],
+      pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
       // Carry Forward
       carryForwardAllowed: [undefined, Validators.required],
-      carryForwardAllowedValue: [undefined, [this.dependentRequiredValidator('carryForwardAllowed')]],
+      carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed')]],
       // Encash
       encashAllowedType: [undefined, Validators.required],
-      encashAllowedValue: [undefined, [this.dependentRequiredValidator('encashAllowedType')]],
+      encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType')]],
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [undefined, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
+      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [undefined, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
-  }
-
-  ngOnInit(): void {
-    this.updateLeaveCategoryData = JSON.parse(localStorage.getItem('updateleavecategory') ?? '{}');
-    this.jobLocationList();
-    this.patchFormValues(this.updateLeaveCategoryData);
-    this.setupDependentFieldListeners();
-    this.getOrgLeavesCategories();
-    const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
-      this.years.push({ label: year.toString(), value: year });
-    }
   }
 
   OnClickLocation(id: any) {
@@ -117,7 +123,7 @@ export class UpdateLeavecategoryComponent {
     })
   }
 
-  navigate(){
+  navigate() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
   getSubLocationByid(locationID: any) {
@@ -329,7 +335,7 @@ export class UpdateLeavecategoryComponent {
   onSubmit() {
     const formData = this.leavePolicyForm.value;
     let payload = {
-      id : this.updateLeaveCategoryData.id,
+      id: this.updateLeaveCategoryData.id,
       applicableYear: this.leavePolicyForm.value.applicableYear ?? this.updateLeaveCategoryData.applicableYear,
       locationID: this.leavePolicyForm.value.locationID.id ?? this.updateLeaveCategoryData.locationID,
       subLocation: this.leavePolicyForm.value.subLocation.id ?? this.updateLeaveCategoryData.subLocation,
@@ -433,15 +439,17 @@ export class UpdateLeavecategoryComponent {
     localStorage.setItem('cloneleavecategory', JSON.stringify(this.updateLeaveCategoryData));
     this.router.navigate(['/settings/timeoff-configurations/cloneleavecategory']);
   }
-  
-  resetForm(content:any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+
+  resetForm(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.leavePolicyForm.reset();
   }
-  cancel(){
+  
+  cancel() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
-  closepopup(){
+
+  closepopup() {
     this.modalService.dismissAll();
   }
 }

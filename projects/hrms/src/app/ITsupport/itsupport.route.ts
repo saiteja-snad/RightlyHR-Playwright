@@ -1,9 +1,7 @@
-
 import { Route } from "@angular/router";
 import { MyTicketsComponent } from "./my-tickets/my-tickets.component";
 import { TeamTicketsComponent } from "./team-tickets/team-tickets.component";
 import { PermissionsGuard } from "../guards/permissions.guard";
-
 
 export default [
     // { path: '', redirectTo: 'mytickets', pathMatch: 'full' },
@@ -20,6 +18,4 @@ export default [
             //    { path: 'inactive-assets', loadComponent: () => import('./inactive-assets-list/inactive-assets-list.component').then((m) => m.InactiveAssetsListComponent) },
         ]
     },
-
-
 ] as Route[];

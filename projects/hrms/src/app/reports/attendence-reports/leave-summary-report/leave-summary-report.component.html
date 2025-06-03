@@ -1,13 +1,19 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <!-- Header -->
-    <div class="component-header">Reports</div>
-
-    <div>
+    
+         <div class="heading-content">
+      <div class="commpoment-name" (click)="navigation()">Report<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">Leave Summary Report</div>
+      
+    </div>
       <form autocomplete="off" [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')){
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          <button type="reset" class="clear-all-btn" [disabled]="
+            !lvSummeryReportForm.get('employee')?.value &&
+            !lvSummeryReportForm.get('manager')?.value &&
+            !lvSummeryReportForm.get('leaveCategory')?.value" (click)="clearAllFilters()">
             Clear All
           </button>
 
@@ -15,7 +21,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
-                filterBy="fullName" [filter]="true" [showClear]="true" formControlName="employee"
+                filterBy="fullName" [filter]="true" formControlName="employee"
                 placeholder="Please select employee" filterPlaceholder="Search employee">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -27,7 +33,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-                [showClear]="true" formControlName="manager" placeholder="Please select manager"
+                formControlName="manager" placeholder="Please select manager"
                 class="form-select custom-select" filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -39,7 +45,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="d-flex align-items-center gap-2">
               <div class="custom-p-select-content">
-                <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label" [showClear]="true"
+                <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label"
                   formControlName="leaveCategory" placeholder="Please select leave category"
                   class="form-select custom-select" [filter]="true" filterPlaceholder="Search leave type">
                   <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
@@ -75,19 +81,12 @@
           </div>
         </div>
       </form>
-    </div>
   </div>
 
-  <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
 
-  <div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
-      <app-attandace-report-tabs />
-    </div>
-    <div class="custom-component-right-content">
+
+
+
       @if (isLoading) {
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -95,9 +94,8 @@
       }
       @else {
       <div class="custom-table-content">
-        <table id="levsumReportTable" class="content w-100">
+        <table id="levsumReportTable" class="w-100">
           <thead>
-            <tr>
               <th>Employee ID</th>
               <th>Employee Name</th>
               <th>Department</th>
@@ -108,29 +106,26 @@
               <th>Month</th>
               <th>Leave Type</th>
               <th>Leaves Availed</th>
-            </tr>
           </thead>
           <tbody>
             @if (!filterlvsumRecord || filterlvsumRecord.length === 0) {
             <tr>
-              <td colspan="9" class="text-center">
                 <app-no-data-found></app-no-data-found>
-              </td>
             </tr>
             }
             @else {
             @for (record of filterlvsumRecord; track $index) {
             <tr>
-              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-              <td class="td-center">{{ record.department ?? '-' }}</td>
-              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-              <td class="td-center">{{ record.location ?? '-' }}</td>
-              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-              <td class="td-center">{{ record.shift ?? '-' }}</td>
-              <td class="td-center">{{record.monthName ?? '-' }}</td>
-              <td class="td-center">{{record.leaveType ?? '-' }}</td>
-              <td class="td-center">{{record.availed ?? '-'}}</td>
+              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td>{{ record.employeeName ?? '-' }}</td>
+              <td>{{ record.department ?? '-' }}</td>
+              <td>{{ record.teamManagerName ?? '-' }}</td>
+              <td>{{ record.location ?? '-' }}</td>
+              <td>{{ record.subLocation ?? '-' }}</td>
+              <td>{{ record.shift ?? '-' }}</td>
+              <td>{{record.monthName ?? '-' }}</td>
+              <td>{{record.leaveType ?? '-' }}</td>
+              <td>{{record.availed ?? '-'}}</td>
             </tr>
             }
             }
@@ -139,5 +134,3 @@
       </div>
       }
     </div>
-  </div>
-</div>

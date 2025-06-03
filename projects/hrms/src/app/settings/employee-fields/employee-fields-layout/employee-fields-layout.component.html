@@ -1,25 +1,13 @@
-<div>
-    @if (shouldShowSection()) {
+<div class="custom-main-component-container">
     <!--header-->
-    <div class="mb-3">
-        <div class="component-header">Settings</div>
+    <div class="component-header-content pt-2">
+        <app-settings-header />
     </div>
-
-    <!--Module Information-->
-    <div>
-       <app-module-information [moduleInfo]="moduleinfo"/>
-    </div>
-    
-    <!--tabs content-->
-    <div class="mb-3">
-        <app-settings-employee-fields-module-tabs />
-    </div>
-    }
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         @if (shouldShowSection() && router.url !== '/settings/employee-fields/no-due-clearnce' ) {
         <!--sub tabs Content-->
-        <div class="custom-component-left-content" >
+        <div class="custom-component-left-content">
             <div *ngIf="isActive('/settings/employee-fields/personal')">
                 <app-settings-personal-tabs />
             </div>
@@ -36,7 +24,7 @@
             </div>
 
             <div *ngIf="isActive('/settings/employee-fields/manage-policies')">
-                <app-settings-manage-policies-tabs/>
+                <app-settings-manage-policies-tabs />
             </div>
 
             <div *ngIf="isActive('/settings/employee-fields/expenes')">
@@ -51,7 +39,7 @@
                 <app-manage-dst-tabs />
             </div>
         </div>
-        <div class="custom-setting-right-content p-3">
+        <div class="custom-setting-right-content">
             <router-outlet />
         </div>
         } @else {

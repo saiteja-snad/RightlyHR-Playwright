@@ -2,14 +2,14 @@
     color: var(--primary-color);
     font-weight: 700;
     background-color: var(--body-bg-color);
-    border-right: 0.25rem solid var(--primary-color);
+    border-left: 0.25rem solid var(--primary-color);
 }
 
-.custom-p-select-content{
+.custom-p-select-content {
     width: 20rem;
 }
 
-.custom-table-content{
+.custom-table-content {
     width: 40rem;
 }
 
@@ -17,4 +17,12 @@
     width: 1.5rem;
     height: 1.5rem;
     cursor: pointer;
+}
+
+.custom-component-left-content{
+    height: calc(100vh - 8.5rem);
+}
+
+.custom-setting-right-content{
+    height: calc(100vh - 8.5rem);
 }

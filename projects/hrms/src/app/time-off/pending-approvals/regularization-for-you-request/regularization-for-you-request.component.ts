@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,9 +16,9 @@ import { RbacService } from '../../../services/rbac.service';
 import { PermissionsearchPipe } from '../../../Pipes/permissionsearch.pipe';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-regularization-for-you-request',
   imports: [
@@ -33,8 +33,9 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     PermissionsearchPipe,
     DataLoaderContentComponent,
     TableModule,
-    NoDataFoundComponent
-  ],
+    NoDataFoundComponent,
+    InfoIconComponent
+],
   templateUrl: './regularization-for-you-request.component.html',
   styleUrl: './regularization-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -57,10 +58,11 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   requestBody = {} as any;
   leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
-  regularizationselect!: LeaveApproval[];
-  selectedProducts!: LeaveApproval[];
+  regularizationselect!: PermissionRequestResponse[];
+  selectedProducts!: PermissionRequestResponse[];
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('dt') table!: Table;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   options = [
@@ -84,9 +86,9 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
   }
 
-  selectCheck(Value: any) {
-    this.multiSelect = Array.isArray(Value) && Value.length > 0;
-  }
+  // selectCheck(Value: any) {
+  //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  // }
 
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
@@ -181,29 +183,139 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
     this.selectedLeaveData = request;
   }
 
+  hasSelectedAllOnce = false;
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false;
+      return;
+    }
+
+    const stageMap: { [stage: string]: any[] } = {};
+
+    value.forEach((item: any) => {
+      const stage = item.approvalHeader?.currentapprovalStage;
+      if (!stageMap[stage]) {
+        stageMap[stage] = [];
+      }
+      stageMap[stage].push(item);
+    });
+
+    const stages = Object.keys(stageMap);
+    const totalAvailable = this.leaves?.getValue().length || 0;
+    const totalSelected = value.length;
+    const isBulkSelect = totalSelected === totalAvailable;
+
+    if (isBulkSelect && stages.length > 1) {
+      if (this.hasSelectedAllOnce) {
+        this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+      }
+
+      this.hasSelectedAllOnce = true;
+
+      let dominantStage = stages[0];
+      let maxCount = stageMap[dominantStage].length;
+
+      for (const stage of stages) {
+        const count = stageMap[stage].length;
+        if (count > maxCount || (count === maxCount && stage === '1')) {
+          dominantStage = stage;
+          maxCount = count;
+        }
+      }
+
+      const dominantItems = stageMap[dominantStage];
+      this.selectedProducts = [...dominantItems];
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
+    }
+
+    if (!isBulkSelect && stages.length > 1) {
+      this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+      const validStage = this.selectedProducts[0]?.approvalHeader?.currentapprovalStage;
+      const newSelection = value.filter(
+        (item: { approvalHeader: { currentapprovalStage: string; }; }) => item.approvalHeader?.currentapprovalStage === validStage
+      );
+      this.selectedProducts = [...newSelection];
+      setTimeout(() => this.updateTableSelectionState(newSelection));
+      return;
+    }
+
+    this.selectedProducts = [...value];
+  }
+
+
+  private updateTableSelectionState(selectedItems: any[]) {
+    this.selectedProducts = [...selectedItems];
+
+    if (this.table) {
+      this.table.selection = null;
+      setTimeout(() => {
+        this.table.selection = selectedItems;
+      });
+    }
+  }
+
+  previousSearchValue: string = '';
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.multiSelect= false;
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false;
+      this.updateTableSelectionState([]);
+    }
+  }
+
   getFilteredAndSortedLeaves(): any[] {
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.regularizationselect ?? [];
-    // Filter
+
     if (search) {
       leaves = leaves.filter(item =>
-        item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
-        item.entity?.employeeName?.toLowerCase().includes(search) ||
-        item.entity?.leaveDurationType?.toLowerCase().includes(search) ||
-        item.entity?.leaveCategoryName?.toLowerCase().includes(search)
+        item.entity?.fusionempId.toLowerCase().includes(search) ||
+        item.entity?.raisedForName?.toLowerCase().includes(search) ||
+        item.entity?.type?.toLowerCase().includes(search)
       );
     }
 
-    // Sort (preserve original sorting logic)
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      return leaves;
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
     const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
     const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
     const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-    return [...selected, ...unselected];
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
+
+  // getFilteredAndSortedLeaves(): any[] {
+  //   const search = this.searchValue?.toLowerCase() ?? '';
+  //   let leaves = this.regularizationselect ?? [];
+  //   // Filter
+  //   if (search) {
+  //     leaves = leaves.filter(item =>
+  //       item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
+  //       item.entity?.employeeName?.toLowerCase().includes(search) ||
+  //       item.entity?.leaveDurationType?.toLowerCase().includes(search) ||
+  //       item.entity?.leaveCategoryName?.toLowerCase().includes(search)
+  //     );
+  //   }
+
+  //   // Sort (preserve original sorting logic)
+  //   if (!this.selectedProducts || this.selectedProducts.length === 0) {
+  //     return leaves;
+  //   }
+
+  //   const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
+  //   const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  //   const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+  //   return [...selected, ...unselected];
+  // }
 
   removeLeadingWhitespace(control: AbstractControl | null): void {
     if (control) {
@@ -302,7 +414,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message = 'Processing Requests, Please wait...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -316,9 +428,9 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message = 'Processing Request, Please wait...';
     }
-    this.sharedModalService.openLoaderModal(message );
+    this.sharedModalService.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
@@ -366,7 +478,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          moduleId: environment.permissionsModuleId,
+          moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: this.selectedProducts.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -377,7 +489,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          moduleId: environment.permissionsModuleId,
+          moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -393,7 +505,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-             this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

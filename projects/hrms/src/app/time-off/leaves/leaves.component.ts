@@ -5,10 +5,10 @@ import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Valid
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { environment } from '../../../environments/environment';
@@ -19,16 +19,20 @@ import { SignalsService } from '../../services/signals.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { ChartModule } from 'primeng/chart';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class LeavesComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
   leaveFormData = {} as Ileavesdatas;
@@ -96,6 +100,7 @@ export class LeavesComponent {
     private fb: FormBuilder,
     public rbac: RbacService,
     public router: Router,
+    public formsValidation:FormValidationsService,
     private signalService: SignalsService) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
@@ -126,6 +131,8 @@ export class LeavesComponent {
     this.getTeamManagersDetails();
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
 
@@ -149,8 +156,9 @@ export class LeavesComponent {
       this.disaplyapplybutton=false;
      this.getDataByLPID(employeedId);
      this.getLeavesData(employeedId);
-     this.getCategoryDetails();
+     this.getCategoryempDetails(employeedId);
     } else {
+      this.http.setEmployeeIdTimeoff(null);
     this.disaplyapplybutton=true;
     this.getLeavesData(this.empdata.employeeId);
     this.getDataByLPID(this.empdata.employeeId);
@@ -158,6 +166,24 @@ export class LeavesComponent {
     }
   }
 
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/leaves': MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_SUMMARY_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
    getDataByLPID(employeeId:any) {
     let empid = employeeId;
     this.subscription = this.http.getData(`Timeoff/LPID/${empid}`).subscribe({
@@ -332,7 +358,7 @@ export class LeavesComponent {
       halfdayavailing: ['', Validators.required],
       availing: [{ value: '', disabled: true }],
       fulldayavailing: [{ value: '', disabled: true }],
-      reason: ['', [Validators.required]]
+      reason: [null, [Validators.required]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -369,7 +395,22 @@ export class LeavesComponent {
       complete: () => { }
     })
   }
-  
+    getCategoryempDetails(employeedId:any) {
+      const empdata = employeedId;
+    this.subscription = this.http.getData(`LeaveEntitlements/employee/${empdata}`).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.categoryDetails = response.data as ICategoryDetails[];
+          this.calculateProbationLeavs(this.categoryDetails);
+          this.logOptionalLeaveDays(this.categoryDetails);
+          this.initChart(this.categoryDetails);
+        }
+      },
+      error: (reason: any) => {
+      },
+      complete: () => { }
+    })
+  }
   get totalAvailableLeaves(): number {
   return this.categoryDetails.reduce((total, item) => {
     if (item.category.isProbationAllowed && item.probationLeaves > 0) {
@@ -506,6 +547,9 @@ export class LeavesComponent {
   }
 
   onleaveSelect(categoryId: number) {
+    this.enableButton = false;
+    this.leaveForm.get('halfdayavailing')?.setValue(null);
+    this.leaveForm.get('availing')?.setValue(null);
     this.leaveFormData.categoryId = categoryId;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
     this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
@@ -515,6 +559,7 @@ export class LeavesComponent {
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeWeekends) {
       this.getweekendbyempid();
     }
+    
     const maxDays = this.selectedleave?.allowedDays;
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
@@ -560,6 +605,29 @@ export class LeavesComponent {
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action);
     this.issEndDategreater = true;
+    if (this.selectedleave?.category?.isOptionalHoliday === true) {
+      const startDate = this.leaveForm.get('startdate')?.value;
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+
+      if (startDate && endDateControl) {
+        endDateControl.setValue(startDate); 
+        endDateControl.disable();
+        halfDayControl?.disable();
+        this.disableSubmitButton = false;
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+      }
+    }
+    else{
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+      if (endDateControl) {
+        endDateControl.enable();
+        halfDayControl?.enable();
+        this.disableSubmitButton = true;
+        this.leaveForm.patchValue({ fulldayavailing: null });
+      }
+    }
     // if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
     //   this.disableSubmitButton = false;
     // }
@@ -805,7 +873,7 @@ export class LeavesComponent {
     this.isNonOptionalHolidaySelected = false;
     this.isHolidaySelected = false;
     this.isWeekOffSelectedEndate = false;
-    this.isWeekOffSelected = false;
+    // this.isWeekOffSelected = false;
     this.isHolidaySelectedEndate = false;
     this.onEndDateChange();
     this.updateEndDateValidity();
@@ -1011,6 +1079,9 @@ export class LeavesComponent {
     }
   }
 
+  startDateErrorMessage = '';
+  endDateErrorMessage = '';
+  
   calculateDateDifference(startDate: string, endDate: string) {
     var date1 = moment(startDate, 'YYYY-MM-DD');
     var date2 = moment(endDate, 'YYYY-MM-DD');
@@ -1082,6 +1153,24 @@ export class LeavesComponent {
           this.isoptionalnotallowedatWorkingdate = false;
         }
       }
+      else if (this.selectedleave?.category?.isOptionalHoliday === false) {
+        const startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+        const endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+        const isStartDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
+          return ele.isOptional === true && this.isSameDate(ele.holidayDate, startDate);
+        });
+
+        const isEndDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
+          return ele.isOptional === true && this.isSameDate(ele.holidayDate, endDate);
+        });
+
+        this.startDateErrorMessage = isStartDateOptionalHoliday ? 'Selected start date is not allowed as it is an optional holiday' : '';
+
+        this.endDateErrorMessage = isEndDateOptionalHoliday ? 'Selected end date is not allowed as it is an optional holiday' : '';
+        if (isStartDateOptionalHoliday || isEndDateOptionalHoliday) {
+          return;
+        }
+      }
       else {
         this.isoptionalnotallowedatWorkingdate = false;
       }
@@ -1102,6 +1191,13 @@ export class LeavesComponent {
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
     }
   }
+  isSameDate(date1: any, date2: any): boolean {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  return d1.getFullYear() === d2.getFullYear() &&
+         d1.getMonth() === d2.getMonth() &&
+         d1.getDate() === d2.getDate();
+}
 
   chooseDayType(daytype: any) {
     this.isDayTypeselected = true;

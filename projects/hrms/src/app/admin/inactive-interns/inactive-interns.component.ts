@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { Subscription } from 'rxjs';
 import { Iinactivetrainee } from './inactive-trainee-mod';
@@ -13,19 +13,20 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-inactive-interns',
-  imports: [CommonModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NgbPopoverModule, NoDataFoundComponent],
   templateUrl: './inactive-interns.component.html',
   styleUrl: './inactive-interns.component.scss'
 })
 
 export class InactiveInternsComponent {
+  moduleinfo: string = '';
   subscription!: Subscription;
   InActiveTrainee = [] as any;
   emp = {} as any;
   searchValue: any;
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,private accessNav: AccessNavigationService) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata('Trainee Inactive');
@@ -46,21 +47,19 @@ export class InactiveInternsComponent {
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);
-     this.goToAccessibleRoute('/personalinfo');
+    this.goToAccessibleRoute('/personalinfo');
   }
- goToAccessibleRoute(actualRoute: string) {
+
+  goToAccessibleRoute(actualRoute: string) {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
-  }
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
   }
 }

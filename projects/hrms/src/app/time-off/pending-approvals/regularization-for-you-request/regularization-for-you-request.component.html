@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
     <div class="component-header-content">
-        <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
+        <div class="component-sub-header">Selected Records: {{selectedProducts.length}}</div>
         <div class="d-flex gap-3">
             @if (canBulkApprove()) {
             @if(rbac.allowedToAccess('For You (Regularization).update')){
@@ -27,13 +27,13 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username" (ngModelChange)="onSearchChange()"
             aria-describedby="basic-addon1" #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
     </div>
 
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
-        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+        <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
             [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -42,13 +42,13 @@
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Requested Date' | translate}}</th>
                     <th>{{'Regularization Date' | translate}}</th>
-                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Duration(In Hrs)' | translate}}</th>
                     <th>{{'Regularization Type' | translate}}</th>
-                    <th>{{'Reason' | translate}}</th>
-                    <th>{{'Approver Comments' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For You (Regularization).update') ||
                     rbac.allowedToAccess('For You (Regularization).delete'))){
-                    <th class="text-center">{{'Action(s)' | translate}}</th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
             </ng-template>
@@ -60,33 +60,33 @@
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{leave.entity.fusionempId}}</td>
-                    <td>{{leave.entity.raisedForName}}</td>
-                    <td>{{leave.entity.createdDate| dateformat}}</td>
-                    <td>{{leave.entity.requestedDate| dateformat}}</td>
-                    <td>{{leave.entity.duration}}</td>
-                    <td>{{leave.entity.type}}</td>
+                    <td>{{leave.entity?.fusionempId}}</td>
+                    <td>{{leave.entity?.raisedForName}}</td>
+                    <td>{{leave.entity?.createdDate| dateformat}}</td>
+                    <td>{{leave.entity?.requestedDate| dateformat}}</td>
+                    <td>{{leave.entity?.duration}}</td>
+                    <td>{{leave.entity?.type}}</td>
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="notes">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #notes>
-                                <p class="mb-0">{{leave.entity.notes}} </p>
+                                <p class="mb-0">{{leave.entity?.notes}} </p>
                             </ng-template>
                         </div>
                     </td>
                     <td class="text-center">
-                        <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
-                            <a type="button" (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
-                                <i class="bi bi-info-circle-fill"></i>
+                        <div *ngIf="leave.entity?.regularizationApproverComments[0]?.comments;else permissionComments">
+                            <a type="button" (click)="comments(leave.entity?.regularizationApproverComments,commentspopup)">
+                                <app-info-icon />
                             </a>
                         </div>
                         <ng-template #permissionComments>-</ng-template>
                     </td>
                     @if(!multiSelect &&(rbac.allowedToAccess('For You (Regularization).update') ||
                     rbac.allowedToAccess('For You (Regularization).delete'))){
-                    <td>
+                    <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -152,16 +152,16 @@
         </div>
         <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
             <div class="custom-main-popup-content">
-                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+                <label for="comments" class="form-label custom-label mb-2">{{'Approver Comments' | translate}}<span
                         class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+                <textarea class="form-control custom-input" id="comments" placeholder="Please provide approver comments"
                     formControlName="comments" maxlength="250" (input)="removeLeadingWhitespace(approveForm.get('comments'))"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment are required</div>
-                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed 250
                         characters</div>
                 </div>
             </div>
@@ -191,16 +191,16 @@
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">
-                <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
+                <label for="comments" class="form-label custom-label mb-2">{{"Reject Reason" | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments"
-                    placeholder="Please provide comments" formControlName="comments"
+                    placeholder="Please provide reject reason" formControlName="comments"
                     maxlength="250" (input)="removeLeadingWhitespace(rejectForm.get('comments'))"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments are required</div>
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters.
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Reject Reason is required</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reject Reason cannot exceed 250 characters.
                     </div>
                 </div>
             </div>
@@ -223,26 +223,26 @@
 </ng-template>
 
 
-<!-- commentspopup -->
+<!-- Comments Popup-->
 <ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
+            <div>
+                <p class="popup-heading mb-0">{{'Approver Comments'| translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
-
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div *ngFor="let comment of approverComments">
+                <div>
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
-                        <p><b>{{"Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
                         <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
                     </div>
                 </div>

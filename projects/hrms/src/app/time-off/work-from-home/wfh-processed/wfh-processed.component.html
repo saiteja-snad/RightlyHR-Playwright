@@ -3,11 +3,11 @@
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <th>Worked Date</th>
-        <th>Availed</th>
-        <th>Reason</th>
-        <th>Applied Date</th>
-        <th>Status</th>
+        <th>{{'Worked Date' | translate}}</th>
+        <th>{{'Availed' | translate}}</th>
+        <th class="text-center">{{'Reason' | translate}}</th>
+        <th>{{'Applied Date'| translate}}</th>
+        <th>{{'Status'| translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="processedWFHs!.length > 0; else noDataTemplate">
@@ -19,11 +19,11 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
+            <td class="text-center">
               <div>
-                <a *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
+                <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                  <app-info-icon />
+                </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
                 </ng-template>

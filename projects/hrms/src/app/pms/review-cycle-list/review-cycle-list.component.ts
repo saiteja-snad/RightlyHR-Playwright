@@ -27,7 +27,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     TranslateModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
@@ -278,7 +279,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
       next: (response) => {
         this.onCreateCycleFormSubmitted();
-        this.conformationPopup.openSuccessModal('Review Cycle is Resumed Successfully');
+        this.conformationPopup.openSuccessModal('Review cycle resumed successfully');
       },
       error: (error) => {
         this.conformationPopup.openErrorModal(error.error.reason);
@@ -311,7 +312,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       next: (response) => {
         // this.closeModal();
         this.onCreateCycleFormSubmitted();
-        this.conformationPopup.openSuccessModal('Review Cycle Initiated Successfully');
+        this.conformationPopup.openSuccessModal('Review cycle initiated successfully');
       },
       error: (error) => {
         this.conformationPopup.openErrorModal(error.error.reason);

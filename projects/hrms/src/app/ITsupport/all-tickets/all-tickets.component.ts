@@ -122,8 +122,9 @@ export class AllTicketsComponent {
     console.log(this.selectedTickets);
     console.log(this.allAssigneeEmployees);
     
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  
     this.itSupportForm.patchValue({
+      employee: this.selectedTickets.employee === 'Self' ? 'Self' : 'Self',
       name: this.selectedTickets.employeeName,
       email: this.selectedTickets.emailaddress,
       phoneNumber: this.selectedTickets.contactnumber,
@@ -136,6 +137,7 @@ export class AllTicketsComponent {
       description: this.selectedTickets.description,
       ticketStatus: this.status.find((status) => status.label === this.selectedTickets.ticketStatus),
     });
+      this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     console.log(this.itSupportForm);
     
    
@@ -177,6 +179,7 @@ export class AllTicketsComponent {
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');
+         this.http.requestRefresh();
         localStorage.removeItem('ticketDetails');
         setTimeout(() => {
           this.itSupportForm.reset();

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -14,25 +14,26 @@ import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, NgbPopoverModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })
 
 export class ProbationEmployeesComponent {
+  moduleinfo: string = '';
   searchValue: any;
   subscription!: Subscription
   probationemp = [] as any
   emp = {} as any;
   empinfo = {} as IProbationEmployees;
-  StatusMsg : any;
-  probationDuration:any;
+  StatusMsg: any;
+  probationDuration: any;
   loader = false;
-  
-  constructor(private router: Router,private http: HttpService, private modalService: NgbModal,public rbac:RbacService,private accessNav: AccessNavigationService) { }
+
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
-    this.getProbationEmployees()
+    this.getProbationEmployees();
   }
 
   getProbationEmployees() {
@@ -40,7 +41,7 @@ export class ProbationEmployeesComponent {
     this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
       next: (data: any) => {
         this.probationemp = data as IProbationEmployees[]
-        this.probationemp.probationEndDate=this.formatDate(this.probationemp.probationEndDate);
+        this.probationemp.probationEndDate = this.formatDate(this.probationemp.probationEndDate);
         this.loader = false;
       }
     })
@@ -49,13 +50,14 @@ export class ProbationEmployeesComponent {
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);
-     this.goToAccessibleRoute('/personalinfo');
+    this.goToAccessibleRoute('/personalinfo');
   }
-   goToAccessibleRoute(actualRoute: string) {
+
+  goToAccessibleRoute(actualRoute: string) {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }
@@ -63,6 +65,7 @@ export class ProbationEmployeesComponent {
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
+
   formatDate(data: any): any {
     if (data) {
       // return moment(data).format('YYYY-MM-DD');

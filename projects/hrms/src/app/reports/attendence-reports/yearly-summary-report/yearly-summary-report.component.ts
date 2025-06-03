@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { AttandaceReportTabsComponent } from '../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component';
 import * as XLSX from 'xlsx';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -15,23 +14,20 @@ import { IYearlyReportRequest } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import {  Router } from '@angular/router';
 
 @Component({
   selector: 'app-yearly-summary-report',
   imports: [
     CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent,
     DropdownModule,
     SelectModule,
     TranslateModule,
     ReactiveFormsModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent
+  
 ],
   templateUrl: './yearly-summary-report.component.html',
   styleUrl: './yearly-summary-report.component.scss'
@@ -75,8 +71,6 @@ export class YearlySummaryReportComponent {
     this.getYearlyReports();
     this.getEmployeeId();
     this.getTeam();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -102,24 +96,7 @@ export class YearlySummaryReportComponent {
     );
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/yearly-summary-report': MODULE_INFOS.ATTENDANCE_YEARLY_SUMMARY_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
+ 
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
@@ -183,9 +160,8 @@ export class YearlySummaryReportComponent {
   generateYearlyReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
     const formValue = this.yearlyReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
     // Check if no filter is provided
     const noFilterProvided =
       !formValue.employee &&
@@ -203,23 +179,23 @@ export class YearlySummaryReportComponent {
     const request: IYearlyReportRequest = {};
 
     // Only include filters if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId !== 'all') {
+      request.employeeId = formValue?.employee?.employeeId;
     }
 
     // Employee filter
-    if (formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.employeeId;
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Leave category
     if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
+      request.LeaveName = formValue?.leaveCategory?.value;
     }
 
     // Year
@@ -261,6 +237,7 @@ export class YearlySummaryReportComponent {
 
   clearAllFilters(): void {
     this.yearlyReportForm.reset();
+    this.filteredYearlyRecord = [];
   }
 
   exportToExcelYearly(): void {
@@ -373,6 +350,9 @@ export class YearlySummaryReportComponent {
 
     // Set minimum width to 10
     return Math.max(10, maxWidth);
+  }
+ navigation(){
+    this.router.navigate(['/reports']);
   }
 
   ngOnDestroy(): void {

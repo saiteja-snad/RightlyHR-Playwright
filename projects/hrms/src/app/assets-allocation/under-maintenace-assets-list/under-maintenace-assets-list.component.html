@@ -1,10 +1,11 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-input custom-input custom-search-input"
-            placeholder="search Here" aria-label="Username" [(ngModel)]="searchQuery"
+            placeholder="Search here" aria-label="Username" [(ngModel)]="searchQuery"
             (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
+
     <ng-container *ngIf="loading; else maincontent">
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">
@@ -17,30 +18,26 @@
     </ng-container>
 
     <ng-template #maincontent>
-
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <tr>
-                        <th>Asset Category</th>
-                        <th>Asset Sub Category</th>
-                        <th>Serial Number</th>
-                        <th>Asset Status</th>
-                        <th>Allocated To</th>
-                        <th>Asset ID</th>
-                        <th>Location </th>
-                        <th>Sub Location </th>
-                     @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') || rbac.allowedToAccess('Under Maintenance View Asset Details.view')
-                      || rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){
-                <th class="text-center">Action(s)</th>
-                }
-
-                    </tr>
+                    <th>Asset Category</th>
+                    <th>Asset Sub Category</th>
+                    <th>Serial Number</th>
+                    <th>Asset Status</th>
+                    <th>Allocated To</th>
+                    <th>Asset ID</th>
+                    <th>Location </th>
+                    <th>Sub Location </th>
+                    @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') ||
+                    rbac.allowedToAccess('Under Maintenance View Asset Details.view')
+                    || rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){
+                    <th class="text-center">Action(s)</th>
+                    }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
                         <tr *ngFor="let asset of assetslist | async">
-
                             <td>{{ asset.assetCategory }}</td>
                             <td>{{ asset.assetSubCategory }}</td>
                             <td>{{ asset.serialNumber }}</td>
@@ -49,7 +46,6 @@
                                 <ng-container *ngIf="asset.assignedTo; else unassigned">
                                     {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
                                     asset.assignedTo.lastName }}
-
                                 </ng-container>
                                 <ng-template #unassigned>
                                     N/A
@@ -58,80 +54,76 @@
                             <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
                             <td>{{ asset.locationName }}</td>
                             <td>{{ asset?.sublocationName || 'N/A' }}</td>
-                                 @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') || rbac.allowedToAccess('Under Maintenance View Asset Details.view')
-                      || rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){        
+                            @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') ||
+                            rbac.allowedToAccess('Under Maintenance View Asset Details.view')
+                            || rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                      @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view')){
+                                        @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view')){
                                         <li>
                                             <a class="dropdown-item"
                                                 (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
                                                 Mark as Available
                                             </a>
                                         </li>
-                                    }
-                                     @if(rbac.allowedToAccess('Under Maintenance View Asset Details.view')){
+                                        }
+                                        @if(rbac.allowedToAccess('Under Maintenance View Asset Details.view')){
                                         <li>
-
                                             <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                                                 View Asset Details
                                             </a>
                                         </li>
-                                    }
-                                     @if(rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){
+                                        }
+                                        @if(rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){
                                         <li>
                                             <a class="dropdown-item"
                                                 (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
                                                 Update
                                             </a>
                                         </li>
-                                    }
+                                        }
                                     </ul>
                                 </div>
                             </td>
-                        }
+                            }
                         </tr>
                     </ng-container>
-
+    
                     <ng-template #noDataTemplate>
                         <tr>
-                            <td>
-                                <app-no-data-found />
-                            </td>
+                            <app-no-data-found />
                         </tr>
                     </ng-template>
                 </tbody>
             </table>
         </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-
-                <div class="d-flex align-items-center gap-3 p-2" *ngIf="totalRecords > 0">
-
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
-
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
+    
+    <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+            collectionSize }}
+          </span>
         </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+          (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
+    </div>
     </ng-template>
 </div>
 
 <ng-template #addassetes let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">Update an Asset</p>
@@ -143,9 +135,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-
             <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="updateanasset(assetForm,storeassetid)">
-
                 <div class="row ">
                     <!-- Location Field -->
                     <div class=" col-md-6 mb-2">
@@ -183,7 +173,7 @@
 
                         </div>
                         <div *ngIf="assetForm.get('assetCategory')?.invalid && assetForm.get('assetCategory')?.touched">
-                            <div class="error-msg">Asset category is required</div>
+                            <div class="error-msg">Asset Category is required</div>
                         </div>
 
                     </div>
@@ -200,10 +190,9 @@
                         </div>
                         <div
                             *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
-                            <div class="error-msg">Asset sub category is required</div>
+                            <div class="error-msg">Asset Sub Category is required</div>
                         </div>
                     </div>
-
 
                     <!-- ASSET Model  -->
                     <div class="col-md-6 mb-2">
@@ -214,11 +203,11 @@
                             class="form-control custom-input custom-input" placeholder="Enter asset model">
                         <div
                             *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
-                            <div class="error-msg">Asset model is required</div>
+                            <div class="error-msg">Asset Model is required</div>
                         </div>
                         <div
                             *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
-                            <div class="error-msg">Asset model cannot be more than 20 characters</div>
+                            <div class="error-msg">Asset Model cannot be more than 20 characters</div>
                         </div>
                     </div>
 
@@ -230,11 +219,11 @@
                             class="form-control custom-input custom-input" placeholder="Enter serial number">
                         <div
                             *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
-                            <div class="error-msg">Serial number is required</div>
+                            <div class="error-msg">Serial Number is required</div>
                         </div>
                         <div
                             *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
-                            <div class="error-msg">Serial number cannot be more than 30 characters</div>
+                            <div class="error-msg">Serial Number cannot be more than 30 characters</div>
                         </div>
 
                     </div>
@@ -249,7 +238,7 @@
                         </div>
                         <div
                             *ngIf="assetForm.get('vendordetailes')?.touched && assetForm.get('vendordetailes')?.invalid">
-                            <div class="error-msg">Vendor name is required</div>
+                            <div class="error-msg">Vendor Name is required</div>
                         </div>
                     </div>
 
@@ -257,9 +246,10 @@
                         <label for="purchasedate" class="form-label custom-label mb-2 custom-label mb-2">Purchase
                             Date<span class="error-msg">*</span></label>
                         <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
-                            class="form-control custom-input custom-input"  [min]="minpurchesDate"[max]="maxpurchesDate">
+                            class="form-control custom-input custom-input" [min]="minpurchesDate"
+                            [max]="maxpurchesDate">
                         <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
-                            <div class="error-msg">Purchase date is required</div>
+                            <div class="error-msg">Purchase Date is required</div>
                         </div>
                     </div>
 
@@ -289,7 +279,7 @@
                         </div>
                         <!-- Custom error message for mismatched dates -->
                         <div *ngIf="dateMismatch">
-                            <div class="error-msg">Warranty Start date must be equal to the Purchase date</div>
+                            <div class="error-msg">Warranty Start Date must be equal to the Purchase date</div>
                         </div>
                     </div>
                     <!-- Warranty date end -->
@@ -302,10 +292,10 @@
                             [min]="assetForm.get('warrantystartdate')?.value" (change)="checkDateMismatch()">
                         <div
                             *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
-                            <div class="error-msg">Warranty expiry date is required</div>
+                            <div class="error-msg">Warranty Expiry Date is required</div>
                         </div>
                         <div *ngIf="warrantydateMismatch">
-                            <div class="error-msg">Warranty expiry date must be greater than warranty start date</div>
+                            <div class="error-msg">Warranty Expiry Date must be greater than warranty start date</div>
                         </div>
                     </div>
 
@@ -334,10 +324,10 @@
                             class="form-control custom-input custom-input"
                             [min]="assetForm.get('warrantyenddate')?.value" (change)="onStartDateChangeamc()" />
                         <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
-                            <div class="error-msg">AMC start date is required</div>
+                            <div class="error-msg">AMC Start Date is required</div>
                         </div>
                         <div *ngIf="amcDateMismatch">
-                            <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
+                            <div class="error-msg">AMC Start Date must be equal to or greater than the warranty expiry
                                 date</div>
                         </div>
                     </div>
@@ -352,10 +342,10 @@
                             class="form-control custom-input custom-input" onkeypress="return false;"
                             [min]="assetForm.get('amcstartdate')?.value" (change)="checkAmcDateMismatch()" />
                         <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-                            <div class="error-msg">AMC expiry date is required</div>
+                            <div class="error-msg">AMC Expiry Date is required</div>
                         </div>
                         <div *ngIf="amcDateMismatch">
-                            <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
+                            <div class="error-msg">AMC Expiry Date must be greater than AMC start date</div>
                         </div>
                     </div>
 
@@ -383,17 +373,17 @@
                             placeholder="AMC Vendor Contact" />
                         <div class="error-msg"
                             *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
-                            AMC vendor contact is required
+                            AMC Vendor Contact is required
                         </div>
 
                         <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">
-                            AMC vendor contact must be 10 to 15 digits
+                            AMC Vendor Contact must be 10 to 15 digits
                         </div>
                         <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
-                            AMC vendor contact must be 10 to 15 digits
+                            AMC Vendor Contact must be 10 to 15 digits
                         </div>
                         <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
-                            AMC vendor Contact is not valid
+                            AMC Vendor Contact is not valid
                         </div>
                     </div>
                 </div>
@@ -413,6 +403,7 @@
 
     </div>
 </ng-template>
+
 <!-- update close pop up -->
 <ng-template #updateconformation let-model>
     <div class="result-popup-content" ngbAutofocus>
@@ -430,6 +421,7 @@
         </div>
     </div>
 </ng-template>
+
 <ng-template #avilableasstes let-model>
     <div class="result-popup-content" ngbAutofocus>
         <div>

@@ -3,14 +3,14 @@
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <th>Requested Date</th>
-        <th>Permission Date</th>
-        <th>Duration(In Hours)</th>
-        <th>Reason</th>
+        <th>{{'Requested Date' | translate}}</th>
+        <th>{{'Permission Date'| translate}}</th>
+        <th>Duration(In<span class="text-lowercase"> hrs)</span></th> 
+        <th class="text-center">{{'Reason'| translate}}</th>
         <!-- <th>Rejected Reason</th> -->
-        <th>Permission Type</th>
-        <th>Status</th>
-        <th>Action(s)</th>
+        <th>{{'Permission Type'| translate}}</th>
+        <th>{{'Status'| translate}}</th>
+        <th class="text-center">{{'Action'| translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
@@ -18,10 +18,10 @@
             <td>{{permissionRequest.createdDate | dateformat}}</td>
             <td>{{permissionRequest.requestedDate | dateformat}}</td>
             <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-            <td>
+            <td class="text-center">
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <i class="bi bi-info-circle-fill" ></i>
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{permissionRequest.notes}}</p>
@@ -31,7 +31,8 @@
             <td>{{permissionRequest.type}}</td>
             <td>{{permissionRequest.status}}</td>
             <td class="text-center">
-              @if(isBeforeToday(permissionRequest.requestedDate)){
+              <!-- @if(isBeforeToday(permissionRequest.requestedDate)){ -->
+              @if(permissionForLoggedInUser && isBeforeToday(permissionRequest.requestedDate)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -42,6 +43,9 @@
                   </li>
                 </ul>
               </div>
+              }@else {
+                -
+                <!-- {{"NA"}} -->
               }
             </td>
           </tr>
@@ -72,9 +76,12 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason"
-          maxlength="250" placeholder="Please enter cancellation reason....." rows="3"></textarea>
+          maxlength="250" placeholder="Please enter cancellation reason....." rows="3" (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))" ></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
+        <div class="error-msg" *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">
+                          Reason for Cancellation must be at least 10 characters
+                        </div>
         <div class="error-msg"
           *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
@@ -86,7 +93,7 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();cancelForm.reset()">{{'Close'|
+        <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)" [disabled]="isLoading">{{'Cancel'|
           translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Submit' | translate }} } @else {
@@ -99,4 +106,21 @@
       </div>
     </form>
   </div>
+</ng-template>
+
+
+
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
+        </div>
+    </div>
 </ng-template>

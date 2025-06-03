@@ -8,7 +8,7 @@
                 <th>Availed</th>
                 <th>Start Date</th>
                 <th>End Date</th>
-                <th>Reason</th>
+                <th class="text-center">Reason</th>
                 <th>Status</th>
             </thead>
             <tbody>
@@ -24,10 +24,10 @@
                     </td>
                     <td>{{item.startdate| dateformat}}</td>
                     <td>{{item.enddate| dateformat}}</td>
-                    <td>
+                    <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{item.notes}}</p>

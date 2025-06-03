@@ -1,4 +1,4 @@
-.custom-select{
+.custom-select {
     border: 1px solid #DEE8F3;
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
@@ -8,4 +8,12 @@
     color: #222222;
     background-color: #F8FBFF;
     min-width: 200px;
+}
+
+.custom-table-content {
+    height: calc(100vh - 20rem);
+}
+
+.total-count-content{
+    left: 40% !important;
 }

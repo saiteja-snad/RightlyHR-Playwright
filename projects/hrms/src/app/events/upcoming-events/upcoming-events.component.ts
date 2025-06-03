@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NavigationEnd, Router } from '@angular/router';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AddEventComponent } from './add-event/add-event.component';
-import { Observable, of, shareReplay, Subscription, tap } from 'rxjs';
+import { filter, Observable, of, shareReplay, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
@@ -16,15 +16,18 @@ import { EventsTabsComponent } from "../../shared/events-tabs/events-tabs.compon
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule,NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })
 
 export class UpcomingEventsComponent implements OnInit,OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription
   postEventsData: any
   customEventupdateForm!: FormGroup;
@@ -52,6 +55,9 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
     this.http.eventAdded$.subscribe(() => {
       this.getCustomEvents();
     });
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
 
@@ -62,6 +68,25 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
       eventMessage: [null, [Validators.required, Validators.maxLength(250)]],
       imageUrl: [null]
     });
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/events/upcoming': MODULE_INFOS.EVENTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   futureDateValidator(): ValidatorFn {

@@ -36,7 +36,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
     NoDataFoundComponent,
     DateformatPipe,
     PendingapprovalsseparationPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
   ],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
@@ -59,7 +59,7 @@ export class SeparationForYourRoleRequestComponent {
     { label: 25, value: 25 },
   ];
   selectedSpRequestData: any = {
-    spsalaryhold: undefined,
+    spsalaryhold: null,
     noticperiodType: null,
     extend: false,
     discontinue: false,
@@ -68,6 +68,12 @@ export class SeparationForYourRoleRequestComponent {
     rejectedReason: '',
     early: false,
   };
+  
+  salaryHoldOptions = [
+  { label: 'Yes', value: true },
+  { label: 'No', value: false }
+];
+
   isLoading = false;
   regular = false;
   extend = false;
@@ -110,7 +116,7 @@ export class SeparationForYourRoleRequestComponent {
       spRequestAppliedDate: null,
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
-      spsalaryhold: undefined
+      spsalaryhold: null
       // Add any other keys your form uses here
     };
     // Reset condition flags
@@ -429,7 +435,7 @@ export class SeparationForYourRoleRequestComponent {
       isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       noticePeriodType: this.selectedSpRequestData.noticperiodType,
       noticePeriodTypeDays: this.selectedSpRequestData.noticperioddays,
-      salaryhold: this.selectedSpRequestData.spsalaryhold,
+      salaryhold: this.selectedSpRequestData.spsalaryhold?.value,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
       currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),

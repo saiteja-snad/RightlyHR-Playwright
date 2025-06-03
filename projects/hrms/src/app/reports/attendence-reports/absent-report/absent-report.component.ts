@@ -79,12 +79,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     ],
   };
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
+  localeOptions: any;
 
   isFilterGivenabsent = false;
   selectedAbsentMonth: string | null = null;
@@ -125,6 +120,12 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getEmployeeId();
@@ -421,7 +422,11 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+ navigation(){
+    this.router.navigate(['/reports']);
+  }
 
+  
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

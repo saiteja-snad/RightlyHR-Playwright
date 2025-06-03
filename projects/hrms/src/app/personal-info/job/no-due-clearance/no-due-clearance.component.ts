@@ -80,6 +80,8 @@ export class NoDueClearanceComponent {
       ...status,
       employeeId: Value,
     }));
+
+    localStorage.setItem('no-due-data', JSON.stringify(Value));
   }
   //function to get employee by id
   getEmployeeId() {

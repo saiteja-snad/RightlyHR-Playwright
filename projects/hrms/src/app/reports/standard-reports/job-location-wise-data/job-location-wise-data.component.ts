@@ -4,7 +4,7 @@ import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootst
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { filter, Subject, takeUntil } from 'rxjs';
+import {  Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { ILocation, ILocationReportData, ISubLocation } from './location-reports.model';
 import { SelectModule } from 'primeng/select';
@@ -13,17 +13,15 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import * as XLSX from "xlsx";
 import { IJob } from '../../../Interfaces/letters-model';
-import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import {  Router } from '@angular/router';
+
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })
@@ -61,8 +59,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.locationReportsForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
     })
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
+   
   }
 
   initializeForm() {
@@ -73,24 +70,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
 
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/standard-reports/job-data': MODULE_INFOS.STANDARD_REPORTS_JOB_LOCATION_WISE_DATA_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
 
   get dateOfJoiningControl(): FormControl {
     return this.locationReportsForm.get('dateOfJoining') as FormControl;
@@ -305,6 +285,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       sheetName,
       fileName
     }
+  }
+ navigation(){
+    this.router.navigate(['/reports']);
   }
 
   private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {

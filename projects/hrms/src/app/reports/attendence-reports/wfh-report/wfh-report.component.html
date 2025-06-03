@@ -1,13 +1,19 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <!--header-->
-    <div class="component-header">Reports</div>
-
-    <div>
-      <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
+    
+         <div class="heading-content">
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">WFH Report</div>
+    </div>
+    <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('WFH Report - Generate.view')){
-          <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          <button type="reset" class="clear-all-btn"  [disabled]="
+            !wfhReportForm.get('dateRange')?.value &&
+            !wfhReportForm.get('employee')?.value &&
+            !wfhReportForm.get('manager')?.value  &&
+            !wfhReportForm.get('team')?.value" (click)="clearAllFilters()">
             Clear All
           </button>
 
@@ -27,7 +33,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-                [showClear]="true" formControlName="employee" placeholder="Please select employee"
+               formControlName="employee" placeholder="Please select employee"
                 class="form-select custom-select" filterPlaceholder="Search employee">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -39,7 +45,7 @@
           @if(rbac.allowedToAccess('Attendance Team Manager List(WFH).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName"
+              <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
                 formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
                 filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -53,7 +59,7 @@
             && !rbac.allowedToAccess('Attendance Team Manager List(WFH).view')){
             <div class="d-flex align-items-center gap-2">
               <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName"
+                <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
                   formControlName="team" placeholder="Please select employee" class="form-select custom-select"
                   filterPlaceholder="Search employee" (onChange)="onClick($event)">
                   <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -88,20 +94,11 @@
             }
           </div>
         </div>
-      </form>
-    </div>
+    </form>
   </div>
 
-  <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+
   
-  <div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
-      <app-attandace-report-tabs />
-    </div>
-    <div class="custom-component-right-content">
 
       @if(isLoading){
       <div class="custom-compoent-data-loader">
@@ -111,7 +108,6 @@
       <div class="custom-table-content">
         <table id="wfhReportTable" class="content w-100">
           <thead>
-            <tr>
               <th>Employee ID</th>
               <th>Employee Name</th>
               <th>Department</th>
@@ -121,23 +117,22 @@
               <th>Shift</th>
               <th>Worked Date</th>
               <th>Duration</th>
-            </tr>
           </thead>
           <tbody>
             @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
             @for (record of filteredWfhRecord; track record) {
             <tr>
-              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-              <td class="td-center">{{ record.department ?? '-' }}</td>
-              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-              <td class="td-center">{{ record.location ?? '-' }}</td>
-              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-              <td class="td-center">{{ record.shift ?? '-' }}</td>
-              <td class="td-center">
+              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td>{{ record.employeeName ?? '-' }}</td>
+              <td>{{ record.department ?? '-' }}</td>
+              <td>{{ record.teamManagerName ?? '-' }}</td>
+              <td>{{ record.location ?? '-' }}</td>
+              <td>{{ record.subLocation ?? '-' }}</td>
+              <td>{{ record.shift ?? '-' }}</td>
+              <td>
                 {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
               </td>
-              <td class="td-center">{{ record.duration ?? '-' }}</td>
+              <td>{{ record.duration ?? '-' }}</td>
             </tr>
             }
             } @else {
@@ -152,5 +147,3 @@
       </div>
       }
     </div>
-  </div>
-</div>

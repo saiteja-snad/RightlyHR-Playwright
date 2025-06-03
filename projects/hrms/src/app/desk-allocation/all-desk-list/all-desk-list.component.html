@@ -1,11 +1,12 @@
-<div class="custom-main-component-container mt-3 ">
+<div class="custom-main-component-container">
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
+    <input type="search" class="form-control custom-input custom-search-input" placeholder="Search here"
       aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
       aria-describedby="basic-addon1">
   </div>
+
   <ng-container *ngIf="loading; else maincontent">
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">
@@ -18,26 +19,23 @@
   </ng-container>
 
   <ng-template #maincontent>
-
     <div class="custom-table-content">
       <table class="w-100">
         <thead>
-          <tr>
-            <th>Desk ID</th>
-            <th>Desk Type</th>
-            <th>Allocated To</th>
-            <th>Location</th>
-            <th>Sub Location</th>
-            <th>Desk Status</th>
-            <th>Approver</th>
-            @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') ||
-            rbac.allowedToAccess('Schedule for Maintenance.view') ||
-            rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') ||
-            rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') ||
-            rbac.allowedToAccess('Mark as Available.view') || rbac.allowedToAccess('View Desk Details.view')){
-            <th class="text-center">Action(s)</th>
-            }
-          </tr>
+          <th>Desk ID</th>
+          <th>Desk Type</th>
+          <th>Allocated To</th>
+          <th>Location</th>
+          <th>Sub Location</th>
+          <th>Desk Status</th>
+          <th>Approver</th>
+          @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') ||
+          rbac.allowedToAccess('Schedule for Maintenance.view') ||
+          rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') ||
+          rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') ||
+          rbac.allowedToAccess('Mark as Available.view') || rbac.allowedToAccess('View Desk Details.view')){
+          <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+          }
         </thead>
         <tbody>
           <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
@@ -45,10 +43,8 @@
               <td>{{ desk.deskName }}</td>
               <td>{{ desk.deskType }}</td>
               <td>{{ desk.allocatedToDetails?.employeeName || 'N/A' }}</td>
-
               <td>{{ desk.location?.jobLocationName }}</td>
               <td>{{ desk.subLocation?.jobSubLocationName }}</td>
-
               <td>{{ desk.deskStatus }}</td>
               <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
               @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') ||
@@ -62,7 +58,6 @@
                   <a data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>
-
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <ng-container *ngIf="desk.deskStatus==='Available'">
                       @if(rbac.allowedToAccess('Request for Allocation.view')){
@@ -88,9 +83,7 @@
                         </a>
                       </li>
                       }
-
                     </ng-container>
-
                     <ng-container *ngIf="desk.deskStatus==='Allocated'">
                       @if(rbac.allowedToAccess('Reallocate desk.view')){
                       <li>
@@ -108,7 +101,6 @@
                       </li>
                       }
                     </ng-container>
-
                     @if(rbac.allowedToAccess('Mark as Active.view')){
                     <li *ngIf="desk.deskStatus === 'Inactive'">
                       <a class="dropdown-item" (click)="openModal(avitive);selectedAsset=desk;viewdata(desk)">
@@ -137,61 +129,48 @@
                 }
               </td>
               }
-
-
             </tr>
           </ng-container>
           <!-- No Data Found Template -->
           <ng-template #noDataTemplate>
             <tr>
-              <td>
-                <app-no-data-found />
-              </td>
+              <app-no-data-found />
             </tr>
           </ng-template>
         </tbody>
       </table>
     </div>
-    <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
+
+    <div class="pagination-content" *ngIf="((desklist | async) ?? []).length > 0">
       <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-
         <div class="d-flex align-items-center gap-3 p-2">
-
           <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-            (ngModelChange)="onRowsChange()">
+            (ngModelChange)="onPageSizeChange($event)">
             <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
             </option>
           </select>
-          <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-            totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+            collectionSize }}
+          </span>
         </div>
-
-        <!-- Pagination -->
-        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
           (onPageChange)="onPageChange($event)"></p-paginator>
       </div>
     </div>
   </ng-template>
 </div>
 
-
-
 <ng-template #reallcatedeskmodal let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Reallocate an Desk</p>
+        <p class="popup-heading mb-0">Reallocate Desk</p>
       </div>
-      <div>
-        <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
-      </div>
+
     </div>
-    <div class="custom-main-popup-content p-3">
-
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="reassiginForm" (ngSubmit)="postReallocateAssets(reassiginForm)">
-
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="subLocation" class="form-label custom-label mb-2 custom-label mb-2">Select Shift<span
@@ -205,7 +184,7 @@
             </div>
           </div>
           <div class="col-md-6 mb-3">
-            <label for="desk" class="form-label custom-label mb-2 ">Desk ID<span class="text-danger">*</span></label>
+            <label for="desk" class="form-label custom-label mb-2">Desk ID<span class="text-danger">*</span></label>
             <input type="text" formControlName="deskid" class="form-control custom-input" />
           </div>
 
@@ -213,9 +192,10 @@
             <label for="asseTID" class="form-label  custom-label mb-2">Select Employee<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
-                (onChange)="onEmployeeSelect($event)" formControlName="employeeName"
-                placeholder="Please select employee" class="form-select custom-select"></p-select>
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
+                [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
+                formControlName="employeeName" placeholder="Please select employee"
+                class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="reassiginForm.get('employeeName')?.invalid && reassiginForm.get('employeeName')?.touched">
@@ -224,13 +204,13 @@
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="Approval" class="form-label custom-label mb-2 ">
+            <label for="Approval" class="form-label custom-label mb-2">
               Select Approver<span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
-                formControlName="approvid" placeholder="Please select approver" class="form-select custom-select"
-                (onChange)="onApprovalSelects($event)"></p-select>
+              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true"
+                filterBy="employeeName" formControlName="approvid" placeholder="Please select approver"
+                class="form-select custom-select" (onChange)="onApprovalSelects($event)"></p-select>
             </div>
             <div class="error-msg"
               *ngIf="reassiginForm.get('approvid')?.invalid && reassiginForm.get('approvid')?.touched">
@@ -238,56 +218,40 @@
             </div>
           </div>
         </div>
-
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openConfirmationModal(confirmationpopup)">Close</button>
+            (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="reassiginForm.invalid">Submit</button>
         </div>
-
-
       </form>
-
     </div>
   </div>
-
 </ng-template>
+
 <!-- reallocation desk -->
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to close?</p>
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
-
     <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-        Yes
-      </button>
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
     </div>
   </div>
 </ng-template>
 
-
 <ng-template #assigindesk let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Allocate an Desk</p>
+        <p class="popup-heading mb-0">Allocate Desk</p>
       </div>
-      <div>
-        <a (click)="openallocationModal(confirmationpopupallocation)"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
-      </div>
+
     </div>
-
-    <div class="custom-main-popup-content p-3">
-
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAllocateAssets(assiginForm);modal.dismiss();">
-
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="subLocation" class="form-label custom-label mb-2">Select Shift<span
@@ -297,7 +261,7 @@
                 placeholder="Please select shift" class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg" *ngIf="assiginForm.get('shifts')?.invalid && assiginForm.get('shifts')?.touched">
-              shift is required
+              Shift is required
             </div>
           </div>
 
@@ -305,8 +269,9 @@
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
-                (onChange)="onEmployeeSelect($event)" formControlName="employeeid" placeholder="Please select employee"
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
+                [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
+                formControlName="employeeid" placeholder="Please select employee"
                 class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
@@ -320,19 +285,18 @@
               Select Approver<span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
-                formControlName="approvid" placeholder="Please select approver" class="form-select custom-select"
-                (onChange)="onApprovalSelects($event)"></p-select>
+              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true"
+                filterBy="employeeName" formControlName="approvid" placeholder="Please select approver"
+                class="form-select custom-select" (onChange)="onApprovalSelects($event)"></p-select>
             </div>
             <div class="error-msg" *ngIf="assiginForm.get('approvid')?.invalid && assiginForm.get('approvid')?.touched">
               Approver is required
             </div>
           </div>
         </div>
-
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openallocationModal(confirmationpopupallocation)">Close</button>
+            (click)="openallocationModal(confirmationpopupallocation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="assiginForm.invalid">Submit</button>
         </div>
       </form>
@@ -345,9 +309,8 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to close?</p>
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
-
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
         No
@@ -358,24 +321,21 @@
     </div>
   </div>
 </ng-template>
+
 <ng-template #relasedesk let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Release an Desk</p>
+        <p class="popup-heading mb-0">Release Desk</p>
       </div>
-      <div>
-        <a (click)="modal.dismiss();realseForm.reset();openModal(realseconforamation)"><img src="icons/close.png"
-            alt="Close Icon" class="close-icon"></a>
-      </div>
+
     </div>
 
-    <div class="custom-main-popup-content p-3">
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="realseForm" (ngSubmit)="updatedeskitemrelease(realseForm)">
-
         <div class="row ">
           <div class="col-md-12 mb-3">
-            <label for="Department" class="form-label custom-label mb-2">Select Reason <span
+            <label for="Department" class="form-label custom-label mb-2">Select Reason<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="deskrealse" optionLabel="value" formControlName="deskrealse"
@@ -389,75 +349,62 @@
           </div>
 
           <div class="col-12 mb-3">
-            <label class="form-label custom-label mb-2 ">
+            <label class="form-label custom-label mb-2">
               Additional Comments
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"
                 (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
                 maxlength="250" rows="3"></textarea>
-              <!-- Error messages -->
-              <div>
-                <div class="error-msg" *ngIf="realseForm.get('reason')?.invalid && realseForm.get('reason')?.touched">
-                  <div *ngIf="realseForm.get('reason')?.errors?.['required']">
-                    Additional Comments is required.
-                  </div>
-                  <div *ngIf="realseForm.get('reason')?.errors?.['maxlength']">
-                    Additional Comments must not exceed 250 characters.
-                  </div>
-                </div>
-              </div>
               <!-- Character count -->
-              <div class="mt-2 text-end">
-                {{ realseForm.get("reason")?.value?.length || 0 }}/250
+              <div class="textarea-count-text">{{ realseForm.get("reason")?.value?.length || 0 }}/250</div>
+              <!-- Error messages -->
+              <div class="error-msg" *ngIf="realseForm.get('reason')?.invalid && realseForm.get('reason')?.touched">
+                <div *ngIf="realseForm.get('reason')?.errors?.['required']">
+                  Additional Comments is required.
+                </div>
+                <div *ngIf="realseForm.get('reason')?.errors?.['maxlength']">
+                  Additional Comments must not exceed 250 characters.
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(realseconforamation);modal.dismiss()">Close</button>
+            (click)="openModal(realseconforamation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="realseForm.invalid">Submit</button>
         </div>
-
       </form>
     </div>
   </div>
-
 </ng-template>
-
-
 
 <ng-template #realseconforamation let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4">Are you sure you want to close?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(relasedesk);modal.dismiss()">No</button>
       <button type="submit" class="custom-btn btn-primary" (click)="conformationpoppup();modal.dimiss()">Yes</button>
     </div>
   </div>
-
 </ng-template>
 
-
 <ng-template #deleteasstes let-model>
-  <div class="custom-main-popup-container" ngbAutofocus>
-
+  <div class="result-popup-content" ngbAutofocus>
     <div class="text-center">
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to mark this desk as inactive?</p>
     </div>
-    <div class="text-center">
-      <h5 class="confirmation-text mb-2"> Are you sure you want to Inactive this Desk ?</h5>
-    </div>
-    <div class="custom-main-popup-content  p-4">
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="inactivedesk(inactiveForm)">
-        <div class="row ">
+        <div class="row">
           <div class="col-md-12 mb-3">
-            <label for="Department" class="form-label custom-label mb-2">Select Reason <span
-                class="text-danger">*</span></label>
+            <label for="Department" class="form-label custom-label mb-2">Select Reason
+              <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="deskinactive" optionLabel="value" formControlName="assetinactive"
                 placeholder="Please select reason" class="form-select custom-select"></p-select>
@@ -470,201 +417,158 @@
           </div>
 
           <div class="col-12 mb-3">
-            <label class="form-label custom-label mb-2 ">
-              Additional Comments
-            </label>
+            <label class="form-label custom-label mb-2">Additional Comments</label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"
                 (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
                 maxlength="250" rows="3"></textarea>
-              <!-- Error messages -->
-              <div>
-                <div class="error-msg"
-                  *ngIf="inactiveForm.get('reason')?.invalid && inactiveForm.get('reason')?.touched">
-                  <div *ngIf="inactiveForm.get('reason')?.errors?.['required']">
-                    Additional Comments is required.
-                  </div>
-                  <div class="error-msg" *ngIf="inactiveForm.get('reason')?.errors?.['maxlength']">
-                    Additional Comments must not exceed 250 characters.
-                  </div>
-                </div>
-              </div>
               <!-- Character count -->
-              <div class="mt-2 text-end">
-                {{ inactiveForm.get("reason")?.value?.length || 0 }}/250
+              <div class="textarea-count-text">{{ inactiveForm.get("reason")?.value?.length || 0 }}/250</div>
+              <!-- Error messages -->
+              <div class="error-msg" *ngIf="inactiveForm.get('reason')?.invalid && inactiveForm.get('reason')?.touched">
+                <div *ngIf="inactiveForm.get('reason')?.errors?.['required']">Additional Comments is required.</div>
+                <div *ngIf="inactiveForm.get('reason')?.errors?.['maxlength']">Additional Comments must not exceed 250
+                  characters.</div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
+            (click)="openModal(inativeconfromation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
         </div>
-
       </form>
-
     </div>
   </div>
 </ng-template>
-
-
 
 <ng-template #inativeconfromation let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary"
-        (click)="openModal(deleteasstes);modal.dismiss()">No</button>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
       <button type="submit" class="custom-btn btn-primary" (click)="conformationpoppup();modal.dismiss()">Yes</button>
     </div>
   </div>
-
 </ng-template>
 
-
-
-
 <ng-template #undermaintance let-model>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="text-center">
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to mark this desk as under maintenance?</p>
     </div>
-    <div class="text-center">
-      <h5 class="confirmation-text mb-2"> Are you sure you want to Mark as Maintenance?</h5>
-    </div>
-    <div class="custom-main-popup-content  p-4">
-
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
-
-        <div class="row ">
+        <div class="row">
           <div class="col-md-12 mb-3">
-            <label for="Department" class="form-label custom-label mb-2">Select Reason <span
+            <label for="Department" class="form-label custom-label mb-2">Select Reason<span
                 class="text-danger">*</span></label>
-
             <div class="custom-p-select-content">
               <p-select [options]="deskundermaintence" optionLabel="value" formControlName="assetundermatince"
                 placeholder="Please select reason" class="form-select custom-select"></p-select>
             </div>
-
             <div class="error-msg"
-              *ngIf="undermaintancedata.controls['assetundermatince'].invalid && (undermaintancedata.controls['assetundermatince'].touched || undermaintancedata.controls['assetundermatince'].dirty)">
-              <div class="error-msg" *ngIf="undermaintancedata.controls['assetundermatince'].errors?.['required']">
-                Reason is required</div>
+              *ngIf="undermaintancedata.controls['assetundermatince'].invalid && 
+                    (undermaintancedata.controls['assetundermatince'].touched || undermaintancedata.controls['assetundermatince'].dirty)">
+              <div *ngIf="undermaintancedata.controls['assetundermatince'].errors?.['required']">Reason is required
+              </div>
             </div>
           </div>
 
-          <div class="col-12 ">
-            <label class="form-label custom-label mb-2">
-              Additional Comments
-            </label>
+          <div class="col-md-12 mb-3">
+            <label class="form-label custom-label mb-2">Additional Comments</label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"
                 (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
                 maxlength="250" rows="3"></textarea>
-              <!-- Error messages -->
-              <div>
-                <div class="error-msg"
-                  *ngIf="undermaintancedata.get('reason')?.invalid && undermaintancedata.get('reason')?.touched">
-                  <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['required']">
-                      Additional Comments is required.
-                    </div> -->
-                  <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['maxlength']">
-                      Additional Comments not exceed 250 characters.
-                    </div> -->
-                </div>
-              </div>
               <!-- Character count -->
-              <div class="mt-2 text-end">
-                {{ undermaintancedata.get("reason")?.value?.length || 0 }}/250
+              <div class="textarea-count-text">{{ undermaintancedata.get("reason")?.value?.length || 0 }}/250</div>
+              <!-- Error messages -->
+              <div class="error-msg"
+                *ngIf="undermaintancedata.get('reason')?.invalid && undermaintancedata.get('reason')?.touched">
+                <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['required']">
+                                            Additional Comments is required.
+                                          </div> -->
+                <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['maxlength']">
+                                            Additional Comments not exceed 250 characters.
+                                          </div> -->
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
+
           <div class="col-md-6 mb-3">
             <label for="startdate" class="form-label custom-label mb-2">Start Date</label>
             <input id="startdate" class="form-control custom-input" type="date" [min]="getToday()"
-              formControlName="startdate" class="form-control custom-input">
-            <div *ngIf="undermaintancedata.get('startdate')?.invalid && undermaintancedata.get('startdate')?.touched">
-              <div class="error-msg">Start date is required</div>
+              formControlName="startdate">
+            <div *ngIf="undermaintancedata.get('startdate')?.invalid && undermaintancedata.get('startdate')?.touched"
+              class="error-msg">
+              Start date is required
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
             <label for="endate" class="form-label custom-label mb-2">End Date</label>
             <input id="enddate" type="date" class="form-control custom-input" formControlName="enddate"
-              [min]="undermaintancedata.get('startdate')?.value" class="form-control custom-input">
-            <div *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
-              <div class="error-msg">End date is required</div>
+              [min]="undermaintancedata.get('startdate')?.value">
+            <div *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched"
+              class="error-msg">
+              End date is required
             </div>
-            <div *ngIf="datesShouldNotBeEqual">
-              <div class="error-msg">End date must be greater than start date</div>
-            </div>
+            <div *ngIf="datesShouldNotBeEqual" class="error-msg">End date must be greater than start date</div>
           </div>
         </div>
-        <div class="d-flex justify-content-end gap-3">
-          <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(conformationpopup);model.dismiss()">Close</button>
+
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="openModal(conformationpopup)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="undermaintancedata.invalid">Submit</button>
         </div>
-
       </form>
-
     </div>
   </div>
 </ng-template>
-
-
 
 <ng-template #conformationpopup let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(undermaintance)">No</button>
       <button type="submit" class="custom-btn btn-primary" (click)="conformationpoppup();modal.dismiss()">Yes</button>
     </div>
   </div>
-
 </ng-template>
-
-
-
 
 <ng-template #Availabledest let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4">Are you sure you want to mark this Desk as Available?</p>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to mark this desk as available?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
       <button type="submit" class="custom-btn btn-primary"
         (click)="aviableassets(selectedAsset);modal.dismiss()">Yes</button>
     </div>
   </div>
-
 </ng-template>
-
 
 <ng-template #avitive let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to mark this Desk as Active?</p>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text"> Are you sure you want to mark this desk as active?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
       <button type="submit" class="custom-btn btn-primary"
         (click)="activeassets(selectedAsset);modal.dismiss()">Yes</button>
     </div>
   </div>
-
 </ng-template>

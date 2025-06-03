@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
@@ -16,16 +16,23 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OnBeHalfOfApprovalTabsComponent } from "../../shared/time-off-module-tabs/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 import { noWhitespaceValidator } from '../../shared/nowhitespace/nowhitespace.component';
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TabsModule } from 'primeng/tabs';
+import { ChartModule } from 'primeng/chart';
+import { FormValidationsService } from '../../services/form-validations.service';
 
 @Component({
   selector: 'app-on-be-half-of',
-  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, Select,TabsModule, ChartModule,  ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class OnBeHalfOfComponent {
+  moduleinfo : string = '';
   @ViewChild('halfDayRadio') halfDayRadio: any;
   @ViewChild('fullDayRadio') fullDayRadio: any;
   responseData: Iorgcategoryleaves[] = [];
@@ -119,6 +126,10 @@ export class OnBeHalfOfComponent {
   isHolidaySelectedEndate: boolean = false;
   blockDates: any;
   blockedData: any;
+  //graph
+  leaveCategoryData: any;
+  leaveCategoryOptions: any;
+  selectedEmployeeName:string = '';
 
   constructor(
     private conformationPopup: OpenModalService,
@@ -126,7 +137,7 @@ export class OnBeHalfOfComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private http: HttpService,public rbac: RbacService,
+    private http: HttpService,public rbac: RbacService,public formsValidation:FormValidationsService,
   ) {
     const today = new Date();
     this.minStartDate = today.toISOString().split('T')[0];
@@ -143,6 +154,8 @@ export class OnBeHalfOfComponent {
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getEmployementTypeByempId(this.empdata.employeeId)
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -158,40 +171,25 @@ export class OnBeHalfOfComponent {
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
   }
-  // initializeForm() {
-  //   this.leaveForm = this.fb.group({
-  //     leaveType: [null, Validators.required],
-  //     startdate: [null, Validators.required],
-  //     enddate: [null, Validators.required],
-  //     halfdayavailing: ['', Validators.required],
-  //     availing: [{ value: '', disabled: true }, Validators.required],
-  //     fulldayavailing: [{ value: '', disabled: true }, Validators.required],
-  //     reason: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
-  //   }, {
-  //     validators: this.startDateBeforeEndDateValidator()
-  //   });
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
   
-  //   this.leaveForm.get('startdate')?.valueChanges.subscribe(() => {
-  //     this.updateHalfDayOptions();
-  //     this.leaveForm.updateValueAndValidity(); // triggers validation again
-  //   });
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/on-behalf-of': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_MODULE_INFO
+    };
   
-  //   this.leaveForm.get('enddate')?.valueChanges.subscribe(() => {
-  //     this.updateHalfDayOptions();
-  //     this.leaveForm.updateValueAndValidity(); // triggers validation again
-  //   });
-  // }
-  // startDateBeforeEndDateValidator(): ValidatorFn {
-  //   return (group: AbstractControl): ValidationErrors | null => {
-  //     const start = group.get('startdate')?.value;
-  //     const end = group.get('enddate')?.value;
-  
-  //     if (start && end && new Date(start) > new Date(end)) {
-  //       return { dateOrderInvalid: true };
-  //     }
-  //     return null;
-  //   };
-  // }
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
   
   updateHalfDayOptions() {
     const start = this.leaveForm.get('startdate')?.value;
@@ -208,8 +206,74 @@ export class OnBeHalfOfComponent {
       this.leaveForm.get('fulldayavailing')?.disable();
     }
   }
+  get totalAvailableLeaves(): number {
+  return this.categoryDetails.reduce((total, item) => {
+    if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+      return total + (item.probationLeaves - item.utilizedDays - item.booked);
+    } else {
+      return total + (item.allowedDays - item.utilizedDays - item.booked);
+    }
+  }, 0);
+}
 
+  initChart(item: any) {
+    const data: number[] = [];
+    const labels: string[] = [];
+    const backgroundColors: string[] = [];
+    item.forEach((category: {
+      category: any; allowedDays: number; name: string; categoryColor: string;
+    }) => {
+      data.push(category.allowedDays);
+      labels.push(category.category.name);
+      backgroundColors.push(category.category.categoryColor);
+    });
+    this.leaveCategoryData = {
+      datasets: [
+        {
+          data: data,
+          backgroundColor: backgroundColors,
+           borderWidth: 0
+        }
+      ]
+    };
+    this.leaveCategoryOptions = {
+      cutout: '70%',
+      // borderWidth:'10px',
+    };
+  }
+
+  getAvailableLeaves(item: any): number {
+    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.probationLeaves - item.utilizedDays - item.booked;
+    } else {
+      return item.allowedDays - item.utilizedDays - item.booked;
+    }
+  }
+
+  getTransparentColor(hex: string, opacity: number): string {
+    // Remove leading # if present
+    hex = hex.replace('#', '');
+    // Convert 3-digit hex to 6-digit
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  getProgress(item: any): number {
+    const available = this.getAvailableLeaves(item);
+    const total = item.allowedDays || 1; // Avoid division by zero
+    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+    return percentage * 360;
+  }
+
+ selectedEmployeeId: string | null = null;
   Onclick(fusionemployeeId: any): void {
+    this.selectedEmployeeId = fusionemployeeId?.value || null;
+    this.selectedEmployeeName = fusionemployeeId?.label || '';
     if (!fusionemployeeId || !fusionemployeeId.value) {
       // Employee deselected (cleared)
       this.resetOnBehalfOfData();
@@ -225,6 +289,7 @@ export class OnBeHalfOfComponent {
     this.leaveapplication = this.employeeiddetails.find(
       (c: any) => c.employeeId == fusionemployeeId.value
     );
+    this.selectedEmployeeName = this.leaveapplication.leaveRequestName;
     this.disablebuttonforemployeeid = true;
     this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
     this.getCategoryDetails(fusionemployeeId.value);
@@ -235,6 +300,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
+    this.http.onBehalfOfTriggerSignal.set(true);
   }
 
   resetOnBehalfOfData(): void {
@@ -336,6 +402,9 @@ export class OnBeHalfOfComponent {
             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName ? employee.firstName : ''} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName ? employee.lastName : ''}`,
+            leaveRequestName: `${employee.firstName ? employee.firstName : ''} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName ? employee.lastName : ''} (${employee.fusionEmpId ? employee.fusionEmpId  : ''
+              })`,
           }));
       },
       error: (reason: any) => {
@@ -374,7 +443,8 @@ export class OnBeHalfOfComponent {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[]
 
-          this.calculateProbationLeavs(this.categoryDetails)
+          this.calculateProbationLeavs(this.categoryDetails);
+          this.initChart(this.categoryDetails);
         }
       },
       error: (reason: any) => {
@@ -653,18 +723,14 @@ export class OnBeHalfOfComponent {
         this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
           next: (data: any) => {
             console.log(data);
-            localStorage.setItem('onbehalfof', JSON.stringify(data));
+            // localStorage.setItem('onbehalfof', JSON.stringify(data));
             if (data) {
-              this.generateEmail(data)
+             
               this.leaveBalance(data);
-              this.leaveForm.reset();
               this.resetRadioButtons();
-              this.conformationPopup.openSuccessModal('Leave processed successfully')
-              setTimeout(() => {
-                this.modalService.dismissAll();
-                this.leaveForm.reset();
-                window.location.reload();
-              }, 2000);
+              this.modalService.dismissAll();
+              this.conformationPopup.openSuccessModal('Leave processed successfully');
+              this.generateEmail(data)
               this.startdatevalid = true
               this.disableSubmitButton = true
               this.issEndDategreater = true
@@ -683,6 +749,7 @@ export class OnBeHalfOfComponent {
           },
           complete: () => {
             this.leaveForm.reset();
+            this.http.onBehalfOfTriggerSignal.set(true);
           }
         });
       } else {
@@ -905,13 +972,15 @@ export class OnBeHalfOfComponent {
       employeeId: this.leaveapplication.employeeId,
       enddate: Value.enddate,
       startdate: Value.startdate,
-      currentApprover: this.empdata.employeeId,
-      appliedDate: this.leaveFormData.date
+      currentApprover: this.empdata.employeeId.toString(),
+      appliedDate: this.leaveFormData.date,
+      comments: this.leaveFormData.notes,
+      categoryName : this.selectedleave.category.name,
     }
     //Third Step is to send the email and attachment to Directreportee
     this.subscription = this.http.postdata(`CustomEmail/LeaveConfirmationToEmp`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        // this.conformationPopup.openSuccessModal('Email Sent Successfully')
       },
     })
   }
@@ -933,6 +1002,7 @@ export class OnBeHalfOfComponent {
   cleardata() {
     this.leaveForm.reset();
     this.disableSubmitButton = false;
+    this.enableButton = false;
     this.modalService.dismissAll();
   }
 
@@ -1005,7 +1075,7 @@ export class OnBeHalfOfComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
+    const dayPresent = this.orgweekend?.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;
@@ -1210,7 +1280,7 @@ export class OnBeHalfOfComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
+    const dayPresent = this.orgweekend?.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;

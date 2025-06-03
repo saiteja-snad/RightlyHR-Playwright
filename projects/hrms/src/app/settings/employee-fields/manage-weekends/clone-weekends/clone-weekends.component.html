@@ -1,9 +1,13 @@
 <div class="custom-main-component-container w-100">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0" (click)="Cancel()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>{{"Clone Weekends" | translate}}
-            </p>
+
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="Cancel()">Manage Weekends<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{"Clone Weekends" | translate}}</div>
+            <!-- <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div> -->
         </div>
     </div>
 
@@ -95,7 +99,7 @@
 
                 <div class="pt-4 mt-1">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addWeekend()"
-                        [disabled]="weekends.length >= 3 || weekendForm.invalid">{{"+ Add Row" | translate}}</button>
+                        [disabled]="weekends.length >= 3 || weekendForm.invalid">{{"+ Add New" | translate}}</button>
                 </div>
             </div>
 
@@ -155,9 +159,12 @@
                 </table>
             </div>
 
+            <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
             <div class="d-flex justify-content-end gap-3 pt-4">
-                <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{"Cancel" | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary px-5" [disabled]="weekendForm.invalid">{{"Save" | translate}}</button>
+                <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{"Cancel" |
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary px-5" [disabled]="weekendForm.invalid">{{"Submit" |
+                    translate}}</button>
             </div>
         </form>
     </div>
@@ -170,7 +177,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

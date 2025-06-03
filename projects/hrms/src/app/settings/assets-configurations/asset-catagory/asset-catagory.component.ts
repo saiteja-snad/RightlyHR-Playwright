@@ -28,7 +28,7 @@ export class AssetCatagoryComponent {
 
   constructor(
     public router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService, public formValidation: FormValidationService, public rbac: RbacService ) { }
+    private http: HttpService, public formValidation: FormValidationService, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -39,14 +39,14 @@ export class AssetCatagoryComponent {
 
   initialassetform() {
     this.assetCategorydata = this.fb.group({
-      assetcaassetCategory: [null, [Validators.required, Validators.maxLength(30)]],
+      assetcaassetCategory: [null, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     }
     )
   }
 
   initialassetformdata() {
     this.assetCategorydataForm = this.fb.group({
-      assetcaassetCategorydata: [null, [Validators.required, Validators.maxLength(30),]],
+      assetcaassetCategorydata: [null, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     }
     )
   }
@@ -65,7 +65,7 @@ export class AssetCatagoryComponent {
       this.http.postdata('AssetCategory', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset Category added Successfully ');
+          this.conformationPopup.openSuccessModal('Asset Category added successfully ');
           this.getassetsCategory()
           this.assetCategorydata.reset()
         },
@@ -90,6 +90,7 @@ export class AssetCatagoryComponent {
   }
 
   openupdate(content: any, data: any) {
+    this.assetCategorydata.reset();
     this.assetdataid = data?.id
     this.assetCategorydataForm.patchValue({
       assetcaassetCategorydata: data?.name,
@@ -114,29 +115,32 @@ export class AssetCatagoryComponent {
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Category Updated Successfully ');
+            this.conformationPopup.openSuccessModal('Asset Category updated successfully ');
             this.getassetsCategory()
           },
           error: (error) => {
             console.error("Error adding Asset Vendor:", error);
-            this.conformationPopup.openErrorModal("Asset category with the same Name already exists")
+            this.conformationPopup.openErrorModal("Asset category with the same Name already exists!")
           }
         });
     } else {
       console.log("Asset Form is invalid.");
     }
   }
- //update close  button click open delet pop up dailog add vender
- openaddmodal(content:any){
-  this.modalService.open(content, { centered: true, backdrop: 'static' });
-}
-//no button click close the  dailog add vender
-cleardata(){
- this.assetCategorydataForm.reset()
-  this.modalService.dismissAll();
-}
- 
+
+  //update close  button click open delet pop up dailog add vender
+  openaddmodal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  
+  //no button click close the  dailog add vender
+  cleardata() {
+    this.assetCategorydataForm.reset()
+    this.modalService.dismissAll();
+  }
+
   opendelete(content: any, data: any) {
+    this.assetCategorydata.reset();
     this.assetdataid = data?.id
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -145,7 +149,7 @@ cleardata(){
     this.http.deleteData(`AssetCategory/${this.assetdataid}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal(' Asset Category Deleted successfully');
+        this.conformationPopup.openSuccessModal(' Asset Category deleted successfully');
         this.getassetsCategory()
         this.getassetsCategory()
       },

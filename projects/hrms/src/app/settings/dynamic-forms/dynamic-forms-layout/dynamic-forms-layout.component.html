@@ -2,8 +2,10 @@
     @if (router.url !== '/settings/dynamic-forms/create-form' && router.url !== '/settings/dynamic-forms/view-form'
     && router.url !== '/settings/dynamic-forms/update-form') {
     <!--header-->
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div class="component-header">Settings</div>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <app-settings-header />
+        </div>
 
         <div>
             @if (rbac.allowedToAccess('Dynamic Forms Module.create')) {
@@ -11,17 +13,9 @@
             }
         </div>
     </div>
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
 
     <div class="d-flex gap-3 w-100">
-        <!--tabs content-->
-        <div class="custom-component-left-content">
-            <app-setting-dynamic-forms-tabs />
-        </div>
-        <div class="card custom-component-right-content p-3">
+        <div class="card custom-component-right-content">
             <router-outlet></router-outlet>
         </div>
     </div>

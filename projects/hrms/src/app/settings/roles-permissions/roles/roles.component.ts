@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subscription } from 'rxjs';
 import { Iroles } from './roles.model';
@@ -11,14 +11,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-roles',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent, ModuleInformationComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -87,7 +85,7 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const request = {
-      name: this.roleForm.get('role')?.value
+      name: this.roleForm.get('role')?.value.trim()
     };
     this.subscription = this.http.postdata("FusionRole", request).subscribe({
       next: (data: any) => {
@@ -107,7 +105,7 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   updateRole(modal: any): void {
     if (this.updateForm.valid) {
-      this.rolesDeletedata.name = this.updateForm.value.firstName,
+      this.rolesDeletedata.name = this.updateForm.value.firstName.trim(),
         this.subscription = this.http.postdata(`FusionRole/Update`, this.rolesDeletedata).subscribe({
           next: (data: any) => {
             this.modalService.dismissAll();
@@ -144,6 +142,22 @@ export class RolesComponent implements OnInit, OnDestroy {
     this.rolesDeletedata = roles;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
+
+  capitalizeFirstLetter(event: Event, form: string): void {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
+    if (value.length === 1) {
+      inputElement.value = value.charAt(0).toUpperCase() + value.slice(1);
+    } else if (value.length > 1 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
+      inputElement.value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+    if(form === 'add'){
+      this.roleForm.get('role')?.setValue(inputElement.value);
+    }else if(form === 'update'){
+      this.updateForm.get('firstName')?.setValue(inputElement.value);
+    }
+  }
+  
 
   deleteRole(modal: any): void {
     const deleteRequest = {

@@ -3,3 +3,8 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.custom-table-content {
+  min-height: 50vh;
+  height: calc(100vh - 12.75rem);
+}

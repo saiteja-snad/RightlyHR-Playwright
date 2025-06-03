@@ -98,6 +98,16 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  resetForm(){
+    this.recallAcceptForm.reset();
+    this.modalService.dismissAll();
+  }
+
+  close(){
+    this.rejectSeparationForm.reset();
+    this.modalService.dismissAll();
+  }
+
   //function to get the leaves by employee id
   getAllPendingApprovals() {
     this.isDataLoader = true;

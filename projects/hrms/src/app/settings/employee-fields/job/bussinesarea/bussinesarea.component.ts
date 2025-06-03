@@ -39,10 +39,10 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
   }
   ngOnInit(): void {
     this.BussinesForm = this.fb.group({
-      BUSINESS: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      BUSINESS: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      BUSINESS: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      BUSINESS: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getBusiness();
@@ -69,7 +69,6 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-         this.resetForm();
       }
     });
   }

@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { filter, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment.dev';
 import { Location } from '@angular/common';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { Select } from 'primeng/select';
@@ -16,16 +15,18 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
-
+import { OpenModalService } from '../../services/open-modal.service';
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select,NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
+
 export class CompanypoliciesComponent {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   policiesform!: FormGroup;
+  ackForm!: FormGroup
   ExpenseViewURL: any;
   ExpenseImageUrl: any;
   empinfo: any;
@@ -45,11 +46,13 @@ export class CompanypoliciesComponent {
   showViewDetailsModal = false;
   isViewingAttachment = false;
   shouldOpenModal = false;
+  viewPolicyname!: string;
+  ackCheckboxChecked : any;
+  selectedItem : any;
 
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location,
+    private sanitizer: DomSanitizer, public readonly router: Router, private confirmation: OpenModalService) { }
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef,
-    public readonly router: Router
-  ) { }
   // @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
@@ -61,49 +64,40 @@ export class CompanypoliciesComponent {
       this.selectedYear = year;
       this.getpolicys(this.jobshiftdetials);
     });
-
-
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    console.log(this.empinfo.employeeId);
     this.getjobDetails();
     this.currentYear = new Date().getFullYear();
-
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.years.push({ label: i.toString(), value: i });
     }
-
+    this.ackForm = this.fb.group({
+      acknowledged: [false, Validators.requiredTrue]
+    });
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/policies/companypolicies': MODULE_INFOS.POLICIES_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-  
+
   openupdateModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
-  openModal(content: any) {
-    this.modalService.open(this.viewattamchment, {
-      size: 'xl', // optional, helps initially
-      centered: true,
-    });
 
+  openModal(content: any) {
+    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true , backdrop : 'static', keyboard : false});
   }
 
   private handleImage(url: string) {
@@ -111,29 +105,23 @@ export class CompanypoliciesComponent {
     const imageUrl = `${baseUrl}${url}`;
     this.EduImageUrl = `${environment.viewUrl}${imageUrl}`;
     // Log imageUrl to console
-    console.log(`Image URL: ${this.EduImageUrl}`);
   }
+
   private handlePDF(url: string) {
     // Assuming NgxDocViewerModule supports PDFs directly
     const baseUrl = this.location.normalize('/');
     const pdfUrl = `${baseUrl}${url}`;
     this.EduViewURL = `${environment.viewUrl}${pdfUrl}`;
-
-
   }
 
-
   onViewClick(policyAttachment: string) {
-    console.log('Opening modal');
     this.shouldOpenModal = true;
     this.EduImageUrl = '';
     this.EduViewURL = '';
-
+    this.ackCheckboxChecked = false;
     const isImage = /\.(jpg|jpeg|png)$/i.test(policyAttachment);
     const isPDF = policyAttachment.toLowerCase().endsWith('.pdf');
-
     this.modalService.dismissAll();
-
     if (isImage) {
       this.handleImage(policyAttachment);
     } else if (isPDF) {
@@ -145,62 +133,62 @@ export class CompanypoliciesComponent {
     this.openModal(this.viewattamchment);
   }
 
-  onViewAttachement(url: any) {
+  onViewAttachement(url: any, name: any, selectedItem : any) {
+    this.viewPolicyname = name;
+    this.selectedItem = selectedItem;
+    this.ackCheckboxChecked = false;
     const lowerUrl = url?.toLowerCase();
-
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
-      this.subscription = this.http
-        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
-        .subscribe({
-          next: (res: any) => {
-            const blob = new Blob([res['body']], { type: 'image/png' });
-            const objectURL = URL.createObjectURL(blob);
-            this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-            this.ExpenseViewURL = null;
-            this.toggleViewModal();
-          },
-          error: (err) => console.error('Error downloading image:', err),
-        });
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
+        next: (res: any) => {
+          const blob = new Blob([res['body']], { type: 'image/png' });
+          const objectURL = URL.createObjectURL(blob);
+          this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          this.ExpenseViewURL = null;
+          this.toggleViewModal();
+          this.ackForm.reset({ acknowledged: false });
+        },
+        error: (err) => console.error('Error downloading image:', err),
+      });
     } else if (lowerUrl?.endsWith('pdf')) {
       this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
       this.toggleViewModal();
+      this.ackForm.reset({ acknowledged: false });
     } else {
       // fallback for other types if needed
       this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`;
       this.toggleViewModal();
+      this.ackForm.reset({ acknowledged: false });
     }
   }
+
   toggleViewModal() {
     this.modalService.dismissAll();
-    this.openModal(this.viewattamchment)
+    this.openModal(this.viewattamchment);
   }
-
 
   getjobDetails() {
     let EmployeeId = this.empinfo.employeeId;
     this.subscription = this.http.getData(`JobDetails/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobshiftdetials = data;
-        console.log(this.jobshiftdetials);
         this.getpolicys(data);
       }
     });
-
   }
+
   getpolicys(jobShiftDetails: any) {
-    this.loading = true
+    this.loading = true;
     let policies = {
       locationId: jobShiftDetails[0]?.locationid,
       subLocationId: jobShiftDetails[0]?.sublocationid,
       shiftId: jobShiftDetails[0]?.shiftId,
-      Applicableyear: this.selectedYear
+      Applicableyear: this.selectedYear,
+      employeeId: this.empinfo.employeeId
     };
-
-    console.log(policies);
-
-    this.subscription = this.http.getDataWithQueryParams(`orgPolicies/getpolicybylocation`, policies).subscribe({
+    this.subscription = this.http.getDataWithQueryParams(`v2/orgPolicies/getpolicybylocation`, policies).subscribe({
       next: (response: any) => {
         this.loading = false
         this.Policies = response;
@@ -209,11 +197,32 @@ export class CompanypoliciesComponent {
         console.log(this.orgPolicyItemsArray);
       },
       error: (reason: any) => {
-        this.loading = false
+        this.loading = false;
       },
       complete: () => {
-        this.loading = false
+        this.loading = false;
       },
+    });
+  }
+
+  postacknowledgement(selectedItem : any) {
+    let data = {
+      orgPolicyItemId: selectedItem.id,
+      employeeId: this.empinfo.employeeId,
+      acknowledged: true,
+      acknowledgedDate: new Date(),
+      source: "Web"
+    }
+    console.log(data);
+    this.subscription = this.http.postdata('OrgPolicyAcknowledgment', data).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.loading = false;
+        this.confirmation.openSuccessModal('Policy Acknowledged successfully');
+        selectedItem.acknowledged = true;
+        this.getjobDetails();
+      },
+      error: (reason: any) => console.log(reason)
     });
   }
 

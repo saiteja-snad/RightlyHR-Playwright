@@ -1,52 +1,6 @@
 .graph-grid {
-    display: flex;
-    gap: 1rem;
-    position: relative;
-
     // total leave summary
     .total-leave-balance-graph-content {
-        width: 21rem;
-        padding: 0.75rem 1rem;
-        border-radius: 1rem;
-        border: 1px solid #DCE3E9;
-        background-color: var(--white-color);
-        display: flex;
-        align-items: center;
-
-        .chart-content {
-            position: relative;
-            width: max-content;
-            height: max-content;
-
-            .total-count-content {
-                position: absolute;
-                top: 40%;
-                left: 26%;
-                text-align: center;
-
-                .count {
-                    font-weight: 700;
-                    font-size: 16px;
-                    color: #0F358A;
-                    line-height: 100%;
-                    letter-spacing: 0%;
-                }
-
-                .total-count-text {
-                    font-weight: 400;
-                    font-size: 10px;
-                    color: #999999;
-                    line-height: 100%;
-                    letter-spacing: 0%;
-                }
-            }
-        }
-
-        canvas {
-            width: 120px !important;
-            height: 120px !important;
-        }
-
         .bi-circle-fill {
             font-size: 9px;
         }
@@ -58,6 +12,11 @@
             letter-spacing: 0%;
             color: #747474;
         }
+    }
+
+    .total-count-content {
+        text-align: center;
+        top: 40% !important;
     }
 
     //scrollable buttons stylings
@@ -144,9 +103,11 @@
 }
 
 .component-left-tabs-container {
-    height: calc(100dvh - 21.5rem);
+    height: calc(100dvh - 20.5rem);
+    min-height: 50vh !important;
 }
 
 .custom-table-content {
-    height: calc(100dvh - 21.5rem);
+    height: calc(100dvh - 20.5rem);
+    min-height: 50vh !important;
 }

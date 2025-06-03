@@ -1,23 +1,6 @@
 <div class="custom-main-component-container">
-    <!--header-->
-    <div class="mb-3">
-        <div class="component-header">Settings</div>
-    </div>
-
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo"/>
-     </div>
-
-    <!--tabs content-->
-    <div class="mb-3">
-        <div>
-            <app-settings-employee-fields-module-tabs />
-        </div>
-    </div>
-
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        <div class="custom-component-left-content p-3">
+        <div class="custom-component-left-content">
             @for(folder of folders; track $index){
             <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor px-2" [ngClass]="{'active': selectedMainFolder === folder}">
                 <i class="bi bi-folder-fill foldder-icon"></i>
@@ -26,7 +9,7 @@
             }
         </div>
 
-        <div class="custom-setting-right-content p-3">
+        <div class="custom-setting-right-content">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div><span class="component-sub-header">Folders</span></div>
                 @if(rbac.allowedToAccess('Document Tab.create')){
@@ -41,7 +24,6 @@
             <div class="custom-table-content">
                 @if(!dataLoad){
                 <table class="w-100">
-
                     <thead>
                         <th>FILE NAME</th>
                         <th>CREATED DATE</th>

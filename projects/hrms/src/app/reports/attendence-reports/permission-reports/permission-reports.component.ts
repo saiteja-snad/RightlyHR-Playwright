@@ -4,8 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
-import { AttandaceReportTabsComponent } from "../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
+import {  Subject, Subscription, takeUntil } from 'rxjs';
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
 import dayjs from 'dayjs';
@@ -16,13 +15,11 @@ import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import {  Router } from '@angular/router';
 
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, AttandaceReportTabsComponent, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent,],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss'
 })
@@ -54,13 +51,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+  localeOptions: any;
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
 
   constructor(
     private authService: AuthService,
@@ -72,13 +64,17 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getAllEmployees();
     this.getTeam();
     this.getMyTeam();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
     // this.getAttendanceReports();
   }
 
@@ -96,32 +92,18 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
   get isPermissionGenerateDisabled(): boolean {
-    const form = this.permissionReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.permissionReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value || form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/permission-report': MODULE_INFOS.ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
 
   getAllEmployees() {
     const loggedInUser = this.authService.getToken();
@@ -164,6 +146,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
   clearAllFilters() { 
     this.permissionReportForm.reset();
+    this.filteredPermissionData = [];
   }
 
   formatDate(date: Date): string {
@@ -182,7 +165,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
   
     const formValue = this.permissionReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
   
     const noFilterProvided =
       !formValue.employee &&
@@ -205,10 +188,13 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.employeeId = ids;  // The selected employee IDs are set here
     }
     // Apply leave category if selected
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee?.employeeId;
+    }
+  
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
-  
     // Apply date range if provided
     if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
       const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
@@ -218,8 +204,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
     
    //Apply my team
-    if(formValue.team){
-      request.teamManagerEmpID =formValue.team.teamManagerEmpID;
+    if(formValue.manager){
+      request.teamManagerId = formValue.manager.employeeId;
     }
 
     // Only include employee filter if not "All Employees"
@@ -406,6 +392,10 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       },
     });
 }
+ navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

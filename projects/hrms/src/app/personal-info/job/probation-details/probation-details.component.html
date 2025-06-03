@@ -7,18 +7,19 @@
             <thead>
                 <tr>
                     <th>Applied Date</th>
-                    <th>probation Period(In days)</th>
-                    <th>probation start date</th>
-                    <th>probation end date</th>
-                    <th>probation extended date</th>
-                    <th>approved status</th>
+                    <th>Probation Period(In days)</th>
+                    <th>Probation start date</th>
+                    <th>Probation end date</th>
+                    <th>Probation extended date</th>
+                    <th>Approver History</th>
                     <th>status</th>
                     @if(canAccess('view','request') || canAccess('view','re-request')){
-                    <th class="text-center">Action(s)</th>
+                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)'  | translate}}</span></th>
                     }
                 </tr>
             </thead>
             <tbody>
+                 @if(getProbationRequestDetails.length > 0) {
                 @for (probation of getProbationRequestDetails; track $index) {
                 <tr>
                     <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
@@ -29,7 +30,7 @@
                     <td>
                         @if(probation.approvers && probation.approvers.length > 0;){
                         <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
-                            <i class="bi bi-info-circle-fill"></i>
+                            <app-info-icon />
                         </div>
                         } @else {
                         <div>-</div>
@@ -60,8 +61,7 @@
                                 }}
                                 <!--status extended-->
                                  @if(canAccess('view','request')){
-                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)
-                                && probation.probationExtendCount < probationExtendTimes){ 
+                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)){ 
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
@@ -69,11 +69,19 @@
                                 }
                             </ul>
                         </div>
-                        } @else {
+                        }
+                         @else {
                         <div>-</div>
                         }
                     </td>
                 }
+                </tr>
+                }
+                } @else {
+                <tr class="table-placeholder">
+                    <td colspan="8">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
                 </tr>
                 }
             </tbody>
@@ -98,7 +106,7 @@
                     <thead>
                         <tr>
                             <th>Approver Role</th>
-                            <th>Over all Rating</th>
+                            <th>Overall Rating</th>
                             <th>Status</th>
                             <th>Extended Date</th>
                             <th>comments </th>

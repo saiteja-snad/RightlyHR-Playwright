@@ -22,6 +22,7 @@ import moment from 'moment';
 import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-time-off-for-your-role-request',
   imports: [
@@ -35,8 +36,9 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
     NoDataFoundComponent,
     TimeoffsearchPipe,
     TableModule,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    InfoIconComponent
+],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -57,8 +59,8 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
   leavesselect!: LeaveApproval[];
-  selectedProducts: LeaveApproval[]=[];
-    requestBody = {} as any;
+  selectedProducts: LeaveApproval[] = [];
+  requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -255,7 +257,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
 
   rejectleave(rejectPopup: any, selecteddata: LeaveApproval) {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-   this.selectedLeaveData = selecteddata;
+    this.selectedLeaveData = selecteddata;
   }
 
   bulkapprove(approverPopup: any) {
@@ -285,10 +287,21 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
+  previousSearchValue: string = '';
+  hasSelectedAllOnce = false; 
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.multiSelect = false;
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false;
+    }
+  }
+
   getFilteredAndSortedLeaves(): any[] {
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.leavesselect ?? [];
-    // Filter
+
     if (search) {
       leaves = leaves.filter(item =>
         item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
@@ -298,15 +311,16 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Sort (preserve original sorting logic)
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      return leaves;
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
     const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
     const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
     const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-    return [...selected, ...unselected];
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
 
   handleAccept(form: any) {
@@ -314,7 +328,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
 
-   if (this.selectedProducts && this.selectedProducts.length > 0) {
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
       this.requestBody = {
         requestProcessedBy: approvedBy,
         status: "Approved",
@@ -368,7 +382,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.multiSelect= false;
+          this.multiSelect = false;
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
@@ -413,7 +427,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-         this.modalService.dismissAll();
+          this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
@@ -423,7 +437,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
-           form.resetForm();
+          form.resetForm();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -438,7 +452,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         complete: () => {
           form.resetForm();
           this.spinnerLoader = false;
-          this.multiSelect= false;
+          this.multiSelect = false;
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
@@ -450,11 +464,11 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   handleProcess(selecteddata: any) {
-     this.selectedLeaveData = selecteddata;
+    this.selectedLeaveData = selecteddata;
     let approvedBy = this.LOGIN.employeeId.toString();
     let message = null;
-     if (this.selectedProducts && this.selectedProducts.length > 0) {
-        this.requestBody = {
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.leavesModuleId,
@@ -464,19 +478,19 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         }))
       }
       message = 'Processing Requests, Please wait...';
-     }else {
-        this.requestBody = {
-          requestProcessedBy: approvedBy,
-          status: 'Processed',
-          moduleId: environment.leavesModuleId,
-          headerRequests: [
-            {
-              headerID: this.selectedLeaveData.approvalHeader?.id,
-              currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
-            },
-          ],
-        };
-        message = 'Processing Request, Please wait...';
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.leavesModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+          },
+        ],
+      };
+      message = 'Processing Request, Please wait...';
     }
 
     this.conformationPopup.openLoaderModal(message);
@@ -504,7 +518,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           }
         },
         complete: () => {
-          this.multiSelect= false;
+          this.multiSelect = false;
           this.signalService.timeOffsidenavCountSignal.set(true);
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);

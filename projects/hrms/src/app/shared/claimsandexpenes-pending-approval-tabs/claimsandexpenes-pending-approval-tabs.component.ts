@@ -13,6 +13,7 @@ import { TabsModule } from 'primeng/tabs';
 import { IJob } from '../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../Interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
+import { SignalsService } from '../../services/signals.service';
 
 @Component({
   selector: 'app-claimsandexpenes-pending-approval-tabs',
@@ -51,16 +52,24 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
   constructor(
     public readonly router: Router,
     private http: HttpService,
+    private signalService:SignalsService
   ) {
-    effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().expenses) {
+     effect(() => {
+      if (this.signalService.claimsandexpensesForRoleTriggerSignal() || this.signalService.clamisandexpensesForYouTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllExpensesPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          expenses: false,
-        }));
+      
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.claimsandexpensesForRoleTriggerSignal()) {
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(false);
+        }
+        
+        if (this.signalService.clamisandexpensesForYouTriggerSignal()) {
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(false);
+        }
       }
-    });
+      
+    }); 
   }
 
   isActive(route: string): boolean {

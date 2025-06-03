@@ -4,7 +4,15 @@
     overflow: auto;
 }
 
+.custom-table-content{
+    height: calc(100dvh - 9.5rem) !important;
+}
+
 .modal-image {
     width: inherit !important;
     max-height: 60vh;
+}
+
+.view-icon{
+    width: 2rem;
 }

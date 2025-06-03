@@ -1,36 +1,59 @@
-<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-  @if(rbac.allowedToAccess('Documents History Offer Letter.view')) {
-    <li [ngbNavItem]="'offer'">
-      <button class="custom-nav-btn" ngbNavLink>Offer Letter</button>
-      <ng-template ngbNavContent>
-        <app-document-history-offer-letter />
-      </ng-template>
-    </li>}
-  
-  @if(rbac.allowedToAccess('Documents History Appointment Letter.view')) {
-    <li [ngbNavItem]="'appointment'">
-      <button class="custom-nav-btn" ngbNavLink>Appointment Letter</button>
-      <ng-template ngbNavContent>
-        <app-document-history-appointment-letter />
-      </ng-template>
-    </li>}
+<div class="d-flex gap-3 w-100">
+  <div class="component-left-tabs-container">
+    <div class="custom-sub-tabs-container">
+      <ul ngbNav #nav="ngbNav" class="nav flex-column" [(activeId)]="active">
+        @if(rbac.allowedToAccess('Documents History Offer Letter.view')) {
+        <li [ngbNavItem]="'offer'" class="nav-item">
+          <button class="nav-link" ngbNavLink>
+            <img src="/letters-icon/offer-letter-icon.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">Offer Letter</div>
+          </button>
+          <div class="tabs-border-bottom"></div>
+          <ng-template ngbNavContent>
+            <app-document-history-offer-letter />
+          </ng-template>
+        </li>}
 
-  @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
-    <li [ngbNavItem]="'trainee-offer'">
-      <button class="custom-nav-btn" ngbNavLink>Trainee Offer Letter</button>
-      <ng-template ngbNavContent>
-        <app-document-history-intern-offer-letter />
-      </ng-template>
-    </li>}
+        @if(rbac.allowedToAccess('Documents History Appointment Letter.view')) {
+        <li [ngbNavItem]="'appointment'" class="nav-item">
+          <button class="nav-link" ngbNavLink>
+            <img src="/letters-icon/appointment-letter-icon.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">Appointment Letter</div>
+          </button>
+          <div class="tabs-border-bottom"></div>
+          <ng-template ngbNavContent>
+            <app-document-history-appointment-letter />
+          </ng-template>
+        </li>}
 
-  @if(rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
-    <li [ngbNavItem]="'trainee-appointment'">
-      <button class="custom-nav-btn" ngbNavLink>Trainee Appointment Letter</button>
-      <ng-template ngbNavContent>
-        <app-document-history-intern-appointment />
-      </ng-template>
-    </li>}
-</ul>
+        @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
+        <li [ngbNavItem]="'trainee-offer'" class="nav-item">
+          <button class="nav-link" ngbNavLink>
+            <img src="/letters-icon/trainee-offer-letter-icon.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">Trainee Offer Letter</div>
+          </button>
+          <div class="tabs-border-bottom"></div>
+          <ng-template ngbNavContent>
+            <app-document-history-intern-offer-letter />
+          </ng-template>
+        </li>}
 
-<!-- Outlet to show content of selected tab -->
-<div [ngbNavOutlet]="nav" class="pt-2"></div>
+        @if(rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
+        <li [ngbNavItem]="'trainee-appointment'" class="nav-item">
+          <button class="nav-link" ngbNavLink>
+            <img src="/letters-icon/trainee-appointment-letter.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">Trainee Appointment Letter</div>
+          </button>
+          <ng-template ngbNavContent>
+            <app-document-history-intern-appointment />
+          </ng-template>
+        </li>}
+      </ul>
+    </div>
+  </div>
+
+  <div class="component-right-content">
+    <!-- Outlet to show content of selected tab -->
+    <div [ngbNavOutlet]="nav"></div>
+  </div>
+</div>

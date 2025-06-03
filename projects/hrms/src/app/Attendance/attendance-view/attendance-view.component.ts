@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { Select } from 'primeng/select';
-import { Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { Subscription, BehaviorSubject, Subject, filter } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { LeaveType, IPermissionsvalue } from '../../Interfaces/timoff-model';
@@ -24,6 +24,9 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { AddLeaveComponent } from '../../time-off/leaves/add-leave/add-leave.component';
 import { IAttendance, IdayLogs } from './attendance-modal';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-attendance-view',
@@ -42,13 +45,16 @@ import { IAttendance, IdayLogs } from './attendance-modal';
     DataLoaderContentComponent,
     TohoursPipe,
     DatePicker,
-  ],
+    ModuleInformationComponent,
+    InfoIconComponent
+],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class AttendanceViewComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   dataLoader = false;
   subscription!: Subscription;
   yearOptions = [
@@ -113,12 +119,12 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     public modalService: NgbModal,
     public rbac: RbacService,
     private fb: FormBuilder,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    public readonly router: Router
   ) {
   }
 
   ngOnInit(): void {
-    console.log(this.date);
     // Get current date
     const now = moment().startOf('month'); // ← important!
     this.date = now.toDate();
@@ -135,6 +141,28 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.getAllEmployeeDetails();
     this.getEmployeeDetails();
     this.initializeForm();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/attendance': MODULE_INFOS.ATTENDANCE_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   checkdates(Value: any) {
@@ -142,7 +170,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       const selectedDate = moment(Value);
       this.selectedYear = selectedDate.year();
       this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
-      console.log(this.selectedYear + this.selectedMonth);
       this.getAttendnaceData(this.getSelectedEmployee());
     }
   }
@@ -158,7 +185,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       permissionDate: [{ value: null, disable: true }, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
-      reason: [null, [Validators.required, Validators.maxLength(250)]],
+      reason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
     });
     this.getDuration();
   }
@@ -175,7 +202,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-
+//function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
     const param = [
@@ -342,49 +369,51 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+getStatusClass(color:any){
+return color
+}
   //function to bind color for the each status
-  getStatusClass(status: string): string {
-    switch (status?.toLowerCase()) {
-      case 'present':
-        return 'status-present';
-      case 'half day present':
-        return 'status-halfdaypresent';
-      case 'absent':
-      case 'absent(permission)':
-        return 'status-absent';
-      case 'leave':
-        return 'status-leave';
-      case 'half day leave':
-        return 'status-leave';
-      case 'first half leave':
-        return 'status-leave';
-      case 'second half leave':
-        return 'status-leave';
-      case 'wfh':
-        return 'status-wfh';
-      case 'first half wfh':
-        return 'status-wfh';
-      case 'second half wfh':
-        return 'status-wfh';
-      case 'half day wfh':
-        return 'status-wfh';
-      case 'compoff':
-        return 'status-compoff';
-      case 'holiday':
-        return 'status-holiday';
-      case 'weekend':
-        return 'status-weekend';
-      case 'half day remote':
-        return 'status-remote';
-      case 'half day':
-        return 'status-halfday';
-      case 'norecords':
-        return 'status-norecords';
-      default:
-        return '';
-    }
-  }
+  // getStatusClass(status: string): string {
+  //   switch (status?.toLowerCase()) {
+  //     case 'present':
+  //       return 'status-present';
+  //     case 'half day present':
+  //       return 'status-halfdaypresent';
+  //     case 'absent':
+  //     case 'absent(permission)':
+  //       return 'status-absent';
+  //     case 'leave':
+  //       return 'status-leave';
+  //     case 'half day leave':
+  //       return 'status-leave';
+  //     case 'first half leave':
+  //       return 'status-leave';
+  //     case 'second half leave':
+  //       return 'status-leave';
+  //     case 'wfh':
+  //       return 'status-wfh';
+  //     case 'first half wfh':
+  //       return 'status-wfh';
+  //     case 'second half wfh':
+  //       return 'status-wfh';
+  //     case 'half day wfh':
+  //       return 'status-wfh';
+  //     case 'compoff':
+  //       return 'status-compoff';
+  //     case 'holiday':
+  //       return 'status-holiday';
+  //     case 'weekend':
+  //       return 'status-weekend';
+  //     case 'half day remote':
+  //       return 'status-remote';
+  //     case 'half day':
+  //       return 'status-halfday';
+  //     case 'norecords':
+  //       return 'status-norecords';
+  //     default:
+  //       return '';
+  //   }
+  // }
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
@@ -404,7 +433,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
                 return {
                   ...employee,
                   fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.firstName??''} ${employee.middleName ? employee.middleName + ' ' : ''
                     }${employee.lastName}`,
                 };
               });

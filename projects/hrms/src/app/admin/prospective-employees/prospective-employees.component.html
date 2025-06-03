@@ -1,18 +1,4 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">
-        <i class="bi bi-arrow-90deg-left cursor me-2" (click)="navigateDashboard()"></i>{{'Prospective Employees'|
-        translate}}
-      </p>
-    </div>
-    @if(this.rbac.allowedToAccess('Add Prospective Employee.view')){
-    <div>
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
-        <i class="bi bi-plus me-2"></i>{{'Add Prospective Employee'| translate}}</button>
-    </div>}
-  </div>
-
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -24,7 +10,7 @@
     @if (!loader) {
     <table class="w-100">
       <thead>
-        <th>{{'Id'|translate}}</th>
+        <th>{{'Employee ID'|translate}}</th>
         <th>{{'Employee Name'|translate}}</th>
         <th>{{'Personal Email'|translate}}</th>
         <th>{{'Phone Number'|translate}}</th>

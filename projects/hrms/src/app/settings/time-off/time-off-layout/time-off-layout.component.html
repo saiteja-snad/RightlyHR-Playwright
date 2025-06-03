@@ -1,24 +1,13 @@
-<div>
-    @if (this.router.url !== '/settings/timeoff-configurations/addleavecategory' && 
-    this.router.url !== '/settings/timeoff-configurations/updateleavecategory' && 
-    this.router.url !== '/settings/timeoff-configurations/cloneleavecategory' && 
+<div class="custom-main-component-container">
+    @if (this.router.url !== '/settings/timeoff-configurations/addleavecategory' &&
+    this.router.url !== '/settings/timeoff-configurations/updateleavecategory' &&
+    this.router.url !== '/settings/timeoff-configurations/cloneleavecategory' &&
     this.router.url !== '/settings/timeoff-configurations/viewleavecategory') {
     <!--header-->
-    <div class="mb-3">
-        <div class="component-header">Settings</div>
+    <div class="component-header-content pt-2">
+        <app-settings-header />
     </div>
-    
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo"/>
-     </div>
 
-    <!--sub module tabs-->
-    <div class="mb-3">
-        <app-settings-time-off-tabs></app-settings-time-off-tabs>
-    </div>
-    
-    
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         @if (isActive('/settings/timeoff-configurations/eligibility-criterias') ||
@@ -33,14 +22,14 @@
             }
         </div>
         }
-    
-        <div class="custom-setting-right-content p-3">
+
+        <div class="custom-setting-right-content">
             <router-outlet />
         </div>
     </div>
     } @else {
-        <div>
-            <router-outlet />
-        </div>
+    <div>
+        <router-outlet />
+    </div>
     }
 </div>

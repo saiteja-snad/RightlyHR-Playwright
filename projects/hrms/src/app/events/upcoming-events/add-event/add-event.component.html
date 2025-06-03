@@ -1,6 +1,6 @@
 <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border" ngbAutofocus>
-        <div class="pt-2">
+        <div>
             <p class="popup-heading mb-0">Add Event</p>
         </div>
         <div>
@@ -43,7 +43,7 @@
                         placeholder="Please enter description" id="description" maxlength="250"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" ></textarea>
                     <div *ngIf=" customEventForm.get('eventMessage')?.touched && customEventForm.get('eventMessage')?.invalid "
                         class="error-msg">
-                        Event Description is requied
+                        Event Description is required
                     </div>
                     <div class="textarea-count-text">{{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250
                     </div>
@@ -60,7 +60,7 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="close()">Close</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="close()">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary"
                     [disabled]="customEventForm.invalid || spinnerLoader">
                     @if(spinnerLoader) {

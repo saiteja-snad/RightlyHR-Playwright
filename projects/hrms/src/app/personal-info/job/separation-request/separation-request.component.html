@@ -2,21 +2,24 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
     @if(canAccess('view','raisenodue')){
+    <ng-container
+      *ngIf="(shouldShowButton(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0) && shouldShowStatusBasedButton()">
+      <ng-container *ngIf="empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                       empinfo?.empstatus?.toLowerCase() !== 'trainee prospective' &&
+                       empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                       empinfo?.empstatus?.toLowerCase() !== 'trainee inactive'">
+        <div class="custom-add-btn" (click)="openModalLg(raiseNodue)">
+          <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
+        </div>
+      </ng-container>
+    </ng-container>
 
-    @if(shouldShowButton(this.empdata.lastworkingday) && !closeBtn && (nodueclearancedetails.length >= 0 && (separationDetails[0]?.status?.toLowerCase() === 'processed' || separationDetails[0]?.status?.toLowerCase() === 'early relieving processed'))){
-      @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()!== 'trainee inactive' )){
-      <div class="custom-add-btn" (click)="openModal(raiseNodue)">
-        <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
-      </div>
-      }
-    }
     <!-- @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)  ){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
       <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
     } -->
-  }
+    }
   </div>
 
   <div class="custom-table-content">
@@ -30,13 +33,15 @@
           <th class="text-center">{{'Approver History'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
+          @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
           @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
           empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
           && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
           !==
           'trainee inactive' )){
-          <th>Action(S)</th>
+          <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
           }
+        }
         </tr>
       </thead>
       <tbody>
@@ -44,8 +49,7 @@
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
-          <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}
-          </td>
+          <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}</td>
           <td>
             @if(item.recallStatus == 'Recalled'){
             <div>NA</div>
@@ -60,7 +64,7 @@
           <td class="text-center">
             @if(item.description){
             <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
-              <i class="bi bi-info-circle-fill"></i>
+              <app-info-icon />
             </div>
             }
             @else {
@@ -72,7 +76,7 @@
           <td class="text-center">
             @if(item.approvers && item.approvers.length > 0;){
             <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
-              <i class="bi bi-info-circle-fill"></i>
+              <app-info-icon />
             </div>
             }
             @else{
@@ -357,52 +361,54 @@
 
 <!-- modal open to raise nodue -->
 <ng-template #raiseNodue let-modal>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Raise No Due Request</p>
-      <p class="confirmation-text">Provide your official work email addresses!</p>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Raise No Due Request</p>
+      </div>
     </div>
-    <div class="custom-main-popup-content p-0 pt-3">
+
+    <div class="custom-main-popup-content">
+      <p class="popup-heading">Provide your official work email addresses!</p>
       <form autocomplete="off" [formGroup]="profileForm">
         <div>
           <label for="comments" class="form-label custom-label mb-2">Add Emails
             <span class="text-danger">*</span></label>
           <div class="mb-3">
-            <div class="d-flex">
+            <div class="d-flex align-items-center gap-2">
               <input name="addemail" class="form-control custom-input" placeholder="Enter email" type="text"
                 formControlName="emails" />
-              <div class="pt-2 ps-2">
-                <button type="button" class="btn-close me-2"></button>
+              <div>
+                <a><img src="/icons/cancel-circle.png" alt="Icon" class="popup-icon"></a>
               </div>
             </div>
             <!-- Error message for the main email input -->
             <div *ngIf="emails?.invalid && (emails?.dirty || emails?.touched)" class="error-msg">
-              <div *ngIf="emails?.errors?.['required']">Email is required.</div>
-              <div *ngIf="emails?.errors?.['email']">Invalid email format.</div>
+              <div *ngIf="emails?.errors?.['required']">Email is required</div>
+              <div *ngIf="emails?.errors?.['email']">Invalid email format</div>
             </div>
           </div>
 
           <!-- Dynamic email inputs from FormArray -->
           <div formArrayName="noduerequestedemails">
             <div *ngFor="let item of formemailsfornodue.controls; let i = index" class="mb-3">
-              <div class="d-flex">
+              <div class="d-flex align-items-center gap-2">
                 <input type="text" [formControlName]="i" class="form-control custom-input" placeholder="Enter email"
                   id="item-{{ i }}" />
-                <div class="pt-3 ps-2">
-                  <button type="button" class="btn-close me-2" (click)="removeSection(i)"></button>
+                <div>
+                  <a (click)="removeSection(i)"><img src="/icons/cancel-circle.png" alt="Icon" class="popup-icon"></a>
                 </div>
               </div>
               <div *ngIf="item.invalid && (item.dirty || item.touched)" class="error-msg">
-                <div *ngIf="item.errors?.['required']">Email is required.</div>
-                <div *ngIf="item.errors?.['email']">Invalid email format.</div>
+                <div *ngIf="item.errors?.['required']">Email is required</div>
+                <div *ngIf="item.errors?.['email']">Invalid email format</div>
+                <div *ngIf="item.errors?.['duplicate']">Duplicate email is not allowed</div>
               </div>
             </div>
           </div>
 
           <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="custom-btn btn-primary text-nowrap w-25 px-2" (click)="addAlias()">+
-              Add</button>
+            <button type="button" class="custom-btn btn-primary text-nowrap px-4" (click)="addAlias()">+ Add</button>
           </div>
         </div>
         <div class="custom-modal-footer">
@@ -429,7 +435,7 @@
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
@@ -442,7 +448,7 @@
 <ng-template #confirmationpopupfornodue let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">

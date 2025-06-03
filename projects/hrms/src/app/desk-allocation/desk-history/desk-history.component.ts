@@ -7,30 +7,27 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-desk-history',
-  imports: [CommonModule, RouterModule, TabsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, RouterModule, TabsModule, DateformatPipe, NoDataFoundComponent, TranslateModule],
   templateUrl: './desk-history.component.html',
   styleUrl: './desk-history.component.scss'
 })
+
 export class DeskHistoryComponent {
   subscription!: Subscription;
-  deskResponse: any
+  deskResponse: any;
   navTabs = [
-    { label: 'Desk Details', route: '/desk/view-desk/desk-data', },
-    { label: 'Desk History', route: '/desk/view-desk/desk-history', },
-
+    { label: 'Desk Details', icon: '/desk-icon/details-icon.png', route: '/desk/view-desk/desk-data', },
+    { label: 'Desk History', icon: '/desk-icon/History-icon.png', route: '/desk/view-desk/desk-history', },
   ];
-  deskid: any
-  transtiondesk = new BehaviorSubject<any[]>([])
-  inactivedesk = new BehaviorSubject<any[]>([])
+  deskid: any;
+  transtiondesk = new BehaviorSubject<any[]>([]);
+  inactivedesk = new BehaviorSubject<any[]>([]);
+
   constructor(private readonly http: HttpService,
     public readonly route: ActivatedRoute,
-    public router: Router, 
-
-  ) {
-
+    public router: Router) {
   }
 
   ngOnInit() {
@@ -41,25 +38,24 @@ export class DeskHistoryComponent {
       }
     });
   }
-  viewdata(data: any) {
-    console.log(data); // Log the incoming data for debugging
 
+  viewdata(data: any) {
     this.subscription = this.http.getData(`DeskAllocationHeader/ById?id=${this.deskid}`).subscribe({
       next: (response: any) => {
         this.deskResponse = response;
         this.transtiondesk.next(response.items);
-        this.inactivedesk.next(response.deskHistory)
-
+        this.inactivedesk.next(response.deskHistory);
       },
       error: (reason: any) => {
         console.log(reason);
       }
     });
   }
-  
+
   navigateassets() {
     this.router.navigate(['/desk/management/all-desks']);
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

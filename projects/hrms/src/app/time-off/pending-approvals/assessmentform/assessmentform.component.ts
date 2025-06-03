@@ -50,6 +50,7 @@ export class AssessmentformComponent {
   formFile = {} as any;
   probationExtensiondays = [] as any;
   probationExtensionDuration!: number;
+  probationExtensionTimes!: number;
   overallRatingcount: number = 0;
   sectionRatings: { [key: number]: number } = {}; // Object to hold ratings for each section
   @ViewChild('formsavepopup') formsavepopup!: any;
@@ -97,6 +98,7 @@ export class AssessmentformComponent {
 
   getProbationExtendDays() {
     let extensionId = environment.ProbationExtensionId;
+    let extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
@@ -105,6 +107,11 @@ export class AssessmentformComponent {
             return ele.configValueId === extensionId;
           });
           this.probationExtensionDuration = duration.noOfDays;
+            let extendTimes = data.find((ele: any) => {
+            return ele.configValueId === extensionPeriodTimes;
+          });
+          this.probationExtensionTimes = extendTimes.noOfDays;
+          console.log(this.probationExtensionTimes);
         },
       });
   }
@@ -112,11 +119,14 @@ export class AssessmentformComponent {
   //function when they enter nulls in start
   ifreasonnull(Value: any) {
     //console.log(Value);
-    if (!Value || !Value.trim()) {
-      this.issubmitdiable = true;
-    } else {
-      this.issubmitdiable = false;
-    }
+    const trimmedValue = Value?.trim();
+  const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+
+  if (!trimmedValue || startsWithSpecialChar) {
+    this.issubmitdiable = true;
+  } else {
+    this.issubmitdiable = false;
+  }
   }
 
   //function call to get the data
@@ -577,7 +587,7 @@ export class AssessmentformComponent {
         status: 'Confirmed',
         responseId: this.responseId,
       });
-      successMessage = 'Probation Request Approved Successfully';
+      successMessage = 'Probation request approved successfully';
     }
     if (this.selected_approve.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -585,7 +595,7 @@ export class AssessmentformComponent {
         status: 'Rejected',
         responseId: this.responseId,
       });
-      successMessage = 'Probation Request Rejected Successfully';
+      successMessage = 'Probation request rejected successfully';
     }
     if (this.selected_approve.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -594,7 +604,7 @@ export class AssessmentformComponent {
         status: 'Extended',
         responseId: this.responseId,
       });
-      successMessage = 'Probation Request Extended Successfully';
+      successMessage = 'Probation request extended successfully';
     }
     let requestBody = {
       status: 'Approved',
@@ -688,7 +698,7 @@ export class AssessmentformComponent {
       )
       .subscribe({
         next: (respone: any) => {
-          this.openModalService.openSuccessModal('Probation Request Processed Successfully');
+          this.openModalService.openSuccessModal('Probation request processed successfully');
 
         },
         error: (reason: any) => {
@@ -833,14 +843,20 @@ export class AssessmentformComponent {
     this.selected_approve.rejectedReason = '';
   }
 
-  getBlockedFutureDate(lastWorkingDate: string): string {
+  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
+    if(extendedDate){
+      lastWorkingDate = extendedDate;
+    }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
 
-  getBlockedFutureDateupto(startDate: string, duration: number): string {
+  getBlockedFutureDateupto(startDate: string,duration: number,extendDate:string): string {
+      if(extendDate){
+      startDate = extendDate;
+    }
     const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
     // Add the duration (e.g., 90 days) to the start date
     const futureDate = startDateObj.add(duration, 'days');

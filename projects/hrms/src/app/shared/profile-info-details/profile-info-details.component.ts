@@ -1,18 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../services/rbac.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MyinfoHeaderTabsComponent } from "../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component";
 import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
 import { PersonalPersonalTabsComponent } from "../personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component";
 import { MyInfoPersonalTabsComponent } from "../myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component";
 import { MyinfoJobTabsComponent } from "../myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
 import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs/personal-job-tabs.component";
-
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PersonalPersonalTabsComponent,
@@ -21,7 +20,7 @@ import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs
   styleUrl: './profile-info-details.component.scss'
 })
 
-export class ProfileInfoDetailsComponent {
+export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
   empinfo: any;
   subscription!: Subscription;
   jobdata: any;
@@ -42,27 +41,44 @@ export class ProfileInfoDetailsComponent {
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
-    this.http.basicDetailesadded$.subscribe(() => {
-      this.getJobDetails();
-      this.getEmployeeId();
-    });
-    this.http.profliepicadd$.subscribe(() => {
-      this.getEmployeeId();
-    });
   }
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
       this.getJobDetails();
+      this.http.profliepicadd$.subscribe(() => {
+        this.getEmployeeId();
+      });
+      this.http.basicDetailesadded$.subscribe(() => {
+        this.getJobDetails();
+        this.getEmployeeId();
+      });
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
       this.getJobDetails();
+      this.http.profliepicadd$.subscribe(() => {
+        this.getEmployeeId();
+      });
+      this.http.basicDetailesadded$.subscribe(() => {
+        this.getJobDetails();
+        this.getEmployeeId();
+      });
     }
+  }
+
+  getEmployeeId() {
+    let employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.empdata = data;
+        if (this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
+      },
+      error: reason => console.log(reason)
+    });
   }
 
   isActive(route: string): boolean {
@@ -95,7 +111,6 @@ export class ProfileInfoDetailsComponent {
   }
 
   chooseNewProfile(event: any) {
-       this.getEmpInfoFromRoute();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -136,15 +151,15 @@ export class ProfileInfoDetailsComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
       next: (data: any) => {
         if (data) {
-          this.empinfo.employeeId = this.empinfo.employeeId
-          this.empinfo.profileUrl = data.path;
-          this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
+          this.empdata.profileUrl = data.path;
+          this.subscription = this.http.postdata("Employeedata/UPDATER", this.empdata).subscribe({
             next: (data: any) => {
-              this.http.setprofileDetails()
               this.getEmployeeId();
               this.onSelectprofilePicDownload(this.empdata)
               this.conformationPopup.openSuccessModal('Profile picture updated successfully')
-
+              if (this.router.url.startsWith('/myinfo')) {
+                this.http.setprofileDetails()
+              }
             },
             error: (reason: any) => {
               this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')
@@ -166,14 +181,9 @@ export class ProfileInfoDetailsComponent {
     });
   }
 
-  getEmployeeId() {
-    let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data;
-        if (this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
-      },
-      error: reason => console.log(reason)
-    });
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

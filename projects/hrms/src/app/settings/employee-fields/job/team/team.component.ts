@@ -60,14 +60,14 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.getTable();
 
     this.AddForm = this.fb.group({
-      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       departmentId: [null, [Validators.required]],
       teamManager: [null, [Validators.required]],
     });
 
     this.updateForm = this.fb.group({
       updateddepartmentId: ['', [Validators.required]],
-      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       updatedteamManager: ['', [Validators.required]]
     });
   }
@@ -158,26 +158,26 @@ export class TeamComponent implements OnInit, OnDestroy {
   addTeam(form: any) {
     if (form.valid) {
       const formData = form.value
-      // Create payload according to Swagger API specification
       const request = {
-        subdepartmentName: formData.teamName,
-        departmentId: formData.departmentId, // This should be the sno value
+        subdepartmentName: formData.teamName.trim(),
+        departmentId: formData.departmentId, 
         reportingmanagerId: formData.teamManager,
         isdeleted: false
       };
-
-      console.log('Adding team with request:', request);
 
       this.subscription = this.http.postdata('Subdepartments', request).subscribe({
         next: (response) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Team added successfully');
-          this.getDepartmentName();
-          this.getTable();
         },
         error: (error: any) => {
-          const errorMessage = error.error?.Message;
+          const errorMessage = error.error?.Message? error.error?.Message : 'Failed to add Team';
           this.conformationPopup.openErrorModal(errorMessage);
+        },
+        complete: ()=>{
+          this.AddForm.reset();
+          this.getDepartmentName();
+          this.getTable();
         }
       });
     } 
@@ -221,7 +221,6 @@ export class TeamComponent implements OnInit, OnDestroy {
   updateTeam(modal: any) {
     if (this.updateForm.valid && this.updateDepartmentDetails?.subdepartmentId) {
       console.log('Update form values:', this.updateForm.value);
-      // Create payload according to Swagger API specification
       const request = {
         subdepartmentId: this.updateDepartmentDetails.subdepartmentId,
         subdepartmentName: this.updateForm.value.UpdatedTeamName?.trim(),
@@ -229,19 +228,15 @@ export class TeamComponent implements OnInit, OnDestroy {
         reportingmanagerId: Number(this.updateForm.value.updatedteamManager) || null,
         isdeleted: false
       };
-
-      console.log('Updating team with request:', request);
-
       this.subscription = this.http.postdata('Subdepartments/Update', request).subscribe({
         next: (response) => {
-         
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Team updated successfully');
           this.updateForm.reset();
           this.getTable();
         },
         error: (error: any) => {
-          const errorMessage = error.error?.Message;
+          const errorMessage = error.error?.Message? error.error?.Message : 'Failed to update Team';
           this.conformationPopup.openErrorModal(errorMessage);
         }
       });

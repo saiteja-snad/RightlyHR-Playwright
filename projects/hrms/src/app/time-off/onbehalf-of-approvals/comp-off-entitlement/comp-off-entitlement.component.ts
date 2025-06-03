@@ -5,7 +5,7 @@ import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -19,10 +19,11 @@ import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-comp-off-entitlement',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
-    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent],
+    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './comp-off-entitlement.component.html',
   styleUrl: './comp-off-entitlement.component.scss'
 })
@@ -40,7 +41,8 @@ export class CompOffEntitlementComponent {
     { label: 25, value: 25 },
   ];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  leaves = [] as AttendanceRequest[];
+  leaves = new BehaviorSubject<AttendanceRequest[]>([]);
+  leavesselect!: AttendanceRequest[];
   approverComments = [] as any[];
   selectedLeaveData = {} as AttendanceRequest;
   // approverComments = [] as AttendanceRequestC[];
@@ -74,7 +76,8 @@ export class CompOffEntitlementComponent {
           this.LOGIN = data;
           this.getAllPendingApprovals();
         } else {
-          this.leaves = [];
+          this.leaves.next([]);
+          this.leavesselect = [];
         }
         this.http.resetTriggerSignal(); // Reset after handling
       }
@@ -88,7 +91,8 @@ export class CompOffEntitlementComponent {
       this.LOGIN = storedEmployee;
       this.getAllPendingApprovals();
     } else {
-      this.leaves = [];
+      this.leaves.next([]);
+      this.leavesselect = [];
     }
     this.intializeApproveForm();
   }
@@ -110,7 +114,8 @@ export class CompOffEntitlementComponent {
     this.dataLoad = true;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.compoffModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.leaves = response.data as AttendanceRequest[];
+        this.leaves.next(response.data);
+        this.leavesselect = response.data;
       },
       error: (reason) => {
         this.dataLoad = false;
@@ -122,7 +127,7 @@ export class CompOffEntitlementComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openApproveModal(content: any, request: AttendanceRequest) {
@@ -145,17 +150,19 @@ export class CompOffEntitlementComponent {
     this.rows = event.rows;
   }
 
+  hasSelectedAllOnce = false;
   selectCheck(value: any) {
+    // debugger
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
+      this.hasSelectedAllOnce = false;
       return;
     }
 
     const stageMap: { [stage: string]: any[] } = {};
 
-    // Group items by their approval stage
     value.forEach((item: any) => {
       const stage = item.approvalHeader?.currentapprovalStage;
       if (!stageMap[stage]) {
@@ -165,71 +172,95 @@ export class CompOffEntitlementComponent {
     });
 
     const stages = Object.keys(stageMap);
-    const totalAvailable = this.leaves.length || 0;
+    const totalAvailable = this.leaves?.getValue().length || 0;
     const totalSelected = value.length;
     const isBulkSelect = totalSelected === totalAvailable;
 
-    // Get the dominant stage (most frequent)
-    let dominantStage = stages[0];
-    let maxCount = stageMap[dominantStage].length;
-    for (const stage of stages) {
-      const count = stageMap[stage].length;
-      if (count > maxCount) {
-        dominantStage = stage;
-        maxCount = count;
-      } else if (count === maxCount && stage === '1') {
-        dominantStage = stage;
+    if (isBulkSelect && stages.length > 1) {
+      if (this.hasSelectedAllOnce) {
+        this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
       }
+
+      this.hasSelectedAllOnce = true;
+
+      let dominantStage = stages[0];
+      let maxCount = stageMap[dominantStage].length;
+
+      for (const stage of stages) {
+        const count = stageMap[stage].length;
+        if (count > maxCount || (count === maxCount && stage === '1')) {
+          dominantStage = stage;
+          maxCount = count;
+        }
+      }
+
+      const dominantItems = stageMap[dominantStage];
+      this.selectedLeavesItems = [...dominantItems];
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
     }
 
-    const lastSelected = value[value.length - 1];
-    const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
-
-    // Scenario 1: Progressive Selection (mixing stages)
-    const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
-    if (
-      this.selectedLeavesItems.length > 0 &&
-      lastSelectedStage &&
-      existingStage &&
-      lastSelectedStage !== existingStage
-    ) {
+    if (!isBulkSelect && stages.length > 1) {
       this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
-      const newSelection = this.selectedLeavesItems.filter(
-        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+      const validStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+      const newSelection = value.filter(
+        (item: { approvalHeader: { currentapprovalStage: string; }; }) => item.approvalHeader?.currentapprovalStage === validStage
       );
       this.selectedLeavesItems = [...newSelection];
       setTimeout(() => this.updateTableSelectionState(newSelection));
       return;
     }
 
-    // Scenario 2: Bulk select - filter by dominant stage only
-    if (isBulkSelect && stages.length > 1) {
-      const dominantItems = [...stageMap[dominantStage]];
-      this.selectedLeavesItems = dominantItems;
-
-
-      setTimeout(() => this.updateTableSelectionState(dominantItems));
-      return;
-    }
-
-    // Valid multi-select with same stage
     this.selectedLeavesItems = [...value];
   }
 
 
   private updateTableSelectionState(selectedItems: any[]) {
-    // Create a new array reference to force change detection
     this.selectedLeavesItems = [...selectedItems];
 
-    // If using PrimeNG table with dataKey
     if (this.table) {
-      // Clear and reset selection to ensure checkbox states update
       this.table.selection = null;
       setTimeout(() => {
         this.table.selection = selectedItems;
       });
     }
   }
+
+  previousSearchValue: string = '';
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.multiSelect= false;
+      this.previousSearchValue = this.searchValue;
+      this.selectedLeavesItems = [];
+      this.hasSelectedAllOnce = false;
+      this.updateTableSelectionState([]);
+    }
+  }
+
+  getFilteredAndSortedLeaves(): AttendanceRequest[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+     let leaves = this.leavesselect ?? [];
+
+    if (search) {
+      leaves = leaves.filter((item: AttendanceRequest) =>
+        item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+        item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
+        item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
+      );
+    }
+
+    if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
+    }
+
+    const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+    const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+    const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
+  }
+
 
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
@@ -264,31 +295,31 @@ export class CompOffEntitlementComponent {
     );
   }
 
-  getFilteredAndSortedLeaves(): AttendanceRequest[] {
-    const search = this.searchValue?.toLowerCase() ?? '';
-    const allLeaves = this.leaves ?? [];
+  // getFilteredAndSortedLeaves(): AttendanceRequest[] {
+  //   const search = this.searchValue?.toLowerCase() ?? '';
+  //   const allLeaves = this.leaves ?? [];
 
-    // Filter
-    let filteredLeaves = allLeaves;
-    if (search) {
-      filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
-        item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
-        item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
-        item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
-      );
-    }
+  //   // Filter
+  //   let filteredLeaves = allLeaves;
+  //   if (search) {
+  //     filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
+  //       item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+  //       item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
+  //       item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
+  //     );
+  //   }
 
-    // Sort
-    if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
-      return filteredLeaves;
-    }
+  //   // Sort
+  //   if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+  //     return filteredLeaves;
+  //   }
 
-    const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
-    const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
-    const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+  //   const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+  //   const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  //   const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
 
-    return [...selected, ...unselected];
-  }
+  //   return [...selected, ...unselected];
+  // }
 
   // handleProcess(request: AttendanceRequest): void {
   //   const requestBody = {
@@ -408,7 +439,7 @@ export class CompOffEntitlementComponent {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary,'Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -464,7 +495,7 @@ export class CompOffEntitlementComponent {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-             this.signalService.handleResponse(this.responseSummary,'Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -524,7 +555,7 @@ export class CompOffEntitlementComponent {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary,'Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

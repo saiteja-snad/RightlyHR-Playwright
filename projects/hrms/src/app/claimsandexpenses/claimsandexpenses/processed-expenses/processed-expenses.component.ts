@@ -79,20 +79,17 @@ export class ProcessedExpensesComponent {
       });
 
   }
-
   onSelectDownload(file: any): void {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.value).subscribe({
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
       next: (res: any) => {
         // Check if the response body is of type Blob
         const blob: Blob = res.body as Blob;
         if (!blob) {
           return;
         }
-
         // Extract filename from 'content-disposition' header if available
         const contentDisposition = res.headers.get('content-disposition');
         let fileName = 'defaultFileName.pdf'; // Default filename
-
         if (contentDisposition) {
           const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
           if (fileNameMatch !== null && fileNameMatch[1]) {
@@ -100,11 +97,10 @@ export class ProcessedExpensesComponent {
           }
         } else {
           // Extract filename from the original file path if 'content-disposition' is not available
-          const filePath = file.value;
+          const filePath = file;
           const parts = filePath.split('/');
           fileName = parts[parts.length - 1] || 'defaultFileName.pdf';
         }
-
         // Create a link element and trigger the download
         const a = document.createElement('a');
         const url = window.URL.createObjectURL(blob);
@@ -112,7 +108,6 @@ export class ProcessedExpensesComponent {
         a.download = fileName;
         document.body.appendChild(a);
         a.click();
-
         // Clean up
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);

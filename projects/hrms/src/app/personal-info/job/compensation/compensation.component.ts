@@ -14,10 +14,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-compensation',
-  imports: [CommonModule, ReactiveFormsModule, Select, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select,TranslateModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './compensation.component.html',
   styleUrl: './compensation.component.scss'
 })

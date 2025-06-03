@@ -1,3 +1,114 @@
+.graph-grid {
+
+    // total leave summary
+    .total-leave-balance-graph-content {
+        .bi-circle-fill {
+            font-size: 9px;
+        }
+
+        .leave-category-text {
+            font-weight: 400;
+            font-size: 11px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            color: #747474;
+        }
+    }
+
+    .total-count-content {
+        text-align: center;
+        top: 40% !important;
+    }
+
+    //scrollable buttons stylings
+    .p-tablist-tab-list {
+        background: none !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem 1rem !important;
+    }
+
+    .p-tab-active {
+        background: none !important;
+        border: 0rem !important;
+    }
+
+    .p-tablist-active-bar {
+        background: none !important;
+    }
+
+    .leaves-category-container {
+        width: calc(100% - 21rem);
+
+        .leaves-category-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 13.5rem !important;
+            padding: 1rem 0.75rem;
+            border: 1px solid #DCE3E9 !important;
+            border-radius: 0.625rem;
+
+            .circular-progress {
+                position: relative;
+                height: 60px;
+                width: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0.625rem 0rem;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    height: 45px;
+                    width: 45px;
+                    border-radius: 50%;
+                    background-color: #fff;
+                }
+
+                .progress-value {
+                    position: relative;
+                    font-weight: 600;
+                    color: #222222;
+                }
+
+                .avaliable-leaves-text {
+                    font-weight: 600;
+                    font-size: 12.45px;
+                }
+
+                .total-leaves-text {
+                    font-weight: 400;
+                    font-size: 10.67px;
+                }
+            }
+
+            .leave-content-text {
+                font-weight: 600;
+                font-size: 11.64px;
+            }
+
+            .leave-category-text {
+                font-weight: 400;
+                font-size: 10px;
+                text-align: center;
+                color: #222222;
+            }
+        }
+    }
+}
+
+.component-left-tabs-container {
+    min-height: 50vh;
+    height: calc(100dvh - 9.5rem);
+}
+
 .custom-table-content {
-    height: calc(100dvh - 10rem) !important;
+    min-height: 50vh;
+    height: calc(100dvh - 9.5rem);
 }

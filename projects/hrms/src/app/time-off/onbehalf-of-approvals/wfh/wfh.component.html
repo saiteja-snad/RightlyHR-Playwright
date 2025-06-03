@@ -28,7 +28,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off" (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -65,7 +65,7 @@
                         leave?.entity?.attendanceRequestDescription != '') {
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{leave?.entity?.attendanceRequestDescription}} </p>
@@ -78,7 +78,7 @@
                     <td class="text-center">
                         <div *ngIf="leave?.entity?.attendanceApprovalcomments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave?.entity?.attendanceApprovalcomments,commentspopup)">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>

@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
@@ -16,11 +16,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './salary-revision-letter.component.html',
-  styleUrl: './salary-revision-letter.component.scss'
+  styleUrl: './salary-revision-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class SalaryRevisionLetterComponent {
@@ -184,7 +186,6 @@ export class SalaryRevisionLetterComponent {
   }
 
   onclickDesignation() {
-
     let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => c.employeeId == this.appraisalData.authorityid
     );
@@ -254,8 +255,13 @@ export class SalaryRevisionLetterComponent {
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
             let res = data.reverse()[0];
-            this.previusSalary = data[1];
-            this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
+            if (data.length > 1) {
+              this.previusSalary = data[1];
+              this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
+            } else {
+              this.previusSalary = { compensationamount: 0 };
+              this.incrementSalary = 0;
+            }
             this.employeeCompensationDetails = res;
             this.appraisalData.salary = res.compensationamount;
             this.appraisalData.compeffectivedate = res.compeffectivedate;

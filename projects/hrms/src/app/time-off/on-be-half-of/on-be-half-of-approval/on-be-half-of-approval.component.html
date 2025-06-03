@@ -4,12 +4,12 @@
             <thead>
                 <th>Date</th>
                 <th>Leave Type</th>
-                <th>Duration</th>
+                <th>Duration(In Days)</th>
                 <th>Availed</th>
                 <th>Start Date</th>
                 <th>End Date</th>
-                <th>Reason</th>
-                <th>Approved Reason</th>
+                <th class="text-center">Reason</th>
+                <th class="text-center">Approved Reason</th>
                 <th>Status</th>
             </thead>
             <tbody>
@@ -22,19 +22,19 @@
                         lev.durationType == 3 ? 'Second Half' : 'Unknown' }}</td>
                     <td>{{lev.startdate | dateformat}}</td>
                     <td>{{lev.enddate | dateformat}}</td>
-                    <td>
+                    <td class="text-center">
                         <div>
-                            <a type="button" [ngbPopover]="reason"><img src="images\info-fill.png" alt="info icon"
-                                    class="info-icon"></a>
+                            <a type="button" [ngbPopover]="reason">
+                                <app-info-icon />
+                            </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{lev.notes}}</p>
                             </ng-template>
                         </div>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div>
-                            <a type="button" [ngbPopover]="appreason"><img src="images\info-fill.png" alt="info icon"
-                                    class="info-icon"></a>
+                            <a type="button" [ngbPopover]="appreason"><app-info-icon /></a>
                             <ng-template #appreason>
                                 <p class="mb-0">{{lev.rejectedReason}}</p>
                             </ng-template>

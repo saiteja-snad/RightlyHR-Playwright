@@ -1,0 +1,19 @@
+.component-left-tabs-container {
+    min-height: 50vh;
+    height: calc(100vh - 11.5rem);
+}
+
+.custom-table-content {
+    min-height: 45vh;
+    height: calc(100vh - 14.75rem);
+}
+
+.component-right-content {
+    width: 100%;
+}
+
+@media only screen and (max-width: 1430px) {
+    .component-right-content {
+        width: calc(100% - 8.625rem) !important;
+    }
+}

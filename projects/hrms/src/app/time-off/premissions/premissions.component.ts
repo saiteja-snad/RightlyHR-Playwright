@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
-import { Subject, takeUntil,Subscription } from 'rxjs';
+import { Subject, takeUntil,Subscription, filter } from 'rxjs';
 import { IEAV, LeaveType } from '../../Interfaces/timoff-model';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../services/rbac.service';
@@ -15,6 +15,9 @@ import { PremissionsTabsComponent } from "../../shared/time-off-module-tabs/prem
 import { environment } from '../../../environments/environment';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -22,14 +25,17 @@ import { TranslateModule } from '@ngx-translate/core';
     Select,
     ReactiveFormsModule,
     CommonModule,
-    PremissionsTabsComponent,TranslateModule
-  ],
+    PremissionsTabsComponent, TranslateModule,
+    ModuleInformationComponent,
+    NgbPopoverModule
+],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
   encapsulation:ViewEncapsulation.None,
 })
 
 export class PremissionsComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   permissiondata = {} as any;
   empinfo = {} as IJob;
@@ -75,7 +81,8 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formsValidation:FormValidationsService
+    public formsValidation:FormValidationsService,
+    public readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -87,6 +94,27 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.formintions();
     this.getEAVData();
     this.getTeamManagersDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/premissions': MODULE_INFOS.ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
  // function to get the data of employees by hierarchy
   
@@ -112,6 +140,13 @@ export class PremissionsComponent implements OnInit, OnDestroy {
        },
      });
  }
+
+
+ 
+  cleardata() {
+    this.modalService.dismissAll();
+    this.permissionForm.reset();
+  }
  
   formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -138,7 +173,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       permissionDate: [null, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
-      reason: [null, [Validators.required, Validators.maxLength(250)]],
+      reason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
     });
   }
 
@@ -272,6 +307,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       this.disaplyapplybutton=false;
       this.getDataPermissions(employeedId);
     }else{
+      this.http.setEmployeeIdPermission(null);
       this.disaplyapplybutton=true;
       this.getDataPermissions(this.empinfo.employeeId);
     }

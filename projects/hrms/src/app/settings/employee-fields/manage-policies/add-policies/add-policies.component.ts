@@ -7,6 +7,8 @@ import { Select } from 'primeng/select';
 import { IPolicies } from '../../../../Interfaces/policies.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ILocation, IShiftHeader, ISubLocation } from '../../../time-off/flexible-leave-allocation/leave-allocation.model';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+
 
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../../../services/http.service';
@@ -20,7 +22,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
   imports: [RouterModule,
     Select,
     CommonModule,
-    ReactiveFormsModule,TabsModule,TranslateModule],
+    ReactiveFormsModule,TabsModule,TranslateModule, ToggleSwitchModule],
   templateUrl: './add-policies.component.html',
   styleUrl: './add-policies.component.scss'
 })
@@ -33,7 +35,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     empinfo : any;
     yearDetails: number[] = [];
     currentYear: number = new Date().getFullYear();
-  
+  isShiftAvailable: boolean = true;
   
     constructor(private fb: FormBuilder,public router:Router,private http: HttpService,
        private confirmation: OpenModalService, private modalService: NgbModal,
@@ -60,7 +62,9 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         policyName: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
         policyFile: ['',Validators.required],
         policyFilePath:[''],
-        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]]
+        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
+        acknowledged : [false],
+        notification : [false],
       });
     }
     getAllYears() {
@@ -80,6 +84,24 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       // }
     }
   
+    onClickedAck(event: any, index : number){
+      const control = this.policies.at(index);
+      if (event.target.checked) {
+        control.get('acknowledged')?.setValue(true);
+      } else {
+        control.get('acknowledged')?.setValue(false);
+      }
+    }
+
+    onClickedEmail(event: any, index : number){
+      const control = this.policies.at(index);
+      if (event.target.checked) {
+        control.get('notification')?.setValue(true);
+      } else {
+        control.get('notification')?.setValue(false);
+      }
+
+    }
   
     removePolicyRow(index: number) {
       this.policies.removeAt(index);
@@ -125,12 +147,17 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
           policyName: item.policyName,
           policyDescription: item.policyDescription,
           policyAttachment: item.policyFilePath,
+          requiresAcknowledgment : item.acknowledged,
+          sendEmailNotification: item.notification,
+          sendPushNotification : false,
+          sendNotification: item.notification,
           status: "Pending for submission",
         }))
       };
       this.subscription = this.http.postdata('orgPolicies/Post', payload).subscribe({
         next: (response: any) => {
           localStorage.setItem('personaldata', JSON.stringify(response))
+          localStorage.setItem('updatepolicies', JSON.stringify(response))
           this.confirmation.openSuccessModal('Policy added successfully');
           this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
         },
@@ -162,6 +189,8 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       if (locationId) {
         this.getSubLocationByid(locationId);
         this.policiesForm.get('subLocation')?.enable();
+        this.policiesForm.get('shift')?.disable();
+        this.policiesForm.get('subLocation')?.markAsTouched();
       } else {
         this.jobLocationDropDownData = [];
         this.subLocationsDropdown=[];
@@ -172,6 +201,13 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
     getSubLocationByid(selectedLocation: any): void {
       if (selectedLocation && selectedLocation.id) {
+          // Reset subLocation and shift fields when location changes
+      this.policiesForm.patchValue({
+        subLocation: null,
+        shift: null
+      });
+      this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
         this.subscription = this.http
           .getData(
             `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
@@ -180,17 +216,26 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
             next: (data: any) => {
               if (data.length === 0) {
                 this.subLocationsDropdown = [];
+                 this.shiftDropdown = []; 
+                 this.policiesForm.get('subLocation')?.enable();
+            this.policiesForm.get('shift')?.disable();
               } else {
                 this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+                 this.shiftDropdown = []; 
+                this.policiesForm.get('subLocation')?.enable();
+                this.policiesForm.get('shift')?.disable();
               }
 
             },
-            error: (err: any) => {
-             
+            error: (error: any) => {
+             if (error.error) {
+            this.confirmation.openErrorModal(error.error.Message);
+          }
             },
           });
       } else {
         this.subLocationsDropdown = [];
+        this.shiftDropdown = [];
         
       }
     }
@@ -200,8 +245,11 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       if (subLocationId) {
         this.getShiftBYid(subLocationId);
         this.policiesForm.get('shift')?.enable();
+         this.shiftDropdown = []; 
+         this.policiesForm.get('shift')?.markAsTouched();
       } else {
         this.subLocationsDropdown=[];
+         this.shiftDropdown = []; 
         this.policiesForm.get('shift')?.disable();
       }
     }
@@ -211,6 +259,11 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     getShiftBYid(selectedSubLocation: any): void {
       const formValue = this.policiesForm.value;
       if (selectedSubLocation && selectedSubLocation) {
+                // Reset subLocation and shift fields when location changes
+      this.policiesForm.patchValue({
+        shift: null
+      });
+      this.shiftDropdown = [];
         const locationId = formValue.location?.id
         const subLocationId = selectedSubLocation
   
@@ -223,10 +276,14 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
               if (data.length === 0) {
                 this.shiftDropdown = []; // Reset if no shifts are found
+                this.isShiftAvailable = false;
               } else {
+                 
                 this.shiftDropdown = [].concat(
                   ...data.map((element: any) => element.orgShiftsItems)
+                  
                 ); // Flatten the shift data
+                this.isShiftAvailable = false;
               }
             },
             error: (err: any) => {
@@ -238,7 +295,13 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         this.shiftDropdown = []; // Reset if no sub-location is selected
       }
     }
-
+onShiftChange(shiftID:any) {
+      if (shiftID) {
+        this.isShiftAvailable = true;
+      } else {
+        this.isShiftAvailable = false;
+      }
+}
     navigation(){
       this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
     }

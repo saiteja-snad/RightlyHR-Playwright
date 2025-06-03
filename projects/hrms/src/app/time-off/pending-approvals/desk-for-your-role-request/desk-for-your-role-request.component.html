@@ -16,15 +16,15 @@
                     <th>Sub Location</th>
                     <th>Shift </th>
                     <th>Allocated Date</th>
-                    <th class="text-center">View Desk</th>
+                    <th class="text-center">View Desk Details</th>
                     <th>Desk Status</th>
                      @if(rbac.allowedToAccess('For Role (Desk Requests).update') || rbac.allowedToAccess('For Role (Desk Requests).delete')) {
-                    <th class="text-center">Action(S)</th>
+                    <th class="text-center">Action</th>
                      }
             </thead>
             <tbody>
-                <ng-container *ngIf="(deskheaderpending | searchfilter : searchValue : ['entity.deskallocatedtoname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']).length > 0; else noDataTemplate">
-                <tr *ngFor="let exp of deskheaderpending   | searchfilter: searchValue : ['entity.deskallocatedtoname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']">
+                <ng-container *ngIf="(deskheaderpending | searchfordesk : searchValue : ['entity.deskallocatedtoname','entity.deskname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']).length > 0; else noDataTemplate">
+                <tr *ngFor="let exp of deskheaderpending   | searchfordesk: searchValue : ['entity.deskallocatedtoname','entity.deskname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']">
                     <td>{{exp.entity?.deskallocatedtoname}}</td>
                     <td>{{exp.entity?.deskname}}</td>
                     <td>{{exp.entity?.deskType}}</td>
@@ -60,7 +60,7 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('For Role (Desk Requests).update') ) {
                                 <li *ngIf="exp.approvalHeader.currentapprovalStage !== exp.approvalHeader.finalapprovalStage">
-                                    <a class="dropdown-item" type="button">Approve</a>
+                                    <a class="dropdown-item" type="button"><i class="bi bi-check-circle me-2"></i>Approve</a>
                                 </li>
                             }
                              @if(rbac.allowedToAccess('For Role (Desk Requests).update') ) {
@@ -68,7 +68,7 @@
                                     *ngIf="exp.approvalHeader.currentapprovalStage === exp.approvalHeader.finalapprovalStage">
                                     <a class="dropdown-item"
                                         (click)="process(exp.approvalHeader.id,exp);viewdeskitem(exp.entity?.deskAllocationItemId)">
-                                        Process
+                                       <i class="bi bi-check-circle me-2"></i> Process
                                     </a>
                                 </li>
                             }
@@ -76,7 +76,7 @@
                                 <li>
                                     <a class="dropdown-item" type="button"
                                         (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal,exp)">
-                                        Reject
+                                       <i class="bi bi-x-circle me-2"></i>  Reject
                                     </a>
                                 </li>
                             }
@@ -100,7 +100,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">View Desk</p>
+                <p class="popup-heading mb-0">View Desk Details</p>
             </div>
             <div>
                 <a (click)="model.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -108,7 +108,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <div class="custom-table p-3">
+            <div class="custom-table ">
                 <table class="w-100">
                     <thead>
                         <tr>
@@ -143,24 +143,42 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to reject?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="Rejected(rejectForm)">
             <div class="custom-main-popup-content">
-                <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
-                    <span class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
-                   formControlName="comments" maxlength="250"></textarea>
-                <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
-                <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected reason is required.</div>
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+                <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}<span class="text-danger">*</span></label>
+                <textarea class="form-control custom-input" id="comments" placeholder="Please enter comments" 
+                   formControlName="comments" maxlength="250" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"></textarea>
+                     <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments are required</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters</div>
                 </div>
+                <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+              
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' | translate}}</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="openconformationPopup(confirmationpopup)">{{'Cancel' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button>
             </div>
         </form>
+    </div>
+</ng-template>
+
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+                Yes
+            </button>
+        </div>
     </div>
 </ng-template>

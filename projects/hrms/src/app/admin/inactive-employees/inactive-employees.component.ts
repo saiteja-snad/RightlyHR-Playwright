@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iinactive } from './inactive-model';
@@ -19,14 +18,14 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
   styleUrl: './inactive-employees.component.scss'
 })
 
-export class InactiveEmployeesComponent implements OnInit ,OnDestroy{
+export class InactiveEmployeesComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   InActive = [] as any;
   emp = {} as any;
   searchValue: any;
   loader = false;
-  
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService,private accessNav: AccessNavigationService) { }
+
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -47,13 +46,14 @@ export class InactiveEmployeesComponent implements OnInit ,OnDestroy{
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);
-     this.goToAccessibleRoute('/personalinfo');
+    this.goToAccessibleRoute('/personalinfo');
   }
- goToAccessibleRoute(actualRoute: string) {
+
+  goToAccessibleRoute(actualRoute: string) {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }
@@ -61,13 +61,10 @@ export class InactiveEmployeesComponent implements OnInit ,OnDestroy{
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
-  }
-
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
   }
 }

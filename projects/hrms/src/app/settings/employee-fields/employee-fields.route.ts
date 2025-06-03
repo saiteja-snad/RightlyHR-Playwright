@@ -1,8 +1,5 @@
 import { Route, } from '@angular/router';
-import { SettingsPersonalTabsComponent } from '../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component';
-import { SettingsJobTabsComponent } from '../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component';
 import { PermissionsGuard } from '../../guards/permissions.guard';
-
 
 export default [
     // { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },
@@ -44,7 +41,10 @@ export default [
             { path: 'interview-round', loadComponent: () => import('./job/interview-round/interview-round.component').then((m) => m.InterviewRoundComponent) },
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent), canActivate: [PermissionsGuard],data: { permission: 'Team.view' } },
             { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent), canActivate: [PermissionsGuard],data: { permission: 'Pre Onboard Documents.view' } },
-            { path: 'signature-authority', loadComponent: () => import('./job/signature-authority/signature-authority.component').then((m) => m.SignatureAuthorityComponent)}
+            { path: 'signature-authority', loadComponent: () => import('./job/signature-authority/signature-authority.component').then((m) => m.SignatureAuthorityComponent)},
+            { path: 'appointment-details', loadComponent: () => import('./job/appointment-details/appointment-details.component').then((m) => m.AppointmentDetailsComponent)},
+            { path: 'probation-frequency', loadComponent: () => import('./job/probation-frequency/probation-frequency.component').then((m) => m.ProbationFrequencyComponent)},
+            { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)}
         ]
     },
     { path: 'documents', loadComponent: () => import('./documents-creation/documents-creation.component').then((m) => m.DocumentsCreationComponent), canActivate: [PermissionsGuard],data: { permission: 'Document Tab.view' } },
@@ -70,7 +70,7 @@ export default [
     { path: 'viewshifts/:id', loadComponent: () => import('./manage-shifts/view-shift/view-shift.component').then((m) => m.ViewShiftComponent)},
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent)},
     { path: 'updatepolices', loadComponent: () => import('./manage-policies/update-policies/update-policies.component').then((m) => m.UpdatePoliciesComponent)},
-    { path: 'clonepolices/:id', loadComponent: () => import('./manage-policies/clone-policies/clone-policies.component').then((m) => m.ClonePoliciesComponent)},
+    { path: 'clonepolices', loadComponent: () => import('./manage-policies/clone-policies/clone-policies.component').then((m) => m.ClonePoliciesComponent)},
     { path: 'viewpolices', loadComponent: () => import('./manage-policies/view-policies/view-policies.component').then((m) => m.ViewPoliciesComponent)},
     {
         path: 'manage-policies',

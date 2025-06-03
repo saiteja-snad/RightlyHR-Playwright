@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -20,7 +20,7 @@ import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt
   styleUrl: './header.component.scss'
 })
 
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   empinfo: any;
   imageUrl: any;
   empdata = {} as any;
@@ -35,12 +35,22 @@ export class HeaderComponent {
    private authService: AuthService, private modalservie: NgbModal, private conformationPopup: OpenModalService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
+
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId()
     this.getJobDetails()
     this.http.profliepicadd$.subscribe(() => {
       this.getEmployeeId();
     });
+  }
+
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   onSelectprofilePicDownload(employee: any) {
@@ -80,7 +90,7 @@ export class HeaderComponent {
     })
   }
 
-  chooseNewProfile(event: any) {
+  chooseNewProfileHeader(event: any) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -98,15 +108,15 @@ export class HeaderComponent {
       }
       this.img = file;
       input.value = ''; // clear input if needed to allow same file re-selection
-      this.onProfilepicSelected(this.img);
+      this.onProfilepicSelectedheader(this.img);
     }
   }
 
-  onProfilepicSelected(img: any) {
+  onProfilepicSelectedheader(img: any) {
     let file = img;
     let d: Date = new Date()
     this.profilePic = this.renameFile(file, `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`)
-    this.postUploadprofilePic()
+    this.postUploadprofilePicheader()
   }
 
   private renameFile(originalFile: File, newName: string) {
@@ -116,7 +126,7 @@ export class HeaderComponent {
     });
   }
 
-  postUploadprofilePic() {
+  postUploadprofilePicheader() {
     let filePath = `/Profilepics/${this.empinfo.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
       next: (data: any) => {
@@ -190,5 +200,11 @@ export class HeaderComponent {
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
+  }
+
+   ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

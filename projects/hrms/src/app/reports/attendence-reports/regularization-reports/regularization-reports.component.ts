@@ -4,8 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
-import { AttandaceReportTabsComponent } from "../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
+import {  Subject, Subscription, takeUntil } from 'rxjs';
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
 import dayjs from 'dayjs';
@@ -16,18 +15,17 @@ import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import {  Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-regularization-reports',
-  imports: [CommonModule, ReactiveFormsModule, AttandaceReportTabsComponent, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './regularization-reports.component.html',
   styleUrl: './regularization-reports.component.scss'
 })
-export class RegularizationReportsComponent implements OnInit, OnDestroy{
-  moduleinfo : string = '';
+export class RegularizationReportsComponent implements OnInit, OnDestroy {
+  moduleinfo: string = '';
   subscription!: Subscription;
   regularizationReportForm!: FormGroup;
   loggedInUser = {} as IemployeeDetails;
@@ -55,13 +53,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     ],
   };
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
-
+  localeOptions: any;
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -72,13 +64,17 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   ) { }
 
   ngOnInit(): void {
+      this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getAllEmployees();
     this.getTeam();
     this.getMyTeam();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
     // this.getAttendanceReports();
   }
 
@@ -87,7 +83,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
       employee: [null],
       manager: [null],
       dateRange: [null],
-      team:[null]
+      team: [null]
     });
 
     this.regularizationReportForm.valueChanges.subscribe(() => {
@@ -96,32 +92,19 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   }
 
   get isPermissionGenerateDisabled(): boolean {
-    const form = this.regularizationReportForm;
+    const { employee, manager, dateRange, leaveCategory, team } = this.regularizationReportForm.value;
+    
+    // Check if any field has a value
     return !(
-      form.get('employee')?.value ||
-      form.get('manager')?.value ||
-      form.get('dateRange')?.value || form.get('team')?.value
+        employee ||
+        manager ||
+        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
+        leaveCategory ||
+        team
     );
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
   
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/regularization-report': MODULE_INFOS.ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
   getAllEmployees() {
     const loggedInUser = this.authService.getToken();
     this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
@@ -140,7 +123,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
             { fullName: 'All Employees', employeeId: 'all' },
             ...employeedata
           ];
-          
+
         },
         error: (reason: any) => {
           console.log(reason);
@@ -162,8 +145,9 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     });
   }
 
-  clearAllFilters() { 
+  clearAllFilters() {
     this.regularizationReportForm.reset();
+    this.filteredRegularizationData = [];
   }
 
   formatDate(date: Date): string {
@@ -172,7 +156,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
   }
-  
+
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
@@ -180,36 +164,38 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   generateRegularizationReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-  
+
     const formValue = this.regularizationReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
-  
+
     const noFilterProvided =
       !formValue.employee &&
       !formValue.leaveCategory &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
       !formValue.manager && !formValue.team;
-  
+
     if (noFilterProvided) {
       this.filteredRegularizationData = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
       return;
     }
-  
+
     const request: IAttendanceDetails = {};
 
     if (this.selectLeaveEmployeeIds.length >= 0) {
-        const ids = this.selectLeaveEmployeeIds?.join(',');
-        request.employeeId = ids;  // The selected employee IDs are set here
+      const ids = this.selectLeaveEmployeeIds?.join(',');
+      request.employeeId = ids;  // The selected employee IDs are set here
     }
-
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee?.employeeId;
+    }
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
-  
+
     // Apply date range if provided
     if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
       const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
@@ -217,17 +203,17 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
       request.StartDate = startDate;
       request.EndDate = endDate;
     }
-  
+
     // Apply manager name if provided
     if (formValue.manager) {
       request.teamManagerId = formValue.manager.employeeId
     }
-    
+
     // Only include employee filter if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
       request.FusionEmpId = formValue.employee.fusionEmpId;
     }
-  
+
     this.reportsService.getRegularizationReports(request).subscribe({
       next: (response: any) => {
         this.filteredRegularizationData = response ?? [];
@@ -405,6 +391,9 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
           }
         },
       });
+  }
+  navigation() {
+    this.router.navigate(['/reports']);
   }
 
   ngOnDestroy(): void {

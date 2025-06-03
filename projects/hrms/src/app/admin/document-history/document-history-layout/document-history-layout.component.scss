@@ -1,37 +1,17 @@
-.nav-tabs {
-    padding: 0.25rem 0.5rem 0rem;
-    border-radius: 0.5rem;
-    background-color: #fff !important;
+.nav-link {
+    width: 100%;
 
-    .nav-link {
-        font-weight: 700;
-        font-size: 14px !important;
-        line-height: 100%;
-        letter-spacing: 0%;
-        vertical-align: middle;
-        color: #06274F !important;
-        border-radius: 0px !important;
-        border: none !important;
-
-        &:focus {
-            border: none !important;
-            outline: none !important;
-            transition: none !important;
-        }
-
-        &:hover {
-            border: none !important;
-            outline: none !important;
-            transition: none !important;
-        }
-
-        &.active {
-            border: none !important;
-            border-bottom: 3px solid var(--primary-color) !important;
-        }
+    &.active {
+        background: linear-gradient(180deg, #FFFFFF 0%, #D8E2F2 100%);
     }
 }
 
+.component-left-tabs-container{
+    height: calc(100vh - 22.75rem);
+    min-height: 55vh;
+}
+
 .custom-table-content {
-    height: calc(100dvh - 32rem);
+    height: calc(100dvh - 25.5rem);
+    min-height: 50vh;
 }

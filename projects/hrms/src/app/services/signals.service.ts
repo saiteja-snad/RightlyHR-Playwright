@@ -27,12 +27,12 @@ export class SignalsService {
   separationForYouTriggerSignal = signal<boolean>(false);
   separationForRoleTriggerSignal = signal<boolean>(false);
   separationSidNavCountTriggerSignal = signal<boolean>(false);
-  
+
   //Recall request
   recallSeparationForYouTriggerSignal = signal<boolean>(false);
   recallSeparationForRoleTriggerSignal = signal<boolean>(false);
   recallSeparationSidNavCountTriggerSignal = signal<boolean>(false);
-  
+
   // Regularization PendingApprovals Signals
   regularizationForYouTriggerSignal = signal<boolean>(false);
   regularizationForRoleTriggerSignal = signal<boolean>(false);
@@ -44,11 +44,17 @@ export class SignalsService {
   timecountTriggerSignal = signal<boolean>(false);
   timeoffForYouTriggerSignal = signal<boolean>(false);
   timeoffForRoleTriggerSignal = signal<boolean>(false);
-  timeOffsidenavCountSignal= signal<boolean>(false);
+  timeOffsidenavCountSignal = signal<boolean>(false);
+  // Desk Allocation request
+  deskForYouTriggerSignal = signal<boolean>(false);
+  deskForRoleTriggerSignal = signal<boolean>(false);
+
+  clamisandexpensesForYouTriggerSignal = signal<boolean>(false);
+  claimsandexpensesForRoleTriggerSignal = signal<boolean>(false);
 
   constructor(
     private sharedModalService: OpenModalService,
-  ) {}
+  ) { }
 
   handleResponse(respone: any, status: string) {
     if (respone.failureRecordsCount != 0) {

@@ -1,0 +1,28 @@
+.custom-table-content {
+    min-height: 50vh;
+    height: calc(100vh - 9.5rem);
+}
+
+.component-right-content {
+    width: 100%;
+}
+
+@media only screen and (max-width: 1430px) {
+    .component-right-content {
+        width: calc(100% - 8.625rem) !important;
+    }
+}
+
+.clear-all-btn {
+    background: none;
+    border: none;
+    text-decoration: underline;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.clear-all-btn:focus {
+    outline: none;
+}

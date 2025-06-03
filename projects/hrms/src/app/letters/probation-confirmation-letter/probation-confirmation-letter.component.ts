@@ -14,40 +14,42 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployee } from './probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-probation-confirmation-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './probation-confirmation-letter.component.html',
   styleUrl: './probation-confirmation-letter.component.scss'
 })
 
 export class ProbationConfirmationLetterComponent {
   subscription!: Subscription;
-  probationemp : IEmployee[]=[];
+  probationemp: IEmployee[] = [];
   probationLetterData = {} as any;
-  authorityDetails: IEmployeeSignatures[]=[];
+  authorityDetails: IEmployeeSignatures[] = [];
   probationFile!: File;
   disableFieldsForApproval: boolean = false;
   loading: boolean = false;
   Status: any;
   probationConfirmationForm!: FormGroup;
-  
+  selectedEmployee: IEmployee | null = null;
+  lastSelectedEmployeeId: number | null = null;
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
   todayDate!: string;
   isdateofprobation: boolean = true;
-  enableBtn= false;
-  spinnerLoader= false;
-  releaseLoader= false;
+  isdateofprobationIssued: boolean = true;
+  enableBtn = false;
+  spinnerLoader = false;
+  releaseLoader = false;
 
   constructor(
-    private http: HttpService, 
-    private router: Router, 
-    private fb: FormBuilder, 
-    private openModalService:OpenModalService) { }
+    private http: HttpService,
+    private router: Router,
+    private fb: FormBuilder,
+    private openModalService: OpenModalService) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -58,18 +60,57 @@ export class ProbationConfirmationLetterComponent {
   }
 
   DateValidation() {
-    if (this.probationLetterData.dateofprobation <= this.probationLetterData.probationEndDate) {
-      this.isdateofprobation = false;
+    const issuedDateControl = this.probationConfirmationForm.get('issuedDate');
+    const issuedDate = issuedDateControl?.value ? new Date(issuedDateControl.value) : null;
+    const probationEndDate = this.selectedEmployee?.probationEndDate
+      ? new Date(this.selectedEmployee.probationEndDate)
+      : null;
+    if (issuedDate && probationEndDate && issuedDate > probationEndDate) {
+      this.isdateofprobationIssued = false;
     } else {
-      this.isdateofprobation = true;
+      this.isdateofprobationIssued = true;
     }
+  }
+
+  CheckDateValidation() {
+    const effectiveDate = new Date(this.probationConfirmationForm.get('effectiveDate')?.value);
+    const joiningDate = this.selectedEmployee?.dateOfJoining
+      ? new Date(this.selectedEmployee.dateOfJoining)
+      : null;
+    const probationStartDate = this.getProbationDetails?.probationStartDate
+      ? new Date(this.getProbationDetails.probationStartDate)
+      : null;
+    const probationEndDate = this.selectedEmployee?.probationEndDate
+      ? new Date(this.selectedEmployee.probationEndDate)
+      : null;
+    // Reset error messages
+    this.jobErrorMessage = '';
+    this.isdateofprobation = true;
+    // Validation: Effective Date >= Joining Date
+    if (joiningDate && effectiveDate < joiningDate) {
+      this.jobErrorMessage = 'Effective Date must be after the employee joining date';
+      return;
+    }
+    // Validation: Effective Date >= Probation Start Date
+    if (probationStartDate && effectiveDate < probationStartDate) {
+      this.jobErrorMessage = 'Effective Date must be after the probation start date';
+      return;
+    }
+    // Validation: Effective Date <= Probation End Date
+    if (probationEndDate && effectiveDate > probationEndDate) {
+      this.isdateofprobation = false;
+      return;
+    }
+    // All validations passed
+    this.jobErrorMessage = '';
+    this.isdateofprobation = true;
   }
 
   preventTyping(event: KeyboardEvent) {
     event.preventDefault();
-  } 
+  }
 
-  naviagte(){
+  naviagte() {
     this.router.navigate(['/admin/probation-employees']);
   }
 
@@ -99,8 +140,31 @@ export class ProbationConfirmationLetterComponent {
     })
   }
 
-  onClickEmployee(event: any){
-    const empId= event.value.employeeId;
+  onClickEmployee(event: any) {
+    const newlySelectedEmployee = event?.value;
+    if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
+      return;
+    }
+    // If employee has changed, reset the dependent fields
+    if (this.lastSelectedEmployeeId && this.lastSelectedEmployeeId !== newlySelectedEmployee.employeeId) {
+      this.probationConfirmationForm.patchValue({
+        issuedDate: null,
+        effectiveDate: null,
+        Documenttype: null,
+        authorityid: null
+      });
+      ['issuedDate', 'effectiveDate', 'Documenttype', 'authorityid'].forEach(controlName => {
+        const control = this.probationConfirmationForm.get(controlName);
+        control?.markAsPristine();
+        control?.markAsUntouched();
+        control?.updateValueAndValidity();
+      });
+      this.jobErrorMessage = '';
+    }
+    // Update tracking and continue normal processing
+    this.lastSelectedEmployeeId = newlySelectedEmployee.employeeId;
+    this.selectedEmployee = event.value;
+    const empId = event.value.employeeId;
     this.getProbationRequest(empId);
     this.pathValuesFuction();
   }
@@ -128,7 +192,7 @@ export class ProbationConfirmationLetterComponent {
   }
 
   async postProbationLetterFormSubmit() {
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     this.loading = true;
     const data = await this.probationLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
@@ -146,27 +210,29 @@ export class ProbationConfirmationLetterComponent {
         const blob = pdf.output('blob');
         //creating form file to upload into AZure
         let d: Date = new Date()
-        this.probationFile = new File( [blob], fileName, { type: 'application/pdf', });
+        this.probationFile = new File([blob], fileName, { type: 'application/pdf', });
         this.uploadProbationLetter();
       });
     }
+    this.openModalService.openSuccessModal("Probation Confirmation Letter Generated Successfully");
   }
 
   uploadProbationLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationLetterData.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
+        this.openModalService.openSuccessModal("Probation Confirmation Letter Generated Successfully");
         if (data) {
           this.postProbationDetails(data.path);
         }
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.openModalService.openErrorModal('file upload  is failed');
       },
-      complete: () =>{
-        this.enableBtn= true;
-        this.spinnerLoader= false;
+      complete: () => {
+        this.enableBtn = true;
+        this.spinnerLoader = false;
       }
     });
   }
@@ -180,54 +246,53 @@ export class ProbationConfirmationLetterComponent {
         if (!data || data.length === 0) {
           this.jobErrorMessage = 'No probation details found for this employee.';
           this.probationConfirmationForm.get('jobValid')?.setValue(false);
-        }else{
+        } else {
           this.getProbationDetails = data.find((ele: any) => {
             return (ele.status === 'Processed');
           });
           this.jobErrorMessage = '';
           this.probationConfirmationForm.get('jobValid')?.setValue(true);
         }
-        
       }
     })
   }
 
   Documenturlresult: any;
-  postProbationDetails(path:any) {
+  postProbationDetails(path: any) {
     let payload = {
-      probationId : this.getProbationDetails.probationId,
-      formId : this.getProbationDetails.formId,
-      employeeId : this.getProbationDetails.employeeId,
-      responseId : this.getProbationDetails.responseId,
-      probationStartDate : this.getProbationDetails.probationStartDate,
-      probationEndDate : this.getProbationDetails.probationEndDate,
-      probationExtendedDate : this.getProbationDetails.probationExtendedDate,
-      status : this.getProbationDetails.status,
-      createdBy : this.getProbationDetails.createdBy,
-      updatedBy : this.getProbationDetails.updatedBy,
-      probationDays : this.getProbationDetails.probationDays,
-      raisedBy : this.getProbationDetails.raisedBy,
-      documentURL : path,
-      parentId : this.getProbationDetails.parentId,
-      probationExtendCount : this.getProbationDetails.probationExtendCount,
-      meta : this.getProbationDetails.meta,
-      appliedDate : this.getProbationDetails.appliedDate,
-      comments : this.getProbationDetails.comments
+      probationId: this.getProbationDetails.probationId,
+      formId: this.getProbationDetails.formId,
+      employeeId: this.getProbationDetails.employeeId,
+      responseId: this.getProbationDetails.responseId,
+      probationStartDate: this.getProbationDetails.probationStartDate,
+      probationEndDate: this.getProbationDetails.probationEndDate,
+      probationExtendedDate: this.getProbationDetails.probationExtendedDate,
+      status: this.getProbationDetails.status,
+      createdBy: this.getProbationDetails.createdBy,
+      updatedBy: this.getProbationDetails.updatedBy,
+      probationDays: this.getProbationDetails.probationDays,
+      raisedBy: this.getProbationDetails.raisedBy,
+      documentURL: path,
+      parentId: this.getProbationDetails.parentId,
+      probationExtendCount: this.getProbationDetails.probationExtendCount,
+      meta: this.getProbationDetails.meta,
+      appliedDate: this.getProbationDetails.appliedDate,
+      comments: this.getProbationDetails.comments
     }
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {
         this.Documenturlresult = data.documentURL;
         this.disableFieldsForApproval = true;
         this.loading = false;
-        this.enableBtn= true;
+        this.enableBtn = true;
         this.openModalService.openSuccessModal("Probation Extension Letter Generated Successfully");
-        // this.probationConfirmationemail();
+        this.probationConfirmationemail();
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
-      complete: () =>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     });
   }
@@ -241,7 +306,7 @@ export class ProbationConfirmationLetterComponent {
     this.probationLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
     this.probationLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
     this.probationLetterData.department = formValues.employeeId?.departmentName,
-    this.probationLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation+ ', '+formValues.employeeId?.jobDetails?.lopcation,
+    this.probationLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation + ', ' + formValues.employeeId?.jobDetails?.lopcation,
     this.probationLetterData.issuedDate = formValues.issuedDate,
     this.probationLetterData.effectiveDate = formValues.effectiveDate,
     this.probationLetterData.Copys = formValues.Documenttype;
@@ -252,7 +317,7 @@ export class ProbationConfirmationLetterComponent {
 
   //to post probation letter email Details to the offerletter table
   probationConfirmationemail() {
-    this.releaseLoader= true;
+    this.releaseLoader = true;
     let pdata = {
       employeeId: this.probationLetterData.employeeId,
       documentUrl: this.Documenturlresult
@@ -260,16 +325,16 @@ export class ProbationConfirmationLetterComponent {
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
         this.openModalService.openSuccessModal("Probation Confirmation Letter Sent Successfully");
-        setTimeout(() =>{
+        setTimeout(() => {
           this.naviagte();
         }, 2000)
       },
       error: (err: any) => {
-        this.releaseLoader= false;
+        this.releaseLoader = false;
       },
-      complete: () =>{
-        this.enableBtn= false;
-        this.releaseLoader= false;
+      complete: () => {
+        this.enableBtn = false;
+        this.releaseLoader = false;
         this.probationConfirmationForm.reset();
       }
     })

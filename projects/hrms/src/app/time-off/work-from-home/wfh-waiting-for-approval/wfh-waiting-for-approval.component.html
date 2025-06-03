@@ -3,12 +3,12 @@
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <th>Worked Date</th>
-        <th>Availed</th>
-        <th>Reason</th>
-        <th>Applied Date</th>
-        <th>Status</th>
-        <th>Action(s)</th>
+        <th>{{'Worked Date' | translate}}</th>
+        <th>{{'Availed' | translate}}</th>
+        <th class="text-center">{{'Reason' | translate}}</th>
+        <th>{{'Applied Date' | translate }}</th>
+        <th>{{'Status' | translate }}</th>
+        <th class="text-center">{{"Action" | translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="waitingForApprovalWFHs!.length > 0; else noDataTemplate">
@@ -20,11 +20,11 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
+            <td class="text-center">
               <div>
-                <a *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
+                <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                  <app-info-icon />
+                </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
                 </ng-template>
@@ -36,20 +36,22 @@
             <td>{{ wfhRequest.requestedDate | dateformat }}</td>
             <td>{{ wfhRequest.status }}</td>
             <td class="text-center">
-              @if(isBeforeToday(wfhRequest.startTime)){
+              <!-- @if(isBeforeToday(wfhRequest.startTime)){ -->
+                 @if(permissionForLoggedInUser && isBeforeToday(wfhRequest.startTime)){
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-
                   <li (click)="onClick(wfhRequest,cancelModal)">
-                    <a class="dropdown-item">Cancel WFH</a>
+                    <a class="dropdown-item">{{'Cancel WFH' | translate}}</a>
                   </li>
                 </ul>
               </div>
+              }@else {
+                -
+                <!-- {{"NA"}} -->
               }
-
             </td>
           </tr>
         </ng-container>
@@ -77,9 +79,12 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason"
-          maxlength="250" placeholder="Please enter cancellation reason....." rows="3"></textarea>
+          maxlength="250" placeholder="Please enter cancellation reason....." rows="3"  (keypress)="formsValidation.restrictInitialSpace($event)"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
+        <div class="error-msg" *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">
+                          Reason for Cancellation must be at least 10 characters
+                        </div>
         <div class="error-msg"
           *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
@@ -91,7 +96,7 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();cancelForm.reset()">{{'Close'|
+        <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)" [disabled]="isLoading">{{'Cancel'|
           translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Submit' | translate }} } @else {
@@ -104,4 +109,19 @@
       </div>
     </form>
   </div>
+</ng-template>
+
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
+        </div>
+    </div>
 </ng-template>

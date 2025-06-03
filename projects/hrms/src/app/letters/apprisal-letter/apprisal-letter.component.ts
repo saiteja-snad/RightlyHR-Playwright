@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -17,11 +17,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent,NgbPopoverModule],
   templateUrl: './apprisal-letter.component.html',
-  styleUrl: './apprisal-letter.component.scss'
+  styleUrl: './apprisal-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ApprisalLetterComponent {
@@ -91,7 +93,6 @@ export class ApprisalLetterComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false }
   ];
-  
   jobErrorMessage!: string;
   spinnerLoader= false;
 
@@ -702,7 +703,6 @@ export class ApprisalLetterComponent {
         } else {
           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
         }
-
         this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
           next: (data: any) => {
             this.conformationPopup.openSuccessModal('Email Sent Successfully');

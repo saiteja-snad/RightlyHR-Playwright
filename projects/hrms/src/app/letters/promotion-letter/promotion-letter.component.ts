@@ -1,6 +1,6 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { AuthService } from '../../services/auth.service';
@@ -14,11 +14,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './promotion-letter.component.html',
-  styleUrl: './promotion-letter.component.scss'
+  styleUrl: './promotion-letter.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class PromotionLetterComponent {
   subscription!: Subscription;
@@ -48,7 +50,6 @@ export class PromotionLetterComponent {
   authoritydetails = [] as any;
   disablebuttonforemployeeid: boolean = true; //variable to disable the fields
   disablebuttonforauthority: boolean = true; //variable to disable the fields
-
   Status: any
   employeeForm!: FormGroup;
   employees = [{ name: 'John Doe', id: 1 }, { name: 'Jane Smith', id: 2 }];
@@ -59,12 +60,10 @@ export class PromotionLetterComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
-
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
   spinnerLoader= false;
   jobErrorMessage!: string;
 

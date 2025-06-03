@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
@@ -16,14 +16,13 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-trainee-offer-letter',
-  imports: [LettersTabComponent, CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule,
-    NgxCountriesDropdownModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule,
+    NgxCountriesDropdownModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './trainee-offer-letter.component.html',
-  styleUrl: './trainee-offer-letter.component.scss'
+  styleUrl: './trainee-offer-letter.component.scss',
 })
 
 export class TraineeOfferLetterComponent {
@@ -64,7 +63,7 @@ export class TraineeOfferLetterComponent {
   JobroleDetails = [] as IRole[];
   disablebuttonfordesignation: boolean = true; //variable to disable the fields
   isIssuedDateValid: boolean = true;
-  isExpiryDateValid: boolean = true;
+  isExpiryDateValid: boolean = false;
   isStartDateValid: boolean = true;
   isStartDateValidofexpected: boolean = true;
   isSearchFeatureDisabled: boolean = true;
@@ -223,9 +222,13 @@ export class TraineeOfferLetterComponent {
   calculateEndDate(value: any) {
     if (this.employeeForm.get('dateOfJoining')?.value && value) {
       const doj = this.employeeForm.get('dateOfJoining')?.value;
+      console.log(doj);
       const startDate = moment(doj); // already a moment object
       const months = parseInt(value, 10);
+      this.traineeEmpData.internshipperiod = months; // save or use as needed
+      console.log(months);
       const endDate = startDate.clone().add(months, 'months'); // purely using moment
+      console.log(endDate);
       this.traineeEmpData.endDate = endDate.format('YYYY-MM-DD'); // clean format
       // Now, calculate the duration in days
       const durationInDays = endDate.diff(startDate, 'days');
@@ -495,6 +498,7 @@ export class TraineeOfferLetterComponent {
             if (Empidvalue) {
               this.disableFields = false; // User clicked "OK," enable fields
               this.traineeEmpData = data.checkofferletter;
+              console.log(this.traineeEmpData);
               this.selectedCountryCode = this.traineeEmpData?.contactnumbercountryflag;
               this.loadingCode = false;
               this.traineeEmpData.note = this.traineeEmpData.note;
@@ -526,6 +530,7 @@ export class TraineeOfferLetterComponent {
                 const months = this.getMonthsBetween(this.traineeEmpData.dateOfJoining, this.traineeEmpData.offertrainingEndDate)
                 this.traineeEmpData.internshipperiod = months;
                 this.calculateEndDate(this.traineeEmpData.internshipperiod)
+                console.log(this.traineeEmpData.internshipperiod);
               }
               this.traineeEmpData.jobLocationName = data.checkofferletter.workLocation;
               this.traineeEmpData.jobSubLocationName = data.checkofferletter.subLocation;
@@ -1016,11 +1021,8 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidity(): void {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
-    if(offerIssuedDate){
-    this.expiryDatevalidate = moment(offerIssuedDate).format('YYYY-MM-DD');
-    }
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate >= offerIssuedDate) {
+      if (offerExpiryDate <= offerIssuedDate) {
         this.isExpiryDateValid = true;
       } else {
         this.isExpiryDateValid = false;

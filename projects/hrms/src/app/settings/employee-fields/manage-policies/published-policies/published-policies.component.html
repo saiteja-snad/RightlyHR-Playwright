@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">{{'Manage Policies' | translate}}</span></div>
-    <div class="custom-add-btn" *ngIf="rbac.allowedToAccess('Policies Pending Tab.create')">
-      <i class="bi bi-plus plus-icon me-1" (click)="nagvition()"></i>{{'Add New' | translate}}
+    <div class="custom-add-btn" *ngIf="rbac.allowedToAccess('Policies Pending Tab.create')" (click)="nagvition()">
+      <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
     </div>
   </div>
 
@@ -16,7 +16,7 @@
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
-          <th class="text-center">{{'Action(s)' | translate}}</th>
+          <th class="text-center">{{'Action' | translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -37,7 +37,7 @@
               <ul class="dropdown-menu custom-dropdown-menu">
                 @if(rbac.allowedToAccess('Policies Published Tab.create')){
                 <li>
-                  <a class="dropdown-item" (click)="clonePolicy1(item.id)">
+                  <a class="dropdown-item" (click)="clonePolicy1(item)">
                     <i class="bi bi-copy me-2"></i>Clone
                   </a>
                 </li>

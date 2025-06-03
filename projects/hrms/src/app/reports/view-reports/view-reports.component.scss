@@ -1,0 +1,41 @@
+.custom-component-right-content{
+    padding: 1rem;
+    height: calc(100vh - 8rem);
+}
+
+.custom-letter-tabs {
+    .tabs-list-content {
+        list-style: none !important;
+        padding-left: 0rem !important;
+        letter-spacing: 0%;
+    }
+
+    .list-item {
+        width: 100%;
+        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+        border: 1px solid #DCE3E9;
+        padding: 1rem;
+        border-radius: 0.625rem;
+        cursor: pointer;
+        margin-bottom: 1rem;
+
+        .label-name {
+            font-weight: 600;
+            font-size: var(--fontsize16);
+            line-height: 18px;
+        }
+
+        .icon {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .subject-text {
+            font-weight: 400;
+            font-size: var(--fontsize12);
+            line-height: 100%;
+            letter-spacing: 1%;
+            color: #9C9C9D;
+        }
+    }
+}

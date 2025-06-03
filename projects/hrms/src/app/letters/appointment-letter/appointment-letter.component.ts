@@ -13,13 +13,13 @@ import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })
@@ -47,17 +47,14 @@ export class AppointmentLetterComponent {
   selectedAuthority: IEmployeeSignatures | undefined;
   authorityFullName!: string;
   isLoading = false;
-  
   SelectDropDown = [
     { name: 'Current Address', code: 'C' },
     { name: 'Permanent Address', code: 'P' }
   ];
-
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
 
   constructor(
     private http: HttpService, 
@@ -73,7 +70,6 @@ export class AppointmentLetterComponent {
     this.getAllBranchLocations();
     this.getAssertType();
     this.getAuthorityDetails();
-
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
   }
@@ -93,7 +89,6 @@ export class AppointmentLetterComponent {
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
-
       addressLine1: [''],
       addressLine2: [''],
       city: [''],
@@ -101,7 +96,6 @@ export class AppointmentLetterComponent {
       country: [''],
       pinCode: ['']
     });
-
     this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
       this.JoiningDateValidation();
     });
@@ -249,7 +243,6 @@ export class AppointmentLetterComponent {
     const selectedAddress = this.employeeaddress.employeeAddresses.find(
       (address: IEmployeeAddress) => address.type.toLowerCase() === Value.value.toLowerCase()
     );
-  
     if (selectedAddress) {
       this.employeeForm.patchValue({
         addressLine1: selectedAddress.addressLine1,
@@ -265,7 +258,6 @@ export class AppointmentLetterComponent {
   JoiningDateValidation() {
     const appointmentDate = this.employeeForm.get('appointmentdate')?.value;
     const dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
-  
     if (appointmentDate && dateOfJoining) {
       const appDate = new Date(appointmentDate);
       const joinDate = new Date(dateOfJoining);

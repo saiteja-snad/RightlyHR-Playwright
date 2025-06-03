@@ -1,4 +1,4 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component} from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
@@ -79,7 +79,7 @@ export class RelievingLetterComponent {
     const relievingDate = new Date(this.employeeForm.get('dateofRelieving')?.value);
     const joiningDate = new Date(this.selectedEmployeeJobDetails?.effectiveDate);
     if (relievingDate <= joiningDate) {
-      this.jobErrorMessage = 'Bank loan date must be after the employee joining date.';
+      this.jobErrorMessage = 'Relieving issued date must be after the employee joining date.';
       this.employeeForm.get('jobValid')?.setValue(false);
     } else {
       this.jobErrorMessage = '';  
@@ -104,7 +104,7 @@ export class RelievingLetterComponent {
         this.employeeDetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };

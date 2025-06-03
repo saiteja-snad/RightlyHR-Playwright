@@ -49,6 +49,7 @@ export class EmployeOffBoardingComponent {
     this.getEmployeeId()
     
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    console.log(this.empinfo);
     this.dateOfJoining = this.formatDateToLocal(this.empinfo.dateOfJoining)
     console.log(this.dateOfJoining);
     
@@ -74,12 +75,15 @@ export class EmployeOffBoardingComponent {
     });
   }
   
+  offBoardingEmp!: any
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
       .getData(`Employeedata/${employeeId}`)
       .subscribe({
         next: (data: any) => {
+          console.log(data);
+          this.offBoardingEmp= data;
           this.joiningDate = this.formatDateToLocal(data.dateOfJoining);
           const lastWorking= this.formatDateToLocal(data.lastworkingday);
           if(data.substatus.toLowerCase() === 'cleared no due'){
@@ -158,7 +162,6 @@ export class EmployeOffBoardingComponent {
     })
   }
   postOffBoardingDetails() {
-    debugger
     if (this.offBoardingForm.valid) {
       const lastDateControl = this.offBoardingForm.get('lastdate');
       if (lastDateControl) {
@@ -170,13 +173,19 @@ export class EmployeOffBoardingComponent {
       this.empinfo.empstatus=formdata.status.statusname;
       this.empinfo.lastworkingday=formdata.lastdate;
       this.empinfo.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
+      this.empinfo.separationType = this.offBoardingEmp.separationType;
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empinfo).subscribe({
         next: (res: any) => {
           console.log(res);
           this.successstatus = 'Employee Inactived successfully';
           this.conformationPopup.openSuccessModal(this.successstatus)
-          this.router.navigate(['/admin/inactive-employees']);
-          this.InactiveEmail(this.empinfo.employeeId);
+          if (this.empinfo.empstatus === 'Inactive') {
+            this.router.navigate(['/admin/inactive-employees']);
+          }
+          else if (this.empinfo.empstatus === 'Trainee Inactive') {
+            this.router.navigate(['/admin/inactive-interns']);
+          }
+          //this.InactiveEmail(this.empinfo.employeeId);
         },
         error: (err: any) => {
           console.log(err);

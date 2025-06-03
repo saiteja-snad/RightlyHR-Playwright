@@ -3,13 +3,13 @@
         @if(!dataLoad){
         <table class="w-100">
             <thead>
-                <th>Requested Date</th>
-                <th>Regularization Date</th>
-                <th>Duration(In Hours)</th>
-                <th>Reason</th>
+                <th>{{'Requested Date' | translate}}</th>
+                <th>{{'Regularization Date' |translate}}</th>
+                <th>Duration(In<span class="text-lowercase"> hrs)</span></th>                
+                <th class="text-center">{{'Reason'|translate}}</th>
                 <!-- <th>Rejected Reason</th> -->
-                <th>Regularization Type</th>
-                <th>Status</th>
+                <th>{{'Regularization Type'|translate}}</th>
+                <th>{{'Status'|translate}}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
@@ -17,10 +17,10 @@
                         <td>{{permissionRequest.createdDate | dateformat}}</td>
                         <td>{{permissionRequest.requestedDate | dateformat}}</td>
                         <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    <i class="bi bi-info-circle-fill" ></i>
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{permissionRequest.notes}} </p>

@@ -23,7 +23,7 @@
           <th>{{'Request Type' | translate}}</th>
           <th>{{'Approver History' | translate}}</th>
           @if(rbac.allowedToAccess('For Role (Recall Requests).update') || rbac.allowedToAccess('For Role (Recall Requests).delete')) {
-          <th>Action<span class="text-lowercase">(s)</span></th>
+          <th>Action</th>
           }
       </thead>
       <tbody>
@@ -247,15 +247,15 @@
 
     <form autocomplete="off" [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
       <div class="custom-main-popup-content">
-        <label for="comments" class="form-label custom-label mb-2">Rejection reason
+        <label for="comments" class="form-label custom-label mb-2">Comments
           <span class="text-danger">*</span></label>
-        <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter rejection reason"
+        <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter comments"
           formControlName="notes" rows="3" maxlength="250"></textarea>
         <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
-            Rejection reason is required
+            Comments are required
           </ng-container>
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
             Maximum 250 characters allowed
@@ -267,8 +267,8 @@
       </div>
 
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();rejectSeparationForm.reset()">{{'Cancel' | translate}}</button>
+        <button type="button" class="custom-btn btn-secondary"
+          (click)="openModal(rejectconfirmationpopup)">{{'Cancel' | translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparationForm.invalid || isLoading">
           @if (!isLoading) {
           {{ 'Reject' | translate }}
@@ -289,13 +289,13 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Process this request?</p>
+      <p class="confirmation-text">Are you sure you want to process this request?</p>
     </div>
     <form autocomplete="off" [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea class="form-control" id="recallReason" placeholder="Please enter comments"
+        <textarea class="form-control custom-input" id="recallReason" placeholder="Please enter comments"
           formControlName="recallReason" rows="3" maxlength="250"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ recallAcceptFormForProcess.get('recallReason')?.value?.length || 0 }} / 250
@@ -303,7 +303,7 @@
         <div class="error-msg"
           *ngIf="recallAcceptFormForProcess.get('recallReason')?.touched && recallAcceptFormForProcess.get('recallReason')?.invalid">
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['required']">
-            Comments is required
+            Comments are required
           </ng-container>
           <ng-container *ngIf="recallAcceptFormForProcess.get('recallReason')?.errors?.['maxlength']">
             Maximum 250 characters allowed
@@ -314,8 +314,8 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();recallAcceptFormForProcess.reset()">{{'Cancel'| translate}}</button>
+        <button type="button" class="custom-btn btn-secondary"
+          (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary"
           [disabled]="recallAcceptFormForProcess.invalid || isLoading">
           @if (!isLoading) {
@@ -330,4 +330,33 @@
       </div>
     </form>
   </div>
+</ng-template>
+
+<!--confirmation Model-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="resetForm()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--reject confirmation Model-->
+<ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+        </div>
+    </div>
 </ng-template>

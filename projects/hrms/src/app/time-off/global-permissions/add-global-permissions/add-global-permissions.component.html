@@ -3,9 +3,6 @@
     <div>
       <p class="popup-heading mb-0">{{'Add Global Permission'| translate}}</p>
     </div>
-    <div>
-      <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-    </div>
   </div>
 
   <div class="custom-main-popup-content">
@@ -27,13 +24,13 @@
         </div>
 
         <!-- Multi-select Dropdown for Options -->
-        <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sublocation'">
+        <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sub Location'">
           <div class="mb-3">
             <label for="location" class="form-label custom-label">Location <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
-                [filter]="true" filterBy="jobLocationName" [showClear]="true" placeholder="Select Location"
-                formControlName="location" (onChange)="getSubLocationByid();" class="custom-select w-100">
+                [filter]="true" filterBy="jobLocationName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Location"
+                formControlName="location" (onChange)="getSubLocationByid();"[selectedItemsLabel]="`${requestForm.get('location')?.value?.length} Locations selected`" class="custom-select w-100">
               </p-multiSelect>
             </div>
             <div class="error-msg" *ngIf="requestForm.get('location')?.touched && requestForm.get('location')?.invalid">
@@ -42,12 +39,12 @@
           </div>
 
           <div class="mb-3">
-            <label for="sublocation" class="form-label custom-label">Sub location <span
+            <label for="sublocation" class="form-label custom-label">Sub Location <span
                 class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                [filter]="true" filterBy="name" [showClear]="true" placeholder="Select Sublocation"
-                formControlName="sublocation" (onChange)="getEmployeesLocationwise()" class="custom-select w-100">
+                [filter]="true" filterBy="name" [showClear]="true" [resetFilterOnHide]="true" placeholder="Select Sub Location"
+                formControlName="sublocation" (onChange)="getEmployeesLocationwise()" class="custom-select w-100" [selectedItemsLabel]="`${requestForm.get('sublocation')?.value?.length} Sublocations selected`">
               </p-multiSelect>
             </div>
             <div class="error-msg"
@@ -59,10 +56,16 @@
           <div class="mb-3">
             <label for="employees" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
+              <!-- <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
+                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees" [resetFilterOnHide]="true" 
+                formControlName="selectedOptions" class="custom-select w-100" [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`">
+              </p-multiSelect> -->
               <p-multiSelect [options]="locationWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
-                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees"
-                formControlName="selectedOptions" class="custom-select w-100">
-              </p-multiSelect>
+                formControlName="selectedOptions" class="custom-select w-100" placeholder="Select Employees" [filter]="true"
+                [resetFilterOnHide]="true" [showClear]="true" (onPanelHide)="onEmployeeDropdownTouched()"
+                (onClear)="onEmployeeDropdownTouched()"
+                [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`" />
+
             </div>
             <div class="error-msg"
               *ngIf="requestForm.get('selectedOptions')?.touched && requestForm.get('selectedOptions')?.invalid">
@@ -76,7 +79,8 @@
             <label for="department" class="form-label custom-label">Department <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="departmentDetails" optionValue="sno" optionLabel="departmentName"
-                [filter]="true" filterBy="departmentName" [showClear]="true" placeholder="Select Department"
+                [filter]="true" filterBy="departmentName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Department"
+                [selectedItemsLabel]="`${requestForm.get('department')?.value?.length} Departments selected`"
                 formControlName="department" (onChange)="getTeamData()" class="custom-select w-100">
               </p-multiSelect>
             </div>
@@ -90,7 +94,8 @@
             <label for="team" class="form-label custom-label">Team <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="teamDetails" optionValue="subdepartmentId" optionLabel="subdepartmentName"
-                [filter]="true" filterBy="subdepartmentName" [showClear]="true" placeholder="Select team"
+                [filter]="true" filterBy="subdepartmentName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select team"
+                [selectedItemsLabel]="`${requestForm.get('teamSelectedOptions')?.value?.length} Teams selected`"
                 formControlName="teamSelectedOptions" (onChange)="getEmployeesTeamwise()" class="custom-select w-100">
               </p-multiSelect>
             </div>
@@ -104,8 +109,8 @@
             <label for="teamemployee" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="teamWiseEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
-                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees"
-                formControlName="teamEmpselectedOptions" (onChange)="getTeamData()" class="custom-select w-100">
+                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees" [resetFilterOnHide]="true"
+                [selectedItemsLabel]="`${requestForm.get('teamEmpselectedOptions')?.value?.length} Employees selected`"formControlName="teamEmpselectedOptions"  class="custom-select w-100">
               </p-multiSelect>
             </div>
             <div class="error-msg"
@@ -120,8 +125,8 @@
             <label for="employees" class="form-label custom-label">Employees <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="getAllEmployeesDetails" optionValue="employeeId" optionLabel="fullName"
-                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees"
-                formControlName="selectedOptions" class="custom-select w-100">
+                [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Select Employees"  [selectedItemsLabel]="`${requestForm.get('selectedOptions')?.value?.length} Employees selected`"
+                formControlName="selectedOptions" class="custom-select w-100" [resetFilterOnHide]="true">
               </p-multiSelect>
             </div>
             <div class="error-msg"

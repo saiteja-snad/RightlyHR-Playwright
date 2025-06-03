@@ -14,25 +14,25 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './bank-loan.model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class BankLoanLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   bankLoanTemplate: any | string | ArrayBuffer | null = null; 
   bankLoanFile!: File;
   isdateofbankloan: boolean = true;
   employeeForm!: FormGroup;
-
   employeeDetails : IEmployeeDetails[]=[];
   selectedEmployeeJobDetails!: IEmployeeJobDetails;
   signatureAuthorityDetails: IEmployeeSignatures[]=[];
-
   selectedEmployee!: IEmployeeDetails;
   selectedAuthority!: IEmployeeSignatures;
   employeeFullname!: string;
@@ -43,7 +43,6 @@ export class BankLoanLetterComponent {
   spinnerLoader= false;
   authorityFullName!: string;
   dateValidationErrorMessage: string = ''; 
-
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false }

@@ -10,17 +10,16 @@ import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { IFamilyDetails } from '../../../Interfaces/reports.model';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
-import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component';
+
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-family-members-data',
@@ -30,22 +29,20 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     CommonModule,
     FormsModule,
     NoDataFoundComponent,
-    StandardReportTabsComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    ModuleInformationComponent
-],
+  ],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',
 })
 export class FamilyMembersDataComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   empStatusList: string[] = ['All Employees', 'Active', 'Inactive'];
   reportForm!: FormGroup;
   dataload = false;
-  spinnerLoader1= false;
-  spinnerLoader2= false;
-  disableBtn= false;
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -61,12 +58,10 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     this.initializeForm();
     // this.getFamilyDetails();
 
-    this.reportForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.reportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     })
 
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -75,28 +70,11 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     });
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
 
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/standard-reports/family-data': MODULE_INFOS.STANDARD_REPORTS_FAMILY_MEMBERS_DATA_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
-  
+
   getFamilyDetails(status?: string) {
     this.dataload = true;
-    this.spinnerLoader1= true;
+    this.spinnerLoader1 = true;
 
     const queryParams = new URLSearchParams();
     const endpoint = status
@@ -110,15 +88,15 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
           this.familydata = data as IFamilyDetails[];
         },
         error: (err: any) => {
-          this.spinnerLoader1= false;
+          this.spinnerLoader1 = false;
           this.dataload = false;
-          this.disableBtn= true;
+          this.disableBtn = true;
           this.familydata = [];
         },
-        complete: ()=>{
-          this.spinnerLoader1= false;
+        complete: () => {
+          this.spinnerLoader1 = false;
           this.dataload = false;
-          this.disableBtn= false;
+          this.disableBtn = false;
         }
       });
   }
@@ -131,7 +109,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   }
 
   exportAsExcelFile(): void {
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {
       employeeId: 'EMPLOYEE ID',
@@ -327,7 +305,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       SheetNames: ['data'],
     };
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
     this.modal.openSuccessModal('Family Members data downloaded successfully');
   }
 
@@ -340,7 +318,9 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       fileName,
     };
   }
-
+  navigation() {
+    this.router.navigate(['/reports']);
+  }
   getColumnWidth(data: any[], columnName: string): number {
     // Find the maximum width of data in the column
     const maxWidth = data.reduce((max: number, record: any) => {

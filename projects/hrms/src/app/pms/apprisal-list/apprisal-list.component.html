@@ -1,11 +1,19 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">{{'Review Cycle Employee List' | translate}}</p>
+    <div class="component-header-content">
+      
+        <div class="heading-content">
+            <div class="commpoment-name ">PMS <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Review Cycle Employee List' | translate}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+        
+
 
         <!--Buttons Content-->
-        <div class="d-flex gap-3 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap">
             @if(rbac.allowedToAccess('Assign Review Template.view')){
             <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0"
                 (click)="openModal(reviewtemplate)">{{'Assign Review Template' | translate}}</button>
@@ -42,10 +50,10 @@
         <!--Buttons Content ends-->
     </div>
 
-     <!--Module Information-->
-     <div>
+      <!--Module Information-->
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <!-- Drop downs -->
     <form autocomplete="off" [formGroup]="dependentdropdowns">
@@ -180,7 +188,7 @@
                         rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view') || rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view') || rbac.allowedToAccess('Re-Generate Appraisal Letter.view') || 
                         rbac.allowedToAccess('Re-Send Appraisal Letter.view') || rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view') || rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view') || 
                         rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view') || rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')){
-                        <th class="text-center">{{'Action(S)' | translate}}</th>
+                        <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">(S)</span></th>
                         }
                     </tr>
                 </thead>
@@ -277,7 +285,7 @@
                                         @if(rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view')){
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && employee.status ==='Completed'"
-                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Completed')">
+                                            (click)="openModal(sigleletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Appraisal Letter' |
                                                 translate}}</a>
                                         </li>
@@ -291,7 +299,7 @@
                                         @if(rbac.allowedToAccess('Re-Generate Appraisal Letter.view')){
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Generated' 
                                             || employee.status ==='Appraisal Letter Sent')"
-                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
+                                            (click)="openModal(sigleletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' |
                                                 translate}}</a>
                                         </li>
@@ -307,7 +315,7 @@
                                         <!-- @if(rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view')){ -->
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'|| employee.status ==='Promotion Letter Sent')"
-                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
+                                            (click)="openModal(sigleletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' |
                                                 translate}}</a>
                                         </li>
@@ -324,7 +332,7 @@
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'"
                                             (change)="onCheckboxChange($event, employee.id)"
-                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Completed')">
+                                            (click)="openModal(singlepromationletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Promotion Letter' |
                                                 translate}}</a>
                                         </li>
@@ -332,7 +340,7 @@
                                         @if(rbac.allowedToAccess('Re-Generate Promotion Letter.view')){
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
-                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
+                                            (click)="openModal(singlepromationletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' |
                                                 translate}}</a>
                                         </li>
@@ -354,7 +362,7 @@
                                         <!-- @if(rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view')){ -->
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Generated'||employee.status ==='Appraisal Letter Sent')"
-                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
+                                            (click)="openModal(singlepromationletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' |
                                                 translate}}</a>
                                         </li>
@@ -459,7 +467,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                        (click)="openConfirmation()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="reviewtemplatedropdowns.invalid || spinnerLoader">
                         <ng-container *ngIf="spinnerLoader; else addText">
@@ -513,7 +521,7 @@
                     <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}<span
                             class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
-                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
+                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false" [min]="selectedEmployee?.dateofjoining | date:'yyyy-MM-dd'">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
                         Effective From Date is required
@@ -542,7 +550,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                        (click)="openConfirmation()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
@@ -584,7 +592,7 @@
                     <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
                         <span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
-                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
+                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false" [min]="selectedEmployee?.dateofjoining | date:'yyyy-MM-dd'">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
                         Effective From Date is required
@@ -613,7 +621,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                        (click)="openConfirmation()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
@@ -709,7 +717,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                        (click)="openConfirmation()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addEmployeeForm.invalid">{{'Submit'
                         | translate}}</button>
                 </div>
@@ -796,7 +804,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                        (click)="openConfirmation()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
@@ -852,7 +860,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmation()">{{'Close'|translate}}</button>
+                        (click)="openConfirmation()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
@@ -876,7 +884,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure want to cancel?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

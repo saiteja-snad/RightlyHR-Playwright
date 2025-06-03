@@ -19,7 +19,7 @@
                     <th>{{'Status' |translate}}</th>
                     <th  class="text-center">{{'Employee Emails' |translate}}</th>
                     @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
-                    <th>Action(S)</th>
+                    <th class="text-center">Action</th>
                     }
             </thead>
             <tbody>
@@ -87,7 +87,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to approve this request?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="AcceptForm" (ngSubmit)="handleAccept()">
             <div class="custom-main-popup-content">
@@ -109,7 +109,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();AcceptForm.reset()">{{'Cancel'| translate}}</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="openModals(confirmationpopup)">{{'Cancel'| translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading"> @if
                     (!isLoading) { {{ 'Approve' | translate }} } @else {
                     <div class="button-loader-content">
@@ -147,8 +147,8 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary"
-                    (click)="modal.dismiss();rejectForm.reset()">{{'Cancel' | translate}}</button>
+                <button type="button" class="custom-btn btn-secondary"
+                     (click)="openModals(rejectconfirmationpopup)">{{'Cancel' | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || isLoading">@if
                     (!isLoading) {
                     {{ 'Reject' | translate }}
@@ -161,5 +161,34 @@
                 </button>
             </div>
         </form>
+    </div>
+</ng-template>
+
+<!--confirmation Model-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="resetForm()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--reject confirmation Model-->
+<ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+        </div>
     </div>
 </ng-template>

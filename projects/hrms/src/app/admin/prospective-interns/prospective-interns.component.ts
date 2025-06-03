@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveInternComponent } from './add-prospective-intern/add-prospective-intern.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -16,12 +16,13 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-prospective-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, NgbPopoverModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })
 
 export class ProspectiveInternsComponent implements OnInit, OnDestroy {
+  moduleinfo: string = '';
   subscription!: Subscription;
   searchValue: any;
   Trainee = [] as any;
@@ -38,8 +39,8 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   filteredTabs: any[] = [];
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, 
-    private modalService: NgbModal, public rbac: RbacService,private accessNav: AccessNavigationService) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService,
+    private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -70,10 +71,6 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
     });
   }
 
-  openAddProspective() {
-    this.modalService.open(AddProspectiveInternComponent, { centered: true, backdrop: 'static', size: 'lg' });
-  }
-
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }
@@ -81,13 +78,14 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);
-     this.goToAccessibleRoute('/personalinfo');
+    this.goToAccessibleRoute('/personalinfo');
   }
- goToAccessibleRoute(actualRoute: string) {
+
+  goToAccessibleRoute(actualRoute: string) {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }
@@ -95,6 +93,7 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
+
   filterByDuration(duration: string) {
     this.serveDetails = this.serveDetails.filter((item: any) => item.servingPeriodType === 'Trainee Duration Period');
   }

@@ -4,13 +4,12 @@ import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
-import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import * as XLSX from "xlsx";
@@ -19,13 +18,12 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-employee-master-data',
-  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent,
-    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe,
+    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss'
 })
@@ -93,9 +91,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
 
     this.masterDataForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
-    })
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
+    });
   }
 
   initializeForm() {
@@ -104,24 +100,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       empStatus: [''],
     });
   }
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
 
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/standard-reports/employee-data': MODULE_INFOS.STANDARD_REPORTS_EMPLOYEE_MASTER_DATA_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
+
+
 
   //method to get All the reports
   // getStandardReports() {
@@ -193,20 +174,62 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.createReportLog("Employee Master Data")
   }
 
-  exportTableToExcel(tableId: string, name?: string) {
+ 
+
+ exportTableToExcel(tableId: string, name?: string) {
     let { sheetName, fileName } = this.getFileName(name);
     let targetTableElm = document.getElementById(tableId);
-    let wb = XLSX.utils.table_to_book(targetTableElm, <XLSX.Table2SheetOpts>{
-      sheet: sheetName
+    
+    // First convert the table to a worksheet
+    let ws = XLSX.utils.table_to_sheet(targetTableElm, <XLSX.Table2SheetOpts>{
+      sheet: sheetName,
     });
-
+    
+    // Convert headers to uppercase and ensure they are properly formatted
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+    
+    // Format header row (first row) with bold font
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
+      if (ws[cellAddress]) {
+        // Convert to uppercase
+        ws[cellAddress].v = ws[cellAddress].v.toString().toUpperCase();
+        ws[cellAddress].w = ws[cellAddress].v;
+        
+        // Add bold style to header
+        ws[cellAddress].s = { font: { bold: true } };
+      }
+    }
+    
+    // Create a new workbook with the formatted worksheet
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    
+    // Write the file
     XLSX.writeFile(wb, `${fileName}.xlsx`);
+    
+    // Also return the array buffer for upload
     let arrayBuffer = XLSX.write(wb, {
       bookType: 'xlsx',
       type: 'array',
     });
+    return { arrayBuffer, fileName };
+}
 
-    return { arrayBuffer, fileName }
+
+    // Function to convert headers to uppercase
+  private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
+    const range = XLSX.utils.decode_range(ws['!ref']!);
+
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
+      let cell = ws[cellAddress];
+
+      if (cell && cell.v) {
+        cell.v = cell.v.toString().toUpperCase(); 
+        cell.w = cell.v; 
+      }
+    }
   }
 
   getFileName(name: string | undefined) {
@@ -218,6 +241,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       fileName
     };
   };
+  navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   uploadReports(reportsData: any, fileName: string) {
     const reportFile = new File(
@@ -282,6 +308,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => { 
         this.modal.openSuccessModal('Employee Master Data downlaoded successfully');
+        this.spinnerLoader2  =  false;
       },
       error: (err) => {
         this.spinnerLoader2= false;

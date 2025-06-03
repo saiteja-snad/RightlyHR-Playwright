@@ -9,19 +9,19 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { IActiveEmployee } from './active-employees.model';
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
+
 @Component({
   selector: 'app-role-assignee',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent,
+     NoDataFoundComponent, TranslateModule, NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -149,10 +149,11 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     };
     this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
       next: (data: any) => {
-        this.modal.openSuccessModal('Assignee Added Successfully');
+        this.modal.openSuccessModal('Assignee added successfully');
       },
-      error: (err) => {
-        this.modal.openErrorModal('Assignee Assignment Failed');
+      error: (err: any) => {
+        const msg = err.error.Message? err.error.Message : 'Assignee Assignment Failed'
+        this.modal.openErrorModal(msg);
       },
       complete: () => {
         this.createAssigneeForm.reset();
@@ -174,7 +175,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     this.http.postdata('FusionUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Assignee Removed Successfully');
+        this.modal.openSuccessModal('Assignee removed successfully');
       },
       error: (err: any) => {
         this.modalService.dismissAll();

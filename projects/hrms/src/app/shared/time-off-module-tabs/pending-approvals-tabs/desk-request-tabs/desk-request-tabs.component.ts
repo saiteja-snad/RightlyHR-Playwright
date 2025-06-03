@@ -8,6 +8,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SignalsService } from '../../../../services/signals.service';
 @Component({
   selector: 'app-desk-request-tabs',
   imports: [TabsModule, RouterModule, CommonModule],
@@ -40,13 +41,23 @@ export class DeskRequestTabsComponent {
     this.getAllDeskPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService) {
+  constructor(public readonly router: Router,private signalService:SignalsService, private http: HttpService,private rbac: RbacService) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().separation) {
+      if (this.signalService.deskForRoleTriggerSignal() || this.signalService.deskForYouTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllDeskPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, separation: false }));
+      
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.deskForRoleTriggerSignal()) {
+          this.signalService.deskForRoleTriggerSignal.set(false);
+        }
+        
+        if (this.signalService.deskForYouTriggerSignal()) {
+          this.signalService.deskForYouTriggerSignal.set(false);
+        }
       }
-    });
+      
+    });    
   }
 
   getAllDeskPendingApprovalsCount() {

@@ -1,45 +1,34 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Trainee Offer Letter'|translate}}
-            </p>
-        </div>
-    </div>
-
-    <!--tabs content-->
-    <div class="mb-3">
-        <app-letters-tab />
-    </div>
-
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
-            <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
+            <form autocomplete="off" [formGroup]="employeeForm"
+                (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Select Employee'|translate}}<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" placeholder="Select employee" placeholder="Please select employee"
-                            (onChange)="onClickValidation($event)" formControlName="fusionEmpId" resetFilterOnHide="true"
-                            class="custom-select w-100">
+                        <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
+                            [filter]="true" filterBy="fullName" placeholder="Select employee"
+                            placeholder="Please select employee" (onChange)="onClickValidation($event)"
+                            formControlName="fusionEmpId" resetFilterOnHide="true" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         <div class="error-msg">Employee is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="email" class="form-control custom-input" formControlName="personalEmail"
                         placeholder="Personal email ID" />
-                    <div *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched">
+                    <div
+                        *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched">
                         <div class="error-msg">Personal Email ID is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Salutation'|translate}}<span
                             class="error-msg">*</span></label>
@@ -51,7 +40,7 @@
                         <div class="error-msg">Salutation is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'First Name'|translate}}<span
                             class="error-msg">*</span></label>
@@ -66,7 +55,7 @@
                         </span>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Middle Name'|translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="middleName"
@@ -75,7 +64,7 @@
                         <div class="error-msg">Middle Name is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Last Name'|translate}}<span
                             class="error-msg">*</span></label>
@@ -90,9 +79,10 @@
                         </span>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Gender'|translate}}<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Gender'|translate}}<span
+                            class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="genderDetails" optionLabel="genderName" placeholder="Gender"
                             formControlName="gender" class="form-select custom-select"></p-select>
@@ -101,7 +91,7 @@
                         <div class="error-msg">Gender is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Select Address'|translate}}
                         <span class="error-msg">*</span></label>
@@ -111,11 +101,12 @@
                             (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                    <div
+                        *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
                         <div class="error-msg">Address is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span
                             class="error-msg">*</span></label>
@@ -125,7 +116,7 @@
                         <div class="error-msg">Address Line 1 is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Address Line 2'|translate}}</label>
                     <input type="text" class="form-control custom-input" formControlName="addressLine2"
@@ -134,27 +125,28 @@
                         <div class="error-msg">Address Line 2 is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'City'|translate}}<span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="city"
-                        placeholder="City" />
+                    <label class="form-label custom-label mb-2">{{'City'|translate}}<span
+                            class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="city" placeholder="City" />
                     <div *ngIf="employeeForm.get('city')?.invalid && employeeForm.get('city')?.touched">
                         <div class="error-msg">City is required</div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'State'|translate}}<span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="state"
-                        placeholder="State" />
+                    <label class="form-label custom-label mb-2">{{'State'|translate}}<span
+                            class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="state" placeholder="State" />
                     <div *ngIf="employeeForm.get('state')?.invalid && employeeForm.get('state')?.touched">
                         <div class="error-msg">State is required</div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Country'|translate}}<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Country'|translate}}<span
+                            class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="country"
                         placeholder="Country" />
                     <div *ngIf="employeeForm.get('country')?.invalid && employeeForm.get('country')?.touched">
@@ -163,7 +155,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span
+                            class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="pinCode"
                         placeholder="Pincode" />
                     <div *ngIf="employeeForm.get('pincode')?.invalid && employeeForm.get('pincode')?.touched">
@@ -176,26 +169,29 @@
                             class="error-msg">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                         @if (!loadingCode) {
-                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [placeholderText]="countryCode"
-                            [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
-                            class="country-input"></lib-country-list>
+                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true"
+                            [placeholderText]="countryCode" [selectedCountryConfig]="selectedCountryConfig"
+                            [countryListConfig]="countryListConfig" class="country-input"></lib-country-list>
                         }
                         @else{
-                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true" [placeholderText]="countryCode"
-                            [selectedCountryConfig]="selectedCountryConfig" [countryListConfig]="countryListConfig"
-                            class="country-input"></lib-country-list>
+                        <lib-country-list [selectedCountryCode]="selectedCountryCode" [class.disabled]="true"
+                            [placeholderText]="countryCode" [selectedCountryConfig]="selectedCountryConfig"
+                            [countryListConfig]="countryListConfig" class="country-input"></lib-country-list>
                         }
                         <input type="text" class="form-control custom-input" placeholder="Mobile number"
                             formControlName="phoneNumber" />
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span
+                            class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <input placeholder="Designation" formControlName="jobRoleDetails" class="form-control custom-input">
-                        <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
-                          <div class="error-msg">Designation is required</div>
+                        <input placeholder="Designation" formControlName="jobRoleDetails"
+                            class="form-control custom-input">
+                        <div
+                            *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
+                            <div class="error-msg">Designation is required</div>
                         </div>
                     </div>
                 </div>
@@ -214,8 +210,8 @@
                     <label class="form-label custom-label mb-2">{{'Work Location'|translate}}<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true" filterBy="name"
-                            [showClear]="true" placeholder="Work location" formControlName="locationId"
+                        <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true"
+                            filterBy="name" [showClear]="true" placeholder="Work location" formControlName="locationId"
                             class="custom-select w-100">
                         </p-select>
                     </div>
@@ -242,7 +238,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="offerSentDate"  [min]="issuedDatevalidate" (change)="updateEndDateValidityupdate();updateEndDateValidityForExpectedStartDate()"
+                    <input type="date" class="form-control custom-input" formControlName="offerSentDate"  [min]="issuedDatevalidate" (change)="updateEndDateValidityupdate();updateEndDateValidityForExpectedStartDate();updateEndDateValidity()"
                         placeholder="Please enter offer issued date" onkeydown="return false;" (change)="isDataPopulated()" />
                     <div *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                         <div class="error-msg">Offer Issued Date is required</div>
@@ -253,9 +249,12 @@
                     <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                        placeholder="Please enter expected start date"  [min]="startDatevalidate" onkeydown="return false;" (change)="onDateOfJoiningChange()"
-                        (change)="updateEndDateValidityupdate()" (change)="updateEndDateValidityForExpectedStartDate()" />
-                    <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
+                        placeholder="Please enter expected start date" [min]="startDatevalidate"
+                        onkeydown="return false;" (change)="onDateOfJoiningChange()"
+                        (change)="updateEndDateValidityupdate()"
+                        (change)="updateEndDateValidityForExpectedStartDate()" />
+                    <div
+                        *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                         <div class="error-msg">Expected Start Date is required</div>
                     </div>
                     <div *ngIf="!isStartDateValid" class="error-msg">
@@ -267,13 +266,13 @@
                     <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                        placeholder="Please enter offer expiry date" [min]="expiryDatevalidate"  (change)="updateEndDateValidity()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
+                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidity()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
-                    <div *ngIf="!isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
+                    <div *ngIf="isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
                         Offer Issued Date</div>
-                        <!-- <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after the
+                    <!-- <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after the
                             Expected Start Date</div> -->
                 </div>
 
@@ -282,12 +281,14 @@
                         {{'Training Period(Months)' | translate}}<span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="internshipPeriod" optionValue="value" optionLabel="name" placeholder="Please select training period"
-                            formControlName="internshipperiod" class="form-select custom-select" resetFilterOnHide="true"
+                        <p-select [options]="internshipPeriod" optionValue="value" optionLabel="name"
+                            placeholder="Please select training period" formControlName="internshipperiod"
+                            class="form-select custom-select" resetFilterOnHide="true"
                             (onChange)="calculateEndDate(employeeForm.get('internshipperiod')?.value)">
                         </p-select>
                     </div>
-                    <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
+                    <div
+                        *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
                         <div class="error-msg">Training Period is required</div>
                     </div>
                 </div>
@@ -296,8 +297,9 @@
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            placeholder="Please select reporting manager" formControlName="reportingmanagerId" class="custom-select w-100"
+                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName"
+                            [filter]="true" filterBy="fullName" placeholder="Please select reporting manager"
+                            formControlName="reportingmanagerId" class="custom-select w-100"
                             (ngModelChange)="selectReportingname($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
@@ -319,11 +321,12 @@
                         <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
-                    <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()" 
-                    placeholder="Please enter note" maxlength="250"></textarea>
+                    <textarea class="form-control custom-input" formControlName="note"
+                        (ngModelChange)="pathValuesFuction()" placeholder="Please enter note"
+                        maxlength="250"></textarea>
                     <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                         <div class="error-msg">Note is required</div>
@@ -334,32 +337,38 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
                         {{'Signature Authority Name'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            placeholder="Please select signature authority" (onChange)="onclickDesignations($event)"
-                            class="form-select custom-select" formControlName="authorityid" resetFilterOnHide="true">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}</ng-template>
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Please select signature authority"
+                            (onChange)="onclickDesignations($event)" class="form-select custom-select"
+                            formControlName="authorityid" resetFilterOnHide="true">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
+                                emp.lastName }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{
+                                emp?.lastName }}</ng-template>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
                     </div>
                 </div>
-        
+
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || loading">
                         @if(loading){
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
                             <span>{{'Loading...'}}</span>
                         </div>
                         }@else { {{buttonValue}} }
                     </button>
                     <button type="button" class="custom-btn btn-primary"
-                        [disabled]="employeeForm.invalid || Approvalloader || disableFieldsForApproval" (click)="emailSendingforApprover()">
+                        [disabled]="employeeForm.invalid || Approvalloader || disableFieldsForApproval || loading"
+                        (click)="emailSendingforApprover()">
                         @if(Approvalloader){
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
                             <span>{{'Loading...'}}</span>
                         </div>
                         }@else { {{'Request For Approval'|translate}} }
@@ -383,62 +392,81 @@
                             <div class="letter-header text-center mb-4">{{'Trainee Offer Letter'|translate}}</div>
                             <div class="d-flex justify-content-between mb-3">
                                 <ul class="list-style-none ps-0">
-                                    <li *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
+                                    <li
+                                        *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
                                         {{'Name'|translate}}:</li>
                                     <ng-template #fullname>
-                                        <li><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}},</b></li>
+                                        <li><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
+                                                {{traineeEmpData.lastName}},</b></li>
                                     </ng-template>
                                     <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
                                         <li><b>{{traineeEmpData.addressLine1}},</b></li>
                                         @if(traineeEmpData.addressLine2){
-                                            <li><b>{{traineeEmpData.addressLine2}},</b></li>
+                                        <li><b>{{traineeEmpData.addressLine2}},</b></li>
                                         }
                                         <li><b>{{traineeEmpData.city}}, {{traineeEmpData.state}},</b></li>
                                         <li><b>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</b></li>
                                     </ng-template>
                                 </ul>
-                                <div class="letter-sub-header">Date: {{traineeEmpData.offerIssuedDate | dateformat}}</div>
+                                <div class="letter-sub-header">Date: {{traineeEmpData.offerIssuedDate | dateformat}}
+                                </div>
                             </div>
-                            <div class="letter-sub-header mb-3">{{'Dear'|translate}} {{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
+                            <div class="letter-sub-header mb-3">{{'Dear'|translate}} {{traineeEmpData.firstName}}
+                                {{traineeEmpData.middleName}}
                                 {{traineeEmpData.lastName}},</div>
                             <div>
                                 <p class="mb-2">The details of your internship offer are as follows:</p>
                                 <ol class="liststylenumber">
                                     <li class="mb-2">
                                         <b>{{'Start Date and Duration' | translate}}: </b>Your internship
-                                        will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> and is
-                                        expected to complete on <!-- <u> <b>{{traineeEmpData.endDate | dateformat}}</b></u> -->
-                                        lasting for a period of <b>{{traineeEmpData.endDate | dateformat}} Months</b>.
+                                        will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> and
+                                        is
+                                        expected to complete on <u> <b>{{traineeEmpData.endDate | dateformat}}</b></u>
+                                        lasting for a period of <b>{{traineeEmpData.internshipperiod | number:'1.0-0'}}
+                                            Months</b>.
                                     </li>
                                     <li class="mb-2"><b>{{'Working Hours and Location'|translate}}:
-                                        </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at RightlyHR, Floor#16, Vijay Krishna Towers, 
-                                        Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be required to work additional hours or remotely, depending on the nature of the projects 
+                                        </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to
+                                        Friday), at our office located at RightlyHR, Floor#16, Vijay Krishna Towers,
+                                        Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be
+                                        required to work additional hours or remotely, depending on the nature of the
+                                        projects
                                         and business requirements.
                                     </li>
                                     <li class="mb-2"><b>{{'Reporting Manager'|translate}}: </b>You will be
                                         reporting to <u>{{ traineeEmpData.reportingmanagerName }}</u>
                                     </li>
                                     <li class="mb-2">
-                                        <b>{{'Stipend/Salary and Benefits'|translate}}: </b>During the internship period, you’re eligible to receive Rs.10,000/- per month as a stipend/salary.
-                                         After successful completion of the internship period, you will be appointed as an employee of RightlyHR with a CTC of <b>{{traineeEmpData.amount}}</b> per annum.
+                                        <b>{{'Stipend/Salary and Benefits'|translate}}: </b>During the internship
+                                        period, you’re eligible to receive Rs.10,000/- per month as a stipend/salary.
+                                        After successful completion of the internship period, you will be appointed as
+                                        an employee of RightlyHR with a CTC of <b>{{traineeEmpData.amount}}</b> per
+                                        annum.
                                     </li>
                                     <li class="mb-2">
-                                        <b>{{'Responsibilities'|translate}}: </b>Your primary responsibilities will be explained by your reporting
-                                        manager during the onboarding process. We expect you to conduct yourself professionally and adhere to company policies and procedures at all times.
+                                        <b>{{'Responsibilities'|translate}}: </b>Your primary responsibilities will be
+                                        explained by your reporting
+                                        manager during the onboarding process. We expect you to conduct yourself
+                                        professionally and adhere to company policies and procedures at all times.
                                     </li>
                                     <li class="mb-2">
-                                        <b>{{'Confidentiality and Non-Disclosure'|translate}}: </b>As an intern, you will have
-                                        access to sensitive and proprietary information. You are required to sign and adhere to the
+                                        <b>{{'Confidentiality and Non-Disclosure'|translate}}: </b>As an intern, you
+                                        will have
+                                        access to sensitive and proprietary information. You are required to sign and
+                                        adhere to the
                                         Confidentiality and Non-Disclosure Agreement, which will be provided separately.
                                     </li>
                                     <li class="mb-2">
-                                        <b>{{'Evaluation and Feedback'|translate}}: </b>Your performance will be evaluated periodically.
-                                        Constructive feedback will be provided to help you grow and make the most out of this opportunity.
+                                        <b>{{'Evaluation and Feedback'|translate}}: </b>Your performance will be
+                                        evaluated periodically.
+                                        Constructive feedback will be provided to help you grow and make the most out of
+                                        this opportunity.
                                     </li>
                                     <li class="mb-2">
                                         <b>{{'Termination'|translate}}: </b>The company may terminate this internship by
-                                        providing 15 days written notice or the company is having a right to terminate this internship immediately, 
+                                        providing 15 days written notice or the company is having a right to terminate
+                                        this internship immediately,
                                         in case of poor performance.
                                     </li>
                                 </ol>
@@ -460,9 +488,12 @@
                                     <div class="hard-copy-letter"></div>
                                 </ng-template>
                                 <div>
-                                    <p *ngIf="(traineeEmpData.note)"><b>{{'Note'|translate}}:</b> {{traineeEmpData.note}}</p>
-                                    <p>Please confirm your acceptance of this offer by signing and returning a scanned copy of this letter within 1 day to 
-                                        <u><b>hr&#64;rightlyhr.com</b></u></p>
+                                    <p *ngIf="(traineeEmpData.note)"><b>{{'Note'|translate}}:</b>
+                                        {{traineeEmpData.note}}</p>
+                                    <p>Please confirm your acceptance of this offer by signing and returning a scanned
+                                        copy of this letter within 1 day to
+                                        <u><b>hr&#64;rightlyhr.com</b></u>
+                                    </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
                                     <p class="mb-2">Sincerely,</p>
@@ -470,14 +501,16 @@
                                 </div>
                                 <div class="pt-3">
                                     <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header" *ngIf="!traineeEmpData.authorityName?.trim()"> Authorized Signatory, </p>
+                                    <p class="letter-sub-header" *ngIf="!traineeEmpData.authorityName?.trim()">
+                                        Authorized Signatory, </p>
                                     <p class="letter-sub-header" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
                                     <p class="letter-sub-header">{{authorityDesignation}} </p>
                                     <br>
                                     <hr>
-                                    <p class="mb-3">I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}
-                                        </b></u>,acknowledge that I have read and understood the terms of
+                                    <p class="mb-3">I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
+                                                {{traineeEmpData.lastName}}
+                                            </b></u>,acknowledge that I have read and understood the terms of
                                         this Internship Offer, and I accept the offer as outlined above.</p>
                                 </div>
                                 <div class="py-3">
@@ -498,24 +531,26 @@
 <!-- offerletter generation popup -->
 <ng-template #approveModal let-modal>
     <div class="result-popup-content" ngbAutofocus>
-      <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
-      <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-        <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
-          (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
-      </div>
+        <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
+        <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
+                (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
+        </div>
     </div>
-  </ng-template>
-  
-  <!-- offerletter generation popup 2 -->
-  <ng-template #approveModal1 let-modal>
+</ng-template>
+
+<!-- offerletter generation popup 2 -->
+<ng-template #approveModal1 let-modal>
     <div class="result-popup-content" ngbAutofocus>
-      <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
-      <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
-        <button type="button" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
-      </div>
+        <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
+        <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
+        </div>
     </div>
-  </ng-template>
+</ng-template>

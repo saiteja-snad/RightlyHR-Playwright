@@ -1,10 +1,17 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content flex-wrap m-0">
+  <div class="component-header-content align-items-center gap-3 flex-wrap mb-3">
     <!--Header-->
-    <div class="component-header mb-3">Organizational Hierarchy</div>
+    <div class="heading-content">
+      <!-- <div class="commpoment-name">Org Hierarchy<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+      </div> -->
+      <div class="component-header">Organizational Hierarchy</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
 
     <!--Dropdown Content-->
-    <div class="d-flex align-items-center gap-3 mb-3">
+    <div class="d-flex align-items-center gap-3">
       @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
       <div class="d-flex align-items-center gap-2">
         <label for="education" class="form-label custom-label custom-label m-0"><b>Select Employee</b></label>
@@ -40,8 +47,9 @@
       </div>
       }
 
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view') || this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view') ){
       <div class="dropdown">
-        <button type="button" class="custom-btn btn-primary px-5" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="custom-btn btn-primary px-5" data-bs-toggle="dropdown" [disabled]="data.length === 0" aria-expanded="false">
           {{'Export'|translate}}
         </button>
         <ul class="dropdown-menu custom-dropdown-menu">
@@ -51,28 +59,18 @@
           @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view') && data.length != 0){
           <li><a class="dropdown-item" (click)="downloadChart('jpg')">{{'Download as JPG'| translate}}</a></li>
           }
-          <li><a class="dropdown-item" (click)="downloadToExcel()">{{'Download as Excel'| translate}}</a></li>
+          <!-- <li><a class="dropdown-item" (click)="downloadToExcel()">{{'Download as Excel'| translate}}</a></li> -->
         </ul>
       </div>
+      }
 
-      <!-- <div>
-        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
-        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0"
-          (click)="downloadChart('pdf')">Download as PDF</button>
-        }
-        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
-        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0"
-          (click)="downloadChart('jpg')">Download as JPG</button>
-        }
-        <button class="custom-btn btn-primary" (click)="downloadToExcel()">Download as Excel</button>
-      </div> -->
+
     </div>
   </div>
 
-  <!--Module Information-->
-  <div>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
 
   <!--loader-->
   <ng-container *ngIf="dataload; else maincontent">
@@ -104,8 +102,11 @@
                   <img [src]="node?.data?.imageUrl || 'images/alternate.png'" class="profile-image" />
                 </div>
                 <div>
-                   <p class="name mb-2">{{ node?.data?.name }}</p>
-                   <p class="jobrole mb-0">{{ node?.data?.title }}</p>
+                  <p class="name mb-2">{{ node?.data?.name }}</p>
+                  <p class="jobrole mb-1">{{ node?.data?.title }}</p>
+                      <!-- <p class="jobrole mb-0 text-nowrap">DOJ:{{ node?.data?.doj | dateformat }}</p> -->
+                   <p class="jobrole mb-0" *ngIf="compensationyesorno">{{ node?.data?.compensationamount }}</p>
+
                 </div>
               </div>
               <!-- <div class="p-2 text-center ">

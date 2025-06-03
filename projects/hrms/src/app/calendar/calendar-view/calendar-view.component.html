@@ -1,21 +1,24 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">Calendar</p>
+  <div class="component-header-content py-2">
+    <div class="heading-content">
+      <div class="component-header">Calendar</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
     </div>
   </div>
 
   <!--Module Information-->
-  <div>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
-
+  </ng-template>
+  
   <!--Content-->
   <div class="d-flex gap-3 w-100">
     <!--sub tabs Content-->
     <div class="custom-component-left-content">
       <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  'rgb(143, 143, 204)'}"></div>
+        <div class="box WFH" [ngStyle]="{'background-color':  '#E1E8FE'}"></div>
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showBirthdays" [(ngModel)]="showBirthdays"
             (change)="filterEventsByTitle()">
@@ -25,19 +28,19 @@
           </label>
         </div>
       </div>
-  
+
       <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  'rgb(204, 143, 143)'}"></div>
+        <div class="box WFH" [ngStyle]="{'background-color':  '#FEE7E1'}"></div>
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showAnniversaries" [(ngModel)]="showAnniversaries"
             (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png" alt="Mile Stone Icon"
-              class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
+          <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png"
+              alt="Mile Stone Icon" class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
         </div>
       </div>
-  
+
       <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  'rgb(204, 204, 143)'}"></div>
+        <div class="box WFH" [ngStyle]="{'background-color':  '#FEE1F7'}"></div>
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showJoinees" [(ngModel)]="showJoinees"
             (change)="filterEventsByTitle()">
@@ -45,9 +48,9 @@
               class="custom-event-icon me-1">{{ 'New Joinees' | translate }}</label>
         </div>
       </div>
-  
+
       <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  '#28692b4d'}"></div>
+        <div class="box WFH" [ngStyle]="{'background-color':  '#E1FEF4'}"></div>
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showHolidays" [(ngModel)]="showHolidays"
             (change)="filterEventsByTitle()">
@@ -56,7 +59,7 @@
         </div>
       </div>
     </div>
-  
+
     <div class="calender-content">
       <full-calendar [options]="calendarOptions" [events]="eventsPromise | async">
         <ng-template #eventContent let-arg>

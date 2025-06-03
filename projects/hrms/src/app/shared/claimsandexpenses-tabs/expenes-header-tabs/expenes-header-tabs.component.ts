@@ -61,6 +61,9 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl(this.defaultRoute);
     }
     this.getexpensesheaderbyemployeeid(this.empinfo.employeeid);
+    this.http.expensesprocesscount$.subscribe(() => {
+      this.getexpensesheaderbyemployeeid(this.empinfo.employeeid);
+    });
   }
 
   getexpensesheaderbyemployeeid(_employeeId: number): void {

@@ -4,7 +4,7 @@
     overflow: auto;
 }
 
-.custom-table-content{
+.custom-table-content {
     height: calc(100dvh - 9.5rem) !important;
 }
 
@@ -13,6 +13,21 @@
     max-height: 60vh;
 }
 
-.view-icon{
+.view-icon {
     width: 2rem;
+}
+
+.acknowledge-content {
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.acknowledge-btn {
+    color: var(--primary-color);
+}
+
+.success-text {
+    color: #04BE51;
 }

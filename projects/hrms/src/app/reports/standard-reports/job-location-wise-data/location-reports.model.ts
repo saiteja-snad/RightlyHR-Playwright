@@ -43,7 +43,7 @@ export interface ILocationReportData {
     contactnumber: number;
     workEmail: string;
     emailaddress: string;
-  
+    mobilePhoneCountryCode:any;
     emergencyName?: string;
     emailId?: string;
     emergencynumber: number;

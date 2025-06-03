@@ -232,6 +232,9 @@ allZeroesIfMaxLength(): ValidatorFn {
   };
 }
   openModal(content: any,) {
+      this.locationfromdata.reset();
+  this.subLocationsDropdown = [];
+  this.locationfromdata.get('subLocationId')?.disable();
     this.modalService.open(content, { centered: true })
 
   }

@@ -223,10 +223,14 @@ export class AllAssetsListComponent {
       return null;
     };
   }
-  openModal(content: any,) {
-    this.modalService.open(content, { centered: true })
+openModal(content: any) {
+  this.locationfromdata.reset();
+  this.subLocationsDropdown = [];
+  this.locationfromdata.get('subLocationId')?.disable();
+  // Open the modal
+  this.modalService.open(content, { centered: true });
+}
 
-  }
   navigateToAsset(assetId: any) {
     this.router.navigate(['/assets-management/view-assets-details'],{ queryParams: { id: assetId }});
   }
@@ -347,44 +351,103 @@ export class AllAssetsListComponent {
     this.isToggledvender = false
   }
 
-  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
 
-    const params = {
-      first: pagenum,
-      rows: pagesize,
-      searchQuery: this.searchQuery,
-      locationid: this.selectedLocationId,
-      status: this.selectedSubLocationId,
-      sublocationid: sublocationid
-    };
-     this.loading = true;
-     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
-       next: (res: any) => {
-        let items = res.items;
-    // Frontend filtering by assigned person's name (if searchQuery exists)
-    if (this.searchQuery && this.searchQuery.trim().length > 0) {
-      const lowerSearch = this.searchQuery.toLowerCase();
-      items = items.filter((item: any) => {
-        const assignedTo = item.assignedTo;
-        if (!assignedTo) return false;
+  //  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
 
-        // Match full name or parts of it
-        const fullName = `${assignedTo.firstName} ${assignedTo.middleName || ''} ${assignedTo.lastName || ''}`.toLowerCase();
-        return fullName.includes(lowerSearch);
-      });
+  //   const params = {
+  //     first: pagenum,
+  //     rows: pagesize,
+  //     searchQuery: this.searchQuery,
+  //     locationid: locationid,
+  //     status: Assetsstatus,
+  //     sublocationid: sublocationid
+  //   };
+  //   this.loading = true;
+  //   this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
+  //     next: (res: any) => {
+  //       this.assetslist.next(res.items);
+  //       this.loading = false;
+  //       this.collectionSize = res.totalCount;
+  //     },
+  //     error: (error: any) => {
+  //       this.loading = false;
+  //       console.error('Error fetching assets:', error);
+  //       this.loading = false
+
+  //     }
+  //   });
+  // }
+
+
+
+getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+  const params = {
+    first: pagenum,
+    rows: pagesize,
+    searchQuery: this.searchQuery,
+    locationid: locationid,
+    status: Assetsstatus,
+    sublocationid: sublocationid
+  };
+
+  this.loading = true;
+
+  this.subscription = this.http.getassetsdesk(
+    "AssetMaster",
+    params.locationid,
+    params.sublocationid,
+    params.status,
+    params.first,
+    params.rows,
+    params.searchQuery
+  ).subscribe({
+    next: (res: any) => {
+      let items = res.items;
+
+      if (this.searchQuery && this.searchQuery.trim().length > 0) {
+        const lowerSearch = this.searchQuery.toLowerCase();
+
+        items = items.filter((item: any) => {
+          const assetCategory = (item.assetCategory || '').toLowerCase();
+          const assetSubCategory = (item.assetSubCategory || '').toLowerCase();
+          const serialNumber = (item.serialNumber || '').toLowerCase();
+          const assetModel = (item.assetModel || '').toLowerCase();
+          const status = (item.status || '').toLowerCase();
+          const assetId = (item.assignedTo?.assetIdName || '').toLowerCase();
+            const assignedTo = item.assignedTo || {};
+            const firstName = (assignedTo.firstName || '').toLowerCase();
+            const middleName = (assignedTo.middleName || '').toLowerCase();
+            const lastName = (assignedTo.lastName || '').toLowerCase();
+            const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+            const lowerSearch = this.searchQuery.toLowerCase().trim();
+          return (
+            assetCategory.includes(lowerSearch) ||
+            assetSubCategory.includes(lowerSearch) ||
+            serialNumber.includes(lowerSearch) ||
+            assetModel.includes(lowerSearch) ||
+            status.includes(lowerSearch) ||
+            fullName.includes(lowerSearch) ||
+            firstName.includes(lowerSearch) ||
+            middleName.includes(lowerSearch) ||
+            assetId.includes(lowerSearch) ||
+            lastName.includes(lowerSearch)
+          );
+        });
+      }
+
+      this.assetslist.next(items);
+      this.collectionSize = items.length;
+      this.loading = false;
+    },
+    error: (error: any) => {
+      console.error('Error fetching assets:', error);
+      this.loading = false;
     }
+  });
+}
 
-    this.assetslist.next(items);
-    this.loading = false;
-    this.collectionSize = res.totalCount;
-  },
-  error: (error: any) => {
-    this.loading = false;
-    console.error('Error fetching assets:', error);
-  }
-});
 
-  }
+
   getvendor() {
     this.http.getData('AssetVendor').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

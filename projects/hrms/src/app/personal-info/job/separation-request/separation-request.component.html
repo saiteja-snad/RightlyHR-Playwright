@@ -100,7 +100,7 @@
           && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
           !==
           'trainee inactive' )){
-          <td>
+          <td class="text-center">
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
               !recallbuttonConditions &&
@@ -310,7 +310,7 @@
     <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
         <div class="mb-4">
-          <label class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">Expected Early Relieving Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
             id="Effective Date" [min]="formattedAppliedDate" [max]="lastWorkingDate"
             (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
@@ -320,10 +320,10 @@
         </div>
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason for Early Relieving<span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" rows="3"
+          <textarea class="form-control custom-input" maxlength="400" pattern="^(?!\s).*" rows="3"
             placeholder="Please provide early relieving reason...." name="Reason"
             formControlName="earlyReleivingReason"></textarea>
-          <div class="textarea-count-text">{{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }}/250
+          <div class="textarea-count-text">{{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }}/400
           </div>
           <div class="error-msg"
             *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">

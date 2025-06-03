@@ -93,7 +93,7 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employeeData = data as Ipersonal;
-        this.selectedCountryCode.set(this.employeeData?.contactnumbercountryflag);
+        this.selectedCountryCode.set(this.employeeData?.contactNumberCountryFlag);
         this.getJobDetails();
 
         this.loading = false;

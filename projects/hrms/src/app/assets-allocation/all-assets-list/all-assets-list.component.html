@@ -1037,7 +1037,7 @@
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="error-msg">
               Contact Number must be 10 to 15 digits
             </div>
-            <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
+            <div class="error-msg" *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
               Contact Number  is not valid
             </div>
           </div>

@@ -22,8 +22,8 @@
                 <th>{{'Early Relieving Reason' | translate}}</th>
                 <th>{{'Request Type' | translate}}</th>
                 <th>{{'Approver History' | translate}}</th>
-                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role
-                (Separation Requests).delete')) {
+                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || 
+                rbac.allowedToAccess('For Role (Separation Requests).delete')) {
                 <th>Action</th>
                 }
             </thead>
@@ -88,6 +88,8 @@
                             <div>-</div>
                             }
                         </td>
+                         @if(rbac.allowedToAccess('For Role (Separation Requests).update') || 
+                            rbac.allowedToAccess('For Role (Separation Requests).delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
@@ -126,6 +128,7 @@
                                 </ul>
                             </div>
                         </td>
+                       }
                         }
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
@@ -381,7 +384,8 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="relieving" name="isreliving"
                         [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" (click)="toggleEarly()">
-                    <label class="form-check-label me-2" for="relieving">{{'Are you willing to accept an early Relieving?' | translate}} </label>
+                    <label class="form-check-label me-2" for="relieving">{{'Are you willing to accept an early
+                        Relieving?' | translate}} </label>
                 </div>
             </div>
 
@@ -389,9 +393,10 @@
                 <label for="Effective Date" class="form-label custom-label mb-2">{{'Salary Hold' | translate}}<span
                         class="text-danger">*</span></label>
                 <div class="custom-p-select-content w-100">
-                    <p-dropdown class="w-100" [options]="salaryHoldOptions" [(ngModel)]="selectedSpRequestData.spsalaryhold"
-                        placeholder="Select" inputId="holdsalary" name="holdsalary" required="true"
-                        [autoDisplayFirst]="false" (onChange)="resetNoticePeriod()" #issalaryhold="ngModel">
+                    <p-dropdown class="w-100" [options]="salaryHoldOptions"
+                        [(ngModel)]="selectedSpRequestData.spsalaryhold" placeholder="Select" inputId="holdsalary"
+                        name="holdsalary" required="true" [autoDisplayFirst]="false" (onChange)="resetNoticePeriod()"
+                        #issalaryhold="ngModel">
                     </p-dropdown>
                 </div>
                 <div class="error-msg"

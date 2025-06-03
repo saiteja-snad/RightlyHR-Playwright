@@ -78,6 +78,7 @@
         <div class="custom-table-content">
             <table class="w-100" id="branchLocation">
                 <thead>
+                    <tr>
                     <th>{{ "Employee ID" }}</th>
                     <th>{{ "Salutation" }}</th>
                     <th>{{ "First Name" }}</th>
@@ -108,6 +109,7 @@
                     <th>{{ "Shift" }}</th>
                     <th>{{ "Shift Code" }}</th>
                     <th>{{ "Job Type" }}</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <ng-container *ngIf="standardReportData.length > 0; else noData">

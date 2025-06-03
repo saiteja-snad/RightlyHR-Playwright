@@ -103,14 +103,14 @@
         <div class="card letter-data-content p-4">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent">
+                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="soft-copy-letter">
+                            <!-- <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
-                            </ng-template>
+                            </ng-template> -->
 
                             <div class="d-flex justify-content-between mb-3">
                                 <div>
@@ -162,7 +162,7 @@
 
                                 <p>Please be aware that your terms and conditions of employment will
                                     remain the same during this extension, and all other aspects of your employment
-                                    relationship with RightlyHR will remain unchanged.</p>
+                                    relationship with SNAD Developers India Pvt Ltd will remain unchanged.</p>
 
                                 <p> We believe that this extension will provide you with an opportunity to
                                     further showcase your abilities, and we have confidence in your potential to succeed
@@ -176,7 +176,7 @@
                                     this extended probationary period.</p>
 
                                 <p class="pt-4">Sincerely,</p>
-                                <p>for RightlyHR</p>
+                                <p>for SNAD Developers India Pvt Ltd</p>
 
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-4">
@@ -194,9 +194,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="letter-footer">
+                        <!-- <div class="letter-footer">
                             <app-letter-footer />
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

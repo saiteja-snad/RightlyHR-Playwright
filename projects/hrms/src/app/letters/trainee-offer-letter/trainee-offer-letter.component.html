@@ -381,14 +381,9 @@
             <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content my-4" id="pdfContent1">
+                    <div class="letter-page-content my-4" id="pdfContent1" [ngClass]="{'soft-copy-letter': traineeEmpData.documentType}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="this.traineeEmpData.documentType; else doc" class="soft-copy-letter">
-                                <app-lettersheader></app-lettersheader>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                         
                             <div class="letter-header text-center mb-4">{{'Trainee Offer Letter'|translate}}</div>
                             <div class="d-flex justify-content-between mb-3">
                                 <ul class="list-style-none ps-0">
@@ -428,7 +423,7 @@
                                     </li>
                                     <li class="mb-2"><b>{{'Working Hours and Location'|translate}}:
                                         </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to
-                                        Friday), at our office located at RightlyHR, Floor#16, Vijay Krishna Towers,
+                                        Friday), at our office located at SNAD Developers India Pvt Ltd, Floor#16, Vijay Krishna Towers,
                                         Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be
                                         required to work additional hours or remotely, depending on the nature of the
                                         projects
@@ -441,7 +436,7 @@
                                         <b>{{'Stipend/Salary and Benefits'|translate}}: </b>During the internship
                                         period, you’re eligible to receive Rs.10,000/- per month as a stipend/salary.
                                         After successful completion of the internship period, you will be appointed as
-                                        an employee of RightlyHR with a CTC of <b>{{traineeEmpData.amount}}</b> per
+                                        an employee of SNAD Developers India Pvt Ltd with a CTC of <b>{{traineeEmpData.amount}}</b> per
                                         annum.
                                     </li>
                                     <li class="mb-2">
@@ -472,32 +467,25 @@
                                 </ol>
                             </div>
                         </div>
-                        <div class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                       
                     </div>
 
                     <!--page-2-->
-                    <div class="letter-page-content my-4" id="pdfContent2">
+                    <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter': traineeEmpData.documentType}">
                         <div class="letter-page-sub-content">
                             <div class="pt-2">
-                                <div *ngIf="this.traineeEmpData.documentType; else doc" class="soft-copy-letter">
-                                    <app-lettersheader></app-lettersheader>
-                                </div>
-                                <ng-template #doc>
-                                    <div class="hard-copy-letter"></div>
-                                </ng-template>
+                             
                                 <div>
                                     <p *ngIf="(traineeEmpData.note)"><b>{{'Note'|translate}}:</b>
                                         {{traineeEmpData.note}}</p>
                                     <p>Please confirm your acceptance of this offer by signing and returning a scanned
                                         copy of this letter within 1 day to
-                                        <u><b>hr&#64;rightlyhr.com</b></u>
+                                        <u><b>hr&#64;snaddevelopers.com</b></u>
                                     </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
                                     <p class="mb-2">Sincerely,</p>
-                                    <p class="mb-2"><b>for RightlyHR</b></p>
+                                    <p class="mb-2"><b>for SNAD Developers India Pvt Ltd</b></p>
                                 </div>
                                 <div class="pt-3">
                                     <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
@@ -519,9 +507,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                      
                     </div>
                 </div>
             </div>

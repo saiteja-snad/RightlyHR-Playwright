@@ -80,7 +80,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Permission Report - Generate.view') && rbac.allowedToAccess('Permission Report - Export.view')){
+            @if(rbac.allowedToAccess('Permission Report - Generate.view') 
+            && rbac.allowedToAccess('Permission Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPemrissionReport()"
               [disabled]="filteredPermissionData.length == 0 || disableBtn">
               @if(spinnerLoader2){

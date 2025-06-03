@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
@@ -20,7 +20,7 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-apprisal-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,NgbPopoverModule],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -171,20 +171,56 @@ export class ApprisalLetterComponent {
 
   gender: any;
   gender2: any;
-  Onclick(fusionemployeeId: any) {
-    this.fusionEmpId = fusionemployeeId;
-    this.appraisalData = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
-    );
-    this.disablebuttonforemployeeid = true;
-    this.getCompensationById(this.appraisalData);
-    this.getJobdetails(this.appraisalData);
-    if (this.appraisalData.gender == 'Male') {
-      return (this.gender = 'Mr.');
-    } else {
-      return (this.gender = 'Ms.');
-    }
+  // Onclick(fusionemployeeId: any) {
+  //   this.fusionEmpId = fusionemployeeId;
+  //   this.appraisalData = this.employeeiddetails.find(
+  //     (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
+  //   );
+  //   this.disablebuttonforemployeeid = true;
+  //   this.getCompensationById(this.appraisalData);
+  //   this.getJobdetails(this.appraisalData);
+  //   if (this.appraisalData.gender == 'Male') {
+  //     return (this.gender = 'Mr.');
+  //   } else {
+  //     return (this.gender = 'Ms.');
+  //   }
+  // }
+selectedEmployeeSalary: number = 0; // Add this at class level
+
+Onclick(fusionemployeeId: any) {
+  this.fusionEmpId = fusionemployeeId;
+  this.appraisalData = this.employeeiddetails.find(
+    (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
+  );
+
+  this.disablebuttonforemployeeid = true;
+  this.getCompensationById(this.appraisalData);
+  this.getJobdetails(this.appraisalData);
+
+  if (this.appraisalData?.salary) {
+    this.selectedEmployeeSalary = this.appraisalData.salary;
+
+    // 👉 Set validator dynamically based on current salary
+    const bonusControl = this.employeeForm.get('bonus');
+    bonusControl?.setValidators([
+      Validators.required,
+      this.bonusValidator(this.selectedEmployeeSalary)
+    ]);
+    bonusControl?.updateValueAndValidity();
   }
+
+  this.gender = this.appraisalData.gender === 'Male' ? 'Mr.' : 'Ms.';
+}
+
+bonusValidator = (salary: number): ValidatorFn => {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (control.value != null && salary != null && control.value > salary) {
+      return { bonusExceedsSalary: true };
+    }
+    return null;
+  };
+};
+
 
   //toggledropdown to open and close the dropdown list
   toggleDropdown(dropcategory: any) {

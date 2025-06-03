@@ -1,20 +1,17 @@
 <div class="custom-main-component-container w-100">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-  
-      <div class="heading-content">
-            <div class="commpoment-name cursor" (click)="Cancel()">Manage Policies<span class="ms-1"><i
-                        class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">{{'Clone Policies' | translate}}</div>
-            <!-- <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div> -->
-        </div>
+   <div class="component-header-content pt-2">
+    <div class="heading-content">
+      <div class="commpoment-name cursor" (click)="Cancel()">Manage Policies
+        <i class="bi bi-chevron-double-right ms-1"></i>
+      </div>
+      <div class="component-header">{{'Clone Policies'| translate}}</div>
+    </div>
   </div>
 
   <form autocomplete="off" [formGroup]="policyForm" (ngSubmit)="submit()">
-    <div class="custom-setting-right-content w-100 p-3">
+    <div class="custom-setting-right-content fields-data-container">
       <!--Select Fields-->
-      <div class="d-flex gap-3 mb-3">
+      <div class="data-header-content">
         <div>
           <label for="year" class="form-label custom-label mb-2">
             {{ "Year" | translate }}<span class="text-danger">*</span>
@@ -25,7 +22,7 @@
             </p-select>
           </div>
         </div>
-    
+  
         <div>
           <label for="location" class="form-label custom-label mb-2">
             {{ "Location" | translate }}<span class="text-danger">*</span>
@@ -41,7 +38,7 @@
             {{'Location is required' | translate}}
           </div>
         </div>
-    
+  
         <div>
           <label for="subLocation" class="form-label custom-label mb-2">
             {{ "Sub Location" | translate }}<span class="text-danger">*</span>
@@ -56,34 +53,35 @@
             {{'Sub Location is required' | translate}}
           </div>
         </div>
-    
+  
         <div>
           <label for="shift" class="form-label custom-label mb-2">
             {{ "Shift" | translate }}<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select [options]="shiftDropdown" optionLabel="shiftName"  formControlName="shift"
-              placeholder="Select shift" class="form-select custom-select"></p-select>
+            <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shift" placeholder="Select shift"
+              class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="policyForm.get('shift')?.touched && policyForm.get('shift')?.hasError('required')"
             class="error-msg">
             {{'Shift is required' | translate}}
           </div>
         </div>
-    
+  
         <div class="pt-4 mt-1">
           <button type="button" class="custom-btn btn-primary" (click)="addPolicyRow();hidePublishCloneButtons = true">
             <i class="bi bi-plus me-2"></i> {{'Add Row' | translate}}
           </button>
         </div>
       </div>
-    
+  
       <div formArrayName="policies">
         <div *ngFor="let policy of policies.controls; let i = index" [formGroupName]="i"
           class="card custom-background-card p-3 mb-3">
           <div class="d-flex w-100 gap-3">
             <div class="w-100">
-              <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
+              <label class="form-label custom-label">{{'Policy Name' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyName" class="form-control custom-input w-100"
                 placeholder="Please enter policy name" maxlength="50"
                 (keydown)="formValidations.restrictInitialSpace($event)" />
@@ -91,13 +89,14 @@
                 {{'Policy Name is required'|translate}}
               </div>
             </div>
-
+  
             <div class="w-100">
               <label class="form-label custom-label">
                 {{'Policy Attachment (Image and PDF only)' | translate}}
               </label>
               <div class="d-flex align-items-center gap-2">
-                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0" accept=".pdf,image/*"/>
+                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0"
+                  accept=".pdf,image/*" />
                 <div [ngbPopover]="oldPopContent" triggers="click" placement="top">
                   <i class="bi bi-info-circle-fill cursor"></i>
                 </div>
@@ -106,41 +105,54 @@
                 <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
               </ng-template>
             </div>
-
+  
+            <!-- Description moved here -->
             <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <label class="form-label custom-label">{{'Description' | translate}}<span
-                      class="text-danger">*</span></label>
-                </div>
-                <div>
-                  <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
-                    class="btn p-0 border-0 bg-transparent">
-                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
-                  </button>
-                </div>
-              </div>
+              <label class="form-label custom-label">{{'Description' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
                 placeholder="Please enter description" maxlength="50"
                 (keydown)="formValidations.restrictInitialSpace($event)" />
-              <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.invalid"
+              <div
+                *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
                 class="error-msg">
                 {{'Policy Description is required'|translate}}
               </div>
             </div>
+  
+            <!-- Acknowledgement Toggle -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+                <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
+              </div>
+              <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+            </div>
+  
+            <!-- Email Notification Toggle + Delete Button -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+                <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
+                  class="btn p-0 border-0 bg-transparent">
+                  <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                </button>
+              </div>
+              <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
+            </div>
           </div>
         </div>
       </div>
-
+  
       <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
-      <div class="d-flex gap-3 justify-content-end pt-4">
-        <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
-          {{'Cancel' | translate}}
-        </button>
-        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="policyForm.invalid || !isFormEdited">
-          {{'Submit' | translate}}
-        </button>
-      </div>
+    </div>
+  
+    <div class="d-flex gap-3 justify-content-end">
+      <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
+        {{'Cancel' | translate}}
+      </button>
+      <button type="submit" class="custom-btn btn-primary px-5" [disabled]="policyForm.invalid || !isFormEdited">
+        {{'Submit' | translate}}
+      </button>
     </div>
   </form>
 </div>

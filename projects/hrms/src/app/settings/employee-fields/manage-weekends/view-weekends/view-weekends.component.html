@@ -1,15 +1,16 @@
 <div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0" (click)="Cancel()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>View Weekends
-            </p>
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="navigate()">Manage Weekends
+                <i class="bi bi-chevron-double-right ms-1"></i>
+            </div>
+            <div class="component-header">{{"View Weekends" | translate}}</div>
         </div>
     </div>
 
-    <div class="custom-setting-right-content w-100 p-3">
-        <form autocomplete="off" [formGroup]="weekendForm">
-            <div class="d-flex gap-3 mb-3">
+    <form autocomplete="off" [formGroup]="weekendForm">
+        <div class="custom-setting-right-content fields-data-container">
+            <div class="data-header-content">
                 <!-- Year -->
                 <div>
                     <label for="year" class="form-label custom-label mb-2">
@@ -79,15 +80,13 @@
             <div class="custom-table-content">
                 <table class="w-100">
                     <thead>
-                        <tr>
-                            <th>Days</th>
-                            <th>1st</th>
-                            <th>2nd</th>
-                            <th>3rd</th>
-                            <th>4th</th>
-                            <th>5th</th>
-                            <!-- <th></th> -->
-                        </tr>
+                        <th>Days</th>
+                        <th>1st</th>
+                        <th>2nd</th>
+                        <th>3rd</th>
+                        <th>4th</th>
+                        <th>5th</th>
+                        <!-- <th></th> -->
                     </thead>
                     <tbody formArrayName="weekends">
                         <tr *ngFor="let weekend of weekends.controls; let i = index" [formGroupName]="i">
@@ -116,13 +115,15 @@
                     </tbody>
                 </table>
             </div>
+        </div>
 
-            <div class="d-flex justify-content-end gap-3 pt-4">
-                <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel' | translate}}</button>
-                <button type="button" class="custom-btn btn-primary px-5" (click)="navigateToClone()">{{'Clone' | translate}}</button>
-            </div>
-        </form>
-    </div>
+        <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary px-5" (click)="navigateToClone()">{{'Clone' |
+                translate}}</button>
+        </div>
+    </form>
 </div>
 
 <ng-template #deletepopup let-modal>
@@ -132,7 +133,8 @@
             <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

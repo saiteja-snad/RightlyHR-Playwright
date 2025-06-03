@@ -294,28 +294,47 @@ openModalView(){
     return true;
   }
 
-  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
-     if(extendedDate){
-      lastWorkingDate = extendedDate;
-    }
-    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
+  // getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
+  //    if(extendedDate){
+  //     lastWorkingDate = extendedDate;
+  //   }
+  //   const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
+  //   // Format the date as "YYYY-MM-DD"
+  //   const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
+  //   return formattedDate;
+  // }
+
+  // getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
+  //     if(extendedDate){
+  //     startDate = extendedDate;
+  //   }
+  //   const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
+  //   // Add the duration (e.g., 90 days) to the start date
+  //   const futureDate = startDateObj.add(duration, 'days');
+  //   // Format the future date as "YYYY-MM-DD"
+  //   const formattedFutureDate = futureDate.format('YYYY-MM-DD');
+  //   return formattedFutureDate;
+  // }
+  getBlockedFutureDate(lastWorkingDate: string): string {
+    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
+
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
+
     return formattedDate;
   }
 
-  getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
-      if(extendedDate){
-      startDate = extendedDate;
-    }
+  getBlockedFutureDateupto(startDate: string, duration: number): string {
     const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
+
     // Add the duration (e.g., 90 days) to the start date
     const futureDate = startDateObj.add(duration, 'days');
+
     // Format the future date as "YYYY-MM-DD"
     const formattedFutureDate = futureDate.format('YYYY-MM-DD');
+
     return formattedFutureDate;
   }
-
   jsonData = {} as any;
   handleProcess(f: NgForm) {
     this.openModalService.openLoaderModal('Processing....')

@@ -37,7 +37,7 @@
                             <ng-template #workemail> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
+                            <span *ngIf="item?.contactnumber;else contactnumb">{{item.mobilePhoneCountryCode}} {{item.contactnumber}}</span>
                             <ng-template #contactnumb> - </ng-template>
                         </td>
                         <td>

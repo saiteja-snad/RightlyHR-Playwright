@@ -49,55 +49,51 @@ export class AddLeavecategoryComponent {
      private router: Router, private modalService: NgbModal) {
   }
 
-  ngOnInit(): void {
-    this.jobLocationList();
-    this.getOrgLeavesCategories();
-    const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
-      this.years.push({ label: year.toString(), value: year });
-    }
-    this.leavePolicyForm = this.fb.group({
-      // Location/Shift Section
-      applicableYear: [undefined, Validators.required],
-      locationID: [undefined, Validators.required],
-      subLocation: [undefined, Validators.required],
-      shiftId: [undefined, Validators.required],
-      // Leave Category Information
-      type: [undefined, Validators.required],
-      name: ['', [Validators.required, this.restrictInputValidator]],
-      categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
-      validity: ['', [Validators.required, this.restrictInputNumbersValidator]],
-      categoryColor: ['#000000', Validators.required],
-      parentId: [undefined],
-      // Additional Information
-      allowedGender: [undefined, Validators.required],
-      allowedMaritalStatus: [undefined, Validators.required],
-      excludeWeekends: [undefined, Validators.required],
-      excludeHolidays: [undefined, Validators.required],
-      isOptionalHoliday: [undefined, Validators.required],
-      allowedHalfDay: [undefined, Validators.required],
-      isApplicableProRataLeave: [undefined, Validators.required],
-      // Future Dates
-      futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed')]],
-      // Past Dates
-      pastDateAllowed: [undefined, Validators.required],
-      pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
-      // Carry Forward
-      carryForwardAllowed: [undefined, Validators.required],
-      carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed')]],
-      // Encash
-      encashAllowedType: [undefined, Validators.required],
-      encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType')]],
-      // Notice Period
-      noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
-      // Probation Period
-      isProbationAllowed: [undefined, Validators.required],
-      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
-    });
-    this.setupDependentFieldListeners();
+ ngOnInit(): void {
+  this.jobLocationList();
+  this.getOrgLeavesCategories();
+
+  const currentYear = new Date().getFullYear();
+  this.years = []; // Ensure it's initialized
+  for (let year = currentYear - 1; year <= currentYear + 1; year++) {
+    this.years.push({ label: year.toString(), value: year });
   }
+
+  this.leavePolicyForm = this.fb.group({
+    applicableYear: [undefined, Validators.required],
+    locationID: [undefined, Validators.required],
+    subLocation: [undefined, Validators.required],
+    shiftId: [undefined, Validators.required],
+    type: [undefined, Validators.required],
+    name: ['', [Validators.required, this.restrictInputValidator]],
+    categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
+    validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
+    categoryColor: ['#000000', Validators.required],
+    parentId: [undefined],
+    allowedGender: ['ALL', Validators.required],
+    allowedMaritalStatus: ['ALL', Validators.required],
+    excludeWeekends: ['No', Validators.required],
+    excludeHolidays: ['No', Validators.required],
+    isOptionalHoliday: [undefined, Validators.required],
+    allowedHalfDay: ['Yes', Validators.required],
+    isApplicableProRataLeave: [undefined, Validators.required],
+    futureDatesAllowed: ['No', Validators.required],
+    futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed')]],
+    pastDateAllowed: ['No', Validators.required],
+    pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
+    carryForwardAllowed: ['No', Validators.required],
+    carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed')]],
+    encashAllowedType: ['No', Validators.required],
+    encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType')]],
+    noticeperiodAllowedType: ['No', Validators.required],
+    noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
+    isProbationAllowed: ['No', Validators.required],
+    probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
+  });
+
+  this.setupDependentFieldListeners();
+}
+
 
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation`).subscribe({

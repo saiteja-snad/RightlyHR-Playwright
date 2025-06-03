@@ -14,12 +14,11 @@
                     <th>{{'Submitted Date'|translate}}</th>
                     <th>{{'Document'|translate}}</th>
                     <th>{{'Status'|translate}}</th>
-                    @if(
-                    (rbac.allowedToAccess('Employee Info Documents Verification.update')
-                    || rbac.allowedToAccess('Employee Info Documents Verification.delete'))
-                    && shouldShowActionColumn
+                    @if( (rbac.allowedToAccess('Employee Info Documents Verification.update')
+                    || rbac.allowedToAccess('Employee Info Documents Verification.delete')) && shouldShowActionColumn
                     ){
-                    <th>{{'ACTION'|translate}}</th>}
+                    <th>{{'ACTION'|translate}}</th>
+                }
                 </tr>
             </thead>
             <tbody>
@@ -53,6 +52,9 @@
                             <div>-</div>
                         </ng-template>
                     </td>
+                     @if( (rbac.allowedToAccess('Employee Info Documents Verification.update')
+                    || rbac.allowedToAccess('Employee Info Documents Verification.delete')) && shouldShowActionColumn
+                    ){
                      @if(rbac.allowedToAccess('Employee Info Documents Verification	.update') 
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
                     <td>
@@ -68,7 +70,7 @@
                             <button class="custom-btn btn-primary-reject" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
                             && data.status=='Submitted' " (click)="submitRejectReason(data);openModal(rejectModal)">Reject</button>}
                         </ng-template>
-                    </td>}
+                    </td>}}
                 </tr>
                 }
                 }

@@ -153,7 +153,8 @@ export class PremissionsWaitingForApprovalComponent
   onClick(data: any, content: any) {
     this.selectedFields = data;
     console.log(this.selectedFields);
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.cancelForm.reset();
   }
   //function to cancle the leave
   cancelpermissionsSubmit() {

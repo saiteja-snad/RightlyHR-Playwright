@@ -1,20 +1,17 @@
 <div class="custom-main-component-container w-100">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-
+  <div class="component-header-content pt-2">
     <div class="heading-content">
-      <div class="commpoment-name cursor" (click)="nagvition()">Manage Holidays<span class="ms-1"><i
-            class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name cursor" (click)="nagvition()">Manage Holidays
+        <i class="bi bi-chevron-double-right ms-1"></i>
+      </div>
       <div class="component-header">{{'Add Holidays' | translate}}</div>
-      <!-- <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div> -->
     </div>
   </div>
 
-  <div class="custom-setting-right-content w-100 p-3">
-    <form autocomplete="off" [formGroup]="holidayForm" (ngSubmit)="submit(holidayForm)">
+  <form autocomplete="off" [formGroup]="holidayForm" (ngSubmit)="submit(holidayForm)">
+    <div class="custom-setting-right-content fields-data-container">
       <!--Select Fields-->
-      <div class="d-flex gap-3 mb-3">
+      <div class="data-header-content">
         <!-- Year -->
         <div>
           <label for="year" class="form-label custom-label mb-2">
@@ -30,7 +27,7 @@
             </div>
           </div>
         </div>
-
+    
         <div>
           <label for="location" class="form-label custom-label mb-2">
             {{ "Location" | translate}}<span class="text-danger">*</span>
@@ -46,22 +43,22 @@
             </div>
           </div>
         </div>
-
+    
         <div>
           <label for="subLocation" class="form-label custom-label mb-2">
             {{ "Sub Location" | translate}}<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
             <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
-              formControlName="subLocation" placeholder="Please select sub location"
-              (onChange)="getShiftBYid($event.value)" class="form-select custom-select"></p-select>
+              formControlName="subLocation" placeholder="Please select sub location" (onChange)="getShiftBYid($event.value)"
+              class="form-select custom-select"></p-select>
             <div *ngIf="holidayForm.get('subLocation')?.touched && holidayForm.get('subLocation')?.hasError('required')"
               class="error-msg">
               {{'Sub Location is required' | translate}}
             </div>
           </div>
         </div>
-
+    
         <div>
           <label for="shift" class="form-label custom-label mb-2">
             {{ "Shift" | translate}}<span class="text-danger">*</span>
@@ -75,14 +72,14 @@
             </div>
           </div>
         </div>
-
+    
         <div class="pt-4 mt-1">
           <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">
             <i class="bi bi-plus me-2"></i> {{'Add New' | translate}}
           </button>
         </div>
       </div>
-
+    
       <div formArrayName="holidays">
         <div class="card custom-background-card p-3 mb-3" *ngFor="let holiday of holidays.controls; let i = index"
           [formGroupName]="i">
@@ -102,7 +99,7 @@
               <div *ngIf="isDuplicateholidayName[i]" class="error-msg">{{ 'Duplicate holiday names are not allowed' |
                 translate }}</div>
             </div>
-
+    
             <div class="w-100">
               <label class="form-label custom-label">
                 {{ 'Holiday Date' | translate }}<span class="text-danger">*</span>
@@ -110,12 +107,12 @@
               <input type="date" formControlName="holidayDate" class="form-control custom-input w-100"
                 [min]="minHolidayDate" [max]="maxHolidayDate" onkeydown="return false" />
               <div *ngIf="holiday.get('holidayDate')?.invalid && (holiday.get('holidayDate')?.dirty || 
-                          holiday.get('holidayDate')?.touched)" class="error-msg">
+                                holiday.get('holidayDate')?.touched)" class="error-msg">
                 <span *ngIf="holiday.get('holidayDate')?.errors?.['required']">{{'Holiday Date is required'
                   |translate}}</span>
               </div>
             </div>
-
+    
             <div class="form-check w-100">
               <!-- Delete Icon -->
               <div class="d-flex justify-content-end w-100"
@@ -133,17 +130,17 @@
         </div>
         <!-- Submit Button -->
       </div>
-
       <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
-      <div class="d-flex justify-content-end gap-3 pt-4">
-        <button type="button" class="custom-btn btn-secondary px-5" (click)="openmodel(cancelpopup)">
-          {{'Cancel' | translate}}
-        </button>
-        <button class="custom-btn btn-primary px-5" [disabled]="holidayForm.invalid" type="submit">
-          {{'Submit' | translate}}</button>
-      </div>
-    </form>
-  </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-3">
+      <button type="button" class="custom-btn btn-secondary px-5" (click)="openmodel(cancelpopup)">
+        {{'Cancel' | translate}}
+      </button>
+      <button class="custom-btn btn-primary px-5" [disabled]="holidayForm.invalid" type="submit">
+        {{'Submit' | translate}}</button>
+    </div>
+  </form>
 </div>
 
 <ng-template #cancelpopup let-model>

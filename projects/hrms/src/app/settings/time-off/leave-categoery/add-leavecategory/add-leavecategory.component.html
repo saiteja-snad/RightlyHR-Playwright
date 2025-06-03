@@ -117,11 +117,15 @@
         <!-- Valid Dates -->
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="email">Valid Days <span class="text-danger">*</span></label>
-          <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
-            autocomplete="off" placeholder="Please enter valid days" required>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched  )">
-            Valid Days is required
+          <input type="number" formControlName="validity" class="form-control custom-input" id="validdates" autocomplete="off"
+            placeholder="Please enter valid days" required>
+          <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched)">
+            <ng-container *ngIf="leavePolicyForm.get('validity')?.errors?.['required']">
+              Valid Days is required
+            </ng-container>
+            <ng-container *ngIf="leavePolicyForm.get('validity')?.errors?.['max']">
+              Valid Days cannot exceed 366
+            </ng-container>
           </div>
         </div>
 

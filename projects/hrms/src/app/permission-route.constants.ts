@@ -180,6 +180,10 @@ export const MY_INFO_PERSONAL_ROUTES = [
       {  route: '/reports/attendence-reports/permission-report',permission: 'Permission Report.view' } ,
       {  route: '/reports/attendence-reports/regularization-report',permission: 'Regularization Report.view' } 
   ];
+
+  export const POLICY_REPORTS_TABS = [
+      { route: '/reports/policy-reports/policy-acknowledgment-report', permission: 'Policy Acknowledgement Report.view' }
+  ];
   
   export const ASSEST_ALLOCATION_TABS = [
       { route: '/assets-management/all-assets', permission:  'Asset Management - All.view'} ,

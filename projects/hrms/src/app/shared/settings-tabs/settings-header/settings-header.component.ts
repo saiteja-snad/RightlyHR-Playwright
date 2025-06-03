@@ -136,7 +136,7 @@ export class SettingsHeaderComponent implements OnInit {
     }
     else if (url.startsWith('/settings/dynamic-forms/form-settings')) {
       this.moduleName = 'Dynamic Forms';
-      this.componentName = 'Forms Settings';
+      this.componentName = 'Form Settings';
     }
   }
 

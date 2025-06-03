@@ -1,24 +1,10 @@
-::ng-deep .custom-toggle.p-inputswitch {
-  width: 36px;
-  height: 20px;
-}
+.small-blue-toggle {
+  --p-toggleswitch-width: 2.5rem;
+  --p-toggleswitch-height: 1.2rem;
+  --p-toggleswitch-handle-size: 1rem;
 
-::ng-deep .custom-toggle.p-inputswitch .p-inputswitch-slider {
-  background-color: #ccc;
-  border-radius: 10px;
-}
-
-::ng-deep .custom-toggle.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
-  background-color: #007bff !important; /* Blue when ON */
-}
-
-::ng-deep .custom-toggle.p-inputswitch .p-inputswitch-slider:before {
-  width: 14px;
-  height: 14px;
-  top: 3px;
-  left: 3px;
-}
-
-::ng-deep .custom-toggle.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider:before {
-  transform: translateX(16px); /* Adjust for smaller width */
+  // // --p-toggleswitch-focus-ring-color: blue;
+  // // --p-toggleswitch-checked-hover-border-color: blue;
+  // --p-toggleswitch-checked-background: #cce4ff;
+  --p-toggleswitch-handle-checked-background: white;
 }

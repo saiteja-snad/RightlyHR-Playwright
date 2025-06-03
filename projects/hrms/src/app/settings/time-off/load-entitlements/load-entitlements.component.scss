@@ -1,7 +1,9 @@
+.custom-table-content {
+    height: 45vh !important;
+}
+
 .form-select {
-    border-radius: 5px;
-    height: 34px;
-    width: 14%;
+    border-radius: 0.5rem;
 }
 
 .dropdown-menu {
@@ -26,12 +28,10 @@
 
 .dropdown-menu {
     display: none;
-    /* Initially hide the dropdown */
 }
 
 .dropdown-menu.show {
     display: block;
-    /* Show the dropdown when the class 'show' is applied */
 }
 
 /* Apply cursor pointer to clear button */
@@ -46,14 +46,11 @@
 
 .input-field[contenteditable="false"] {
     background-color: #eee;
-    /* gray background */
     color: #999;
-    /* gray text */
 }
 
 .inpuut-field[contenteditable="true"] {
     background-color: #fff;
-    /* white background */
 }
 
 .bgfade {

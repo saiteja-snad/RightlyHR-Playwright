@@ -165,7 +165,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   onClick(data: any, content: any) {
     this.selectedFields = data;
     console.log(this.selectedFields);
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
   //function to cancle the leave
   cancelWFHSubmit() {

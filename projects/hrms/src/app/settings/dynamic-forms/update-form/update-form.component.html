@@ -100,11 +100,11 @@
                     <div class="error-msg">
                         <div *ngIf="updateForm.get('cutOffRating')?.errors?.['required'] && updateForm.get('cutOffRating')?.touched">
                         Cut Off Rating is required.</div>
-                    <div
+                    <div  class="error-msg"
                         *ngIf="updateForm.get('cutOffRating')?.errors?.['min'] && updateForm.get('cutOffRating')?.touched">
                         Cut Off Rating must be at least 1.
                     </div>
-                    <div *ngIf="updateForm.errors?.['cutOffGreaterThanOverall']">
+                    <div   class="error-msg" *ngIf="updateForm.errors?.['cutOffGreaterThanOverall']">
                         Cut Off Rating cannot be greater than Overall Rating.
                     </div>
                     </div>

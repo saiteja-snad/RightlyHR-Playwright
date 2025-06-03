@@ -190,7 +190,7 @@ export class EmployeeManagementLayoutComponent {
     this.EmployeeInfoData = {
       datasets: [
         {
-          data: [this.Active, this.Inactive, this.ACTDATA, this.PROBDATA, this.Trainee, this.traineeactive, this.traineeInactive,],
+          data: [this.Active, this.Inactive, this.ACTDATA, this.PROBDATA, this.traineeactive, this.traineeInactive, this.Trainee,],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         }

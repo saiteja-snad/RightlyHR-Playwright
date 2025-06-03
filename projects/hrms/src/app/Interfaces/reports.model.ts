@@ -139,6 +139,7 @@ export interface EmployeeDetails {
   reportLastName: string;
   workPhone: number;
   contactnumber: number;
+  mobilePhoneCountryCode: any;
   workEmail: string;
   emailaddress: string;
   emergencyName: string;

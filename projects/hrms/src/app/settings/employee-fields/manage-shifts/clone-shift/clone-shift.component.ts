@@ -58,7 +58,7 @@ export class CloneShiftComponent {
     const clonedShiftData = localStorage.getItem('clonedShiftData');
    if (shiftId && clonedShiftData) {
     const parsedData = JSON.parse(clonedShiftData);
-    this.patchShiftForm(parsedData); // patch form using the same method
+    this.patchShiftForm(parsedData);
   }
   }
 
@@ -316,7 +316,7 @@ onLocationChange(selectedLocationId: number | null) {
         this.locations = data;
         this.sublocatiodis = true;
         this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
-        this.subLocations = this.selectedLocation.subLocations;
+        // this.subLocations = this.selectedLocation.subLocations;
         const sublocationdata = this.subLocations.find(
           (sub: any) => sub.id === this.shiftDATA
         );

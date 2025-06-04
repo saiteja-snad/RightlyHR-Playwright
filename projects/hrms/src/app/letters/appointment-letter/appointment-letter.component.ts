@@ -83,9 +83,9 @@ export class AppointmentLetterComponent {
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
       documentType: ['', Validators.required],
-      assertType: ['', Validators.required],
-      model: ['', Validators.required],
-      serial: ['', Validators.required],
+      // assertType: ['', Validators.required],
+      // model: ['', Validators.required],
+      // serial: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
@@ -364,6 +364,7 @@ export class AppointmentLetterComponent {
     };
     this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
+         this.spinnerLoader= false;
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(()=>{
           this.navigateDashboard();

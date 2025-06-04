@@ -208,7 +208,7 @@
         
          
         </div>
-         <!-- @if(selected_approve.probationextendedcount<probationExtensionTimes){ -->
+         @if(selected_approve.probationextendedcount<probationExtensionTimes){
           <div class="mb-3" *ngIf="extend">
           <label for="exampleFormControlInput1" class="form-label custom-label">{{'Extend Date' | translate}}
             <span class="text-danger">*</span>
@@ -247,7 +247,7 @@
        
         </div>
 
-         <!-- } -->
+         }
        
         <div class="mb-3" *ngIf="discontinue">
           <label for="Descriptiondetails" class="form-label custom-label">{{'Reject Reason' | translate}}

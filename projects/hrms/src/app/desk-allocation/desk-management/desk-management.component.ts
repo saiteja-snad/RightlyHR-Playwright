@@ -117,19 +117,17 @@ export class DeskManagementComponent {
   }
 
   openModal(content: any) {
-     this.deskForm.reset(); 
-  this.deskForm.get('subLocationId')?.disable();
+    this.deskForm.reset(); 
+    this.deskForm.get('subLocationId')?.disable();
     this.deskForm.get('shifts')?.disable();
-      this.deskForm.get('employeid')?.disable();
-        this.deskForm.get('deskapprovalid')?.disable();
-  this.isToggled = false;
-   this.desktype = [];
-  this.subLocationsDropdown = [];
-  this.deskdataid = [];
-  this.shiftDropdown = [];
-  this.employeeiddetails = [];
-  this.approvalname = [];
-
+    this.deskForm.get('employeid')?.disable();
+    this.deskForm.get('deskapprovalid')?.disable();
+    this.isToggled = false;
+    this.desktype = [];
+    this.subLocationsDropdown = [];
+    this.deskdataid = [];
+    this.shiftDropdown = [];
+    this.employeeiddetails = [];
     this.modalService.open(content, { centered: true });
   }
 

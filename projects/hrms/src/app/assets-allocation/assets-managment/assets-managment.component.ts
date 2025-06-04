@@ -81,7 +81,7 @@ export class AssetsManagmentComponent {
   initializeNavTabs(): void {
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
-      { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
+      // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
       { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#25BBFF', permission: { feature: 'Asset Management - Available', action: 'view' } },
       { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#FCD643', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
       { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF338A', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },

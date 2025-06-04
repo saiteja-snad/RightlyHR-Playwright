@@ -46,7 +46,7 @@ export class ActiveNewUserInvitationComponent {
       this.isSubmitDisabled = true;
       this.inviteeEmployeeID = selected.employeeId;
       this.inviteActiveEmployeeForm.patchValue({
-        fullname: selected.firstName + ' ' + selected.middleName + ' ' + selected.lastName,
+        fullname:  `${selected.firstName} ${selected.middleName ? selected.middleName + ' ' : ''}${selected.lastName}`,
       });
     }
   }

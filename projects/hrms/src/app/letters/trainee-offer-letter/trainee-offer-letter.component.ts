@@ -1022,7 +1022,7 @@ export class TraineeOfferLetterComponent {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate <= offerIssuedDate) {
+      if (offerExpiryDate < offerIssuedDate) {
         this.isExpiryDateValid = true;
       } else {
         this.isExpiryDateValid = false;

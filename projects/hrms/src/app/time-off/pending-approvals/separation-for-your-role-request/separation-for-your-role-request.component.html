@@ -334,15 +334,15 @@
                 (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
-                        {{'Comments' | translate}}<span class="text-danger">*</span></label>
+                        {{'Reject Reason' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250" (keydown)="formsValidation.restrictInitialSpace($event)"
+                        placeholder="Please enter reject reason" name="notes" #notes="ngModel" [maxLength]="250" (keydown)="formsValidation.restrictInitialSpace($event)"
                         [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
                     <div class="error-msg" *ngIf="(notes.touched && notes.invalid) || 
-                    (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Comments are
+                    (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Reject Reason is
                         required</div>
                 </div>
                 <div class="custom-modal-footer">
@@ -384,8 +384,7 @@
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="relieving" name="isreliving"
                         [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" (click)="toggleEarly()">
-                    <label class="form-check-label me-2" for="relieving">{{'Are you willing to accept an early
-                        Relieving?' | translate}} </label>
+                    <label class="form-check-label me-2" for="relieving">{{'Are you willing to accept an early Relieving?' | translate}} </label>
                 </div>
             </div>
 

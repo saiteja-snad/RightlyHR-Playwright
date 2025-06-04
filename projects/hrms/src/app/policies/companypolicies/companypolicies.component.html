@@ -29,6 +29,7 @@
         <th>{{'Policy Name'|translate}}</th>
         <th>{{'Description'|translate}}</th>
         <th class="text-center">{{'Attachment'|translate}}</th>
+        <th class="text-center">{{'Acknowledged' | translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="((orgPolicyItemsArray) ?? []).length > 0; else noDataTemplate">
@@ -37,9 +38,23 @@
             <td>{{item.policyDescription}}</td>
             <td class="text-center">
               <a type="button" class="view-btn text-nowrap"
-                (click)="onViewAttachement(item.policyAttachment,item.policyName)">
+                (click)="onViewAttachement(item.policyAttachment,item.policyName,item)">
                 <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
               </a>
+            </td>
+            <td class="text-center acknowledge-content">
+              <ng-container *ngIf="item.requiresAcknowledgment">
+                <ng-container *ngIf="item.acknowledged; else showAcknowledge">
+                 <span class="success-text">Yes</span>
+                </ng-container>
+                <ng-template #showAcknowledge>
+                  <a class="acknowledge-btn" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
+                    <u>Acknowledge</u></a>
+                </ng-template>
+              </ng-container>
+              <ng-container *ngIf="!item.requiresAcknowledgment">
+                <span>N/A</span>
+              </ng-container>
             </td>
           </tr>
         </ng-container>
@@ -79,6 +94,24 @@
         <ng-template #imageView>
           <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />
         </ng-template>
+      </div>
+      <!-- Acknowledge Footer -->
+      <div class="modal-footer justify-content-between bg-white px-4 py-3 border-top"
+        *ngIf="selectedItem?.requiresAcknowledgment && !selectedItem?.acknowledged">
+        <form [formGroup]="ackForm" class="d-flex justify-content-between w-100 align-items-center">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="ackCheckbox" formControlName="acknowledged" />
+            <label class="form-check-label" for="ackCheckbox">
+              I acknowledge that I have read and agree to the policy.
+            </label>
+          </div>
+
+          <button class="btn btn-primary" [disabled]="ackForm.invalid || loading"
+            (click)="postacknowledgement(selectedItem)">
+            <span *ngIf="!loading">Acknowledge</span>
+            <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </form>
       </div>
     </div>
   </div>

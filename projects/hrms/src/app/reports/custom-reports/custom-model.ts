@@ -3,10 +3,10 @@ export interface Ipersonal {
   accountName: string;
   accountNo: number;
   appointmentSentDate: string;
-  esicapplicable: any;
-  pfapplicable: any
+  esicApplicable: any;
+  pfApplicable: any
   appointmentSentStatus: string;
-  appointmentsentby: string;
+  appointmentSentBy: string;
   backgroundCheckStatus: string;
   bankName: string;
   bloodGroup: string;
@@ -39,11 +39,11 @@ export interface Ipersonal {
   gender: string;
   gpa: number;
   gradeName: string;
-  healthinsurance: string;
+  healthInsurance: string;
   ifscCode: string;
   issuedcountry: string;
   issueddate: string;
-  jobeffectivedate: string;
+  jobEffectiveDate: string;
   jobGrade: string;
   jobRole: string;
   jobType: string;
@@ -54,7 +54,7 @@ export interface Ipersonal {
   m: number;
   maritalStatus: string;
   noticePeriod: string;
-  offersentby: string;
+  offerSentBy: string;
   offerSentDate: string;
   offerSentStatus: string;
   overtimeeligibility: string;
@@ -68,8 +68,8 @@ export interface Ipersonal {
   reason: string;
   relationShip: string;
   relationship1: string;
-  reportingmanager: string;
-  salaryhold: string;
+  reportingManager: string;
+  salaryHold: string;
   // secondaryLanguage: string;
   specialization: string;
   subdepartment_name: string;
@@ -81,25 +81,25 @@ export interface Ipersonal {
   workEmail: string;
   workPhone: string;
   subLocation: string;
-  branchcode: string
-  joblocationname: string;
-  jobsublocationname: string;
-  shiftname: string;
-  shiftcode: string;
-  teammanager: string;
+  branchCode: string
+  jobLocationName: string;
+  jobSubLocationName: string;
+  shiftName: string;
+  shiftCode: string;
+  teamManager: string;
   totalYearsOfExperience: string;
-  permanentzipcode: any;
-  permanentcountry: string;
-  permanentstate: string;
-  permanentcity: string;
-  permanentaddressline2: string;
-  permanentaddressline1: string;
-  currentzipcode: any;
-  currentstate: string;
-  currentcity: string;
-  currentaddressline2: string;
-  currentaddressline1: string;
-  currentcountry: string;
+  permanentZipCode: any;
+  permanentCountry: string;
+  permanentState: string;
+  permanentCity: string;
+  permanentAddressLine2: string;
+  permanentAddressLine1: string;
+  currentZipCode: any;
+  currentState: string;
+  currentCity: string;
+  currentAddressLine2: string;
+  currentAddressLine1: string;
+  currentCountry: string;
 }
 export interface IStatus {
   sno: number;

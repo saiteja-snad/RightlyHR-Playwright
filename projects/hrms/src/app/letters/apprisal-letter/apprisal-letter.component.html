@@ -68,11 +68,16 @@
         </div>
     
         <div class="mb-3">
-          <label class="form-label custom-label mb-2"> {{'Performance Variable Bonus'| translate }}</label>
-          <input type="number" class="form-control custom-input" placeholder="Please enter performance variable bonus" 
-           formControlName="bonus" (input)="sanitizeInput($event)" />
+          <label class="form-label custom-label mb-2">{{ 'Performance Variable Bonus' | translate }}</label>
+          <input type="number" class="form-control custom-input" placeholder="Please enter performance variable bonus"
+            formControlName="bonus" (input)="sanitizeInput($event)" />
           <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
-            <div class="error-msg">{{'Performance variable bonus is required'| translate }}</div>
+            <div *ngIf="employeeForm.get('bonus')?.errors?.['required']" class="error-msg">
+              {{ 'Performance variable bonus is required' | translate }}
+            </div>
+            <div *ngIf="employeeForm.get('bonus')?.errors?.['bonusExceedsSalary']" class="error-msg">
+              Bonus cannot exceed employee's salary
+            </div>
           </div>
         </div>
 

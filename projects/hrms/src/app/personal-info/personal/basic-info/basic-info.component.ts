@@ -204,7 +204,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const updatePayload = {
       ...this.empyployeedata,
       employeeId: this.empinfo.employeeId,
-      fusionEmpId:this.empinfo.fusionEmpId,
+      fusionEmpId: formValue.fusionEmpId,
       title: formValue.salutation.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
@@ -213,7 +213,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-
       marriedDate: formValue.marriageDate,
     };
 

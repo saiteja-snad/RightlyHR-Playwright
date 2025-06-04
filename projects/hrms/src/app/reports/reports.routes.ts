@@ -1,5 +1,6 @@
 import { Route, } from '@angular/router';
 import { PermissionsGuard } from '../guards/permissions.guard';
+import { PolicyAcknowledgementReportComponent } from './policy-reports/policy-acknowledgement-report/policy-acknowledgement-report.component';
 
 export default [
 
@@ -32,6 +33,11 @@ export default [
         ]
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
+    {
+        path: 'policy-reports', children:[
+            {path: 'policy-acknowledgment-report', component : PolicyAcknowledgementReportComponent}
+        ]
+    },
     { path: 'team-leave-balance', loadComponent: () => import('./team-leave-balance/team-leave-balance.component').then((m) => m.TeamLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance.view' } },
     { path: 'team-leave-summary', loadComponent: () => import('./team-leave-summary/team-leave-summary.component').then((m) => m.TeamLeaveSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance Summary.view' } },
     { path: 'org-leave-balance', loadComponent: () => import('./org-leave-balance//org-leave-balance.component').then((m) => m.OrgLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Org Leave Balance.view' } },

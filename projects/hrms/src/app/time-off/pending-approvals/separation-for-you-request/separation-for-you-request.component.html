@@ -22,8 +22,8 @@
                 <th>{{'Early Relieving Reason' | translate}}</th>
                 <th>{{'Request Type' | translate}}</th>
                 <th>{{'Approver History' | translate}}</th>
-                @if(rbac.allowedToAccess('For You (Separation Requests).update') || rbac.allowedToAccess('For You
-                (Separation Requests).delete')) {
+                @if(rbac.allowedToAccess('For You (Separation Requests).update') || 
+                rbac.allowedToAccess('For You (Separation Requests).delete')) {
                 <th>Action</th>
                 }
             </thead>
@@ -115,8 +115,8 @@
                             }
                             @else{-}
                         </td>
-                        @if(rbac.allowedToAccess('For You (Separation Requests).update') || rbac.allowedToAccess('For
-                        You (Separation Requests).delete')) {
+                        @if(rbac.allowedToAccess('For You (Separation Requests).update') || 
+                        rbac.allowedToAccess('For You (Separation Requests).delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
@@ -157,8 +157,6 @@
                         </td>
                         }
                         }
-
-
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
                         <app-no-data-found />
@@ -247,7 +245,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
-                        pattern="^[^\s].*" required [disabled]="!isCheckBoxEnabledEarly"></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)" required [disabled]="!isCheckBoxEnabledEarly"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -287,7 +285,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        pattern="^[^\s].*" [disabled]="!isCheckBoxEnabledExtended"></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)" [disabled]="!isCheckBoxEnabledExtended"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250
                     </div>
@@ -320,7 +318,7 @@
                         translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"
                         required [disabled]="!isCheckBoxEnabledRegular"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
@@ -525,7 +523,7 @@
                         {{'Early Relieving Reason' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter early relieving reason" name="Reason" #Reason="ngModel"
-                        maxlength="250" pattern="^[^\s].*" #earlyrelievingreason="ngModel"
+                        maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" #earlyrelievingreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
@@ -561,7 +559,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        pattern="^[^\s].*"></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || 
@@ -589,7 +587,7 @@
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custome-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"
                         required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>

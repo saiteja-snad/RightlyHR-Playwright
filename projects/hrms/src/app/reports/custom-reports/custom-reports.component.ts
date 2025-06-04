@@ -527,27 +527,27 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
         // else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
         // Current Address
         else if (field === 'Address Line 1(current)')
-          data[field] = user.currentaddressline1;
+          data[field] = user.currentAddressLine1;
         else if (field === 'Address Line 2(current)')
-          data[field] = user.currentaddressline2;
-        else if (field === 'City(current)') data[field] = user.currentcity;
-        else if (field === 'State(current)') data[field] = user.currentstate;
+          data[field] = user.currentAddressLine2;
+        else if (field === 'City(current)') data[field] = user.currentCity;
+        else if (field === 'State(current)') data[field] = user.currentState;
         else if (field === 'Country(current)')
-          data[field] = user.currentcountry;
+          data[field] = user.currentCountry;
         else if (field === 'Zip Code/Post Code(current)')
-          data[field] = user.currentzipcode;
+          data[field] = user.currentZipCode;
         // Permanent Address
         else if (field === 'Address Line 1(permanemt)')
-          data[field] = user.permanentaddressline1;
+          data[field] = user.permanentAddressLine1;
         else if (field === 'Address Line 2(permanemt)')
-          data[field] = user.permanentaddressline2;
-        else if (field === 'City(permanemt)') data[field] = user.permanentcity;
+          data[field] = user.permanentAddressLine2;
+        else if (field === 'City(permanemt)') data[field] = user.permanentCity;
         else if (field === 'State(permanemt)')
-          data[field] = user.permanentstate;
+          data[field] = user.permanentState;
         else if (field === 'Country(permanemt)')
-          data[field] = user.permanentcountry;
+          data[field] = user.permanentZipCode;
         else if (field === 'Zip Code/Post Code(permanemt)')
-          data[field] = user.permanentzipcode;
+          data[field] = user.permanentZipCode;
         // Contact Details
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
@@ -599,13 +599,13 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
         // Pre Onboarding
         else if (field === 'Offer Sent Date')
           data[field] = this.formatDate(user.offerSentDate);
-        else if (field === 'Offer Sent By') data[field] = user.offersentby;
+        else if (field === 'Offer Sent By') data[field] = user.offerSentBy;
         else if (field === 'Offer Sent Status')
           data[field] = user.offerSentStatus;
         else if (field === 'Appointment Sent Date')
           data[field] = this.formatDate(user.appointmentSentDate);
         else if (field === 'Appointment Sent By')
-          data[field] = user.appointmentsentby;
+          data[field] = user.appointmentSentBy;
         else if (field === 'Appointment Sent Status')
           data[field] = user.appointmentSentStatus;
         // Onboarding
@@ -615,15 +615,15 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
           data[field] = this.formatDate(user.probationEndDate);
         else if (field === 'Probation Status')
           data[field] = user.probationStatus;
-        else if (field === 'Branch Code') data[field] = user.branchcode;
+        else if (field === 'Branch Code') data[field] = user.branchCode;
         else if (field === 'Notice Period') data[field] = user.noticePeriod;
         else if (field === 'Background Check Status')
           data[field] = user.backgroundCheckStatus;
-        else if (field === 'Salary Hold') data[field] = user.salaryhold;
+        else if (field === 'Salary Hold') data[field] = user.salaryHold;
         else if (field === 'PT') data[field] = user.pt;
-        else if (field === 'PF') data[field] = user.pfapplicable;
-        else if (field === 'ESIC') data[field] = user.esicapplicable;
-        else if (field === 'Insurance') data[field] = user.healthinsurance;
+        else if (field === 'PF') data[field] = user.pfApplicable;
+        else if (field === 'ESIC') data[field] = user.esicApplicable;
+        else if (field === 'Insurance') data[field] = user.healthInsurance;
         // Offboarding
         else if (field === 'Last Working Day')
           data[field] = this.formatDate(user.lastworkingday);
@@ -635,18 +635,18 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
         else if (field === 'Grade Name') data[field] = user.gradeName;
         // Job Details
         else if (field === 'Job Effective Date')
-          data[field] = this.formatDate(user.jobeffectivedate);
+          data[field] = this.formatDate(user.jobEffectiveDate);
         else if (field === 'Job Role') data[field] = user.jobRole;
         else if (field === 'Department') data[field] = user.departmentName;
         else if (field === 'Team') data[field] = user.subdepartment_name;
-        else if (field === 'Team Manager') data[field] = user.teammanager;
+        else if (field === 'Team Manager') data[field] = user.teamManager;
         else if (field === 'Reporting Manager')
-          data[field] = user.reportingmanager;
-        else if (field === 'Location') data[field] = user.joblocationname;
+          data[field] = user.reportingManager;
+        else if (field === 'Location') data[field] = user.jobLocationName;
         else if (field === 'Sub Location')
-          data[field] = user.jobsublocationname;
-        else if (field === 'Shift') data[field] = user.shiftname;
-        else if (field === 'Shift Code') data[field] = user.shiftcode;
+          data[field] = user.jobSubLocationName;
+        else if (field === 'Shift') data[field] = user.shiftName;
+        else if (field === 'Shift Code') data[field] = user.shiftCode;
         // Compensation
         else if (field === 'Compensation Effective Date')
           data[field] = this.formatDate(user.compeffectivedate);

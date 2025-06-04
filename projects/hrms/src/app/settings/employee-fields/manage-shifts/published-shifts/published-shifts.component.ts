@@ -46,9 +46,35 @@ export class PublishedShiftsComponent {
     });
   }
 
-  view(id: any) {
-    this.router.navigate(['/settings/employee-fields/viewshifts', id]);
-  }
+view(id: any): void {
+  const shift = this.shiftsData.find((item: any) => item.id == id);
+
+  const transformedShift = {
+    id: shift.id,
+    year: shift.applicableyear,
+    location: shift.locationId,
+    subLocation: shift.subLocationId,
+    status: shift.status,
+    addedBy: shift.addedbyName,
+    addedDate: shift.addedDate,
+    shifts: shift.orgShiftsItems.map((item: any) => ({
+      shiftCode: item.code,
+      shiftName: item.shiftName,
+      color: item.color,
+      startTime: item.shiftStartTime,
+      endTime: item.shiftEndTime,
+      gracePeriod: item.allowedGracePeriod,
+      latesAllowed: item.latesAllowed,
+      breakTime: item.allowedBreakTime,
+      halfDayMinHrs: item.halfDayMinHrs,
+      fullDayMinHrs: item.fullDayMinHrs,
+      description: item.shiftDescription
+    }))
+  };
+
+  localStorage.setItem('viewShiftData', JSON.stringify(transformedShift));
+  this.router.navigate(['/settings/employee-fields/viewshifts', id]);
+}
 
   cloneshiftsPolicy1(id: any): void {
     const shift = this.shiftsData.find((item: any) => item.id == id);

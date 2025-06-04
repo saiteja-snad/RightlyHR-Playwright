@@ -65,8 +65,24 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
         acknowledged : [false],
         notification : [false],
-      });
+      },
+      {
+        validator: this.acknowledgementNotificationValidator
+      }
+    );
     }
+
+    acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
+    const acknowledged = group.get('acknowledged')?.value;
+    const notification = group.get('notification')?.value;
+
+    if (acknowledged && !notification) {
+      return { 'acknowledgementNotificationInvalid': true };
+    }
+
+    return null;
+  }
+
     getAllYears() {
       for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
         this.yearDetails.push(i);

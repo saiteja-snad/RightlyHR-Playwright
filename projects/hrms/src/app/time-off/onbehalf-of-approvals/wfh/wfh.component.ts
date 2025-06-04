@@ -312,6 +312,7 @@ bulkapprove(approverPopup: any) {
           status: 'Approved',
           comments: comments,
           moduleId: environment.wfhModuleId,
+          onBehalfOfApproval : true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -323,6 +324,7 @@ bulkapprove(approverPopup: any) {
           status: 'Approved',
           comments: comments,
           moduleId: environment.wfhModuleId,
+          onBehalfOfApproval : true,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -378,6 +380,7 @@ bulkapprove(approverPopup: any) {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.wfhModuleId,
+          onBehalfOfApproval : true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -389,6 +392,7 @@ bulkapprove(approverPopup: any) {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.wfhModuleId,
+          onBehalfOfApproval : true,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,
@@ -441,6 +445,7 @@ bulkapprove(approverPopup: any) {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.wfhModuleId,
+        onBehalfOfApproval : true,
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -452,6 +457,7 @@ bulkapprove(approverPopup: any) {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.wfhModuleId,
+        onBehalfOfApproval : true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,

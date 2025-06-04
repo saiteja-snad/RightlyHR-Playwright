@@ -20,6 +20,9 @@ import { AttendanceViewComponent } from "../../Attendance/attendance-view/attend
 import { EmployeeManagementLayoutComponent } from "../../admin/employee-management-layout/employee-management-layout.component";
 import { InviteUserLayoutComponent } from "../../invite-new-user/invite-user-layout/invite-user-layout.component";
 import { LettersLayoutComponent } from "../../letters/letters-layout/letters-layout.component";
+import { BloodBankComponent } from "../../blood-bank/blood-bank/blood-bank.component";
+import { PhonebookComponent } from "../../phonebook/phonebook/phonebook.component";
+import { ContactDirectoryComponent } from "../../contact-directory/contact-directory/contact-directory.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -45,4 +48,7 @@ export default [
     { path: 'employee-management', component: EmployeeManagementLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../admin/employee-management.route') },
     { path: 'invite-user', component: InviteUserLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../invite-new-user/invite-user.route') },
     { path: 'letters', component: LettersLayoutComponent, loadChildren: () => import('../../letters/letters.route') },
+    { path: 'blood-bank', component: BloodBankComponent, canActivate: [MsalGuard] },
+     { path: 'phonebook', component: PhonebookComponent, canActivate: [MsalGuard] },
+      { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [MsalGuard] },
 ] as Route[];

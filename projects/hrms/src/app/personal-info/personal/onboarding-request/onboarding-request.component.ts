@@ -96,7 +96,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
         if(data){
           this.reRequestForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          this.conformationPopup.openSuccessModal('Email sent successfully')
         }
         
       },
@@ -197,7 +197,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata('OnBoardingDocuments/Update', this.doumentsapprovedata).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document Approved Successfully');
+        this.conformationPopup.openSuccessModal('Document approved successfully');
         setTimeout(() => {
           this.getdocumentdeatilsbyempid();
           this.getEmployeeId();
@@ -223,7 +223,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.rejectionData.reason = this.rejectDocument.get('comments')?.value;
     this.http.postdata('OnBoardingDocuments/Update', this.rejectionData).subscribe({
       next: (updatedData: any) => {
-        this.conformationPopup.openSuccessModal('Document Rejected Successfully');
+        this.conformationPopup.openSuccessModal('Document rejected successfully');
         setTimeout(() => {
           this.rejectDocument.reset();
           this.modalService.dismissAll();

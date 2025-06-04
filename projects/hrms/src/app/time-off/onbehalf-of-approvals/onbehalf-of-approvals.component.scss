@@ -2,12 +2,24 @@
    background: linear-gradient(180deg, #FFFFFF 0%, #D8E2F2 100%);
 }
 
-.custom-tab-content{
+.custom-tab-content {
    width: 100%;
 }
 
 @media only screen and (max-width: 1430px) {
    .custom-tab-content {
       width: calc(100% - 8.625rem) !important;
+   }
+}
+
+.component-left-tabs-container {
+   min-height: 50vh;
+   height: calc(100dvh - 9.5rem);
+}
+
+.custom-p-multi-select-table {
+   .p-datatable-table-container {
+      height: calc(100vh - 16.25rem);
+      min-height: 45vh;
    }
 }

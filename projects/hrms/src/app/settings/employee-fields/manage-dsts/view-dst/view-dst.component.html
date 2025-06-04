@@ -1,18 +1,19 @@
 <div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0 cursor" (click)="navigate()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>{{'View DST'| translate}}
-            </p>
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="navigate()">Manage DST
+                <i class="bi bi-chevron-double-right ms-1"></i></div>
+            <div class="component-header">{{'View DST'| translate}}</div>
         </div>
     </div>
 
-    <div class="custom-setting-right-content w-100 p-3">
-        <form autocomplete="off" [formGroup]="dstForm">
-            <div class="d-flex gap-3 mb-3">
+    <form autocomplete="off" [formGroup]="dstForm">
+        <div class="custom-setting-right-content fields-data-container">
+            <div class="data-header-content">
                 <!-- Year -->
                 <div>
-                    <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}</label><span class="text-danger">*</span>
+                    <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}</label><span
+                        class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
                             class="form-select custom-select" formControlName="year" placeholder="Please select year">
@@ -21,10 +22,11 @@
                         </p-select>
                     </div>
                 </div>
-            
+    
                 <!-- Location -->
                 <div>
-                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate}}</label><span class="text-danger">*</span>
+                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate}}</label><span
+                        class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
@@ -35,24 +37,27 @@
                         </p-select>
                     </div>
                 </div>
-            
+    
                 <!-- Sub Location -->
                 <div>
-                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" | translate}}</label><span class="text-danger">*</span>
+                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" |
+                        translate}}</label><span class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
                             formControlName="subLocation" placeholder="Please select sub location"
                             (onChange)="getAllShifts($event.value)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
+                                }}</ng-template>
                             <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                         </p-select>
                     </div>
                 </div>
-            
+    
                 <!-- Shifts -->
                 <div>
-                    <label for="shift" class="form-label custom-label mb-2">{{ "Shift"| translate }}</label><span class="text-danger">*</span>
+                    <label for="shift" class="form-label custom-label mb-2">{{ "Shift"| translate }}</label><span
+                        class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                             [showClear]="false" formControlName="shift" placeholder="Please select shift"
@@ -77,8 +82,10 @@
                     </thead>
                     <tbody formArrayName="momentRows">
                         <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
-                            <td><input type="date" class="form-control custom-input" formControlName="startDate" onkeydown="return false" /></td>
-                            <td><input type="date" class="form-control custom-input" formControlName="endDate" onkeydown="return false" /></td>
+                            <td><input type="date" class="form-control custom-input" formControlName="startDate"
+                                    onkeydown="return false" /></td>
+                            <td><input type="date" class="form-control custom-input" formControlName="endDate"
+                                    onkeydown="return false" /></td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="momentType" [showClear]="false" formControlName="momentType"
                                     placeholder="Select type" class="form-select custom-select"
@@ -95,12 +102,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex gap-3 justify-content-end pt-4">
-                <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()" >{{'Cancel' | translate}}</button>
-                <button class="custom-btn clone-btn px-5" type="button" (click)="navigateToCloneComponent()">{{'Clone'  | translate}}</button>
-            </div>
-        </form>
-    </div>
+        </div>
+        <div class="d-flex gap-3 justify-content-end">
+            <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">{{'Cancel' | translate}}</button>
+            <button class="custom-btn clone-btn px-5" type="button" (click)="navigateToCloneComponent()">{{'Clone' | translate}}</button>
+        </div>
+    </form>
 </div>
 
 <ng-template #confirmation let-modal>

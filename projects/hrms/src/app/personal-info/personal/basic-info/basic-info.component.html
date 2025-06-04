@@ -23,8 +23,9 @@
     <!--input content-->
     <form autocomplete="off" [formGroup]="basicInfoForm">
       <div class="row" >
+        @if((empinfo.empstatus=='Prospective' && empinfo.empType!='onboard')|| empinfo.empstatus =='Trainee Prospective'){
         <div class="col-md-6 col-lg-4 mb-3"  >
-          <label for="employeeId" class="form-label custom-label mb-2" >Employee ID<span
+          <label for="employeeId" class="form-label custom-label mb-2" >ID<span
               class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId"
             formControlName="employeeId" placeholder="Please enter Employee ID" />
@@ -32,8 +33,19 @@
             class="error-msg">
             Employee ID is required
           </div>
+        </div>}
+        @if((empinfo.empstatus != 'Prospective' || (empinfo.empstatus=='Prospective' && empinfo.empType=='onboard'))  && empinfo.empstatus != 'Trainee Prospective'){
+        <div class="col-md-6 col-lg-4 mb-3"  >
+          <label for="employeeId" class="form-label custom-label mb-2" >Employee ID<span
+              class="text-danger">*</span></label>
+          <input type="text" autocomplete="off" class="form-control custom-input" id="fusionEmpId"
+            formControlName="fusionEmpId" placeholder="Please enter Employee ID" />
+          <div *ngIf="basicInfoForm.get('fusionEmpId')?.invalid && basicInfoForm.get('fusionEmpId')?.touched"
+            class="error-msg">
+            Employee ID is required
+          </div>
         </div>
-
+      }
         <div class="col-md-6 col-lg-4 mb-3" >
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span></label>

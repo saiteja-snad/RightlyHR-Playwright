@@ -417,7 +417,7 @@ pendingCount = 0;
           );
           
           this.pastDatesAllowed = parseInt(
-            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDays')?.value ?? '0',
+            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDaysAllowed')?.value ?? '0',
             10
           );
         },

@@ -7,12 +7,10 @@ import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
-import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/reports-main-tabs.component";
-import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component";
-import { EmployeeManagementTabsComponent } from "../Employee-management-content/employee-management-tabs/employee-management-tabs.component";
+import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ReportsMainTabsComponent, SettingsMainHeaderTabsComponent, EmployeeManagementTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ItsuporrtHeaderTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -45,11 +43,8 @@ export class SidenavComponent implements OnInit {
       label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png',
       route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' }
     },
-    //IT Supports
-    {
-      label: 'IT Support', icon: '/main-menu-icons/it-support-icon.png', activeIcon: '/main-menu-icons/it-support.png',
-      route: '/it-support', permission: { feature: 'IT Support', action: 'view' }
-    },
+    
+    
     //org Hierarcy
     {
       label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
@@ -59,7 +54,19 @@ export class SidenavComponent implements OnInit {
     {
       label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
-    }
+    },
+    {
+      label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png',
+      route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' }
+    },
+    {
+      label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
+      route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' }
+    },
+    {
+      label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
+      route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' }
+    },
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon

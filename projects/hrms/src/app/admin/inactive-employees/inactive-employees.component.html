@@ -38,7 +38,7 @@
               -
             </ng-template>
           </td>
-          <td> <span *ngIf="act.contactnumber;else contactnum">+91{{act.contactnumber}}</span>
+          <td> <span *ngIf="act.contactnumber;else contactnum">{{act.mobilePhoneCountryCode}} {{act.contactnumber}}</span>
             <ng-template #contactnum>
               -
             </ng-template>

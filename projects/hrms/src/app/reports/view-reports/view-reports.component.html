@@ -1,0 +1,107 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content pt-2">
+        <div class="component-header">Reports</div>
+    </div>
+
+    <div class="custom-component-right-content">
+        <div class="custom-letter-tabs">
+            <ul class="tabs-list-content">
+                <!--Standard Reports-->
+                @if(rbac.allowedToAccess('Standard Reports.view')){
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/Standard-reports-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Standard Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{standardReports}}</p>
+                    <div>
+                        <app-standard-report-tabs />
+                    </div>
+                </li>
+                }
+
+                <!--Attendance Reports-->
+                @if(rbac.allowedToAccess('Attendance reports.view')){
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Attendance Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{attendanceReports}}</p>
+                    <div>
+                        <app-attandace-report-tabs />
+                    </div>
+                </li>
+                }
+
+                @if(rbac.allowedToAccess('Policy Acknowledgement Report.view')){
+                <!--Policy Reports-->
+                <li class="list-item">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/attendance-Report-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Policy Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{policyReportModuleReports}}</p>
+                    <div>
+                        <app-policy-reports-tabs />
+                    </div>
+                </li>
+                }
+                <!--Time Off-->
+                <!--Custom Reports-->
+                @if(rbac.allowedToAccess('Custom Reports.view')){
+                <li class="list-item" [routerLink]="['/reports/custom-reports']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/Custom-Reports-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Custom Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{customReports}}</p>
+                </li>
+                }
+
+                <!--Monthly Attendance Reports-->
+                @if(rbac.allowedToAccess('Monthly Attendance Reports.view')){
+                <li class="list-item" [routerLink]="['/reports/monthly-attandance-reports']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/reports-icons/Monthly-Attendance-Report-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Monthly Attendance Reports</div>
+                    </div>
+                    <p class="subject-text mb-3">{{monthlyAttendanceReports}}</p>
+                </li>
+                }
+
+                <!--Team Leave Balance-->
+                @if(rbac.allowedToAccess('Team Leave Balance.view')){
+                <li class="list-item" [routerLink]="['/reports/team-leave-balance']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/time-off-icon/team-leave-balance-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Team Leave Balance</div>
+                    </div>
+                    <p class="subject-text mb-3">{{teamLeaveBalance}}</p>
+                </li>
+                }
+
+                <!--Team Leave Summary-->
+                @if(rbac.allowedToAccess('Team Leave Balance Summary.view')){
+                <li class="list-item" [routerLink]="['/reports/team-leave-summary']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/time-off-icon/team-leave-summary-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Team Leave Summary</div>
+                    </div>
+                    <p class="subject-text mb-3">{{teamLeaveSummary}}</p>
+                </li>
+                }
+                <!-- Org Leave Balance -->
+                @if(rbac.allowedToAccess('Org Leave Balance.view')){
+                <li class="list-item" [routerLink]="['/reports/org-leave-balance']">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <img src="/time-off-icon/Org-Leave-Balance-icon.png" alt="Icon" class="icon">
+                        <div class="label-name">Org Leave Balance</div>
+                    </div>
+                    <p class="subject-text mb-3">{{teamLeaveSummaryModuleInfo}}</p>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

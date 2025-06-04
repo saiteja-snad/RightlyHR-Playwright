@@ -126,15 +126,15 @@
         <div class="card letter-data-content p-4">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent1">
+                    <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter': probationLetterData.Copys}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
+                            <!-- <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
-                            </ng-template>
-                            <div class="letter-div">
+                            </ng-template> -->
+                            <div  class="letter-div" *ngIf="probationLetterData" >
                                 <div class="d-flex justify-content-between mb-3">
                                     <ul class="list-style-none ps-0">
                                         <li>To</li>
@@ -161,7 +161,7 @@
 
                                 <p class="mb-4">We are pleased to inform you that, following a comprehensive
                                     assessment of your performance during the probationary period, you have successfully
-                                    completed your probationary period with RightlyHR. </p>
+                                    completed your probationary period with SNAD Developers India Pvt Ltd. </p>
 
                                 <p class="mb-4">
                                     Effective from {{probationLetterData.effectiveDate|dateformat}}, your position as
@@ -171,7 +171,7 @@
                                 </p>
 
                                 <p class="mb-4">
-                                    We believe that your continued presence at RightlyHR will
+                                    We believe that your continued presence at SNAD Developers India Pvt Ltd will
                                     further contribute to our success, and we look forward to seeing your continued
                                     growth and contributions to the organization.
                                 </p>
@@ -182,7 +182,7 @@
                                 </p>
 
                                 <p class="mb-2 pt-4">Sincerely,</p>
-                                <p class="letter-sub-header"><b>for RightlyHR</b></p>
+                                <p class="letter-sub-header"><b>for SNAD Developers India Pvt Ltd</b></p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <div *ngIf="!probationLetterData.authorityName" class="letter-sub-header pt-4">Authority
                                     Signature</div>
@@ -198,9 +198,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="letter-footer">
+                        <!-- <div class="letter-footer">
                             <app-letter-footer />
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

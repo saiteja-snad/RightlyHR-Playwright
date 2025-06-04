@@ -7,9 +7,7 @@
             </div>
 
             <div>
-                <div *ngIf="isActive('/it-support')">
-                    <app-itsuporrt-header-tabs />
-                </div>
+               
                 <div *ngIf="showPmsTabs()">
                     <app-pms-tabs />
                 </div>
@@ -54,7 +52,7 @@
                             <p class="sub-text m-0 mb-1">{{jobRole}}</p>
                             <div class="border-bottom"></div>
                             <div class="mb-2">
-                                <a class="profile-btn" [routerLink]="['/myinfo/personal/basic-info']">View Profile</a>
+                                <a class="profile-btn" (click)="goToAccessibleRoute('/myinfo')">View Profile</a>
                             </div>
                             <button class="custom-btn btn-primary" (click)="openlogoutModal()">
                                 <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-1">Logout

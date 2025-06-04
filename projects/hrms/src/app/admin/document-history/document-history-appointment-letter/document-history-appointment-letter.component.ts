@@ -21,32 +21,28 @@ import { RbacService } from '../../../services/rbac.service';
   templateUrl: './document-history-appointment-letter.component.html',
   styleUrl: './document-history-appointment-letter.component.scss',
 })
-export class DocumentHistoryAppointmentLetterComponent
-  implements OnInit, OnDestroy
-{
+
+export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
 
-  constructor(private http: HttpService,public rbac: RbacService) {}
+  constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.getAppointmentLetters();
   }
 
   getAppointmentLetters() {
-    this.subscription = this.http
-      .getData('AppointmentLetter/getAllNames')
-      .subscribe({
-        next: (data: any) => {
-          this.AppointmentLetters = data;
-        },
-      });
+    this.subscription = this.http.getData('AppointmentLetter/getAllNames').subscribe({
+      next: (data: any) => {
+        this.AppointmentLetters = data;
+      },
+    });
   }
 
   onSelectDownload(file: any) {
-    this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl)
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl)
       .subscribe({
         next: (res: any) => {
           let fileName = res.headers

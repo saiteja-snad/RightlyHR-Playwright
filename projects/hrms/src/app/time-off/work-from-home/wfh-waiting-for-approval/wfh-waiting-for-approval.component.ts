@@ -52,6 +52,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
+  permissionForLoggedInUser: boolean = true;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -135,6 +136,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   getWFHRequests() {
     let empId = this.empinfo.employeeId;
     this.dataload = true;
+    this.permissionForLoggedInUser = true;
     console.log(empId);
     this.http
       .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
@@ -163,7 +165,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   onClick(data: any, content: any) {
     this.selectedFields = data;
     console.log(this.selectedFields);
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
   //function to cancle the leave
   cancelWFHSubmit() {
@@ -214,6 +216,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   getWFHEMPRequests() {
     let empId = this.selectempid;
     this.dataload = true;
+    this.permissionForLoggedInUser = false;
     console.log(empId);
     this.http
       .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)

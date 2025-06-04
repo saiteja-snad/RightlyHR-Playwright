@@ -1,40 +1,30 @@
 <div class="custom-main-component-container">
-    <!--header-->
-    <div class="mb-3">
-         <div class="heading-content">
-            <div class="commpoment-name">Settings<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Employee Fields</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name" (click)="navigateToSettings()">Settings</div>
+            <div class="commpoment-name">
+                <i class="bi bi-chevron-double-right"></i>
             </div>
-        </div>
-    </div>
-
-  
-    <!--Module Information-->
-    <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
-
-    <!--tabs content-->
-    <div class="mb-3">
-        <div>
-            <app-settings-employee-fields-module-tabs />
+            <div class="commpoment-name">Employee Fields</div>
+            <div class="commpoment-name">
+                <i class="bi bi-chevron-double-right"></i>
+            </div>
+            <div class="component-header">Documents</div>
         </div>
     </div>
 
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        <div class="custom-component-left-content p-3">
+        <div class="custom-component-left-content">
             @for(folder of folders; track $index){
-            <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor px-2" [ngClass]="{'active': selectedMainFolder === folder}">
+            <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor px-2"
+                [ngClass]="{'active': selectedMainFolder === folder}">
                 <i class="bi bi-folder-fill foldder-icon"></i>
                 <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
             </div>
             }
         </div>
 
-        <div class="custom-setting-right-content p-3">
+        <div class="custom-setting-right-content">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div><span class="component-sub-header">Folders</span></div>
                 @if(rbac.allowedToAccess('Document Tab.create')){
@@ -49,7 +39,6 @@
             <div class="custom-table-content">
                 @if(!dataLoad){
                 <table class="w-100">
-
                     <thead>
                         <th>FILE NAME</th>
                         <th>CREATED DATE</th>
@@ -70,21 +59,22 @@
                             </td>
                             <td>{{ subFolder.createdOn | dateformat }}</td>
                             @if(rbac.allowedToAccess('Document Tab.delete')){
-                            <td><button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
+                            <td>
+                                <button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
                             </td>
                             }
                             }
                         </tr>
                         }
-                    }
-                    @else{
+                        }
+                        @else{
                         <tr>
-                          <td colspan="3"><app-no-data-found /></td>
+                           <app-no-data-found />
                         </tr>
-                      }
+                        }
                     </tbody>
                 </table>
-            }
+                }
             </div>
         </div>
     </div>
@@ -108,22 +98,24 @@
                     <label for="subDirName" class="form-label custom-label mb-2">
                         {{ "File Name" | translate }}<span class="text-danger">*</span>
                     </label>
-                    <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
-                    autocomplete="off" placeholder="Please enter file name" id="subDirName"  #subDirName="ngModel" required maxlength="50" [attr.maxlength]="50"
-                    (keydown)="formValidations.restrictInitialSpace($event)"/>
+                    <input type="text" class="form-control custom-input" name="subDirName"
+                        [(ngModel)]="subDir.subDirName" autocomplete="off" placeholder="Please enter file name"
+                        id="subDirName" #subDirName="ngModel" required maxlength="50" [attr.maxlength]="50"
+                        (keydown)="formValidations.restrictInitialSpace($event)" />
                     <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
                         {{'File Name is required' | translate}}
-                      </div>
+                    </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="onClose()">{{'Cancel'|translate}}</button>
-                    <button type="submit" [disabled]="AddSubDirectory.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="onClose()">{{'Cancel'|translate}}</button>
+                    <button type="submit" [disabled]="AddSubDirectory.invalid"
+                        class="custom-btn btn-primary">{{'Add'|translate}}</button>
                 </div>
             </form>
         </div>
     </div>
 </ng-template>
-
 
 <ng-template #deletefile let-model>
     <div class="result-popup-content" ngbAutofocus>

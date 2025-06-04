@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { SettingsAssetsConfigurationsTabsComponent } from "../../../shared/settings-tabs/settings-assets-configurations-tabs/settings-assets-configurations-tabs.component";
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
+
 @Component({
   selector: 'app-asset-configuration-lay-out',
-  imports: [RouterModule, SettingsAssetsConfigurationsTabsComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './asset-configuration-lay-out.component.html',
   styleUrl: './asset-configuration-lay-out.component.scss',
   encapsulation: ViewEncapsulation.None

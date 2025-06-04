@@ -83,6 +83,9 @@ export class UnderMaintenaceAssetsListComponent {
   empinfo = {} as any
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+     this.http.assetsUpdateLocationId(this.selectedLocationId); 
     this.getFilteredData();
     this.getassetsCategory()
     this.getjobLocationList()

@@ -1,15 +1,15 @@
 <div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0" (click)="navigate()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add New'| translate}}
-            </p>
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="navigate()">Manage DST
+                <i class="bi bi-chevron-double-right ms-1"></i></div>
+            <div class="component-header">{{'Add New'|translate}}</div>
         </div>
     </div>
 
-    <div class="custom-setting-right-content w-100 p-3">
-        <form autocomplete="off" [formGroup]="dstForm" (ngSubmit)="onSubmit(dstForm)">
-            <div class="d-flex gap-3 mb-3">
+    <form autocomplete="off" [formGroup]="dstForm" (ngSubmit)="onSubmit(dstForm)">
+        <div class="custom-setting-right-content fields-data-container">
+            <div class="data-header-content">
                 <!-- Year -->
                 <div>
                     <label for="year" class="form-label custom-label mb-2">
@@ -17,10 +17,10 @@
                     </label>
                     <div class="custom-p-select-content">
                         <!-- <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                            class="custom-select w-100" formControlName="year" placeholder="Please select year">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                            <ng-template let-year #item>{{ year }}</ng-template>
-                        </p-select> -->
+                                class="custom-select w-100" formControlName="year" placeholder="Please select year">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                                <ng-template let-year #item>{{ year }}</ng-template>
+                            </p-select> -->
                         <p-select [options]="yearsList" [filter]="false" [showClear]="false" class="custom-select w-100"
                             formControlName="year" placeholder="Please select year">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-
+    
                 <!-- Location -->
                 <div>
                     <label for="location" class="form-label custom-label mb-2">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-
+    
                 <!-- Sub Location -->
                 <div>
                     <label for="subLocation" class="form-label custom-label mb-2">
@@ -74,7 +74,7 @@
                         </div>
                     </div>
                 </div>
-
+    
                 <!-- Shifts -->
                 <div>
                     <label for="shift" class="form-label custom-label mb-2">
@@ -93,17 +93,17 @@
                         </div>
                     </div>
                 </div>
-
+    
                 <!-- <div> -->
                 <!-- <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">+ {{'Add Row' |
-                        translate}}</button>
-                </div> -->
+                            translate}}</button>
+                    </div> -->
                 <div class="pt-4 mt-1">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addMomentRow();">
                         + {{'Add New' | translate}}</button>
                 </div>
             </div>
-
+    
             <!-- Table for Moment Rows -->
             <div class="custom-table-content">
                 <table class="w-100">
@@ -162,8 +162,8 @@
                             </td>
                             <td>
                                 <!-- <a (click)="momentRows.length > 1 && removeMomentRow(i)"*ngIf="momentRows.length > 1">
-                                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
-                                </a> -->
+                                        <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
+                                    </a> -->
                                 <!-- Delete Icon -->
                                 <div class="d-flex justify-content-end ">
                                     <button type="button" class="custom-icon btn" (click)="removeMomentRow(i)"
@@ -176,15 +176,15 @@
                     </tbody>
                 </table>
             </div>
-
+    
             <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
-            <div class="d-flex gap-3 justify-content-end">
-                <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">{{'Cancel' |
-                    translate}}</button>
-                <button class="custom-btn btn-primary px-5" [disabled]="dstForm.invalid">{{'Submit' | translate}}</button>
-            </div>
-        </form>
-    </div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-end">
+            <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">{{'Cancel' | translate}}</button>
+            <button class="custom-btn btn-primary px-5" [disabled]="dstForm.invalid">{{'Submit' | translate}}</button>
+        </div>
+    </form>
 </div>
 
 <ng-template #confirmation let-modal>

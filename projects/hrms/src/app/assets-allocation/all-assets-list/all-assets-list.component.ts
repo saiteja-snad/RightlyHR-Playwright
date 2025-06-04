@@ -978,7 +978,7 @@ export class AllAssetsListComponent {
           },
           error: (error) => {
             console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal(error.error.message)
+            this.conformationPopup.openErrorModal("Cannot reallocate to the same Employee");
           },
 
         });

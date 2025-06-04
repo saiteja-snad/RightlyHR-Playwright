@@ -23,8 +23,8 @@
         </div>
     </div>
 
-    <div class="graph-grid w-100 mb-3">
-        <div class="total-leave-balance-graph-content">
+    <div class="custom-graph-grid w-100 mb-3">
+        <div class="custom-graph-content">
             <div class="chart-content">
                 <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions"
                     class="doughnut-chart m-0" />
@@ -44,18 +44,16 @@
             </ul>
         </div>
 
-        <div class="employee-category-container">
-            <div class="cards-grid-container">
-                @for (item of cardItems; track $index) {
-                <div class="employees-category-card"  [routerLink]="[item.link]" routerLinkActive="active-nav-link">
-                    <div class="accent-bar" [style.background]="item.employeementTypeColor"></div>
-                    <div class="w-100 text-center py-1">
-                        <p class="label-name mb-2">{{ item.label }} {{item.sublabel}}</p>
-                        <p class="count-text m-0">{{ item.count }}</p>
-                    </div>
+        <div class="cards-grid-container">
+            @for (item of cardItems; track $index) {
+            <div class="employees-category-card" [routerLink]="[item.link]" routerLinkActive="active-nav-link">
+                <div class="accent-bar" [style.background]="item.employeementTypeColor"></div>
+                <div class="w-100 text-center py-1 text-content">
+                    <p class="label-name mb-2">{{ item.label }} {{item.sublabel}}</p>
+                    <p class="count-text m-0">{{ item.count }}</p>
                 </div>
-                }
             </div>
+            }
         </div>
     </div>
 

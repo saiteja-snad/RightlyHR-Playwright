@@ -140,6 +140,7 @@ export interface EmployeeDetails {
   workPhone: number;
   contactnumber: number;
   mobilePhoneCountryCode: any;
+  workPhoneCountryCode: any;
   workEmail: string;
   emailaddress: string;
   emergencyName: string;

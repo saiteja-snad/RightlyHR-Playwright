@@ -158,8 +158,12 @@
                                     <td>{{ emp.permanentState ? emp.permanentState : '-' }}</td>
                                     <td>{{ emp.permanentCountry ? emp.permanentCountry : '-' }}</td>
                                     <td>{{ emp.permanentZipCode ? emp.permanentZipCode : '-' }}</td>
-                                    <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
-                                    <td>{{ emp.mobilePhoneCountryCode}} {{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
+                                    <td> {{
+                                        extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -')
+                                        }}</td>
+                                    <td> {{
+                                        extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -')
+                                        }}</td>
                                     <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
                                     <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | date:'MM-dd-yyyy') : '-' }}
                                     </td>

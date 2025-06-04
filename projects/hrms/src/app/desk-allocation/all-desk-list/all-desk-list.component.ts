@@ -400,15 +400,10 @@ export class AllDeskListComponent {
           this.selectedEmployee = null
         },
       error: (error) => {
-  if (error.status !== 500) {
+  
     this.conformationPopup.openErrorModal("Employee's Desk Allocation Request already exists!");
-    
-    // Give user time to read error, then reopen form
-    setTimeout(() => {
-      this.openModal(this.assigindesk);
-    }, 500); // small delay for modal transition
-  }
-}
+  
+    }
       });
     } else {
       console.log('Form is invalid');

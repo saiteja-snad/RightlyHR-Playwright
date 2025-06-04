@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -88,8 +88,9 @@ export class AllocatedDeskListComponent {
     config.keyboard = false;
   }
 
-  ngOnInit() {
+  @ViewChild('reallcatedeskmodal') private readonly reallcatedeskmodal!: NgbModal;
 
+  ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     console.log(this.empinfo);
   
@@ -382,19 +383,18 @@ export class AllocatedDeskListComponent {
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
           ///this.updatedeskallowcation(this.assiginForm)
         this.getAllDesks(this.page, this.pageSize, null, null, null);
+        this.getcount(null,null,this.Status)
           this.reassiginForm.reset();
           this.reassiginForm.get('employeeName')?.reset()
           this.reassiginForm.get('approvid')?.reset()
           this.selectedEmployee = null;
           this.selectedmanerEmployee = null
           this.shiftDropdown = [];
-
         },
         error: (error) => {
-          console.log('Error:', error);
-          this.conformationPopup.openErrorModal(error.error.message);
-
-        }
+          console.log('Error:', error);     
+          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');       
+      }      
       });
     } else {
       console.log('Form is invalid');

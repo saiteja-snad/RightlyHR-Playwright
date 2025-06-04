@@ -93,6 +93,7 @@
     --fontsize32: 2rem;
     --fontsize28: 1.75rem;
     --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
     --fontsize20: 1.25rem;
     --fontsize18: 1.125rem;
     --fontsize16: 1rem;
@@ -2459,12 +2460,12 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .small-blue-toggle {
-  --p-toggleswitch-width: 2.5rem;
-  --p-toggleswitch-height: 1.2rem;
-  --p-toggleswitch-handle-size: 1rem;
+    --p-toggleswitch-width: 2.5rem;
+    --p-toggleswitch-height: 1.2rem;
+    --p-toggleswitch-handle-size: 1rem;
 
-  // // --p-toggleswitch-focus-ring-color: blue;
-  // // --p-toggleswitch-checked-hover-border-color: blue;
-  // --p-toggleswitch-checked-background: #cce4ff;
-  --p-toggleswitch-handle-checked-background: white;
+    // // --p-toggleswitch-focus-ring-color: blue;
+    // // --p-toggleswitch-checked-hover-border-color: blue;
+    // --p-toggleswitch-checked-background: #cce4ff;
+    --p-toggleswitch-handle-checked-background: white;
 }

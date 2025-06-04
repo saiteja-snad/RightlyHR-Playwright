@@ -29,14 +29,13 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-
                     @if ( showSaperationDots ) {
                     @if(canAccess('update','job') || canAccess('delete','job')|| canAccess('view','separation') ){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                     && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
                     !=='trainee inactive' )){
-                    <th *ngIf="!showSaperationDots" class="text-center">{{"Action" | translate}}<span
+                    <th  class="text-center">{{"Action" | translate}}<span
                             class="text-lowercase">(s)</span></th>
                     }
                     }
@@ -113,15 +112,13 @@
                                 <div>-</div>
                             </ng-template>
                         </td>
-                          @if (first && showSaperationDots ) {
-
+                        @if (first && showSaperationDots ) {
                         @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation') ){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
                         !=='trainee inactive' )){
-                        <td class="text-center">
-                          
+                        <td class="text-center">                        
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -146,7 +143,7 @@
                             </div>
                             
                         </td>
-                    }
+                        }
                         }
                         }
                     </tr>

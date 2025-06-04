@@ -1,9 +1,11 @@
-<div class="component-side-nav-tabs-container py-3">
-    <ul class="nav flex-column">
-        <li class="nav-item" *ngFor="let link of navTabs">
-            <a class="nav-link" [routerLink]="[link.link]" routerLinkActive="active-nav-link">
-                {{ link.label }}
-            </a>
-        </li>
-    </ul>
+<div class="cards-grid-container">
+    <div *ngFor="let tab of navTabs;">
+        <div class="settings-sub-tabs-card" [routerLink]="tab.link">
+            <div class="d-flex gap-2 align-items-center mb-2">
+                <img [src]="tab.icon" alt="Icon" class="icon">
+                <div class="label-name">{{ tab.label }}</div>
+            </div>
+            <div class="subject-text">{{tab.subjectText}}</div>
+        </div>
+    </div>
 </div>

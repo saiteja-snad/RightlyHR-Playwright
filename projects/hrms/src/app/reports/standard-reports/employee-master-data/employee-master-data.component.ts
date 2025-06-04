@@ -4,13 +4,12 @@ import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IStandardReportRequest } from '../../../Interfaces/reports.model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
-import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import * as XLSX from "xlsx";
@@ -19,14 +18,12 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-employee-master-data',
-  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent,NgbPopoverModule,
-    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe,
+    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss'
 })
@@ -94,9 +91,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
 
     this.masterDataForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
-    })
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
+    });
   }
 
   initializeForm() {
@@ -105,24 +100,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       empStatus: [''],
     });
   }
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
 
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/standard-reports/employee-data': MODULE_INFOS.STANDARD_REPORTS_EMPLOYEE_MASTER_DATA_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
+
+
 
   //method to get All the reports
   // getStandardReports() {
@@ -171,6 +151,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         if (res) {
           this.employeeMasterData = res.standardReports || [];
         }
+        console.log(this.employeeMasterData);
       },
       error: (err: any) => {
         this.dataload = false;
@@ -261,6 +242,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       fileName
     };
   };
+  navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   uploadReports(reportsData: any, fileName: string) {
     const reportFile = new File(

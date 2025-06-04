@@ -90,16 +90,9 @@
         <div class="card letter-data-content p-4">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent">
+                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
                         <div class="letter-page-sub-content">
 
-                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-lettersheader></app-lettersheader>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
 
                             <div class="py-3 text-end">
                                 <span class="letter-sub-header">Date: </span>
@@ -113,7 +106,7 @@
                                     <span *ngIf="!employeeFullname; else name">_______________________</span>
                                     <ng-template #name><b>{{employeeFullname}}</b></ng-template> has been working in our
                                     Establishment
-                                    "RightlyHR" currently designated as
+                                    "SNAD Developers India Pvt Ltd" currently designated as
                                     <span
                                         *ngIf="!selectedEmployeeJobDetails?.jobRole;else role">_______________________</span>
                                     <ng-template #role><b> {{selectedEmployeeJobDetails.jobRole}} </b></ng-template>
@@ -128,7 +121,7 @@
                                 enable {{herOrHimdata}} to apply for a bank Loan.
                             </p>
                             <p class="mb-5">If you have any further questions, you can call us at 8886651309.</p>
-                            <p class="py-4">Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
+                            <p class="py-4">Sincerely,<br><span class="letter-sub-header">for SNAD Developers India Pvt Ltd</span></p>
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
@@ -146,9 +139,7 @@
                                 <p>{{selectedAuthority.designation}}</p>
                             </div>
                         </div>
-                        <div class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                      
                     </div>
                 </div>
             </div>

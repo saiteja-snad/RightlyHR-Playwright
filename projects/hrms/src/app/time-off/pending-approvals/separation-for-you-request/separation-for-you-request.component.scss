@@ -1,4 +1,4 @@
 .custom-height {
-    height: max-content;
-    max-height: 45vh;
+    height: max-content !important;
+    min-height: max-content !important;
 }

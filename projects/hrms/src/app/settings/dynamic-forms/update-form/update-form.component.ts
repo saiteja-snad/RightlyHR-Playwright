@@ -79,8 +79,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     this.updateForm = this.fb.group({
       formHeader: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
       moduleId: ['', Validators.required],
-      cutOffRating: [null,],
-      overAllRating: [null,],
+      cutOffRating: [null],
+      overAllRating: [null],
       formId: [null, Validators.required],
       createdBy: [null, Validators.required],
       ratingScaleRange: [null, Validators.required],
@@ -584,8 +584,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       ),
       status: data.status,
       meta: data.meta,
-      overAllRating: data.overAllRating,
-      cutOffRating: data.cutOffRating,
+      overAllRating: data.overAllRating || null,
+      cutOffRating: data.cutOffRating || null,
       sectionId: data.sectionId,
       formHeaderId: data.formHeaderId,
     });
@@ -663,6 +663,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       }
       sectionsArray.push(sectionGroup);
     });
+
+    
   }
 
   prepareRatingScaleRanges(ratingScaleRange: string): { minimum: number; maximum: number }[] {
@@ -678,39 +680,41 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   isDraftType = false;
   onSaveSubmit() {
     this.isDraftType = true;
-    if (this.updateForm.valid) {
-      const selectedRange = this.updateForm.value.ratingScaleRange;
-      this.updateDetails.ratingScaleRange = selectedRange ? `${selectedRange.minimum}-${selectedRange.maximum}` : null;
-      this.updateDetails.formName = this.updateForm.value.formHeader;
-      this.updateDetails.moduleId = Number(this.updateForm.value.moduleId.id);
-      this.updateDetails.overAllRating = this.updateForm.value.overAllRating;
-      this.updateDetails.cutOffRating = this.updateForm.value.cutOffRating;
-      this.updateDetails.createdBy = this.updateForm.value.createdBy;
-      this.updateDetails.updatedBy = this.updateDetails.employeeId;
-      this.updateDetails.formId = this.updateForm.value.formId;
-      this.updateDetails.sectionId = this.updateForm.value.sectionId;
-      this.updateDetails.formHeaderId = this.updateForm.value.formHeaderId;
-      this.updateDetails.status = "draft"
-      this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(this.updateForm.value.sections);
-      this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, { responseType: 'text' }).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => {
-          this.openSuccessModal('draft');
-          setTimeout(() => {
-            if (this.formStatus === 'draft') {
-              // Stay on the same page by reloading the current page
-              // location.reload();
-              this.router.navigate(['/settings/dynamic-forms/draft-forms'])
-            } else {
-              // Navigate to the forms tab for any other status
-              this.router.navigate(['/settings/dynamic-forms/active-forms']);
-            }
-          }, 1000);
-          this.isDraftType = false;
-        }, error: (error) => {
-          console.log(error);
-        }
-      });
-    }
+    console.log(this.updateForm);
+    
+    // if (this.updateForm.valid) {
+    //   const selectedRange = this.updateForm.value.ratingScaleRange;
+    //   this.updateDetails.ratingScaleRange = selectedRange ? `${selectedRange.minimum}-${selectedRange.maximum}` : null;
+    //   this.updateDetails.formName = this.updateForm.value.formHeader;
+    //   this.updateDetails.moduleId = Number(this.updateForm.value.moduleId.id);
+    //   this.updateDetails.overAllRating = this.updateForm.value.overAllRating;
+    //   this.updateDetails.cutOffRating = this.updateForm.value.cutOffRating;
+    //   this.updateDetails.createdBy = this.updateForm.value.createdBy;
+    //   this.updateDetails.updatedBy = this.updateDetails.employeeId;
+    //   this.updateDetails.formId = this.updateForm.value.formId;
+    //   this.updateDetails.sectionId = this.updateForm.value.sectionId;
+    //   this.updateDetails.formHeaderId = this.updateForm.value.formHeaderId;
+    //   this.updateDetails.status = "draft"
+    //   this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(this.updateForm.value.sections);
+    //   this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, { responseType: 'text' }).pipe(takeUntil(this.destroy$)).subscribe({
+    //     next: () => {
+    //       this.openSuccessModal('draft');
+    //       setTimeout(() => {
+    //         if (this.formStatus === 'draft') {
+    //           // Stay on the same page by reloading the current page
+    //           // location.reload();
+    //           this.router.navigate(['/settings/dynamic-forms/draft-forms'])
+    //         } else {
+    //           // Navigate to the forms tab for any other status
+    //           this.router.navigate(['/settings/dynamic-forms/active-forms']);
+    //         }
+    //       }, 1000);
+    //       this.isDraftType = false;
+    //     }, error: (error) => {
+    //       console.log(error);
+    //     }
+    //   });
+    // }
   }
 
   updateFormDetails(formId: number) {
@@ -718,6 +722,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.assignValuestoUpdateForm(data);
         // Set formStatus based on fetched data
+        this.toggleRatingValidators(data.moduleId);
         this.formStatus = data.status;
       },
       error: (err) => console.error(err)

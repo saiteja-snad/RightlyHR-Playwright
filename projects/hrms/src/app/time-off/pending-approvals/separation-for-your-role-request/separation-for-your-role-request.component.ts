@@ -23,6 +23,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-separation-for-your-role-request',
   imports: [
@@ -97,7 +98,7 @@ export class SeparationForYourRoleRequestComponent {
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public rbac: RbacService,
-    private signalService: SignalsService
+    private signalService: SignalsService, public formsValidation:FormValidationsService
   ) { }
 
   ngOnInit(): void {

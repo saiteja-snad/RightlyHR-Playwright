@@ -553,7 +553,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
           this.jobDetailsForm.reset();
           this.http.setBasicDetails();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Job Details added successfully');
+          this.conformationPopup.openSuccessModal('Job details added successfully');
           this.getJobDetails(); // Refresh job details
         },
         error: (reason: any) => {
@@ -789,7 +789,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         if (res) {
           this.separationRequestForm.reset();
           this.modalService.dismissAll(); // Close the modal
-          this.conformationPopup.openSuccessModal('Separation Request Raised Successfully');
+          this.conformationPopup.openSuccessModal('Separation request raised successfully');
           this.getSeparationRequest();
           this.webNotificationformanager();
         }
@@ -842,12 +842,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
          this.jobEmailsent()
         this.modalService.dismissAll(); // Close the modal
-        this.conformationPopup.openSuccessModal('Job Details updated successfully');
+        this.conformationPopup.openSuccessModal('Job details updated successfully');
         this.getJobDetails();
         this.http.setBasicDetails();
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Job Details update failed');
+        this.conformationPopup.openErrorModal('Job details update failed');
       },
     });
   }
@@ -870,7 +870,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         // Show success modal
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Job Details deleted successfully');
+        this.conformationPopup.openSuccessModal('Job details deleted successfully');
         // Refresh the job details list
         this.getJobDetails();
         this.http.setBasicDetails();

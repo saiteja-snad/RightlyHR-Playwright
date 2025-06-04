@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <!--header-->
-  <div class="mb-3"><span class="component-sub-header">Leave Allocation</span></div>
-
+  <div class="mb-3"><span class="component-header">Leave Allocation</span></div>
+  
   <div class="row">
     <div class="col-lg-4 col-md-6 mb-3">
       <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Year</label>
@@ -79,6 +79,6 @@
   </div>
 
   <div class="d-flex justify-content-end" *ngIf="rbac.allowedToAccess('Leave Allocation Tab.create')">
-    <button type="submit" [disabled]="!isFormValid()" (click)="policySubmit()" class="custom-btn btn-primary">Save</button>
+    <button type="submit" [disabled]="!isFormValid()" (click)="policySubmit()" class="custom-btn btn-primary px-5">Save</button>
   </div>
 </div>

@@ -15,24 +15,22 @@ import { permissionsData } from './permissionsdata';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
-import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-permissions',
   imports: [
     CommonModule,
     FormsModule,
     AutoCompleteModule,
-    SettingsRolePermissionsModuleTabsComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent,
     TranslateModule,
-    NgbPopoverModule
+    NgbPopoverModule,
+    SettingsHeaderComponent,
   ],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
@@ -557,6 +555,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management',
     'Holidays',
     'Attendance',
+    'Blood Bank'
 
   ];
   expensesModuleTabs = [
@@ -652,9 +651,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Rejected (Time Off)',
     'Request Leave Button',
     'Cancelled (Time Off)',
-    'Org Leave Balance',
-    'Team Leave Balance Summary (Time Off)',
-    'Team Leave Balance (Time Off)'
+  
   ];
 
   // ////////
@@ -763,7 +760,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Standard Reports',
     'Custom Reports',
     'Attendance reports',
-    'Monthly Attendance Reports'
+    'Monthly Attendance Reports',
+      'Org Leave Balance',
+    'Team Leave Balance Summary',
+    'Team Leave Balance'
   ];
   standardReportsTabsFields = [
     'Employee Master Data',

@@ -8,13 +8,13 @@ import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-
 @Component({
   selector: 'app-view-shift',
   imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TabsModule, TranslateModule],
   templateUrl: './view-shift.component.html',
   styleUrl: './view-shift.component.scss'
 })
+
 export class ViewShiftComponent {
   @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;
@@ -49,6 +49,54 @@ export class ViewShiftComponent {
       this.getShiftById(shiftId);
     }
   }
+
+patchShiftForm(data: any): void {
+  this.shiftForm.patchValue({
+    year: data.year,
+    location: data.location,
+  });
+
+  const selectedLocation = this.locations.find(loc => loc.id === data.location);
+  console.log(selectedLocation)
+  if (selectedLocation) {
+    this.subLocations = selectedLocation.subLocations || [];
+
+    this.sublocation = this.subLocations;
+
+    const matchedSub = this.subLocations.find(sub => sub.id === data.subLocation);
+    console.log(matchedSub.id)
+    if (matchedSub) {
+      this.shiftForm.patchValue({ subLocation: matchedSub.id });
+    }
+  }
+
+  const shiftArray = this.shiftForm.get('shifts') as FormArray;
+  shiftArray.clear();
+
+  (data.shifts || []).forEach((item: any) => {
+    const shiftGroup = this.fb.group({
+      shiftCode: [{ value: item.shiftCode || '', disabled: true }, Validators.required],
+      shiftName: [{ value: item.shiftName || '', disabled: true }, Validators.required],
+      color: [{ value: item.color || '#000000', disabled: true }],
+      startTime: [{ value: item.startTime || '', disabled: true }, Validators.required],
+      endTime: [{ value: item.endTime || '', disabled: true }, Validators.required],
+      gracePeriod: [{ value: item.gracePeriod || 0, disabled: true }],
+      latesAllowed: [{ value: item.latesAllowed || 0, disabled: true }],
+      breakTime: [{ value: item.breakTime || 0, disabled: true }],
+      halfDayMinHrs: [{ value: item.halfDayMinHrs || 0, disabled: true }],
+      fullDayMinHrs: [{ value: item.fullDayMinHrs || 0, disabled: true }],
+    });
+
+    shiftArray.push(shiftGroup);
+  });
+
+  // Disable top-level controls
+  this.shiftForm.get('year')?.disable();
+  this.shiftForm.get('location')?.disable();
+  this.shiftForm.get('subLocation')?.disable();
+}
+
+
 
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
@@ -170,19 +218,10 @@ export class ViewShiftComponent {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
-        this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
-        this.sublocation = this.selectedLocation.subLocations;
-        const sublocationdata = this.sublocation.find(
-          (sub: any) => sub.id === this.shiftDATA
-        );
-        if (sublocationdata) {
-          this.matchedSubLocation = sublocationdata;
-          if (this.matchedSubLocation) {
-            // Set the value to form
-            this.shiftForm.patchValue({ subLocation: this.matchedSubLocation.id });
-            this.matchedSubLocation = this.matchedSubLocation.jobSubLocationName;
-          }
-        }
+      const selectedShiftData = JSON.parse(localStorage.getItem('viewShiftData')!);
+      if (selectedShiftData) {
+        this.patchShiftForm(selectedShiftData);
+      }
       },
       error: (reason: any) => console.log(reason)
     });

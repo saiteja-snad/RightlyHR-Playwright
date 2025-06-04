@@ -169,7 +169,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null, Validators.required],
+      Copys: [null],
       offerExpiryDate: ['', Validators.required],
       note: ['', [Validators.maxLength(250)]],
       authorityid: [null, Validators.required]
@@ -189,7 +189,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5']; // IDs of the content elements to be converted to PDF
+    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5','pdfContent6']; // IDs of the content elements to be converted to PDF
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -362,7 +362,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
       error: (error: any) => {
@@ -472,7 +472,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
                 phoneNumber: this.prospectiveEmpData?.phoneNumber
               })
               this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value;
-              this.selectedCountryCode = this.prospectiveEmpData?.contactnumbercountryflag;
+              this.selectedCountryCode = this.prospectiveEmpData?.contactNumberCountryFlag;
               this.loadingCode = false;
               this.getEmployeeAddress(data.checkofferletter.empId);
               if (this.prospectiveEmpData.approver) {

@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { filter, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit,  } from '@angular/core';
+import {  Subscription } from 'rxjs';
 import dayjs from 'dayjs';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,7 +9,6 @@ import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { ReportsService } from '../../../services/reports/reports.service';
 import * as XLSX from 'xlsx';
-import { AttandaceReportTabsComponent } from '../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component';
 import { IWfhReportRequest } from '../../../Interfaces/reports.model';
 import { HttpService } from '../../../services/http.service';
 import { DropdownModule } from 'primeng/dropdown';
@@ -18,20 +17,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-wfh-report',
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule,
+    CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, DropdownModule, SelectModule, TranslateModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent,
-    NgbPopoverModule
+  
 ],
   templateUrl: './wfh-report.component.html',
   styleUrl: './wfh-report.component.scss',
@@ -98,8 +93,6 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getTeam();
     this.getMyTeam();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -128,24 +121,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     );
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
 
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/wfh-report': MODULE_INFOS.ATTENDANCE_WFH_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
@@ -454,6 +430,10 @@ export class WfhReportComponent implements OnInit, OnDestroy {
         },
       });
   }
+   navigation(){
+    this.router.navigate(['/reports']);
+  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

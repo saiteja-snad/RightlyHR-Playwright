@@ -59,7 +59,7 @@ patchShiftForm(data: any): void {
   const selectedLocation = this.locations.find(loc => loc.id === data.location);
   console.log(selectedLocation)
   if (selectedLocation) {
-    this.subLocation = selectedLocation.subLocations || [];
+    this.subLocations = selectedLocation.subLocations || [];
 
     const matchedSub = this.subLocations.find(sub => sub.id === data.subLocation);
     console.log(matchedSub.id)

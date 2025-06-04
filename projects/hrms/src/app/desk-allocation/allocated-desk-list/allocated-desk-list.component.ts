@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-allocated-desk-list',
-  imports: [CommonModule, Select, ReactiveFormsModule, FormsModule, PaginatorModule,FormsModule, NoDataFoundComponent,TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, FormsModule, PaginatorModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './allocated-desk-list.component.html',
   styleUrl: './allocated-desk-list.component.scss'
 })
@@ -82,7 +82,7 @@ export class AllocatedDeskListComponent {
     public conformationPopup: OpenModalService,
     public rbac: RbacService,
 
-  public formValidation: FormValidationService,
+    public formValidation: FormValidationService,
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -92,12 +92,14 @@ export class AllocatedDeskListComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
-    console.log(this.empinfo);
-  
+
+    this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
+    this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+    this.http.deskUpdateLocationId(this.selectedLocationId);
     this.getAllLocations();
     this.getapproval()
     this.intialreassigindesk();
-    
+
     this.getdatabyentriy()
     this.intialrealsedata()
 
@@ -117,13 +119,13 @@ export class AllocatedDeskListComponent {
   }
 
   getFilteredData() {
-    this.subscription=this.http.desklocationId$.subscribe({
-      next:(Value:any)=>{
+    this.subscription = this.http.desklocationId$.subscribe({
+      next: (Value: any) => {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
-        this.selectedSubLocationId= JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+        this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
         this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
-        this.getcount(Value, this.selectedSubLocationId,this.Status);
+        this.getcount(Value, this.selectedSubLocationId, this.Status);
       }
     })
   }
@@ -199,29 +201,29 @@ export class AllocatedDeskListComponent {
   }
 
   onRowsChange() {
-    this.page = 1;        
-    this.first = 0; 
-    this.getAllDesks(this.page, this.pageSize, null,null,this.Status);
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
   }
 
   onPageChange(event: any) {
-     this.page = event.page + 1;
+    this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+    this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
   }
 
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
-     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+    this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
   }
 
 
- onSearchChange(event: any) {
+  onSearchChange(event: any) {
     if (event !== '' && event.length >= 1) {
       this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
@@ -382,8 +384,8 @@ export class AllocatedDeskListComponent {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
           ///this.updatedeskallowcation(this.assiginForm)
-        this.getAllDesks(this.page, this.pageSize, null, null, null);
-        this.getcount(null,null,this.Status)
+          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+          this.getcount(null, null, this.Status)
           this.reassiginForm.reset();
           this.reassiginForm.get('employeeName')?.reset()
           this.reassiginForm.get('approvid')?.reset()
@@ -392,9 +394,9 @@ export class AllocatedDeskListComponent {
           this.shiftDropdown = [];
         },
         error: (error) => {
-          console.log('Error:', error);     
-          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');       
-      }      
+          console.log('Error:', error);
+          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');
+        }
       });
     } else {
       console.log('Form is invalid');
@@ -455,7 +457,8 @@ export class AllocatedDeskListComponent {
           console.log(res);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
-          this.getAllDesks(this.page, this.pageSize, null, null, null);
+          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+          this.getcount(null, null, this.Status);
 
 
         },
@@ -473,7 +476,7 @@ export class AllocatedDeskListComponent {
   }
 
 
-  
+
 
 
 
@@ -599,27 +602,27 @@ export class AllocatedDeskListComponent {
       next: (data: any) => {
         console.log(data);
         const totalCount = data.totalCount || 0;
-       
+
         const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
         const availableData = statusCounts.find((item: any) => item.status === "Available");
         const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
         const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
         const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
         const waitingForApprovalData = statusCounts.find((item: any) => item.status === "Waiting for Approval");
-  
+
         const availableCount = availableData?.count || 0;
         const allocateCount = allocateData?.count || 0;
         const inactiveCount = inactivedata?.count || 0;
         const undermaintenceCount = undermaintence?.count || 0;
         const waitingForApprovalCount = waitingForApprovalData?.count || 0;
-  
+
         this.http.setTotalDeskCount(totalCount);
         this.http.setAvailableDeskCount(availableCount);
         this.http.setAllocatedDeskCount(allocateCount);
         this.http.setundermatinaceDeskCount(undermaintenceCount);
         this.http.setinactiveSubjectDeskCount(inactiveCount);
         this.http.setWFASubjectDeskCount(waitingForApprovalCount);
-  
+
         console.log('Available Count:', availableCount);
         console.log('Allocated Count:', allocateCount);
         console.log('Inactive Count:', inactiveCount);
@@ -631,14 +634,14 @@ export class AllocatedDeskListComponent {
       }
     });
   }
-       //close dailog open
+  //close dailog open
   openallocationModal(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  cleardata(){
+  cleardata() {
     this.reassiginForm.reset();
-      this.modalService.dismissAll();
-    }
+    this.modalService.dismissAll();
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -101,6 +101,9 @@ export class AllDeskListComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+       this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
+    this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+    this.http.deskUpdateLocationId(this.selectedLocationId);
     this.getdatabyentriyinactive()
     this.intialassigindesk()
     this.getAllLocations();

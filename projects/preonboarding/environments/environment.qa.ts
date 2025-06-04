@@ -1,7 +1,9 @@
 export const environment = {
     production: false,
     
+
     ApiUrl:'https://snadqaapi.onpremise.snadhr.com/api/',
+
     viewUrl:'https://sasda001.blob.core.windows.net/fusionplusqa/',
     // ApiUrl: 'https://api.fusion.snadhr.com/api/',
     clientId:'f3f3ce8d-f7ab-4e7a-887c-4b2b1f295a16',

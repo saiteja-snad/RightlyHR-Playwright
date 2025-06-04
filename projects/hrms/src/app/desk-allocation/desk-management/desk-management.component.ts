@@ -5,7 +5,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
-import { BehaviorSubject, filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
@@ -119,6 +119,9 @@ export class DeskManagementComponent {
   openModal(content: any) {
      this.deskForm.reset(); 
   this.deskForm.get('subLocationId')?.disable();
+    this.deskForm.get('shifts')?.disable();
+      this.deskForm.get('employeid')?.disable();
+        this.deskForm.get('deskapprovalid')?.disable();
   this.isToggled = false;
    this.desktype = [];
   this.subLocationsDropdown = [];
@@ -429,37 +432,35 @@ export class DeskManagementComponent {
       });
   }
 
-  getcount(locationId: string | null, subLocationId: string | null) {
+
+getcount(locationId: string | null, subLocationId: string | null) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
-    this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
-      next: (data: any) => {
-        const totalCount = data.totalCount || 0;
-        // this.http.setAssetCount(totalCount);
-        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
-        const availableData = statusCounts.find((item: any) => item.status === "Available");
-        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
-        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
-        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
-        const waitingForApprovalData = statusCounts.find((item: any) => item.status === "Waiting for Approval");
-        this.http.setTotalDeskCount(totalCount);
-        const availableCount = availableData?.count || 0;
-        const allocateCount = allocateData?.count || 0;
-        const inactiveCount = inactivedata?.count || 0;
-        const undermaintenceCount = undermaintence?.count || 0;
-        const waitingForApprovalCount = waitingForApprovalData?.count || 0;
-        this.http.setAvailableDeskCount(availableCount);
-        this.http.setAllocatedDeskCount(allocateCount);
-        this.http.setundermatinaceDeskCount(undermaintenceCount);
-        this.http.setinactiveSubjectDeskCount(inactiveCount);
-        this.http.setWFASubjectDeskCount(waitingForApprovalCount);
-        this.initChart();
-      },
-      error: (error) => {
-        console.error('Error fetching count:', error);
-      }
-    });
+    params.append('status', status);
+   
+  
+  this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
+    next: (data: any) => {
+  const totalCount = data.totalCount || 0;
+  this.http.setTotalDeskCount(totalCount);
+  const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+  const availableCount = statusCounts.find((item: any) => item.status === "Available")?.count || 0;
+  const allocateCount = statusCounts.find((item: any) => item.status === "Allocated")?.count || 0;
+  const inactiveCount = statusCounts.find((item: any) => item.status === "Inactive")?.count || 0;
+  const undermaintenceCount = statusCounts.find((item: any) => item.status === "Under Maintenance")?.count || 0;
+  const waitingForApprovalCount = statusCounts.find((item: any) => item.status === "Waiting for Approval")?.count || 0;
+
+  this.http.setAvailableDeskCount(availableCount);
+  this.http.setAllocatedDeskCount(allocateCount);
+  this.http.setundermatinaceDeskCount(undermaintenceCount);
+  this.http.setinactiveSubjectDeskCount(inactiveCount);
+  this.http.setWFASubjectDeskCount(waitingForApprovalCount);
+
+  // Move chart initialization here
+  setTimeout(() => this.initChart(), 0);
+},
+  });
   }
 
   onHitSubLocationChange() {
@@ -483,32 +484,42 @@ export class DeskManagementComponent {
     this.modalService.dismissAll();
     this.isToggled = false;
   }
-  initChart() {
-    const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour );
+
+
+initChart(): void {
+  combineLatest([
+    this.http.deskAvailableCountSubject,
+    this.http.deskAllocatedCountSubject,
+    this.http.deskUndermaindanaenceCountSubject,
+    this.http.deskinactiveCountSubject,
+    this.http.deskWiatingforapprovalCountsubject,
+  ]).subscribe(([available, allocated, underMaintenance, inactive, waitingForApproval]) => {
+    const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
     const backgroundColors = chartTabs.map(item => item.backgroundcolour);
 
     this.deskData = {
       datasets: [
         {
           data: [
-          
-            this.http.deskAvailableCountSubject.value ?? 0,
-            this.http.deskAllocatedCountSubject.value ?? 0,
-            this.http.deskUndermaindanaenceCountSubject.value ?? 0,
-            this.http.deskinactiveCountSubject.value ?? 0,
-            this.http.deskWiatingforapprovalCountsubject.value ?? 0
+            available ?? 0,
+            allocated ?? 0,
+            underMaintenance ?? 0,
+            inactive ?? 0,
+            waitingForApproval ?? 0
           ],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         }
       ]
     };
-    console.log(this.deskData);
 
     this.deskDataOptions = {
       cutout: '70%',
     };
-  }
+  });
+}
+
+  
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

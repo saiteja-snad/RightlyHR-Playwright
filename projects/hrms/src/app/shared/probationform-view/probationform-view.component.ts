@@ -170,7 +170,7 @@ if(hasdata.length>0){
  // console.log('Overall Rating:', this.overallRating);
 }
 getFormDetails(employeeId:any,responseId:any){
-  this.subscription=this.http.getData(`ProbationFlow/getFormResponseByEmployeeId/${employeeId}?formId=1&responseId=${responseId}`).subscribe({
+  this.subscription=this.http.getData(`ProbationFlow/getFormResponseByEmployeeId/${employeeId}?formId=0&responseId=${responseId}`).subscribe({
     next:(response:any)=>{
       // .filter((ele: any) => {
         // Parse the metaData and assign it to metadata property

@@ -40,6 +40,7 @@ export interface ILocationReportData {
     permanentZipCode?: string;
   
     workPhone: number;
+    workPhoneCountryCode : any;
     contactnumber: number;
     workEmail: string;
     emailaddress: string;

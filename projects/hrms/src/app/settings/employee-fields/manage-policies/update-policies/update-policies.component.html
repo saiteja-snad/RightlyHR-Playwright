@@ -82,7 +82,6 @@
                 {{'Policy Name is required'|translate}}
               </div>
             </div>
-
             <div class="w-100">
               <label class="form-label custom-label">
                 {{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span>
@@ -118,7 +117,9 @@
               <div class="d-flex justify-content-between">
                 <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
               </div>
-              <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+              <div class="small-blue-toggle mt-2">
+                <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+              </div>
             </div>
 
             <!-- Email Notification Toggle + Delete Button -->
@@ -130,7 +131,9 @@
                   <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
                 </button>
               </div>
-              <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
+              <div class="small-blue-toggle mt-2">
+                <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
+              </div>
             </div>
           </div>
         </div>

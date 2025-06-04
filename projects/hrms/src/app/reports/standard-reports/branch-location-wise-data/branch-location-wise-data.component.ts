@@ -299,6 +299,16 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     return Math.max(10, maxWidth);
   }
 
+  extractPhoneCode(code: string | undefined): string {
+  if (!code) return '';
+  const match = code.match(/\((\+\d+)\)/);
+  if (match) {
+    return match[1];
+  }
+
+  return code.startsWith('+') ? code : '';
+}
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

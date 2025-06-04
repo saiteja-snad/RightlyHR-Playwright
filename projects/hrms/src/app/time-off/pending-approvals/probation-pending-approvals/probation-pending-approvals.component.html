@@ -184,14 +184,15 @@
                     (earlyrelievingreason.invalid && ProcessacceptForm.submitted)">{{'Comments is required' | translate}}</div>
                      <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
-             @if(selectedData.probationextendedcount<probationExtensionTimes){
+             <!-- @if(selectedData.probationextendedcount<probationExtensionTimes){ -->
                 <div class="mb-3" *ngIf="extend">
                     <label for="exampleFormControlInput1" class="form-label custom-label">{{'Extend Date' |
                         translate}}<span class="text-danger">*</span>
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        (keypress)="letters($event)" 
+                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate)"
+                                    [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration)"
                         [(ngModel)]="selectedData.extenddate" required>
                     <div class="error-msg"
                         *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && ProcessacceptForm.submitted)">
@@ -213,7 +214,7 @@
                      || (Extendreason.errors?.['pattern']) ">{{'Feedback for Extend is required' | translate}}</div>
                       <div class="error-msg" *ngIf="Extendreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
-            }
+            <!-- } -->
                 <div class="mb-3" *ngIf="discontinue">
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">{{'Reject Reason' | translate}}
                         <span class="text-danger">*</span></label>

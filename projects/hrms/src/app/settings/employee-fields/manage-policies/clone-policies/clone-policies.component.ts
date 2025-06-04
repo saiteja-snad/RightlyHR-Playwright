@@ -67,7 +67,11 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
           policyNewFile: [''],
           acknowledged : [row.requiresAcknowledgment],
           notification : [row.sendEmailNotification],
-        })
+        },
+        {
+            validator: this.acknowledgementNotificationValidator
+        }
+      )
       );
     });
 
@@ -133,7 +137,11 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       policyNewFile: ['', Validators.required],
       acknowledged : [false],
       notification : [false],
-    });
+    },
+      {
+        validator: this.acknowledgementNotificationValidator
+      }
+  );
     this.policies.push(policyGroup);
   }
   
@@ -141,6 +149,17 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     if (this.policies.length > 1) {
       this.policies.removeAt(index);
     }
+  }
+
+     acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
+    const acknowledged = group.get('acknowledged')?.value;
+    const notification = group.get('notification')?.value;
+
+    if (acknowledged && !notification) {
+      return { 'acknowledgementNotificationInvalid': true };
+    }
+
+    return null;
   }
 
   hidePublishCloneButtons : boolean = false
@@ -346,7 +365,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
       const locationId =  formValue.location?.id ?? this.updatePoliciesData.locationId;
-      const subLocationId = formValue.subLocation.id;
+      const subLocationId = formValue.subLocation?.id ?? this.updatePoliciesData.subLocationId;
 
       this.subscription = this.http
         .getData(

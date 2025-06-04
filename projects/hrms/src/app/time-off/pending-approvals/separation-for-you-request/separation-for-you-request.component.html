@@ -366,11 +366,11 @@
             <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label labell">
-                        {{ "Comments" | translate }}<span class="text-danger">*</span>
+                        {{ "Reject Reason" | translate }}<span class="text-danger">*</span>
                     </label>
 
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1" formControlName="notes"
-                        placeholder="Please enter comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"></textarea>
+                        placeholder="Please enter reject reason" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"></textarea>
 
                     <div class="textarea-count-text">
                         {{ rejectForm.get('notes')?.value?.length || 0 }}/250
@@ -379,10 +379,10 @@
                    <div class="error-msg"
                         *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
                         <div *ngIf="rejectForm.get('notes')?.errors?.['required']">
-                            Comments are required
+                            Reject Reason is required
                         </div>
                         <div *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">
-                            Comments cannot exceed 250 characters
+                            Reject Reason cannot exceed 250 characters
                         </div>
                     </div>
                 </div>

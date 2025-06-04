@@ -348,6 +348,7 @@ export class PermissionsComponent {
           status: 'Approved',
           comments: comments,
           moduleId: environment.permissionsModuleId,
+          onBehalfOfApproval : true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -358,6 +359,7 @@ export class PermissionsComponent {
           requestProcessedBy: approvedBy,
           status: 'Approved',
           comments: comments,
+          onBehalfOfApproval : true,
           moduleId: environment.permissionsModuleId,
           headerRequests: [
             {
@@ -413,6 +415,7 @@ export class PermissionsComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.permissionsModuleId,
+        onBehalfOfApproval : true,
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -424,6 +427,7 @@ export class PermissionsComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.permissionsModuleId,
+        onBehalfOfApproval : true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,
@@ -478,6 +482,7 @@ export class PermissionsComponent {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.permissionsModuleId,
+          onBehalfOfApproval : true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -488,6 +493,7 @@ export class PermissionsComponent {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
+          onBehalfOfApproval : true,
           moduleId: environment.permissionsModuleId,
           headerRequests: [
             {

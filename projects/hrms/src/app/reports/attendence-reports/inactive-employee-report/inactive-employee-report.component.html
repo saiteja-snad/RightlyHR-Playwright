@@ -108,6 +108,7 @@
             <th>Team Manager</th>
             <th>Location</th>
             <th>Sub Location</th>
+            <th>Year</th>
             <th>Leave Type</th>
             <th>Entitled</th>
             <th>Availed</th>
@@ -123,10 +124,11 @@
               <td>{{ record.teamManagerName ?? '-' }}</td>
               <td>{{ record.location ?? '-' }}</td>
               <td>{{ record.subLocation ?? '-' }}</td>
+              <td>{{ record.year ?? '-' }}</td>
               <td>{{ record.leaveType ?? '-' }}</td>
               <td>{{ record.entitled ?? '-' }}</td>
               <td>{{ record.availed ?? '-' }}</td>
-              <td>{{ record.balanced ?? '-' }}</td>
+              <td>{{ record.balance ?? '-' }}</td>
             </tr>
             }
             } @else {

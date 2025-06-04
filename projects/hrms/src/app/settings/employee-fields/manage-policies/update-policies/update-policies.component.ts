@@ -86,9 +86,14 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
           policyNewFile: [''],
           acknowledged : [row.requiresAcknowledgment],
           notification : [row.sendEmailNotification],
-        })
+        },
+          {
+            validator: this.acknowledgementNotificationValidator
+          }
+      )
       );
-    });
+    }
+  );
     // this.addPolicyRow();
 
     this.policies.valueChanges.subscribe(() => {
@@ -109,7 +114,11 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       policyNewFile: ['', Validators.required],
       acknowledged : [false],
       notification : [false],
-    });
+    },
+    {
+        validator: this.acknowledgementNotificationValidator
+    }
+  );
     this.hidePublishCloneButtons = true;
     this.policies.push(policyGroup);
   }
@@ -118,6 +127,17 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     if (this.policies.length > 1) {
       this.policies.removeAt(index);
     }
+  }
+
+   acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
+    const acknowledged = group.get('acknowledged')?.value;
+    const notification = group.get('notification')?.value;
+
+    if (acknowledged && !notification) {
+      return { 'acknowledgementNotificationInvalid': true };
+    }
+
+    return null;
   }
 
   onClickedAck(event: any, index : number){

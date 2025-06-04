@@ -9,10 +9,11 @@
             filterBy="firstName" placeholder="Please select employee" class="custom-select w-100" formControlName = "EmployeeID"
             (onChange)="onChangePropesctiveEmployess($event)">
             <!-- Template for selected item -->
-            <ng-template #selectedItem let-selectedOption>{{ selectedOption.firstName }} {{ selectedOption.middleName }} 
-              {{ selectedOption.lastName }} - {{selectedOption.workEmail ?? 'NA'}}</ng-template>
+            <ng-template #selectedItem let-selectedOption>
+              {{ selectedOption.firstName }} {{ selectedOption.middleName ? ' ' + selectedOption.middleName : '' }} {{ selectedOption.lastName }} - {{selectedOption.workEmail ?? 'NA'}}</ng-template>
             <!-- Template for dropdown items -->
-            <ng-template let-employee #item>{{ employee.firstName }} {{ employee.middleName }} {{ employee.lastName }}
+            <ng-template let-employee #item>{{ employee.firstName }}{{ employee.middleName ? ' ' + employee.middleName : '' }} {{ employee.lastName }}
+              
               - {{employee.workEmail ?? 'NA'}}</ng-template>
           </p-select>
         </div>

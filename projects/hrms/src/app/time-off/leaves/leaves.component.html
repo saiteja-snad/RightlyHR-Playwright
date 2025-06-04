@@ -61,7 +61,7 @@
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">
                 <div>
-                    <p class="leave-content-text m-0 mb-2">{{ item.category.name }}</p>
+                    <p class="leave-content-text m-0 mb-2" [style.color]="item.category.categoryColor">{{ item.category.name }}</p>
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
                             <p class="m-0">Booked</p>

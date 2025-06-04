@@ -9,7 +9,7 @@
         padding: 0.75rem 1rem;
         border-radius: 1rem;
         border: 1px solid #DCE3E9;
-        background: linear-gradient(180deg, #FFFFFF 0%, #E6EBF4 100%);
+        background: #FFFFFF;
         display: flex;
         align-items: center;
 
@@ -26,7 +26,7 @@
         .chart-content {
             position: relative;
             width: max-content;
-            height: max-content;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -76,7 +76,7 @@
         grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
         gap: 1rem;
 
-        .active-nav-link{
+        .active-nav-link {
             box-shadow: 0px 0px 9.62px 0px #0B3A8340 !important;
         }
 
@@ -84,7 +84,7 @@
             width: 100%;
             height: 100%;
             padding: 0.75rem 1rem;
-            background: linear-gradient(180deg, #FFFFFF 0%, #DEE4EE 100%);
+            background: #FFFFFF;
             border-radius: 0.625rem;
             line-height: 17.32px;
             letter-spacing: 0%;
@@ -106,8 +106,8 @@
             }
 
             .label-name {
-                font-weight: 400;
-                font-size: var(--fontsize12);
+                font-weight: 600;
+                font-size: var(--fontsize14);
                 color: #686868;
             }
 

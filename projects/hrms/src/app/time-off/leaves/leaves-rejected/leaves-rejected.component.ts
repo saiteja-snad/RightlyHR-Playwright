@@ -53,13 +53,16 @@ export class LeavesRejectedComponent {
         // Use the new employee ID here
         this.selectempid = id;
         console.log('Updated employee ID:', id);
+          this.getDataByEMPLPID();
         // Example: this.loadEmployeeDetails(id);
+      } else {
+        this.loggedinuser = this.authService.getToken();
+        this.empdata = JSON.parse(
+          localStorage.getItem('rightlyHrUser') || '{}'
+        );
+      
         this.getDataByLPID();
-      }
-      else{
-   this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByEMPLPID();
+
       }
     });
   }

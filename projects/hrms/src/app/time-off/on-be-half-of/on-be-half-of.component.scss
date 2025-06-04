@@ -3,7 +3,7 @@
     // total leave summary
     .total-leave-balance-graph-content {
         width: 25rem !important;
-        background: linear-gradient(180deg, #FFFFFF 0%, #E6EBF4 100%);
+        background: #FFFFFF;
 
         .bi-circle-fill {
             font-size: 10px;
@@ -30,7 +30,7 @@
         .leaves-category-card {
             width: 100%;
             padding: 0.75rem 1rem;
-            background: linear-gradient(180deg, #FFFFFF 0%, #DEE4EE 100%);
+            background: #FFFFFF;
             border-radius: 0.625rem;
             display: flex;
             align-items: center;
@@ -52,7 +52,7 @@
                     height: 50px;
                     width: 50px;
                     border-radius: 50%;
-                    background: linear-gradient(180deg, #FFFFFF 0%, #DEE4EE 100%);
+                    background: #FFFFFF;
                 }
 
                 .progress-value {

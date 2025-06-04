@@ -437,5 +437,28 @@
         </div>
       </div>
     </div>
+    <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(deletepopup)">{{'Cancel'|translate}}</button>
+            <button type="button" class="custom-btn clone-btn px-5"  (click)="cloneCategory(leavePolicyForm)" 
+            [disabled]="leavePolicyForm.invalid">{{'Clone'|translate}}</button>
+      </div>
   </form>
 </div>
+
+
+
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary "
+                (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary " (click)="resteAndNavigateToPublished()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

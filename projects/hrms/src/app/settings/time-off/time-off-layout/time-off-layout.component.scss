@@ -7,5 +7,10 @@
 }
 
 .custom-table-content {
-    height: calc(100dvh - 24rem) !important;
+    height: calc(100dvh - 15rem) !important;
+}
+
+.fields-data-container{
+    height: calc(100vh - 12rem) !important;
+    padding: 1rem !important;
 }

@@ -11,9 +11,11 @@
 }
 
 .custom-table-content {
-    height: calc(100vh - 20rem);
+    height: calc(100vh - 26rem);
+    border-bottom-left-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
 }
 
-.total-count-content{
+.total-count-content {
     left: 40% !important;
 }

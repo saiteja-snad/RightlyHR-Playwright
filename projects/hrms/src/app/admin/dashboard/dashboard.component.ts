@@ -454,15 +454,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.EmployeeInfoData = {
       datasets: [
         {
-          data: [
-            this.Active,
-            this.Inactive,
-            this.ACTDATA,
-            this.Trainee,
-            this.traineeactive,
-            this.traineeInactive,
-            this.PROBDATA,
-          ],
+          data: [this.Active, this.Inactive, this.ACTDATA, this.PROBDATA, this.traineeactive, this.traineeInactive, this.Trainee,],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         },

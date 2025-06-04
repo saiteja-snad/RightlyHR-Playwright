@@ -29,7 +29,7 @@
         <th>{{'Policy Name'|translate}}</th>
         <th>{{'Description'|translate}}</th>
         <th class="text-center">{{'Attachment'|translate}}</th>
-        <th>{{'Acknowledged' | translate}}</th>
+        <th class="text-center">{{'Acknowledged' | translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="((orgPolicyItemsArray) ?? []).length > 0; else noDataTemplate">
@@ -42,19 +42,18 @@
                 <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="view-icon">
               </a>
             </td>
-            <td>
+            <td class="text-center acknowledge-content">
               <ng-container *ngIf="item.requiresAcknowledgment">
                 <ng-container *ngIf="item.acknowledged; else showAcknowledge">
-                  Yes
+                 <span class="success-text">Yes</span>
                 </ng-container>
                 <ng-template #showAcknowledge>
-                  <button class="btn btn-primary btn-sm" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
-                    Acknowledge
-                  </button>
+                  <a class="acknowledge-btn" (click)="onViewAttachement(item.policyAttachment, item.policyName, item)">
+                    <u>Acknowledge</u></a>
                 </ng-template>
               </ng-container>
               <ng-container *ngIf="!item.requiresAcknowledgment">
-                N/A
+                <span>N/A</span>
               </ng-container>
             </td>
           </tr>

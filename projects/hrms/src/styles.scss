@@ -141,7 +141,6 @@ body {
     padding: 0.5rem 0.75rem;
     background-color: var(--header-background-color);
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -167,7 +166,6 @@ body {
         align-items: center;
         font-size: var(--fontsize10);
         font-weight: 700;
-        letter-spacing: -2%;
         border-radius: 0.3rem;
         color: var(--side-nav-item-color);
         cursor: pointer;
@@ -184,7 +182,6 @@ body {
     }
 
     .sidenav-footer-content {
-        // border-top: 1px solid var(--white-color);
         padding-top: 0.5rem;
     }
 
@@ -217,9 +214,7 @@ body {
 
         .dropdown-menu {
             position: fixed !important;
-            inset: auto auto auto 0px !important;
-            margin: 0rem 4.75rem !important;
-            transform: translate(18px, -181px) !important;
+            margin: 0rem 1.75rem !important;
             width: 325px !important;
             min-height: 225px !important;
             max-height: 325px !important;
@@ -246,8 +241,6 @@ body {
             color: #222222;
         }
 
-
-        /* dashboard.component.css */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -265,7 +258,6 @@ body {
             min-height: 6.25rem;
         }
 
-        /* RIGHT BORDER STYLES */
         .border-right-top::after,
         .border-right-middle::after,
         .border-right-bottom::after {
@@ -290,7 +282,6 @@ body {
             background: linear-gradient(to bottom, #BCD4F0, white);
         }
 
-        /* BOTTOM BORDER STYLES */
         .border-bottom-left::before,
         .border-bottom-middle::before,
         .border-bottom-right::before {
@@ -332,66 +323,16 @@ body {
     }
 }
 
-// header Nav Tabs stylings
-.header-module-tabs-container {
-    .nav-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: 400;
-        font-size: var(--fontsize15);
-        line-height: 100%;
-        letter-spacing: 0%;
-        vertical-align: middle;
-        padding: 0rem 1rem 0.5rem !important;
-    }
-
-    .nav-tab-active {
-        border-bottom: 0.25rem solid var(--navtab-item-color);
-        font-weight: 700;
-    }
-
-    a {
-        color: var(--primary-color) !important;
-
-        &:hover {
-            color: var(--primary-color) !important;
-        }
-
-        &:focus {
-            color: var(--primary-color) !important;
-        }
-    }
-
-    .active-nav-link {
-        border-bottom: 0.25rem solid var(--navtab-item-color);
-        font-weight: 700;
-    }
-
-    .p-tablist-tab-list {
-        gap: 0rem !important;
-        border: none !important;
-    }
-
-    .p-tab {
-        padding: 0rem !important;
-        border: none !important;
-        transition: none !important;
-    }
-}
-
 //employeeinfotabs
 .employee-info-nav-tabs {
     .nav-link {
         width: 5.5rem;
         color: #606060;
-        text-decoration: none;
         font-weight: 400;
         font-size: var(--fontsize12);
         line-height: 100%;
-        letter-spacing: 0%;
         text-align: center;
-        vertical-align: middle;
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem;
         border-radius: 6px;
     }
 
@@ -399,7 +340,6 @@ body {
         color: #fff;
         background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
         font-weight: 500;
-        border-radius: 6px;
     }
 }
 
@@ -419,12 +359,7 @@ body {
         padding: 0.75rem 1rem 0.5rem;
     }
 
-    .nav-tab-active {
-        border-bottom: 0.25rem solid var(--navtab-item-color);
-        font-weight: 700;
-    }
-
-    .active-nav-link {
+    .nav-tab-active, .active-nav-link {
         border-bottom: 0.25rem solid var(--navtab-item-color);
         font-weight: 700;
     }
@@ -659,13 +594,6 @@ body {
     background-color: var(--card-bg-color);
 }
 
-.back-icon {
-    width: 1.25rem;
-    height: 1.5rem;
-    cursor: pointer;
-    margin-right: 0.5rem;
-}
-
 .component-edit-icon {
     font-size: var(--fontsize16);
 }
@@ -708,10 +636,6 @@ a {
     line-height: 1.5rem !important;
 }
 
-.info-icon {
-    font-size: 1.2rem !important;
-}
-
 // scroll bar stylings
 ::-webkit-scrollbar {
     width: 0.4rem;
@@ -723,7 +647,6 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
-
 // scroll bar stylings ends
 
 // button stylings
@@ -861,9 +784,7 @@ select:focus {
     font-size: var(--fontsize14);
     vertical-align: middle;
     color: #222222;
-
 }
-
 // Select Styling 
 
 // p select stylings
@@ -984,7 +905,6 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
-
 // Select Styling 
 
 // table stylings
@@ -1045,10 +965,6 @@ select:focus {
         border: none !important;
     }
 
-    // tr:nth-child(even) {
-    //     background-color: var(--table-data-bg-even-color);
-    // }
-
     .dropdown-item {
         font-weight: 400;
         font-size: var(--fontsize14);
@@ -1057,8 +973,13 @@ select:focus {
         color: #141414;
         padding: 0.75rem;
     }
-}
 
+    tfoot{
+        bottom: 0;
+        position: sticky;
+        z-index: 1;
+    }
+}
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1124,7 +1045,6 @@ select:focus {
         }
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
@@ -1217,7 +1137,6 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-
     table,
     th,
     td {
@@ -1289,7 +1208,6 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // note text stylings
@@ -1303,7 +1221,6 @@ select:focus {
         font-weight: 700;
     }
 }
-
 // note text stylings
 
 //My Info Stylings
@@ -1443,14 +1360,15 @@ input[type="file"] {
     }
 }
 
-//info icon
-.info-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-}
-
 //pagenation stylings
 .pagination-content {
+    width: 100%;
+    background-color: var(--white-color);
+    
+    .custom-pagination-select {
+        font-size: var(--fontsize14);
+    }
+
     .custom-pagination-select:focus {
         outline: none;
         box-shadow: none;
@@ -1461,12 +1379,11 @@ input[type="file"] {
         .p-paginator-pages {
             .p-paginator-page {
                 border-radius: 50%;
-                width: 1.25rem;
-                height: 1.25rem;
-                margin: 0 0.2rem;
+                margin: 0rem;
                 color: #333;
                 font-weight: 500;
                 transition: all 0.3s ease;
+                font-size: var(--fontsize12);
             }
 
             .p-paginator-page:hover {
@@ -1480,34 +1397,22 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first,.p-paginator-prev,
+        .p-paginator-next,.p-paginator-last {
             border-radius: 50%;
-            width: 1.25rem;
-            height: 1.25rem;
-            margin: 0 0.3rem;
+            margin: 0rem;
             background-color: #f8f8f8;
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
-
 }
-
 //pagenation stylings
-
-// login components stylings
-
-// login components stylings
 
 // custom phone number input with country code stylings
 .custom-phone-number-content {
@@ -1848,6 +1753,22 @@ input[type="file"] {
     }
 }
 
+.fields-data-container {
+    height: calc(100vh - 12rem);
+    position: relative;
+    padding-top: 0rem !important;
+    margin-bottom: 1rem;
+
+    .data-header-content {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        gap: 1rem;
+        background-color: #fff;
+        padding: 1rem 0rem;
+    }
+}
 // Settings Stylings Ends
 
 // red trash icon
@@ -1925,7 +1846,6 @@ input[type="checkbox"] {
         }
     }
 }
-
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1944,7 +1864,6 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
-
 // Action buttons stylings Ends
 
 // component loader
@@ -2082,8 +2001,7 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: 500;
         }
 
-        th,
-        td {
+        th, td {
             padding: 1rem;
             text-align: center;
             line-height: 100%;
@@ -2106,15 +2024,6 @@ input[type=number]::-webkit-outer-spin-button {
             color: #184066 !important;
         }
     }
-}
-
-// custom height
-.custom-content-height16 {
-    height: calc(100dvh - 16rem);
-}
-
-.custom-content-height17 {
-    height: calc(100dvh - 17rem);
 }
 
 // time Off stylings
@@ -2141,8 +2050,7 @@ input[type=number]::-webkit-outer-spin-button {
                 border-radius: 0.5rem;
                 overflow: hidden;
 
-                th,
-                td {
+                th, td {
                     text-align: center;
                     padding: 0.5rem;
                     border: 1px solid #767676;
@@ -2258,17 +2166,14 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-
 .custom-reportes-sub-tabs-content {
     padding: 1rem;
     cursor: pointer;
 
     .reportes-header-content {
-
         .icon-header {
             width: 3rem;
             height: 3rem;
-
         }
 
         .main-header {
@@ -2276,29 +2181,24 @@ input[type=number]::-webkit-outer-spin-button {
             justify-content: center;
             align-items: center;
             font-weight: 600;
-            font-size: 16px;
+            font-size: var(--fontsize16);
             line-height: 18px;
             letter-spacing: 0%;
             color: #222222;
-
         }
 
         .sub-text {
-
             font-weight: 400;
-            font-size: 12px;
+            font-size: var(--fontsize12);
             line-height: 100%;
             letter-spacing: 1%;
             color: #9C9C9D;
         }
-
-
     }
 
     .custom-reports-content {
         display: flex;
         gap: 1.5rem;
-
 
         .custom-reports {
             width: 16rem;
@@ -2312,7 +2212,6 @@ input[type=number]::-webkit-outer-spin-button {
             flex-direction: column;
             align-items: flex-start;
             cursor: pointer;
-
 
             .icon {
                 width: 1rem;
@@ -2334,11 +2233,9 @@ input[type=number]::-webkit-outer-spin-button {
                 line-height: 100%;
                 letter-spacing: 1%;
                 color: #ACACAD;
-
             }
 
-            &.active,
-            &.active-nav-link {
+            &.active, &.active-nav-link {
                 border: 2px solid #00b2ff;
                 background: #eaf8ff;
                 box-shadow: 0 4px 16px 0 rgba(0, 178, 255, 0.08);
@@ -2477,7 +2374,7 @@ input[type=number]::-webkit-outer-spin-button {
 
             .content-text {
                 font-weight: 600;
-                font-size: 12px;
+                font-size: var(--fontsize12);
                 line-height: 18px;
                 letter-spacing: 0%;
                 text-align: center;
@@ -2527,4 +2424,15 @@ input[type=number]::-webkit-outer-spin-button {
         font-size: var(--fontsize10);
         color: #ACACAD;
     }
+}
+
+.small-blue-toggle {
+  --p-toggleswitch-width: 2.5rem;
+  --p-toggleswitch-height: 1.2rem;
+  --p-toggleswitch-handle-size: 1rem;
+
+  // // --p-toggleswitch-focus-ring-color: blue;
+  // // --p-toggleswitch-checked-hover-border-color: blue;
+  // --p-toggleswitch-checked-background: #cce4ff;
+  --p-toggleswitch-handle-checked-background: white;
 }

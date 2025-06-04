@@ -190,7 +190,6 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
 
   hidePublishCloneButtons: boolean = false;
   submit() {
-    debugger
     console.log(this.updatePoliciesData)
     const formValue = this.policyForm.value;
     const payload = {

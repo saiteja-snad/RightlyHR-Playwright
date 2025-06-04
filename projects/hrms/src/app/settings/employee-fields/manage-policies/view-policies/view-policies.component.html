@@ -1,31 +1,30 @@
 <div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      
-          <div class="heading-content">
-            <div class="commpoment-name cursor" (click)="Cancel()">Manage Policies<span class="ms-1"><i
-                        class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">{{'View Policy' | translate}}</div>
-            <!-- <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div> -->
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="Cancel()">Manage Policies
+                <i class="bi bi-chevron-double-right ms-1"></i>
+            </div>
+            <div class="component-header">{{'View Policy'| translate}}</div>
         </div>
     </div>
 
     <form autocomplete="off" [formGroup]="policyForm" (ngSubmit)="submit()">
-        <div class="custom-setting-right-content w-100 p-3">
+        <div class="custom-setting-right-content fields-data-container">
             <!--Select Fields-->
-            <div class="d-flex gap-3 mb-3">
+            <div class="data-header-content">
                 <div>
-                    <label class="form-label custom-label">{{'Year' | translate}}<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label">{{'Year' | translate}}<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="yearDetails" optionLabel="name" placeholder="Select year" formControlName="year"
-                            class="form-select custom-select">
+                        <p-select [options]="yearDetails" optionLabel="name" placeholder="Select year"
+                            formControlName="year" class="form-select custom-select">
                         </p-select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="form-label custom-label">{{'Location' | translate}}<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label">{{'Location' | translate}}<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue=""
                             formControlName="location" placeholder="Select location" class="form-select custom-select"
@@ -35,26 +34,29 @@
                 </div>
 
                 <div class="custom-p-select-content">
-                    <label class="form-label custom-label">{{'Sub Location' | translate}}<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label">{{'Sub Location' | translate}}<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue=""
-                            formControlName="subLocation" placeholder="Please select sub location" (onChange)="getShiftBYid($event)"
-                            class="form-select custom-select"></p-select>
+                            formControlName="subLocation" placeholder="Please select sub location"
+                            (onChange)="getShiftBYid($event)" class="form-select custom-select"></p-select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="form-label custom-label">{{'Shift' | translate}}<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label">{{'Shift' | translate}}<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="shift" formControlName="shift"
-                            placeholder="Select shift" class="form-select custom-select"></p-select>
+                        <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="shift"
+                            formControlName="shift" placeholder="Select shift"
+                            class="form-select custom-select"></p-select>
                     </div>
                 </div>
             </div>
 
             <div formArrayName="policies">
-                <div class="card custom-background-card p-3 mb-3" *ngFor="let holiday of policies.controls; let i = index"
-                    [formGroupName]="i">
+                <div class="card custom-background-card p-3 mb-3"
+                    *ngFor="let holiday of policies.controls; let i = index" [formGroupName]="i">
                     <div class="d-flex gap-3">
                         <div class="w-100">
                             <label class="form-label custom-label">{{'Policy Name' | translate}}<span
@@ -62,14 +64,15 @@
                             <input type="text" formControlName="policyName" class="form-control custom-input w-100"
                                 placeholder="Please enter policy name" />
                         </div>
-            
+
                         <div class="w-100">
                             <label class="form-label custom-label">
                                 {{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span>
                             </label>
                             <div class="d-flex align-items-center gap-2">
-                                <input type="text" class="form-control custom-input w-100" 
-                                [value]="getPolicyAttachmentName(holiday.get('policyFile')?.value)" [disabled]="true"/>
+                                <input type="text" class="form-control custom-input w-100"
+                                    [value]="getPolicyAttachmentName(holiday.get('policyFile')?.value)"
+                                    [disabled]="true" />
                                 <div [ngbPopover]="popContent" triggers="click" placement="top">
                                     <i class="bi bi-info-circle-fill cursor"></i>
                                 </div>
@@ -78,36 +81,37 @@
                                 <div>{{ getPolicyAttachmentName(holiday.get('policyFile')?.value) }}</div>
                             </ng-template>
                         </div>
-            
+
                         <div class="w-100">
                             <label class="form-label custom-label">{{'Description' | translate}}<span
                                     class="text-danger">*</span></label>
-                            <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
-                                placeholder="Please enter description">
+                            <input type="text" formControlName="policyDescription"
+                                class="form-control custom-input w-100" placeholder="Please enter description">
                         </div>
 
                         <div class="w-100">
                             <div class="d-flex justify-content-between">
-                            <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
-                              </div>
-                            <p-toggleswitch formControlName="acknowledged"/>
-                          </div>
-
-                          <div class="w-100">
-                            <div class="d-flex justify-content-between">
-                              <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                                <label class="form-label custom-label">{{'Acknowledgement Required' |
+                                    translate}}</label>
                             </div>
-                            <p-toggleswitch formControlName="notification"/>
-                          </div>
+                            <p-toggleswitch formControlName="acknowledged" />
+                        </div>
+
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                            </div>
+                            <p-toggleswitch formControlName="notification" />
+                        </div>
                     </div>
                 </div>
             </div>
-               
-            <div class=" d-flex justify-content-end gap-3 pt-4">
-                <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>
-                <button type="button" class="custom-btn clone-btn px-5" *ngIf="!hideBUTTON" (click)="cloneshiftsPolicy1()" 
+        </div>
+
+        <div class=" d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel'|translate}}</button>
+            <button type="button" class="custom-btn clone-btn px-5" *ngIf="!hideBUTTON" (click)="cloneshiftsPolicy1()"
                 [disabled]="policyForm.invalid">{{'Clone'|translate}}</button>
-            </div>
         </div>
     </form>
 </div>

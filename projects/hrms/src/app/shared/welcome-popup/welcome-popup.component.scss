@@ -1,0 +1,31 @@
+.welcome-pop-content {
+    padding: 1.5rem;
+    text-align: center;
+
+    .celebrations-image {
+        width: 12.5rem;
+        height: 9rem;
+    }
+
+    .welcome-text {
+        font-weight: 700;
+        font-size: 21.58px;
+        line-height: 100%;
+        letter-spacing: 0px;
+        text-align: center;
+        color: #1A2028;
+    }
+
+    .content-text {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 1px;
+        text-align: center;
+        color: #787878;
+    }
+
+    .custom-btn{
+        padding: 0.625rem 3rem;
+    }
+}

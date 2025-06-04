@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left me-2" (click)="openModal(navigateToTable,
-                {size:'md',centered: true})"></i>{{'Update Form'}}
-            </p>
+    <div class="component-header-content pt-2">
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="openModal(navigateToTable, {size:'md',centered: true})">
+                {{'Update Form'}}<i class="bi bi-chevron-double-right ms-1"></i>
+            </div>
+            <div class="component-header">{{'Create Form'}}</div>
         </div>
     </div>
 
@@ -13,13 +13,16 @@
             <div class="row mb-3">
                 <!-- Form Name -->
                 <div class="col-md-4">
-                    <label class="form-label custom-label mb-2" for="formHeader">Form Name<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2" for="formHeader">Form Name<span
+                            class="text-danger">*</span></label>
                     <input formControlName="formHeader" class="form-control custom-input"
                         (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Form Name" />
                     <div class="error-msg">
-                        <div *ngIf="updateForm.get('formHeader')?.errors?.['required'] && updateForm.get('formHeader')?.touched">
+                        <div
+                            *ngIf="updateForm.get('formHeader')?.errors?.['required'] && updateForm.get('formHeader')?.touched">
                             Form Name is required.</div>
-                        <div *ngIf="updateForm.get('formHeader')?.hasError('maxlength') && updateForm.get('formHeader')?.touched">
+                        <div
+                            *ngIf="updateForm.get('formHeader')?.hasError('maxlength') && updateForm.get('formHeader')?.touched">
                             Form Name must not exceed 255 characters
                         </div>
                         <div *ngIf="updateForm.get('formHeader')?.hasError('onlySpecialChars')">
@@ -36,7 +39,8 @@
                             class="custom-select w-100" formControlName="moduleId" placeholder="Select Module"
                             (onChange)="onModuleChange($event.value)">
                             <!-- Selected item template -->
-                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.moduleName }}</ng-template>
+                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.moduleName
+                                }}</ng-template>
                             <!-- Dropdown item template -->
                             <ng-template let-module pTemplate="item">{{ module.moduleName }}</ng-template>
                         </p-select>
@@ -52,13 +56,14 @@
                     <label class="content-heading mb-2">Rating Scale Range<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="uniqueRatingScaleRanges" [filter]="false" [showClear]="false"
-                            class="custom-select w-100" formControlName="ratingScaleRange" placeholder="Select Rating Scale Range"
-                            (onChange)="onRatingScaleRangeChange($event)">
+                            class="custom-select w-100" formControlName="ratingScaleRange"
+                            placeholder="Select Rating Scale Range" (onChange)="onRatingScaleRangeChange($event)">
                             <!-- Selected item template -->
-                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.minimum }} to 
+                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.minimum }} to
                                 {{ selectedOption?.maximum }}</ng-template>
                             <!-- Dropdown item template -->
-                            <ng-template let-range pTemplate="item">{{ range.minimum }} to {{ range.maximum }}</ng-template>
+                            <ng-template let-range pTemplate="item">{{ range.minimum }} to {{ range.maximum
+                                }}</ng-template>
                         </p-select>
                     </div>
                     <div class="error-msg"
@@ -67,7 +72,7 @@
                     </div>
                 </div>
             </div>
-    
+
             <div class="row mb-3">
                 <!-- Overall Rating -->
                 <div class="col-md-4" *ngIf="updateForm.get('moduleId')?.value?.id !== 24 ">
@@ -76,9 +81,11 @@
                     <input type="number" formControlName="overAllRating" class="form-control custom-input"
                         placeholder="Enter Overall rating" min="1" (input)="restrictToNumbers($event)" />
                     <div class="error-msg">
-                        <div *ngIf="updateForm.get('overAllRating')?.errors?.['required'] && updateForm.get('overAllRating')?.touched">
+                        <div
+                            *ngIf="updateForm.get('overAllRating')?.errors?.['required'] && updateForm.get('overAllRating')?.touched">
                             Over All Rating is required.</div>
-                        <div *ngIf="updateForm.get('overAllRating')?.errors?.['min'] && updateForm.get('overAllRating')?.touched">
+                        <div
+                            *ngIf="updateForm.get('overAllRating')?.errors?.['min'] && updateForm.get('overAllRating')?.touched">
                             Overall Rating Rating must be at least 1.
                         </div>
                     </div>
@@ -90,9 +97,11 @@
                         <span class="text-danger">*</span></label>
                     <input type="number" formControlName="cutOffRating" class="form-control custom-input"
                         placeholder="Enter CutOff rating" min="1" (input)="restrictToNumbers($event)" />
-                    <div *ngIf="updateForm.get('cutOffRating')?.errors?.['required'] && updateForm.get('cutOffRating')?.touched">
+                    <div
+                        *ngIf="updateForm.get('cutOffRating')?.errors?.['required'] && updateForm.get('cutOffRating')?.touched">
                         Cut Off Rating is required.</div>
-                    <div *ngIf="updateForm.get('cutOffRating')?.errors?.['min'] && updateForm.get('cutOffRating')?.touched">
+                    <div
+                        *ngIf="updateForm.get('cutOffRating')?.errors?.['min'] && updateForm.get('cutOffRating')?.touched">
                         Cut Off Rating must be at least 1.
                     </div>
                     <div *ngIf="updateForm.errors?.['cutOffGreaterThanOverall']">
@@ -100,7 +109,7 @@
                     </div>
                 </div>
             </div>
-    
+
             <div formArrayName="sections" ngbAccordion cdkDropList (cdkDropListDropped)="onDropSection($event)">
                 <div *ngFor="let section of updateSections.controls; let sectionIndex = index"
                     [formGroupName]="sectionIndex" ngbAccordionItem cdkDrag [collapsed]="false" #sectionElement>
@@ -117,14 +126,18 @@
                             </div>
                             <!-- Section Name -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label mb-2">Section Name<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label mb-2">Section Name<span
+                                        class="text-danger">*</span></label>
                                 <input formControlName="sectionName" class="form-control custom-input"
-                                    (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Section Name">
+                                    (keypress)="formsValidations.restrictInitialSpace($event)"
+                                    placeholder="Enter Section Name">
                                 <div class="error-msg">
-                                    <div *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
+                                    <div
+                                        *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
                                         Section Name is required.
                                     </div>
-                                    <div *ngIf="section.get('sectionName')?.hasError('maxlength') && section.get('sectionName')?.touched">
+                                    <div
+                                        *ngIf="section.get('sectionName')?.hasError('maxlength') && section.get('sectionName')?.touched">
                                         Section Name must not exceed 255 characters
                                     </div>
                                     <div *ngIf="section.get('sectionName')?.hasError('onlySpecialChars')">
@@ -136,53 +149,62 @@
                             <div class="col-md-3">
                                 <label class="form-label">Choose Section Type<span class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
-                                    <p-select [options]="sectionTypes" optionLabel="label" optionValue="value" formControlName="sectionType"
-                                        placeholder="Choose Section Type" class="custom-select w-100" [filter]="false" [showClear]="false"
+                                    <p-select [options]="sectionTypes" optionLabel="label" optionValue="value"
+                                        formControlName="sectionType" placeholder="Choose Section Type"
+                                        class="custom-select w-100" [filter]="false" [showClear]="false"
                                         (onChange)="onSectionTypeChange(section)">
                                         <!-- Selected item template -->
-                                        <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption?.label }}</ng-template>
+                                        <ng-template let-selectedOption pTemplate="selectedItem">{{
+                                            selectedOption?.label }}</ng-template>
                                         <!-- Dropdown item template -->
                                         <ng-template let-type pTemplate="item">{{ type.label }}</ng-template>
                                     </p-select>
                                 </div>
-                                <div class="error-msg" *ngIf="section.get('sectionType')?.errors?.['required'] && section.get('sectionType')?.touched">
+                                <div class="error-msg"
+                                    *ngIf="section.get('sectionType')?.errors?.['required'] && section.get('sectionType')?.touched">
                                     Section Type is required.
                                 </div>
                             </div>
                             <!-- Section Weightage -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label mb-2">Section Weightage <span class="text-danger">*</span></label>
+                                <label class="form-label custom-label mb-2">Section Weightage <span
+                                        class="text-danger">*</span></label>
                                 <input type="number" formControlName="weightage" class="form-control custom-input"
                                     placeholder="Enter Weightage" min="1" (input)="restrictToNumbers($event)">
                                 <div class="error-msg">
-                                    <div *ngIf="section.get('weightage')?.errors?.['required'] && section.get('weightage')?.touched">
+                                    <div
+                                        *ngIf="section.get('weightage')?.errors?.['required'] && section.get('weightage')?.touched">
                                         Section Weightage is required.
                                     </div>
-                                    <div *ngIf="section.get('weightage')?.errors?.['min'] && section.get('weightage')?.touched">
+                                    <div
+                                        *ngIf="section.get('weightage')?.errors?.['min'] && section.get('weightage')?.touched">
                                         Section Weightage must be at least 1.
                                     </div>
                                     <div *ngIf="updateForm.errors?.['weightageGreaterThanOverall']">
                                         Each section's weightage must be less than or equal to the Overall Rating.
                                     </div>
                                     <div *ngIf="!section.get('weightage')?.errors?.['required'] && updateForm.errors?.['weightageNotEqualTo100'] && 
-                                    section.get('weightage')?.touched">Sum of all section weightage should be equal to 100</div>
+                                    section.get('weightage')?.touched">Sum of all section weightage should be equal to
+                                        100</div>
                                 </div>
                             </div>
                             <!-- Remove Section  -->
                             <div class="col-md-3">
-                                <i class="bi bi-trash text-danger" style="cursor: pointer;" (click)="removeUpdateSection(sectionIndex)"></i>
+                                <i class="bi bi-trash text-danger" style="cursor: pointer;"
+                                    (click)="removeUpdateSection(sectionIndex)"></i>
                             </div>
                         </div>
                     </div>
-    
+
                     <div ngbAccordionCollapse>
                         <div class="p-3">
                             <!-- Rating Scale Types -->
                             <div class="col-md-4 mb-3" *ngIf="section.get('sectionType')?.value === 'rating'">
                                 <div class="d-flex custom-p-select-content">
-                                    <p-select [options]="filteredRatingScaleTypes" optionLabel="ratingType" optionValue="ratingType"
-                                        [filter]="false" [showClear]="false" class="form-select question-type rounded-2"
-                                        formControlName="ratingScaleType" placeholder="Choose rating scale type">
+                                    <p-select [options]="filteredRatingScaleTypes" optionLabel="ratingType"
+                                        optionValue="ratingType" [filter]="false" [showClear]="false"
+                                        class="form-select question-type rounded-2" formControlName="ratingScaleType"
+                                        placeholder="Choose rating scale type">
                                     </p-select>
                                     <span class="text-danger">*</span>
                                 </div>
@@ -192,7 +214,8 @@
                                 </div>
                             </div>
                             <!-- questions with section type rating -->
-                            <div formArrayName="questions" cdkDropList (cdkDropListDropped)="onDropQuestion($event, sectionIndex)"
+                            <div formArrayName="questions" cdkDropList
+                                (cdkDropListDropped)="onDropQuestion($event, sectionIndex)"
                                 *ngIf="section.get('sectionType')?.value === 'rating'">
                                 <div *ngFor="let question of getUpdateQuestions(sectionIndex).controls; let questionIndex = index"
                                     [formGroupName]="questionIndex" cdkDrag>
@@ -207,9 +230,12 @@
                                             </div>
                                             <!-- Question Weightage -->
                                             <div class="col-md-3">
-                                                <label class="form-label custom-label mb-2">Question Weightage<span class="text-danger">*</span></label>
-                                                <input type="number" formControlName="questionWeightage" class="form-control custom-input"
-                                                    placeholder="Enter Question Weightage" min="1" (input)="restrictToNumbers($event)">
+                                                <label class="form-label custom-label mb-2">Question Weightage<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="number" formControlName="questionWeightage"
+                                                    class="form-control custom-input"
+                                                    placeholder="Enter Question Weightage" min="1"
+                                                    (input)="restrictToNumbers($event)">
                                                 <div class="error-msg"
                                                     *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
                                                     Question Weightage is required.
@@ -218,8 +244,7 @@
                                                     *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
                                                     Question Weightage must be at least 1.
                                                 </div>
-                                                <div class="error-msg"
-                                                    *ngIf="!question.get('questionWeightage')?.errors?.['required'] && updateForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100']
+                                                <div class="error-msg" *ngIf="!question.get('questionWeightage')?.errors?.['required'] && updateForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100']
                                                      && question.get('questionWeightage')?.touched">
                                                     Total question weightage in this section must be 100.
                                                 </div>
@@ -255,15 +280,19 @@
                                         <!-- Question -->
                                         <div class="mt-3">
                                             <div class="d-flex ms-4">
-                                                <input formControlName="question" class="form-control hide-input rounded-2" placeholder="Enter your Question"
+                                                <input formControlName="question"
+                                                    class="form-control hide-input rounded-2"
+                                                    placeholder="Enter your Question"
                                                     (input)="validateInput(question.get('question'))">
                                                 <span class="text-danger">*</span>
                                             </div>
                                             <div class="error-msg">
-                                                <div *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
+                                                <div
+                                                    *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
                                                     Question is required.
                                                 </div>
-                                                <div *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
+                                                <div
+                                                    *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
                                                     Question must not exceed 1000 characters
                                                 </div>
                                             </div>
@@ -271,7 +300,8 @@
 
                                         <!-- Rating Section Options -->
                                         <div>
-                                            <ng-container *ngFor="let scale of getRatingScaleOptions(section.get('ratingScaleType')?.value)">
+                                            <ng-container
+                                                *ngFor="let scale of getRatingScaleOptions(section.get('ratingScaleType')?.value)">
                                                 <div class="d-flex align-items-center gap-2 m-2">
                                                     <input type="radio" class="form-check-input" disabled />
                                                     <span class="mt-1">{{scale.description}}</span>
@@ -282,15 +312,19 @@
                                         <!-- Question Required -->
                                         <div class="d-flex justify-content-end gap-3 pt-3">
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input rounded-2" type="checkbox" id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                    formControlName="required" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
+                                                <input class="form-check-input rounded-2" type="checkbox"
+                                                    id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
+                                                    formControlName="required"
+                                                    [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
                                                     triggers="mouseenter:mouseleave" placement="start">
-                                                <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                                <label class="form-check-label"
+                                                    for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
                                                     Required
                                                 </label>
                                             </div>
                                             <div>
-                                                <i class="bi bi-trash text-danger cursor" (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
+                                                <i class="bi bi-trash text-danger cursor"
+                                                    (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -298,7 +332,8 @@
                             </div>
 
                             <!-- Questions within Section -->
-                            <div class="p-3" formArrayName="questions" cdkDropList (cdkDropListDropped)="onDropQuestion($event, sectionIndex)"
+                            <div class="p-3" formArrayName="questions" cdkDropList
+                                (cdkDropListDropped)="onDropQuestion($event, sectionIndex)"
                                 *ngIf="section.get('sectionType')?.value === 'normal'">
                                 <div *ngFor="let question of getUpdateQuestions(sectionIndex).controls; let questionIndex = index"
                                     [formGroupName]="questionIndex" class="mb-3 p-3 border rounded" cdkDrag>
@@ -306,7 +341,8 @@
                                     <div class="d-flex gap-3">
                                         <div class="question-drag"
                                             *ngIf="getUpdateQuestions(sectionIndex).controls.length > 1">
-                                            <button class="drag-btn" cdkDragHandle><i class="bi bi-grip-vertical"></i></button>
+                                            <button class="drag-btn" cdkDragHandle><i
+                                                    class="bi bi-grip-vertical"></i></button>
                                         </div>
                                         <!-- Question Type -->
                                         <div class="col-md-3" *ngIf="section.get('sectionType')?.value === 'normal'">
@@ -331,7 +367,8 @@
                                                             class="m-2">
                                                             <i class="bi bi-star-fill"></i>
                                                         </ng-container>
-                                                        <ng-container *ngIf="question.get('type')?.value === 'text area'"
+                                                        <ng-container
+                                                            *ngIf="question.get('type')?.value === 'text area'"
                                                             class="m-2">
                                                             <i class="bi bi-textarea-t"></i>
                                                         </ng-container>
@@ -348,16 +385,20 @@
                                                         <li *ngFor="let type of questionTypes"
                                                             (click)="selectType(type, sectionIndex, questionIndex)">
                                                             <a class="dropdown-item">
-                                                                <ng-container *ngIf="type.value  === 'text'" class="m-2">
+                                                                <ng-container *ngIf="type.value  === 'text'"
+                                                                    class="m-2">
                                                                     <i class="bi bi-type"></i>
                                                                 </ng-container>
-                                                                <ng-container *ngIf="type.value === 'checkbox'" class="m-2">
+                                                                <ng-container *ngIf="type.value === 'checkbox'"
+                                                                    class="m-2">
                                                                     <i class="bi bi-check-square-fill"></i>
                                                                 </ng-container>
-                                                                <ng-container *ngIf="type.value === 'boolean'" class="m-2">
+                                                                <ng-container *ngIf="type.value === 'boolean'"
+                                                                    class="m-2">
                                                                     <i class="bi bi-record-circle"></i>
                                                                 </ng-container>
-                                                                <ng-container *ngIf="type.value === 'rating'" class="m-2">
+                                                                <ng-container *ngIf="type.value === 'rating'"
+                                                                    class="m-2">
                                                                     <i class="bi bi-star-fill"></i>
                                                                 </ng-container>
                                                                 <ng-container *ngIf="type.value === 'text area'"
@@ -379,18 +420,23 @@
                                         <!-- Question Weightage -->
                                         <div class="col-md-3">
                                             <div class="d-flex">
-                                                <input type="number" formControlName="questionWeightage" class="form-control custom-input"
-                                                    placeholder="Enter Question Weightage" min="1" (input)="restrictToNumbers($event)">
+                                                <input type="number" formControlName="questionWeightage"
+                                                    class="form-control custom-input"
+                                                    placeholder="Enter Question Weightage" min="1"
+                                                    (input)="restrictToNumbers($event)">
                                                 <span class="text-danger">*</span>
                                             </div>
                                             <div class="error-msg">
-                                                <div *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
+                                                <div
+                                                    *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
                                                     Question Weightage is required.
                                                 </div>
-                                                <div *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
+                                                <div
+                                                    *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
                                                     Question Weightage must be at least 1.
                                                 </div>
-                                                <div *ngIf="!question.get('questionWeightage')?.errors?.['required'] && updateForm.errors?.['section' + sectionIndex 
+                                                <div
+                                                    *ngIf="!question.get('questionWeightage')?.errors?.['required'] && updateForm.errors?.['section' + sectionIndex 
                                                 + 'QuestionWeightageNotEqualTo100'] && question.get('questionWeightage')?.touched">
                                                     Total question weightage in this section must be 100.
                                                 </div>
@@ -407,18 +453,21 @@
                                             <span class="text-danger">*</span>
                                         </div>
                                         <div class="error-msg">
-                                            <div *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
+                                            <div
+                                                *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
                                                 Question is required.
                                             </div>
-                                            <div *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
+                                            <div
+                                                *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
                                                 Question must not exceed 1000 characters
                                             </div>
                                         </div>
                                     </div>
-    
+
                                     <!-- Option Section for Checkbox, Multiple-Choice, or Boolean -->
                                     <div *ngIf="question.get('type')?.value === 'checkbox' || question.get('type')?.value === 'multiple-choice' 
-                                    || question.get('type')?.value === 'boolean'" formArrayName="options" class="mt-1 col-md-12">
+                                    || question.get('type')?.value === 'boolean'" formArrayName="options"
+                                        class="mt-1 col-md-12">
                                         <div *ngFor="let option of getUpdateOptions(sectionIndex, questionIndex)?.controls; let optionIndex = index"
                                             class="p-2 mb-1" [formGroupName]="optionIndex">
                                             <div class="d-flex gap-2 align-items-center">
@@ -428,14 +477,16 @@
                                                 </ng-container>
                                                 <ng-container *ngIf="question.get('type')?.value === 'boolean'">
                                                     <input type="radio" class="form-check-input " style=" color: grey;"
-                                                        name="booleanOptionGroup{{ sectionIndex }}{{ questionIndex }}" disabled>
+                                                        name="booleanOptionGroup{{ sectionIndex }}{{ questionIndex }}"
+                                                        disabled>
                                                 </ng-container>
                                                 <div class="d-flex w-100">
-                                                    <input formControlName="option" class="form-control w-25" placeholder="Enter option"
+                                                    <input formControlName="option" class="form-control w-25"
+                                                        placeholder="Enter option"
                                                         (keypress)="formsValidations.restrictInitialSpace($event)" />
                                                     <span class="text-danger">*</span>
-                                                    <button type="button" class="btn float-end" 
-                                                    (click)="removeUpdateOption(sectionIndex, questionIndex, optionIndex)">❌</button>
+                                                    <button type="button" class="btn float-end"
+                                                        (click)="removeUpdateOption(sectionIndex, questionIndex, optionIndex)">❌</button>
                                                 </div>
                                             </div>
                                             <div class="error-msg"
@@ -448,13 +499,15 @@
                                     </div>
 
                                     <!-- Question Type => Text | Textarea-->
-                                    <div *ngIf="question.get('type')?.value === 'text' || question.get('type')?.value === 'text area'" class="mt-2">
+                                    <div *ngIf="question.get('type')?.value === 'text' || question.get('type')?.value === 'text area'"
+                                        class="mt-2">
                                         <textarea *ngIf="question.get('type')?.value === 'text area'"
-                                            class="form-control hide-input" placeholder="Your answer here" disabled></textarea>
+                                            class="form-control hide-input" placeholder="Your answer here"
+                                            disabled></textarea>
                                         <input type="text" *ngIf="question.get('type')?.value === 'text'"
                                             class="form-control hide-input" placeholder="Your answer here" disabled>
                                     </div>
-    
+
                                     <!-- Stars for Rating Type -->
                                     <div *ngIf="question.get('type')?.value === 'rating'" class="mt-2">
                                         <div class="rating">
@@ -467,16 +520,20 @@
                                     <!-- Question required -->
                                     <div class="d-flex justify-content-end gap-2">
                                         <div class="form-check form-switch  ms-3">
-                                            <input class="form-check-input" type="checkbox" id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                formControlName="required" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
+                                            <input class="form-check-input" type="checkbox"
+                                                id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
+                                                formControlName="required"
+                                                [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
                                                 triggers="mouseenter:mouseleave" placement="start">
-                                            <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                            <label class="form-check-label"
+                                                for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
                                                 Required
                                             </label>
                                         </div>
                                         <!-- Remove Question Button -->
                                         <div>
-                                            <i class="bi bi-trash text-danger cursor" (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
+                                            <i class="bi bi-trash text-danger cursor"
+                                                (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -487,7 +544,8 @@
                                     The section must contain at least one question.
                                 </div>
                                 <!-- Add Question Button -->
-                                <button type="button" class="custom-btn btn-primary width-max" (click)="addUpdateQuestion(sectionIndex)">
+                                <button type="button" class="custom-btn btn-primary width-max"
+                                    (click)="addUpdateQuestion(sectionIndex)">
                                     Add Question</button>
                             </div>
                         </div>
@@ -501,10 +559,12 @@
                 <!-- Add Section -->
                 <button type="button" class="custom-btn btn-primary" (click)="addUpdateSection()">Add Section</button>
                 <!-- Save as Draft -->
-                <button type="button" class="custom-btn btn-primary" *ngIf="formStatus === 'draft'" [disabled]="updateForm.invalid" 
-                (click)="openconfirmationModel(confirmationtosaveasdraft)">Save as Draft</button>
+                <button type="button" class="custom-btn btn-primary" *ngIf="formStatus === 'draft'"
+                    [disabled]="updateForm.invalid" (click)="openconfirmationModel(confirmationtosaveasdraft)">Save as
+                    Draft</button>
                 <!-- Submit | Update -->
-                <button type="button" class="custom-btn btn-primary" (click)="openconfirmationModel(confirmationtosave);statuscheck(formStatus)"
+                <button type="button" class="custom-btn btn-primary"
+                    (click)="openconfirmationModel(confirmationtosave);statuscheck(formStatus)"
                     [disabled]="updateForm.invalid">{{ formStatus === 'draft' ? 'Submit':'Update' }}</button>
             </div>
         </form>

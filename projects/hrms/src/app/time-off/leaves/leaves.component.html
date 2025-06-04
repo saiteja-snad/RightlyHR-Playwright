@@ -2,43 +2,45 @@
     @if(router.url !== '/time-off/leaves/team-leave-balance' && router.url !== '/time-off/leaves/team-leave-summary'
     && router.url !== '/time-off/leaves/org-leave-balance'){
     <div class="component-header-content">
-       
-          <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+        <div class="heading-content">
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
             <div class="component-header">{{'Leave Balance'|translate}}</div>
-           <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
         </div>
-
 
         <div class="d-flex align-items-center gap-3">
             <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true"optionValue="employeeId" name="myteamemployees"
-                    placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                    [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
-                </p-select>             
+                <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
+                    name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
+                    class="form-select custom-select" [autoDisplayFirst]="false" required
+                    (onChange)="onCheckemployee($event.value)">
+                </p-select>
             </div>
             <div *ngIf="disaplyapplybutton">
                 @if (rbac.allowedToAccess('Request Leave Button.view')) {
-                <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">Request Leave</button>
+                <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">Request
+                    Leave</button>
                 }
             </div>
         </div>
     </div>
 
-    
-   <!--Module Information-->
+    <!--Module Information-->
     <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo"  />
+        <app-module-information [moduleInfo]="moduleinfo" />
     </ng-template>
 
     @if (rbac.allowedToAccess('Time Off Module.view')) {
     <div class="graph-grid w-100 mb-3">
         <div class="total-leave-balance-graph-content">
             <div class="chart-content">
-                <p-chart type="doughnut" [data]="leaveCategoryData" [options]="leaveCategoryOptions" class="doughnut-chart" />
+                <p-chart type="doughnut" [data]="leaveCategoryData" [options]="leaveCategoryOptions"
+                    class="doughnut-chart" />
                 <div class="total-count-content">
                     <p class="count m-0 p-0 mb-2">{{totalAvailableLeaves}}</p>
                     <p class="total-count-text m-0 p-0">Total Leaves</p>
@@ -55,63 +57,38 @@
                 }
             </ul>
         </div>
-        <div class="leaves-category-container">
-            <p-tabs scrollable>
-                <p-tablist>
-                    @for (item of categoryDetails; track $index) {
-                    <p-tab>
-                        <div class="card leaves-category-card">
-                            <p class="leave-content-text m-0">{{ item.category.name }}</p>
-                            <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' ' 
-                            + getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
-                                <span class="progress-value">
-                                    <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
-                                    <span class="total-leaves-text">/{{item.allowedDays}}</span>
-                                </span>
-                            </div>
-                            <!--  -->
-                            <!-- <p-chart type="doughnut" [data]="leavecategorychartdata" [options]="leavecategorychartoptions" class="doughnut-chart mb-3" /> -->
-                            <div class="d-flex gap-2">
-                                <div class="leave-category-text">
-                                    <p class="m-0 pb-1">Entitled</p>
-                                    <p class="m-0">{{item.allowedDays}}</p>
-                                </div>
-                                <div class="leave-category-text">
-                                    <p class="m-0 pb-1">Booked</p>
-                                    <p class="m-0">{{item.booked}}</p>
-                                </div>
-                                <div class="leave-category-text">
-                                    @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
-                                    <p class="m-0 pb-1">Processed</p>
-                                    <p class="m-0">{{item.utilizedDays}}</p>
-                                    }
-                                    @if (!item.category.isProbationAllowed) {
-                                    <p class="m-0 pb-1">Processed</p>
-                                    <p class="m-0">{{item.utilizedDays}}</p>
-                                    }
-                                </div>
-                                <div class="leave-category-text">
-                                    @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
-                                    <p class="m-0 pb-1">Available</p>
-                                    <p class="m-0">{{item.probationLeaves - item.utilizedDays - item.booked}}</p>
-                                    }
-                                    @if (!item.category.isProbationAllowed) {
-                                    <p class="m-0 pb-1">Available</p>
-                                    <p class="m-0">{{item.allowedDays - item.utilizedDays -item.booked}}</p>
-                                    }
-                                </div>
-                                @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
-                                <div class="leave-category-text">
-                                    <p class="m-0 pb-1">Probation Leaves</p>
-                                    <p class="m-0">{{ item.probationLeaves }}</p>
-                                </div>
-                                }
-                            </div>
+        <div class="cards-grid-container">
+            @for (item of categoryDetails; track $index) {
+            <div class="leaves-category-card">
+                <div>
+                    <p class="leave-content-text m-0 mb-2" [style.color]="item.category.categoryColor">{{ item.category.name }}</p>
+                    <div class="d-flex gap-2">
+                        <div class="leave-category-text">
+                            <p class="m-0">Booked</p>
+                            <p class="m-0">{{item.booked}}</p>
                         </div>
-                    </p-tab>
-                    }
-                </p-tablist>
-            </p-tabs>
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
+                            <p class="m-0">Processed</p>
+                            <p class="m-0">{{item.utilizedDays}}</p>
+                            }
+                            @if (!item.category.isProbationAllowed) {
+                            <p class="m-0">Processed</p>
+                            <p class="m-0">{{item.utilizedDays}}</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
+                 getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
+                    <span class="progress-value">
+                        <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                        <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                    </span>
+                </div>
+            </div>
+            }
         </div>
     </div>
     }
@@ -141,6 +118,7 @@
                 <a (click)="cleardata()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
                 <div class="row">
@@ -277,14 +255,17 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Reason For Leave'| translate}}<span
                                 class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" [maxlength]="250" [minlength]="10"  formControlName="reason"
-                            placeholder="Please enter reason" (input)="formsValidation.validateInput(leaveForm.get('reason'))"></textarea>
-                        <div class="textarea-count-text" >{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
+                        <textarea class="form-control custom-input" [maxlength]="250" [minlength]="10"
+                            formControlName="reason" placeholder="Please enter reason"
+                            (input)="formsValidation.validateInput(leaveForm.get('reason'))"></textarea>
+                        <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
                         <div class="error-msg"
                             *ngIf="(leaveForm.get('reason')?.touched && leaveForm.get('reason')?.errors?.['required'])">
                             Reason is required
                         </div>
-                        <div class="error-msg" *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.errors?.['minlength']">Reason must be atleast 10 characters</div>
+                        <div class="error-msg"
+                            *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.errors?.['minlength']">
+                            Reason must be atleast 10 characters</div>
                     </div>
 
                     <div *ngIf="dateDifference &&  isDayTypeselected">
@@ -305,7 +286,6 @@
                         </ng-template>
                         <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
                     </div>
-
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"

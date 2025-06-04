@@ -6,20 +6,17 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
-import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ICreateSubDir, IFolders } from '../../../Interfaces/document.model';
 import { CommonModule } from '@angular/common';
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-documents-creation',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, CommonModule, NoDataFoundComponent, NgbPopoverModule],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })
@@ -55,6 +52,10 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
     .subscribe(() => {
       this.updateModuleInfo();
     });
+  }
+
+  navigateToSettings() {
+    this.router.navigate(['/settings'])
   }
 
   getMainFolders(dirPath?: string, previousSelectedFolder?: IFolders) {

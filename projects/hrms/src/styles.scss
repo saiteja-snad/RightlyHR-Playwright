@@ -167,7 +167,6 @@ body {
         align-items: center;
         font-size: var(--fontsize10);
         font-weight: 700;
-        letter-spacing: -2%;
         border-radius: 0.3rem;
         color: var(--side-nav-item-color);
         cursor: pointer;
@@ -184,7 +183,6 @@ body {
     }
 
     .sidenav-footer-content {
-        // border-top: 1px solid var(--white-color);
         padding-top: 0.5rem;
     }
 
@@ -217,9 +215,7 @@ body {
 
         .dropdown-menu {
             position: fixed !important;
-            inset: auto auto auto 0px !important;
-            margin: 0rem 4.75rem !important;
-            transform: translate(18px, -181px) !important;
+            margin: 0rem 1.75rem !important;
             width: 325px !important;
             min-height: 225px !important;
             max-height: 325px !important;
@@ -246,8 +242,6 @@ body {
             color: #222222;
         }
 
-
-        /* dashboard.component.css */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -265,7 +259,6 @@ body {
             min-height: 6.25rem;
         }
 
-        /* RIGHT BORDER STYLES */
         .border-right-top::after,
         .border-right-middle::after,
         .border-right-bottom::after {
@@ -290,7 +283,6 @@ body {
             background: linear-gradient(to bottom, #BCD4F0, white);
         }
 
-        /* BOTTOM BORDER STYLES */
         .border-bottom-left::before,
         .border-bottom-middle::before,
         .border-bottom-right::before {
@@ -332,66 +324,16 @@ body {
     }
 }
 
-// header Nav Tabs stylings
-.header-module-tabs-container {
-    .nav-link {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: 400;
-        font-size: var(--fontsize15);
-        line-height: 100%;
-        letter-spacing: 0%;
-        vertical-align: middle;
-        padding: 0rem 1rem 0.5rem !important;
-    }
-
-    .nav-tab-active {
-        border-bottom: 0.25rem solid var(--navtab-item-color);
-        font-weight: 700;
-    }
-
-    a {
-        color: var(--primary-color) !important;
-
-        &:hover {
-            color: var(--primary-color) !important;
-        }
-
-        &:focus {
-            color: var(--primary-color) !important;
-        }
-    }
-
-    .active-nav-link {
-        border-bottom: 0.25rem solid var(--navtab-item-color);
-        font-weight: 700;
-    }
-
-    .p-tablist-tab-list {
-        gap: 0rem !important;
-        border: none !important;
-    }
-
-    .p-tab {
-        padding: 0rem !important;
-        border: none !important;
-        transition: none !important;
-    }
-}
-
 //employeeinfotabs
 .employee-info-nav-tabs {
     .nav-link {
         width: 5.5rem;
         color: #606060;
-        text-decoration: none;
         font-weight: 400;
         font-size: var(--fontsize12);
         line-height: 100%;
-        letter-spacing: 0%;
         text-align: center;
-        vertical-align: middle;
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem;
         border-radius: 6px;
     }
 
@@ -399,7 +341,6 @@ body {
         color: #fff;
         background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
         font-weight: 500;
-        border-radius: 6px;
     }
 }
 
@@ -419,11 +360,7 @@ body {
         padding: 0.75rem 1rem 0.5rem;
     }
 
-    .nav-tab-active {
-        border-bottom: 0.25rem solid var(--navtab-item-color);
-        font-weight: 700;
-    }
-
+    .nav-tab-active,
     .active-nav-link {
         border-bottom: 0.25rem solid var(--navtab-item-color);
         font-weight: 700;
@@ -516,8 +453,8 @@ body {
     }
 
     .nav-item:last-child {
-        .border-bottom {
-            display: none;
+        .tabs-border-bottom {
+            display: none !important;
         }
     }
 }
@@ -578,8 +515,12 @@ body {
     .commpoment-name {
         font-weight: 400;
         font-size: var(--fontsize14);
-        color: #5C5C5C;
+        color: #6F809C;
         cursor: pointer;
+    }
+
+    .bi-chevron-double-right {
+        color: #6F809C;
     }
 
     .component-header {
@@ -621,6 +562,7 @@ body {
     padding: 0.625rem;
     border-radius: 0.5rem;
     border: 0.25rem solid #FFFFFF;
+    box-shadow: 0px 0px 10px 0px #0B3A8380;
 
     .info-text {
         font-weight: 400;
@@ -657,13 +599,6 @@ body {
 .custom-background-card {
     border: none;
     background-color: var(--card-bg-color);
-}
-
-.back-icon {
-    width: 1.25rem;
-    height: 1.5rem;
-    cursor: pointer;
-    margin-right: 0.5rem;
 }
 
 .component-edit-icon {
@@ -706,10 +641,6 @@ a {
     text-decoration: none !important;
     border-bottom: 2px solid var(--primary-color);
     line-height: 1.5rem !important;
-}
-
-.info-icon {
-    font-size: 1.2rem !important;
 }
 
 // scroll bar stylings
@@ -861,7 +792,6 @@ select:focus {
     font-size: var(--fontsize14);
     vertical-align: middle;
     color: #222222;
-
 }
 
 // Select Styling 
@@ -1045,10 +975,6 @@ select:focus {
         border: none !important;
     }
 
-    // tr:nth-child(even) {
-    //     background-color: var(--table-data-bg-even-color);
-    // }
-
     .dropdown-item {
         font-weight: 400;
         font-size: var(--fontsize14);
@@ -1056,6 +982,12 @@ select:focus {
         letter-spacing: 0%;
         color: #141414;
         padding: 0.75rem;
+    }
+
+    tfoot {
+        bottom: 0;
+        position: sticky;
+        z-index: 1;
     }
 }
 
@@ -1443,14 +1375,15 @@ input[type="file"] {
     }
 }
 
-//info icon
-.info-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-}
-
 //pagenation stylings
 .pagination-content {
+    width: 100%;
+    background-color: var(--white-color);
+
+    .custom-pagination-select {
+        font-size: var(--fontsize14);
+    }
+
     .custom-pagination-select:focus {
         outline: none;
         box-shadow: none;
@@ -1461,12 +1394,11 @@ input[type="file"] {
         .p-paginator-pages {
             .p-paginator-page {
                 border-radius: 50%;
-                width: 1.25rem;
-                height: 1.25rem;
-                margin: 0 0.2rem;
+                margin: 0rem;
                 color: #333;
                 font-weight: 500;
                 transition: all 0.3s ease;
+                font-size: var(--fontsize12);
             }
 
             .p-paginator-page:hover {
@@ -1485,9 +1417,7 @@ input[type="file"] {
         .p-paginator-next,
         .p-paginator-last {
             border-radius: 50%;
-            width: 1.25rem;
-            height: 1.25rem;
-            margin: 0 0.3rem;
+            margin: 0rem;
             background-color: #f8f8f8;
             color: #333;
         }
@@ -1500,14 +1430,9 @@ input[type="file"] {
             cursor: not-allowed;
         }
     }
-
 }
 
 //pagenation stylings
-
-// login components stylings
-
-// login components stylings
 
 // custom phone number input with country code stylings
 .custom-phone-number-content {
@@ -1848,6 +1773,23 @@ input[type="file"] {
     }
 }
 
+.fields-data-container {
+    height: calc(100vh - 12rem);
+    position: relative;
+    padding-top: 0rem !important;
+    margin-bottom: 1rem;
+
+    .data-header-content {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        gap: 1rem;
+        background-color: #fff;
+        padding: 1rem 0rem;
+    }
+}
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -2108,15 +2050,6 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-// custom height
-.custom-content-height16 {
-    height: calc(100dvh - 16rem);
-}
-
-.custom-content-height17 {
-    height: calc(100dvh - 17rem);
-}
-
 // time Off stylings
 .clickable-text {
     text-decoration: underline;
@@ -2258,17 +2191,14 @@ input[type=number]::-webkit-outer-spin-button {
     }
 }
 
-
 .custom-reportes-sub-tabs-content {
     padding: 1rem;
     cursor: pointer;
 
     .reportes-header-content {
-
         .icon-header {
             width: 3rem;
             height: 3rem;
-
         }
 
         .main-header {
@@ -2276,29 +2206,24 @@ input[type=number]::-webkit-outer-spin-button {
             justify-content: center;
             align-items: center;
             font-weight: 600;
-            font-size: 16px;
+            font-size: var(--fontsize16);
             line-height: 18px;
             letter-spacing: 0%;
             color: #222222;
-
         }
 
         .sub-text {
-
             font-weight: 400;
-            font-size: 12px;
+            font-size: var(--fontsize12);
             line-height: 100%;
             letter-spacing: 1%;
             color: #9C9C9D;
         }
-
-
     }
 
     .custom-reports-content {
         display: flex;
         gap: 1.5rem;
-
 
         .custom-reports {
             width: 16rem;
@@ -2312,7 +2237,6 @@ input[type=number]::-webkit-outer-spin-button {
             flex-direction: column;
             align-items: flex-start;
             cursor: pointer;
-
 
             .icon {
                 width: 1rem;
@@ -2334,7 +2258,6 @@ input[type=number]::-webkit-outer-spin-button {
                 line-height: 100%;
                 letter-spacing: 1%;
                 color: #ACACAD;
-
             }
 
             &.active,
@@ -2477,7 +2400,7 @@ input[type=number]::-webkit-outer-spin-button {
 
             .content-text {
                 font-weight: 600;
-                font-size: 12px;
+                font-size: var(--fontsize12);
                 line-height: 18px;
                 letter-spacing: 0%;
                 text-align: center;
@@ -2495,23 +2418,29 @@ input[type=number]::-webkit-outer-spin-button {
 
 //Sub Tab latest Design CSS
 .cards-grid-container {
-    align-items: center;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     gap: 1rem;
 }
 
 .settings-sub-tabs-card {
-    width: 20rem;
-    height: 8.75rem;
+    width: 100%;
+    height: 100%;
     padding: 0.625rem;
-    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    background: #FFFFFF;
     border: 1px solid #CBD7E2;
     border-radius: 0.625rem;
 
     .icon {
         width: 1rem;
         height: 1rem;
+    }
+
+    .sub-tabs-header {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin-bottom: 0.75rem;
     }
 
     .label-name {
@@ -2524,7 +2453,18 @@ input[type=number]::-webkit-outer-spin-button {
 
     .subject-text {
         font-weight: 400;
-        font-size: var(--fontsize10);
-        color: #ACACAD;
+        font-size: 11px;
+        color: #656565;
     }
+}
+
+.small-blue-toggle {
+  --p-toggleswitch-width: 2.5rem;
+  --p-toggleswitch-height: 1.2rem;
+  --p-toggleswitch-handle-size: 1rem;
+
+  // // --p-toggleswitch-focus-ring-color: blue;
+  // // --p-toggleswitch-checked-hover-border-color: blue;
+  // --p-toggleswitch-checked-background: #cce4ff;
+  --p-toggleswitch-handle-checked-background: white;
 }

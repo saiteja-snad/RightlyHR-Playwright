@@ -53,6 +53,7 @@ export class DeskManagementComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+  
     this.intialdesk()
     this.intiallocationandsublocation()
     this.getjobLocationList()

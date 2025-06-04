@@ -300,7 +300,7 @@ export class AddressProofLetterComponent {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim()
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
         }));
       },
       error: (error: any) => {

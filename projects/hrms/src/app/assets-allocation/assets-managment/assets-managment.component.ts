@@ -7,7 +7,7 @@ import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { BehaviorSubject, filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { IAsset, ICategory, IVendor } from '../../Interfaces/assets-management.model';
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
@@ -526,8 +526,8 @@ export class AssetsManagmentComponent {
       // Disable fields and clear validators
       this.assetForm.get('warrantystartdate')?.disable();
       this.assetForm.get('warrantyenddate')?.disable();
-      // this.assetForm.get('warrantystartdate')?.reset();
-      // this.assetForm.get('warrantyenddate')?.reset();
+      this.assetForm.get('warrantystartdate')?.reset();
+      this.assetForm.get('warrantyenddate')?.reset();
       this.assetForm.get('warrantystartdate')?.clearValidators();
       this.assetForm.get('warrantyenddate')?.clearValidators();
     }
@@ -571,29 +571,27 @@ export class AssetsManagmentComponent {
     if (locationId) params.append('locationid', locationId);
     if (subLocationId) params.append('sublocationid', subLocationId);
     params.append('status', status);
-    this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
-      next: (data: any) => {
-        const totalCount = data.totalCount || 0;
-        this.http.setAssetCount(totalCount);
-        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
-        const availableData = statusCounts.find((item: any) => item.status === "Available");
-        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
-        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
-        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
-        const availableCount = availableData?.count || 0;
-        const allocateCount = allocateData?.count || 0;
-        const inactiveCount = inactivedata?.count || 0;
-        const undermaintenceCount = undermaintence?.count || 0;
-        this.http.setavilableAssetCount(availableCount);
-        this.http.setallocatedAssetCount(allocateCount);
-        this.http.setundermatinaceAssetCount(undermaintenceCount);
-        this.http.setinactiveSubjectAssetCount(inactiveCount);
-        this.initChart();
-      },
-      error: (error) => {
-        console.error('Error fetching count:', error);
-      }
-    });
+   
+  
+  this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
+    next: (data: any) => {
+  const totalCount = data.totalCount || 0;
+  this.http.setAssetCount(totalCount);
+  const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+  const availableCount = statusCounts.find((item: any) => item.status === "Available")?.count || 0;
+  const allocateCount = statusCounts.find((item: any) => item.status === "Allocated")?.count || 0;
+  const inactiveCount = statusCounts.find((item: any) => item.status === "Inactive")?.count || 0;
+  const undermaintenceCount = statusCounts.find((item: any) => item.status === "Under Maintenance")?.count || 0;
+
+  this.http.setavilableAssetCount(availableCount);
+  this.http.setallocatedAssetCount(allocateCount);
+  this.http.setundermatinaceAssetCount(undermaintenceCount);
+  this.http.setinactiveSubjectAssetCount(inactiveCount);
+
+  // Move chart initialization here
+  setTimeout(() => this.initChart(), 0);
+},
+  });
   }
 
   //close dailog open
@@ -608,32 +606,31 @@ export class AssetsManagmentComponent {
     this.isToggledamc = false
   }
 
-  initChart() {
+initChart(): void {
+  combineLatest([
+    this.http.avilableassetCountSubject,
+    this.http.allocatedassetCountSubject,
+    this.http.undermatinaceassetCountSubject,
+    this.http.inactiveaceassetCountSubject
+  ]).subscribe(([available, allocated, underMaintenance, inactive]) => {
     const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
     const backgroundColors = chartTabs.map(item => item.backgroundcolour);
 
     this.assetData = {
       datasets: [
         {
-          data: [
-
-            this.http.avilableassetCountSubject.value ?? 0,
-            this.http.allocatedassetCountSubject.value ?? 0,
-            this.http.undermatinaceassetCountSubject.value ?? 0,
-            this.http.inactiveaceassetCountSubject.value ?? 0,
-
-          ],
+          data: [available ?? 0, allocated ?? 0, underMaintenance ?? 0, inactive ?? 0],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         }
       ]
     };
 
-
     this.assetDataOptions = {
       cutout: '70%',
     };
-  }
+  });
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

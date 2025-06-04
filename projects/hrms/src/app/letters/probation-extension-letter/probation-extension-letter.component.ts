@@ -164,23 +164,34 @@ export class ProbationExtensionLetterComponent {
   preventTyping(event: KeyboardEvent) {
     event.preventDefault();
   } 
+pathValuesFuction() {
+  const formValues = this.probationExtensionForm.value;
 
-  //function to patch the values in the form to the template
-  pathValuesFuction() {
-    const formValues = this.probationExtensionForm.value;
-    this.probationExtensionLetterData.firstName = formValues.employeeId?.firstName,
-    this.probationExtensionLetterData.middleName = formValues.employeeId?.middleName,
-    this.probationExtensionLetterData.lastName = formValues.employeeId?.lastName,
-    this.probationExtensionLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
-    this.probationExtensionLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
-    this.probationExtensionLetterData.department = formValues.employeeId?.departmentName,
-    this.probationExtensionLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation+ ', '+formValues.employeeId?.jobDetails?.lopcation,
-    this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate,
-    this.probationExtensionLetterData.Documenttype = formValues?.Documenttype;
-    this.probationExtensionLetterData.authorityName = formValues.authorityid?.fullName,
-    this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
-    this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
-  }
+  // Safely access employee details
+  const employee = formValues.employeeId;
+  const jobDetails = employee?.jobDetails;
+
+  this.probationExtensionLetterData.firstName = employee?.firstName || '';
+  this.probationExtensionLetterData.middleName = employee?.middleName || '';
+  this.probationExtensionLetterData.lastName = employee?.lastName || '';
+  this.probationExtensionLetterData.fusionEmpId = employee?.fusionEmpId || '';
+  this.probationExtensionLetterData.jobRole = jobDetails?.jobRole || '';
+  this.probationExtensionLetterData.department = employee?.departmentName || '';
+  this.probationExtensionLetterData.workLocation = jobDetails?.subLocation && jobDetails?.lopcation 
+    ? `${jobDetails.subLocation}, ${jobDetails.lopcation}` 
+    : '';
+
+  // Issued date and doc type
+  this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate || '';
+  this.probationExtensionLetterData.Documenttype = formValues?.Documenttype || '';
+
+  // Authority
+  const authority = formValues.authorityid;
+  this.probationExtensionLetterData.authorityName = authority?.fullName || '';
+  this.probationExtensionLetterData.authorityDesignation = authority?.designation || '';
+  this.probationExtensionLetterData.employeeId = employee?.employeeId || '';
+}
+
 
   async postProbationExtensionLetterFormSubmit() {
     this.spinnerLoader= true;

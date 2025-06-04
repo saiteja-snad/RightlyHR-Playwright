@@ -209,9 +209,11 @@ export class YearlySummaryReportComponent {
         // Extract the year from startDate and add it to each record
         this.filteredYearlyRecord = data.map((record: any) => {
           const startDate = new Date(record.startDate);  // Assuming startDate is in a valid format
+          const yearFromStartDate = startDate.getFullYear();
           return {
             ...record,
-            year: startDate.getFullYear()  // Add the year as a new field
+            // year: startDate.getFullYear()  // Add the year as a new field
+            year : record.year || yearFromStartDate
           };
         });
 
@@ -255,7 +257,7 @@ export class YearlySummaryReportComponent {
       entitlementYear: 'YEAR',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
-      balanced: 'BALANCED'
+      balance: 'BALANCE'
     };
 
     // Define new sequence
@@ -271,7 +273,7 @@ export class YearlySummaryReportComponent {
       'YEAR',
       'ENTITLED',
       'AVAILED',
-      'BALANCED'
+      'BALANCE'
     ];
 
     // Modify data with renamed headers and new sequence

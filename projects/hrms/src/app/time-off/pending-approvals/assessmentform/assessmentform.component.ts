@@ -22,7 +22,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 
 export class AssessmentformComponent {
-  subscription!: Subscription;
+   subscription!: Subscription;
   dynamicformSubmit = {} as IFormDetails;
   dynamicFormDetails = {} as IFormDetails;
   dynamicFormQuestions = [] as ISection[];
@@ -103,6 +103,8 @@ export class AssessmentformComponent {
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
         next: (data: any) => {
+          console.log(data);
+          
           let duration = data.find((ele: any) => {
             return ele.configValueId === extensionId;
           });
@@ -717,7 +719,7 @@ export class AssessmentformComponent {
   //function to get the form answers
   getFormDetails(Value: any) {
     this.subscription = this.http
-      .getData(`ProbationFlow/getFormResponseByFormId/1?employeeId=${Value}`)
+      .getData(`ProbationFlow/getFormResponseByFormId/0?employeeId=${Value}`)
       .subscribe({
         next: (response: any) => {
           console.log(response);
@@ -843,20 +845,16 @@ export class AssessmentformComponent {
     this.selected_approve.rejectedReason = '';
   }
 
-  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
-    if(extendedDate){
-      lastWorkingDate = extendedDate;
-    }
-    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
+   getBlockedFutureDate(lastWorkingDate: string): string {
+    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
 
-  getBlockedFutureDateupto(startDate: string,duration: number,extendDate:string): string {
-      if(extendDate){
-      startDate = extendDate;
-    }
+  getBlockedFutureDateupto(startDate: string, duration: number): string {
+    console.log("probation: ",startDate, duration);
+    
     const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
     // Add the duration (e.g., 90 days) to the start date
     const futureDate = startDateObj.add(duration, 'days');

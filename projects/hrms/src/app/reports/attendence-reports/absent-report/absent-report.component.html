@@ -85,7 +85,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Absent Report - Generate.view') && rbac.allowedToAccess('Absent Report - Export.view')){
+          @if(rbac.allowedToAccess('Absent Report - Generate.view') 
+          && rbac.allowedToAccess('Absent Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelAbsent()"
             [disabled]="filteredAbsentRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){

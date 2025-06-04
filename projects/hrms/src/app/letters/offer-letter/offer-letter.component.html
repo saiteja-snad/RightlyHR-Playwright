@@ -287,6 +287,13 @@
         </div>
 
         <div class="mb-3">
+              <label for="sublocation" class="form-label custom-label mb-2">Address
+                <span class="error-msg">*</span></label>
+              <input type="text" class="form-control custom-input" formControlName="address"
+                 [readonly]="true" autocomplete="off" placeholder="Address">
+        </div>
+
+        <div class="mb-3">
           <label class="form-label custom-label mb-2">Offer Issued Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
             [min]="issuedDatevalidate" placeholder="Please enter offer issued date" (click)="pathValuesFuction()"
@@ -333,7 +340,7 @@
           </div>
         </div>
 
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
@@ -343,7 +350,7 @@
           <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched" class="error-msg">
             Document Type is required
           </div>
-        </div>
+        </div> -->
 
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Note</label>
@@ -395,14 +402,14 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content" id="pdfContent1">
+          <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
-              <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+              <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                 <app-lettersheader />
               </div>
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
-              </ng-template>
+              </ng-template> -->
               <div class="letter-div">
                 <div class="text-center mb-5">
                   <p class="letter-header">OFFER LETTER</p>
@@ -441,7 +448,7 @@
                   {{prospectiveEmpData.lastName}},</p>
               </div>
 
-              <p>Congratulations and Welcome to RightlyHR!!!</p>
+              <p>Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
 
               <p>Further to your application for employment with us, and the subsequent selection process, we are
                 delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
@@ -449,13 +456,12 @@
                   || 0)}}</b> per annum.
               </p>
 
-              <p>RightlyHR is formed as an INDIAN Spin-off of RightlyHR, a
+              <p>SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of SNAD Developers India Pvt Ltd, a
                 US based organization for providing Software Development and Services to various IT Organizations across
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p>Your reporting location will be <b> RightlyHR, Vijaya Krishna Towers, Floor#16,
-                  Madhava Reddy Colony, Gachibowli, Hyderabad, Telangana - 500032, India. Your date of joining would
+              <p>Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining would
                   be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
 
               <p>
@@ -505,23 +511,18 @@
                 </li>
               </ol>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2">
+          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
-                  <app-lettersheader />
-                </div>
-                <ng-template #doc>
-                  <div class="hard-copy-letter"></div>
-                </ng-template>
+               
                 <ul class="bullet">
-                  <li class="mb-3">Information pertaining to RightlyHR operations and intellectual property
+                  <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
@@ -569,7 +570,7 @@
 
                 <p>We wish you a long, rewarding and fulfilling career experience and look
                   forward to having you on board with us. Please visit our website <a href="" target="_blank"
-                    rel="noopener noreferrer">www.rightlyhr.com</a>
+                    rel="noopener noreferrer"> www.snaddevelopers.com</a>
                   for more information about our Company. </p>
 
                 <p>All other detailed terms and conditions of your employment will be specified
@@ -587,27 +588,25 @@
                 <p>For any further information or clarification required, please feel free to
                   reach us on our email at <a
                     href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
-                    target="_blank" rel="noopener noreferrer"> hr&#64;rightlyhr.com</a></p>
+                    target="_blank" rel="noopener noreferrer"> hr&#64;snaddevelopers.com</a></p>
               </div>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+       
           </div>
 
           <!--page-3-->
-          <div class="letter-page-content my-4" id="pdfContent3">
+          <div class="letter-page-content my-4" id="pdfContent3"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
-                </ng-template>
+                </ng-template> -->
                 <div>
                   <p>Yours Sincerely,</p>
-                  <p class="mb-5 letter-sub-header">For RightlyHR </p>
+                  <p class="mb-5 letter-sub-header">For SNAD Developers India Pvt Ltd </p>
                   <div class="stamp"></div>
                   <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
@@ -635,27 +634,27 @@
                 </div>
               </div>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
 
           <!--page-4-->
-          <div class="letter-page-content my-4" id="pdfContent4">
+          <div class="letter-page-content my-4" id="pdfContent4"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
-                </ng-template>
+                </ng-template> -->
                 <p class="letter-header text-center mb-4">ANNEXURE - 1</p>
                 <p class="letter-sub-header">Documents / Information required to be submitted on the day of joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
                 <div class="mb-1">
-                  <div class="box"></div> Acceptance copies of RightlyHR. duly signed offer Letter.
+                  <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.
                 </div>
                 <div class="mb-1">
                   <div class="mb-3">
@@ -724,21 +723,19 @@
                 </div>
               </div>
             </div>
-            <div class="letter-footer">
-              <app-letter-footer />
-            </div>
+           
           </div>
 
           <!--page-5-->
-          <div class="letter-page-content my-4" id="pdfContent5">
+          <div class="letter-page-content my-4" id="pdfContent5"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-                <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
+                <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
-                </ng-template>
+                </ng-template> -->
                 <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
                 <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
                 <div class="row">
@@ -918,12 +915,25 @@
                 <!-- table end -->
                 <p class="letter-sub-header mb-1 mt-2">Note: {{prospectiveEmpData.note}}</p>
                 <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
-                  Award Program will be made available to you upon joining RightlyHR. Please note: RightlyHR reserves
+                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note: SNAD Developers India Pvt Ltd reserves
                   the
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                   any time.
                 </p>
-                <p class="mb-0">Additional Details Related to Salary Structure: </p>
+                
+              </div>
+            </div>
+            <!-- <div class="letter-footer">
+              <app-letter-footer />
+            </div> -->
+          </div>
+
+            <div class="letter-page-content my-4" id="pdfContent6"  >
+            <div class="letter-page-sub-content">
+              <div class="pt-2">
+       
+               
+                <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-0">
                   <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
                     deductions.</li>
@@ -951,9 +961,9 @@
                   whatsoever.</p>
               </div>
             </div>
-            <div class="letter-footer">
+            <!-- <div class="letter-footer">
               <app-letter-footer />
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

@@ -46,7 +46,9 @@ export class CloneLeavecategoryComponent {
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
-  constructor(private fb: FormBuilder, private http: HttpService, private router: Router, private modalService: NgbModal,private confirmation: OpenModalService) { }
+
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,private router: Router, private modalService: NgbModal) { }
+
 
   ngOnInit(): void {
     this.intializeForm();

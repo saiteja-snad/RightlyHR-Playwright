@@ -93,7 +93,7 @@ export class PersonalDetailsComponent implements OnInit {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employeeData = data as Ipersonal;
-        this.selectedCountryCode.set(this.employeeData?.contactnumbercountryflag);
+        this.selectedCountryCode.set(this.employeeData?.contactNumberCountryFlag);
         this.getJobDetails();
 
         this.loading = false;
@@ -163,7 +163,7 @@ export class PersonalDetailsComponent implements OnInit {
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
         addressLine1: [null, [Validators.required,Validators.maxLength(100),Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
-        addressLine2: [null, [Validators.maxLength(150), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(150), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
         city: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         state: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         country: [null, [Validators.required ,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
@@ -173,7 +173,7 @@ export class PersonalDetailsComponent implements OnInit {
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
         addressLine1: [null, [Validators.required,Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
-        addressLine2: [null, [Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
         city: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         state: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         country: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],

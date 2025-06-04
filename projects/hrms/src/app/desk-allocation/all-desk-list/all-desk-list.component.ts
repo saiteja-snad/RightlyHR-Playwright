@@ -101,6 +101,9 @@ export class AllDeskListComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+       this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
+    this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+    this.http.deskUpdateLocationId(this.selectedLocationId);
     this.getdatabyentriyinactive()
     this.intialassigindesk()
     this.getAllLocations();
@@ -192,6 +195,9 @@ export class AllDeskListComponent {
   }
 
   openModal(content: any) {
+    this.realseForm.reset();
+this.reassiginForm.get('employeeName')?.setValue(null); // Explicitly set employee field to blank
+  this.employeeiddetails = []; // Cle
     this.modalService.open(content, { centered: true });
   }
 
@@ -258,7 +264,7 @@ export class AllDeskListComponent {
     const params = {
       first: pagenum,
       rows: pagesize,
-      locationid: locationid,
+      locationid: this.selectedLocationId,
       sublocationid: sublocationid,
       status: Deskstatus,
       searchQuery: this.searchQuery
@@ -272,6 +278,7 @@ export class AllDeskListComponent {
           this.desklist.next(data.items)
           //this.getcount(this.selectedLocationId, this.selectedSubLocationId)
           // Update the collection size (total records) for pagination
+          // this.getcount(null,null);
           this.collectionSize = data.totalRecords;
         },
         error: (error: any) => {
@@ -282,6 +289,38 @@ export class AllDeskListComponent {
           this.loading = false;
         }
       });
+  }
+
+   getcount(locationId: string | null, subLocationId: string | null) {
+    const params = new URLSearchParams();
+    if (locationId) params.append('locationid', locationId);
+    if (subLocationId) params.append('sublocationid', subLocationId);
+    this.http.getData(`DeskAllocationHeader/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        const totalCount = data.totalCount || 0;
+        // this.http.setAssetCount(totalCount);
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableData = statusCounts.find((item: any) => item.status === "Available");
+        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
+        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
+        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
+        const waitingForApprovalData = statusCounts.find((item: any) => item.status === "Waiting for Approval");
+        this.http.setTotalDeskCount(totalCount);
+        const availableCount = availableData?.count || 0;
+        const allocateCount = allocateData?.count || 0;
+        const inactiveCount = inactivedata?.count || 0;
+        const undermaintenceCount = undermaintence?.count || 0;
+        const waitingForApprovalCount = waitingForApprovalData?.count || 0;
+        this.http.setAvailableDeskCount(availableCount);
+        this.http.setAllocatedDeskCount(allocateCount);
+        this.http.setundermatinaceDeskCount(undermaintenceCount);
+        this.http.setinactiveSubjectDeskCount(inactiveCount);
+        this.http.setWFASubjectDeskCount(waitingForApprovalCount);
+      },
+      error: (error) => {
+        console.error('Error fetching count:', error);
+      }
+    });
   }
 
   navigateToAsset(deskid: any) {
@@ -365,9 +404,11 @@ export class AllDeskListComponent {
           this.selectedmanerEmployee = null
           this.selectedEmployee = null
         },
-        error: (error) => {
-          this.conformationPopup.openErrorModal(error.error || 'Error occurred during assignment.')
-        }
+      error: (error) => {
+  
+    this.conformationPopup.openErrorModal("Employee's Desk Allocation Request already exists!");
+  
+    }
       });
     } else {
       console.log('Form is invalid');
@@ -414,6 +455,7 @@ export class AllDeskListComponent {
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
           ///this.updatedeskallowcation(this.assiginForm)
           this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null);
+            this.getcount(null,null);
           this.reassiginForm.reset();
           this.reassiginForm.get('employeeName')?.reset()
           this.reassiginForm.get('approvid')?.reset()
@@ -422,7 +464,7 @@ export class AllDeskListComponent {
           this.shiftDropdown = [];
         },
         error: (error) => {
-          this.conformationPopup.openErrorModal(error.error.message);
+          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');
         }
       });
     } else {
@@ -487,6 +529,7 @@ export class AllDeskListComponent {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
           this.getAllDesks(this.page, this.pageSize, null, null, null);
+            this.getcount(null,null);
           this.assiginForm.reset();
         },
         error: (error) => {
@@ -550,10 +593,8 @@ export class AllDeskListComponent {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Desk marked as inactive successfully');
-          setTimeout(() => {
-            location.reload();
-          }, 2000);
           this.getAllDesks(this.page, this.pageSize, null, null, null);
+           this.getcount(null,null);
           this.inactiveForm.reset();
         },
         error: (error) => {
@@ -657,7 +698,8 @@ export class AllDeskListComponent {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Desk marked as under maintenance successfully')
-          this.getAllDesks(this.page, this.pageSize, null, null, null)
+          this.getAllDesks(this.page, this.pageSize, null, null, null);
+           this.getcount(null,null);
           this.undermaintancedata.reset();
         },
         error: (error) => {
@@ -685,7 +727,8 @@ export class AllDeskListComponent {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Desk marked as active successfully')
         // this.getAllDesks(this.page, this.pageSize);
-        this.getAllDesks(this.page, this.pageSize, null, null, null)
+        this.getAllDesks(this.page, this.pageSize, null, null, null);
+          this.getcount(null,null);
       },
       error: (error) => {
         this.conformationPopup.openSuccessModal(error.error?.Message || 'Error occurred during assignment.')

@@ -74,7 +74,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
+          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') 
+          && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()"
             [disabled]="filteredInactiveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){

@@ -1,6 +1,8 @@
 export const environment = {
   production: false,
-  ApiUrl: 'https://rightlyhrnewversionapi.rightlyhr.com/api/',
+
+  ApiUrl:'https://snadqaapi.onpremise.snadhr.com/api/',
+
   webSocketUrl: 'ws://rightlyhrnewversionapi.rightlyhr.com',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   modules: [
@@ -35,8 +37,8 @@ export const environment = {
   ProbationrequestmoduleId: 20,
   ProbationExtensionId: 2,
   ProbationNoticePeriodId: 0,
-  ProbationbuttonbeforeId: 3,
-  ProbationExtendPeriodTimes: 1,
+  ProbationbuttonbeforeId: 1,
+  ProbationExtendPeriodTimes: 3,
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,
   expensesModuleId:19,

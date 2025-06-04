@@ -16,6 +16,7 @@ import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DocumentData } from '../../../Interfaces/document.model';
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
@@ -95,7 +96,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
         if(data){
           this.reRequestForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          this.conformationPopup.openSuccessModal('Email sent successfully')
         }
         
       },
@@ -196,7 +197,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata('OnBoardingDocuments/Update', this.doumentsapprovedata).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document Approved Successfully');
+        this.conformationPopup.openSuccessModal('Document approved successfully');
         setTimeout(() => {
           this.getdocumentdeatilsbyempid();
           this.getEmployeeId();
@@ -222,7 +223,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.rejectionData.reason = this.rejectDocument.get('comments')?.value;
     this.http.postdata('OnBoardingDocuments/Update', this.rejectionData).subscribe({
       next: (updatedData: any) => {
-        this.conformationPopup.openSuccessModal('Document Rejected Successfully');
+        this.conformationPopup.openSuccessModal('Document rejected successfully');
         setTimeout(() => {
           this.rejectDocument.reset();
           this.modalService.dismissAll();
@@ -241,6 +242,18 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     modal.dismiss();
     this.rejectDocument.reset();
   }
+
+ get shouldShowActionColumn(): boolean {
+  if (!this.documentData) return false;
+  const docs: DocumentData[] = this.documentData.value; // get the current value from BehaviorSubject
+  return docs.some((data: DocumentData) => 
+    data.status !== 'Verified' &&
+    data.status !== 'Rejected' &&
+    data.status === 'Submitted' &&
+    !!data.documentUrl
+  );
+}
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

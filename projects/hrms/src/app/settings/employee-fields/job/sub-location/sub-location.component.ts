@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
@@ -10,10 +10,11 @@ import { subLocationData } from './sub-location-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-sub-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NgbPopoverModule, InfoIconComponent],
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })
@@ -44,11 +45,13 @@ export class SubLocationComponent {
     this.AddForm = this.fb.group({
       AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       AddSubLocation: ['', Validators.required, Validators.pattern(/^[^\s].*$/)],
+      AddAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250),Validators.pattern(/^[^\s].*$/)]],
     });
 
     this.updateForm = this.fb.group({
       UpdateSubLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       updateLocation: [null, [Validators.required, ]],
+      UpdateAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250),Validators.pattern(/^[^\s].*$/)]],
     });
     this.getSubLocation();
     this.getLocation();
@@ -89,6 +92,7 @@ export class SubLocationComponent {
     const request: subLocationData = {
       jobSubLocationName: this.AddForm.value.AddLocation.trim(),
       jobLocationId: this.AddForm.value.AddSubLocation,
+      address: this.AddForm.value.AddAddress.trim(),
       isDeleted: false
     };
 
@@ -136,6 +140,7 @@ export class SubLocationComponent {
         id: this.selectedId,
         jobSubLocationName: this.updateForm.value.UpdateSubLocation.trim(),
         jobLocationId: this.updateForm.value.updateLocation,
+        address: this.updateForm.value.UpdateAddress.trim(),
         isDeleted: false
       };
 

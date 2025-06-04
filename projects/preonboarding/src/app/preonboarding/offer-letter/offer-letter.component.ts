@@ -144,6 +144,7 @@ export class OfferLetterComponent implements OnInit {
         this.offerLetterData.offerSentDate = this.getofferdata.offerSentDate
         this.offerLetterData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.offerLetterData.note = this.getofferdata.note
+         this.offerLetterData.address=this.getofferdata.address;
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }
@@ -212,7 +213,7 @@ export class OfferLetterComponent implements OnInit {
         this.loadingcircle = false;
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
-        this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
+        this.confiramtionpopups.openSuccess('Offer letter rejected successfully');
         
        
         
@@ -417,6 +418,8 @@ export class OfferLetterComponent implements OnInit {
         Employee.jobRole = res.jobRole;
         Employee.workLocation = res.lopcation;
         Employee.subLocation = res.subLocation;
+        this.getaddress(this.jobDeatils.
+          locationId,this.jobDeatils.subLocationId);
       }
     })
   }
@@ -450,7 +453,7 @@ export class OfferLetterComponent implements OnInit {
     this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
-        this.confiramtionpopups.openSuccess('Offer Letter Accepted Successfully');
+        this.confiramtionpopups.openSuccess('Offer letter accepted successfully');
         this.loadingcircle = false;
         this.getOfferLetterDetails();
       },
@@ -542,6 +545,16 @@ export class OfferLetterComponent implements OnInit {
     }
   }
 
+  getaddress(locationId: number, sublocationId: number) {
+    this.subscription = this.http.getData(`PreonboardingJobDetails/GetbyJobLocationSubLocationId?joblocid=${locationId}&sublocid=${sublocationId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.offerLetterData.address = data.address;
+        console.log(this.offerLetterData.address);
+      }
+    })
+  }
+  
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

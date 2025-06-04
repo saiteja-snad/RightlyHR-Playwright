@@ -80,7 +80,8 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Comp Off Report - Generate.view') && rbac.allowedToAccess('Comp Off Report - Export.view')){
+          @if(rbac.allowedToAccess('Comp Off Report - Generate.view')
+           && rbac.allowedToAccess('Comp Off Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filteredCompoffRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){

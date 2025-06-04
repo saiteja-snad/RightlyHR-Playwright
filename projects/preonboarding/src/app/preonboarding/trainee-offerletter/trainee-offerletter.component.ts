@@ -215,6 +215,23 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     })
   }
 
+
+  getTrainingDurationInMonths(start: Date, end: Date): number {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  let months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+  months += endDate.getMonth() - startDate.getMonth();
+
+  // If end day is before start day, reduce by 1
+  if (endDate.getDate() < startDate.getDate()) {
+    months--;
+  }
+
+  return months >= 0 ? months : 0;
+}
+
+
   getOfferDetailsByOfferId(offerId: number) {
     this.subscription = this.http.getData(`PreOnboardingTraineeOfferLetter/getbyid/${offerId}`).subscribe({
       next: (respone) => {
@@ -292,7 +309,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
           this.getOfferLetterDetails();
           this.modalService.dismissAll();
           setTimeout(() => {
-            this.openPopup.openSuccess("Offer Letter Accepted Successfully");
+            this.openPopup.openSuccess("Offer letter accepted successfully");
           }, 3000);
           
           this.loadingcircle = false;
@@ -367,7 +384,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.loadingcircle = false;
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
-          this.openPopup.openSuccess("Offer Letter Rejected Successfully");
+          this.openPopup.openSuccess("Offer letter rejected successfully");
       },
       error: (err: any) => {
         console.log(err);
@@ -383,7 +400,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.openPopup.openSuccess("Accepted Successfully")
+    this.openPopup.openSuccess("Accepted successfully")
     this.router.navigate(['/login'])
   }
 

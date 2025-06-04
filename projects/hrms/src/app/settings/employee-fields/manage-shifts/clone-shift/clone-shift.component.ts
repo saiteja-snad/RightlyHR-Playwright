@@ -74,7 +74,7 @@ export class CloneShiftComponent {
   shiftArray.clear();
   (data.shifts || []).forEach((item: any) => {
     shiftArray.push(this.fb.group({
-      shiftCode: [item.shiftCode || '', Validators.required],
+      shiftCode: ['', Validators.required],
       shiftName: [item.shiftName || '', Validators.required],
       color: [item.color || '#000000'],
       startTime: [item.startTime || '', Validators.required],

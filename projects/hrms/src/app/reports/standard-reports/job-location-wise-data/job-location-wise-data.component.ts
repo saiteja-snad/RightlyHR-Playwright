@@ -361,6 +361,19 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     })
   }
 
+  extractPhoneCode(code: string | undefined): string {
+  if (!code) return '';
+  const match = code.match(/\((\+\d+)\)/);
+  if (match) {
+    return match[1];
+  }
+  if (/^\+\d+$/.test(code.trim())) {
+    return code.trim();
+  }
+
+  return '';
+}
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

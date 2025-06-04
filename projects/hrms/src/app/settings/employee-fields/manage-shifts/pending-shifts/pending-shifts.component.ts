@@ -49,6 +49,8 @@ export class PendingShiftsComponent {
   }
 
   updateShift(id: any): void {
+    const shift = this.shiftsData.find((item : any) => item.id == id);
+    localStorage.setItem('selectedShift', JSON.stringify(shift));
     this.router.navigate(['/settings/employee-fields/updateshifts', id]);
   }
 

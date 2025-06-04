@@ -151,6 +151,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         if (res) {
           this.employeeMasterData = res.standardReports || [];
         }
+        console.log(this.employeeMasterData);
       },
       error: (err: any) => {
         this.dataload = false;

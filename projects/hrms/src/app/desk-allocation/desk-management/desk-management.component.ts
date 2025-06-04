@@ -57,7 +57,7 @@ export class DeskManagementComponent {
     this.intiallocationandsublocation()
     this.getjobLocationList()
     this.getapproval()
-    this.getdatabyentriy()
+    //this.getdatabyentriy()
     this.getcount(null, null)
     this.initializeNavTabs();
     this.updateModuleInfo();
@@ -100,7 +100,7 @@ export class DeskManagementComponent {
   intiallocationandsublocation() {
     this.locationfromdata = this.fb.group({
       locationId: [null],
-      subLocationId: [{ value: null, disabled: true }],
+      subLocationId: [{ value: null, disabled: true },Validators.required],
     });
   }
 
@@ -117,6 +117,16 @@ export class DeskManagementComponent {
   }
 
   openModal(content: any) {
+     this.deskForm.reset(); 
+  this.deskForm.get('subLocationId')?.disable();
+  this.isToggled = false;
+   this.desktype = [];
+  this.subLocationsDropdown = [];
+  this.deskdataid = [];
+  this.shiftDropdown = [];
+  this.employeeiddetails = [];
+  this.approvalname = [];
+
     this.modalService.open(content, { centered: true });
   }
 
@@ -152,7 +162,10 @@ export class DeskManagementComponent {
   }
 
   getSubLocationByid(selectedLocation: any): void {
-    this.deskForm.get('subLocationId')?.enable()
+    this.deskForm.get('subLocationId')?.enable();
+     this.deskForm.get('subLocationId')?.reset();
+  this.deskForm.get('subLocationId')?.markAsTouched();
+  this.deskForm.get('subLocationId')?.updateValueAndValidity();
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
@@ -162,7 +175,7 @@ export class DeskManagementComponent {
             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
           }
           // Reset the sub-location selection in the form
-          this.deskForm.patchValue({ subLocation: null });
+        //  this.deskForm.patchValue({ subLocation: null });
         },
         error: (err: any) => {
           this.subLocationsDropdown = []; // Reset on error
@@ -282,6 +295,7 @@ export class DeskManagementComponent {
         // Filter only assets that are active and not deleted
         const filteredAssets = res.filter((asset: any) => asset.status === 'Available' && !asset.isDeleted);
         this.deskdataid = filteredAssets;
+        this.getdatabyentriy();
       },
       error: (errormessage) => {
         console.log(errormessage);

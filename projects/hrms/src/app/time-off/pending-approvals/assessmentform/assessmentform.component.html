@@ -176,13 +176,13 @@
               (click)="toggleApprove()">
             <label class="form-check-label ms-2" for="flexRadioEarly">{{'Confirmed' | translate}}</label>
           </div>
-          <!-- @if(selected_approve.probationextendedcount>probationExtensionTimes){ -->
+          @if(selected_approve.probationextendedcount>probationExtensionTimes){
            <div class="form-check form-check-inline ms-3">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
               (click)="toggleExtend()">
             <label class="form-check-label ms-2" for="flexRadioExtend">{{'Extend' | translate}}</label>
           </div>
-          <!-- } -->
+          }
           
           <div class="form-check form-check-inline ms-3">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
@@ -226,7 +226,6 @@
            <div *ngIf="!isempeffectivevaild">
             {{'Extend Date cannot be less than Training End date' | translate}}</div>
           </div>
-          
         </div>
 
         <div class="mb-3" *ngIf="extend">

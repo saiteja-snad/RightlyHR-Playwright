@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div class="component-sub-header">Separation Details</div>
+    <div > <span class="component-sub-header"> Separation Details</span></div>
     @if(canAccess('view','raisenodue')){
     <ng-container
       *ngIf="(shouldShowButton(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0) && shouldShowStatusBasedButton()">

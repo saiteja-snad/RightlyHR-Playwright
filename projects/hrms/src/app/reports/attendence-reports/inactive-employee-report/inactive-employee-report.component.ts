@@ -302,9 +302,10 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
       leaveType: 'LEAVE TYPE',
+      year: 'YEAR',
       entitled: 'ENTITLED',
       availed: 'AVAILED',
-      balanced: 'BALANCED',
+      balance: 'BALANCE',
     };
 
     // Define new sequence
@@ -315,10 +316,11 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       'TEAM MANAGER',
       'LOCATION',
       'SUB LOCATION',
+      'YEAR',
       'LEAVE TYPE',
       'ENTITLED',
       'AVAILED',
-      'BALANCED',
+      'BALANCE',
     ];
 
     // Function to format date in dd-MMM-yyyy format
@@ -341,9 +343,9 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
         );
         if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
           let value = record[originalColumnName];
-          if (originalColumnName === 'appliedDate' && value) {
-            value = formatDate(value); // Format the date
-          }
+          // if (originalColumnName === 'appliedDate' && value) {
+          //   value = formatDate(value); // Format the date
+          // }
           modifiedRecord[columnName] = value ?? '-'; // Use a default value if the property is missing
         } else {
           modifiedRecord[columnName] = '-'; // Use a default value if the column is not found in the record
@@ -404,9 +406,9 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
         [
           'EMPLOYEE ID',
           'DEPARTMENT',
+          'YEAR',
           'ENTITLED',
-          'APPLIED DATE',
-          'BALANCED',
+          'BALANCE',
           'SUB LOCATION',
         ].includes(columnName)
       ) {

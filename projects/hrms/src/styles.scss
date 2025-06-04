@@ -2457,3 +2457,14 @@ input[type=number]::-webkit-outer-spin-button {
         color: #656565;
     }
 }
+
+.small-blue-toggle {
+  --p-toggleswitch-width: 2.5rem;
+  --p-toggleswitch-height: 1.2rem;
+  --p-toggleswitch-handle-size: 1rem;
+
+  // // --p-toggleswitch-focus-ring-color: blue;
+  // // --p-toggleswitch-checked-hover-border-color: blue;
+  // --p-toggleswitch-checked-background: #cce4ff;
+  --p-toggleswitch-handle-checked-background: white;
+}

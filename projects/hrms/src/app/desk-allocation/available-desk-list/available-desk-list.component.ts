@@ -96,6 +96,9 @@ export class AvailableDeskListComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
+       this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
+    this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+    this.http.deskUpdateLocationId(this.selectedLocationId);
     this.getdatabyentriyinactive()
     this.intialassigindesk()
     this.getAllLocations();
@@ -321,6 +324,7 @@ export class AvailableDeskListComponent {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully');
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+          this.getcount(null,null,this.Status);
           this.assiginForm.reset();
           this.assiginForm.get('employeeName')?.reset()
           this.assiginForm.get('approvid')?.reset()
@@ -425,6 +429,7 @@ export class AvailableDeskListComponent {
             location.reload();
           }, 2000);
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+          this.getcount(null,null,this.Status);
           this.inactiveForm.reset();
         },
         error: (error) => {
@@ -526,7 +531,8 @@ export class AvailableDeskListComponent {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Desk marked as under maintenance successfully')
-          this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
+          this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
+          this.getcount(null,null,this.Status);
           this.undermaintancedata.reset();
         },
         error: (error) => {

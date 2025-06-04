@@ -8,85 +8,85 @@
     <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
     }
-  }
+    }
   </div>
 
   <div class="custom-table-content">
     @if (!loading) {
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Education</th>
-            <th>University</th>
-            <th>Specialization</th>
-            <th>GPA</th>
-            <th>From Date</th>
-            <th>To Date</th>
-            <th>Document</th>
-            @if( canAccess('update','education') || canAccess('delete','education')){
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Education</th>
+          <th>University</th>
+          <th>Specialization</th>
+          <th>GPA</th>
+          <th>From Date</th>
+          <th>To Date</th>
+          <th>Document</th>
+          @if( canAccess('update','education') || canAccess('delete','education')){
+          @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
+          'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+          employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+          <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+          }}
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let edacationDetails of educationData | async">
+            <td>{{ edacationDetails.degree }}</td>
+            <td>{{edacationDetails.university}}</td>
+            <td>{{edacationDetails.specialization}}</td>
+            <td>{{edacationDetails.gpa}}</td>
+            <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
+            <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
+            <td>
+              <span *ngIf="edacationDetails.attachment;else noData" class="download-text"
+                (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
+                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+            </td>
+            @if( canAccess('update','education' ) || canAccess('delete','education')){
             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
             'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
             employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-              <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+            <td class="text-center">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  @if( canAccess('update','education' )){
+                  <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>Update
+                    </a>
+                  </li>
+                  }@if( canAccess('delete','education' )){
+                  <li (click)="opendeletModal(deleteconformation,edacationDetails)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>Delete
+                    </a>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
             }}
           </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
-            <tr *ngFor="let edacationDetails of educationData | async">
-              <td>{{ edacationDetails.degree }}</td>
-              <td>{{edacationDetails.university}}</td>
-              <td>{{edacationDetails.specialization}}</td>
-              <td>{{edacationDetails.gpa}}</td>
-              <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
-              <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
-              <td>
-                <span *ngIf="edacationDetails.attachment;else noData" class="download-text"
-                  (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                  <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
-              </td>
-              @if( canAccess('update','education' ) || canAccess('delete','education')){
-              @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
-              'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-              employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-              <td class="text-center">
-                <div class="dropdown">
-                  <span type="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </span>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    @if( canAccess('update','education' )){
-                    <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
-                      <a class="dropdown-item">
-                        <i class="bi bi-pencil me-2"></i>Update
-                      </a>
-                    </li>
-                  }@if( canAccess('delete','education' )){
-                    <li (click)="opendeletModal(deleteconformation,edacationDetails)">
-                      <a class="dropdown-item">
-                        <i class="bi bi-trash3 me-2"></i>Delete
-                      </a>
-                    </li>
-                  }
-                  </ul>
-                </div>
-              </td>
-              }}
-            </tr>
-          </ng-container>
-          <!-- No Data Found Template -->
-          <ng-template #noDataTemplate>
-            <tr>
-              <td>
-                <app-no-data-found />
-              </td>
-            </tr>
-          </ng-template>
-        </tbody>
-      </table>
+        </ng-container>
+        <!-- No Data Found Template -->
+        <ng-template #noDataTemplate>
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
     }
     @else {
-      <app-data-loader-content/>
+    <app-data-loader-content />
     }
   </div>
 </div>
@@ -110,8 +110,8 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="degreeDetails" [filter]="true"  [resetFilterOnHide]="true" filterBy="degreeName" optionLabel="degreeName"
-                formControlName="education" placeholder="Please select education"
+              <p-select [options]="degreeDetails" [filter]="true" [resetFilterOnHide]="true" filterBy="degreeName"
+                optionLabel="degreeName" formControlName="education" placeholder="Please select education"
                 class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"
@@ -232,8 +232,8 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="degreeDetails" [filter]="true"   [resetFilterOnHide]="true" filterBy="degreeName" optionLabel="degreeName"
-                formControlName="educationupdate" placeholder="Please select education"
+              <p-select [options]="degreeDetails" [filter]="true" [resetFilterOnHide]="true" filterBy="degreeName"
+                optionLabel="degreeName" formControlName="educationupdate" placeholder="Please select education"
                 class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg"

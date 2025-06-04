@@ -1,7 +1,7 @@
 <div class="d-flex gap-3 align-items-center flex-wrap">
   <div *ngFor="let tab of filteredTabs;">
       <div class="settings-sub-tabs-card" [routerLink]="tab.route">
-          <div class="d-flex gap-2 align-items-center mb-2">
+          <div class="sub-tabs-header">
               <img [src]="tab.icon" alt="Icon" class="icon">
               <div class="label-name">{{ tab.label }}</div>
           </div>

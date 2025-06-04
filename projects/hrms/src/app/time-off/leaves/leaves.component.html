@@ -2,7 +2,6 @@
     @if(router.url !== '/time-off/leaves/team-leave-balance' && router.url !== '/time-off/leaves/team-leave-summary'
     && router.url !== '/time-off/leaves/org-leave-balance'){
     <div class="component-header-content">
-
         <div class="heading-content">
             <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
@@ -12,7 +11,6 @@
                     class="module-icon">
             </div>
         </div>
-
 
         <div class="d-flex align-items-center gap-3">
             <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
@@ -59,63 +57,38 @@
                 }
             </ul>
         </div>
-        <div class="leaves-category-container">
-            <p-tabs scrollable>
-                <p-tablist>
-                    @for (item of categoryDetails; track $index) {
-                    <p-tab>
-                        <div class="card leaves-category-card">
-                            <p class="leave-content-text m-0">{{ item.category.name }}</p>
-                            <div class="circular-progress"
-                                [style.background]="'conic-gradient(' + item.category.categoryColor + ' ' 
-                            + getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
-                                <span class="progress-value">
-                                    <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
-                                    <span class="total-leaves-text">/{{item.allowedDays}}</span>
-                                </span>
-                            </div>
-                            <!-- Progress -->
-                            <div class="d-flex gap-2">
-                                <div class="leave-category-text">
-                                    <p class="m-0 pb-1">Entitled</p>
-                                    <p class="m-0">{{item.allowedDays}}</p>
-                                </div>
-                                <div class="leave-category-text">
-                                    <p class="m-0 pb-1">Booked</p>
-                                    <p class="m-0">{{item.booked}}</p>
-                                </div>
-                                <div class="leave-category-text">
-                                    @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
-                                    <p class="m-0 pb-1">Processed</p>
-                                    <p class="m-0">{{item.utilizedDays}}</p>
-                                    }
-                                    @if (!item.category.isProbationAllowed) {
-                                    <p class="m-0 pb-1">Processed</p>
-                                    <p class="m-0">{{item.utilizedDays}}</p>
-                                    }
-                                </div>
-                                <div class="leave-category-text">
-                                    @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
-                                    <p class="m-0 pb-1">Available</p>
-                                    <p class="m-0">{{item.probationLeaves - item.utilizedDays - item.booked}}</p>
-                                    }
-                                    @if (!item.category.isProbationAllowed) {
-                                    <p class="m-0 pb-1">Available</p>
-                                    <p class="m-0">{{item.allowedDays - item.utilizedDays -item.booked}}</p>
-                                    }
-                                </div>
-                                @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
-                                <div class="leave-category-text">
-                                    <p class="m-0 pb-1">Probation Leaves</p>
-                                    <p class="m-0">{{ item.probationLeaves }}</p>
-                                </div>
-                                }
-                            </div>
+        <div class="cards-grid-container">
+            @for (item of categoryDetails; track $index) {
+            <div class="leaves-category-card">
+                <div>
+                    <p class="leave-content-text m-0 mb-2" [style.color]="item.category.categoryColor">{{ item.category.name }}</p>
+                    <div class="d-flex gap-2">
+                        <div class="leave-category-text">
+                            <p class="m-0">Booked</p>
+                            <p class="m-0">{{item.booked}}</p>
                         </div>
-                    </p-tab>
-                    }
-                </p-tablist>
-            </p-tabs>
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
+                            <p class="m-0">Processed</p>
+                            <p class="m-0">{{item.utilizedDays}}</p>
+                            }
+                            @if (!item.category.isProbationAllowed) {
+                            <p class="m-0">Processed</p>
+                            <p class="m-0">{{item.utilizedDays}}</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
+                 getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
+                    <span class="progress-value">
+                        <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                        <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                    </span>
+                </div>
+            </div>
+            }
         </div>
     </div>
     }

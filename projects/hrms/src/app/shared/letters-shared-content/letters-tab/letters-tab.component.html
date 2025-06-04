@@ -1,11 +1,15 @@
-<div class="custom-letter-tabs">
-    <ul *ngFor="let tab of navTabs" class="tabs-list-content">
-        <li [routerLink]="tab.link" class="list-item">
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <img [src]="tab.icon" alt="Icon" class="icon">
-                <div class="label-name">{{ tab.label }}</div>
+<div class="documents-grid-container">
+    <div class="phone-book-card" *ngFor="let tab of navTabs" [routerLink]="tab.link">
+        <div class="profile-content">
+            <div>
+                <img [src]="tab.icon" alt="profile" class="profile-icon">
             </div>
+            <div>
+                <p class="name text-truncate m-0">{{ tab.label }}</p>
+            </div>
+        </div>
+        <div class="data-content">
             <p class="subject-text m-0">{{tab.subject}}</p>
-        </li>
-    </ul>
+        </div>
+    </div>
 </div>

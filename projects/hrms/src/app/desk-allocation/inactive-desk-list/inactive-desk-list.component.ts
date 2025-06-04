@@ -64,6 +64,9 @@ export class InactiveDeskListComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("fusionuser") ?? '{}');
+       this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
+    this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
+    this.http.deskUpdateLocationId(this.selectedLocationId);
     console.log(this.empinfo);
     this.getFilteredData()
 
@@ -102,7 +105,7 @@ export class InactiveDeskListComponent {
           console.log(data);
           this.loading = false
           this.desklist.next(data.items)
-          this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
+          //this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
           // Update the collection size (total records) for pagination
           this.collectionSize = data.totalRecords;
 

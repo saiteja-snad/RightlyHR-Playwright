@@ -17,28 +17,29 @@
             <img [src]="emp.profileUrl" alt="profile" class="profile-icon">
           </div>
           <div>
-            <p class="name text-truncate m-0">{{ emp.fullName }}<span class="employe-number ms-1">({{ emp.employeeId }})</span></p>
+            <p class="name text-truncate m-0">{{ emp.fullName }}<span class="employe-number ms-1">({{ emp.employeeId
+                }})</span></p>
           </div>
         </div>
         <div class="data-content">
           <p class="label-text text-truncate mb-2">
-            <span class="bi bi-person-vcard me-2"></span>
-            <span>Designation:</span>
+            <i class="bi bi-person-vcard me-2"></i>
+            <span class="label-text">Designation:</span>
             <span class="link-text ms-1">{{ emp.jobRole }}</span>
           </p>
           <p class="label-text text-truncate mb-2">
-            <span class="bi bi-envelope me-2"></span>
-            <span>Work Email:</span>
+            <i class="bi bi-envelope me-2"></i>
+            <span class="label-text">Work Email:</span>
             <span class="link-text ms-1">{{ emp.workEmail }}</span>
           </p>
           <p class="label-text text-truncate mb-2">
-            <span class="bi bi-telephone me-2"></span>
-            <span>Work:</span>
+            <i class="bi bi-telephone me-2"></i>
+            <span class="label-text">Work:</span>
             <span class="link-text ms-1"><u>{{emp.workPhoneCountryCode}}{{ emp.workPhone }}</u></span>
           </p>
           <p class="label-text text-truncate mb-2">
-            <span class="bi bi-telephone me-2"></span>
-            <span>Personal:</span>
+            <i class="bi bi-telephone me-2"></i>
+            <span class="label-text">Personal:</span>
             <span class="link-text ms-1"><u>{{emp.mobilePhoneCountryCode}}{{ emp.contactNumber }}</u></span>
           </p>
         </div>

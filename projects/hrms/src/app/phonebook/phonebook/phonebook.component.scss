@@ -8,7 +8,7 @@
     }
 
     .phone-book-card {
-        width: 25rem;
+        width: 100%;
         height: max-content;
         border-radius: 0.625rem;
         border: 1px solid #DCE3E9;
@@ -41,6 +41,14 @@
 
         .data-content {
             padding: 0.75rem;
+
+            .label-text {
+                color: #989898;
+            }
+
+            i {
+                color: #989898;
+            }
         }
 
         .label-text {

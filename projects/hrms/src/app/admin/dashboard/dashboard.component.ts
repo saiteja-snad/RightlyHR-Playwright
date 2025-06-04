@@ -14,7 +14,6 @@ import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDays
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
-
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -98,9 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
@@ -316,11 +313,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   openModalLarge(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
-    });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', });
   }
 
   dayLogsData(

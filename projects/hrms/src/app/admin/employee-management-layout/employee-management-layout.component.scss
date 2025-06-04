@@ -1,16 +1,11 @@
-.graph-grid {
+.custom-graph-grid {
     display: flex;
-    align-items: center;
     gap: 1rem;
     position: relative;
 
-    .p-tablist-tab-list {
-        background-color: transparent !important;
-    }
-
     // total leave summary
-    .total-leave-balance-graph-content {
-        width: 21rem;
+    .custom-graph-content {
+        width: 24rem;
         padding: 0.75rem 1rem;
         border-radius: 1rem;
         border: 1px solid #DCE3E9;
@@ -75,10 +70,15 @@
     }
 
     .cards-grid-container {
+        width: 100%;
         align-items: center;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
         gap: 1rem;
+
+        .active-nav-link{
+            box-shadow: 0px 0px 9.62px 0px #0B3A8340 !important;
+        }
 
         .employees-category-card {
             width: 100%;
@@ -96,6 +96,13 @@
                 width: 0.325rem;
                 height: 100%;
                 border-radius: 1rem;
+            }
+
+            .text-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
 
             .label-name {

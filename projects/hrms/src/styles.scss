@@ -214,9 +214,7 @@ body {
 
         .dropdown-menu {
             position: fixed !important;
-            inset: auto auto auto 0px !important;
-            margin: 0rem 4.75rem !important;
-            transform: translate(18px, -181px) !important;
+            margin: 0rem 1.75rem !important;
             width: 325px !important;
             min-height: 225px !important;
             max-height: 325px !important;
@@ -979,7 +977,7 @@ select:focus {
     tfoot{
         bottom: 0;
         position: sticky;
-        z-index: 1; 
+        z-index: 1;
     }
 }
 // My Info Stylings
@@ -1364,6 +1362,9 @@ input[type="file"] {
 
 //pagenation stylings
 .pagination-content {
+    width: 100%;
+    background-color: var(--white-color);
+    
     .custom-pagination-select {
         font-size: var(--fontsize14);
     }
@@ -1412,10 +1413,6 @@ input[type="file"] {
     }
 }
 //pagenation stylings
-
-// login components stylings
-
-// login components stylings
 
 // custom phone number input with country code stylings
 .custom-phone-number-content {
@@ -1753,6 +1750,23 @@ input[type="file"] {
             height: 1.25rem;
             cursor: pointer;
         }
+    }
+}
+
+.fields-data-container {
+    height: calc(100vh - 12rem);
+    position: relative;
+    padding-top: 0rem !important;
+    margin-bottom: 1rem;
+
+    .data-header-content {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        gap: 1rem;
+        background-color: #fff;
+        padding: 1rem 0rem;
     }
 }
 // Settings Stylings Ends

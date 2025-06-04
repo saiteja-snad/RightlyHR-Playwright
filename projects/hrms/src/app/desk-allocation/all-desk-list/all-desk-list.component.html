@@ -137,30 +137,24 @@
             </tr>
           </ng-template>
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="100%" class="p-0">
-              <div class="pagination-content w-100" *ngIf="((desklist | async) ?? []).length > 0">
-                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                  <div class="d-flex align-items-center gap-3 p-2">
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                      (ngModelChange)="onPageSizeChange($event)">
-                      <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                      </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">
-                      Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }}
-                      of {{ collectionSize }}
-                    </span>
-                  </div>
-                  <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tfoot>
       </table>
+    </div>
+    <div class="pagination-content w-100" *ngIf="((desklist | async) ?? []).length > 0">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }}
+            of {{ collectionSize }}
+          </span>
+        </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+          (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
     </div>
     </ng-template>
 </div>

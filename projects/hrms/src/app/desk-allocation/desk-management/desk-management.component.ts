@@ -68,7 +68,7 @@ export class DeskManagementComponent {
   initializeNavTabs(): void {
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
-      { label: 'All', route: '/desk/management/all-desks', icon: '/desk-icon/all-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
+      // { label: 'All', route: '/desk/management/all-desks', icon: '/desk-icon/all-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
       { label: 'Available', route: '/desk/management/available-desks', icon: '/desk-icon/Available-icon.png', backgroundcolour: '#25BBFF', permission: { feature: 'Desk Allocation - Available', action: 'view' }, count$: this.http.deskAvailableCountSubject },
       { label: 'Allocated', route: '/desk/management/allocated-desk', icon: '/desk-icon/Allocated-icon.png', backgroundcolour: '#FCD643', permission: { feature: 'Desk Allocation - Allocated', action: 'view' }, count$: this.http.deskAllocatedCountSubject },
       { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', icon: '/desk-icon/Under-Maintannace-icon.png', backgroundcolour: '#FF338A', permission: { feature: 'Desk Allocation - Under Maintenance', action: 'view' }, count$: this.http.deskUndermaindanaenceCountSubject },

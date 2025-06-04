@@ -196,6 +196,8 @@ export class AllDeskListComponent {
 
   openModal(content: any) {
     this.realseForm.reset();
+this.reassiginForm.get('employeeName')?.setValue(null); // Explicitly set employee field to blank
+  this.employeeiddetails = []; // Cle
     this.modalService.open(content, { centered: true });
   }
 
@@ -262,7 +264,7 @@ export class AllDeskListComponent {
     const params = {
       first: pagenum,
       rows: pagesize,
-      locationid: locationid,
+      locationid: this.selectedLocationId,
       sublocationid: sublocationid,
       status: Deskstatus,
       searchQuery: this.searchQuery
@@ -462,7 +464,7 @@ export class AllDeskListComponent {
           this.shiftDropdown = [];
         },
         error: (error) => {
-          this.conformationPopup.openErrorModal(error.error.message);
+          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');
         }
       });
     } else {

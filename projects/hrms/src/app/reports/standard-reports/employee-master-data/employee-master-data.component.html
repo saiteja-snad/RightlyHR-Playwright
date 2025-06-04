@@ -210,17 +210,25 @@
             <td>{{ emp.permanentState || '-' }}</td>
             <td>{{ emp.permanentCountry || '-' }}</td>
             <td>{{ emp.permanentZipCode || '-' }}</td>
-            <td>{{ emp.workPhone || '-' }}</td>
-            <td>{{ emp.mobilePhoneCountryCode}} {{ emp.contactnumber || '-' }}</td>
+            <td> {{
+              extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -')
+              }}</td>
+            <td> {{
+              extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -')
+              }}</td>
             <td>{{ emp.workEmail || '-' }}</td>
             <td>{{ emp.emailaddress || '-' }}</td>
             <td>{{ emp.emergencyName || '-' }}</td>
             <td>{{ emp.emailId || '-' }}</td>
-            <td>{{ emp.emergencynumber || '-' }}</td>
+            <td> {{
+              extractPhoneCode(emp.emergencycode) + (emp.emergencynumber ? ' ' + emp.emergencynumber : ' -')
+              }}</td>
             <td>{{ emp.relationShip || '-' }}</td>
             <td>{{ emp.emergencyName1 || '-' }}</td>
             <td>{{ emp.emergencyEmail1 || '-' }}</td>
-            <td>{{ emp.emergencyNumber1 || '-' }}</td>
+            <td> {{
+              extractPhoneCode(emp.emergencycode1) + (emp.emergencyNumber1 ? ' ' + emp.emergencyNumber1 : ' -')
+              }}</td>
             <td>{{ emp.relationship1 || '-' }}</td>
             <td>{{ emp.degree || '-' }}</td>
             <td>{{ emp.university || '-' }}</td>

@@ -321,6 +321,15 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     })
   }
 
+  extractPhoneCode(code: string | undefined): string {
+  if (!code) return '';
+  const match = code.match(/\((\+\d+)\)/);
+  if (match) {
+    return match[1];
+  }
+  return code.startsWith('+') ? code : '';
+}
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

@@ -9,7 +9,7 @@ export default [
     { path: 'management', component: DeskManagementComponent,
         children:[
             // { path: '', redirectTo: 'all-desks', pathMatch: 'full' },
-                { path: 'all-desks', loadComponent: () => import('./all-desk-list/all-desk-list.component').then((m) => m.AllDeskListComponent), canActivate: [PermissionsGuard], data: { permission: 'Desk Allocation - All.view' }  },
+                // { path: 'all-desks', loadComponent: () => import('./all-desk-list/all-desk-list.component').then((m) => m.AllDeskListComponent), canActivate: [PermissionsGuard], data: { permission: 'Desk Allocation - All.view' }  },
                 { path: 'available-desks', loadComponent: () => import('./available-desk-list/available-desk-list.component').then((m) => m.AvailableDeskListComponent), canActivate: [PermissionsGuard], data: { permission: 'Desk Allocation - Available.view' }  },
                 { path: 'allocated-desk', loadComponent: () => import('./allocated-desk-list/allocated-desk-list.component').then((m) => m.AllocatedDeskListComponent), canActivate: [PermissionsGuard], data: { permission: 'Desk Allocation - Allocated.view' }  },
                 { path: 'under-maintenance-desk', loadComponent: () => import('./under-maintenance-desk-list/under-maintenance-desk-list.component').then((m) => m.UnderMaintenanceDeskListComponent), canActivate: [PermissionsGuard], data: { permission: 'Desk Allocation - Under Maintenance.view' }  },

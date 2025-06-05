@@ -112,6 +112,13 @@ export class TraineeApprovalsComponent {
 
   comment = [] as any;
   commentsFunction(Value: any, content: any) {
+    this.myApproverComments = Value.map((ele: any) => {
+      const parsedMetaData = JSON.parse(ele.meta);
+      return {
+        ...ele, 
+        metadata: parsedMetaData, 
+      };
+    });
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
     this.comment = Value;
   }
@@ -307,6 +314,7 @@ export class TraineeApprovalsComponent {
     let EmployeeId = loggedInUser.employeeId
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
       next: (data: any) => {
+        console.log(data);
         this.Trainees.next(data.data as Itraineeapproval[])
         this.noRecalllength = this.Trainees;
       },

@@ -45,7 +45,15 @@
                             dateformat }}</span>
                         <ng-template #starttime>-</ng-template>
                     </td>
-                    <td>
+                    <td class="text-center">
+                            <div *ngIf="trn?.entity?.comments.length>0;else approvercomments">
+                                <div (click)="commentsFunction(trn?.entity?.comments,commentspopup)">
+                                    <i class="bi bi-info-circle-fill info-icon"></i>
+                                </div>
+                            </div>
+                            <ng-template #approvercomments>-</ng-template>
+                    </td>
+                    <!-- <td>
                         @if(trn.entity?.comments != null && trn.entity?.comments != '') {
                         <div>
                             <a type="button" (click)="commentsFunction(trn.entity?.comments,commentspopup)">
@@ -57,7 +65,7 @@
                             <span>-</span>
                         </div>
                         }
-                    </td>
+                    </td> -->
                     @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('Trainee Details.delete')) {
                     <td>
                         <div class="dropdown">

@@ -701,19 +701,17 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       teamManager: `${data?.firstName ?? ''} ${data?.middleName ?? ''} ${data?.lastName ?? ''}`,
       reportingManager: `${data?.fName ?? ''} ${data?.mName ?? ''} ${data?.lName ?? ''}`,
     });
-    let currentDate = moment();
-    this.postSeparationRequest.appliedDate = this.separationRequestForm.get('appliedDate')?.value || currentDate.format('YYYY-MM-DD');
-    this.onCheckNotiesperiod(this.postSeparationRequest.appliedDate);
   }
 
   //function to check the noticeperiod valid upto
   onCheckNotiesperiod(Value: any) {
     if (Value) {
       let noticePeriodValidupto = this.noticeperiodDuration;
-      let currentDate = moment(this.postSeparationRequest.appliedDate);
+      let currentDate = moment(Value);
       let futureDate = currentDate.add(noticePeriodValidupto, 'days');
       let formatedate = this.formatDate(futureDate);
       this.postSeparationRequest.lastworkingday = formatedate;
+      console.log('lastworkingday', this.postSeparationRequest.lastworkingday);
     }
   }
 
@@ -762,6 +760,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   //function to post the separation request form
   postSeparationRequestForm() {
     this.isLoading = true;
+    const appliedDate = this.separationRequestForm.get('appliedDate')?.value;
+
+    if (appliedDate) {
+      this.onCheckNotiesperiod(appliedDate);
+    }
+
     if (this.postSeparationRequest.isEarlyRelieving !== true) {
       (this.postSeparationRequest.reasonForEarlyRelieving = null),
         (this.postSeparationRequest.earlyRelievingDate = null);

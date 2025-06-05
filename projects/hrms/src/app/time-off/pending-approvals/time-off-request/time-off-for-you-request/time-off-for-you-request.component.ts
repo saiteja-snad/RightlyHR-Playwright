@@ -295,6 +295,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(checkbalancepopup, {
       centered: true,
       backdrop: 'static',
+      size:'lg'
     });
     let employeeId = Value.entity.leaveempId;
     this.http
@@ -305,6 +306,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.leaveEntitlementsList = res.data.find(
             (ele: any) => ele.category.id === Value.entity.leaveCategoryId
           );
+          console.log(this.leaveEntitlementsList)
           // Check if isProbationAllowed is explicitly true or null
           const isProbationAllowed =
             this.leaveEntitlementsList?.category?.isProbationAllowed;

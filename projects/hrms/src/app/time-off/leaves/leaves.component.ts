@@ -125,7 +125,7 @@ export class LeavesComponent {
     this.getOrgHolidaysByEmpId();
     this.getallpolicy();
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
-    this.getEmployementTypeByempId(this.empdata.employeeId)
+
     this.getweekendbyempid()
     this.checkPreviousOptionalLeaves();
     this.getTeamManagersDetails();
@@ -133,6 +133,10 @@ export class LeavesComponent {
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.leaveForm.get('startdate')?.valueChanges.subscribe((startDate: string) => {
+    this.minEndDate = startDate; // Set min for enddate input
+    this.leaveForm.get('enddate')?.updateValueAndValidity(); // Optional: trigger validation
+  });
   }
 
 
@@ -991,43 +995,9 @@ export class LeavesComponent {
     });
   }
 
-  getEmployementTypeByempId(empid: number) {
-    this.subscription = this.http.getData(`Employementtype/${empid}`).subscribe({
-      next: (res: any) => {
-        let sortedresponse = res.sort((a: any, b: any) => {
-          if (a.empEffectiveDate < b.empEffectiveDate) {
-            return -1;
-          }
-          if (a.empEffectiveDate > a.empEffectiveDate) {
-            return 1;
-          }
-          return 0;
-        })
-        let gradeid = sortedresponse[sortedresponse.length - 1]?.gradeId
-        this.getLeavePoliciesbygradeId(gradeid)
-      }
-    })
-  }
 
-  getLeavePoliciesbygradeId(gradeId: number) {
-    this.subscription = this.http.getData(`LeavePolicy/getbygradeid/${gradeId}`).subscribe({
-      next: (res: any) => {
-        this.leavedata = res as ILeaves[];
-        var joiningDate = new Date(this.empdata.dateOfJoining)
-        const joiningYear = joiningDate.getFullYear()
-        const presentDate = new Date();
-        const presentYear = presentDate.getFullYear()
-        if (presentYear == joiningYear) {
-          const joiningMonth = (joiningDate.getMonth() + 1);
-          const remainingDays = (12 - joiningMonth) * 21;
-          this.leavedata.forEach((leavs: ILeaves) => {
-            leavs.maxDays = Math.round((leavs.maxDays * remainingDays) / 252)
-          });
-        }
-        this.getLeaveTakenByEmpId();
-      }
-    });
-  }
+
+
 
   getLeaveTakenByEmpId() {
     let LBEId = this.empdata.employeeId;
@@ -1084,114 +1054,100 @@ export class LeavesComponent {
   endDateErrorMessage = '';
   
   calculateDateDifference(startDate: string, endDate: string) {
-    var date1 = moment(startDate, 'YYYY-MM-DD');
-    var date2 = moment(endDate, 'YYYY-MM-DD');
-    var days = date2.diff(date1, 'days');
-    const start = moment(startDate);
-    const end = moment(endDate);
-    let diff = days + 1;
-    let currentDate = start;
-    // while (currentDate <= end) {
-    if (this.selectedleave && this.selectedleave.category) {
-      if (this.selectedleave.category.excludeWeekends) {
-        if (this.orgweekend?.orgWeekendItems?.some((item: any) => item.weekday === currentDate.format('dddd'))) {
-          diff -= 1;
-        }
-      }
-      if (this.selectedleave?.category.excludeHolidays && !this.selectedleave.category.isOptionalHoliday) {
-        this.isoptionalnotallowedatWorkingdate = false;
-        let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {
-          return ele.isOptional != true
-        })
-        if (filteredholidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(currentDate))) {
-          diff -= 1;
-        }
-      }
-      else {
-        diff -= 0;
-      }
-      if (this.orgholidays?.orgHolidaysItems?.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') &&
-        (holiday.isOptional === false || holiday.isOptional === null))) {
-        this.isNonOptionalHolidaySelected = true;
-      } else {
-        this.isNonOptionalHolidaySelected = false;
-      }
-      let nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => ele.isOptional === false || ele.isOptional == null);
-      if (nonOptionalHolidays?.some((holiday: any) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
-        this.isHolidaySelectedEndate = true;
-        this.isHolidaySelected = true;
-      } else {
-        this.isHolidaySelectedEndate = false;
-        this.isHolidaySelected = false;
-      }
-      if (this.selectedleave.category.isOptionalHoliday) {
-        let filteredholidays = this.orgholidays?.orgHolidaysItems.filter((ele: any) => {
-          return ele.isOptional == true
-        })
-        let dateRange = [];
-        for (let m = moment(startDate); m.diff(endDate, 'days') <= 0; m.add(1, 'days')) {
-          dateRange.push(m.format('YYYY-MM-DD'));
-        }
-        let isOptionalHolidayBetweenDates = dateRange?.some(date => {
-          return !filteredholidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
-        });
-        const isStartOptionalHoliday = this.orgholidays?.orgHolidaysItems?.some((holiday: any) => {
-          return moment(holiday.holidayDate).isSame(startDate, 'day') && holiday.isOptional === true;
-        });
-        const isEndOptionalHoliday = this.orgholidays?.orgHolidaysItems?.some((holiday: any) => {
-          return moment(holiday.holidayDate).isSame(endDate, 'day') && holiday.isOptional === true;
-        });
-        if (isOptionalHolidayBetweenDates) {
-          this.isoptionalnotallowedatWorkingdate = true;
-        }
-        else if (!isStartOptionalHoliday) {
-          this.isoptionalnotallowedatWorkingdate = true;
-        }
-        else if (!isEndOptionalHoliday) {
-          this.isoptionalnotallowedatWorkingdate = true;
-        }
-        else {
-          this.isoptionalnotallowedatWorkingdate = false;
-        }
-      }
-      else if (this.selectedleave?.category?.isOptionalHoliday === false) {
-        const startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
-        const endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
-        const isStartDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
-          return ele.isOptional === true && this.isSameDate(ele.holidayDate, startDate);
-        });
+  const start = moment(startDate, 'YYYY-MM-DD');
+  const end = moment(endDate, 'YYYY-MM-DD');
+  let diff = 0;
 
-        const isEndDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
-          return ele.isOptional === true && this.isSameDate(ele.holidayDate, endDate);
-        });
+  this.isHolidaySelected = false;
+  this.isHolidaySelectedEndate = false;
+  this.isNonOptionalHolidaySelected = false;
+  this.startDateErrorMessage = '';
+  this.endDateErrorMessage = '';
+  this.isoptionalnotallowedatWorkingdate = false;
 
-        this.startDateErrorMessage = isStartDateOptionalHoliday ? 'Selected start date is not allowed as it is an optional holiday' : '';
+  const nonOptionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => !h.isOptional);
+  const optionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => h.isOptional);
 
-        this.endDateErrorMessage = isEndDateOptionalHoliday ? 'Selected end date is not allowed as it is an optional holiday' : '';
-        if (isStartDateOptionalHoliday || isEndDateOptionalHoliday) {
-          return;
-        }
-      }
-      else {
-        this.isoptionalnotallowedatWorkingdate = false;
-      }
+  // Loop from start to end
+  let current = start.clone();
+  while (current.isSameOrBefore(end, 'day')) {
+    const isWeekend = this.selectedleave?.category.excludeWeekends &&
+      this.orgweekend?.orgWeekendItems?.some((item: { weekday: string; }) => item.weekday === current.format('dddd'));
+
+    const isNonOptionalHoliday = this.selectedleave?.category.excludeHolidays &&
+      nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(current, 'day'));
+
+    if (!isWeekend && !isNonOptionalHoliday) {
+      diff++;
     }
-    currentDate = currentDate.add(1, 'day');
-    // }
-    if (endDate != null) {
-      this.dateDifference = diff;
-      console.log(this.dateDifference);
-      if (this.dateDifference > 1) {
-        this.chooseDayType("full");
-      }
-      else if (this.dateDifference <= 1) {
-        this.isDayTypeselected = false;
-        this.selectedValuehalf = false;
-        this.enableButton = false;
-      }
-      this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
+
+    current.add(1, 'day');
+  }
+
+  // Optional holiday handling
+  if (this.selectedleave?.category.isOptionalHoliday) {
+    let dateRange: string[] = [];
+    for (let m = start.clone(); m.diff(end, 'days') <= 0; m.add(1, 'days')) {
+      dateRange.push(m.format('YYYY-MM-DD'));
+    }
+
+    const hasNonOptional = dateRange.some(date =>
+      !optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'))
+    );
+
+    const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
+      moment(holiday.holidayDate).isSame(startDate, 'day')
+    );
+
+    const isEndOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
+      moment(holiday.holidayDate).isSame(endDate, 'day')
+    );
+
+    this.isoptionalnotallowedatWorkingdate = hasNonOptional || !isStartOptional || !isEndOptional;
+  }
+
+  // Check if start or end date is a non-optional holiday
+  if (nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(startDate, 'day'))) {
+    this.isNonOptionalHolidaySelected = true;
+  }
+
+  if (nonOptionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(endDate, 'day'))) {
+    this.isHolidaySelected = true;
+    this.isHolidaySelectedEndate = true;
+  }
+
+  // Check optional holiday misuse if optional leave not allowed
+  if (this.selectedleave?.category?.isOptionalHoliday === false) {
+    const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: any; }) =>
+      this.isSameDate(holiday.holidayDate, startDate)
+    );
+
+    const isEndOptional = optionalHolidays?.some((holiday: { holidayDate: any; }) =>
+      this.isSameDate(holiday.holidayDate, endDate)
+    );
+
+    this.startDateErrorMessage = isStartOptional ? 'Selected start date is not allowed as it is an optional holiday' : '';
+    this.endDateErrorMessage = isEndOptional ? 'Selected end date is not allowed as it is an optional holiday' : '';
+
+    if (isStartOptional || isEndOptional) {
+      return;
     }
   }
+
+  // Set final calculated difference
+  this.dateDifference = diff;
+
+  if (diff > 1) {
+    this.chooseDayType("full");
+  } else {
+    this.isDayTypeselected = false;
+    this.selectedValuehalf = false;
+    this.enableButton = false;
+  }
+
+  this.dateDiff = this.leaveFormData.isDaytype ? diff / 2 : diff;
+}
+
   isSameDate(date1: any, date2: any): boolean {
   const d1 = new Date(date1);
   const d2 = new Date(date2);
@@ -1391,6 +1347,7 @@ export class LeavesComponent {
     this.disableSubmitButton = false;
     this.modalService.dismissAll();
     this.enableButton = false;
+    this.selectedleave = null;
   }
 
   ngOnDestroy(): void {

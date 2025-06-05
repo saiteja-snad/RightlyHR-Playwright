@@ -26,8 +26,9 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" (ngModelChange)="onSearchChange()"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            (ngModelChange)="onSearchChange()" placeholder="Search here" aria-label="Username"
+            aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -49,7 +50,8 @@
                     <th>End Date</th>
                     <th class="text-center">Reason</th>
                     <th class="text-center">Approver Comments</th>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For
+                    You (Time Off).delete'))){
                     <th>Action</th>
                     }
                 </tr>
@@ -174,7 +176,7 @@
 </ng-template>
 
 <!-- checkbalancepopup -->
-<ng-template #checkbalancepopup let-modal>
+<!-- <ng-template #checkbalancepopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
@@ -204,7 +206,71 @@
             </div>
         </div>
     </div>
+</ng-template> -->
+
+<!-- checkbalancepopup -->
+<ng-template #checkbalancepopup let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <!-- <p class="popup-heading mb-0">Leave Balance</p> -->
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            @if(leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0){
+                            <tr>
+                                <th colspan="5" class="custom-popup-header">Leave Balances({{leaveEntitlementsList?.category?.name}})</th>
+                            </tr>
+                            }@else{
+                            <tr>
+                                <th colspan="4" class="custom-popup-header">Leave Balances({{leaveEntitlementsList?.category?.name}})</th>
+                            </tr>
+                            }
+
+                            <tr class="custom-popup-header">
+                                <th class="text-center">Entitled</th>
+                                <th class="text-center">Booked</th>
+                                <th class="text-center">Processed</th>
+                                <th class="text-center">Available</th>
+                                <th class="text-center"
+                                    *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                    Probation Leaves
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center">{{ leaveEntitlementsList.allowedDays }}</td>
+                                <td class="text-center">{{ leaveEntitlementsList.booked }}</td>
+                                <td class="text-center">{{ leaveEntitlementsList.utilizedDays }}</td>
+                                <td class="text-center">{{
+                                    (leaveEntitlementsList.category?.isProbationAllowed &&
+                                    leaveEntitlementsList.probationLeaves > 0)
+                                    ? (leaveEntitlementsList.probationLeaves - leaveEntitlementsList.utilizedDays)
+                                    : (leaveEntitlementsList.allowedDays - leaveEntitlementsList.utilizedDays)
+                                    }}
+                                </td>
+                                <td class="text-center"
+                                    *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                    {{ leaveEntitlementsList.probationLeaves }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </ng-template>
+
 
 <!-- approverpopup -->
 <ng-template #approverPopup let-modal>
@@ -240,7 +306,8 @@
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" required pattern="^\S.*"
                         [(ngModel)]="selectedLeaveData.comments"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keypress)="formsValidation.restrictInput($event)">
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
+                        (keypress)="formsValidation.restrictInput($event)">
                     </textarea>
 
                     <div class="textarea-count-text">
@@ -254,7 +321,8 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
@@ -286,8 +354,9 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keypress)="formsValidation.restrictInput($event)" required></textarea>
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                        pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
+                        (keypress)="formsValidation.restrictInput($event)" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -298,7 +367,8 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
@@ -346,4 +416,3 @@
         </div>
     </div>
 </ng-template>
-

@@ -1,13 +1,11 @@
-<div class="header-module-tabs-container">
-    <p-tabs value="0" scrollable>
-        <p-tablist>
-            <ng-container *ngFor="let tab of filteredTabs;">
-                <p-tab [value]="tab.link">
-                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                        {{ tab.label }}
-                    </a>
-                </p-tab>
-            </ng-container>
-        </p-tablist>
-    </p-tabs>
+<div class="cards-grid-container">
+    <div *ngFor="let tab of filteredTabs;">
+        <div class="settings-sub-tabs-card" [routerLink]="tab.link">
+            <div class="sub-tabs-header">
+                <img [src]="tab.icon" alt="Icon" class="icon">
+                <div class="label-name">{{ tab.label }}</div>
+            </div>
+            <div class="subject-text">{{tab.description}}</div>
+        </div>
+    </div>
 </div>

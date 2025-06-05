@@ -22,7 +22,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 @Component({
   selector: 'app-trainee-approvals',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, InfoIconComponent],
+    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss'
 })

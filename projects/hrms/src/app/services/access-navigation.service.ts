@@ -255,6 +255,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/policies':
+        if (this.rbac.allowedToAccess('Policies.view')) {
+          return (route = '/policies');
+        }
+        break;
+        
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {

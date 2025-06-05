@@ -19,11 +19,11 @@ import { IReviewCycle, IDesignationNames } from './add-assessor/add-assessor.mod
 import { AuthService } from '../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { SettingsHeaderComponent } from "../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-assessor-configuration',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, Select, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, Select, SettingsHeaderComponent],
   templateUrl: './assessor-configuration.component.html',
   styleUrl: './assessor-configuration.component.scss'
 })

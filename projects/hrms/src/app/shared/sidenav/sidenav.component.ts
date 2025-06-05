@@ -24,12 +24,12 @@ export class SidenavComponent implements OnInit {
     },
     //Policies
     {
-      label: 'Policies', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/policies.png',
+      label: 'Policies', icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png',
       route: '/policies', permission: { feature: 'Policies', action: 'view' }
     },
-    //Events
+    //Event/
     {
-      label: 'Events', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png',
+      label: 'Events', icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png',
       route: '/events', permission: { feature: 'Events', action: 'view' }
     },
     //expenses
@@ -47,11 +47,6 @@ export class SidenavComponent implements OnInit {
       label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms.png',
       permission: { feature: 'PMS', action: 'view' }
     },
-    // //pms configuration
-    // {
-    //   label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration.png',
-    //   route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' }
-    // },
     //Blood Bank
     {
       label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',

@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="d-flex align-items-center gap-3">
-            @if (rbac.allowedToAccess('My Team (Permissions).view')) {
+             @if (rbac.allowedToAccess('My Team (Permissions).view')) {
              <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" class="form-select custom-select"

@@ -16,7 +16,7 @@
             <img [src]="iconPath" alt="Icon" class="icon">
           </div>
           <div class="pt-2">
-            <div class="time mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div>
+            <div class="time text-nowrap mb-2">{{ currentTime | date: 'h:mm:ss a' }}</div>
             <div class="date">{{ currentTime | date: 'MMMM d, y' }}</div>
           </div>
         </div>
@@ -39,7 +39,7 @@
                   (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-' }}</span></div>
               <br>
               <br>
-              <div class="start-end-time-text">Last Out: <span class="time"> {{
+              <div class="start-end-time-text"><span class="text-nowrap">Last Out:</span> <span class="time"> {{
                   attendanceData.data.attendanceData[0].lastLogout ?
                   (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-' }} </span></div>
               @if( attendanceData.data.attendanceData[0].status !== 'WFH' && attendanceData.data.attendanceData[0].status

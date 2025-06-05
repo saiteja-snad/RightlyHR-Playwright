@@ -269,6 +269,4 @@ export class UnderMaintenanceDeskListComponent {
     }
   }
 
-
-
 }

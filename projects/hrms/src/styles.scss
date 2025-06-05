@@ -93,6 +93,7 @@
     --fontsize32: 2rem;
     --fontsize28: 1.75rem;
     --fontsize24: 1.5rem;
+    --fontsize22: 1.375rem;
     --fontsize20: 1.25rem;
     --fontsize18: 1.125rem;
     --fontsize16: 1rem;
@@ -141,6 +142,7 @@ body {
     padding: 0.5rem 0.75rem;
     background-color: var(--header-background-color);
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -359,7 +361,8 @@ body {
         padding: 0.75rem 1rem 0.5rem;
     }
 
-    .nav-tab-active, .active-nav-link {
+    .nav-tab-active,
+    .active-nav-link {
         border-bottom: 0.25rem solid var(--navtab-item-color);
         font-weight: 700;
     }
@@ -451,8 +454,8 @@ body {
     }
 
     .nav-item:last-child {
-        .border-bottom {
-            display: none;
+        .tabs-border-bottom {
+            display: none !important;
         }
     }
 }
@@ -513,8 +516,12 @@ body {
     .commpoment-name {
         font-weight: 400;
         font-size: var(--fontsize14);
-        color: #5C5C5C;
+        color: #6F809C;
         cursor: pointer;
+    }
+
+    .bi-chevron-double-right {
+        color: #6F809C;
     }
 
     .component-header {
@@ -556,6 +563,7 @@ body {
     padding: 0.625rem;
     border-radius: 0.5rem;
     border: 0.25rem solid #FFFFFF;
+    box-shadow: 0px 0px 10px 0px #0B3A8380;
 
     .info-text {
         font-weight: 400;
@@ -647,6 +655,7 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
+
 // scroll bar stylings ends
 
 // button stylings
@@ -785,6 +794,7 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
+
 // Select Styling 
 
 // p select stylings
@@ -905,6 +915,7 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -974,77 +985,114 @@ select:focus {
         padding: 0.75rem;
     }
 
-    tfoot{
+    tfoot {
         bottom: 0;
         position: sticky;
         z-index: 1;
     }
 }
+
 // My Info Stylings
 
 // User Profile Card Stylings
 .profile-info-card-main-container {
-    .custom-background-card {
-        border: 1px solid #D7DEE6;
-        padding: 0.75rem;
-    }
-
-    .image-content {
+    .profile-card {
         position: relative;
-        display: flex;
-        justify-content: center;
+        background: linear-gradient(179.5deg, #FFFFFF 0.44%, #CAD9E5 205.82%);
+        border: 0.5px solid #D7DEE6;
+        margin-top: 2.5rem;
+        width: 100%;
 
-        .edit-icon-content {
+        .image-content {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: absolute;
-            top: 76%;
-            left: 44%;
+            top: -20%;
 
-            .edit-icon {
-                width: 1.75rem;
-                height: 1.75rem;
+            .profile-image {
+                width: 4.5rem;
+                height: 4.5rem;
+                box-shadow: 0px 0px 10px 0px #0B3A8333;
+                border: 2px solid #FFFFFF;
                 border-radius: 50%;
+            }
+
+            .edit-icon-content {
+                z-index: 1;
+                position: absolute;
+                top: 75%;
+
+                .edit-icon {
+                    width: 2rem;
+                    height: 2rem;
+                }
             }
         }
 
-        .profile-image {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
+        .profile-content {
+            padding: 0.75rem;
+            padding-top: 4rem;
+
+            .name {
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 14px;
+                letter-spacing: 0%;
+                color: var(--primary-color);
+            }
+
+            .label-text {
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 100%;
+                letter-spacing: 0%;
+                vertical-align: middle;
+                color: #989898;
+            }
+
+            .link-text {
+                color: #5E779E;
+            }
         }
     }
 
-    .profile-content {
-        margin-top: 1.25rem;
-        padding-top: 0.5rem;
-        line-height: 100%;
-        letter-spacing: 0%;
-        text-wrap: nowrap;
-        line-break: anywhere;
+    .manager-card {
+        width: 100%;
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: #ECF1F5;
 
-        .name {
-            font-weight: 700;
-            font-size: var(--fontsize14);
-            color: var(--primary-color);
+        .accent-bar {
+            width: 0.25rem;
+            border-radius: 0.5rem;
+            background-color: #1064CA;
         }
 
-        .sub-text {
+        .accent-bar1 {
+            width: 0.25rem;
+            border-radius: 0.5rem;
+            background-color: #E0433A;
+        }
+
+        .label-name {
             font-weight: 400;
-            font-size: var(--fontsize10);
-            color: #8D8D8D;
+            font-size: 11.2px;
+            line-height: 17.32px;
+            letter-spacing: 0%;
+            color: #686868;
         }
 
-        .label-text {
+        .count-text {
             font-weight: 500;
-            font-size: 10px;
-            text-transform: capitalize;
-            color: #909090;
-        }
-
-        .name-text {
-            color: #3F434A !important;
+            color: var(--primary-color);
         }
     }
 }
+
 // My Info Stylings Ends
 
 // letter main content
@@ -1137,6 +1185,7 @@ select:focus {
 
 // salary details table
 .salary-details-table {
+
     table,
     th,
     td {
@@ -1210,6 +1259,7 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // note text stylings
@@ -1223,6 +1273,7 @@ select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 //My Info Stylings
@@ -1366,7 +1417,7 @@ input[type="file"] {
 .pagination-content {
     width: 100%;
     background-color: var(--white-color);
-    
+
     .custom-pagination-select {
         font-size: var(--fontsize14);
     }
@@ -1399,21 +1450,26 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,.p-paginator-prev,
-        .p-paginator-next,.p-paginator-last {
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
             border-radius: 50%;
             margin: 0rem;
             background-color: #f8f8f8;
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 }
+
 //pagenation stylings
 
 // custom phone number input with country code stylings
@@ -1771,6 +1827,7 @@ input[type="file"] {
         padding: 1rem 0rem;
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -1848,6 +1905,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1866,6 +1924,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -2003,7 +2062,8 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: 500;
         }
 
-        th, td {
+        th,
+        td {
             padding: 1rem;
             text-align: center;
             line-height: 100%;
@@ -2052,7 +2112,8 @@ input[type=number]::-webkit-outer-spin-button {
                 border-radius: 0.5rem;
                 overflow: hidden;
 
-                th, td {
+                th,
+                td {
                     text-align: center;
                     padding: 0.5rem;
                     border: 1px solid #767676;
@@ -2087,7 +2148,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .menu-grid-content {
     width: 100%;
-    height: calc(100vh - 35.5rem);
+    height: 100%;
     overflow: auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2237,7 +2298,8 @@ input[type=number]::-webkit-outer-spin-button {
                 color: #ACACAD;
             }
 
-            &.active, &.active-nav-link {
+            &.active,
+            &.active-nav-link {
                 border: 2px solid #00b2ff;
                 background: #eaf8ff;
                 box-shadow: 0 4px 16px 0 rgba(0, 178, 255, 0.08);
@@ -2394,23 +2456,29 @@ input[type=number]::-webkit-outer-spin-button {
 
 //Sub Tab latest Design CSS
 .cards-grid-container {
-    align-items: center;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     gap: 1rem;
 }
 
 .settings-sub-tabs-card {
-    width: 20rem;
-    height: 8.75rem;
+    width: 100%;
+    height: 100%;
     padding: 0.625rem;
-    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    background: #FFFFFF;
     border: 1px solid #CBD7E2;
     border-radius: 0.625rem;
 
     .icon {
         width: 1rem;
         height: 1rem;
+    }
+
+    .sub-tabs-header {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin-bottom: 0.75rem;
     }
 
     .label-name {
@@ -2423,18 +2491,18 @@ input[type=number]::-webkit-outer-spin-button {
 
     .subject-text {
         font-weight: 400;
-        font-size: var(--fontsize10);
-        color: #ACACAD;
+        font-size: 11px;
+        color: #656565;
     }
 }
 
 .small-blue-toggle {
-  --p-toggleswitch-width: 2.5rem;
-  --p-toggleswitch-height: 1.2rem;
-  --p-toggleswitch-handle-size: 1rem;
+    --p-toggleswitch-width: 2.5rem;
+    --p-toggleswitch-height: 1.2rem;
+    --p-toggleswitch-handle-size: 1rem;
 
-  // // --p-toggleswitch-focus-ring-color: blue;
-  // // --p-toggleswitch-checked-hover-border-color: blue;
-  // --p-toggleswitch-checked-background: #cce4ff;
-  --p-toggleswitch-handle-checked-background: white;
+    // // --p-toggleswitch-focus-ring-color: blue;
+    // // --p-toggleswitch-checked-hover-border-color: blue;
+    // --p-toggleswitch-checked-background: #cce4ff;
+    --p-toggleswitch-handle-checked-background: white;
 }

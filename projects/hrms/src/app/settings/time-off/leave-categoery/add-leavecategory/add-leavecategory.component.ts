@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -49,49 +49,106 @@ export class AddLeavecategoryComponent {
      private router: Router, private modalService: NgbModal) {
   }
 
- ngOnInit(): void {
-  this.jobLocationList();
-  this.getOrgLeavesCategories();
-
-  const currentYear = new Date().getFullYear();
-  this.years = []; // Ensure it's initialized
-  for (let year = currentYear - 1; year <= currentYear + 1; year++) {
-    this.years.push({ label: year.toString(), value: year });
+  ngOnInit(): void {
+    this.jobLocationList();
+    this.getOrgLeavesCategories();
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 10; year--) {
+      this.years.push({ label: year.toString(), value: year });
+    }
+    this.leavePolicyForm = this.fb.group({
+      // Location/Shift Section
+      applicableYear: [undefined, Validators.required],
+      locationID: [undefined, Validators.required],
+      subLocation: [undefined, Validators.required],
+      shiftId: [undefined, Validators.required],
+      // Leave Category Information
+      type: [undefined, Validators.required],
+      name: ['', [Validators.required, this.restrictInputValidator]],
+      categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
+      validity: ['', [Validators.required, this.restrictInputNumbersValidator,Validators.max(366)]],
+      categoryColor: ['#000000', Validators.required],
+      parentId: [undefined],
+      // Additional Information
+      allowedGender: [undefined, Validators.required],
+      allowedMaritalStatus: [undefined, Validators.required],
+      excludeWeekends: [undefined, Validators.required],
+      excludeHolidays: [undefined, Validators.required],
+      isOptionalHoliday: [undefined, Validators.required],
+      allowedHalfDay: [undefined, Validators.required],
+      isApplicableProRataLeave: [undefined, Validators.required],
+      // Future Dates
+      futureDatesAllowed: [undefined, Validators.required],
+      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed'), this.maxValidDaysValidator('validity') ]],
+      // Past Dates
+      pastDateAllowed: [undefined, Validators.required],
+      pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
+      // Carry Forward
+      carryForwardAllowed: [undefined, Validators.required],
+      carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed'),]],
+      // Encash
+      encashAllowedType: [undefined, Validators.required],
+      encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType'),]],
+      // Notice Period
+      noticeperiodAllowedType: [undefined, Validators.required],
+      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType'),]],
+      // Probation Period
+      isProbationAllowed: [undefined, Validators.required],
+      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
+    });
+    this.setupDependentFieldListeners();
+    this.validateAllowedDays();
   }
 
-  this.leavePolicyForm = this.fb.group({
-    applicableYear: [undefined, Validators.required],
-    locationID: [undefined, Validators.required],
-    subLocation: [undefined, Validators.required],
-    shiftId: [undefined, Validators.required],
-    type: [undefined, Validators.required],
-    name: ['', [Validators.required, this.restrictInputValidator]],
-    categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
-    validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
-    categoryColor: ['#000000', Validators.required],
-    parentId: [undefined],
-    allowedGender: ['ALL', Validators.required],
-    allowedMaritalStatus: ['ALL', Validators.required],
-    excludeWeekends: ['No', Validators.required],
-    excludeHolidays: ['No', Validators.required],
-    isOptionalHoliday: [undefined, Validators.required],
-    allowedHalfDay: ['Yes', Validators.required],
-    isApplicableProRataLeave: [undefined, Validators.required],
-    futureDatesAllowed: ['No', Validators.required],
-    futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed')]],
-    pastDateAllowed: ['No', Validators.required],
-    pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
-    carryForwardAllowed: ['No', Validators.required],
-    carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed')]],
-    encashAllowedType: ['No', Validators.required],
-    encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType')]],
-    noticeperiodAllowedType: ['No', Validators.required],
-    noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
-    isProbationAllowed: ['No', Validators.required],
-    probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
-  });
 
-  this.setupDependentFieldListeners();
+validateAllowedDays(){
+   this.setupMaxValidation('futureDatesAllowedDays', 'validity');
+   this.setupMaxValidation('pastDatesAllowedDays', 'validity');
+   this.setupMaxValidation('carryForwardAllowedValue', 'validity');
+   this.setupMaxValidation('encashAllowedValue', 'validity');
+   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+   this.setupMaxValidation('probationDays', 'validity');
+}
+
+
+setupMaxValidation(controlName: string, maxControlName: string): void {
+  const control = this.leavePolicyForm.get(controlName);
+  const maxControl = this.leavePolicyForm.get(maxControlName);
+
+  if (!control || !maxControl) return;
+
+  control.valueChanges.subscribe(value => {
+    const max = maxControl.value;
+
+    if (value && +value > max) {
+      control.setErrors({ ...control.errors, maxExceeded: true });
+    } else {
+      if (control.hasError('maxExceeded')) {
+        const errors = { ...control.errors };
+        delete errors['maxExceeded'];
+        control.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+  });
+}
+
+
+
+
+  maxValidDaysValidator(maxField: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const parent = control.parent;
+    if (!parent) return null;
+
+    const max = parent.get(maxField)?.value;
+    if (max != null && control.value != null && control.value > max) {
+      console.log(`Max value exceeded: ${control.value} > ${max}`);
+      
+      return { maxExceeded: true };
+    }
+    return null;
+  };
 }
 
 
@@ -102,6 +159,11 @@ export class AddLeavecategoryComponent {
       }
     })
   }
+
+
+
+
+
 
   OnClickLocation(id: any) {
     const locationID = id;
@@ -355,11 +417,12 @@ export class AddLeavecategoryComponent {
 
   resetForm(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.leavePolicyForm.reset();
   }
 
   cancel() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+    this.leavePolicyForm.reset();
+
   }
 
   closepopup() {

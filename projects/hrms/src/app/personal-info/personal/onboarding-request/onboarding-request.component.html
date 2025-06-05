@@ -1,5 +1,6 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+         <div><span class="component-sub-header">{{'Onboarding Requests' |translate }}</span></div>
         <button *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata?.empstatus?.toLowerCase() =='prospective' 
             || empdata?.empstatus?.toLowerCase() =='trainee prospective')  && empdata?.substatus?.toLowerCase() =='documents rejected'" 
             class="custom-btn btn-primary" (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>

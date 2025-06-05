@@ -22,6 +22,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 
 @Component({
@@ -48,12 +49,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   standardReportData = [] as EmployeeDetails[];
   branchLocations = [] as Branch[];
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
+ 
+  localeOptions: any;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -78,10 +75,17 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     private modal: OpenModalService,
     private reportService: ReportsService,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
+     this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getBranchLocations();

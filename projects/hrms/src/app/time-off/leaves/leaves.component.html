@@ -173,7 +173,7 @@
                         <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="enddate"
-                            [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
+                            [min]="minEndDate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
                         <div class="error-msg"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
                             End Date is required

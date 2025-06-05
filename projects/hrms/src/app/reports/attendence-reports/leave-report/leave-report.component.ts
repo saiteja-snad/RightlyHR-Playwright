@@ -76,6 +76,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+  localeOptions: any;
 
 
 
@@ -87,7 +88,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public readonly router: Router
   ) { }
-  localeOptions: any;
 
   ngOnInit(): void {
     this.localeOptions = {

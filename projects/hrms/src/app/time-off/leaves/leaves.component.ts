@@ -133,6 +133,10 @@ export class LeavesComponent {
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.leaveForm.get('startdate')?.valueChanges.subscribe((startDate: string) => {
+    this.minEndDate = startDate; // Set min for enddate input
+    this.leaveForm.get('enddate')?.updateValueAndValidity(); // Optional: trigger validation
+  });
   }
 
 

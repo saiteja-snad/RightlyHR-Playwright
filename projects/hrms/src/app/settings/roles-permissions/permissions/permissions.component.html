@@ -863,7 +863,7 @@
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id || per.fields === 'Solved Tickets Tab'">
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"

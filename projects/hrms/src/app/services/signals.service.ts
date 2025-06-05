@@ -52,6 +52,9 @@ export class SignalsService {
   clamisandexpensesForYouTriggerSignal = signal<boolean>(false);
   claimsandexpensesForRoleTriggerSignal = signal<boolean>(false);
 
+  //trainee details trigger signals
+  traineeDetailsTriggerSignal = signal<boolean>(false);
+
   constructor(
     private sharedModalService: OpenModalService,
   ) { }

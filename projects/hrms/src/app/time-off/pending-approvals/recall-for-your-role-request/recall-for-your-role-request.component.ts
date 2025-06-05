@@ -295,7 +295,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
           ...status,
           recall: true,
         }));
-        this.conformationPopup.openSuccessModal('Recall Request Processed Successfull');
+        this.conformationPopup.openSuccessModal('Recall Request Processed Successfully');
         this.isLoading = false;
         
       },

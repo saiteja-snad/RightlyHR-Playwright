@@ -19,16 +19,15 @@ export class MyInfoPersonalTabsComponent implements OnInit {
 
   ngOnInit(): void {
     this.navTabs = [
-      { label: 'Basic Information', link: '/myinfo/personal/basic-info', icon: '/my-info-icons/basic-info-icon.png', permission: { feature: 'My Info Basic Information', action: 'view' } },
-      { label: 'Address Details', link: '/myinfo/personal/address-info', icon: '/my-info-icons/address-info-icon.png', permission: { feature: 'My Info Address Details', action: 'view' } },
-      { label: 'Contact Details', link: '/myinfo/personal/contact-details', icon: '/my-info-icons/contact-icon.png', permission: { feature: 'My Info Contact Details', action: 'view' } },
-      { label: 'Emergency Contact Details', link: '/myinfo/personal/emergency-contact-details', icon: '/my-info-icons/emergency-contact-icon.png', permission: { feature: 'My Info Emergency Contact Details', action: 'view' } },
-      { label: 'Education Details', link: '/myinfo/personal/education-details', icon: '/my-info-icons/education-icon.png', permission: { feature: 'My Info Education Details', action: 'view' } },
-      { label: 'Identity Details', link: '/myinfo/personal/identity-details', icon: '/my-info-icons/identity-verification-icon.png', permission: { feature: 'My Info Identity Details', action: 'view' } },
-      { label: 'Family Details', link: '/myinfo/personal/family-details', icon: '/my-info-icons/family-icon.png', permission: { feature: 'My Info Family Details', action: 'view' } },
-      { label: 'Bank Details', link: '/myinfo/personal/bank-details', icon: '/my-info-icons/bank-details-icon.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
+      { label: 'Basic Info', link: '/myinfo/personal/basic-info', icon: '/my-info-icons/basic-info-icon.png', permission: { feature: 'My Info Basic Information', action: 'view' } },
+      { label: 'Contact Info', link: '/myinfo/personal/contact-details', icon: '/my-info-icons/contact-icon.png', permission: { feature: 'My Info Contact Details', action: 'view' } },
+      { label: 'Addresses', link: '/myinfo/personal/address-info', icon: '/my-info-icons/address-info-icon.png', permission: { feature: 'My Info Address Details', action: 'view' } },
+      { label: 'Emergency Contacts', link: '/myinfo/personal/emergency-contact-details', icon: '/my-info-icons/emergency-contact-icon.png', permission: { feature: 'My Info Emergency Contact Details', action: 'view' } },
+      { label: 'Family Members', link: '/myinfo/personal/family-details', icon: '/my-info-icons/family-icon.png', permission: { feature: 'My Info Family Details', action: 'view' } },
+      { label: 'Identity Info', link: '/myinfo/personal/identity-details', icon: '/my-info-icons/identity-verification-icon.png', permission: { feature: 'My Info Identity Details', action: 'view' } },
+      { label: 'Bank info', link: '/myinfo/personal/bank-details', icon: '/my-info-icons/bank-details-icon.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
+      { label: 'Academics', link: '/myinfo/personal/education-details', icon: '/my-info-icons/education-icon.png', permission: { feature: 'My Info Education Details', action: 'view' } },
       { label: 'Visa Details', link: '/myinfo/personal/visa-details', icon: '/my-info-icons/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
-      { label: 'Team Members', link: '/myinfo/personal/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } }
     ];
     this.filterTabsByRbac();
   }
@@ -36,7 +35,6 @@ export class MyInfoPersonalTabsComponent implements OnInit {
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
-
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);

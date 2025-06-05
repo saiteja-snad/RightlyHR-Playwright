@@ -82,10 +82,6 @@
       <div>
         <p class="popup-heading mb-0">Add Visa Details</p>
       </div>
-      <div>
-        <a (click)="modal.dismiss();visaForm.reset()"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
-      </div>
     </div>
     <div class="custom-main-popup-content ">
       <form [formGroup]="visaForm" (ngSubmit)="postvisa()">
@@ -165,10 +161,6 @@
     <div class="custom-poup-header-content popup-header-border">
       <div>
         <p class="popup-heading mb-0">Update Visa Details</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss();visaupdateForm.reset()"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content ">

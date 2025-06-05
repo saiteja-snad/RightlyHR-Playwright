@@ -1,5 +1,7 @@
 <div class="profile-info-card-main-container w-100">
+    @if(!isloading){
     <div class="card profile-card mb-2">
+
         <div class="image-content">
             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
             <div class="edit-icon-content">
@@ -11,6 +13,7 @@
         </div>
 
         <!--user additional details-->
+
         <div class="profile-content text-nowrap">
             <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                 {{empdata?.lastName}}</p>
@@ -54,7 +57,14 @@
                 </span>
             </p>
         </div>
+
     </div>
+    }
+    @else {
+        <div class="mb-2">
+              <p-skeleton height="14rem" />
+        </div>
+    }
 
     <div class="manager-card mb-2">
         <div class="accent-bar"></div>

@@ -2,7 +2,7 @@
   <div class="card custom-background-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <span class="component-sub-header">Contact Details</span>
+        <span class="component-sub-header">Contact Info</span>
       </div>
       @if(canAccessfield('update','contact')){
       @if(!buttons && ( employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
@@ -26,8 +26,7 @@
       <div class="row">
 
         <div class="col-lg-4 col-md-6 mb-3">
-          <label for="location" class="form-label custom-label mb-2">Work Number<span
-              class="text-danger">*</span></label>
+          <label for="location" class="form-label custom-label mb-2">Work Number</label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
               <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
@@ -42,7 +41,7 @@
             <input type="text" class="form-control custom-input" formControlName="workNumber"
               (input)="onWorkNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
               placeholder="Please enter work number" id="phonenumbers" aria-describedby="phonenumbers"
-              autocomplete="off" required>
+              autocomplete="off" >
           </div>
           <div class="error-msg my-1"
             *ngIf="contactForm.get('workNumber')?.invalid &&  (contactForm.get('workNumber')?.touched || contactForm.get('workNumber')?.dirty)">

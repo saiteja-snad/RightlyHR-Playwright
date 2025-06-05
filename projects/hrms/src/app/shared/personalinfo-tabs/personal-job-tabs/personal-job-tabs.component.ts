@@ -42,7 +42,7 @@ export class PersonalJobTabsComponent implements OnInit {
   const { empstatus } = this.empinfo;
 
   const allTabs = [
-    { label: 'PreOnboarding Info', link: '/personalinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
+    { label: 'Pre Onboarding Info', link: '/personalinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
     { label: 'Onboarding Info', link: '/personalinfo/job/onboarding-details', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Details', action: 'view' } },
     { label: 'Compensations', link: '/personalinfo/job/compensation-details', icon: '/images/compensation.png', permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
     { label: 'Probation Info', link: '/personalinfo/job/probation-details', icon: '/images/probation.png', permission: { feature: 'Employee Info Probation Details', action: 'view' } },

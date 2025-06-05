@@ -267,8 +267,4 @@ export class InactiveDeskListComponent {
     }
   }
 
-
-
-
-
 }

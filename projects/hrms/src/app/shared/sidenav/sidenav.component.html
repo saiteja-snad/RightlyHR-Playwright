@@ -9,18 +9,20 @@
             </li>
             }
             <!--Employee Management-->
+            @if(this.rbac.allowedToAccess('Employees.view')){
             <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
                 [ngClass]="{ 'active': ActiveRoute() }">
                 <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
             </li>
+           }
             <!--My Info-->
-            <!-- @if(this.rbac.allowedToAccess('My Info.view')){
+            @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/myinfo')">
-                <img [src]="isActiveRoute('/myinfo') ? 'main-menu-icons/user-account-color.png' : 'main-menu-icons/user-account.png'"
+                <img src="main-menu-icons/employee-management-icon.png"
                     alt="Icon" class="main-menu-icon">My Info
             </li>
-            } -->
+            }
             <!--Events-->
             @if(this.rbac.allowedToAccess('Events.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/events');resetDropdown()"

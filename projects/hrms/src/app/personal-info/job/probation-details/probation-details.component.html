@@ -1,6 +1,9 @@
 <div class="custom-main-component-container">
     <!--Header-->
-    <div class="component-sub-header mb-3">Probation Details</div>
+     <div class="d-flex justify-content-between align-items-center mb-3">
+        <div> <span  class="component-sub-header">Probation Details</span></div>
+     </div>
+    
     <!--table Content-->
     <div class="custom-table-content">
         <table class="w-100">
@@ -45,12 +48,12 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <!--status pending-->
                                  @if(canAccess('view','request')){
-                                <!-- @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){ -->
+                                @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
-                                <!-- } -->
+                                }
                             }
                                 <!--status Rejected-->
                                 @if(canAccess('view','re-request')){

@@ -88,12 +88,10 @@
   border: 1px solid #CCDAEC;
   background-color: #fff;
   border-radius: 0.5rem;
-  width: 25rem;
-  min-height: 40dvh;
-  height: max-content;
+  width: 20rem;
+  height: calc(100vh - 9.5rem);
   line-height: 100%;
   letter-spacing: 0%;
-
 
   tr {
     border-bottom: 1px solid #EFEFEF !important;

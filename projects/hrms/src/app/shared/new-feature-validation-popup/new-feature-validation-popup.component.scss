@@ -1,0 +1,70 @@
+.feature-confirmation-popup {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #EAF4FF 100%);
+
+    .logo {
+        position: absolute;
+        width: 8.5rem;
+        height: 8.5rem;
+        z-index: 1;
+        top: -15%;
+        left: 36%;
+    }
+
+    .unleash-text {
+        font-weight: 600;
+        font-size: 16.58px;
+        line-height: 30.15px;
+        letter-spacing: 0px;
+        text-align: center;
+        color: #6C839E;
+    }
+
+    .welcome-text {
+        color: #275C9A;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 28px;
+        letter-spacing: 0px;
+        text-align: center;
+    }
+
+    .content-header {
+        font-weight: 800;
+        font-size: 15px;
+        line-height: 24.49px;
+        letter-spacing: 2%;
+        vertical-align: middle;
+        color: #1A2028;
+    }
+
+    .content-text {
+        font-weight: 600;
+        font-size: 14px;
+        vertical-align: middle;
+        color: #555555;
+    }
+
+    .custom-btn {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.75rem;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 100%;
+        letter-spacing: 0%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(90.02deg, #0B3A83 0.02%, #94BEFF 265.37%);
+        color: #FFFFFF;
+        padding: 0.75rem 2.5rem;
+    }
+
+    .btn-cancel {
+        color: #4B4B4B;
+        background-color: transparent !important;
+    }
+}

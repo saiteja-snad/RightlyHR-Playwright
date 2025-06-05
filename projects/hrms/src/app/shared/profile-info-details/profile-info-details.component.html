@@ -1,5 +1,5 @@
 <div class="profile-info-card-main-container w-100">
-    <div class="card profile-card mb-3">
+    <div class="card profile-card mb-2">
         <div class="image-content">
             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
             <div class="edit-icon-content">
@@ -14,7 +14,7 @@
         <div class="profile-content text-nowrap">
             <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                 {{empdata?.lastName}}</p>
-            <p class="name emp-id text-center m-0 mb-2">{{ empdata?.employeeId }}</p>
+            <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-envelope me-2"></i>
                 <span class="link-text">{{this.empdata?.workEmail || 'NA'}}</span>

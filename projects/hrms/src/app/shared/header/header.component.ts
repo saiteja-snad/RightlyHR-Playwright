@@ -10,12 +10,10 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
-import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, PmsSettingsTabsComponent, PmsTabsComponent, ItsuporrtHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, PmsTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

@@ -32,7 +32,7 @@
                             <td>
                                 <span *ngIf="identityDetails.attachment;else noData" class="download-text"
                                     (click)="onSelectIdentityAttachmentDownload(identityDetails)">
-                                    <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
+                                    <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template
                                     #noData>-</ng-template>
                             </td>
                             @if(canAccess('update','identity') || canAccess('delete','identity')){

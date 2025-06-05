@@ -9,12 +9,14 @@
             </div>
         </div>
         <div class="d-flex align-items-center gap-3">
+             @if (rbac.allowedToAccess('My Team (Permissions).view')) {
              <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" class="form-select custom-select"
                     name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true" showClear="true"required (onChange)="onCheckemployee($event.value)">
                 </p-select>
             </div>
+        }
             <div *ngIf="disaplyapplybutton">
                 @if(rbac.allowedToAccess('Request Permission Button.view')){
                 <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)">Request Permission</button>

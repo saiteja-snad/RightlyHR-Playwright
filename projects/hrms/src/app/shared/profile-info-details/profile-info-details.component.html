@@ -1,41 +1,75 @@
 <div class="profile-info-card-main-container w-100">
-    <div class="card custom-background-card mb-3">
+    <div class="card profile-card mb-2">
         <div class="image-content">
             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
             <div class="edit-icon-content">
-                <label for="formFile-personalinfo"  class="form-label">
+                <label for="formFile-personalinfo" class="form-label">
                     <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>
-                <input class="form-control d-none" type="file" id="formFile-personalinfo" accept=".jpg" (change)="chooseNewProfile($event)">             
+                <input class="form-control d-none" type="file" id="formFile-personalinfo" accept=".jpg"
+                    (change)="chooseNewProfile($event)">
             </div>
         </div>
 
         <!--user additional details-->
         <div class="profile-content text-nowrap">
-            <div class="text-center">
-                <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
-                    {{empdata?.lastName}}</p>
-                <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
-                <p class="sub-text m-0 mb-1">{{jobRole}}</p>
-                <p class="sub-text m-0 mb-1"><i class="bi bi-telephone me-1"></i>{{empdata?.workPhoneCountryCode}}
-                    {{empdata?.workPhone || 'N/A'}}</p>
-                <p class="sub-text m-0 mb-1"><i class="bi bi-geo-alt me-1"></i>{{jobdata?.locationName}},{{jobdata?.sublocationName
-                    || 'N/A' }}</p>
-                <p class="sub-text m-0 mb-1">
-                    <i class="bi bi-clock-history me-1"></i>
-                    <b *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</b>
+            <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
+                {{empdata?.lastName}}</p>
+            <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
+            <p class="label-text text-truncate mb-2">
+                <i class="bi bi-envelope me-2"></i>
+                <span class="link-text">{{this.empdata?.workEmail || 'NA'}}</span>
+            </p>
+            <p class="label-text text-truncate mb-2">
+                <i class="bi bi-person-vcard me-2"></i>
+                <span class="link-text">{{jobRole}}</span>
+            </p>
+            <p class="label-text text-truncate mb-2"><i class="bi bi-geo-alt me-2"></i>
+                <span class="link-text">{{jobdata?.locationName}},{{jobdata?.sublocationName || 'NA' }}</span>
+            </p>
+            <p class="label-text text-truncate mb-2">
+                <i class="bi bi-clock-history me-2"></i>
+                <span class="link-text">
+                    <span *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</span>
                     <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName" class="mx-1">|</span>
                     <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
                     <span *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && 
                             (jobdata?.shiftStartTime && jobdata?.shiftEndTime)" class="mx-1">|</span>
-                    <span *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
+                    <span
+                        *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
                     <ng-template #noData>N/A</ng-template>
-                </p>
-                <p class="label-text m-0 mb-1"><span class="me-1">Team Manager</span>:
-                    <span class="name-text ms-1">{{reportesto?.fistname || 'N/A'}}
-                    {{reportesto?.middlename || ''}} {{reportesto?.lastname}}</span></p>
-                <p class="label-text m-0"><span class="me-1">Reporting Manager</span>:
-                    <span class="name-text me-1">{{Reportingmanager || 'N/A'}}</span></p>
-            </div>
+                </span>
+            </p>
+            <p class="label-text text-truncate mb-2">
+                <i class="bi bi-telephone me-2"></i>
+                <span class="link-text">
+                    <span *ngIf="empdata?.workPhone">
+                        <u>{{ empdata?.workPhoneCountryCode + ' ' + empdata?.workPhone }}</u>
+                    </span>
+                    <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
+                        <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>
+                    </span>
+                    <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">
+                        NA
+                    </span>
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="manager-card mb-2">
+        <div class="accent-bar"></div>
+        <div class="w-100">
+            <p class="label-name mb-1">Team Manager</p>
+            <p class="label-name count-text m-0">{{reportesto?.fistname || 'NA'}}
+                {{reportesto?.middlename || ''}} {{reportesto?.lastname}}</p>
+        </div>
+    </div>
+
+    <div class="manager-card mb-2">
+        <div class="accent-bar1" [style.background]=""></div>
+        <div class="w-100">
+            <p class="label-name mb-1">Reporting Manager</p>
+            <p class="label-name count-text m-0">{{Reportingmanager || 'NA'}}</p>
         </div>
     </div>
 

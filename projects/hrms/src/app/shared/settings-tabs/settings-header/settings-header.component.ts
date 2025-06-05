@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { RbacService } from '../../../services/rbac.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { filter } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -88,11 +87,11 @@ export class SettingsHeaderComponent implements OnInit {
     // Time Off
     else if (url.startsWith('/settings/timeoff-configurations/leave-categoery')) {
       this.moduleName = 'Time Off';
-      this.componentName = 'leave Categoery';
+      this.componentName = 'Leave Category';
     }
     else if (url.startsWith('/settings/timeoff-configurations/leave-allocation')) {
       this.moduleName = 'Time Off';
-      this.componentName = 'leave Allocation';
+      this.componentName = 'Leave Allocation';
     }
     else if (url.startsWith('/settings/timeoff-configurations/flexible-leave-allocation')) {
       this.moduleName = 'Time Off';
@@ -119,6 +118,16 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/assets-configuration/asset-subcatagory')) {
       this.moduleName = 'Assets Configuration';
       this.componentName = 'Asset Sub Category';
+    }
+
+    // PMS Configurations
+    else if (url.startsWith('/pmsconfiguration/increment')) {
+      this.moduleName = 'PMS Configurations';
+      this.componentName = 'Increment Percentage';
+    }
+    else if (url.startsWith('/pmsconfiguration/assessor')) {
+      this.moduleName = 'PMS Configurations';
+      this.componentName = 'Assessor Configuration';
     }
 
     //Dynamic Forms

@@ -41,7 +41,17 @@
             </p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-telephone me-2"></i>
-                <span class="link-text"><u>{{empdata?.workPhoneCountryCode}} {{empdata?.workPhone ||'NA'}}</u></span>
+                <span class="link-text">
+                    <span *ngIf="empdata?.workPhone">
+                        <u>{{ empdata?.workPhoneCountryCode + ' ' + empdata?.workPhone }}</u>
+                    </span>
+                    <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
+                        <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>
+                    </span>
+                    <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">
+                        NA
+                    </span>
+                </span>
             </p>
         </div>
     </div>

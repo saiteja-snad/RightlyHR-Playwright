@@ -22,7 +22,7 @@
           <th>GPA/CGPA</th>
           <th>From Date</th>
           <th>To Date</th>
-          <th>Document</th>
+          <th class="text-center">Document</th>
           @if( canAccess('update','education') || canAccess('delete','education')){
           @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
           'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
@@ -41,9 +41,9 @@
             <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
             <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
             <td class="text-center">
-              <span *ngIf="edacationDetails.attachment;else noData" class="download-text"
+              <span *ngIf="edacationDetails.attachment;else noData"
                 (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                <i class="bi bi-download clip-icon px-2"></i></span><ng-template #noData>-</ng-template>
+                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template #noData>-</ng-template>
             </td>
             @if( canAccess('update','education' ) || canAccess('delete','education')){
             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==

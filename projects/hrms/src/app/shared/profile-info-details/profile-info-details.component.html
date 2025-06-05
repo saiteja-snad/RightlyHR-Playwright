@@ -14,16 +14,17 @@
         <div class="profile-content text-nowrap">
             <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                 {{empdata?.lastName}}</p>
+            <p class="name emp-id text-center m-0 mb-2">{{ empdata?.employeeId }}</p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-envelope me-2"></i>
-                <span class="link-text">{{this.empdata?.workEmail || 'N/A'}}</span>
+                <span class="link-text">{{this.empdata?.workEmail || 'NA'}}</span>
             </p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-person-vcard me-2"></i>
                 <span class="link-text">{{jobRole}}</span>
             </p>
             <p class="label-text text-truncate mb-2"><i class="bi bi-geo-alt me-2"></i>
-                <span class="link-text">{{jobdata?.locationName}},{{jobdata?.sublocationName || 'N/A' }}</span>
+                <span class="link-text">{{jobdata?.locationName}},{{jobdata?.sublocationName || 'NA' }}</span>
             </p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-clock-history me-2"></i>
@@ -49,7 +50,7 @@
         <div class="accent-bar"></div>
         <div class="w-100">
             <p class="label-name mb-1">Team Manager</p>
-            <p class="label-name count-text m-0">{{reportesto?.fistname || 'N/A'}}
+            <p class="label-name count-text m-0">{{reportesto?.fistname || 'NA'}}
                 {{reportesto?.middlename || ''}} {{reportesto?.lastname}}</p>
         </div>
     </div>
@@ -58,7 +59,7 @@
         <div class="accent-bar1" [style.background]=""></div>
         <div class="w-100">
             <p class="label-name mb-1">Reporting Manager</p>
-            <p class="label-name count-text m-0">{{Reportingmanager || 'N/A'}}</p>
+            <p class="label-name count-text m-0">{{Reportingmanager || 'NA'}}</p>
         </div>
     </div>
 

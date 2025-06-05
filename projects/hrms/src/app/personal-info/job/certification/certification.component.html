@@ -48,9 +48,9 @@
                             }}
                         </td>
                         <td class="text-center">
-                            <span *ngIf="empcreficition.attachment;else noData" class="download-text"
-                                (click)="onSelectBankProofDownload(empcreficition)">
-                                <i class="bi bi-download clip-icon px-2"></i>Download</span>
+                            <span *ngIf="empcreficition.attachment;else noData" 
+                            (click)="onSelectBankProofDownload(empcreficition)">
+                                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
                             <ng-template #noData><span class="text-center">-</span></ng-template>
                         </td>
                         @if(canAccess('update','certification') ||

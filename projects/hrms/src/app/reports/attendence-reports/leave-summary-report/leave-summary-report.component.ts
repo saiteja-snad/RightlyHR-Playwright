@@ -67,7 +67,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-  localeOptions: any;
+  localeOptions: any ;
+
 
   constructor(
     private authService: AuthService,
@@ -79,7 +80,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-      this.localeOptions = {
+   this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',

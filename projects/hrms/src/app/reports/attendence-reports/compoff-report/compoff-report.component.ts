@@ -73,6 +73,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+ 
   localeOptions: any;
 
 

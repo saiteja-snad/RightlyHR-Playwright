@@ -270,8 +270,11 @@
                         <p class="error-msg" *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
                             The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
                     </ng-template>
-                    <p class="custom-label">Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                    
                 </div>
+                @if(selectedleave && selectedleave.category){
+                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                }
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">
                         {{'Cancel'| translate}}</button>

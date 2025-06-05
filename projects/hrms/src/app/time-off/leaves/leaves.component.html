@@ -116,9 +116,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Request Leave'| translate}}</p>
             </div>
-            <div>
-                <a (click)="cleardata()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
 
         <div class="custom-main-popup-content">
@@ -173,7 +170,7 @@
                         <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="enddate"
-                            [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
+                            [min]="minEndDate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
                         <div class="error-msg"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
                             End Date is required
@@ -286,8 +283,10 @@
                             <p class="error-msg" *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
                                 The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
                         </ng-template>
-                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
                     </div>
+                    @if(selectedleave && selectedleave.category){
+                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                    }
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
@@ -316,7 +315,7 @@
         </div>
 
         <div class="custom-modal-footer">
-            <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="cleardata();modal.dismiss()">Yes</button>
         </div>
     </div>

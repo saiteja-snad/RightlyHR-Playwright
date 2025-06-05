@@ -63,12 +63,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     { label: 'Prospective', value: 'Prospective' }
   ];
 
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear',
-  };
+  localeOptions: any;
 
   constructor(
     private authService: AuthService, 
@@ -81,6 +76,12 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     // this.getStandardReports();

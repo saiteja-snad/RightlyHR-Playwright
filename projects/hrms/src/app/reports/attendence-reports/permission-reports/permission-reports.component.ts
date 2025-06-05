@@ -54,6 +54,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   localeOptions: any;
 
 
+
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,

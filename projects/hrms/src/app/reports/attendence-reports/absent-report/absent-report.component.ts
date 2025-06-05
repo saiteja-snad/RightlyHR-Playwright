@@ -78,8 +78,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
-  localeOptions: any;
+  localeOptions: any ;
 
   isFilterGivenabsent = false;
   selectedAbsentMonth: string | null = null;

@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">Education Details</span></div>
+    <div><span class="component-sub-header">Academics</span></div>
     @if(canAccess('create','education')){
     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee
     prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
@@ -19,7 +19,7 @@
           <th>Education</th>
           <th>University</th>
           <th>Specialization</th>
-          <th>GPA</th>
+          <th>GPA/CGPA</th>
           <th>From Date</th>
           <th>To Date</th>
           <th class="text-center">Document</th>
@@ -96,11 +96,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div>
-        <p class="popup-heading mb-0">Add Education Details</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
+        <p class="popup-heading mb-0">Add Academic</p>
       </div>
     </div>
     <div class="custom-main-popup-content">
@@ -149,11 +145,11 @@
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
+            <label for="gpa" class="form-label custom-label mb-2">GPA/CGPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpa"
-              placeholder="Please enter GPA">
+              placeholder="Please enter GPA/CGPA">
             <div class="error-msg" *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched">
-              GPA is required and should be between 1 and 10
+              GPA/CGPA is required and should be between 1 and 10
             </div>
           </div>
 
@@ -181,7 +177,7 @@
           </div>
 
           <div class="col-md-12 mb-3">
-            <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
+            <label for="attachment" class="form-label custom-label mb-2">Attachment (Upload the Image/PDF)<span
                 class="text-danger">*</span></label>
             <input type="file" formControlName="attachment" accept=".pdf, .png, .jpg"
               (change)="onChangeEducation($event)" class="form-control custom-input px-0" />
@@ -190,7 +186,7 @@
               File is required
             </div>
             <div class="d-flex justify-content-between align-items-center mt-3">
-              <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+              <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are allowed.
                 The file size should be less than 25MB.</p>
             </div>
           </div>
@@ -219,10 +215,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div>
-        <p class="popup-heading mb-0">Update Education Details</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <p class="popup-heading mb-0">Update Academics</p>
       </div>
     </div>
     <div class="custom-main-popup-content ">
@@ -272,12 +265,12 @@
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
+            <label for="gpa" class="form-label custom-label mb-2">GPA/CGPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpaupdate"
-              placeholder="Please enter GPA">
+              placeholder="Please enter GPA/CGPA">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('gpaupdate')?.invalid && educationupdateForm.get('gpaupdate')?.touched">
-              GPA is required and should be between 1 and 10
+              GPA/CGPA is required and should be between 1 and 10
             </div>
           </div>
 
@@ -347,7 +340,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
-      <p class="confirmation-text mb-4">Are you sure you want to delete the Education Details?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to delete the Academic?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

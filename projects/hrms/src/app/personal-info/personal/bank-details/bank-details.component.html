@@ -32,8 +32,8 @@
                             <td>{{bankiteams.accountNo}}</td>
                             <td>{{bankiteams.ifscCode}}</td>
                             <td>
-                                <span *ngIf="bankiteams.docUrl;else noData" class="download-text" (click)="onSelectBankProofDownload(bankiteams)">
-                                    <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+                                <span *ngIf="bankiteams.docUrl;else noData" (click)="onSelectBankProofDownload(bankiteams)">
+                                    <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template #noData>-</ng-template>
                             </td>
                             <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                             @if( canAccess('update','bank') || canAccess('delete','bank')){

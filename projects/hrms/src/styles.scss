@@ -490,6 +490,11 @@ body {
     background-color: var(--white-color);
 }
 
+.download-icon {
+    width: 2rem;
+    cursor: pointer;
+}
+
 .component-right-content {
     width: 100%;
     height: 100%;
@@ -794,7 +799,6 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
-
 // Select Styling 
 
 // p select stylings
@@ -1032,15 +1036,18 @@ select:focus {
         }
 
         .profile-content {
-            padding: 0.75rem;
-            padding-top: 4rem;
+            padding: 3.5rem 0.75rem 0.75rem;
 
             .name {
                 font-weight: 700;
-                font-size: 14px;
+                font-size: var(--fontsize16);
                 line-height: 14px;
                 letter-spacing: 0%;
                 color: var(--primary-color);
+            }
+
+            .emp-id {
+                font-size: var(--fontsize14) !important;
             }
 
             .label-text {
@@ -1265,6 +1272,7 @@ select:focus {
     font-size: var(--fontsize12) !important;
     font-weight: 400;
     vertical-align: middle;
+    color: #b0b0b0;
 
     .note {
         font-size: var(--fontsize14) !important;
@@ -1565,6 +1573,7 @@ input[type="file"] {
         font-weight: 700;
         font-size: var(--fontsize16);
         vertical-align: middle;
+        color: var(--primary-color);
     }
 
     .close-icon {
@@ -2225,6 +2234,10 @@ input[type=number]::-webkit-outer-spin-button {
         font-size: 10px;
         color: #222222;
     }
+
+    .active-nav-link {
+        background: linear-gradient(360deg, #FFFFFF 0%, #D8E2F2 100%);
+    }
 }
 
 .custom-reportes-sub-tabs-content {
@@ -2498,7 +2511,6 @@ input[type=number]::-webkit-outer-spin-button {
     --p-toggleswitch-width: 2.5rem;
     --p-toggleswitch-height: 1.2rem;
     --p-toggleswitch-handle-size: 1rem;
-
     // // --p-toggleswitch-focus-ring-color: blue;
     // // --p-toggleswitch-checked-hover-border-color: blue;
     // --p-toggleswitch-checked-background: #cce4ff;

@@ -7,12 +7,8 @@
             </div>
 
             <div>
-               
                 <div *ngIf="showPmsTabs()">
                     <app-pms-tabs />
-                </div>
-                <div *ngIf="showPmsConfigurationTabs()">
-                    <app-pms-settings-tabs />
                 </div>
             </div>
         </div>
@@ -22,7 +18,8 @@
             <div class="dropdown">
                 <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="text-end">
-                        <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}</p>
+                        <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
+                        </p>
                         <p class="m-0 job-role">{{jobRole}}</p>
                     </div>
                     <div>
@@ -37,17 +34,17 @@
                             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
                                 class="profile-image">
                             <div class="edit-icon-content">
-                            <!-- <label for="formFile" class="form-label">
+                                <!-- <label for="formFile" class="form-label">
                             <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>
                             <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
                                 (change)="chooseNewProfileHeader($event)"> -->
-                        </div>
+                            </div>
                         </div>
                         <div class="data-content">
                             <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                                 {{empdata?.lastName}}
                             </p>
-                            <p class="name m-0 mb-1">({{empdata?.fusionEmpId}})</p>
+                            <p class="name m-0 mb-1">{{empdata?.fusionEmpId}}</p>
                             <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
                             <p class="sub-text m-0 mb-1">{{jobRole}}</p>
                             <div class="border-bottom"></div>

@@ -13,15 +13,17 @@
             @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/myinfo')">
-                <img src="main-menu-icons/user-account.png" alt="Icon" class="main-menu-icon">My Info
+                <img src="/main-menu-icons/my-Info-icon.png" alt="Icon" class="main-menu-icon">My Info
             </li>
             }
 
             <!--Employee Management-->
+            @if(this.rbac.allowedToAccess('Employees.view')){
             <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
                 [ngClass]="{ 'active': ActiveRoute() }">
                 <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
             </li>
+            }
 
             <!--Time Off-->
             @if(this.rbac.allowedToAccess('Time-Off.view')){
@@ -107,6 +109,7 @@
             }
         </ul>
     </div>
+    
     <!--Settings content-->
     <div class="sidenav-footer-content">
         <div class="d-flex justify-content-center w-100">

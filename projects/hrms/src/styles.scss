@@ -799,6 +799,7 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
+
 // Select Styling 
 
 // p select stylings
@@ -1366,9 +1367,9 @@ select:focus {
     border-radius: 0.5rem;
 
     .holidays-content {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
         gap: 1rem;
-        flex-wrap: wrap;
 
         .holiday-card {
             width: 20rem;

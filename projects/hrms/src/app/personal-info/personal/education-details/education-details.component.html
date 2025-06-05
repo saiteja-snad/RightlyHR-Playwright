@@ -22,7 +22,7 @@
           <th>GPA</th>
           <th>From Date</th>
           <th>To Date</th>
-          <th>Document</th>
+          <th class="text-center">Document</th>
           @if( canAccess('update','education') || canAccess('delete','education')){
           @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
           'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
@@ -40,10 +40,10 @@
             <td>{{edacationDetails.gpa}}</td>
             <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
             <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
-            <td>
-              <span *ngIf="edacationDetails.attachment;else noData" class="download-text"
+            <td class="text-center">
+              <span *ngIf="edacationDetails.attachment;else noData"
                 (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template #noData>-</ng-template>
             </td>
             @if( canAccess('update','education' ) || canAccess('delete','education')){
             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
@@ -161,7 +161,7 @@
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
             <input type="date" formControlName="degreeStartDate" onkeypress="return false" [min]="dateofbirth"
-              [max]="currentDate" class="form-control custom-input" id="degreeStartDate">
+               class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
               From Date is required
@@ -171,7 +171,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()" [max]="currentDate"
+            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()" 
               onkeypress="return false" [min]="educationForm.get('degreeStartDate')?.value"
               class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
@@ -284,7 +284,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDateupdate" [min]="dateofbirth" [max]="currentDate"
+            <input type="date" formControlName="degreeStartDateupdate" [min]="dateofbirth" 
               onkeypress="return false" class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeStartDateupdate')?.invalid && educationupdateForm.get('degreeStartDateupdate')?.touched">
@@ -295,7 +295,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()" [max]="currentDate"
+            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()" 
               onkeypress="return false" [min]="educationupdateForm.get('degreeStartDateupdate')?.value"
               class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"

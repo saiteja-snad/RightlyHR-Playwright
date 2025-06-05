@@ -179,7 +179,7 @@
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="remoteLogin" class="form-label custom-label mb-2">Remote Login</label>
+                    <label for="remoteLogin" class="form-label custom-label mb-2">Allow Work Home</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="remoteLogin" optionLabel="name" optionValue="value"
                             formControlName="remoteLogin" placeholder="Select Remote Login"
@@ -188,10 +188,11 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('remoteLogin')?.invalid && onboardingForm.get('remoteLogin')?.touched">
-                        Remote Login is required
+                        Allow Work Home is required
                     </div>
                 </div>
 
+                @if (onboardingForm.get('remoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
                     <div class="custom-p-select-content">
@@ -204,8 +205,9 @@
                         Work Location is required
                     </div>
                 </div>
+            }
 
-                @if (onboardingForm.get('remoteLogin')?.value === false) {
+                @if (onboardingForm.get('remoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
                     <div class="custom-p-select-content">

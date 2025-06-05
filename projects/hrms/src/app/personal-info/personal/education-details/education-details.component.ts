@@ -8,22 +8,20 @@ import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-import {Router } from '@angular/router';
-
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-education-details',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
+
 export class EducationDetailsComponent implements OnInit, OnDestroy {
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
@@ -48,13 +46,13 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   loading = false
   dateofbirth: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
-    public formValidation: FormValidationService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
+    public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializeupdateForm()
     this.getDegree()
-   
+
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
       this.educationForm.get('degreeEndDate')?.reset();
     });
@@ -66,11 +64,9 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     return this.permissionRouteService.canAccessField(action, permission);
   }
 
- 
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
@@ -212,7 +208,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.educationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Education details added successfully');
-        console.log('Education data saved successfully:', payload);
         this.getEducationEmpid();
       },
       error: (err: any) => {
@@ -241,13 +236,11 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   onChangeEducation(event: any): void {
     this.displalyeducationattachment = '';
     const file: File = event.target.files[0];
-  
     if (!file) return;
-  
     const allowedTypes = ['image/jpeg',
-        'image/*',
-        'application/pdf',
-        'image/png',];
+      'image/*',
+      'application/pdf',
+      'image/png',];
     const maxSizeInMB = 25;
     const fileSizeInMB = file.size / (1024 * 1024);
 
@@ -257,7 +250,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       this.resetEducationForms();
       return;
     }
-  
     if (fileSizeInMB > maxSizeInMB) {
       this.educationAttachment = '';
       this.displalyeducationattachment = '';
@@ -265,23 +257,20 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       this.resetEducationForms();
       return;
     }
-  
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
       file,
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
-  
-    console.log('Education attachment:', this.educationAttachment);
   }
-  
+
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
       type: originalFile.type,
       lastModified: originalFile.lastModified
     });
   }
-  resetEducationForms(){
+  resetEducationForms() {
     this.educationForm.get('attachment')?.reset();
     this.educationForm.get('attachment')?.markAsUntouched();
     this.educationupdateForm.get('attachmentupdate')?.reset();
@@ -316,7 +305,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('Degree').subscribe({
       next: (data: any) => {
         this.degreeDetails = data as IDegre[];
-
       },
     });
   }
@@ -329,7 +317,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.loading = false
         this.educationData.next(data);
-
       },
     });
   }
@@ -337,18 +324,13 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   //openupdate
   openModalupdate(content: any, educationDetails: any): void {
     // Reinitialize the form to update validators
-
     this.selectedEducationId = educationDetails.id
     const selectedEducationType = this.degreeDetails.find(
       (item) => item.degreeName === educationDetails?.degree
     );
-
     // Convert dates to 'YYYY-MM-DD' format
     const degreeStartDate = this.formatDateToLocal(educationDetails.degreeStartDate)
-
-
     const degreeEndDate = this.formatDateToLocal(educationDetails.degreeEndDate)
-
     this.educationupdateForm.patchValue({
       educationupdate: selectedEducationType,
       universityupdate: educationDetails.university,
@@ -356,11 +338,8 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       gpaupdate: educationDetails.gpa,
       degreeStartDateupdate: degreeStartDate,
       degreeEndDateupdate: degreeEndDate,
-
     });
-
     this.educationAttachment = educationDetails.attachment
-
     this.displalyeducationattachment = educationDetails.attachment
       ? educationDetails.attachment.split('/').pop()
       : null;
@@ -368,8 +347,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     const attachmentValidators = this.displalyeducationattachment ? [] : [Validators.required];
     this.educationupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
     this.educationupdateForm.get('attachmentupdate')?.updateValueAndValidity();
-
-
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
@@ -377,8 +354,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     if (this.educationupdateForm.valid) {
       this.spinnerLoader = true
       const formData = this.educationupdateForm.value;
-
-
       const payload = {
         id: this.selectedEducationId,
         university: formData.universityupdate,
@@ -391,7 +366,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         attachment: this.educationAttachment || '', // Use the existing attachment or the new one
         employeeId: this.empinfo.employeeId // Add employee ID if required
       };
-
       // Check if a new attachment is selected
       if (this.educationAttachment instanceof File) {
         this.uploadUpdatedEducationAttachment(payload);
@@ -427,7 +401,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`Education/UPDATER`, payload).subscribe({
       next: (data: any) => {
         this.spinnerLoader = false
-        console.log('Education updated successfully', data);
         this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
@@ -437,7 +410,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         this.spinnerLoader = false
         this.conformationPopup.openErrorModal(reason.error.Message);
-       
+
       }
     });
   }
@@ -453,7 +426,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       console.error('No education record selected for deletion');
       return;
     }
-
     const payload = {
       status: 'Void',
       id: this.selectedEducationDetails.id,
@@ -469,7 +441,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     // Send the delete request
     this.subscription = this.http.postdata('Education/UPDATER', payload).subscribe({
       next: (data: any) => {
-        console.log('Education record deleted successfully:', data);
         this.modalService.dismissAll()
         this.getEducationEmpid();
         this.conformationPopup.openSuccessModal('Education details deleted successfully');

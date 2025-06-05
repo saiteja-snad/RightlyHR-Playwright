@@ -490,6 +490,11 @@ body {
     background-color: var(--white-color);
 }
 
+.download-icon {
+    width: 1.5rem;
+    cursor: pointer;
+}
+
 .component-right-content {
     width: 100%;
     height: 100%;
@@ -794,7 +799,6 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
-
 // Select Styling 
 
 // p select stylings
@@ -996,64 +1000,102 @@ select:focus {
 
 // User Profile Card Stylings
 .profile-info-card-main-container {
-    .custom-background-card {
-        border: 1px solid #D7DEE6;
-        padding: 0.75rem;
-    }
-
-    .image-content {
+    .profile-card {
         position: relative;
-        display: flex;
-        justify-content: center;
+        background: linear-gradient(179.5deg, #FFFFFF 0.44%, #CAD9E5 205.82%);
+        border: 0.5px solid #D7DEE6;
+        margin-top: 2.5rem;
+        width: 100%;
 
-        .edit-icon-content {
+        .image-content {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: absolute;
-            top: 76%;
-            left: 44%;
+            top: -20%;
 
-            .edit-icon {
-                width: 1.75rem;
-                height: 1.75rem;
+            .profile-image {
+                width: 4.5rem;
+                height: 4.5rem;
+                box-shadow: 0px 0px 10px 0px #0B3A8333;
+                border: 2px solid #FFFFFF;
                 border-radius: 50%;
+            }
+
+            .edit-icon-content {
+                z-index: 1;
+                position: absolute;
+                top: 75%;
+
+                .edit-icon {
+                    width: 2rem;
+                    height: 2rem;
+                }
             }
         }
 
-        .profile-image {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
+        .profile-content {
+            padding: 3.5rem 0.75rem 0.75rem;
+
+            .name {
+                font-weight: 700;
+                font-size: var(--fontsize16);
+                line-height: 14px;
+                letter-spacing: 0%;
+                color: var(--primary-color);
+            }
+
+            .emp-id {
+                font-size: var(--fontsize14) !important;
+            }
+
+            .label-text {
+                font-weight: 400;
+                font-size: 12px;
+                line-height: 100%;
+                letter-spacing: 0%;
+                vertical-align: middle;
+                color: #989898;
+            }
+
+            .link-text {
+                color: #5E779E;
+            }
         }
     }
 
-    .profile-content {
-        margin-top: 1.25rem;
-        padding-top: 0.5rem;
-        line-height: 100%;
-        letter-spacing: 0%;
-        text-wrap: nowrap;
-        line-break: anywhere;
+    .manager-card {
+        width: 100%;
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background-color: #ECF1F5;
 
-        .name {
-            font-weight: 700;
-            font-size: var(--fontsize14);
-            color: var(--primary-color);
+        .accent-bar {
+            width: 0.25rem;
+            border-radius: 0.5rem;
+            background-color: #1064CA;
         }
 
-        .sub-text {
+        .accent-bar1 {
+            width: 0.25rem;
+            border-radius: 0.5rem;
+            background-color: #E0433A;
+        }
+
+        .label-name {
             font-weight: 400;
-            font-size: var(--fontsize10);
-            color: #8D8D8D;
+            font-size: 11.2px;
+            line-height: 17.32px;
+            letter-spacing: 0%;
+            color: #686868;
         }
 
-        .label-text {
+        .count-text {
             font-weight: 500;
-            font-size: 10px;
-            text-transform: capitalize;
-            color: #909090;
-        }
-
-        .name-text {
-            color: #3F434A !important;
+            color: var(--primary-color);
         }
     }
 }
@@ -1230,6 +1272,7 @@ select:focus {
     font-size: var(--fontsize12) !important;
     font-weight: 400;
     vertical-align: middle;
+    color: #b0b0b0;
 
     .note {
         font-size: var(--fontsize14) !important;
@@ -1530,6 +1573,7 @@ input[type="file"] {
         font-weight: 700;
         font-size: var(--fontsize16);
         vertical-align: middle;
+        color: var(--primary-color);
     }
 
     .close-icon {
@@ -2111,7 +2155,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .menu-grid-content {
     width: 100%;
-    height: calc(100vh - 35.5rem);
+    height: 100%;
     overflow: auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2189,6 +2233,10 @@ input[type=number]::-webkit-outer-spin-button {
         font-weight: 500;
         font-size: 10px;
         color: #222222;
+    }
+
+    .active-nav-link {
+        background: linear-gradient(360deg, #FFFFFF 0%, #D8E2F2 100%);
     }
 }
 
@@ -2463,7 +2511,6 @@ input[type=number]::-webkit-outer-spin-button {
     --p-toggleswitch-width: 2.5rem;
     --p-toggleswitch-height: 1.2rem;
     --p-toggleswitch-handle-size: 1rem;
-
     // // --p-toggleswitch-focus-ring-color: blue;
     // // --p-toggleswitch-checked-hover-border-color: blue;
     // --p-toggleswitch-checked-background: #cce4ff;

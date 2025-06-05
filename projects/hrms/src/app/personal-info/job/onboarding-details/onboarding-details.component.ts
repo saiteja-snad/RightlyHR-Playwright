@@ -74,8 +74,8 @@ export class OnboardingDetailsComponent {
   ]
 
   worklocation = [
-    { name: 'Remote/Hybrid', value: 'Remote/Hybrid', allowWFH: true },
-    { name: 'Work From Home', value: 'Work From Home', allowWFH: false }
+    { name: 'Remote/Hybrid', value: 'Remote/Hybrid', allowWFH: false },
+    { name: 'Work From Home', value: 'Work From Home', allowWFH: true }
   ];
   filteredWorkLocations: any[] = [];
   selectedWorkLocation: any = null;

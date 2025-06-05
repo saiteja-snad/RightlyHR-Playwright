@@ -45,6 +45,7 @@ export class PersonalJobTabsComponent implements OnInit {
 
   filterTabs(): void {
   const { empstatus } = this.empinfo;
+
   const allTabs = [
     { label: 'Pre-Onboarding Info', link: '/personalinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
     { label: 'Onboarding Info', link: '/personalinfo/job/onboarding-details', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Details', action: 'view' } },
@@ -62,13 +63,13 @@ export class PersonalJobTabsComponent implements OnInit {
     { label: 'Team Members', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } }
   ];
 
+  const statusesToRemoveOffboarding = ['Active', 'Trainee Active', 'Prospective', 'Trainee Prospective'];
+
   this.navTabs = allTabs.filter(tab => {
-    // Remove "Offboarding Details" if status is Active
-    if (empstatus === 'Active' && tab.label === 'Offboarding Details') {
+    // Remove "Offboarding Info" if empstatus is one of the above statuses
+    if (statusesToRemoveOffboarding.includes(empstatus) && tab.label === 'Offboarding Info') {
       return false;
     }
-
-    // Otherwise, keep the tab
     return true;
   });
 }

@@ -58,14 +58,10 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getEmpInfoFromRoute();
-   
-    this.getFamilyRelations();
     this.initializeForm();
-  
+    this.getFamilyRelations();
+    this.getEmpInfoFromRoute();
     this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
-   
-   
   }
   showButtons() {
     this.buttons = !this.buttons
@@ -110,16 +106,18 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employedata = data;
-        this.patchForm(data);
         this.loading = false;
         this.selectedemergencycoutrycode.set(data.emergencyNumberCountryFlag);
         this.selectedemergency1coutrycode.set(data.emergencyPhoneCountryFlag);
-       
+        if (this.familyRelations.length) {
+        this.patchForm(data); 
+      }
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
   patchForm(data: any): void {
+    
     const contact1Relationship = this.familyRelations.find(
       (relation) => relation.relationship1 === data.relationShip
     ) || null;
@@ -140,7 +138,6 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       contact2Phone: data.emergencyNumber1 || '', // Bind second emergency contact phone
       contact2Relationship: contact2Relationship || '', // Bind second emergency contact relationship
     });
-
   }
 
   enableForm(): void {
@@ -220,6 +217,9 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.familyRelations = data as IRelation[];
+          if (this.employedata) {
+            this.patchForm(this.employedata); // Only patch after relations are available
+          }
         },
       });
   }

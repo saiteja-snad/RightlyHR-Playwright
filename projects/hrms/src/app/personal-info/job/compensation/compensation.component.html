@@ -115,10 +115,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Compensations</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();compForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
-            </div>
         </div>
         <div class="custom-main-popup-content p-3">
             <form autocomplete="off" [formGroup]="compForm" (ngSubmit)="postcompensation(compForm)">
@@ -224,9 +220,6 @@
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Compensation Details</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-3">

@@ -86,9 +86,6 @@
             <div>
                 <p class="popup-heading mb-0">Add Bank Info</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();bankDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
         <div class="custom-main-popup-content ">
             <form autocomplete="off" [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
@@ -203,10 +200,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div >
                 <p class="popup-heading mb-0">Update Bank Info</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();bankDetailsUpdateForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">

@@ -86,10 +86,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Identity Info</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();identityForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
-            </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
@@ -174,9 +170,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">Update Identity Info</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">

@@ -123,10 +123,6 @@
                 <p class="popup-heading mb-0">Add Certifications
                 </p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();certificationForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
-            </div>
         </div>
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
@@ -239,9 +235,6 @@
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Certifications</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">

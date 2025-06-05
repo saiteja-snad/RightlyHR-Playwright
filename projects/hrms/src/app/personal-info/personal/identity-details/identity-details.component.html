@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">{{'Identity Details' | translate}}</span></div>
+        <div><span class="component-sub-header">{{'Identity Info' | translate}}</span></div>
          @if(canAccess('create','identity')){
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
         'trainee prospective'
@@ -84,11 +84,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Identity Details</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();identityForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <p class="popup-heading mb-0">Add Identity Info</p>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -135,7 +131,7 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
+                        <label class="form-label custom-label mb-2">Attachment (Upload the Image/PDF)<span
                                 class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input px-0" formControlName="identityAttachment"
                             (change)="onIdentityAttachmentSelected($event)" accept="image/*, .jpg, .pdf" />
@@ -145,7 +141,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center mt-2">
-                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
                     </div>
@@ -173,10 +169,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Update Identity Details</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <p class="popup-heading mb-0">Update Identity Info</p>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -255,7 +248,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Identity Details?</p>
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Identity Info?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

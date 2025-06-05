@@ -82,9 +82,6 @@
             <div>
                 <p class="popup-heading mb-0">Add Family Member</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();familyDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
@@ -149,9 +146,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div >
                 <p class="popup-heading mb-0">Update Family Member</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">

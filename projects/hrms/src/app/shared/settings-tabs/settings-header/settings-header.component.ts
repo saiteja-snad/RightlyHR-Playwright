@@ -88,11 +88,11 @@ export class SettingsHeaderComponent implements OnInit {
     // Time Off
     else if (url.startsWith('/settings/timeoff-configurations/leave-categoery')) {
       this.moduleName = 'Time Off';
-      this.componentName = 'leave Category';
+      this.componentName = 'Leave Category';
     }
     else if (url.startsWith('/settings/timeoff-configurations/leave-allocation')) {
       this.moduleName = 'Time Off';
-      this.componentName = 'leave Allocation';
+      this.componentName = 'Leave Allocation';
     }
     else if (url.startsWith('/settings/timeoff-configurations/flexible-leave-allocation')) {
       this.moduleName = 'Time Off';

@@ -1,5 +1,5 @@
 <div class="profile-info-card-main-container w-100">
-    <div class="card profile-card mb-3">
+    <div class="card profile-card mb-2">
         <div class="image-content">
             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
             <div class="edit-icon-content">
@@ -14,16 +14,17 @@
         <div class="profile-content text-nowrap">
             <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                 {{empdata?.lastName}}</p>
+            <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-envelope me-2"></i>
-                <span class="link-text">{{this.empdata?.workEmail || 'N/A'}}</span>
+                <span class="link-text">{{this.empdata?.workEmail || 'NA'}}</span>
             </p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-person-vcard me-2"></i>
                 <span class="link-text">{{jobRole}}</span>
             </p>
             <p class="label-text text-truncate mb-2"><i class="bi bi-geo-alt me-2"></i>
-                <span class="link-text">{{jobdata?.locationName}},{{jobdata?.sublocationName || 'N/A' }}</span>
+                <span class="link-text">{{jobdata?.locationName}},{{jobdata?.sublocationName || 'NA' }}</span>
             </p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-clock-history me-2"></i>
@@ -40,7 +41,17 @@
             </p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-telephone me-2"></i>
-                <span class="link-text"><u>{{empdata?.workPhoneCountryCode}} {{empdata?.workPhone ||'NA'}}</u></span>
+                <span class="link-text">
+                    <span *ngIf="empdata?.workPhone">
+                        <u>{{ empdata?.workPhoneCountryCode + ' ' + empdata?.workPhone }}</u>
+                    </span>
+                    <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
+                        <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>
+                    </span>
+                    <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">
+                        NA
+                    </span>
+                </span>
             </p>
         </div>
     </div>
@@ -49,7 +60,7 @@
         <div class="accent-bar"></div>
         <div class="w-100">
             <p class="label-name mb-1">Team Manager</p>
-            <p class="label-name count-text m-0">{{reportesto?.fistname || 'N/A'}}
+            <p class="label-name count-text m-0">{{reportesto?.fistname || 'NA'}}
                 {{reportesto?.middlename || ''}} {{reportesto?.lastname}}</p>
         </div>
     </div>
@@ -58,7 +69,7 @@
         <div class="accent-bar1" [style.background]=""></div>
         <div class="w-100">
             <p class="label-name mb-1">Reporting Manager</p>
-            <p class="label-name count-text m-0">{{Reportingmanager || 'N/A'}}</p>
+            <p class="label-name count-text m-0">{{Reportingmanager || 'NA'}}</p>
         </div>
     </div>
 

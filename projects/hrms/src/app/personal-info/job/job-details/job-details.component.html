@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">{{'Job Details' |translate }}</span></div>
+        <div><span class="component-sub-header">{{'Job Info' |translate }}</span></div>
 
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
@@ -35,8 +35,7 @@
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                     && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
                     !=='trainee inactive' )){
-                    <th  class="text-center">{{"Action" | translate}}<span
-                            class="text-lowercase">(s)</span></th>
+                    <th  class="text-center">{{"Action" | translate}}</th>
                     }
                     }
                     }
@@ -169,7 +168,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Job Details</p>
+                <p class="popup-heading mb-0">Add Job Info</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon"
@@ -346,7 +345,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update Job Details</p>
+                <p class="popup-heading mb-0">Update Job Info</p>
             </div>
             <!-- <div>
                 <a (click)="modal.dismiss();jobDetailsupdateForm.reset()">
@@ -689,7 +688,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Job Details?</p>
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Job Info?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

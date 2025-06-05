@@ -7,10 +7,9 @@ import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
-import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ItsuporrtHeaderTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -18,54 +17,60 @@ import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt
 export class SidenavComponent implements OnInit {
   // Main Modules
   modules = [
+    //Holidays
+    {
+      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
+      route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
+    },
+    //Policies
+    {
+      label: 'Policies', icon: '/main-menu-icons/policies-icon.png', activeIcon: '/main-menu-icons/policies.png',
+      route: '/policies', permission: { feature: 'Policies', action: 'view' }
+    },
+    //Event/
+    {
+      label: 'Events', icon: '/main-menu-icons/events-colored-icon.png', activeIcon: '/main-menu-icons/calendar-favorite.png',
+      route: '/events', permission: { feature: 'Events', action: 'view' }
+    },
     //expenses
     {
       label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png',
       route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' }
+    },
+    //org Hierarcy
+    {
+      label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
+      route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' }
     },
     //pms
     {
       label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms.png',
       permission: { feature: 'PMS', action: 'view' }
     },
-    //pms configuration
+    //Blood Bank
     {
-      label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration.png',
-      route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' }
+      label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
+      route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' }
     },
-    //Desk
+    //Contacts Directory
     {
-      label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
-      route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
+      label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png',
+      route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' }
+    },
+    //Phone Book
+    {
+      label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
+      route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' }
     },
     //Assets
     {
       label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png',
       route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' }
     },
-    
-    
-    //org Hierarcy
+    //Desk
     {
-      label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
-      route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' }
-    },
-    //Holidays
-    {
-      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
-      route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
-    },
-    {
-      label: 'Contacts Directory', icon: '/main-menu-icons/contact-directory-color-icon.png', activeIcon: '/main-menu-icons/contact-directory-icon.png',
-      route: '/contacts-directory', permission: { feature: 'Contacts Directory', action: 'view' }
-    },
-    {
-      label: 'Blood Bank', icon: '/main-menu-icons/blood-bank-color-icon.png', activeIcon: '/main-menu-icons/blood-bank-icon.png',
-      route: '/blood-bank', permission: { feature: 'Blood Bank', action: 'view' }
-    },
-    {
-      label: 'Phone Book', icon: '/main-menu-icons/phonebook-color-icon.png', activeIcon: '/main-menu-icons/phonebook-icon.png',
-      route: '/phonebook', permission: { feature: 'Phone Book', action: 'view' }
+      label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
+      route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
     },
   ];
   columnsPerRow = 3;

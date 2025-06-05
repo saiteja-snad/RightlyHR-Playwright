@@ -120,7 +120,7 @@ export class AddEventComponent implements OnInit, OnDestroy {
 
       const file = this.eventAttachment;
       if (file) {
-        const filePath = `/Profilepics/${this.Employeeinfo.employeeId}`;
+        const filePath = `/Events/${this.Employeeinfo.employeeId}`;
         this.uploadEventAttachment(filePath, file, payload);
       } else {
         this.saveEvent(payload);

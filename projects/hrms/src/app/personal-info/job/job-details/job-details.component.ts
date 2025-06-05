@@ -702,7 +702,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       reportingManager: `${data?.fName ?? ''} ${data?.mName ?? ''} ${data?.lName ?? ''}`,
     });
     let currentDate = moment();
-    this.postSeparationRequest.appliedDate = currentDate;
+    this.postSeparationRequest.appliedDate = this.separationRequestForm.get('appliedDate')?.value || currentDate.format('YYYY-MM-DD');
     this.onCheckNotiesperiod(this.postSeparationRequest.appliedDate);
   }
 

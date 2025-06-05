@@ -162,7 +162,6 @@ export class EmployeeManagementLayoutComponent {
         employeementTypeColor: '#0B3A83',
         permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
-
       {
         label: 'Prospective Trainees',
         link: '/employee-management/prospective-interns',

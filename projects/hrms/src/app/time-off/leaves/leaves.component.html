@@ -39,7 +39,7 @@
 
     @if (rbac.allowedToAccess('Time Off Module.view')) {
     <div class="graph-grid w-100 mb-3">
-        <div class="total-leave-balance-graph-content">
+        <!-- <div class="total-leave-balance-graph-content">
             <div class="chart-content">
                 <p-chart type="doughnut" [data]="leaveCategoryData" [options]="leaveCategoryOptions"
                     class="doughnut-chart" />
@@ -58,7 +58,7 @@
                 </li>
                 }
             </ul>
-        </div>
+        </div> -->
         <div class="cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">

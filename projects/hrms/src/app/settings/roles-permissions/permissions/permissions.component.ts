@@ -652,6 +652,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Rejected (Time Off)',
     'Request Leave Button',
     'Cancelled (Time Off)',
+    'My Team (Time Off)',
   
   ];
 
@@ -662,27 +663,31 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Processed (WFH)',
     'Cancel (WFH)',
     'Rejected (WFH)',
-    'Request WFH Button'
+    'Request WFH Button',
+    'My Team (WFH)',
   ];
   compOffModuleSubTabs = [
     'Waiting For Approval (Comp Off)',
     'Approved (Comp Off)',
     'Processed (Comp Off)',
     'Rejected (Comp Off)',
-    'Request Comp Off Button'
+    'Request Comp Off Button',
+    'My Team (Comp Off)',
   ];
   permissionsModuleSubTabs = [
     'Waiting For Approval (Permissions)',
     'Approved (Permissions)',
     'Cancel (Permissions)',
     'Rejected (Permissions)',
-    'Request Permission Button'
+    'Request Permission Button',
+    'My Team (Permissions)',
   ];
   regularizationModuleSubTabs = [
     'Waiting For Approval (Regularization)',
     'Approved (Regularization)',
     'Rejected (Regularization)',
-    'Processed (Regularization)'
+    'Processed (Regularization)',
+    'My Team (Regularization)',
   ];
   onBehalfOfModuleSubTabs = [
     'Waiting For Approval (On Behalf Of)',

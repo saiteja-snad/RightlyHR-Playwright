@@ -702,7 +702,7 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Dashboard' 
+                            <tr class="text-align-center" *ngIf="per.fields === 'Dashboard' || per.fields === 'Employees'
                             || per.fields === 'My Info' || per.fields === 'Events' 
                             || per.fields === 'Time-Off'    || per.fields === 'Expenses' 
                             || per.fields === 'Reports' || per.fields === 'Policies' 

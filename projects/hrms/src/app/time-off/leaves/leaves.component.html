@@ -79,6 +79,9 @@
                             @if (!item.category.isProbationAllowed) {
                             <p class="m-0">Processed</p>
                             <p class="m-0">{{item.utilizedDays}}</p>
+                            }@else {
+                                <p class="m-0">Processed</p>
+                                <p class="m-0">{{item.utilizedDays}}</p>
                             }
                         </div>
                     </div>

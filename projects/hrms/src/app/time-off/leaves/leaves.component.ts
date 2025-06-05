@@ -125,7 +125,7 @@ export class LeavesComponent {
     this.getOrgHolidaysByEmpId();
     this.getallpolicy();
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
-    this.getEmployementTypeByempId(this.empdata.employeeId)
+
     this.getweekendbyempid()
     this.checkPreviousOptionalLeaves();
     this.getTeamManagersDetails();
@@ -995,43 +995,9 @@ export class LeavesComponent {
     });
   }
 
-  getEmployementTypeByempId(empid: number) {
-    this.subscription = this.http.getData(`Employementtype/${empid}`).subscribe({
-      next: (res: any) => {
-        let sortedresponse = res.sort((a: any, b: any) => {
-          if (a.empEffectiveDate < b.empEffectiveDate) {
-            return -1;
-          }
-          if (a.empEffectiveDate > a.empEffectiveDate) {
-            return 1;
-          }
-          return 0;
-        })
-        let gradeid = sortedresponse[sortedresponse.length - 1]?.gradeId
-        this.getLeavePoliciesbygradeId(gradeid)
-      }
-    })
-  }
 
-  getLeavePoliciesbygradeId(gradeId: number) {
-    this.subscription = this.http.getData(`LeavePolicy/getbygradeid/${gradeId}`).subscribe({
-      next: (res: any) => {
-        this.leavedata = res as ILeaves[];
-        var joiningDate = new Date(this.empdata.dateOfJoining)
-        const joiningYear = joiningDate.getFullYear()
-        const presentDate = new Date();
-        const presentYear = presentDate.getFullYear()
-        if (presentYear == joiningYear) {
-          const joiningMonth = (joiningDate.getMonth() + 1);
-          const remainingDays = (12 - joiningMonth) * 21;
-          this.leavedata.forEach((leavs: ILeaves) => {
-            leavs.maxDays = Math.round((leavs.maxDays * remainingDays) / 252)
-          });
-        }
-        this.getLeaveTakenByEmpId();
-      }
-    });
-  }
+
+
 
   getLeaveTakenByEmpId() {
     let LBEId = this.empdata.employeeId;

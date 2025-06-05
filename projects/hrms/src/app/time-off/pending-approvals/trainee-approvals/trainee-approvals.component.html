@@ -18,9 +18,9 @@
                 <th class="text-nowrap">{{'Employee Name'|translate}}</th>
                 <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
                 <th class="text-nowrap">{{'Training End Date'|translate}}</th>
-                <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
+                <th class="text-center">{{'Approver Comments'|translate}}</th>
                 @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('TraineeDetails.delete')) {
-                <th class="text-nowrap">{{'Action' | translate}}</th>
+                <th class="text-center">{{'Action' | translate}}</th>
                 }
             </thead>
             <tbody>
@@ -45,29 +45,16 @@
                             dateformat }}</span>
                         <ng-template #starttime>-</ng-template>
                     </td>
-                    <td class="text-center">
-                            <div *ngIf="trn?.entity?.comments.length>0;else approvercomments">
-                                <div (click)="commentsFunction(trn?.entity?.comments,commentspopup)">
-                                    <i class="bi bi-info-circle-fill info-icon"></i>
-                                </div>
-                            </div>
-                            <ng-template #approvercomments>-</ng-template>
-                    </td>
-                    <!-- <td>
-                        @if(trn.entity?.comments != null && trn.entity?.comments != '') {
-                        <div>
-                            <a type="button" (click)="commentsFunction(trn.entity?.comments,commentspopup)">
-                                <app-info-icon />
-                            </a>
+                <td class="text-center">
+                    <div *ngIf="trn?.entity?.comments; else approvercomments">
+                        <div (click)="commentsFunction(trn?.entity?.comments, commentspopup)">
+                            <i class="bi bi-info-circle-fill info-icon"></i>
                         </div>
-                        }@else {
-                        <div>
-                            <span>-</span>
-                        </div>
-                        }
-                    </td> -->
+                    </div>
+                    <ng-template #approvercomments>-</ng-template>
+                </td>
                     @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('Trainee Details.delete')) {
-                    <td>
+                    <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -255,7 +242,7 @@
 
         <div class="custom-main-popup-content">
             <div class="card p-3">
-                <div *ngFor="let comment of comment">
+                <div *ngFor="let comment of comments">
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }}</p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>

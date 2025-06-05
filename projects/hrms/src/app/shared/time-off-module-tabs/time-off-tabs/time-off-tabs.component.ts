@@ -29,8 +29,8 @@ export class TimeOffTabsComponent implements OnInit {
     this.allowedWfh = this.empinfo.allowWFH;
     this.navTabs = [
       { label: 'Time-Off', link: '/time-off/leaves',icon:'/time-off-icon/leaves-icon.png', permission: { feature: 'Time Off Module', action: 'view' } },
-      ...(!this.allowedWfh ? [{ label: 'WFH', link: '/time-off/wfh', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'WFH/On Duty Module', action: 'view' } }] : []),
-      ...(this.allowedWfh ? [{ label: 'Remote Login', link: '/time-off/remote', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'Remote Login Module', action: 'view' } }] : []),
+      ...(this.allowedWfh ? [{ label: 'WFH', link: '/time-off/wfh', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'WFH/On Duty Module', action: 'view' } }] : []),
+      // ...(this.allowedWfh ? [{ label: 'Remote Login', link: '/time-off/remote', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'Remote Login Module', action: 'view' } }] : []),
       { label: 'Comp-Off', link: '/time-off/comp-off', icon:'/time-off-icon/comp-off.png', permission: { feature: 'Comp Off Module', action: 'view' } },
       { label: 'Permissions', link: '/time-off/premissions', icon:'/time-off-icon/permissions-icon.png', permission: { feature: 'Permissions Module', action: 'view' } },
       { label: 'Regularization', link: '/time-off/regularization',icon:'/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },

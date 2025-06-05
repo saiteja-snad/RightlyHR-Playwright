@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
     <!--Header-->
-     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div> <span  class="component-sub-header">Probation Info</span></div>
-     </div>
-    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div> <span class="component-sub-header">Probation Info</span></div>
+    </div>
+
     <!--table Content-->
     <div class="custom-table-content">
         <table class="w-100">
@@ -22,7 +22,7 @@
                 </tr>
             </thead>
             <tbody>
-                 @if(getProbationRequestDetails.length > 0) {
+                @if(getProbationRequestDetails.length > 0) {
                 @for (probation of getProbationRequestDetails; track $index) {
                 <tr>
                     <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
@@ -42,44 +42,49 @@
                     <td>{{probation.status}}</td>
                     @if(canAccess('view','request') || canAccess('view','request')){
                     <td class="text-center">
-                        @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status === 'Extended') {
+                        @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status ===
+                        'Extended') {
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
-                             <ul class="dropdown-menu custom-dropdown-menu">
+                            <ul class="dropdown-menu custom-dropdown-menu">
                                 <!--status pending-->
+                                @if(probation.status === 'Pending' &&
+                                shouldprobationShowButton(probation.probationEndDate) && probation.status!='Extended'){
                                 @if(canAccess('view','request')){
-                                @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
+
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
                                 }
-                            }
+                                }
                                 <!--status Rejected-->
                                 @if(canAccess('view','re-request')){
-                                @if(probation.status === 'Rejected' && shouldprobationShowButton(empdata.probationEndDate)){
+                                @if(probation.status === 'Rejected' &&
+                                shouldprobationShowButton(probation.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Re-Request for Probation Confirmation</a>
                                 </li>
                                 }}
                                 <!--status extended-->
-                                 @if(canAccess('view','request')){
-                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)){ 
+                                @if(canAccess('view','request')){
+                                @if(probation.status === 'Extended' &&
+                                shouldprobationShowButton(probation.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
-                            }
+                                }
                                 }
                             </ul>
                         </div>
                         }
-                         @else {
+                        @else {
                         <div>-</div>
                         }
                     </td>
-                }
+                    }
                 </tr>
                 }
                 } @else {
@@ -119,10 +124,13 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let comment of appcomment">
-                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) : '-'}}</td>
-                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating | number:'1.2-2') : '-'}}</td>
+                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
+                                '-'}}</td>
+                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
+                                number:'1.2-2') : '-'}}</td>
                             <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
-                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}
+                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) :
+                                'NA'}}
                             </td>
                             <td>
                                 <div>

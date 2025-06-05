@@ -14,6 +14,7 @@
         </div>
 
         <!--Header profile content-->
+        @if(!isloading){
         <div class="header-profile-dropdown-content">
             <div class="dropdown">
                 <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -27,25 +28,18 @@
                             class="profile-img">
                     </div>
                 </div>
-
                 <ul class="dropdown-menu">
                     <div class="dropdown-content">
                         <div class="image-content">
                             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
                                 class="profile-image">
-                            <div class="edit-icon-content">
-                                <!-- <label for="formFile" class="form-label">
-                            <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>
-                            <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
-                                (change)="chooseNewProfileHeader($event)"> -->
-                            </div>
+                            <div class="edit-icon-content"></div>
                         </div>
                         <div class="data-content">
                             <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
-                                {{empdata?.lastName}}
-                            </p>
+                                {{empdata?.lastName}}</p>
                             <p class="name m-0 mb-1">{{empdata?.fusionEmpId}}</p>
-                            <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
+                            <p class="sub-text m-0 mb-1">{{empdata?.workEmail || 'N/A'}}</p>
                             <p class="sub-text m-0 mb-1">{{jobRole}}</p>
                             <div class="border-bottom"></div>
                             <div class="mb-2">
@@ -59,6 +53,41 @@
                 </ul>
             </div>
         </div>
+        }
+        @else {
+        <div class="header-profile-dropdown-content">
+            <div class="dropdown">
+                <div class="profile-dropdown" type="button">
+                    <div class="text-end">
+                        <p-skeleton width="3rem" height="1rem" class="mb-2"></p-skeleton>
+                        <p-skeleton width="3rem" height="1rem"></p-skeleton>
+                    </div>
+                    <div>
+                        <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                    </div>
+                </div>
+                <ul class="dropdown-menu">
+                    <div class="dropdown-content">
+                        <div class="image-content">
+                            <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                            <div class="edit-icon-content"></div>
+                        </div>
+                        <div class="data-content">
+                            <p-skeleton width="8rem" height="1.5rem" class="mb-1"></p-skeleton>
+                            <p-skeleton width="6rem" height="1rem" class="mb-1"></p-skeleton>
+                            <p-skeleton width="10rem" height="1rem" class="mb-1"></p-skeleton>
+                            <p-skeleton width="6rem" height="1rem" class="mb-1"></p-skeleton>
+                            <div class="border-bottom"></div>
+                            <div class="mb-2">
+                                <p-skeleton width="6rem" height="2rem"></p-skeleton>
+                            </div>
+                            <p-skeleton width="8rem" height="2.5rem"></p-skeleton>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        }
     </div>
 </div>
 

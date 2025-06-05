@@ -23,7 +23,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { SettingsHeaderComponent } from "../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-assessor-configuration',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, Select, SettingsHeaderComponent],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
+     DataLoaderContentComponent, TranslateModule, Select, SettingsHeaderComponent],
   templateUrl: './assessor-configuration.component.html',
   styleUrl: './assessor-configuration.component.scss'
 })

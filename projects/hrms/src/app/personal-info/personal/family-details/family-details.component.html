@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div> <span class="component-sub-header">{{'Family Details '| translate}}</span></div>
+        <div> <span class="component-sub-header">{{'Family Members '| translate}}</span></div>
         @if(canAccess('create','family')){
        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
@@ -80,7 +80,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Add Family Member Details</p>
+                <p class="popup-heading mb-0">Add Family Member</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();familyDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -148,7 +148,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div >
-                <p class="popup-heading mb-0">Update Family Details</p>
+                <p class="popup-heading mb-0">Update Family Member</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -217,7 +217,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Family Details?</p>
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Family Member?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

@@ -1,38 +1,36 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { Subscription } from 'rxjs';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-personal-job-tabs',
-  imports: [RouterModule,TabsModule,CommonModule],
+  imports: [RouterModule, TabsModule, CommonModule],
   templateUrl: './personal-job-tabs.component.html',
   styleUrl: './personal-job-tabs.component.scss'
 })
 export class PersonalJobTabsComponent implements OnInit {
   navTabs: any[] = [];
   filteredTabs: any[] = [];
-  columnsPerRow=3;
-  constructor(public rbac: RbacService,public readonly router: Router) { }
+  subscription!: Subscription
+  empinfo = {} as Ipersonal;
+  columnsPerRow = 3;
+  constructor(public rbac: RbacService,
+    public readonly router: Router,
+    private route: ActivatedRoute,) { }
 
   ngOnInit(): void {
-    this.navTabs= [
-       { label: ' Pre-Onboarding Details', link: '/personalinfo/job/pre-onboarding-details', icon:'/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
-     { label: 'Onboarding Details', link: '/personalinfo/job/onboarding-details',icon:'/images/onboarding.png',permission: { feature: 'Employee Info Onboarding Details', action: 'view' } },
-     { label: 'Offboarding Details', link: '/personalinfo/job/employmentType' , icon:'/images/offboarding.png', permission: { feature: 'Employee Info Offboarding Details', action: 'view' }},
-     { label: 'Job Details', link: '/personalinfo/job/job-details', icon:'/images/jobdetailes.png',permission: { feature: 'Employee Info Job Details', action: 'view' } },
-     { label: 'Separation Request Details', link: '/personalinfo/job/separation-details', icon:'/images/sepration-request.png',permission: { feature: 'Employee Info Separation Request Details', action: 'view' } },
-     { label: 'No Due Clearance Details', link: '/personalinfo/job/no-due-clearance-details',icon:'/images/nodue.png',permission: { feature: 'Employee Info No Due Clearance Details', action: 'view' } },
-     { label: 'Probation Details', link: '/personalinfo/job/probation-details' , icon:'/images/probation.png',permission: { feature: 'Employee Info Probation Details', action: 'view' }},
-     { label: 'Previous Experience Details', link: '/personalinfo/job/past-experiences', icon:'/images/experience.png',permission: { feature: 'Employee Info Previous Experience Details', action: 'view' } },
-     { label: 'Certification Details', link: '/personalinfo/job/certifications' , icon:'/images/certificate.png',permission: { feature: 'Employee Info Certification Details', action: 'view' }},
-     { label: 'Compensation Details', link: '/personalinfo/job/compensation-details', icon:'/images/compensation.png',permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
-     { label: 'Desk Details', link: '/personalinfo/job/desk-details', icon:'/images/desk.png', permission: { feature: 'Employee Info Desk Details', action: 'view' } },
-     { label: 'Assets Details', link: '/personalinfo/job/assets-details', icon:'/images/assets-list.png', permission: { feature: 'Employee Info Asset Details', action: 'view' } },
-    { label: 'Trainee Onboard Request', link: '/personalinfo/job/tranee-onboarding-requests',icon:'/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' }},
-   ];
-   this.filterTabsByRbac();
+    if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    }
+    else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    }
+    this.filterTabs();
+    this.filterTabsByRbac();
   }
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
@@ -43,6 +41,39 @@ export class PersonalJobTabsComponent implements OnInit {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
+
+
+  filterTabs(): void {
+  const { empstatus } = this.empinfo;
+
+  const allTabs = [
+    { label: 'Pre-Onboarding Info', link: '/personalinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
+    { label: 'Onboarding Info', link: '/personalinfo/job/onboarding-details', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Details', action: 'view' } },
+    { label: 'Offboarding Info', link: '/personalinfo/job/employmentType', icon: '/images/offboarding.png', permission: { feature: 'Employee Info Offboarding Details', action: 'view' } },
+    { label: 'Job Info', link: '/personalinfo/job/job-details', icon: '/images/jobdetailes.png', permission: { feature: 'Employee Info Job Details', action: 'view' } },
+    { label: 'Separation Request', link: '/personalinfo/job/separation-details', icon: '/images/sepration-request.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' } },
+    { label: 'No Due Clearance Info', link: '/personalinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'Employee Info No Due Clearance Details', action: 'view' } },
+    { label: 'Probation Info', link: '/personalinfo/job/probation-details', icon: '/images/probation.png', permission: { feature: 'Employee Info Probation Details', action: 'view' } },
+    { label: 'Employment History', link: '/personalinfo/job/past-experiences', icon: '/images/experience.png', permission: { feature: 'Employee Info Previous Experience Details', action: 'view' } },
+    { label: 'Certifications', link: '/personalinfo/job/certifications', icon: '/images/certificate.png', permission: { feature: 'Employee Info Certification Details', action: 'view' } },
+    { label: 'Compensations', link: '/personalinfo/job/compensation-details', icon: '/images/compensation.png', permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
+    { label: 'Desk Info', link: '/personalinfo/job/desk-details', icon: '/images/desk.png', permission: { feature: 'Employee Info Desk Details', action: 'view' } },
+    { label: 'Assigned Assets ', link: '/personalinfo/job/assets-details', icon: '/images/assets-list.png', permission: { feature: 'Employee Info Asset Details', action: 'view' } },
+    { label: 'Trainee Onboard Request', link: '/personalinfo/job/tranee-onboarding-requests', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' } },
+    { label: 'Team Members', link: '/personalinfo/job/team-members', icon: '/my-info-icons/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } }
+  ];
+
+  const statusesToRemoveOffboarding = ['Active', 'Trainee Active', 'Prospective', 'Trainee Prospective'];
+
+  this.navTabs = allTabs.filter(tab => {
+    // Remove "Offboarding Info" if empstatus is one of the above statuses
+    if (statusesToRemoveOffboarding.includes(empstatus) && tab.label === 'Offboarding Info') {
+      return false;
+    }
+    return true;
+  });
+}
+
 
   navigateToAccessedRoute(link: string): void {
     this.router.navigateByUrl(link);

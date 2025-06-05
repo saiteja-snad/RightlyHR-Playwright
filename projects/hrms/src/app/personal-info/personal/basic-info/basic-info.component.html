@@ -28,7 +28,7 @@
           <label for="employeeId" class="form-label custom-label mb-2" >ID<span
               class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId"
-            formControlName="employeeId" placeholder="Please enter Employee ID" />
+            formControlName="employeeId" placeholder="Please enter employee ID" />
           <div *ngIf="basicInfoForm.get('employeeId')?.invalid && basicInfoForm.get('employeeId')?.touched"
             class="error-msg">
             Employee ID is required
@@ -39,7 +39,7 @@
           <label for="employeeId" class="form-label custom-label mb-2" >Employee ID<span
               class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="fusionEmpId"
-            formControlName="fusionEmpId" placeholder="Please enter Employee ID" />
+            formControlName="fusionEmpId" placeholder="Please enter employee ID" />
           <div *ngIf="basicInfoForm.get('fusionEmpId')?.invalid && basicInfoForm.get('fusionEmpId')?.touched"
             class="error-msg">
             Employee ID is required

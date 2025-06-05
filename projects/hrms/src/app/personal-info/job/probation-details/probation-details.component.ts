@@ -34,7 +34,7 @@ export class ProbationDetailsComponent implements OnInit {
   loggedinuser = {} as any;
 
   constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
-     private modalService: NgbModal,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
+    private modalService: NgbModal, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute()
@@ -53,13 +53,13 @@ export class ProbationDetailsComponent implements OnInit {
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
-    this.getEmployeeId();
-    this.getProbationRequest();
+      this.getEmployeeId();
+      this.getProbationRequest();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
-   this.getEmployeeId();
-    this.getProbationRequest();
+      this.getEmployeeId();
+      this.getProbationRequest();
     }
   }
 
@@ -85,6 +85,7 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   shouldprobationShowButton(probationEndDate: string): boolean {
+    console.log(probationEndDate);
     const shouldShow = (this.isprobationEndDateComplete(probationEndDate));
     return shouldShow;
   }
@@ -107,10 +108,15 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   isprobationEndDateComplete(probationEndDate: string) {
+    
+
     if (probationEndDate) {
-      const endDate = new Date(probationEndDate);
-      const buttonEnabledDate = new Date(endDate);
-      buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.probationProbationNotiperiodDuration));
+      const [day, month, yearAndTime] = probationEndDate.split("-");
+      const [year, time] = yearAndTime.split(" ");
+      const endDate = new Date(`${year}-${month}-${day}T${time}`);
+      // const endDate = new Date(probationEndDate);
+      let buttonEnabledDate = endDate;
+      // buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.probationProbationNotiperiodDuration));
       const currentDate = new Date();
       const isComplete = currentDate >= buttonEnabledDate;
       return isComplete;
@@ -170,7 +176,7 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   openview(content: any) {
-    this.modalService.open(content, { size:'xl', centered: true, backdrop: 'static' });
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static' });
   }
 
   setformView(employeeId: number, responseId: number) {
@@ -178,7 +184,7 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   probationCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { size:'xl', centered: true, backdrop: 'static' });
+    this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static' });
     this.appcomment = Value.map((ele: any) => {
       const parsedMetaData = JSON.parse(ele.metaData);
       return {

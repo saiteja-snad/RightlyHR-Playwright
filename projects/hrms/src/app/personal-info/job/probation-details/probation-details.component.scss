@@ -9,6 +9,6 @@
 }
 
 .custom-popup-table {
-    height: 20vh !important;
-    max-height: 45vh !important;
+    height: max-content !important;
+    min-height: max-content !important;
 }

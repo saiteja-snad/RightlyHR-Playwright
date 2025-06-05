@@ -45,8 +45,7 @@
                             <ng-template #prostartdate> - </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate |
-                                date}}</span>
+                            <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate | date}}</span>
                             <ng-template #proenddate> - </ng-template>
                         </td>
                         <td>

@@ -1,20 +1,20 @@
 <div class="custom-main-component-container">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-       <div>
+        <div>
             <span class="component-sub-header ">Team Members</span>
         </div>
-    <div class="d-flex gap-3 align-items-center">
+        <div class="d-flex gap-3 align-items-center">
             @if(canAccess('view','chtm')) {
-        <div>
-            <button class="custom-btn btn-primary" (click)="openModals(changetmmodals)">Change TM</button>
-        </div>}
+            <div>
+                <button class="custom-btn btn-primary" (click)="openModals(changetmmodals)">Change TM</button>
+            </div>}
             @if(canAccess('view','changesrm')) {
-        <div>
-            <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
+            <div>
+                <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
+            </div>
+            }
         </div>
-        }
-    </div>
     </div>
 
     <!--Input search-->
@@ -36,12 +36,17 @@
                     <th class="text-center">Action</th>}
                 </tr>
             </thead>
-            <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+            <tbody
+                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
 
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
                     <tr *ngFor="let details of filteredMembers">
                         <td>{{ details.fusionEmpId || 'N/A' }}</td>
-                        <td  (click)="select(details)" >{{ details.firstName || 'N/A' }} {{details.middleName }} {{details.lastName }}</td>
+                        <td [ngClass]="{'clickable-row': details.isAccess}"
+                            [style.cursor]="details.isAccess ? 'pointer' : 'not-allowed'"
+                            (click)="details.isAccess && select(details)">
+                            {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}
+                        </td>
                         <td>{{ details.workEmail || 'N/A' }}</td>
                         <td>{{ details.contactnumber || 'N/A' }}</td>
 
@@ -257,7 +262,7 @@
                         <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
                                 class="text-danger">*</span></label>
                         <input id="teamManagerName" placeholder="Team manager" class="form-select custom-input"
-                            formControlName="teamManagerName"  />
+                            formControlName="teamManagerName" />
                         <div *ngIf="foremployeeForm.get('teamManagerName')?.touched && foremployeeForm.get('teamManagerName')?.invalid"
                             class="error-msg">
                             Team manager is required

@@ -207,10 +207,10 @@ export class TeamMembersComponent {
       .subscribe(
         (responseData: any) => {
           console.log(responseData);
-          const filteredData = (responseData as Iteammembers[]).filter(
-            (member) => member['isAccess'] === true
-          );
-          this.teamMemberArray = filteredData.map((employee: any) => ({
+          // const filteredData = (responseData as Iteammembers[]).filter(
+          //   (member) => member['isAccess'] === true
+          // );
+          this.teamMemberArray = responseData.map((employee: any) => ({
             ...employee,
             jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
             fullName: `${
@@ -232,6 +232,7 @@ export class TeamMembersComponent {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/myinfo')) {
       this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+      
       this.goToAccessibleRoute('/personalinfo');
     }
   }

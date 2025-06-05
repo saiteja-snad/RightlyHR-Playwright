@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'app-view-policies',
@@ -17,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ReactiveFormsModule,
     TranslateModule,
     NgbPopoverModule,
+    ToggleSwitchModule
   ],
   templateUrl: './view-policies.component.html',
   styleUrl: './view-policies.component.scss',
@@ -79,6 +81,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
             policyDescription: [
               { value: row.policyDescription, disabled: true },
             ],
+            acknowledged: [{ value: row.requiresAcknowledgment, disabled: true }],
+            notification : [{ value: row.sendNotification, disabled: true }],
           })
         );
         const fileName = this.getFileName(row.policyAttachment);

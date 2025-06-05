@@ -183,6 +183,8 @@ checkDuplicate(): void {
       authorizedDate: new Date().toISOString(),
       authorizedstatus: 'string',
       shiftID: formValue.shift,
+      lastModifedby : parseInt(this.empinfo.employeeId),
+      lastModifeddate : new Date().toISOString(),
       orgHolidaysItems: formValue.holidays.map((item: any) => ({
         holidayName: item.holidayName,
         holidayDate: item.holidayDate,
@@ -199,7 +201,7 @@ checkDuplicate(): void {
       },
       error: (error) => {
         if (error.error) {
-          this.confirmation.openErrorModal(error.error.Message);
+          this.confirmation.openErrorModal("Holidays already exixts with selected year, location, sublocation and shift!");
         }
       }
     });

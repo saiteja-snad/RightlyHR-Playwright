@@ -3,12 +3,8 @@
         <!--header-->
 
         <div class="heading-content">
-            <div class="commpoment-name">Standard Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">Job Location Wise Data </div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
-            </div>
         </div>
         <div>
             <form autocomplete="off" [formGroup]="locationReportsForm" (ngSubmit)="onSubmit(locationReportsForm)">
@@ -68,7 +64,8 @@
                             }
                         </button>
                         }
-                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
+                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')
+                         && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
                         <button type="button" class="custom-btn btn-primary"
                             [disabled]="locationReportList.length === 0 || disableBtn"
                             (click)="onClickJobLocationExport() ">
@@ -86,17 +83,8 @@
         </div>
     </div>
 
-    <!--Module Information-->
-    <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
 
-    <div class="d-flex gap-3 w-100">
-        <div class="component-left-tabs-container">
-            <app-standard-report-tabs />
-        </div>
 
-        <div class="component-right-content">
             <ng-container *ngIf="dataload; else maincontent">
                 <ng-template #loadingSpinner>
                     <div class="custom-compoent-data-loader">
@@ -109,6 +97,7 @@
                 <div class="custom-table-content">
                     <table class="w-100" id="jobLocation">
                         <thead>
+                            <tr>
                             <th>Employee ID</th>
                             <th>Salutation</th>
                             <th>First Name</th>
@@ -143,6 +132,7 @@
                             <th>Shift</th>
                             <th>Shift Code</th>
                             <th>Job Type</th>
+                            </tr>
                         </thead>
                         <tbody>
                             @if(locationReportList.length > 0){
@@ -156,33 +146,37 @@
                                     <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
                                     <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
                                     <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
-                                    <td>{{ emp.currentaddressline1 ? emp.currentaddressline1 : '-' }}</td>
-                                    <td>{{ emp.currentaddressline2 ? emp.currentaddressline2 : '-' }}</td>
-                                    <td>{{ emp.currentcity ? emp.currentcity : '-' }}</td>
-                                    <td>{{ emp.currentstate ? emp.currentstate : '-' }}</td>
-                                    <td>{{ emp.currentcountry ? emp.currentcountry : '-' }}</td>
-                                    <td>{{ emp.currentzipcode ? emp.currentzipcode : '-' }}</td>
-                                    <td>{{ emp.permanentaddressline1 ? emp.permanentaddressline1 : '-' }}</td>
-                                    <td>{{ emp.permanentaddressline2 ? emp.permanentaddressline2 : '-' }}</td>
-                                    <td>{{ emp.permanentcity ? emp.permanentcity : '-' }}</td>
-                                    <td>{{ emp.permanentstate ? emp.permanentstate : '-' }}</td>
-                                    <td>{{ emp.permanentcountry ? emp.permanentcountry : '-' }}</td>
-                                    <td>{{ emp.permanentzipcode ? emp.permanentzipcode : '-' }}</td>
-                                    <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
-                                    <td>{{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
+                                    <td>{{ emp.currentAddressLine1 ? emp.currentAddressLine1 : '-' }}</td>
+                                    <td>{{ emp.currentAddressLine2 ? emp.currentAddressLine2 : '-' }}</td>
+                                    <td>{{ emp.currentCity ? emp.currentCity : '-' }}</td>
+                                    <td>{{ emp.currentState ? emp.currentState : '-' }}</td>
+                                    <td>{{ emp.currentCountry ? emp.currentCountry : '-' }}</td>
+                                    <td>{{ emp.currentZipCode ? emp.currentZipCode : '-' }}</td>
+                                    <td>{{ emp.permanentAddressLine1 ? emp.permanentAddressLine1 : '-' }}</td>
+                                    <td>{{ emp.permanentAddressLine2 ? emp.permanentAddressLine2 : '-' }}</td>
+                                    <td>{{ emp.permanentCity ? emp.permanentCity : '-' }}</td>
+                                    <td>{{ emp.permanentState ? emp.permanentState : '-' }}</td>
+                                    <td>{{ emp.permanentCountry ? emp.permanentCountry : '-' }}</td>
+                                    <td>{{ emp.permanentZipCode ? emp.permanentZipCode : '-' }}</td>
+                                    <td> {{
+                                        extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -')
+                                        }}</td>
+                                    <td> {{
+                                        extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -')
+                                        }}</td>
                                     <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
-                                    <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}
+                                    <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | date:'MM-dd-yyyy') : '-' }}
                                     </td>
                                     <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
                                     <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
                                     <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
                                     <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
-                                    <td>{{ emp.teammanager? emp.teammanager: '-'}}</td>
-                                    <td>{{ emp.reportingmanager ? emp.reportingmanager : '-' }}</td>
-                                    <td>{{ emp.joblocationname ? emp.joblocationname : '-' }}</td>
-                                    <td>{{ emp.jobsublocationname ? emp.jobsublocationname : '-' }}</td>
-                                    <td>{{ emp.shiftname ? emp.shiftname : '-' }}</td>
-                                    <td>{{ emp.shiftcode ? emp.shiftcode : '-' }}</td>
+                                    <td>{{ emp.teamManager? emp.teamManager: '-'}}</td>
+                                    <td>{{ emp.reportingManager ? emp.reportingManager : '-' }}</td>
+                                    <td>{{ emp.jobLocationName ? emp.jobLocationName : '-' }}</td>
+                                    <td>{{ emp.jobSubLocationName ? emp.jobSubLocationName : '-' }}</td>
+                                    <td>{{ emp.shiftName ? emp.shiftName : '-' }}</td>
+                                    <td>{{ emp.shiftCode ? emp.shiftCode : '-' }}</td>
                                     <td>{{ emp.jobType ? emp.jobType : '-' }}</td>
                                 </tr>
                                 }
@@ -197,5 +191,4 @@
                 </div>
             </ng-template>
         </div>
-    </div>
-</div>
+    

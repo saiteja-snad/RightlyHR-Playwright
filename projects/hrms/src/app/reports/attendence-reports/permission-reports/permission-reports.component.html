@@ -3,11 +3,8 @@
     <!-- Header -->
 
          <div class="heading-content">
-      <div class="commpoment-name">Attendance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name" (click)="navigation()">  Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Permission Report</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div>
     </div>
 
       <form autocomplete="off" [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
@@ -83,7 +80,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Permission Report - Generate.view') && rbac.allowedToAccess('Permission Report - Export.view')){
+            @if(rbac.allowedToAccess('Permission Report - Generate.view') 
+            && rbac.allowedToAccess('Permission Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPemrissionReport()"
               [disabled]="filteredPermissionData.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -99,17 +97,10 @@
       </form>
   </div>
 
- <!--Module Information-->
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
 
-  <div class="d-flex gap-3 w-100">
-    <div class="component-left-tabs-container">
-      <app-attandace-report-tabs />
-    </div>
 
-    <div class="component-right-content">
+ 
+
       @if (isLoading) {
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -156,5 +147,4 @@
       </div>
       }
     </div>
-  </div>
-</div>
+  

@@ -83,9 +83,9 @@ export class AppointmentLetterComponent {
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
       documentType: ['', Validators.required],
-      assertType: ['', Validators.required],
-      model: ['', Validators.required],
-      serial: ['', Validators.required],
+      // assertType: ['', Validators.required],
+      // model: ['', Validators.required],
+      // serial: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
@@ -144,7 +144,7 @@ export class AppointmentLetterComponent {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim()
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
         }));
       },
       error: (error: any) => {
@@ -285,7 +285,7 @@ export class AppointmentLetterComponent {
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
     const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6', 'pdfContent7',
-      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12', 'pdfContent13'];
+      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12', ];
 
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -326,6 +326,7 @@ export class AppointmentLetterComponent {
   sendEmployeeDetails() {
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.selectedEmployee).subscribe({
       next: (data: any) => {
+        this.spinnerLoader= false;
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -364,10 +365,11 @@ export class AppointmentLetterComponent {
     };
     this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Appointment Letter Generated Successfully')
+         this.spinnerLoader= false;
+        this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(()=>{
           this.navigateDashboard();
-        }, 2000);
+        }, 3000);
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -407,7 +409,8 @@ export class AppointmentLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully');
+         this.spinnerLoader= false;
+        this.conformationPopup.openSuccessModal('Email sent successfully');
       },
       error: (err: any) => {
         this.spinnerLoader= false;
@@ -417,19 +420,21 @@ export class AppointmentLetterComponent {
       }
     })
   }
-
   //Post Asset Details
   postAssetDetails() {
     const formData= this.employeeForm.value;
     let postAssetDetails = {
       empid: this.selectedEmployee.employeeId,
-      assetType: formData.assertType.assetType1,
+      // assetType: formData.assertType.assetType1,
       maker: null,
       model: formData.model,
       serialNumber:formData.serial,
     };
     this.subscription = this.http.postdata('AssetTable', postAssetDetails).subscribe({
-      next: (data: any) => { },
+      next: (data: any) => {
+         this.spinnerLoader= false;
+       },
+      
       error: (reason: any) => {
         this.spinnerLoader= false;
       },

@@ -11,7 +11,7 @@ import { UpdateExperienceDetailsComponent } from './update-experience-details/up
 import { Router } from '@angular/router';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
-import { environment } from '../../../../environments/environment.dev';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-experience-details',
   imports: [CommonModule, DateFormatPipe,NgxDocViewerModule, DetailedStepProgressbarComponent],
@@ -149,7 +149,7 @@ export class ExperienceDetailsComponent {
     this.subscription = this.http.getData(`PreonboardingExperience/Deletebyid/${item.id}`).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.openPopup.openSuccess("Experience Details deleted successfully");
+        this.openPopup.openSuccess("Experience details deleted successfully");
       },
       error: (err: any) => {
         this.modalService.dismissAll();

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { filter, forkJoin, Observable, Subscription } from 'rxjs';
@@ -31,6 +31,7 @@ import { Skeleton } from 'primeng/skeleton';
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class DashboardComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -64,7 +65,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   birthDaysData: IBirthDaysData[] = [];
   anniversariesData: IAnniversariesData[] = [];
   newJoineesData: INewJoinee[] = [];
-  attendanceData: AttendanceResponse = {}  as AttendanceResponse;
+  attendanceData: AttendanceResponse = {} as AttendanceResponse;
   punchPairs = [] as IdayLogs[];
   logsDuration!: string;
   selectedDate!: Date;
@@ -79,7 +80,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private http: HttpService,
-    private cdr: ChangeDetectorRef,
     public rbac: RbacService,
     public modalService: NgbModal,
   ) { }
@@ -97,9 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
@@ -118,11 +116,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
@@ -227,38 +223,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loadEvents() {
     this.eventsLoader = true;
     forkJoin([
-      this.http.getData(
-        `Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`
-      ) as Observable<IBirthDaysData[]>,
-      this.http.getData(
-        `Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`
-      ) as Observable<IAnniversariesData[]>,
-      this.http.getData(
-        `Employeedata/Newjoinee?year=${this.currentYear}&months=${this.currentMonth}`
-      ) as Observable<INewJoinee[]>,
-      this.http.getData(
-        `Employeedata/ActiveEmployeeMarriageAnniversary?months=${this.currentMonth}`
-      ) as Observable<IMarriageAnniversary[]>
-      ,
+      this.http.getData(`Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`) as Observable<IBirthDaysData[]>,
+      this.http.getData(`Employeedata/ActiveEmployeesAnniversaries?year=${this.currentYear}&months=${this.currentMonth}`) as Observable<IAnniversariesData[]>,
+      this.http.getData(`Employeedata/Newjoinee?year=${this.currentYear}&months=${this.currentMonth}`) as Observable<INewJoinee[]>,
+      this.http.getData(`Employeedata/ActiveEmployeeMarriageAnniversary?months=${this.currentMonth}`) as Observable<IMarriageAnniversary[]>,
     ]).subscribe(
       ([birthdays, anniversaries, newJoinees, marriageAnniversary]) => {
         const today = new Date();
         const todayDay = today.getDate();
         const todayMonth = today.getMonth(); // 0-based
-        const birthDayEvents = birthdays
-          .filter((b) => {
-            const dob = new Date(b.dob);
-            return dob.getDate() === todayDay && dob.getMonth() === todayMonth;
-          })
-          .map((b) => ({
-            type: 'Birthday',
-            name: this.getFullName({
-              firstName: b.firstName,
-              middleName: b.middleName,
-              lastName: b.lastName,
-            }),
-            date: b.dob,
-          }));
+        const birthDayEvents = birthdays.filter((b) => {
+          const dob = new Date(b.dob);
+          return dob.getDate() === todayDay && dob.getMonth() === todayMonth;
+        }).map((b) => ({
+          type: 'Birthday',
+          name: this.getFullName({
+            firstName: b.firstName,
+            middleName: b.middleName,
+            lastName: b.lastName,
+          }),
+          date: b.dob,
+        }));
         const anniversaryEvents = anniversaries
           .filter((a) => {
             const doj = new Date(a.dateOfJoining);
@@ -328,11 +313,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   openModalLarge(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
-    });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', });
   }
 
   dayLogsData(
@@ -376,8 +357,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {
     this.attendanceLoader = true;
     this.subscription = this.http.getData(
-        `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
-      )
+      `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
+    )
       .subscribe({
         next: (data: any) => {
           this.attendanceLoader = false;
@@ -405,13 +386,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
-        label: 'Inactive',
-        link: '/employee-management/inactive-employees',
-        count: this.Inactive,
-        icon: '/employee-data/inactive-employee-icon.png',
-        employeementTypeColor: '#E54288',
-        permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
+        label: 'Probation',
+        link: '/employee-management/probation-employees',
+        count: this.PROBDATA,
+        icon: '/employee-data/Probation-Employee-icon.png',
+        employeementTypeColor: '#FF2E22',
+        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
       },
+
       {
         label: 'Prospective',
         link: '/employee-management/prospective-employees',
@@ -421,12 +403,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
-        label: 'Probation',
-        link: '/employee-management/probation-employees',
-        count: this.PROBDATA,
-        icon: '/employee-data/Probation-Employee-icon.png',
-        employeementTypeColor: '#FF2E22',
-        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
+        label: 'Inactive',
+        link: '/employee-management/inactive-employees',
+        count: this.Inactive,
+        icon: '/employee-data/inactive-employee-icon.png',
+        employeementTypeColor: '#E54288',
+        permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
 
       {
@@ -437,14 +419,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         employeementTypeColor: '#0B3A83',
         permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
-      {
-        label: 'Inactive Trainees',
-        link: '/employee-management/inactive-interns',
-        count: this.traineeInactive,
-        icon: '/employee-data/inactive-trainee-icon.png',
-        employeementTypeColor: '#1064CA',
-        permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
-      },
+
       {
         label: 'Prospective Trainees',
         link: '/employee-management/prospective-interns',
@@ -452,6 +427,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
         icon: '/employee-data/prospective-trainee-icon.png',
         employeementTypeColor: '#53D33A',
         permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+      },
+      {
+        label: 'Inactive Trainees',
+        link: '/employee-management/inactive-interns',
+        count: this.traineeInactive,
+        icon: '/employee-data/inactive-trainee-icon.png',
+        employeementTypeColor: '#1064CA',
+        permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
     ];
     // this.filterTabsByRbac();
@@ -466,15 +449,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.EmployeeInfoData = {
       datasets: [
         {
-          data: [
-            this.Active,
-            this.Inactive,
-            this.ACTDATA,
-            this.Trainee,
-            this.traineeactive,
-            this.traineeInactive,
-            this.PROBDATA,
-          ],
+          data: [this.Active, this.PROBDATA, this.ACTDATA, this.Inactive, this.traineeactive, this.Trainee, this.traineeInactive,],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         },

@@ -1,20 +1,17 @@
 <div class="custom-main-component-container w-100">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content pt-2">
     <div class="heading-content">
-      <div class="commpoment-name cursor" (click)="navigate()">Leave Category<span class="ms-1">
-        <i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name cursor" (click)="navigate()">Leave Category
+        <i class="bi bi-chevron-double-right ms-1"></i>
+      </div>
       <div class="component-header">Clone Leave Category</div>
-      <!-- <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div> -->
     </div>
   </div>
 
   <form autocomplete="off" [formGroup]="leavePolicyForm" (ngSubmit)="onSubmit()">
-    <div class="custom-setting-right-content w-100 p-3">
+    <div class="custom-setting-right-content fields-data-container">
       <div class="row">
         <div class="component-sub-header mb-3">Location/Shift</div>
-
         <!-- Year -->
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="subLocation">Year<span class="text-danger">*</span></label>
@@ -120,10 +117,14 @@
           <label class="form-label custom-label mb-2" for="email">Valid Days <span class="text-danger">*</span></label>
           <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
             autocomplete="off" placeholder="Please enter valid days" required>
-          <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && 
-                                              (leavePolicyForm.get('validity')?.touched  )">
-            Valid Days is required
+           <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && (leavePolicyForm.get('validity')?.touched  )">
+            <span *ngIf="leavePolicyForm.get('validity')?.errors?.['required']">
+              Valid Days is required
+            </span>
           </div>
+          <span class="error-msg" *ngIf="leavePolicyForm.get('validity')?.errors?.['max']">
+            Valid Days cannot exceed 366
+          </span>
         </div>
 
         <!-- Color -->
@@ -284,6 +285,9 @@
             <span *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['min']">
               Future Dates Allowed days must be at least 1
             </span>
+            <span  *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['maxExceeded']">
+             Value cannot exceed the Valid Days limit
+            </span>
           </div>
         </div>
 
@@ -316,6 +320,9 @@
             </span>
             <span *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['min']">
               Past Dates Allowed days must be at least 1
+            </span>
+            <span  *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['maxExceeded']">
+             Value cannot exceed the Valid Days limit
             </span>
           </div>
         </div>
@@ -350,6 +357,9 @@
             <span *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['min']">
               Carry Forward days must be at least 1
             </span>
+            <span  *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['maxExceeded']">
+             Value cannot exceed the Valid Days limit
+            </span>
           </div>
         </div>
 
@@ -382,6 +392,9 @@
             </span>
             <span *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['min']">
               Encash days must be at least 1
+            </span>
+            <span  *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['maxExceeded']">
+             Value cannot exceed the Valid Days limit
             </span>
           </div>
         </div>
@@ -416,6 +429,9 @@
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['min']">
               Maximum Leaves Allowed Per Month must be at least 1
             </span>
+            <span  *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['maxExceeded']">
+             Value cannot exceed the Valid Days limit
+            </span>
           </div>
         </div>
 
@@ -449,13 +465,16 @@
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['min']">
               Maximum Leaves Allowed Per Month must be at least 1
             </span>
+            <span  *ngIf="leavePolicyForm.get('probationDays')?.errors?.['maxExceeded']">
+             Value cannot exceed the Valid Days limit
+            </span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Form submission buttons -->
-    <div class="d-flex justify-content-end gap-3 pt-3">
+    <div class="d-flex justify-content-end gap-3">
       <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)">Cancel</button>
       <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leavePolicyForm.invalid">Save</button>
     </div>

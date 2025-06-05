@@ -180,9 +180,13 @@ export const MY_INFO_PERSONAL_ROUTES = [
       {  route: '/reports/attendence-reports/permission-report',permission: 'Permission Report.view' } ,
       {  route: '/reports/attendence-reports/regularization-report',permission: 'Regularization Report.view' } 
   ];
+
+  export const POLICY_REPORTS_TABS = [
+      { route: '/reports/policy-reports/policy-acknowledgment-report', permission: 'Policy Acknowledgement Report.view' }
+  ];
   
   export const ASSEST_ALLOCATION_TABS = [
-      { route: '/assets-management/all-assets', permission:  'Asset Management - All.view'} ,
+      //{ route: '/assets-management/all-assets', permission:  'Asset Management - All.view'} ,
       { route: '/assets-management/available-assets',permission:  'Asset Management - Available.view'} ,
       { route: '/assets-management/allocated-assets', permission:  'Asset Management - Allocated.view'} ,
       { route: '/assets-management/under-maintenance-assets',permission:  'Asset Management - Under Maintenance.view'} ,
@@ -191,7 +195,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   
   
   export const DESK_ALLOCATION_TABS = [
-      {  route: '/desk/management/all-desks', permission:  'Desk Allocation - All.view' } ,
+      // {  route: '/desk/management/all-desks', permission:  'Desk Allocation - All.view' } ,
       {  route: '/desk/management/available-desks', permission:  'Desk Allocation - Available.view' } ,
       {  route: '/desk/management/allocated-desk', permission:  'Desk Allocation - Allocated.view' } ,
       {  route: '/desk/management/under-maintenance-desk', permission:  'Desk Allocation - Under Maintenance.view' } ,

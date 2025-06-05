@@ -339,50 +339,7 @@ input:focus {
 }
 
 // letter main content
-.letter-data-content {
-    width: 100%;
 
-    .letter-page-content {
-        height: 380mm;
-        width: 270mm;
-        position: relative;
-        background-image: url(/images/water-mark.png);
-        background-repeat: no-repeat;
-        background-position: center;
-        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-        overflow: hidden;
-
-        .letter-page-sub-content {
-            padding: 1.25rem 3.75rem;
-            font-size: var(--fontsize14);
-            color: #000000;
-        }
-
-        .letter-header {
-            font-weight: 500;
-            font-size: var(--fontsize18);
-        }
-
-        .letter-footer {
-            width: 270mm;
-            background-color: #06274F;
-            color: #fff;
-            position: absolute;
-            bottom: 0px;
-            padding: 0.75rem;
-
-            .company-name {
-                font-size: var(--fontsize14);
-                font-weight: 600;
-            }
-
-            .company-address {
-                font-size: var(--fontsize12);
-                font-weight: 500;
-            }
-        }
-    }
-}
 
 // custom -select dropdown
 .custom-dropdown-menu {

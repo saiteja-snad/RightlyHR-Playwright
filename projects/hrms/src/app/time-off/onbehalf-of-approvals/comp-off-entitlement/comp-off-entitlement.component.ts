@@ -410,6 +410,7 @@ export class CompOffEntitlementComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.compoffModuleId,
+        onBehalfOfApproval : true,
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -421,6 +422,7 @@ export class CompOffEntitlementComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.compoffModuleId,
+        onBehalfOfApproval : true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,
@@ -470,6 +472,7 @@ export class CompOffEntitlementComponent {
           status: 'Approved',
           comments: comments,
           moduleId: environment.compoffModuleId,
+          onBehalfOfApproval : true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -480,6 +483,7 @@ export class CompOffEntitlementComponent {
           requestProcessedBy: approvedBy,
           status: 'Approved',
           comments: comments,
+          onBehalfOfApproval : true,
           moduleId: environment.compoffModuleId,
           headerRequests: [
             {
@@ -530,6 +534,7 @@ export class CompOffEntitlementComponent {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.compoffModuleId,
+          onBehalfOfApproval : true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -540,6 +545,7 @@ export class CompOffEntitlementComponent {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
+          onBehalfOfApproval : true,
           moduleId: environment.compoffModuleId,
           headerRequests: [
             {

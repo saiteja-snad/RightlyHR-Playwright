@@ -9,3 +9,9 @@ input:focus{
     pointer-events: none;
     opacity: 0.5;
 }
+
+.soft-copy-letter {
+    background-image: url('/images/snad-letter-bg.jpg') !important;
+    padding-top: 10rem !important;
+    // margin-bottom: 2rem;
+}

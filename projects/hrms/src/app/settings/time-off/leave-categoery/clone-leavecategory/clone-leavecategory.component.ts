@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { OpenModalService } from '../../../../services/open-modal.service';
 @Component({
   selector: 'app-clone-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -45,7 +46,9 @@ export class CloneLeavecategoryComponent {
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
-  constructor(private fb: FormBuilder, private http: HttpService, private router: Router, private modalService: NgbModal) { }
+
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,private router: Router, private modalService: NgbModal) { }
+
 
   ngOnInit(): void {
     this.intializeForm();
@@ -71,7 +74,7 @@ export class CloneLeavecategoryComponent {
       type: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
-      validity: ['', [Validators.required, this.restrictInputNumbersValidator]],
+      validity: ['', [Validators.required, this.restrictInputNumbersValidator,Validators.max(366)]],
       categoryColor: ['#000000', Validators.required],
       parentId: [undefined],
       // Additional Information
@@ -101,7 +104,44 @@ export class CloneLeavecategoryComponent {
       isProbationAllowed: [undefined, Validators.required],
       probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
+    this.validateAllowedDays()
   }
+
+
+
+
+  validateAllowedDays(){
+   this.setupMaxValidation('futureDatesAllowedDays', 'validity');
+   this.setupMaxValidation('pastDatesAllowedDays', 'validity');
+   this.setupMaxValidation('carryForwardAllowedValue', 'validity');
+   this.setupMaxValidation('encashAllowedValue', 'validity');
+   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+   this.setupMaxValidation('probationDays', 'validity');
+}
+
+
+setupMaxValidation(controlName: string, maxControlName: string): void {
+  const control = this.leavePolicyForm.get(controlName);
+  const maxControl = this.leavePolicyForm.get(maxControlName);
+
+  if (!control || !maxControl) return;
+
+  control.valueChanges.subscribe(value => {
+    const max = maxControl.value;
+
+    if (value && +value > max) {
+      control.setErrors({ ...control.errors, maxExceeded: true });
+    } else {
+      if (control.hasError('maxExceeded')) {
+        const errors = { ...control.errors };
+        delete errors['maxExceeded'];
+        control.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+  });
+}
+
 
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
@@ -332,61 +372,62 @@ export class CloneLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm;
-    // let payload = {
-    //   applicableYear: this.leavePolicyForm.value.applicableYear,
-    //   locationID: this.leavePolicyForm.value.locationID.id,
-    //   subLocation: this.leavePolicyForm.value.subLocation.id,
-    //   shiftId: this.leavePolicyForm.value.shiftId,
-    //   type: this.leavePolicyForm.value.type,
-    //   name: this.leavePolicyForm.value.name,
-    //   categoryCode: this.leavePolicyForm.value.categoryCode,
-    //   validity: this.leavePolicyForm.value.validity,
-    //   categoryColor: this.leavePolicyForm.value.categoryColor,
-    //   parentId: this.leavePolicyForm.value.parentId,
-    //   allowedGender: this.leavePolicyForm.value.allowedGender,
-    //   allowedMaritalStatus: this.leavePolicyForm.value.allowedMaritalStatus,
-    //   excludeWeekends: this.leavePolicyForm.value.excludeWeekends,
-    //   excludeHolidays: this.leavePolicyForm.value.excludeHolidays,
-    //   isOptionalHoliday: this.leavePolicyForm.value.isOptionalHoliday,
-    //   allowedHalfDay: this.leavePolicyForm.value.allowedHalfDay,
-    //   isApplicableProRataLeave: this.leavePolicyForm.value.isApplicableProRataLeave,
-    //   futureDatesAllowed: this.leavePolicyForm.value.futureDatesAllowed,
-    //   futureDatesAllowedDays: this.leavePolicyForm.value.futureDatesAllowedDays ?? 0,
-    //   pastDateAllowed: this.leavePolicyForm.value.pastDateAllowed,
-    //   pastDatesAllowedDays: this.leavePolicyForm.value.pastDatesAllowedDays ?? 0,
-    //   carryForwardAllowed: this.leavePolicyForm.value.carryForwardAllowed,
-    //   carryForwardAllowedValue: this.leavePolicyForm.value.carryForwardAllowedValue ?? 0,
-    //   encashAllowedType: this.leavePolicyForm.value.encashAllowedType,
-    //   encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
-    //   noticeperiodAllowedType: this.leavePolicyForm.value.noticeperiodAllowedType,
-    //   noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
-    //   isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
-    //   probationDays: this.leavePolicyForm.value.probationDays ?? 0,
-    //   addedBy: 3356,
-    //   lastModifiedBy: 3356,
-    //   status :"Pending for submission",
-    //   addedDate : new Date(),
-    //   lastModifiedDate : new Date()
-    // };
-    // this.http.postdata('OrgLeavesCategories', payload).subscribe({
-    //   next: (data: any) => {
-    //     this.confirmation.openSuccessModal('Leave Category added successfully');
-    //     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
-    //     this.leavePolicyForm.reset();
-    //   },
-    //   error: (err: any) => {
-    //     console.log(err);
-    //     this.confirmation.openErrorModal(err.error.message);
-    //   }
-    // });
+    let payload = {
+      applicableYear: this.leavePolicyForm.value.applicableYear,
+      locationID: this.leavePolicyForm.value.locationID.id,
+      subLocation: this.leavePolicyForm.value.subLocation.id,
+      shiftId: this.leavePolicyForm.value.shiftId,
+      type: this.leavePolicyForm.value.type,
+      name: this.leavePolicyForm.value.name,
+      categoryCode: this.leavePolicyForm.value.categoryCode,
+      validity: this.leavePolicyForm.value.validity,
+      categoryColor: this.leavePolicyForm.value.categoryColor,
+      parentId: this.leavePolicyForm.value.parentId,
+      allowedGender: this.leavePolicyForm.value.allowedGender,
+      allowedMaritalStatus: this.leavePolicyForm.value.allowedMaritalStatus,
+      excludeWeekends: this.leavePolicyForm.value.excludeWeekends,
+      excludeHolidays: this.leavePolicyForm.value.excludeHolidays,
+      isOptionalHoliday: this.leavePolicyForm.value.isOptionalHoliday,
+      allowedHalfDay: this.leavePolicyForm.value.allowedHalfDay,
+      isApplicableProRataLeave: this.leavePolicyForm.value.isApplicableProRataLeave,
+      futureDatesAllowed: this.leavePolicyForm.value.futureDatesAllowed,
+      futureDatesAllowedDays: this.leavePolicyForm.value.futureDatesAllowedDays ?? 0,
+      pastDateAllowed: this.leavePolicyForm.value.pastDateAllowed,
+      pastDatesAllowedDays: this.leavePolicyForm.value.pastDatesAllowedDays ?? 0,
+      carryForwardAllowed: this.leavePolicyForm.value.carryForwardAllowed,
+      carryForwardAllowedValue: this.leavePolicyForm.value.carryForwardAllowedValue ?? 0,
+      encashAllowedType: this.leavePolicyForm.value.encashAllowedType,
+      encashAllowedValue: this.leavePolicyForm.value.encashAllowedValue ?? 0,
+      noticeperiodAllowedType: this.leavePolicyForm.value.noticeperiodAllowedType,
+      noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
+      isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
+      probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      addedBy: 3356,
+      lastModifiedBy: 3356,
+      status :"Pending for submission",
+      addedDate : new Date(),
+      lastModifiedDate : new Date()
+    };
+    this.http.postdata('OrgLeavesCategories', payload).subscribe({
+      next: (data: any) => {
+        this.confirmation.openSuccessModal('Leave Category added successfully');
+        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+        this.leavePolicyForm.reset();
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.confirmation.openErrorModal(err.error.message);
+      }
+    });
   }
 
   resetForm(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.leavePolicyForm.reset();
+    
   }
 
   cancel() {
+    this.leavePolicyForm.reset();
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
   }
 

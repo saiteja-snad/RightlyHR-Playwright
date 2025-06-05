@@ -15,24 +15,22 @@ import { permissionsData } from './permissionsdata';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
-import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-permissions',
   imports: [
     CommonModule,
     FormsModule,
     AutoCompleteModule,
-    SettingsRolePermissionsModuleTabsComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent,
     TranslateModule,
-    NgbPopoverModule
+    NgbPopoverModule,
+    SettingsHeaderComponent,
   ],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
@@ -543,6 +541,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   sidebarTabsFields = [
     'Dashboard',
     'My Info',
+    'Employees',
     'Events',
     'Time-Off',
     'Expenses',
@@ -557,6 +556,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management',
     'Holidays',
     'Attendance',
+    'Blood Bank'
 
   ];
   expensesModuleTabs = [
@@ -652,9 +652,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Rejected (Time Off)',
     'Request Leave Button',
     'Cancelled (Time Off)',
-    'Org Leave Balance',
-    'Team Leave Balance Summary (Time Off)',
-    'Team Leave Balance (Time Off)'
+    'My Team (Time Off)',
+  
   ];
 
   // ////////
@@ -664,27 +663,31 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Processed (WFH)',
     'Cancel (WFH)',
     'Rejected (WFH)',
-    'Request WFH Button'
+    'Request WFH Button',
+    'My Team (WFH)',
   ];
   compOffModuleSubTabs = [
     'Waiting For Approval (Comp Off)',
     'Approved (Comp Off)',
     'Processed (Comp Off)',
     'Rejected (Comp Off)',
-    'Request Comp Off Button'
+    'Request Comp Off Button',
+    'My Team (Comp Off)',
   ];
   permissionsModuleSubTabs = [
     'Waiting For Approval (Permissions)',
     'Approved (Permissions)',
     'Cancel (Permissions)',
     'Rejected (Permissions)',
-    'Request Permission Button'
+    'Request Permission Button',
+    'My Team (Permissions)',
   ];
   regularizationModuleSubTabs = [
     'Waiting For Approval (Regularization)',
     'Approved (Regularization)',
     'Rejected (Regularization)',
-    'Processed (Regularization)'
+    'Processed (Regularization)',
+    'My Team (Regularization)',
   ];
   onBehalfOfModuleSubTabs = [
     'Waiting For Approval (On Behalf Of)',
@@ -763,7 +766,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Standard Reports',
     'Custom Reports',
     'Attendance reports',
-    'Monthly Attendance Reports'
+    'Monthly Attendance Reports',
+      'Org Leave Balance',
+    'Team Leave Balance Summary',
+    'Team Leave Balance'
   ];
   standardReportsTabsFields = [
     'Employee Master Data',

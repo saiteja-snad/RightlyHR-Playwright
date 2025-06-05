@@ -94,7 +94,8 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
       next: (res: any) => {
         // console.log(response);
-        this.mangeractiveEmplist = res.map((employee: any) => {
+        const myTeam = res.filter((e: any) => e.isAccess);
+        this.mangeractiveEmplist = myTeam.map((employee: any) => {
           return {
             ...employee,
             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''

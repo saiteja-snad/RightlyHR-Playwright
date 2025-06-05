@@ -568,6 +568,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         status: "Approved",
         comments: comments,
         moduleId: environment.leavesModuleId,
+        onBehalfOfApproval : true,
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
@@ -580,6 +581,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         status: 'Approved',
         comments: comments,
         moduleId: environment.leavesModuleId,
+        onBehalfOfApproval : true,
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: [
           {
@@ -638,6 +640,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         comments: comments,
         isPlannedLeave: false,
         moduleId: environment.leavesModuleId,
+        onBehalfOfApproval : true,
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -650,6 +653,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         comments: comments,
         isPlannedLeave: false,
         moduleId: environment.leavesModuleId,
+        onBehalfOfApproval : true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader?.id,
@@ -706,6 +710,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.leavesModuleId,
+        onBehalfOfApproval : true,
         headerRequests: this.selectedProducts.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage
@@ -717,6 +722,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.leavesModuleId,
+        onBehalfOfApproval : true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader?.id,

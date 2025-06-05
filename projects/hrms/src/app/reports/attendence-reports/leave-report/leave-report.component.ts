@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { filter, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { AttandaceReportTabsComponent } from '../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component';
 import * as XLSX from 'xlsx';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -19,10 +18,8 @@ import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../../shared/modules-info';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -31,14 +28,12 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     NgxDaterangepickerBootstrapDirective,
     CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent,
     DropdownModule,
     SelectModule,
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent,
-    NgbPopoverModule
+   
 ],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss'
@@ -107,8 +102,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.getAttendanceReports();
     this.getTeam();
     this.getMyTeam();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -126,24 +119,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     })
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/attendence-reports/leave-report': MODULE_INFOS.ATTENDANCE_LEAVE_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
-  }
 
 clearAllFilters(): void {
     this.LeaveReportForm.reset();
@@ -471,6 +446,9 @@ clearAllFilters(): void {
   //   const form = this.LeaveReportForm.value;
   //   return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
   // }
+ navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

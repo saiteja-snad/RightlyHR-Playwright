@@ -2,11 +2,9 @@
   <div class="component-header-content">
     <!-- Header -->
        <div class="heading-content">
-      <div class="commpoment-name">Attendance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Yearly Summary Report</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div>
+     
     </div>
 
     <form autocomplete="off" [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport()">
@@ -75,7 +73,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view') && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
+            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')
+             && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredYearlyRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -91,18 +90,10 @@
     </form>
   </div>
 
-  <!--Module Information-->
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
 
 
-  <div class="d-flex gap-3 w-100">
-    <div class="component-left-tabs-container">
-      <app-attandace-report-tabs />
-    </div>
 
-    <div class="component-right-content">
+
       @if (isLoading) {
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -135,11 +126,11 @@
               <td>{{ record.location ?? '-' }}</td>
               <td>{{ record.subLocation ?? '-' }}</td>
               <td>{{ record.shift ?? '-' }}</td>
-              <td>{{ record.entitlementYear ? record.entitlementYear : '-' }}</td>
+              <td>{{ record.year ? record.year : '-' }}</td>
               <td>{{ record.leaveType ?? '-' }}</td>
               <td>{{ record.entitled ?? '-' }}</td>
               <td>{{ record.availed ?? '-' }}</td>
-              <td>{{ record.balanced ?? '-' }}</td>
+              <td>{{ record.balance ?? '-' }}</td>
             </tr>
             }
             } @else {
@@ -152,5 +143,3 @@
       </div>
       }
     </div>
-  </div>
-</div>

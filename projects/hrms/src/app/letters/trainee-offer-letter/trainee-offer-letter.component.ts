@@ -329,7 +329,7 @@ export class TraineeOfferLetterComponent {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
       error: (error: any) => {
@@ -499,7 +499,7 @@ export class TraineeOfferLetterComponent {
               this.disableFields = false; // User clicked "OK," enable fields
               this.traineeEmpData = data.checkofferletter;
               console.log(this.traineeEmpData);
-              this.selectedCountryCode = this.traineeEmpData?.contactnumbercountryflag;
+              this.selectedCountryCode = this.traineeEmpData?.contactNumberCountryFlag;
               this.loadingCode = false;
               this.traineeEmpData.note = this.traineeEmpData.note;
               this.patchForm(this.traineeEmpData);
@@ -638,7 +638,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.employeeId;
     this.loading = false;
-    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Trainee offer letter generated successfully');
   }
 
 
@@ -1002,7 +1002,7 @@ export class TraineeOfferLetterComponent {
       next: (data: any) => {
         //this.Approvednotification();
         if (data) {
-          this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
+          this.conformationPopup.openSuccessModal('Request for approval sent successfully');
         }
         this.Approvalloader = false;
         setTimeout(() => {
@@ -1022,7 +1022,7 @@ export class TraineeOfferLetterComponent {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate <= offerIssuedDate) {
+      if (offerExpiryDate < offerIssuedDate) {
         this.isExpiryDateValid = true;
       } else {
         this.isExpiryDateValid = false;

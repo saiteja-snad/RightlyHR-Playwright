@@ -193,7 +193,7 @@ export class AddProspectiveEmployeeComponent {
         if (res.statusCode == 201) {
           this.result = res.employeeData;
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Prospective Employee Created Successfully');
+          this.conformationPopup.openSuccessModal('Prospective employee created successfully');
           this.http.activeTabSubject.next(this.result.employeeId);
           if (this.result.employeeId != null) {
             const jobdata = {

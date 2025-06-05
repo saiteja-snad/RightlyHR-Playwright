@@ -206,7 +206,7 @@ checkDuplicate(): void {
       },
       error: (error) => {
         if (error.error) {
-          this.confirmation.openErrorModal(error.error.Message);
+          this.confirmation.openErrorModal("Holidays already exixts with selected year, location, sublocation and shift!");
         }
       }
     });

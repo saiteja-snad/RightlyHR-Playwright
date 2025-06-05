@@ -20,7 +20,7 @@ export class LettersInfoComponent {
   componentname: string = '';
   routeToInfoMap!: { [key: string]: string };
 
-  constructor(private router: Router, public rbac: RbacService) { }
+  constructor(public router: Router, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
@@ -95,5 +95,13 @@ export class LettersInfoComponent {
     else if (this.router.url === '/letters/probation-extension-letter') {
       this.componentname = 'Probation Extension Letter';
     }
+  }
+
+  navigateEmployeeManagement() {
+    this.router.navigate(['/employee-management']);
+  }
+
+  navigateletterTabs() {
+    this.router.navigate(['/letters/lettes-tabs']);
   }
 }

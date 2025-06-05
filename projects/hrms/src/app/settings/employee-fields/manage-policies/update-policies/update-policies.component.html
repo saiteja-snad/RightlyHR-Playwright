@@ -1,32 +1,29 @@
 <div class="custom-main-component-container w-100">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    
-      <div class="heading-content">
-            <div class="commpoment-name cursor"(click)="Cancel()">Manage Policies<span class="ms-1"><i
-                        class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">{{"Update Policies" | translate}}</div>
-            <!-- <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div> -->
-        </div>
+  <div class="component-header-content pt-2">
+    <div class="heading-content">
+      <div class="commpoment-name cursor" (click)="Cancel()">Manage Policies
+        <i class="bi bi-chevron-double-right ms-1"></i>
+      </div>
+      <div class="component-header">{{'Update Policies'| translate}}</div>
+    </div>
   </div>
+
   <form autocomplete="off" [formGroup]="policyForm" (ngSubmit)="submit()">
-    <div class="custom-setting-right-content w-100 p-3">
+    <div class="custom-setting-right-content fields-data-container">
       <!--Select Fields-->
-      <div class="d-flex gap-3 mb-3">
+      <div class="data-header-content">
         <!-- Year -->
         <div>
           <label for="year" class="form-label custom-label mb-2">
             {{ "Year" | translate }}<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-      
             <p-select [options]="yearDetails" optionLabel="name" placeholder="Select year" formControlName="year"
               class="form-select custom-select">
             </p-select>
           </div>
         </div>
-      
+
         <!-- Location -->
         <div>
           <label for="location" class="form-label custom-label mb-2">
@@ -39,7 +36,7 @@
             </p-select>
           </div>
         </div>
-      
+
         <!-- Sub Location -->
         <div>
           <label for="subLocation" class="form-label custom-label mb-2">
@@ -51,7 +48,7 @@
               class="form-select custom-select"></p-select>
           </div>
         </div>
-      
+
         <!-- Shift -->
         <div>
           <label for="shift" class="form-label custom-label mb-2">
@@ -62,9 +59,10 @@
               placeholder="Select shift" class="form-select custom-select"></p-select>
           </div>
         </div>
-      
+
         <div class="pt-4 mt-1">
-          <button type="button" class="custom-btn btn-primary px-4" (click)="addPolicyRow(); hidePublishCloneButtons = true">
+          <button type="button" class="custom-btn btn-primary px-4"
+            (click)="addPolicyRow(); hidePublishCloneButtons = true">
             <i class="bi bi-plus me-2"></i>{{'Add New' | translate}}
           </button>
         </div>
@@ -75,7 +73,8 @@
           class="card custom-background-card p-3 mb-3">
           <div class="d-flex gap-3">
             <div class="w-100">
-              <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
+              <label class="form-label custom-label">{{'Policy Name' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyName" class="form-control custom-input w-100"
                 placeholder="Please enter policy name" maxlength="50"
                 (keydown)="formValidations.restrictInitialSpace($event)" />
@@ -83,14 +82,13 @@
                 {{'Policy Name is required'|translate}}
               </div>
             </div>
-        
-        
             <div class="w-100">
               <label class="form-label custom-label">
                 {{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span>
               </label>
               <div class="d-flex align-items-center gap-2">
-                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0" accept=".pdf,image/*"/>
+                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0"
+                  accept=".pdf,image/*" />
                 <div [ngbPopover]="newPopContent" triggers="click" placement="top">
                   <i class="bi bi-info-circle-fill cursor"></i>
                 </div>
@@ -99,25 +97,42 @@
                 <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
               </ng-template>
             </div>
-        
+
+            <!-- Description moved here -->
             <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <label class="form-label custom-label">{{'Description' | translate}}<span class="text-danger">*</span></label>
-                </div>
-                <div>
-                  <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
-                    class="btn p-0 border-0 bg-transparent">
-                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
-                  </button>
-                </div>
-              </div>
+              <label class="form-label custom-label">{{'Description' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
                 placeholder="Please enter description" maxlength="50"
                 (keydown)="formValidations.restrictInitialSpace($event)" />
-              <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.invalid"
+              <div
+                *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
                 class="error-msg">
                 {{'Policy Description is required'|translate}}
+              </div>
+            </div>
+
+            <!-- Acknowledgement Toggle -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+                <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
+              </div>
+              <div class="small-blue-toggle mt-2">
+                <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+              </div>
+            </div>
+
+            <!-- Email Notification Toggle + Delete Button -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+                <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
+                  class="btn p-0 border-0 bg-transparent">
+                  <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                </button>
+              </div>
+              <div class="small-blue-toggle mt-2">
+                <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
               </div>
             </div>
           </div>
@@ -125,27 +140,28 @@
       </div>
 
       <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
-      <div class="d-flex gap-3 justify-content-end pt-4">
-        <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
-          {{'Cancel' | translate}}
-        </button>
-        <button type="button" class="custom-btn clone-btn px-5" (click)="clonePolicy1()">
-          {{'Clone' | translate}}
-        </button>
-        <button type="button" class="custom-btn publish-btn px-5" (click)="publish()">
-          {{'Publish' | translate}}
-        </button>
-        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="this.policies.invalid">
-          {{'Update' | translate}}
-        </button>
-      </div>
+    </div>
+    <div class="d-flex gap-3 justify-content-end">
+      <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
+        {{'Cancel' | translate}}
+      </button>
+      @if(!hidePublishCloneButtons){
+      <button type="button" class="custom-btn clone-btn px-5" (click)="clonePolicy1()">
+        {{'Clone' | translate}}
+      </button>
+      <button type="button" class="custom-btn publish-btn px-5" (click)="publish()">
+        {{'Publish' | translate}}
+      </button>
+      }
+      <button type="submit" class="custom-btn btn-primary px-5" [disabled]="this.policies.invalid">
+        {{'Update' | translate}}
+      </button>
     </div>
   </form>
 </div>
 
 <ng-template #deletepopup let-modal>
   <div class="result-popup-content" ngbAutofocus>
-
     <div>
       <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
       <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
@@ -155,5 +171,4 @@
       <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
     </div>
   </div>
-
 </ng-template>

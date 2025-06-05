@@ -2,7 +2,7 @@
     <div class="card custom-background-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <span class="component-sub-header">Onboarding Details</span>
+                <span class="component-sub-header">Onboarding Info</span>
             </div>
             @if(canAccess('view','onboarding')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
@@ -179,7 +179,7 @@
                 </div>
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="remoteLogin" class="form-label custom-label mb-2">Remote Login</label>
+                    <label for="remoteLogin" class="form-label custom-label mb-2">Allow Work From Home</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="remoteLogin" optionLabel="name" optionValue="value"
                             formControlName="remoteLogin" placeholder="Select Remote Login"
@@ -188,10 +188,11 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('remoteLogin')?.invalid && onboardingForm.get('remoteLogin')?.touched">
-                        Remote Login is required
+                        Allow Work From Home is required
                     </div>
                 </div>
 
+                @if (onboardingForm.get('remoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
                     <div class="custom-p-select-content">
@@ -204,8 +205,9 @@
                         Work Location is required
                     </div>
                 </div>
+            }
 
-                @if (onboardingForm.get('remoteLogin')?.value === false) {
+                @if (onboardingForm.get('remoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
                     <div class="custom-p-select-content">
@@ -224,7 +226,6 @@
         </form>
     </div>
 
-    @if(this.rbac.allowedToAccess('Employee Trainee Details.view')){
     <div class="card custom-background-card p-4" *ngIf="empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active'">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
@@ -274,5 +275,5 @@
             </div>
         </form>
     </div>
-    }
+    
 </div>

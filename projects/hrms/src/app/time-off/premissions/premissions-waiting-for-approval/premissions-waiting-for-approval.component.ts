@@ -58,6 +58,7 @@ export class PremissionsWaitingForApprovalComponent
   ];
   cancelForm!: FormGroup;
   isLoading = false;
+  permissionForLoggedInUser: boolean = true;
   constructor(
     private http: HttpService,
     private signalService: SignalsService,
@@ -128,6 +129,7 @@ export class PremissionsWaitingForApprovalComponent
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
     this.dataload = true;
+     this.permissionForLoggedInUser = true
     this.http
       .getData(`RegularizationRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))
@@ -151,7 +153,8 @@ export class PremissionsWaitingForApprovalComponent
   onClick(data: any, content: any) {
     this.selectedFields = data;
     console.log(this.selectedFields);
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.cancelForm.reset();
   }
   //function to cancle the leave
   cancelpermissionsSubmit() {
@@ -204,6 +207,7 @@ export class PremissionsWaitingForApprovalComponent
   getDataEMPPermissions() {
     let empId = this.selectempid;
     this.dataload = true;
+     this.permissionForLoggedInUser = false;
     this.http
       .getData(`RegularizationRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))

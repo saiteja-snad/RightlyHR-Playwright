@@ -111,7 +111,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
          console.log('getEmployeesByhierarchy', response);
          if (response && response.length) {
            // No filter
-           this.getEmployeeInfo = response.map((employee: any) => ({
+            const myTeam = response.filter((e: any) => e.isAccess);
+           this.getEmployeeInfo = myTeam.map((employee: any) => ({
              ...employee,
              fullName: `${
                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
@@ -417,7 +418,7 @@ pendingCount = 0;
           );
           
           this.pastDatesAllowed = parseInt(
-            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDays')?.value ?? '0',
+            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDaysAllowed')?.value ?? '0',
             10
           );
         },

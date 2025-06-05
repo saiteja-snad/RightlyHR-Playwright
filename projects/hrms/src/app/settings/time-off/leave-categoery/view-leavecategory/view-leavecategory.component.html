@@ -1,18 +1,15 @@
 <div class="custom-main-component-container w-100">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-
+  <div class="component-header-content pt-2">
     <div class="heading-content">
-      <div class="commpoment-name cursor" (click)="navigate()">Leave Category<span class="ms-1"><i
-            class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name cursor" (click)="navigate()">Leave Category
+        <i class="bi bi-chevron-double-right ms-1"></i>
+      </div>
       <div class="component-header">View Leave Category</div>
-      <!-- <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div> -->
     </div>
   </div>
 
   <form autocomplete="off" [formGroup]="leavePolicyForm" (ngSubmit)="onSubmit()">
-    <div class="custom-setting-right-content w-100 p-3">
+    <div class="custom-setting-right-content fields-data-container">
       <div class="row">
         <div class="component-sub-header mb-3">Location/Shift</div>
         <!-- Year -->
@@ -440,5 +437,28 @@
         </div>
       </div>
     </div>
+    <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(deletepopup)">{{'Cancel'|translate}}</button>
+            <button type="button" class="custom-btn clone-btn px-5"  (click)="cloneCategory(leavePolicyForm)" 
+            [disabled]="leavePolicyForm.invalid">{{'Clone'|translate}}</button>
+      </div>
   </form>
 </div>
+
+
+
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary "
+                (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary " (click)="resteAndNavigateToPublished()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

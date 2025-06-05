@@ -8,39 +8,29 @@
                 <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Dashboard
             </li>
             }
-            <!--Employee Management-->
-            <li class="nav-item menu-item-clear" (click)="resetDropdown()" [ngClass]="{ 'active': ActiveRoute() }">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
-                    </div>
-                    <ul class="dropdown-menu custom-employee-dropdown">
-                        <app-employee-management-tabs />
-                    </ul>
-                </div>
-            </li>
+
             <!--My Info-->
-            <!-- @if(this.rbac.allowedToAccess('My Info.view')){
+            @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/myinfo')">
-                <img [src]="isActiveRoute('/myinfo') ? 'main-menu-icons/user-account-color.png' : 'main-menu-icons/user-account.png'"
-                    alt="Icon" class="main-menu-icon">My Info
-            </li>
-            } -->
-            <!--Events-->
-            @if(this.rbac.allowedToAccess('Events.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/events');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/events')">
-                <img src="main-menu-icons/calendar-favorite.png" alt="Icon" class="main-menu-icon">Events
+                <img src="/main-menu-icons/my-Info-icon.png" alt="Icon" class="main-menu-icon">My Info
             </li>
             }
+
+            <!--Employee Management-->
+            @if(this.rbac.allowedToAccess('Employees.view')){
+            <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/employee-management"
+                [ngClass]="{ 'active': ActiveRoute() }">
+                <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
+            </li>
+            }
+
             <!--Time Off-->
             @if(this.rbac.allowedToAccess('Time-Off.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/clock.png"
-                            alt="Icon" class="main-menu-icon">Time-Off
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">Time-Off
                     </div>
                     <ul class="dropdown-menu">
                         <app-time-off-tabs />
@@ -48,21 +38,7 @@
                 </div>
             </li>
             }
-            <!--Policies-->
-            @if(this.rbac.allowedToAccess('Policies.view')){
-            <li class="nav-item menu-item-clear" [routerLink]="['/policies']" (click)="resetDropdown()"
-                routerLinkActive="active-nav-link" #policies="routerLinkActive">
-                <img src="main-menu-icons/policies.png"
-                    alt="Icon" class="main-menu-icon">Policies
-            </li>
-            }
-            <!--Calendar-->
-            @if(this.rbac.allowedToAccess('Calendar.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar-view');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/calendar-view')">
-                <img src="main-menu-icons/calendar.png" alt="Icon" class="main-menu-icon">Calendar
-            </li>
-            }
+
             <!--Attendance-->
             @if(this.rbac.allowedToAccess('Attendance.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/attendance');resetDropdown()"
@@ -70,19 +46,31 @@
                 <img src="main-menu-icons/finger-print.png" alt="Icon" class="main-menu-icon">Attendance
             </li>
             }
+
             <!--Reports-->
             @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/reports')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-reports-main-tabs />
-                    </ul>
-                </div>
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/reports');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/reports')">
+                <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
             </li>
             }
+
+            <!--It Support-->
+            @if(this.rbac.allowedToAccess('IT Support.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/it-support');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/it-support')">
+                <img src="main-menu-icons/it-support.png" alt="Icon" class="main-menu-icon">IT Support
+            </li>
+            }
+
+            <!--Calendar-->
+            @if(this.rbac.allowedToAccess('Calendar.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar-view');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/calendar-view')">
+                <img src="main-menu-icons/calendar.png" alt="Icon" class="main-menu-icon">Calendar
+            </li>
+            }
+
             <!--Selected Item form the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"
@@ -90,6 +78,7 @@
                 <img [src]="selectedDropdownModule.activeIcon" alt="Icon" class="main-menu-icon">
                 {{ selectedDropdownModule.label }}
             </li>
+
             <!--Drop Menu Items-->
             <li class="nav-item text-wrap align-items-center">
                 <div class="btn-group dropend custom-main-menu-dropdown">
@@ -111,20 +100,16 @@
                     </ul>
                 </div>
             </li>
+
             @if(this.rbac.allowedToAccess('Settings Icon.view')){
-            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/settings')">
-                <div class="btn-group dropend custom-main-menu-dropdown">
-                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-gear gear-icon"></i>Settings
-                    </div>
-                    <ul class="dropdown-menu">
-                        <app-settings-main-header-tabs />
-                    </ul>
-                </div>
+            <li class="nav-item menu-item-clear" (click)="resetDropdown()" routerLink="/settings"
+                routerLinkActive="active-nav-link">
+                <i class="bi bi-gear gear-icon"></i>Settings
             </li>
             }
         </ul>
     </div>
+    
     <!--Settings content-->
     <div class="sidenav-footer-content">
         <div class="d-flex justify-content-center w-100">

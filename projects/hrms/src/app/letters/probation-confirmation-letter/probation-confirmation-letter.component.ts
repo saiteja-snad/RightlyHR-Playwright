@@ -298,22 +298,32 @@ export class ProbationConfirmationLetterComponent {
   }
 
   //function to patch the values in the form to the template
-  pathValuesFuction() {
-    const formValues = this.probationConfirmationForm.value;
-    this.probationLetterData.firstName = formValues.employeeId?.firstName,
-    this.probationLetterData.middleName = formValues.employeeId?.middleName,
-    this.probationLetterData.lastName = formValues.employeeId?.lastName,
-    this.probationLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
-    this.probationLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
-    this.probationLetterData.department = formValues.employeeId?.departmentName,
-    this.probationLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation + ', ' + formValues.employeeId?.jobDetails?.lopcation,
-    this.probationLetterData.issuedDate = formValues.issuedDate,
-    this.probationLetterData.effectiveDate = formValues.effectiveDate,
-    this.probationLetterData.Copys = formValues.Documenttype;
-    this.probationLetterData.authorityName = formValues.authorityid?.fullName,
-    this.probationLetterData.authorityDesignation = formValues.authorityid?.designation,
-    this.probationLetterData.employeeId = formValues.employeeId?.employeeId
-  }
+pathValuesFuction() {
+  const formValues = this.probationConfirmationForm.value;
+
+  const employee = formValues.employeeId;
+  const jobDetails = employee?.jobDetails;
+  const authority = formValues.authorityid;
+
+  this.probationLetterData.firstName = employee?.firstName || '';
+  this.probationLetterData.middleName = employee?.middleName || '';
+  this.probationLetterData.lastName = employee?.lastName || '';
+  this.probationLetterData.fusionEmpId = employee?.fusionEmpId || '';
+  this.probationLetterData.jobRole = jobDetails?.jobRole || '';
+  this.probationLetterData.department = employee?.departmentName || '';
+  
+  this.probationLetterData.workLocation = jobDetails?.subLocation && jobDetails?.lopcation
+    ? `${jobDetails.subLocation}, ${jobDetails.lopcation}`
+    : jobDetails?.subLocation || jobDetails?.lopcation || '';
+
+  this.probationLetterData.issuedDate = formValues.issuedDate || '';
+  this.probationLetterData.effectiveDate = formValues.effectiveDate || '';
+  this.probationLetterData.Copys = formValues.Documenttype || '';
+  this.probationLetterData.authorityName = authority?.fullName || '';
+  this.probationLetterData.authorityDesignation = authority?.designation || '';
+  this.probationLetterData.employeeId = employee?.employeeId || '';
+}
+
 
   //to post probation letter email Details to the offerletter table
   probationConfirmationemail() {

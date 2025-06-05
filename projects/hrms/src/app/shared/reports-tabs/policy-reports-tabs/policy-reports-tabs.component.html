@@ -1,0 +1,11 @@
+<div class="d-flex gap-3 align-items-center flex-wrap">
+  <div *ngFor="let tab of filteredTabs;">
+      <div class="settings-sub-tabs-card" [routerLink]="tab.route">
+          <div class="sub-tabs-header">
+              <img [src]="tab.icon" alt="Icon" class="icon">
+              <div class="label-name">{{ tab.label }}</div>
+          </div>
+          <div class="subject-text">{{tab.description}}</div>
+      </div>
+  </div>
+</div>

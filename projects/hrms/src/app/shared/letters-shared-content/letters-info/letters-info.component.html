@@ -1,8 +1,20 @@
 <div class="heading-content">
-    <div class="component-header">{{componentname | translate}}</div>
-    <div>
-        <img src="/icons/moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+    <div class="commpoment-name" (click)="navigateEmployeeManagement()">Employee Management</div>
+    <div class="commpoment-name">
+        <i class="bi bi-chevron-double-right"></i>
     </div>
+    @if (router.url === '/letters/lettes-tabs') {
+    <div class="component-header">Generate Documents</div>
+    }@else {
+    <div class="commpoment-name" (click)="navigateletterTabs()">Generate Documents</div>
+    <div class="commpoment-name">
+        <i class="bi bi-chevron-double-right"></i>
+    </div>
+    <div class="component-header">{{componentname | translate}}</div>
+    }
+    <!-- <div>
+        <img src="/icons/moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+    </div> -->
 </div>
 
 <!--Module Information-->

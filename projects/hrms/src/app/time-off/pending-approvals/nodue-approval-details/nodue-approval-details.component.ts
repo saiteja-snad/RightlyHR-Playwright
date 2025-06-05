@@ -137,7 +137,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
           ...status,
           nodue: true,
         }));
-        this.conformationPopup.openSuccessModal('No Due Request Approved Successfully');
+        this.conformationPopup.openSuccessModal('No due request approved successfully');
         this.getAllPendingApprovalsNoDue();
       },
       error: (reason: any) => {
@@ -170,7 +170,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
           ...status,
           nodue: true,
         }));
-        this.conformationPopup.openSuccessModal('No Due Request rejected successfully');
+        this.conformationPopup.openSuccessModal('No due request rejected successfully');
         this.getAllPendingApprovalsNoDue();
       },
       error: (reason: any) => {

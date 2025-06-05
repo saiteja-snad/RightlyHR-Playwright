@@ -1,20 +1,15 @@
-.graph-grid {
+.custom-graph-grid {
     display: flex;
-    align-items: center;
     gap: 1rem;
     position: relative;
 
-    .p-tablist-tab-list {
-        background-color: transparent !important;
-    }
-
     // total leave summary
-    .total-leave-balance-graph-content {
-        width: 21rem;
+    .custom-graph-content {
+        width: 24rem;
         padding: 0.75rem 1rem;
         border-radius: 1rem;
         border: 1px solid #DCE3E9;
-        background-color: var(--white-color);
+        background: #FFFFFF;
         display: flex;
         align-items: center;
 
@@ -31,28 +26,24 @@
         .chart-content {
             position: relative;
             width: max-content;
-            height: max-content;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             .total-count-content {
                 position: absolute;
-                top: 50%;
-                left: 35%;
-                text-align: center;
 
                 .count {
                     font-weight: 700;
-                    font-size: 16px;
+                    font-size: 18px;
                     color: #0F358A;
-                    line-height: 100%;
-                    letter-spacing: 0%;
                 }
 
                 .total-count-text {
                     font-weight: 400;
                     font-size: 10px;
                     color: #999999;
-                    line-height: 100%;
-                    letter-spacing: 0%;
                 }
             }
         }
@@ -66,74 +57,64 @@
             font-size: 8px;
         }
 
-        .employee-type-text {
+        .list-style-none {
             font-weight: 400;
             font-size: 10px;
             letter-spacing: 0%;
+        }
+
+        .employee-type-text {
+            line-height: 100%;
             color: #747474;
         }
     }
 
-    //scrollable buttons stylings
-    .p-tablist-tab-list {
-        background: none !important;
-        border: none !important;
-    }
-
-    .p-tab {
-        padding: 0rem 0.5rem !important;
-    }
-
-    .p-tab-active {
-        background: none !important;
-        border: 0rem !important;
-    }
-
-    .p-tablist-nav-button {
-        box-shadow: none !important;
-    }
-
-    .p-tablist-active-bar {
-        background: none !important;
-    }
-
-    .p-icon {
-        width: 1.5rem;
-        height: 1.5rem;
-        color: var(--primary-color);
-    }
-
-    .employee-category-container {
-        width: calc(100% - 21rem);
+    .cards-grid-container {
+        width: 100%;
+        align-items: center;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
 
         .active-nav-link {
-            box-shadow: 0px 0px 10px 0px #0B3A8340;
+            box-shadow: 0px 0px 9.62px 0px #0B3A8340 !important;
         }
 
-        .employee-category-card {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            width: 13.5rem !important;
-            padding: 1rem 0.75rem;
-            border: 1px solid #DCE3E9 !important;
+        .employees-category-card {
+            width: 100%;
+            height: 100%;
+            padding: 0.75rem 1rem;
+            background: #FFFFFF;
             border-radius: 0.625rem;
-            margin: 0.25rem;
+            line-height: 17.32px;
+            letter-spacing: 0%;
+            margin: 0rem;
+            display: flex;
+            cursor: pointer;
 
-            .icon {
-                width: 2.5rem;
-                height: 2.5rem;
+            .accent-bar {
+                width: 0.325rem;
+                height: 100%;
+                border-radius: 1rem;
             }
 
-            .content-text {
+            .text-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .label-name {
                 font-weight: 600;
-                font-size: 12px;
-                line-height: 18px;
-                letter-spacing: 0%;
-                text-align: center;
+                font-size: var(--fontsize14);
+                color: #686868;
+            }
+
+            .count-text {
+                font-weight: 600;
+                font-size: var(--fontsize16);
                 color: #222222;
-                text-wrap: wrap;
             }
         }
     }

@@ -251,7 +251,7 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
 
       const file = this.eventAttachment;
       if (file) {
-        const filePath = `/Profilepics/${this.Employeeinfo.employeeId}`;
+        const filePath = `/Events/${this.Employeeinfo.employeeId}`;
         this.uploadEventAttachmentForUpdate(filePath, file, payload);
       } else {
         this.saveUpdatedEvent(payload);

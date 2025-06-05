@@ -541,6 +541,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   sidebarTabsFields = [
     'Dashboard',
     'My Info',
+    'Employees',
     'Events',
     'Time-Off',
     'Expenses',

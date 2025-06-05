@@ -99,8 +99,10 @@ export class AllocatedAssetsListComponent {
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
-    this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-    this.http.assetsUpdateLocationId(this.selectedLocationId);
+
+  this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
+     this.http.assetsUpdateLocationId(this.selectedLocationId); 
+
     this.getFilteredData();
     this.getassetsCategory()
     this.getjobLocationList()
@@ -327,118 +329,121 @@ export class AllocatedAssetsListComponent {
     this.isToggledvender = false
   }
 
-  //   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+//   getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
 
-  //     const params = {
-  //       first: pagenum,
-  //       rows: pagesize,
-  //       searchQuery: this.searchQuery,
-  //       locationid: locationid,
-  //       status: Assetsstatus,
-  //       sublocationid: sublocationid
-  //     };
-  //     this.loading = true;
-  //     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
-  //       next: (res: any) => {
-  //          let items = res.items;
-  //     // Frontend filtering by assigned person's name (if searchQuery exists)
-  //  if (this.searchQuery && this.searchQuery.trim().length > 0) {
-  //   const lowerSearch = this.searchQuery.toLowerCase().trim();
+//     const params = {
+//       first: pagenum,
+//       rows: pagesize,
+//       searchQuery: this.searchQuery,
+//       locationid: locationid,
+//       status: Assetsstatus,
+//       sublocationid: sublocationid
+//     };
+//     this.loading = true;
+//     this.subscription = this.http.getassetsdesk("AssetMaster", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery).subscribe({
+//       next: (res: any) => {
+//          let items = res.items;
+//     // Frontend filtering by assigned person's name (if searchQuery exists)
+//  if (this.searchQuery && this.searchQuery.trim().length > 0) {
+//   const lowerSearch = this.searchQuery.toLowerCase().trim();
 
-  //   items = items.filter((item: any) => {
-  //     const assignedTo = item.assignedTo;
-  //     if (!assignedTo) return false;
+//   items = items.filter((item: any) => {
+//     const assignedTo = item.assignedTo;
+//     if (!assignedTo) return false;
 
-  //     const firstName = assignedTo.firstName?.trim() || '';
-  //     const middleName = assignedTo.middleName?.trim() || '';
-  //     const lastName = assignedTo.lastName?.trim() || '';
+//     const firstName = assignedTo.firstName?.trim() || '';
+//     const middleName = assignedTo.middleName?.trim() || '';
+//     const lastName = assignedTo.lastName?.trim() || '';
 
-  //     // Build full name and normalize spacing
-  //     const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').toLowerCase();
+//     // Build full name and normalize spacing
+//     const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').toLowerCase();
 
-  //     // Match full or partial name
-  //     return fullName.includes(lowerSearch);
-  //   });
-  // }
+//     // Match full or partial name
+//     return fullName.includes(lowerSearch);
+//   });
+// }
 
-  //        this.assetslist.next(items);
-  //         this.loading = false;
-  //         this.collectionSize = res.totalCount;
-  //       },
-  //       error: (error: any) => {
-  //         this.loading = false;
-  //         console.error('Error fetching assets:', error);
-  //         this.loading = false
+//        this.assetslist.next(items);
+//         this.loading = false;
+//         this.collectionSize = res.totalCount;
+//       },
+//       error: (error: any) => {
+//         this.loading = false;
+//         console.error('Error fetching assets:', error);
+//         this.loading = false
 
-  //       }
-  //     });
-  //   }
+//       }
+//     });
+//   }
 
-  getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
-    const params = {
-      first: pagenum,
-      rows: pagesize,
-      searchQuery: this.searchQuery,
-      locationid: locationid,
-      status: Assetsstatus,
-      sublocationid: sublocationid
-    };
+getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Assetsstatus: any) {
+  const params = {
+    first: pagenum,
+    rows: pagesize,
+    searchQuery: this.searchQuery,
+    locationid: locationid,
+    status: Assetsstatus,
+    sublocationid: sublocationid
+  };
 
-    this.loading = true;
+  this.loading = true;
 
-    this.subscription = this.http.getassetsdesk(
-      "AssetMaster",
-      params.locationid,
-      params.sublocationid,
-      params.status,
-      params.first,
-      params.rows,
-      params.searchQuery
-    ).subscribe({
-      next: (res: any) => {
-        let items = res.items;
+  this.subscription = this.http.getassetsdesk(
+    "AssetMaster",
+    params.locationid,
+    params.sublocationid,
+    params.status,
+    params.first,
+    params.rows,
+    params.searchQuery
+  ).subscribe({
+    next: (res: any) => {
+      let items = res.items;
 
-        if (this.searchQuery && this.searchQuery.trim().length > 0) {
-          const lowerSearch = this.searchQuery.toLowerCase();
+      if (this.searchQuery && this.searchQuery.trim().length > 0) {
+        const lowerSearch = this.searchQuery.toLowerCase();
 
-          items = items.filter((item: any) => {
-            const assetCategory = (item.assetCategory || '').toLowerCase();
-            const assetSubCategory = (item.assetSubCategory || '').toLowerCase();
-            const serialNumber = (item.serialNumber || '').toLowerCase();
-            const assetModel = (item.assetModel || '').toLowerCase();
-            const status = (item.status || '').toLowerCase();
-            const assetId = (item.assignedTo?.assetIdName || '').toLowerCase();
+        items = items.filter((item: any) => {
+          const assetCategory = (item.assetCategory || '').toLowerCase();
+          const assetSubCategory = (item.assetSubCategory || '').toLowerCase();
+          const serialNumber = (item.serialNumber || '').toLowerCase();
+          const assetModel = (item.assetModel || '').toLowerCase();
+          const status = (item.status || '').toLowerCase();
+          const assetId = (item.assignedTo?.assetIdName || '').toLowerCase();
+
             const assignedTo = item.assignedTo || {};
             const firstName = (assignedTo.firstName || '').toLowerCase();
             const middleName = (assignedTo.middleName || '').toLowerCase();
             const lastName = (assignedTo.lastName || '').toLowerCase();
             const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
             const lowerSearch = this.searchQuery.toLowerCase().trim();
-            return (
-              assetCategory.includes(lowerSearch) ||
-              assetSubCategory.includes(lowerSearch) ||
-              serialNumber.includes(lowerSearch) ||
-              assetModel.includes(lowerSearch) ||
-              status.includes(lowerSearch) ||
-              fullName.includes(lowerSearch) ||
-              firstName.includes(lowerSearch) ||
-              middleName.includes(lowerSearch) ||
-              assetId.includes(lowerSearch) ||
-              lastName.includes(lowerSearch)
-            );
-          });
-        }
 
-        this.assetslist.next(items);
-        this.collectionSize = items.length;
-        this.loading = false;
-      },
-      error: (error: any) => {
-        console.error('Error fetching assets:', error);
-        this.loading = false;
+          return (
+            assetCategory.includes(lowerSearch) ||
+            assetSubCategory.includes(lowerSearch) ||
+            serialNumber.includes(lowerSearch) ||
+            assetModel.includes(lowerSearch) ||
+            status.includes(lowerSearch) ||
+            fullName.includes(lowerSearch) ||
+            firstName.includes(lowerSearch) ||
+            middleName.includes(lowerSearch) ||
+            assetId.includes(lowerSearch) ||
+            lastName.includes(lowerSearch)
+          );
+        });
       }
-    });
-  }
+
+      this.assetslist.next(items);
+      this.collectionSize = items.length;
+      this.loading = false;
+    },
+    error: (error: any) => {
+      console.error('Error fetching assets:', error);
+      this.loading = false;
+    }
+  });
+}
+
 
 
   getvendor() {

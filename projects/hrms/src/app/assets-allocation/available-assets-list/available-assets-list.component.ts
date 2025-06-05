@@ -413,6 +413,36 @@ allZeroesIfMaxLength(): ValidatorFn {
       });
   }
 
+  // getSubLocationByid(selectedLocation: any): void {
+  //   this.locationfromdata.get('subLocationId')?.enable()
+  //   this.assetForm.get('subLocationId')?.enable()
+  //   if (selectedLocation && selectedLocation.id) {
+  //     this.subscription = this.http
+  //       .getData(
+  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+  //       )
+  //       .subscribe({
+  //         next: (data: any) => {
+  //           console.log('Sub Location Data:', data);
+
+  //           if (data.length === 0) {
+  //             this.subLocationsDropdown = []; // Reset if no sub-locations are found
+  //           } else {
+  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+  //           }
+  //           this.assetForm.patchValue({ subLocation: null });
+  //         },
+  //         error: (err: any) => {
+  //           console.error('Error fetching sub-location data:', err);
+  //           this.subLocationsDropdown = []; // Reset on error
+  //           this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
+  //         },
+  //       });
+  //   } else {
+  //     this.subLocationsDropdown = []; // Reset if no location is selected
+  //   }
+  // }
+
   getSubLocationByid(selectedLocation: any): void {
   this.locationfromdata.get('subLocationId')?.enable();
   this.assetForm.get('subLocationId')?.enable()

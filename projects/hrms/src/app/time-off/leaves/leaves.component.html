@@ -13,6 +13,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
+            @if (rbac.allowedToAccess('My Team (Time Off).view')) {
             <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
@@ -21,6 +22,7 @@
                     (onChange)="onCheckemployee($event.value)">
                 </p-select>
             </div>
+            }
             <div *ngIf="disaplyapplybutton">
                 @if (rbac.allowedToAccess('Request Leave Button.view')) {
                 <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary">Request

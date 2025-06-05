@@ -46,7 +46,9 @@ export class CloneLeavecategoryComponent {
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
+
   constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,private router: Router, private modalService: NgbModal) { }
+
 
   ngOnInit(): void {
     this.intializeForm();
@@ -72,7 +74,7 @@ export class CloneLeavecategoryComponent {
       type: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
-      validity: ['', [Validators.required, this.restrictInputNumbersValidator]],
+      validity: ['', [Validators.required, this.restrictInputNumbersValidator,Validators.max(366)]],
       categoryColor: ['#000000', Validators.required],
       parentId: [undefined],
       // Additional Information
@@ -102,7 +104,44 @@ export class CloneLeavecategoryComponent {
       isProbationAllowed: [undefined, Validators.required],
       probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
+    this.validateAllowedDays()
   }
+
+
+
+
+  validateAllowedDays(){
+   this.setupMaxValidation('futureDatesAllowedDays', 'validity');
+   this.setupMaxValidation('pastDatesAllowedDays', 'validity');
+   this.setupMaxValidation('carryForwardAllowedValue', 'validity');
+   this.setupMaxValidation('encashAllowedValue', 'validity');
+   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+   this.setupMaxValidation('probationDays', 'validity');
+}
+
+
+setupMaxValidation(controlName: string, maxControlName: string): void {
+  const control = this.leavePolicyForm.get(controlName);
+  const maxControl = this.leavePolicyForm.get(maxControlName);
+
+  if (!control || !maxControl) return;
+
+  control.valueChanges.subscribe(value => {
+    const max = maxControl.value;
+
+    if (value && +value > max) {
+      control.setErrors({ ...control.errors, maxExceeded: true });
+    } else {
+      if (control.hasError('maxExceeded')) {
+        const errors = { ...control.errors };
+        delete errors['maxExceeded'];
+        control.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+  });
+}
+
 
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
@@ -384,10 +423,11 @@ export class CloneLeavecategoryComponent {
 
   resetForm(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
-    this.leavePolicyForm.reset();
+    
   }
 
   cancel() {
+    this.leavePolicyForm.reset();
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
   }
 

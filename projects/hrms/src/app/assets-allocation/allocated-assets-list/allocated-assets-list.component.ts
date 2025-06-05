@@ -46,7 +46,7 @@ export class AllocatedAssetsListComponent {
   isToggledWarranty = false;
   assetForm!: FormGroup;
   assetslist = new BehaviorSubject<IAsset[]>([])
-  searchQuery='';
+  searchQuery = '';
   dateMismatch = false;
   assetinactivedropdrown: any[] = []
   minEndDate = ''
@@ -80,7 +80,7 @@ export class AllocatedAssetsListComponent {
   transactionid: any;
   transitionsid: any;
   employeid: any;
-    minpurchesDate: any;
+  minpurchesDate: any;
   maxpurchesDate: any;
   constructor(
     private readonly fb: FormBuilder,
@@ -90,7 +90,7 @@ export class AllocatedAssetsListComponent {
     public conformationPopup: OpenModalService,
     public rbac: RbacService,
     private readonly datepipe: DatePipe,
-   public formValidation: FormValidationService,
+    public formValidation: FormValidationService,
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -99,8 +99,10 @@ export class AllocatedAssetsListComponent {
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
+
   this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
      this.http.assetsUpdateLocationId(this.selectedLocationId); 
+
     this.getFilteredData();
     this.getassetsCategory()
     this.getjobLocationList()
@@ -116,11 +118,11 @@ export class AllocatedAssetsListComponent {
     this.intialfromundermatince();
     this.intialtransferfrom();
     const today = new Date();
-  // Set max to today's date
-  this.maxpurchesDate = today.toISOString().split('T')[0];
-  // Set min to Jan 1st of the current year
-  const startOfYear = new Date(today.getFullYear(), 0, 1); 
-  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
+    // Set max to today's date
+    this.maxpurchesDate = today.toISOString().split('T')[0];
+    // Set min to Jan 1st of the current year
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    this.minpurchesDate = startOfYear.toISOString().split('T')[0];
   }
 
   initialform() {
@@ -168,19 +170,19 @@ export class AllocatedAssetsListComponent {
       enddate: [null],
       comments: [null],
       vendorname: [{ value: null, disabled: true }, []],
-      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(15),Validators.minLength(10), Validators.pattern("[0-9]+$"),this.allZeroesIfMaxLength()]]
+      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(15), Validators.minLength(10), Validators.pattern("[0-9]+$"), this.allZeroesIfMaxLength()]]
     })
   }
-//if user put only zero multipul times mobile no field
-allZeroesIfMaxLength(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = String(control.value || '');
-    if (/^0{10,}$/.test(value)) {
-      return { allZeroesIfMaxLength: true };
-    }
-    return null;
-  };
-}
+  //if user put only zero multipul times mobile no field
+  allZeroesIfMaxLength(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = String(control.value || '');
+      if (/^0{10,}$/.test(value)) {
+        return { allZeroesIfMaxLength: true };
+      }
+      return null;
+    };
+  }
 
   initialassiginform() {
     this.assiginForm = this.fb.group({
@@ -242,7 +244,7 @@ allZeroesIfMaxLength(): ValidatorFn {
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
         this.getassetsdata(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
-        this.getcount(Value,  this.selectedSubLocationId,this.Status);
+        this.getcount(Value, this.selectedSubLocationId, this.Status);
       }
     })
   }
@@ -408,12 +410,14 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           const assetModel = (item.assetModel || '').toLowerCase();
           const status = (item.status || '').toLowerCase();
           const assetId = (item.assignedTo?.assetIdName || '').toLowerCase();
+
             const assignedTo = item.assignedTo || {};
             const firstName = (assignedTo.firstName || '').toLowerCase();
             const middleName = (assignedTo.middleName || '').toLowerCase();
             const lastName = (assignedTo.lastName || '').toLowerCase();
             const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
             const lowerSearch = this.searchQuery.toLowerCase().trim();
+
           return (
             assetCategory.includes(lowerSearch) ||
             assetSubCategory.includes(lowerSearch) ||
@@ -439,6 +443,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
     }
   });
 }
+
 
 
   getvendor() {
@@ -529,25 +534,25 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
     return new Date().toISOString().split('T')[0]
   }
   onRowsChange() {
-    this.page = 1;        
-    this.first = 0; 
-    this.getassetsdata(this.page, this.pageSize, null,null, this.Status);
+    this.page = 1;
+    this.first = 0;
+    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
   }
 
   onPageChange(event: any) {
-     this.page = event.page + 1;
+    this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.getassetsdata(this.page, this.pageSize, null,null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
   }
 
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
-     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.getassetsdata(this.page, this.pageSize, null,null, this.Status);
+    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
   }
   onSearchChange(event: any) {
 
@@ -644,7 +649,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10), this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -1043,7 +1048,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Released Successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null,this.selectedSubLocationId,this.Status);
+            this.getcount(null, this.selectedSubLocationId, this.Status);
           },
           error: (error) => {
             this.conformationPopup.openErrorModal("Asset Assigned Failed")
@@ -1131,7 +1136,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Reallocated Successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.getcount(null,this.selectedSubLocationId,this.Status);
+            this.getcount(null, this.selectedSubLocationId, this.Status);
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -1488,11 +1493,11 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
 
       });
   }
-  
+
   navigateToAsset(assetId: any) {
-    this.router.navigate(['/assets-management/view-assets-details'],{ queryParams: { id: assetId }});
+    this.router.navigate(['/assets-management/view-assets-details'], { queryParams: { id: assetId } });
   }
-  
+
   getcount(locationId: string | null, subLocationId: string | null, status: string) {
     const params = new URLSearchParams();
     if (locationId) params.append('locationid', locationId);
@@ -1526,12 +1531,12 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
     });
   }
   // update close pop up
-  openclosemodal(content:any){
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  openclosemodal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  opendeletclosepopup(){
-     this.modalService.dismissAll();
-     this.assetForm.reset();
+  opendeletclosepopup() {
+    this.modalService.dismissAll();
+    this.assetForm.reset();
   }
   ngOnDestroy(): void {
     this.destroy$.next(true);

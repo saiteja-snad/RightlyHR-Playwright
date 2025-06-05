@@ -3,7 +3,8 @@
         <div class="heading-content">
             <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
         </div>
 
@@ -37,11 +38,14 @@
                 </p-select>
             </div>
             }
-            @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view') || this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))
-            && ((selectedEmployeeOfHr?.employeeId != empdata.employeeId && selectedEmployeeOfHr != null) || (selectedEmployee?.employeeId != empdata.employeeId && 
+            @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view') ||
+            this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))
+            && ((selectedEmployeeOfHr?.employeeId != empdata.employeeId && selectedEmployeeOfHr != null) ||
+            (selectedEmployee?.employeeId != empdata.employeeId &&
             selectedEmployee != null))){
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata);this.selectedEmployee = null;this.selectedEmployeeOfHr = null">
-               <img src="icons/finger-print.png" alt="" class="finger-icon me-1">My Attendance
+            <button type="button" class="custom-btn btn-primary"
+                (click)="getAttendnaceData(empdata);this.selectedEmployee = null;this.selectedEmployeeOfHr = null">
+                <img src="icons/finger-print.png" alt="" class="finger-icon me-1">My Attendance
             </button>
             }
         </div>
@@ -98,7 +102,7 @@
                                 <div class="pe-4 mb-2">-</div>
                                 }
                             </div>
-    
+
                             <!--Sub status content-->
                             @if((item?.tags ?? []).length > 0 &&item.status){
                             <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
@@ -107,7 +111,7 @@
                                 }
                             </div>
                             }
-    
+
                             <!-- action btns content-->
                             <div class="d-flex gap-3 justify-content-end">
                                 @if(rbac.allowedToAccess('Request Leave.view')){
@@ -119,9 +123,8 @@
                                 @if(rbac.allowedToAccess('Request Regularization.view')){
                                 @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
                                 (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs &&
-                                    item.isRegularizationApplicable && currentMonth==selectedMonth
-                                     && item.employeeId==empdata.employeeId){ <a
-                                    class="application-btn"
+                                    item.isRegularizationApplicable && currentMonth==selectedMonth &&
+                                    item.employeeId==empdata.employeeId){ <a class="application-btn"
                                     (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                     <u>Regularization</u></a>
                                     }
@@ -142,7 +145,7 @@
             </table>
         </div>
 
-        @if(statusCounts$.value.length>0){ 
+        @if(statusCounts$.value.length>0){
         <div class="attendance-summary-table">
             <table class="w-100">
                 <thead>
@@ -157,8 +160,7 @@
                         <td>{{ status.value }}</td>
                     </tr>
                     }
-                    @if(statusCounts$.value.length<=0){ 
-                        <tr>
+                    @if(statusCounts$.value.length<=0){ <tr>
                         <app-no-data-found />
                         </tr>
                         }
@@ -182,7 +184,7 @@
 <ng-template #raiseregularization let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
+            <div>
                 <p class="popup-heading mb-0">Request Regularization</p>
             </div>
         </div>
@@ -192,7 +194,7 @@
                 (ngSubmit)="applyRgularization(regularizationForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="Date" class="form-label custom-label pt-2 mb-2">Date<span
+                        <label for="Date" class="form-label custom-label mb-2">Date<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="permissionDate" id="Date"
                             (keydown)="false" placeholder="Select Date" />
@@ -201,11 +203,9 @@
                             Permission Date is required.
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="duration" class="form-label custom-label pt-2 mb-2">Duration<span
+                    <div class="col-md-12 mb-3">
+                        <label for="duration" class="form-label custom-label  mb-2">Duration<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
@@ -216,9 +216,9 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="leaveType" class="form-label custom-label pt-2 mb-2">Regularization Category<span
-                                class="text-danger">*</span></label>
+                    <div class="col-md-12 mb-3">
+                        <label for="leaveType" class="form-label custom-label  mb-2">Regularization
+                            Category<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
                                 placeholder="Please select regularization type" id="leaveType"
@@ -252,7 +252,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(confirmationpopup)">{{'Cancel'}}</button>

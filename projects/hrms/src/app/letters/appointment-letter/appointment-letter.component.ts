@@ -326,6 +326,7 @@ export class AppointmentLetterComponent {
   sendEmployeeDetails() {
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.selectedEmployee).subscribe({
       next: (data: any) => {
+        this.spinnerLoader= false;
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -368,7 +369,7 @@ export class AppointmentLetterComponent {
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(()=>{
           this.navigateDashboard();
-        }, 2000);
+        }, 3000);
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -408,6 +409,7 @@ export class AppointmentLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
+         this.spinnerLoader= false;
         this.conformationPopup.openSuccessModal('Email sent successfully');
       },
       error: (err: any) => {
@@ -418,19 +420,21 @@ export class AppointmentLetterComponent {
       }
     })
   }
-
   //Post Asset Details
   postAssetDetails() {
     const formData= this.employeeForm.value;
     let postAssetDetails = {
       empid: this.selectedEmployee.employeeId,
-      assetType: formData.assertType.assetType1,
+      // assetType: formData.assertType.assetType1,
       maker: null,
       model: formData.model,
       serialNumber:formData.serial,
     };
     this.subscription = this.http.postdata('AssetTable', postAssetDetails).subscribe({
-      next: (data: any) => { },
+      next: (data: any) => {
+         this.spinnerLoader= false;
+       },
+      
       error: (reason: any) => {
         this.spinnerLoader= false;
       },

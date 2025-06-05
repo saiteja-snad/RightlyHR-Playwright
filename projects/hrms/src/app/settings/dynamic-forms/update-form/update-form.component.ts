@@ -682,39 +682,39 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     this.isDraftType = true;
     console.log(this.updateForm);
     
-    // if (this.updateForm.valid) {
-    //   const selectedRange = this.updateForm.value.ratingScaleRange;
-    //   this.updateDetails.ratingScaleRange = selectedRange ? `${selectedRange.minimum}-${selectedRange.maximum}` : null;
-    //   this.updateDetails.formName = this.updateForm.value.formHeader;
-    //   this.updateDetails.moduleId = Number(this.updateForm.value.moduleId.id);
-    //   this.updateDetails.overAllRating = this.updateForm.value.overAllRating;
-    //   this.updateDetails.cutOffRating = this.updateForm.value.cutOffRating;
-    //   this.updateDetails.createdBy = this.updateForm.value.createdBy;
-    //   this.updateDetails.updatedBy = this.updateDetails.employeeId;
-    //   this.updateDetails.formId = this.updateForm.value.formId;
-    //   this.updateDetails.sectionId = this.updateForm.value.sectionId;
-    //   this.updateDetails.formHeaderId = this.updateForm.value.formHeaderId;
-    //   this.updateDetails.status = "draft"
-    //   this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(this.updateForm.value.sections);
-    //   this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, { responseType: 'text' }).pipe(takeUntil(this.destroy$)).subscribe({
-    //     next: () => {
-    //       this.openSuccessModal('draft');
-    //       setTimeout(() => {
-    //         if (this.formStatus === 'draft') {
-    //           // Stay on the same page by reloading the current page
-    //           // location.reload();
-    //           this.router.navigate(['/settings/dynamic-forms/draft-forms'])
-    //         } else {
-    //           // Navigate to the forms tab for any other status
-    //           this.router.navigate(['/settings/dynamic-forms/active-forms']);
-    //         }
-    //       }, 1000);
-    //       this.isDraftType = false;
-    //     }, error: (error) => {
-    //       console.log(error);
-    //     }
-    //   });
-    // }
+    if (this.updateForm.valid) {
+      const selectedRange = this.updateForm.value.ratingScaleRange;
+      this.updateDetails.ratingScaleRange = selectedRange ? `${selectedRange.minimum}-${selectedRange.maximum}` : null;
+      this.updateDetails.formName = this.updateForm.value.formHeader;
+      this.updateDetails.moduleId = Number(this.updateForm.value.moduleId.id);
+      this.updateDetails.overAllRating = this.updateForm.value.overAllRating;
+      this.updateDetails.cutOffRating = this.updateForm.value.cutOffRating;
+      this.updateDetails.createdBy = this.updateForm.value.createdBy;
+      this.updateDetails.updatedBy = this.updateDetails.employeeId;
+      this.updateDetails.formId = this.updateForm.value.formId;
+      this.updateDetails.sectionId = this.updateForm.value.sectionId;
+      this.updateDetails.formHeaderId = this.updateForm.value.formHeaderId;
+      this.updateDetails.status = "draft"
+      this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(this.updateForm.value.sections);
+      this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, { responseType: 'text' }).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.openSuccessModal('draft');
+          setTimeout(() => {
+            if (this.formStatus === 'draft') {
+              // Stay on the same page by reloading the current page
+              // location.reload();
+              this.router.navigate(['/settings/dynamic-forms/draft-forms'])
+            } else {
+              // Navigate to the forms tab for any other status
+              this.router.navigate(['/settings/dynamic-forms/active-forms']);
+            }
+          }, 1000);
+          this.isDraftType = false;
+        }, error: (error) => {
+          console.log(error);
+        }
+      });
+    }
   }
 
   updateFormDetails(formId: number) {

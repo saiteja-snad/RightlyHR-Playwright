@@ -199,7 +199,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
       const apiEndpoints = [
         `Employeedata/ActiveEmployeesbday?months=${this.mixedMonth}`,
         `Employeedata/ActiveEmployeesAnniversaries?year=${this.changeYear}&months=${this.mixedMonth}`,
-        `Employeedata/Newjoinee?year=${this.changeYear}&months=${this.mixedMonth}`,
+        `Employeedata/Newjoinee?year=${this.changeYear}&month=${this.currentMonth}`,
         `orgHolidays/getOrgHoliday/${employeeId}?year=${this.changeYear}`,
       ];
       const apiPromises = apiEndpoints.map((endpoint) =>

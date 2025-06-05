@@ -22,7 +22,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 @Component({
   selector: 'app-trainee-approvals',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, InfoIconComponent],
+    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss'
 })
@@ -110,18 +110,20 @@ export class TraineeApprovalsComponent {
     this.modalService.dismissAll();
   }
 
-  comment = [] as any;
-  commentsFunction(Value: any, content: any) {
-    this.myApproverComments = Value.map((ele: any) => {
-      const parsedMetaData = JSON.parse(ele.meta);
-      return {
-        ...ele, 
-        metadata: parsedMetaData, 
-      };
-    });
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
-    this.comment = Value;
-  }
+commentsFunction(value: any, content: any) {
+  const commentsArray = Array.isArray(value) ? value : [value];
+  this.myApproverComments = commentsArray.map((ele: any) => {
+    const parsedMetaData = ele.meta ? JSON.parse(ele.meta) : {};
+    return {
+      ...ele,
+      metadata: parsedMetaData
+    };
+  });
+
+  this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+  this.comments = commentsArray;
+}
+
 
   onRowsChange() {
     this.first = 0;

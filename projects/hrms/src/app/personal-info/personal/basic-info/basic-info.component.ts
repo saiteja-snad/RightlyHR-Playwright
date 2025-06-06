@@ -283,20 +283,40 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
   }
 
+
+  
+
   showButtons(): void {
     this.buttons = !this.buttons;
-  
+    const fullPath = this.router.url;
+    
     if (this.buttons) {
       this.basicInfoForm.enable();
-            this.basicInfoForm.get('employeeId')?.disable();
+      
+      // Always disable employeeId field
+      this.basicInfoForm.get('employeeId')?.disable();
+      
+      // Handle different route cases
+      if (fullPath.startsWith('/myinfo')) {
+        this.basicInfoForm.get('fusionEmpId')?.disable();
+      }
+      
+      // Personal info route specific logic for fusionEmpId
+      if (fullPath.startsWith('/personalinfo/personal')) {
+        if (!this.rbac.allowedToAccess('Employee Info Basic Information.view')) {
+          this.basicInfoForm.get('fusionEmpId')?.disable();
+        }
+        if (this.rbac.allowedToAccess('Employee Info Basic Information.update')) {
+          this.basicInfoForm.get('fusionEmpId')?.enable();
+        }
+      }
     } else {
-            this.basicInfoForm.get('employeeId')?.disable();
+      this.basicInfoForm.get('employeeId')?.disable();
       this.basicInfoForm.disable();
       this.basicInfoForm.reset();
       this.getEmployeeId();
     }
   }
-  
 
   ngOnDestroy() {
     if (this.subscription) {

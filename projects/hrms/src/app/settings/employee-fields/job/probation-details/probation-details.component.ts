@@ -162,7 +162,7 @@ export class ProbationDetailsComponent {
   
   //  UPDATE
   updateJobroletype(modal: any) {
-    if (this.updateForm.valid && this.selectedId) {
+   
       const request  = {
         value: this.updateForm.value.Type.trim(),
         noOfDays: this.updateForm.value.Duration,
@@ -170,7 +170,7 @@ export class ProbationDetailsComponent {
         id:this.selectedId,
         isDeleted : false
       };
-console.log("request",request);
+        console.log("request",request);
       this.subscription = this.http.postdata('ProbationFlow/settingsprobationconfigupdate', request).subscribe({
         next: () => {
           modal.close();
@@ -183,7 +183,7 @@ console.log("request",request);
         }
       });
     }
-  }
+  
   // Method to open the delete modal dialog
   // DELETE
   opendelete(probationDetailslist: any) {

@@ -88,9 +88,7 @@
   <ng-template #maincontent>
     <div class="organization-chart-container">
       <ng-container *ngIf="!data?.length; else showChart">
-        <div class="no-data-content mb-0">
-          <app-no-data-found></app-no-data-found>
-        </div>
+        <app-no-data-found></app-no-data-found>
       </ng-container>
 
       <ng-template #showChart>

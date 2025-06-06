@@ -32,7 +32,7 @@ import { FormValidationsService } from '../../services/form-validations.service'
 })
 
 export class LeavesComponent {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
   leaveFormData = {} as Ileavesdatas;
@@ -100,7 +100,7 @@ export class LeavesComponent {
     private fb: FormBuilder,
     public rbac: RbacService,
     public router: Router,
-    public formsValidation:FormValidationsService,
+    public formsValidation: FormValidationsService,
     private signalService: SignalsService) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
@@ -135,15 +135,13 @@ export class LeavesComponent {
     this.initiateUpdateModuleInfo();
   }
 
-
-
- draftsCount = 0;
+  draftsCount = 0;
   waitingforapprovalCount = 0;
   approvedCount = 0;
   rejectedCount = 0;
   processedCount = 0;
   cancelledCount = 0;
-   disaplyapplybutton=true;
+  disaplyapplybutton = true;
   onCheckemployee(employeedId: any) {
     this.http.setEmployeeIdTimeoff(employeedId); //
     this.waitingforapprovalCount = 0;
@@ -151,47 +149,41 @@ export class LeavesComponent {
     this.approvedCount = 0;
     this.processedCount = 0;
     this.cancelledCount = 0;
-    this.lpdata=[];
+    this.lpdata = [];
     if (employeedId) {
-      this.disaplyapplybutton=false;
-     this.getDataByLPID(employeedId);
-     this.getLeavesData(employeedId);
-     this.getCategoryempDetails(employeedId);
+      this.disaplyapplybutton = false;
+      this.getDataByLPID(employeedId);
+      this.getLeavesData(employeedId);
+      this.getCategoryempDetails(employeedId);
     } else {
       this.http.setEmployeeIdTimeoff(null);
-    this.disaplyapplybutton=true;
-    this.getLeavesData(this.empdata.employeeId);
-    this.getDataByLPID(this.empdata.employeeId);
-    this.getCategoryDetails();
+      this.disaplyapplybutton = true;
+      this.getLeavesData(this.empdata.employeeId);
+      this.getDataByLPID(this.empdata.employeeId);
+      this.getCategoryDetails();
     }
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/leaves': MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_SUMMARY_MODULE_INFO
+      '/time-off/leaves': MODULE_INFOS.TIME_OFF_LEAVES_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-   getDataByLPID(employeeId:any) {
+
+  getDataByLPID(employeeId: any) {
     let empid = employeeId;
     this.subscription = this.http.getData(`Timeoff/LPID/${empid}`).subscribe({
       next: (response: any) => {
-        console.log('getDataByLPID-LEAVECOM',response);
         this.lpdata = response;
-        console.log(this.lpdata); // the response data stored in the lpdata variable
-       
         // Reset counts
         this.waitingforapprovalCount = 0;
         this.draftsCount = 0;
@@ -199,7 +191,6 @@ export class LeavesComponent {
         this.rejectedCount = 0;
         this.processedCount = 0;
         this.cancelledCount = 0;
-
         // Add existing counts
         this.lpdata.forEach((element: { status: string }) => {
           if (element.status === 'Waiting for Approval') {
@@ -221,63 +212,33 @@ export class LeavesComponent {
             this.cancelledCount++;
           }
         });
-
         // Check if optionalHolidays is defined before accessing its length
         if (this.optionalHolidays) {
           let totalOptionalHolidays = this.optionalHolidays.length;
-          console.log('Total Optional Holidays:', totalOptionalHolidays);
-
           // Initialize variables
           this.optLevsUsed = 0; // Track how many optional holidays are booked with "Optional Holiday"
           let otherCategoriesUsed = 0; // Track how many optional holidays are booked with other categories
-
           // Iterate over lpdata to adjust the used "Optional Holiday"
           this.lpdata.forEach((leave: any) => {
             let leaveDate = moment(leave.startdate).format('YYYY-MM-DD');
             let isOptionalHoliday = this.optionalHolidays.some(
-              (holiday: any) =>
-                moment(holiday.holidayDate).format('YYYY-MM-DD') === leaveDate
+              (holiday: any) => moment(holiday.holidayDate).format('YYYY-MM-DD') === leaveDate
             );
             if (isOptionalHoliday) {
               if (leave.categoryName === 'Optional Holiday') {
                 this.optLevsUsed += leave.duration; // Add duration to optLevsUsed
               } else {
                 otherCategoriesUsed += leave.duration;
-                console.log(
-                  `Optional holiday on ${leaveDate} booked with ${leave.categoryName}.`
-                );
               }
             }
           });
-
-          console.log('"Optional Holiday" used:', this.optLevsUsed);
-          console.log(
-            'Optional holidays booked with other categories, total duration:',
-            otherCategoriesUsed
-          );
-
           // Ensure optionalLeaveAllowedDays is defined
-          if (
-            this.optionalLeaveAllowedDays !== undefined &&
-            this.optionalLeaveAllowedDays !== null
-          ) {
+          if (this.optionalLeaveAllowedDays !== undefined && this.optionalLeaveAllowedDays !== null) {
             let remainingOptionalHolidays =
               totalOptionalHolidays - otherCategoriesUsed;
-            console.log(
-              'Remaining Optional Holidays:',
-              remainingOptionalHolidays
-            );
-
-            console.log(
-              'Optional leave allowed days:',
-              this.optionalLeaveAllowedDays
-            );
-
             // Logic for blocking leave requests if remainingOptionalHolidays matches optionalLeaveAllowedDays
             if (remainingOptionalHolidays <= this.optionalLeaveAllowedDays) {
-              console.log(
-                'You must use "Optional Holiday" category for remaining optional holidays.'
-              );
+              console.log('You must use "Optional Holiday" category for remaining optional holidays.');
             }
           } else {
             console.error('optionalLeaveAllowedDays is undefined.');
@@ -289,58 +250,43 @@ export class LeavesComponent {
       error: (reason: any) => console.log(reason),
     });
   }
-   leavedatatimeoff: any;
+
+  leavedatatimeoff: any;
   leavedatas: any;
-  getLeavesData(employeeId:any) {
+  getLeavesData(employeeId: any) {
     let empdata = employeeId;
     console.log(empdata);
     this.subscription = this.http
       .getData(`Timeoff/${empdata}`)
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-
           this.leavedatatimeoff = response;
-          console.log(this.leavedatas);
-
           this.getDataByLPID(employeeId);
         },
         error: (reason: any) => console.log(reason),
       });
   }
-  
+
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
- getTeamManagersDetails() {
-  const EmployeeId = this.empdata.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        console.log('getEmployeesByhierarchy', response);
-        if (response && response.length) {
-          // No filter
-          this.getEmployeeInfo = response.map((employee: any) => ({
-            ...employee,
-            fullName: `${
-              employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-            }${employee.firstName} ${
-              employee.middleName ? employee.middleName + ' ' : ''
-            }${employee.lastName}`,
-          }));
-          console.log('getEmployeeInfo', this.getEmployeeInfo);
-        }
-      },
-    });
-}
-
-
-
-
-
-
-
-
+  getTeamManagersDetails() {
+    const EmployeeId = this.empdata.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            // No filter
+            this.getEmployeeInfo = response.map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            }));
+          }
+        },
+      });
+  }
 
   navigateOrLeavebalance() {
     this.router.navigate(['/time-off/leaves/org-leave-balance'])
@@ -395,8 +341,9 @@ export class LeavesComponent {
       complete: () => { }
     })
   }
-    getCategoryempDetails(employeedId:any) {
-      const empdata = employeedId;
+
+  getCategoryempDetails(employeedId: any) {
+    const empdata = employeedId;
     this.subscription = this.http.getData(`LeaveEntitlements/employee/${empdata}`).subscribe({
       next: (response: any) => {
         if (response.success) {
@@ -411,15 +358,16 @@ export class LeavesComponent {
       complete: () => { }
     })
   }
+
   get totalAvailableLeaves(): number {
-  return this.categoryDetails.reduce((total, item) => {
-    if (item.category.isProbationAllowed && item.probationLeaves > 0) {
-      return total + (item.probationLeaves - item.utilizedDays - item.booked);
-    } else {
-      return total + (item.allowedDays - item.utilizedDays - item.booked);
-    }
-  }, 0);
-}
+    return this.categoryDetails.reduce((total, item) => {
+      if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+        return total + (item.probationLeaves - item.utilizedDays - item.booked);
+      } else {
+        return total + (item.allowedDays - item.utilizedDays - item.booked);
+      }
+    }, 0);
+  }
 
   initChart(item: any) {
     const data: number[] = [];
@@ -437,7 +385,7 @@ export class LeavesComponent {
         {
           data: data,
           backgroundColor: backgroundColors,
-           borderWidth: 0
+          borderWidth: 0
         }
       ]
     };
@@ -559,7 +507,6 @@ export class LeavesComponent {
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeWeekends) {
       this.getweekendbyempid();
     }
-    
     const maxDays = this.selectedleave?.allowedDays;
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
@@ -609,16 +556,15 @@ export class LeavesComponent {
       const startDate = this.leaveForm.get('startdate')?.value;
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
-
       if (startDate && endDateControl) {
-        endDateControl.setValue(startDate); 
+        endDateControl.setValue(startDate);
         endDateControl.disable();
         halfDayControl?.disable();
         this.disableSubmitButton = false;
         this.leaveForm.patchValue({ fulldayavailing: '2' });
       }
     }
-    else{
+    else {
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
       if (endDateControl) {
@@ -1032,7 +978,6 @@ export class LeavesComponent {
     let LBEId = this.empdata.employeeId;
     this.subscription = this.http.getData(`LeaveBalance/getbyid/${LBEId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         const groupedData = data.reduce((acc: any, curr: any) => {
           if (acc[curr.leavePolicyId]) {
             acc[curr.leavePolicyId].leavesTaken += curr.leavesTaken;
@@ -1042,7 +987,6 @@ export class LeavesComponent {
           return acc;
         }, {});
         this.Leavestaken = Object.values(groupedData) as ILeavesTaken[];
-        console.log(this.Leavestaken);
         this.leavedata.forEach((leaves: ILeaves) => {
           this.Leavestaken.forEach((leavetaken: ILeavesTaken) => {
             if (leavetaken.leavesTaken && leaves.lpId == leavetaken.leavePolicyId) {
@@ -1081,7 +1025,7 @@ export class LeavesComponent {
 
   startDateErrorMessage = '';
   endDateErrorMessage = '';
-  
+
   calculateDateDifference(startDate: string, endDate: string) {
     var date1 = moment(startDate, 'YYYY-MM-DD');
     var date2 = moment(endDate, 'YYYY-MM-DD');
@@ -1159,13 +1103,10 @@ export class LeavesComponent {
         const isStartDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
           return ele.isOptional === true && this.isSameDate(ele.holidayDate, startDate);
         });
-
         const isEndDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
           return ele.isOptional === true && this.isSameDate(ele.holidayDate, endDate);
         });
-
         this.startDateErrorMessage = isStartDateOptionalHoliday ? 'Selected start date is not allowed as it is an optional holiday' : '';
-
         this.endDateErrorMessage = isEndDateOptionalHoliday ? 'Selected end date is not allowed as it is an optional holiday' : '';
         if (isStartDateOptionalHoliday || isEndDateOptionalHoliday) {
           return;
@@ -1191,13 +1132,14 @@ export class LeavesComponent {
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
     }
   }
+
   isSameDate(date1: any, date2: any): boolean {
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
-  return d1.getFullYear() === d2.getFullYear() &&
-         d1.getMonth() === d2.getMonth() &&
-         d1.getDate() === d2.getDate();
-}
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
+  }
 
   chooseDayType(daytype: any) {
     this.isDayTypeselected = true;

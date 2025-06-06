@@ -107,45 +107,9 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     };
   }
 
-    vadationfotidentitytype() {
+  vadationfotidentitytype() {
     this.identityForm.get('identityType')?.valueChanges.subscribe(selected => {
-      const identityNumberControl = this.identityForm.get('identityNumber') 
-
-      identityNumberControl?.clearValidators();
-
-      if (selected?.identityType1 === 'Passport') {
-        // Allow alphanumeric + special characters
-        identityNumberControl?.setValidators([
-          Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
-        ]);
-      } else if (selected?.identityType1 === 'PAN'){
-          this.IdentityMaxNumber=10;
-          this.IdentityMinNumber=10;
-          identityNumberControl?.setValidators([
-          Validators.required,
-          this.invalidIdentityNumberValidator(),
-          Validators.minLength(this.IdentityMinNumber),
-          Validators.maxLength(this.IdentityMaxNumber),
-          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
-        ]);
-      }
-      else{
-        // Allow numbers only
-        identityNumberControl?.setValidators([
-          Validators.required,
-          Validators.pattern(/^[0-9]+$/)
-        ]);
-      }
-
-      identityNumberControl?.updateValueAndValidity();
-    });
-  }
-
-
-     vadationfoforupdatetidentitytype() {
-    this.identityupdateForm.get('identityupdateNumber')?.valueChanges.subscribe(selected => {
-      const identityNumberControl =this.identityupdateForm.get('identityupdateNumber')
+      const identityNumberControl = this.identityForm.get('identityNumber')
 
       identityNumberControl?.clearValidators();
 
@@ -153,19 +117,52 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         // Allow alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+          Validators.maxLength(10),
+          Validators.minLength(10)
         ]);
       } else {
         // Allow numbers only
         identityNumberControl?.setValidators([
           Validators.required,
-          Validators.pattern(/^[0-9]+$/)
+          Validators.pattern(/^[0-9]+$/),
+          Validators.maxLength(this.IdentityMaxNumber),
+          Validators.minLength(this.IdentityMinNumber)
+         
         ]);
       }
 
-      identityNumberControl?.updateValueAndValidity();
+      identityNumberControl?.updateValueAndValidity({ emitEvent: false });
     });
   }
+
+
+vadationfoforupdatetidentitytype() {
+  this.identityupdateForm.get('identityupdateType')?.valueChanges.subscribe(selected => {
+    const identityNumberControl = this.identityupdateForm.get('identityupdateNumber');
+    identityNumberControl?.clearValidators();
+
+    if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+      // Allow alphanumeric + special characters
+      identityNumberControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+        Validators.maxLength(10),
+        Validators.minLength(10)
+      ]);
+    } else {
+      // Allow numbers only
+      identityNumberControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^[0-9]+$/),
+        Validators.maxLength(this.IdentityMaxNumber),
+        Validators.minLength(this.IdentityMinNumber)
+      ]);
+    }
+
+    identityNumberControl?.updateValueAndValidity({ emitEvent: false }); // Prevents recursive valueChanges
+  });
+}
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({

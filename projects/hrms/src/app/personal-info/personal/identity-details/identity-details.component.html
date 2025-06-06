@@ -115,10 +115,10 @@
                                 Identity Number is required
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['minlength']">
-                                Identity Number must be at least {{ IdentityMinNumber }} digits
+                                  Invalid Identity Number
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['maxlength']">
-                                Identity Number must not exceed {{ IdentityMaxNumber }} digits
+                                  Invalid Identity Number
                             </div>
                             <div class="error-msg"
                                 *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
@@ -201,10 +201,10 @@
                                 Identity Number is required
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['minlength']">
-                                Identity Number must be at least {{ IdentityMinNumber }} digits
+                                 Invalid Identity Number
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
-                                Identity Number must not exceed {{ IdentityMaxNumber }} digits
+                                  Invalid Identity Number
                             </div>
                             <div class="error-msg"
                                 *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['invalidIdentityNumber'] && identityupdateForm.get('identityupdateNumber')?.touched">

@@ -39,7 +39,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false
   loading = false
   selectedIdentityTypetoUpdate: any;
-  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService,
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -48,7 +48,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.initializeupdateForm();
     this.vadationfotidentitytype()
-    this. vadationfoforupdatetidentitytype() 
+    this.vadationfoforupdatetidentitytype()
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -56,7 +56,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-   
+
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
@@ -107,9 +107,9 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     };
   }
 
-    vadationfotidentitytype() {
+  vadationfotidentitytype() {
     this.identityForm.get('identityType')?.valueChanges.subscribe(selected => {
-      const identityNumberControl = this.identityForm.get('identityNumber') 
+      const identityNumberControl = this.identityForm.get('identityNumber')
 
       identityNumberControl?.clearValidators();
 
@@ -117,13 +117,18 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         // Allow alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+          Validators.maxLength(10),
+          Validators.minLength(10)
         ]);
       } else {
         // Allow numbers only
         identityNumberControl?.setValidators([
           Validators.required,
-          Validators.pattern(/^[0-9]+$/)
+          Validators.pattern(/^[0-9]+$/),
+          Validators.maxLength(this.IdentityMaxNumber),
+          Validators.minLength(this.IdentityMinNumber)
+         
         ]);
       }
 
@@ -132,29 +137,32 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
 
 
-     vadationfoforupdatetidentitytype() {
-    this.identityupdateForm.get('identityupdateNumber')?.valueChanges.subscribe(selected => {
-      const identityNumberControl =this.identityupdateForm.get('identityupdateNumber')
+vadationfoforupdatetidentitytype() {
+  this.identityupdateForm.get('identityupdateType')?.valueChanges.subscribe(selected => {
+    const identityNumberControl = this.identityupdateForm.get('identityupdateNumber');
+    identityNumberControl?.clearValidators();
 
-      identityNumberControl?.clearValidators();
+    if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+      // Allow alphanumeric + special characters
+      identityNumberControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+        Validators.maxLength(10),
+        Validators.minLength(10)
+      ]);
+    } else {
+      // Allow numbers only
+      identityNumberControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^[0-9]+$/),
+        Validators.maxLength(this.IdentityMaxNumber),
+        Validators.minLength(this.IdentityMinNumber)
+      ]);
+    }
 
-      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
-        // Allow alphanumeric + special characters
-        identityNumberControl?.setValidators([
-          Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
-        ]);
-      } else {
-        // Allow numbers only
-        identityNumberControl?.setValidators([
-          Validators.required,
-          Validators.pattern(/^[0-9]+$/)
-        ]);
-      }
-
-      identityNumberControl?.updateValueAndValidity();
-    });
-  }
+    identityNumberControl?.updateValueAndValidity({ emitEvent: false }); // Prevents recursive valueChanges
+  });
+}
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -308,9 +316,9 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.getIdentityByEmpid()
         this.conformationPopup.openSuccessModal('Identity details added successfully');
       },
-      error: () => {
+      error: (error) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal('Identity details added failed');
+        this.conformationPopup.openErrorModal( error.error.Message ||  'Identity details added failed');
       }
     });
   }
@@ -428,7 +436,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.spinnerLoader = false
-      
+
         this.conformationPopup.openErrorModal('Failed to update identity details');
       }
     });

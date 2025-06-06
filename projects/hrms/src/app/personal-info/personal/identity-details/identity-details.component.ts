@@ -113,13 +113,24 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
       identityNumberControl?.clearValidators();
 
-      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+      if (selected?.identityType1 === 'Passport') {
         // Allow alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
           Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
         ]);
-      } else {
+      } else if (selected?.identityType1 === 'PAN'){
+          this.IdentityMaxNumber=10;
+          this.IdentityMinNumber=10;
+          identityNumberControl?.setValidators([
+          Validators.required,
+          this.invalidIdentityNumberValidator(),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+        ]);
+      }
+      else{
         // Allow numbers only
         identityNumberControl?.setValidators([
           Validators.required,

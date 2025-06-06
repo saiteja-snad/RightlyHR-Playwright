@@ -101,7 +101,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
         if (res) {
           this.cancelForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Leave cancelled successfully')
+          this.conformationPopup.openSuccessModal('Leave cancellation successfully!')
           this.getDataByLPID();
           setTimeout(() => {
             window.location.reload();

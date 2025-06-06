@@ -339,7 +339,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+               this.signalService.handleResponse(this.requestSummary, 'WFH Request Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -408,7 +408,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+               this.signalService.handleResponse(this.requestSummary, 'WFH Request Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -477,7 +477,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-             this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+             this.signalService.handleResponse(this.requestSummary, 'WFH Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }

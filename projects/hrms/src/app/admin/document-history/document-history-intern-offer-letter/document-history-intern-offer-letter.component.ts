@@ -224,7 +224,7 @@ export class DocumentHistoryInternOfferLetterComponent {
         next: (data: any) => {
           if (data) {
             this.conformationPopup.openSuccessModal(
-              'Trainee offer approved successfully'
+              'Trainee Offer Letter Approved Successfully'
             );
             this.getTraineeOfferLetters();
             this.ApprovedTaineenotification(datas);
@@ -281,7 +281,7 @@ export class DocumentHistoryInternOfferLetterComponent {
         next: (data: any) => {
           if (data) {
             this.conformationPopup.openSuccessModal(
-              'Trainee offer released successfully'
+              'Trainee Offer Letter Released Successfully'
             );
             this.getTraineeOfferLetters();
           }
@@ -402,7 +402,7 @@ export class DocumentHistoryInternOfferLetterComponent {
           if (data) {
             setTimeout(() => {
               this.conformationPopup.openSuccessModal(
-                'Trainee offer rejected successfully'
+                'Trainee Offer Letter Rejected successfully'
               );
             }, 3000);
             this.getTraineeOfferLetters();

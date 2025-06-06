@@ -316,15 +316,15 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         }));
         if (this.requestType === 'Separation Request') {
           this.conformationPopup.openSuccessModal(
-            'Separation request approved successfully'
+            'Separation Request Approved Successfully'
           );
         } else if (this.requestType === 'Early Relieving Request') {
           this.conformationPopup.openSuccessModal(
-            'Early relieving request approved successfully'
+            'Early Relieving Request Approved Successfully'
           );
         } else {
           this.conformationPopup.openSuccessModal(
-            'Separation request approved successfully'
+            'Separation Request Approved Successfully'
           );
         }
         this.getseparationforyourequests();
@@ -369,15 +369,15 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         }));
         if (this.requestType === 'Separation Request') {
           this.conformationPopup.openSuccessModal(
-            'Separation request rejected successfully'
+            'Separation Request Rejected Successfully'
           );
         } else if (this.requestType === 'Early Relieving Request') {
           this.conformationPopup.openSuccessModal(
-            'Early relieving request rejected successfully'
+            'Early Relieving Request Rejected Successfully'
           );
         } else {
           this.conformationPopup.openSuccessModal(
-            'Separation request rejected successfully'
+            'Separation Request Rejected Successfully'
           );
         }
         this.getseparationforyourequests();
@@ -458,7 +458,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
             separation: true,
           }));
           this.conformationPopup.openSuccessModal(
-            'Separation request processed successfully'
+            'Separation Request Processed Successfully'
           );
           this.signalService.separationForYouTriggerSignal.set(true);
           this.signalService.separationForRoleTriggerSignal.set(true);

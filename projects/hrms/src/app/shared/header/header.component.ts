@@ -11,9 +11,10 @@ import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, PmsTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule,Skeleton, PmsTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -27,6 +28,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   profilePic: any;
   img: any
   spinnerLoader = false;
+  isloading: boolean = false;
   @ViewChild('logoutpopup') logoutpopup: any;
   
   constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer, public rbac: RbacService,
@@ -65,27 +67,46 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
     }
   }
-
   getEmployeeId() {
+    this.isloading = true;
     let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data;
-        this.imageUrl = this.empdata.profileUrl;
-        this.onSelectprofilePicDownload(this.empdata);
-      },
-      error: reason => console.log(reason)
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.isloading = false;
+          this.empdata = data;
+          this.imageUrl = this.empdata.profileUrl;
+          this.onSelectprofilePicDownload(this.empdata);
+        },
+        error: (reason: any) => {
+          this.isloading = false
+        },
+        complete: () => {
+          this.isloading = false;
+        },
+      });
   }
 
-  getJobDetails() {
+ getJobDetails() {
+    this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        let jobdetails = data
-        this.jobRole = jobdetails[0]?.jobRole
-      }
-    })
+    this.subscription = this.http
+      .getData(`JobDetails/Empname/${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.isloading = false;
+          let jobdetails = data;
+          this.jobRole = jobdetails[0]?.jobRole;
+        },
+        error: (reason: any) => {
+          console.error(reason);
+          this.isloading = false;
+        },
+        complete: () => {
+          this.isloading = false;
+        },
+      });
   }
 
   chooseNewProfileHeader(event: any) {

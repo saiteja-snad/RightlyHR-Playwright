@@ -1,6 +1,16 @@
 <div class="custom-main-component-container">
-  <div class="component-header-content">
-    <div><span class="component-header">No Due Clearance</span></div>
+  <div class="component-header-content pt-2">
+    <div class="heading-content">
+      <div class="commpoment-name" (click)="navigateToSettings()">Settings</div>
+      <div class="commpoment-name">
+        <i class="bi bi-chevron-double-right"></i>
+      </div>
+      <div class="commpoment-name">Employee Fields</div>
+      <div class="commpoment-name">
+        <i class="bi bi-chevron-double-right"></i>
+      </div>
+      <div class="component-header">No Due Clearance</div>
+    </div>
     <button class="custom-btn btn-primary px-5" (click)="openModal(addnodue)"
       *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.create')">Add New
     </button>

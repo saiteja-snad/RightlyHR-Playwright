@@ -12,21 +12,21 @@
 
         <!--user additional details-->
         <div class="profile-content text-nowrap">
-            <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
+            <p class="name text-center m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                 {{empdata?.lastName}}</p>
-            <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
-            <p class="label-text text-truncate mb-2">
+            <p class="name emp-id text-center m-0 mb-1">{{empdata?.fusionEmpId}}</p>
+            <p class="label-text text-truncate mb-1">
                 <i class="bi bi-envelope me-2"></i>
                 <span class="link-text">{{this.empdata?.workEmail || 'NA'}}</span>
             </p>
-            <p class="label-text text-truncate mb-2">
+            <p class="label-text text-truncate mb-1">
                 <i class="bi bi-person-vcard me-2"></i>
                 <span class="link-text">{{jobRole}}</span>
             </p>
-            <p class="label-text text-truncate mb-2"><i class="bi bi-geo-alt me-2"></i>
+            <p class="label-text text-truncate mb-1"><i class="bi bi-geo-alt me-2"></i>
                 <span class="link-text">{{jobdata?.locationName}},{{jobdata?.sublocationName || 'NA' }}</span>
             </p>
-            <p class="label-text text-truncate mb-2">
+            <p class="label-text text-truncate mb-1">
                 <i class="bi bi-clock-history me-2"></i>
                 <span class="link-text">
                     <span *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</span>
@@ -39,7 +39,7 @@
                     <ng-template #noData>N/A</ng-template>
                 </span>
             </p>
-            <p class="label-text text-truncate mb-2">
+            <p class="label-text text-truncate mb-1">
                 <i class="bi bi-telephone me-2"></i>
                 <span class="link-text">
                     <span *ngIf="empdata?.workPhone">

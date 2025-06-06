@@ -108,6 +108,9 @@ export class AvailableDeskListComponent {
     this.getdatabyentriyundermaintance();
     this.getdatabyentriy();
     this.getdatabyentriyrealse();
+      this.http.deskDetailesadded$.subscribe(() => {
+      this.getFilteredData();
+    });
     // this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, null,null);
     this.getFilteredData();
     this.assiginForm.get('shifts')?.valueChanges.subscribe((seletshift) => {

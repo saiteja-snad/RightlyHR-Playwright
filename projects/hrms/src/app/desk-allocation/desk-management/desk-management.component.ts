@@ -370,7 +370,7 @@ export class DeskManagementComponent {
             this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
             this.getAllDesks(this.page, this.pageSize, null, null, 'All');
             this.getcount(null, null);
-            this.navigateToAsset();
+           
             this.deskForm.reset();
             this.isToggled = false;
             this.http.setnewdeskDetails();
@@ -469,9 +469,6 @@ getcount(locationId: string | null, subLocationId: string | null) {
 
   }
 
-  navigateToAsset() {
-    this.router.navigate(['/desk/management/all-desks']);
-  }
 
   //close dailog open
   openConfirmationModal(content: any) {

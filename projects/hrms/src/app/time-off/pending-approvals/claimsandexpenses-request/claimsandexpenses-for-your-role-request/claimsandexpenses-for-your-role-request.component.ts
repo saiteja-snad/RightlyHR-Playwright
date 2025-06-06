@@ -125,12 +125,12 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         approvedBy: this.empinfo.employeeId.toString(),
         currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
-      this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
+      this.sharedModalService.openLoaderModal('Approving Expense Request...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
-          this.sharedModalService.openSuccessModal('Request Approved Successfully');
+          this.sharedModalService.openSuccessModal('Expense Request Approved Successfully');
           this.approveForm.reset();
            this.http.setnewcountDetails()
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -159,12 +159,12 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         approvedBy: this.empinfo.employeeId.toString(),
         currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
-      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
+      this.sharedModalService.openLoaderModal('Rejecting Expense...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
-          this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+          this.sharedModalService.openSuccessModal('Expense Rejected Successfully');
           this.rejectForm.reset();
           this.http.setnewcountDetails()
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -190,7 +190,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       approvedBy: this.empinfo.employeeId.toString(),
       currentStage : parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
     };
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+    this.sharedModalService.openLoaderModal('Processing Request...');
     this.http.putData(`PendingApproval/process/${request?.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();

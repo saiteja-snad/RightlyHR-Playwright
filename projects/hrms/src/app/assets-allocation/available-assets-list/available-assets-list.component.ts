@@ -115,6 +115,9 @@ export class AvailableAssetsListComponent {
     this.initialReleaseform();
     this.intialfromundermatince();
     this.intialtransferfrom();
+      this.http.assetDetailesadded$.subscribe(() => {
+      this.getFilteredData();
+    });
     const today = new Date();
   // Set max to today's date
   this.maxpurchesDate = today.toISOString().split('T')[0];

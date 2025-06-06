@@ -357,7 +357,7 @@ fileuploadhide :any;
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              this.conformationPopup.openSuccessModal('Expense request submitted successfully! ');
               this.getexpensesheaderbyid(this.empinfo.employeeId);
             }
           },
@@ -373,7 +373,7 @@ fileuploadhide :any;
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              this.conformationPopup.openSuccessModal('Expense request submitted successfully! ');
               this.newExpenseForm.reset();
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
@@ -444,7 +444,7 @@ fileuploadhide :any;
               this.http.setnewcountDetails();
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');
+              this.conformationPopup.openSuccessModal(' Expenses request  saved as draft successfully!');
               // this.filterAllExpenses()
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
@@ -464,7 +464,7 @@ fileuploadhide :any;
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

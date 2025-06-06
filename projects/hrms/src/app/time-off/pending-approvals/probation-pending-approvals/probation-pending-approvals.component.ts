@@ -345,7 +345,7 @@ openModalView(){
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation request processed successfully';
+      successMessage = 'Probation Status Processed Successfully';
     }
     if (this.selectedData.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -353,7 +353,7 @@ openModalView(){
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation request rejected successfully';
+      successMessage = 'Probation Request Rejected Successfully';
     }
     if (this.selectedData.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -362,7 +362,7 @@ openModalView(){
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation extended successfully';
+      successMessage = 'Probation Request Extended Successfully';
     }
     let requestBody = {
       status: 'Processed',

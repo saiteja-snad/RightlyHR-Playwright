@@ -967,7 +967,7 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Desk Allocation - Create' || per.fields === 'Desk Allocation - All' || per.fields === 'Desk Allocation - Available'
+                                *ngIf="per.fields === 'Desk Allocation - Create'  || per.fields === 'Desk Allocation - Available'
                             || per.fields === 'Desk Allocation - Allocated' || per.fields === 'Desk Allocation - Under Maintenance' 
                             || per.fields === 'Desk Allocation - Inactive' || per.fields === 'Desk Allocation - Waiting For Approval'">
                                 <td class="text-align-center">{{ per.fields }}</td>
@@ -991,7 +991,7 @@
                         </ng-container>
 
                         <!-- Desk Allocation All Tabs Actions -->
-                        <tr>
+                        <!-- <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAlldeskalltabs
@@ -1027,7 +1027,7 @@
                                         [disabled]="true">
                                 </td>
                             </tr>
-                        </ng-container>
+                        </ng-container> -->
 
 
                         <!-- Desk Allocation Available Tabs Actions -->
@@ -2389,7 +2389,7 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Asset Management - Create'  || per.fields === 'Asset Management - All'
+                            <tr class="text-align-center" *ngIf="per.fields === 'Asset Management - Create'
                         || per.fields === 'Asset Management - Available'  || per.fields === 'Asset Management - Available' || per.fields === 'Asset Management - Allocated'
                         || per.fields === 'Asset Management - Under Maintenance'  || per.fields === 'Asset Management - Inactive' 
                         ">
@@ -2425,7 +2425,7 @@
                         </ng-container>
 
                         <!--Asset Management Allocation All Tabs Actions -->
-                        <tr>
+                        <!-- <tr>
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectallsubassetstabs
@@ -2462,7 +2462,7 @@
                                         [disabled]="true">
                                 </td>
                             </tr>
-                        </ng-container>
+                        </ng-container> -->
                         <!-- Asset Management Allocation Available Tabs Actions -->
                         <tr>
                             <th colspan="5" class="custom-header">

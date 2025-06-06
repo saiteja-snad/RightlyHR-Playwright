@@ -148,7 +148,7 @@ export const MODULE_INFOS = {
     CURRENT_OPENINGS_MODULE_INFO: "The Current Openings section allows HR to post jobs and manage job listings categorized as Active or Inactive. It also tracks applicant statuses through stages like Applied, Interview Process, Rejected, On Hold, Request for Onboarding, Onboarded, and Archive, with search functionality for applicants.",
 
     //Attendance Module Info 
-    ATTENDANCE_MODULE_INFO: "The Attendance section displays a day-wise record for the selected month (May 2025), showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.",
+    ATTENDANCE_MODULE_INFO: "The Attendance section displays a day-wise record for the selected month showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.",
 
     //My info Personal Module info 
     PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO: "The Basic Information section captures essential employee details such as Employee ID, Salutation, First Name, Middle Name, Last Name, Gender, Date of Birth, Blood Group, and Marital Status. This section allows users to update these fields and save or cancel changes as needed.",

@@ -157,22 +157,22 @@ export const permissionsData = [
 
   //Desk Management Tabs Section
   { fields: 'Desk Allocation - Create', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Desk Allocation - All', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Desk Allocation - All', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Available', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Inactive', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Waiting For Approval', View: false, Update: false, Create: false, Delete: false },
 
-  //Desk Management All Tab Actions
-  { fields: 'Request for Allocation', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Inactive desk', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Schedule for Maintenance', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Reallocate desk', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Release Desk', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Mark as Active', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Mark as Available', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'View Desk Details', View: false, Update: false, Create: false, Delete: false },
+  // //Desk Management All Tab Actions
+  // { fields: 'Request for Allocation', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Inactive desk', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Schedule for Maintenance', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Reallocate desk', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Release Desk', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Mark as Active', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Mark as Available', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'View Desk Details', View: false, Update: false, Create: false, Delete: false },
 
   //Desk Management Available Tab Actions
   { fields: 'Available Request for Allocation', View: false, Update: false, Create: false, Delete: false },
@@ -459,7 +459,7 @@ export const permissionsData = [
 
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Available', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Allocated', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
@@ -467,16 +467,16 @@ export const permissionsData = [
 
   //Asset Management All Tab Actions
 
-  { fields: 'All Allocate Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Inactive Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Mark as Maintenance', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Transfer Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Reallocate Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Release Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All View Asset Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'All Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Allocate Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Inactive Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Mark as Maintenance', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Transfer Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Reallocate Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Release Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All View Asset Details', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'All Update Asset Details', View: false, Update: false, Create: false, Delete: false },
 
   //Asset Management Available Tab Actions
   { fields: 'Available Allocate Asset', View: false, Update: false, Create: false, Delete: false },

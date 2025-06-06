@@ -123,7 +123,6 @@ export class DocumentsComponent {
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;
-    console.log('Selected Subfolder:', subFolder);
     if (subFolder.isDirectory) {
       this.getAllFiles();
     } else {
@@ -136,9 +135,17 @@ export class DocumentsComponent {
 
   getAllFiles() {
     this.loading=true
+    
+   // Check if it's organization policy folder by checking the full path
+  const isOrgPolicyFolder = this.selectedFile?.name.includes('FusionDocuments/organizationPolicy');
+  
+ // Fix the template literal syntax
+  const queryPath = isOrgPolicyFolder 
+    ? `${this.selectedFile?.name}`  // Just use the folder name for organization policy
+    : `${this.selectedFile?.name}/${this.empdata.employeeId}`; // Append employee ID for other folders
     if (!this.selectedFile?.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile?.name}/${this.empdata.employeeId}`)
+        .getDataWithQuery('FileSystem/Files',  queryPath)
         .subscribe({
           next: (data: any) => {
             this.loading=false

@@ -82,10 +82,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]],
       workMail: ['', [Validators.required, Validators.email]], 
-      countyCode1: [null, [Validators.required]],
+      countyCode1: [null,],
        countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
-      workNumber: [null, [Validators.required,]], // Required and 10-digit phone number
+      workNumber: [null,], // Required and 10-digit phone number
 
     });
    
@@ -163,11 +163,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       emailaddress: formValue.personalEmail,
       workEmail: formValue.workMail || this.employedata.workEmail,
       contactnumber: contactnumber,
-      workPhone: worknumber,
+      workPhone: worknumber || null,
       mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
-      workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode,
+      workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode || null,
       contactnumbercountryflag:this.selectedCountryCodephoneflag  || this.employedata.contactnumbercountryflag,
-      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag
+      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag || null
      };
 
 
@@ -216,10 +216,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.selectedCountryCodegflag = country.code;
     console.log('Selected country code:', this.selectedCountryCodegflag);
     console.log('Selected country dial code:', this.selectedDialCode);
-    this.contactForm.get('countyCode1')?.setValue(country.dialling_code);
-    this.contactForm.get('countyCode1')?.markAsTouched();
-    this.contactForm.get('workNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
-    this.contactForm.get('workNumber')?.updateValueAndValidity();
+    // this.contactForm.get('countyCode1')?.setValue(country.dialling_code);
+    // this.contactForm.get('countyCode1')?.markAsTouched();
+    // this.contactForm.get('workNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
+    // this.contactForm.get('workNumber')?.updateValueAndValidity();
     this.employedata.workPhoneCountryCode = country.dialling_code;
     this.employedata.workphonecountryflag = country.code;
   }

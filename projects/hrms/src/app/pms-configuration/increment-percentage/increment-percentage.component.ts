@@ -14,13 +14,12 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 import { UpdateIncrementComponent } from './update-increment/update-increment.component';
 import { ViewIncrementComponent } from './view-increment/view-increment.component';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { SettingsHeaderComponent } from "../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-increment-percentage',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, SettingsHeaderComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, SettingsHeaderComponent],
   templateUrl: './increment-percentage.component.html',
   styleUrl: './increment-percentage.component.scss',
 })

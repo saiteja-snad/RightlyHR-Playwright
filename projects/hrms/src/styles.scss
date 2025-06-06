@@ -139,8 +139,12 @@ body {
 //header stylings starts
 .header-main-container {
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: 0.325rem 0.75rem;
     background-color: var(--header-background-color);
+
+    .company-logo-image {
+        height: 2.5rem;
+    }
 }
 
 //header stylings Ends
@@ -799,6 +803,7 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
+
 // Select Styling 
 
 // p select stylings
@@ -909,7 +914,7 @@ select:focus {
 
     .dropdown-item {
         padding: 0.625rem;
-        font-weight: 600;
+        font-weight: 400;
         font-size: var(--fontsize14);
         color: var(--primary-color);
         border-bottom: 1px solid #C8D5E4;
@@ -1053,8 +1058,6 @@ select:focus {
             .label-text {
                 font-weight: 400;
                 font-size: 12px;
-                line-height: 100%;
-                letter-spacing: 0%;
                 vertical-align: middle;
                 color: #989898;
             }
@@ -1104,11 +1107,20 @@ select:focus {
 
 // letter main content
 .main-letter-content {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+
     .letter-fields-content {
-        width: 27rem;
+        width: 24rem;
         height: calc(100dvh - 8.25rem);
         overflow-x: hidden;
         overflow-y: auto;
+        padding: 1.125rem;
+
+        .custom-btn {
+            font-size: var(--fontsize12) !important;
+        }
     }
 
     .letter-data-content {
@@ -1116,6 +1128,7 @@ select:focus {
         flex: 1;
         height: calc(100dvh - 8.25rem);
         overflow: auto;
+        padding: 1.125rem;
 
         .letter-sub-data-content {
             display: flex;
@@ -1366,9 +1379,9 @@ select:focus {
     border-radius: 0.5rem;
 
     .holidays-content {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
         gap: 1rem;
-        flex-wrap: wrap;
 
         .holiday-card {
             width: 20rem;

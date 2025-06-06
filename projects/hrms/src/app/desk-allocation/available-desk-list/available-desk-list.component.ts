@@ -110,6 +110,9 @@ export class AvailableDeskListComponent {
     this.getdatabyentriyrealse();
     // this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, null,null);
     this.getFilteredData();
+      this.http.deskDetailesadded$.subscribe(() => {
+      this.getFilteredData();
+    });
     this.assiginForm.get('shifts')?.valueChanges.subscribe((seletshift) => {
       this.shift = seletshift
       this.selectedEmployee = null

@@ -117,13 +117,18 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         // Allow alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
-          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+          Validators.maxLength(10),
+          Validators.minLength(10)
         ]);
       } else {
         // Allow numbers only
         identityNumberControl?.setValidators([
           Validators.required,
-          Validators.pattern(/^[0-9]+$/)
+          Validators.pattern(/^[0-9]+$/),
+          Validators.maxLength(this.IdentityMaxNumber),
+          Validators.minLength(this.IdentityMinNumber)
+         
         ]);
       }
 
@@ -141,13 +146,17 @@ vadationfoforupdatetidentitytype() {
       // Allow alphanumeric + special characters
       identityNumberControl?.setValidators([
         Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+        Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+        Validators.maxLength(10),
+        Validators.minLength(10)
       ]);
     } else {
       // Allow numbers only
       identityNumberControl?.setValidators([
         Validators.required,
-        Validators.pattern(/^[0-9]+$/)
+        Validators.pattern(/^[0-9]+$/),
+        Validators.maxLength(this.IdentityMaxNumber),
+        Validators.minLength(this.IdentityMinNumber)
       ]);
     }
 
@@ -307,9 +316,9 @@ vadationfoforupdatetidentitytype() {
         this.getIdentityByEmpid()
         this.conformationPopup.openSuccessModal('Identity details added successfully');
       },
-      error: () => {
+      error: (error) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal('Identity details added failed');
+        this.conformationPopup.openErrorModal( error.error.Message ||  'Identity details added failed');
       }
     });
   }

@@ -106,8 +106,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
-                            [minlength]="IdentityMinNumber" class="form-control custom-input"
+                        <input type="text" formControlName="identityNumber" 
+                          class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number" (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
@@ -192,8 +192,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityupdateNumber" [maxlength]="IdentityMaxNumber"
-                            [minlength]="IdentityMinNumber" class="form-control custom-input" id="identityNumber"
+                        <input type="text" formControlName="identityupdateNumber" 
+                          class="form-control custom-input" id="identityNumber"
                             placeholder="Please enter Identity Number"  (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateNumber')?.invalid && identityupdateForm.get('identityupdateNumber')?.touched">

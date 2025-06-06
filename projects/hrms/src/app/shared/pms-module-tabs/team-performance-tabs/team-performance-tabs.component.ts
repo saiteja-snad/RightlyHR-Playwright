@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 
@@ -7,7 +7,8 @@ import { TabsModule } from 'primeng/tabs';
   selector: 'app-team-performance-tabs',
   imports: [RouterModule,CommonModule,TabsModule],
   templateUrl: './team-performance-tabs.component.html',
-  styleUrl: './team-performance-tabs.component.scss'
+  styleUrl: './team-performance-tabs.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class TeamPerformanceTabsComponent {

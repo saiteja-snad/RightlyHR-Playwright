@@ -23,7 +23,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { permission: 'My Info Certification Details.view', route: '/myinfo/job/certifications' },
     { permission: 'My Info Compensation Details.view', route: '/myinfo/job/compensation-details' },
     { permission: 'My Info Desk Details.view', route: '/myinfo/job/desk-details' },
-    { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' }
+    { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' },
+     { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' }
   ];
   
 
@@ -411,7 +412,8 @@ export const HOLIDAYS_SUB_TABS = [
     { permission: 'Employee Info Family Details.view', route: '/personalinfo/personal/family-details' },
     { permission: 'Employee Info Bank Details.view', route: '/personalinfo/personal/bank-details' },
     { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' },
-  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' }
+  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' },
+  
   ];
   export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
     { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }

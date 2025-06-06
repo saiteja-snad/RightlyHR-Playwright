@@ -14,7 +14,7 @@
                         <th>Applicable To Experienced/Fresher/Trainee</th>
                         <th>Is Mandatory</th>
                         <th>Is Identity</th>
-                        <th class="text-center">Action<span class="text-lowercase">(S)</span></th>
+                        <th class="text-center"  *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">Action<span class="text-lowercase">(S)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,10 +39,10 @@
                             <!-- isIdentityDocument logic -->
                             <td>{{ preonboarding.isIdentityDocument ? 'Yes' : 'No' }}</td>
                             <!-- Action(S) dropdown -->
-                            <td class="text-center">
+                            <td class="text-center"  *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">
                                 <div class="dropdown">
                                     <span type="button" data-bs-toggle="dropdown"
-                                        *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">
+                                       >
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">

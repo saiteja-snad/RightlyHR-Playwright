@@ -74,6 +74,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityNumber: ['', [
         Validators.required,
         this.invalidIdentityNumberValidator(),
+        
       ]],
       identityAttachment: ['', Validators.required]
     });

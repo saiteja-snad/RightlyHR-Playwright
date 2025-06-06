@@ -206,6 +206,9 @@
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
                                   Invalid Identity Number
                             </div>
+                                   <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['pattern']">
+                                  Invalid format based on selected Identity Type
+                            </div>
                             <div class="error-msg"
                                 *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['invalidIdentityNumber'] && identityupdateForm.get('identityupdateNumber')?.touched">
                                 Identity Number cannot be all zeroes

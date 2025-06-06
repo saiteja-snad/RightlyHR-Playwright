@@ -23,7 +23,8 @@ export const MY_INFO_JOB_ROUTES = [
   { permission: 'My Info Certification Details.view', route: '/myinfo/job/certifications' },
   { permission: 'My Info Compensation Details.view', route: '/myinfo/job/compensation-details' },
   { permission: 'My Info Desk Details.view', route: '/myinfo/job/desk-details' },
-  { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' }
+  { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' },
+   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' }
 ];
 
 

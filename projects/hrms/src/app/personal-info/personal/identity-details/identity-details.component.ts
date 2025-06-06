@@ -132,7 +132,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         ]);
       }
 
-      identityNumberControl?.updateValueAndValidity();
+     identityNumberControl?.updateValueAndValidity({ emitEvent: false });
     });
   }
 

@@ -5,7 +5,8 @@
             </div>
             <div class="component-header">My Tickets</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"  class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
         </div>
 
@@ -23,10 +24,11 @@
     </ng-template>
 
     <div class="mb-3">
-        <app-itsuporrt-header-tabs/>
+        <app-itsuporrt-header-tabs />
     </div>
 
     <div class="custom-table-content">
+        @if (!dataloader) {
         <table class="w-100">
             <thead>
                 <th>Ticket ID</th>
@@ -67,6 +69,10 @@
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>
 
@@ -86,15 +92,16 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="ticketRaisedFor" name="employee"
-                                (onChange)="onTicketRaisedForChange($event.value)" optionLabel="label" optionValue="label"
-                                placeholder="Please select" formControlName="employee" class="custom-select w-100">
+                                (onChange)="onTicketRaisedForChange($event.value)" optionLabel="label"
+                                optionValue="label" placeholder="Please select" formControlName="employee"
+                                class="custom-select w-100">
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('employee')?.invalid && itSupportForm.get('employee')?.touched">
                             <div class="error-msg">{{'Ticket Raised For is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Name' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -104,10 +111,10 @@
                                 placeholder="Please enter employeename" onkeydown="return false;" />
                             }
                             @else {
-                            <p-select [options]="allEmployees" resetFilterOnHide="true" [filter]="true" filterBy="firstName"
-                                optionLabel="fullName" optionValue="employeeId" (onChange)="colleagueDetails($event.value)"
-                                placeholder="Please select employee" formControlName="colleaguename" class="custom-select w-100"
-                                [dataKey]="'fusionEmpId'">
+                            <p-select [options]="allEmployees" resetFilterOnHide="true" [filter]="true"
+                                filterBy="firstName" optionLabel="fullName" optionValue="employeeId"
+                                (onChange)="colleagueDetails($event.value)" placeholder="Please select employee"
+                                formControlName="colleaguename" class="custom-select w-100" [dataKey]="'fusionEmpId'">
                                 <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
                                     emp.lastName
                                     }}</ng-template>
@@ -122,7 +129,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Email' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -134,19 +141,20 @@
                             <div class="error-msg">{{'Email is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Phone Number' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <input type="number" class="form-control custom-input" formControlName="phoneNumber" readonly="true"
-                                placeholder="Please enter phonenumber" onkeydown="return false;" />
+                            <input type="number" class="form-control custom-input" formControlName="phoneNumber"
+                                readonly="true" placeholder="Please enter phonenumber" onkeydown="return false;" />
                         </div>
-                        <div *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
+                        <div
+                            *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
                             <div class="error-msg">{{'Phone Number is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Desk Details' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -154,33 +162,35 @@
                             <input type="text" class="form-control custom-input" formControlName="deskdetails"
                                 placeholder="Please enter Deskdetails" readOnly="true" onkeydown="return false;" />
                         </div>
-                        <div *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
+                        <div
+                            *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
                             <div class="error-msg">{{'Desk Details is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="departmentDetails" resetFilterOnHide="true" [filter]="true"
-                                filterBy="departmentName" optionLabel="departmentName" placeholder="Please select department"
-                                formControlName="department" class="custom-select w-100"
-                                (onChange)="onDepartmentChange($event.value)">
+                                filterBy="departmentName" optionLabel="departmentName"
+                                placeholder="Please select department" formControlName="department"
+                                class="custom-select w-100" (onChange)="onDepartmentChange($event.value)">
                             </p-select>
                         </div>
-                        <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
+                        <div
+                            *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                             <div class="error-msg">{{'Department is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="teamDropdownValues" resetFilterOnHide="true" [filter]="true"
-                                filterBy="subdepartmentName" optionLabel="subdepartmentName" placeholder="Please select team"
-                                formControlName="team" class="custom-select w-100"
+                                filterBy="subdepartmentName" optionLabel="subdepartmentName"
+                                placeholder="Please select team" formControlName="team" class="custom-select w-100"
                                 (onChange)="onSubDepartmentNameChange($event.value)">
                             </p-select>
                         </div>
@@ -188,34 +198,35 @@
                             <div class="error-msg">{{'Team is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="typeDetails" optionLabel="label" optionValue="value"
                                 placeholder="Please select type" formControlName="type" class="custom-select w-100">
-        
+
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('type')?.invalid && itSupportForm.get('type')?.touched">
                             <div class="error-msg">{{'Type is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="priorityDetails" optionLabel="label" optionValue="value"
-                                placeholder="Please select priority" formControlName="priority" class="custom-select w-100">
+                                placeholder="Please select priority" formControlName="priority"
+                                class="custom-select w-100">
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
                             <div class="error-msg">{{'Priority is required' | translate}}</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -229,9 +240,9 @@
                         </div>
                         <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
                         </div>
-        
+
                     </div>
-        
+
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
                                 class="text-danger">*</span></label>
@@ -241,14 +252,16 @@
                              && itSupportForm.get('description')?.touched">
                             <div class="error-msg ">{{'Description is required' | translate}}</div>
                         </div>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250</div>
+                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
+                        </div>
                     </div>
                 </div>
-        
+
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openConfirmationModal(confirmationpopup)">{{'Cancel'}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">{{'Submit'}}</span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
                     </button>

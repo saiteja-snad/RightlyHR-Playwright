@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.pipe';
 import { RbacService } from '../../../services/rbac.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-document-history-appointment-letter',
   imports: [
@@ -17,7 +19,9 @@ import { RbacService } from '../../../services/rbac.service';
     DateformatPipe,
     FormsModule,
     AppointmentletterpipePipe,
-  ],
+    NoDataFoundComponent,
+    DataLoaderContentComponent
+],
   templateUrl: './document-history-appointment-letter.component.html',
   styleUrl: './document-history-appointment-letter.component.scss',
 })
@@ -26,7 +30,7 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
-
+  dataloader: boolean = false;
   constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -34,10 +38,19 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
   }
 
   getAppointmentLetters() {
+    this.dataloader = true;
     this.subscription = this.http.getData('AppointmentLetter/getAllNames').subscribe({
       next: (data: any) => {
+        this.dataloader = false;
         this.AppointmentLetters = data;
       },
+      error: (error: any) => {
+        this.dataloader = false;
+        console.error('Error fetching appointment letters:', error);
+      },
+      complete: () => {
+        this.dataloader = false;
+      }
     });
   }
 

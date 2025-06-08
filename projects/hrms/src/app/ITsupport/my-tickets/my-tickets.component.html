@@ -5,14 +5,13 @@
             </div>
             <div class="component-header">My Tickets</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"  class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
         </div>
 
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">
-                <i class="bi bi-plus me-2"></i>Add New Ticket</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">New Ticket</button>
         </div>
         }
     </div>

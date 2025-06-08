@@ -55,6 +55,7 @@
 
     <div class="d-flex gap-3">
         <div class="custom-table-content attendance-log-content">
+            @if(!dataLoader){
             <table class="w-100">
                 <thead>
                     <th>Date</th>
@@ -64,8 +65,7 @@
                     <th>Logs</th>
                     <th class="text-end pe-5">Status</th>
                 </thead>
-                <tbody>
-                    @if(!dataLoader){
+                <tbody>           
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
@@ -134,12 +134,12 @@
                     @else {
                     <app-no-data-found />
                     }
-                    }
-                    @else {
-                    <app-data-loader-content />
-                    }
                 </tbody>
             </table>
+            }
+            @else {
+                <app-data-loader-content />
+            }
         </div>
 
         @if(statusCounts$.value.length>0){ 

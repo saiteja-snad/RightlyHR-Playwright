@@ -1,5 +1,6 @@
 <div class="custom-main-component-container">
     <div class="custom-table-content">
+        @if (!loading) {
         <table class="w-100">
             <thead>
                 <th>Date</th>
@@ -55,5 +56,9 @@
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>

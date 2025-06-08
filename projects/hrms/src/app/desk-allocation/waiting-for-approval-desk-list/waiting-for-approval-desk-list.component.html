@@ -6,19 +6,11 @@
       aria-describedby="basic-addon1">
   </div>
 
-  <ng-container *ngIf="loading; else maincontent">
-    <ng-template #loadingSpinner>
-      <div class="loader-placeholder-content text-center">
-        <div>
-          <app-data-loader-content />
-        </div>
-      </div>
-    </ng-template>
-    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-  </ng-container>
 
-  <ng-template #maincontent>
+
+
     <div class="custom-table-content">
+      @if(!loading){
       <table class="w-100">
         <thead>
           <th>Desk ID</th>
@@ -69,6 +61,11 @@
           </ng-template>
         </tbody>
       </table>
+      }
+      @else {
+                  <app-data-loader-content />
+      }
+
     </div>
 
     <div class="pagination-content" *ngIf="((desklist | async) ?? []).length > 0">
@@ -88,5 +85,5 @@
           (onPageChange)="onPageChange($event)"></p-paginator>
       </div>
     </div>
-  </ng-template>
+ 
 </div>

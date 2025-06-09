@@ -66,6 +66,7 @@ export class LeavesApprovalComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
@@ -74,8 +75,14 @@ export class LeavesApprovalComponent {
         } else {
           console.error("Invalid response format");
         }
+        this.loading = false;
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {console.log(reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 

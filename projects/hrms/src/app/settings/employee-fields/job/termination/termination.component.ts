@@ -8,10 +8,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-termination',
-  imports: [CommonModule,ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './termination.component.html',
   styleUrl: './termination.component.scss'
 })
@@ -22,6 +23,7 @@ export class TerminationComponent {
   updateForm!: FormGroup;
   subscription: any;
   terminationDetails: any[] = [];
+  loader = false;
   terminationdata = {} as Termination;
   selectedId: number | null = null;
   selectedDeleteTermination: any = null;
@@ -48,8 +50,13 @@ export class TerminationComponent {
   }
 
   getTermination() {
+    this.loader = true;
     this.http.getData('TerminationReason').subscribe((data: any) => {
       this.terminationDetails = data;
+      this.loader = false;
+    }, (error: any) => {
+      this.loader = false;
+  
     });
   }
 

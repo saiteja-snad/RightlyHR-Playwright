@@ -1,174 +1,180 @@
 <div class="custom-main-component-container">
-    <div class="mb-3">
-        <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
-            *ngIf="rbac.allowedToAccess('Signature Authority.create')">{{'Add' | translate}}</button>
-    </div>
+  <div class="mb-3">
+    <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
+      *ngIf="rbac.allowedToAccess('Signature Authority.create')">{{'Add' | translate}}</button>
+  </div>
 
-    <div class="custom-main-component-container">
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Letter Type</th>
-                        <th>Employees</th>
-                        <th class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
-                        rbac.allowedToAccess('Signature Authority.delete')">Action<span class="text-lowercase">(S)</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of signatureEmployeesList">
-                            <td>{{item.letterType}}</td>
-                            <td>{{ item.firstName }} {{item.middleName}} {{item.lastName}}</td>
-                            <td class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
+  <div class="custom-main-component-container">
+    <div class="custom-table-content">
+      @if(!loading){
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Letter Type</th>
+            <th>Employees</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
+                        rbac.allowedToAccess('Signature Authority.delete')">Action<span
+                class="text-lowercase">(S)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container>
+            <tr *ngFor="let item of signatureEmployeesList">
+              <td>{{item.letterType}}</td>
+              <td>{{ item.firstName }} {{item.middleName}} {{item.lastName}}</td>
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
                                                         rbac.allowedToAccess('Signature Authority.delete')">
-                                <div class="dropdown">
-                                    <span type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </span>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('Signature Authority.update')">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
-                                            </a>
-                                        </li>
-                                        <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('Signature Authority.delete')">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('Signature Authority.update')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('Signature Authority.delete')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      }
+      @else {
+      <app-data-loader-content />
+      }
     </div>
+  </div>
 </div>
 
 <!-- Add Popup Modal -->
 <ng-template #addpopup let-modal>
-    <form autocomplete="off" [formGroup]="AddForm" (ngSubmit)="createSignatureAuthorityFromForm()">
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="custom-poup-header-content popup-header-border">
-                <div>
-                    <p class="popup-heading mb-0">{{ 'Signature Authority' | translate }}</p>
-                </div>
-                <div>
-                    <a (click)="modal.dismiss();AddForm.reset()">
-                        <img src="icons/close.png" alt="Close Icon" class="close-icon" />
-                    </a>
-                </div>
-            </div>
-
-            <div class="custom-main-popup-content">
-                <!-- Letter Type Field -->
-                <div class="mb-3">
-                    <label for="jobgrade" class="form-label custom-label mb-2">
-                        {{ 'Letter Type' | translate }} <span class="error-msg">*</span>
-                    </label>
-                    <div class="custom-p-select-content">
-                        <p-select formControlName="letterType" [options]="signatureLetterTypes" optionLabel="value"
-                            optionValue="id" placeholder="Please select letter type" class="custom-select w-100" [filter]="true"
-                            filterBy="value"></p-select>
-                    </div>
-                    <div *ngIf="AddForm.get('letterType')?.touched && AddForm.get('letterType')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('letterType')?.errors?.['required']">{{'Letter Type is required'|translate}}</div>
-                    </div>
-                </div>
-
-                <!-- Employee Field -->
-                <div class="mb-3">
-                    <label class="form-label custom-label mb-2">
-                        {{ 'Employee' | translate }} <span class="error-msg">*</span>
-                    </label>
-                    <div class="custom-p-select-content">
-                        <p-select formControlName="employee" [options]="employeeiddetails" optionLabel="fullName"
-                            optionValue="employeeId" placeholder="Please select employee" class="custom-select w-100" [filter]="true"
-                            filterBy="fullName"></p-select>
-                    </div>
-                    <div *ngIf="AddForm.get('employee')?.touched && AddForm.get('employee')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('employee')?.errors?.['required']">{{'Employee is required'|translate}}</div>
-                    </div>
-                </div>
-
-                <!-- Buttons -->
-                <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss(); AddForm.reset()">
-                        {{ 'Cancel' | translate }}
-                    </button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="AddForm.invalid">
-                        {{ 'Add' | translate }}
-                      </button>
-                </div>
-            </div>
+  <form autocomplete="off" [formGroup]="AddForm" (ngSubmit)="createSignatureAuthorityFromForm()">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div>
+          <p class="popup-heading mb-0">{{ 'Signature Authority' | translate }}</p>
         </div>
-    </form>
+        <div>
+          <a (click)="modal.dismiss();AddForm.reset()">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <!-- Letter Type Field -->
+        <div class="mb-3">
+          <label for="jobgrade" class="form-label custom-label mb-2">
+            {{ 'Letter Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select formControlName="letterType" [options]="signatureLetterTypes" optionLabel="value" optionValue="id"
+              placeholder="Please select letter type" class="custom-select w-100" [filter]="true"
+              filterBy="value"></p-select>
+          </div>
+          <div *ngIf="AddForm.get('letterType')?.touched && AddForm.get('letterType')?.invalid" class="error-msg">
+            <div *ngIf="AddForm.get('letterType')?.errors?.['required']">{{'Letter Type is required'|translate}}</div>
+          </div>
+        </div>
+
+        <!-- Employee Field -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Employee' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select formControlName="employee" [options]="employeeiddetails" optionLabel="fullName"
+              optionValue="employeeId" placeholder="Please select employee" class="custom-select w-100" [filter]="true"
+              filterBy="fullName"></p-select>
+          </div>
+          <div *ngIf="AddForm.get('employee')?.touched && AddForm.get('employee')?.invalid" class="error-msg">
+            <div *ngIf="AddForm.get('employee')?.errors?.['required']">{{'Employee is required'|translate}}</div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss(); AddForm.reset()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="AddForm.invalid">
+            {{ 'Add' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
 </ng-template>
 
 <!--Update Popup-->
 <ng-template #updatepopup let-modal>
-    <form autocomplete="off" [formGroup]="UpdateForm" (ngSubmit)="updateSignatureAuthority(modal)">
-      <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-          <p class="popup-heading mb-0">{{ 'Update Signature Authority' | translate }}</p>
-          <a (click)="modal.dismiss();UpdateForm.reset()">
-            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
-          </a>
-        </div>
-  
-        <div class="custom-main-popup-content">
-          <!-- Letter Type -->
-          <div class="mb-3">
-            <label class="form-label custom-label mb-2">
-              {{ 'Letter Type' | translate }} <span class="error-msg">*</span>
-            </label>
-            <div class="custom-p-select-content">
-              <p-select formControlName="updateLetterType" [options]="signatureLetterTypes" optionLabel="value"
-                        optionValue="id" placeholder="Please select letter type" class="custom-select w-100" [filter]="true"
-                        filterBy="value" resetFilterOnHide="true"></p-select>
-            </div>
-          </div>
-  
-          <!-- Employee -->
-          <div class="mb-3">
-            <label class="form-label custom-label mb-2">
-              {{ 'Employee' | translate }} <span class="error-msg">*</span>
-            </label>
-            <div class="custom-p-select-content">
-              <p-select formControlName="updateEmployee" [options]="employeeiddetails" optionLabel="fullName"
-                        optionValue="employeeId" placeholder="Please select employee" class="custom-select w-100" [filter]="true"
-                        filterBy="fullName" resetFilterOnHide="true"></p-select>
-            </div>
-          </div>
-  
-          <!-- Footer -->
-          <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();UpdateForm.reset()">
-              {{ 'Cancel' | translate }}
-            </button>
-            <button type="submit" class="custom-btn btn-primary" [disabled]="UpdateForm.invalid">
-              {{ 'Update' | translate }}
-            </button>
-          </div>
-        </div>
+  <form autocomplete="off" [formGroup]="UpdateForm" (ngSubmit)="updateSignatureAuthority(modal)">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <p class="popup-heading mb-0">{{ 'Update Signature Authority' | translate }}</p>
+        <a (click)="modal.dismiss();UpdateForm.reset()">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+        </a>
       </div>
-    </form>
-  </ng-template>
 
-  <!--Delete Popup-->
-  <ng-template #deletepopup let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-        <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
-      </div>
-      <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
-        <button type="button" class="custom-btn btn-primary " (click)="deleteSignatureAuthority(modal)">{{'Yes'|translate}}</button>
+      <div class="custom-main-popup-content">
+        <!-- Letter Type -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Letter Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select formControlName="updateLetterType" [options]="signatureLetterTypes" optionLabel="value"
+              optionValue="id" placeholder="Please select letter type" class="custom-select w-100" [filter]="true"
+              filterBy="value" resetFilterOnHide="true"></p-select>
+          </div>
+        </div>
+
+        <!-- Employee -->
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Employee' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select formControlName="updateEmployee" [options]="employeeiddetails" optionLabel="fullName"
+              optionValue="employeeId" placeholder="Please select employee" class="custom-select w-100" [filter]="true"
+              filterBy="fullName" resetFilterOnHide="true"></p-select>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();UpdateForm.reset()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="UpdateForm.invalid">
+            {{ 'Update' | translate }}
+          </button>
+        </div>
       </div>
     </div>
-  </ng-template>
-  
+  </form>
+</ng-template>
+
+<!--Delete Popup-->
+<ng-template #deletepopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary "
+        (click)="deleteSignatureAuthority(modal)">{{'Yes'|translate}}</button>
+    </div>
+  </div>
+</ng-template>

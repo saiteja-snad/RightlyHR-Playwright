@@ -14,10 +14,11 @@ import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-await-on-user-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './await-on-user-tickets.component.html',
   styleUrl: './await-on-user-tickets.component.scss'
 })
@@ -41,7 +42,7 @@ export class AwaitOnUserTicketsComponent {
   selectedTickets: any = {};
   itTicketDetails = {} as any;
   selectedAssigneeId: any;
-
+  dataloading: boolean = false;
   constructor(
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
@@ -122,12 +123,19 @@ export class AwaitOnUserTicketsComponent {
   }
 
   getuserticketsbyempid() {
+    this.dataloading = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.dataloading = false;
         this.tickets = data.filter((ticket: any) => ticket.ticketStatus === 'Await On User');
       },
       error: (err: any) => {
+        this.dataloading = false;
+        console.error(err);
+      },
+      complete: () => {
+        this.dataloading = false;
       }
     })
   }

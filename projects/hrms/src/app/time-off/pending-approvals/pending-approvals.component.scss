@@ -1,5 +1,5 @@
 .component-left-tabs-container {
-    height: calc(100dvh - 9rem);
+    height: calc(100dvh - 8rem);
     min-height: 50vh !important;
 }
 
@@ -16,4 +16,10 @@
 .custom-table-content {
     height: calc(100dvh - 15.5rem) !important;
     min-height: 50vh !important;
+}
+
+.custom-table {
+    height: max-content !important;
+    min-height: max-content !important;
+    max-height: 45vh !important;
 }

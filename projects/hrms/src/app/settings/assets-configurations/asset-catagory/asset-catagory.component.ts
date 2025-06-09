@@ -11,9 +11,11 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { AssetCategory } from '../../../Interfaces/assets-management.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsLoaderComponent } from "../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-asset-catagory',
-  imports: [ReactiveFormsModule, CommonModule, TranslateModule, NoDataFoundComponent],
+  imports: [ReactiveFormsModule, CommonModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, SettingsLoaderComponent],
   templateUrl: './asset-catagory.component.html',
   styleUrl: './asset-catagory.component.scss'
 })
@@ -22,6 +24,7 @@ export class AssetCatagoryComponent {
   assetCategorydata!: FormGroup;
   assetCategorydataForm!: FormGroup;
   empinfo = {} as any;
+  loading = false;
   assetdataid: any
   destroy$: Subject<boolean> = new Subject<boolean>();
   assetCategorys = new BehaviorSubject<any>([]);
@@ -79,11 +82,14 @@ export class AssetCatagoryComponent {
   }
 
   getassetsCategory() {
+    this.loading = true;
     this.http.getData('AssetCategory?parentId=0').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.assetCategorys.next(data);
       },
       error: (error) => {
+        this.loading = false;
         console.error("Error fetching asset categories:", error);
       }
     });

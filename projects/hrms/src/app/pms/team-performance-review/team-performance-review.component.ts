@@ -6,10 +6,11 @@ import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
 
 @Component({
   selector: 'app-team-performance-review',
-  imports: [RouterOutlet, TeamPerformanceTabsComponent, ModuleInformationComponent,TranslateModule,NgbPopoverModule],
+  imports: [RouterOutlet, TeamPerformanceTabsComponent, ModuleInformationComponent, TranslateModule, NgbPopoverModule, PmsTabsComponent],
   templateUrl: './team-performance-review.component.html',
   styleUrl: './team-performance-review.component.scss',
   encapsulation: ViewEncapsulation.None,

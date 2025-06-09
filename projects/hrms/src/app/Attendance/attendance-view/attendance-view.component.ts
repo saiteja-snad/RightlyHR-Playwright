@@ -27,7 +27,7 @@ import { IAttendance, IdayLogs } from './attendance-modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
-
+import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-attendance-view',
   imports: [
@@ -46,15 +46,16 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
     TohoursPipe,
     DatePicker,
     ModuleInformationComponent,
-    InfoIconComponent
-],
+    InfoIconComponent,
+    AccordionModule
+  ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class AttendanceViewComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   dataLoader = false;
   subscription!: Subscription;
   yearOptions = [
@@ -145,22 +146,22 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.initiateUpdateModuleInfo();
   }
 
-
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
+    const currentDate = new Date();
+    const month = currentDate.toLocaleString('default', { month: 'long' }); // e.g., June
+    const year = currentDate.getFullYear();
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
-      '/attendance': MODULE_INFOS.ATTENDANCE_MODULE_INFO
+      '/attendance': MODULE_INFOS.getAttendanceModuleInfo(month, year)
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -185,7 +186,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       permissionDate: [{ value: null, disable: true }, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
-      reason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
+      reason: [null, [Validators.required, Validators.minLength(10), Validators.maxLength(250)]],
     });
     this.getDuration();
   }
@@ -202,7 +203,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-//function to get the attendance criteria
+  
+  //function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
     const param = [
@@ -324,9 +326,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   ) {
     this.openModal(durationPopup);
     (this.logsDuration = duration),
-      (this.totalDurationHours = totalDurationHours),
-      (this.permissionsDuration = permissionduration),
-      (this.regularizationAttendDuration = regularizationduration);
+    (this.totalDurationHours = totalDurationHours),
+    (this.permissionsDuration = permissionduration),
+    (this.regularizationAttendDuration = regularizationduration);
   }
 
   getSelectedEmployee() {
@@ -369,9 +371,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         },
       });
   }
-getStatusClass(color:any){
-return color
-}
+
+  getStatusClass(color: any) {
+    return color
+  }
+
   //function to bind color for the each status
   // getStatusClass(status: string): string {
   //   switch (status?.toLowerCase()) {
@@ -433,7 +437,7 @@ return color
                 return {
                   ...employee,
                   fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName??''} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''
                     }${employee.lastName}`,
                 };
               });
@@ -469,7 +473,7 @@ return color
         },
       });
   }
-  
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

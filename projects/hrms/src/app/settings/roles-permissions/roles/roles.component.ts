@@ -14,9 +14,10 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
+import { SettingsLoaderComponent } from "../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-roles',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, SettingsHeaderComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent, NgbPopoverModule, SettingsHeaderComponent, SettingsLoaderComponent],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
   encapsulation:ViewEncapsulation.None

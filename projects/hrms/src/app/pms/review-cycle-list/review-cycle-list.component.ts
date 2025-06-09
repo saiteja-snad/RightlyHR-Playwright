@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter, Subscription } from 'rxjs';
@@ -8,7 +8,7 @@ import { HttpService } from '../../services/http.service';
 import { CreateComponent } from './create/create.component';
 import { UpdateComponent } from './update/update.component';
 import { ViewComponent } from './view/view.component';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { PaginatorModule } from 'primeng/paginator';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
@@ -16,6 +16,7 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
 
 @Component({
   selector: 'app-review-cycle-list',
@@ -28,10 +29,12 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     DataLoaderContentComponent,
     NoDataFoundComponent,
     ModuleInformationComponent,
-    NgbPopoverModule
+    NgbPopoverModule,
+    PmsTabsComponent
 ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
 
 export class ReviewCycleListComponent implements OnInit, OnDestroy {

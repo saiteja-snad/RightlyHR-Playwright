@@ -10,10 +10,11 @@ import { TeamData } from './team.model';
 import { SelectModule } from 'primeng/select';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-team',
-  imports: [TranslateModule, CommonModule, ReactiveFormsModule, SelectModule],
+  imports: [TranslateModule, CommonModule, ReactiveFormsModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './team.component.html',
   styleUrl: './team.component.scss'
 })
@@ -27,6 +28,7 @@ export class TeamComponent implements OnInit, OnDestroy {
   teamdetailsdata = [] as any;
   teamdetails = [] as any[];
   deptdetails = [] as any[];
+  loader = false;
   isEditMode = false;
 
   @ViewChild('addpopup') addpopup: any;
@@ -125,10 +127,12 @@ export class TeamComponent implements OnInit, OnDestroy {
 
 
   getTable() {
+
+    this.loader = true;
     this.subscription = this.http.getDatabyid("Subdepartments/Getalldept").subscribe({
       next: (data: any) => {
         console.log('Received team data:', data);
-
+        this.loader = false;
         if (!data || !Array.isArray(data)) {
           console.warn('Received invalid data for teams:', data);
           this.teamdetailsdata = [];
@@ -149,6 +153,7 @@ export class TeamComponent implements OnInit, OnDestroy {
 
       },
       error: (reason: any) => {
+        this.loader = false;
         const errorMessage = reason.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
       }

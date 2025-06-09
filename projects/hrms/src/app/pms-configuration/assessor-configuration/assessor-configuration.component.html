@@ -21,9 +21,7 @@
 
         <ng-container *ngIf="dataload; else maincontent">
             <ng-template #loadingSpinner>
-                <div class="custom-compoent-data-loader">
-                    <app-data-loader-content />
-                </div>
+                <app-data-loader-content />
             </ng-template>
             <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
         </ng-container>
@@ -98,9 +96,7 @@
                         }
                         @else {
                         <tr>
-                            <td colspan="6">
-                                <app-no-data-found />
-                            </td>
+                            <app-no-data-found />
                         </tr>
                         }
                     </tbody>

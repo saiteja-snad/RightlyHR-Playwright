@@ -10,10 +10,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails, ISignatureAuthority, ISignatureList } from './signature-authority.model';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-signature-authority',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './signature-authority.component.html',
   styleUrl: './signature-authority.component.scss',
 })
@@ -29,6 +30,7 @@ export class SignatureAuthorityComponent implements OnInit {
   employeeiddetails: IemployeeDetails[] = [];
   selectedId: number | null = null;
   selectedDeleteserving: any = null;
+  loading = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -96,15 +98,18 @@ export class SignatureAuthorityComponent implements OnInit {
   }
 
   getAllSignatureEmployees() {
+    this.loading = true;
     this.subscription = this.http
       .getAllSignatureEmployeesData('SignaturesList')
       .subscribe({
         next: (data: any) => {
+          this.loading = false;
           this.signatureEmployeesList = data;
           console.log(this.signatureEmployeesList);
         },
         error: (reason: any) => {
           console.log(reason);
+          this.loading = false;
         },
       });
   }

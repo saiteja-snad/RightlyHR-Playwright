@@ -10,10 +10,11 @@ import { subLocationData } from './sub-location-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-sub-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })
@@ -21,6 +22,7 @@ export class SubLocationComponent {
   subscription!: Subscription;
   SubLocationdetails = [] as any;
   JobroleDetails = [] as any;
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
@@ -69,8 +71,10 @@ export class SubLocationComponent {
   }
 
   getSubLocation() {
+    this.loader = true;
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
+        this.loader = false;
         console.log(data);
         this.SubLocationdetails = data.sort((a: any, b: any) => {
           // First sort by location name
@@ -82,6 +86,10 @@ export class SubLocationComponent {
           return locationComparison;
         });
       },
+      error: (error: any) => {
+        this.loader = false;
+       
+      }
     });
   }
   //ADD

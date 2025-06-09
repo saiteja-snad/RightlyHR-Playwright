@@ -9,9 +9,10 @@ import { Subscription } from 'rxjs';
 import { GenderData } from './gender.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-gender',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './gender.component.html',
   styleUrl: './gender.component.scss'
 })
@@ -22,6 +23,7 @@ export class GenderComponent {
   GenderForm!: FormGroup;
   updateForm!: FormGroup;
   GenderDetail: any[] = [];
+  loading = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteGender: any = null;
@@ -53,8 +55,13 @@ export class GenderComponent {
   }
   
   getGender() {
+    this.loading = true;
     this.http.getData('Gender').subscribe((data: any) => {
       this.GenderDetail = data;
+      this.loading = false;
+    }, (error: any) => {
+      this.loading = false;
+      
     });
   }
 

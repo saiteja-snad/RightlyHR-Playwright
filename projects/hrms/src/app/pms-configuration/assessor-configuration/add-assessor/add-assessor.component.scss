@@ -1,4 +1,5 @@
-.custom-table-content{
+.custom-table-content {
+    min-height: 10vh;
     height: max-content;
-    overflow: unset !important;
+    max-height: 30vh;
 }

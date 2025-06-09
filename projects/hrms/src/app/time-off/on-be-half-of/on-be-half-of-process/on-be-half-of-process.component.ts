@@ -10,9 +10,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-on-be-half-of-process',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './on-be-half-of-process.component.html',
   styleUrl: './on-be-half-of-process.component.scss'
 })
@@ -25,12 +26,14 @@ export class OnBeHalfOfProcessComponent {
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
+  
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  loading: boolean = false;
   onRowsChange() {
     this.first = 0;
   }
@@ -62,8 +65,10 @@ export class OnBeHalfOfProcessComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         if (Array.isArray(response)) {
           this.processedLeaves = response.filter(item => item.status.toLowerCase() === 'processed');
           let pendingCount = this.processedLeaves.length;
@@ -71,7 +76,11 @@ export class OnBeHalfOfProcessComponent {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {console.log(reason)
+        this.loading = false;
+        // Handle error appropriately, e.g., show a notification
+      }
+
     });
   }
 }

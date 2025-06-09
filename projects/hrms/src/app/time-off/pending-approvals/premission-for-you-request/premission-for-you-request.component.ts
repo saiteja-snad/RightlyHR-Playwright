@@ -330,7 +330,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -464,7 +464,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

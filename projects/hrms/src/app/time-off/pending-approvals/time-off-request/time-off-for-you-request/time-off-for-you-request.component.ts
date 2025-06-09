@@ -461,7 +461,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -531,7 +531,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -578,7 +578,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage
         }))
       }
-      message = 'Processing Requests, Please wait...';
+      message = 'Processing Selected Leave Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -591,7 +591,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Request, Please wait...';
+      message = 'Processing Selected Leave Requests...';
     }
     this.conformationPopup.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
@@ -600,7 +600,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }

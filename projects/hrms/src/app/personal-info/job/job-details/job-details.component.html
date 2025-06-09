@@ -29,7 +29,6 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-
                     @if ( showSaperationDots ) {
                     @if(canAccess('update','job') || canAccess('delete','job')|| canAccess('view','separation') ){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&

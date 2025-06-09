@@ -7,8 +7,8 @@
                 <th>Leave Type</th>
                 <th>Duration</th>
                 <th>Availed</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th class="text-center text-nowrap">Start Date</th>
+                <th class="text-center text-nowrap">End Date</th>
                 <th class="text-center">Reason</th>
                 <th>Status</th>
             </thead>
@@ -23,8 +23,8 @@
                         {{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
                         item.durationType == 3 ? 'Second Half' : 'Unknown' }}
                     </td>
-                    <td>{{item.startdate| dateformat}}</td>
-                    <td>{{item.enddate| dateformat}}</td>
+                    <td class="text-center text-nowrap">{{item.startdate| dateformat}}</td>
+                    <td class="text-center text-nowrap">{{item.enddate| dateformat}}</td>
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">

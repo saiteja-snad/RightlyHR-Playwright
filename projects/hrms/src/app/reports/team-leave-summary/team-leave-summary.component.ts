@@ -1,29 +1,23 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { LeavesApprovaltabsComponent } from '../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
-import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { ITeamLeaveSummary } from '../../time-off/leaves/leaves.model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../shared/modules-info';
-
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-team-leave-summary',
-  imports: [LeavesApprovaltabsComponent, CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule],
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })
 
 export class TeamLeaveSummaryComponent {
-  moduleinfo : string = '';
   teamLeaveSummary: ITeamLeaveSummary[] = [];
   loggedInUser: any;
   selectedYear: number | undefined;
@@ -35,7 +29,6 @@ export class TeamLeaveSummaryComponent {
   searchText: string = '';
   filteredTeamLeaveSummary: any[] = [];
   selectedEmployee: any;
-
   destroy$: Subject<boolean> = new Subject<boolean>();
   // year
   years = [
@@ -58,7 +51,6 @@ export class TeamLeaveSummaryComponent {
     { name: 'November', value: 11 },
     { name: 'December', value: 12 },
   ];
-
   readonly DISPLAY_LABEL_MAP: Record<string, string> = {
     'leaves': 'Leave(s)',
     'wfh': 'WFH',
@@ -78,27 +70,6 @@ export class TeamLeaveSummaryComponent {
     this.selectedMonth = currentDate.getMonth() + 1;
     this.selectedYear = currentDate.getFullYear();
     this.getAllTeamLeaveSummary();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/leaves/team-leave-summary': MODULE_INFOS.TIME_OFF_LEAVES_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllTeamLeaveSummary() {
@@ -153,7 +124,7 @@ export class TeamLeaveSummaryComponent {
     this.selectedEmployee = employee;
     const actualKey = this.DISPLAY_LABEL_MAP[type];
     this.popupData = employee[type] || [];
-    this.popupType = actualKey; 
+    this.popupType = actualKey;
     this.openModal(content);
   }
 
@@ -165,7 +136,8 @@ export class TeamLeaveSummaryComponent {
     if (!entries || !Array.isArray(entries)) return 0;
     return entries.reduce((sum, item) => sum + parseFloat(item.duration || 0), 0);
   }
-    navigation() {
+
+  navigation() {
     this.router.navigate(['/reports']);
   }
 

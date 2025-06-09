@@ -9,10 +9,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { InterviewRoundData } from './interview-module';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-interview-round',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './interview-round.component.html',
   styleUrl: './interview-round.component.scss'
 })
@@ -27,6 +28,7 @@ export class InterviewRoundComponent implements OnInit {
   roundname1= [] as any[];
   selectedId: number | null = null;
   interviewdetails=[] as any[];
+loader = false;
   
   selectedDeleteBank = {} as any;
 
@@ -53,12 +55,15 @@ export class InterviewRoundComponent implements OnInit {
     this.getInterview();
   }
   getInterview() {
+    this.loader = true;
     this.subscription = this.http.getData('interviewRounds').subscribe({
       next: (data: any) => {
         console.log(data);
+        this.loader = false;
         this.interviewdetails = data as InterviewRoundData [];
       },
       error: (reason: any) => {
+        this.loader = false;
         console.log(reason);
       },
     });

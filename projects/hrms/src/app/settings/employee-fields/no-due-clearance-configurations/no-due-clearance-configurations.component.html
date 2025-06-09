@@ -17,6 +17,7 @@
   </div>
 
   <div class="custom-table-content">
+    @if(!loading){
     <table class="w-100">
       <thead>
         <th>Department/Employee Manager</th>
@@ -73,6 +74,10 @@
         }
       </tbody>
     </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
   </div>
 </div>
 

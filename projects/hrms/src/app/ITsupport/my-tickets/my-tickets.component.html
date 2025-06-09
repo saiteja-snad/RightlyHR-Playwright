@@ -11,8 +11,7 @@
 
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">
-                {{'Add New Ticket' | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">{{'Add New Ticket' | translate}}</button>
         </div>
         }
     </div>
@@ -114,12 +113,10 @@
                                 filterBy="firstName" optionLabel="fullName" optionValue="employeeId"
                                 (onChange)="colleagueDetails($event.value)" placeholder="Please select employee"
                                 formControlName="colleaguename" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
-                                    emp.lastName
-                                    }}</ng-template>
+                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} 
+                                    {{ emp.lastName }}</ng-template>
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }}
-                                    {{ emp?.lastName
-                                    }}</ng-template>
+                                    {{ emp?.lastName }}</ng-template>
                             </p-select>
                             }
                             <div
@@ -204,7 +201,6 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="typeDetails" optionLabel="label" optionValue="value"
                                 placeholder="Please select type" formControlName="type" class="custom-select w-100">
-
                             </p-select>
                         </div>
                         <div *ngIf="itSupportForm.get('type')?.invalid && itSupportForm.get('type')?.touched">
@@ -247,6 +243,7 @@
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*"
                             [maxlength]="250" placeholder="Please enter description"></textarea>
+                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250</div>
                         <div *ngIf="itSupportForm.get('description')?.invalid
                              && itSupportForm.get('description')?.touched">
                             <div class="error-msg ">{{'Description is required' | translate}}</div>
@@ -254,7 +251,6 @@
                         <div *ngIf="itSupportForm.get('description')?.hasError('pattern')">
                             <div class="error-msg ">{{'Description must not contain only spaces' | translate}}</div>
                         </div>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250</div>
                     </div>
                 </div>
 

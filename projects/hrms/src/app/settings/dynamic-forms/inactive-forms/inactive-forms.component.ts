@@ -53,6 +53,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
   allFormsDetails = [] as IAllFormsData[];
   searchValue: any;
   updateForm!: FormGroup;
+
   
   modules: any[] = environment.modules;
   questionTypes = [

@@ -73,7 +73,7 @@
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li (click)="openModal(updatetickets, ticket)">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
+                                                <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
                                             </a>
                                         </li>
                                     </ul>
@@ -83,11 +83,10 @@
                                 <!-- No action -->
                             </ng-template>
                         </td>
-
                         }
                     </tr>
                     <tr *ngIf="filteredTickets.length === 0">
-                        <app-no-data-found></app-no-data-found>
+                        <app-no-data-found />
                     </tr>
                 </ng-container>
             </tbody>
@@ -121,90 +120,69 @@
                         <div *ngIf="itSupportForm.get('employee')?.invalid && itSupportForm.get('employee')?.touched">
                             <div class="error-msg">{{'Ticket Raised For is required' | translate}}</div>
                         </div>
-
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Name' | translate}}<span
                                 class="text-danger">*</span></label>
-
                         <input type="text" class="form-control custom-input" formControlName="name"
                             placeholder="Please enter employeename" onkeydown="return false;" />
-
                         <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
                             <div class="error-msg">{{'Employee is required' | translate}}</div>
                         </div>
-
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Email' | translate}}<span
                                 class="text-danger">*</span></label>
-
                         <input type="text" class="form-control custom-input" formControlName="email"
                             placeholder="Please enter email" onkeydown="return false;" />
-
-
                         <div *ngIf="itSupportForm.get('email')?.invalid && itSupportForm.get('email')?.touched">
                             <div class="error-msg">{{'Email is required' | translate}}</div>
                         </div>
-
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Phone Number' | translate}}<span
                                 class="text-danger">*</span></label>
-
                         <input type="number" class="form-control custom-input" formControlName="phoneNumber"
                             placeholder="Please enter phonenumber" onkeydown="return false;" />
-
-
                         <div
                             *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
                             <div class="error-msg">{{'Phone Number is required' | translate}}</div>
                         </div>
-
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Desk Details' | translate}}<span
                                 class="text-danger">*</span></label>
-
                         <input type="text" class="form-control custom-input" formControlName="deskdetails"
                             placeholder="Please enter Deskdetails" onkeydown="return false;" />
-
-
                         <div
                             *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
                             <div class="error-msg">{{'Desk Details is required' | translate}}</div>
                         </div>
-
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                                 class="text-danger">*</span></label>
-
                         <input type="text" class="form-control custom-input" formControlName="department"
                             placeholder="Please enter department" onkeydown="return false;" />
-
                         <div
                             *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                             <div class="error-msg">{{'Department is required' | translate}}</div>
                         </div>
-
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                                 class="text-danger">*</span></label>
-
                         <input type="text" class="form-control custom-input" formControlName="team"
                             placeholder="Please enter department" onkeydown="return false;" />
                         <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
                             <div class="error-msg">{{'Team is required' | translate}}</div>
                         </div>
-
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
@@ -247,7 +225,6 @@
                     </div>
                 </div>
                 <div class="row">
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Action'| translate}}<span
                                 class="text-danger">*</span></label>
@@ -278,7 +255,6 @@
                         </div> -->
                     </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span
@@ -289,7 +265,7 @@
                             *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
                             <div class="error-msg">{{'Description is required' | translate}}</div>
                         </div>
-                         <div *ngIf="itSupportForm.get('description')?.hasError('pattern')">
+                        <div *ngIf="itSupportForm.get('description')?.hasError('pattern')">
                             <div class="error-msg">{{'Description must not contain only spaces' | translate}}</div>
                         </div>
                     </div>
@@ -302,7 +278,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openConfirmationModal(confirmationpopup)">{{'Cancel'}}</button>
@@ -326,7 +301,6 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text"> {{'Are you sure you want to cancel?' | translate}}</p>
         </div>
-
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
                 {{'No' | translate}}

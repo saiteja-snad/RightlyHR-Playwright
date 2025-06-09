@@ -9,11 +9,12 @@ import { Subscription } from 'rxjs';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { Iconsoltancy } from './consoltancy-model';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 
 @Component({
   selector: 'app-consultancy',
-  imports: [CommonModule,ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './consultancy.component.html',
   styleUrl: './consultancy.component.scss'
 })
@@ -23,6 +24,7 @@ export class ConsultancyComponent {
   consultancyForm!: FormGroup;
   updateForm!: FormGroup;
   consultancyDetail: any[] = [];
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteCos: any = null;
@@ -50,8 +52,13 @@ export class ConsultancyComponent {
   }
   
   getconsoltancyDetail() {
+    this.loader = true;
     this.http.getData('JobPosting/getAllConsultancyData').subscribe((data: any) => {
       this.consultancyDetail = data;
+      this.loader = false;
+    }, (error: any) => {
+      this.loader = false;
+    
     });
   }
   //ADD

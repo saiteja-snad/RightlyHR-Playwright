@@ -1,14 +1,15 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="JobtypeForm" (ngSubmit)="addjobType()" *ngIf="rbac.allowedToAccess('Job Type.create')">
+    <form autocomplete="off" [formGroup]="JobtypeForm" (ngSubmit)="addjobType()"
+        *ngIf="rbac.allowedToAccess('Job Type.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter job type"
                     formControlName="jobtype" aria-label="jobtype" aria-describedby="jobtype"
-                    (keydown)="formValidations.restrictInputAllowSpecialChars($event)"
-                    maxlength="101">
+                    (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
                 <span class="input-group-text" id="jobtype">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="JobtypeForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="JobtypeForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="JobtypeForm.get('jobtype')?.touched && JobtypeForm.get('jobtype')?.invalid" class="error-msg">
@@ -27,6 +28,7 @@
 
     <!--Data Content-->
     <div class="custom-settings-data-table">
+        @if(!loader){
         <table class="w-100">
             <thead>
                 <tr>
@@ -57,6 +59,10 @@
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
     </div>
 </div>
 
@@ -77,8 +83,10 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Job Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobtype"
-                        placeholder="Please enter job type" (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
-                    <div *ngIf="updateForm.get('jobtype')?.touched && updateForm.get('jobtype')?.invalid" class="error-msg">
+                        placeholder="Please enter job type"
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
+                    <div *ngIf="updateForm.get('jobtype')?.touched && updateForm.get('jobtype')?.invalid"
+                        class="error-msg">
                         <div *ngIf="updateForm.get('jobtype')?.errors?.['required']">
                             {{ 'Job Type is required' | translate }}
                         </div>
@@ -91,7 +99,8 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
                     <button type="button" class="custom-btn btn-primary" (click)="updatejobtype(modal)"
                         [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
@@ -108,7 +117,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

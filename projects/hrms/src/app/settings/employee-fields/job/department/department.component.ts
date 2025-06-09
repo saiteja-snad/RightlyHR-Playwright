@@ -14,10 +14,11 @@ import { HttpService } from '../../../../services/http.service';
 import { DepartmentData } from './department-module';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-department',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './department.component.html',
   styleUrl: './department.component.scss',
 })
@@ -27,6 +28,7 @@ export class DepartmentComponent {
   DepartmentForm!: FormGroup;
   updateForm!: FormGroup;
   DepartmentDetail: any[] = [];
+  loading = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
@@ -65,8 +67,13 @@ export class DepartmentComponent {
   }
 
   getDepartment() {
+    this.loading = true;
     this.http.getData('Department').subscribe((data: any) => {
       this.DepartmentDetail = data;
+      this.loading = false;
+    }, (error: any) => {  
+      this.loading = false;
+      console.error(error);
     });
   }
   //ADD

@@ -1,16 +1,19 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="CompensationForm" (ngSubmit)="addReason()" *ngIf="rbac.allowedToAccess('Compensation Reason.create')">
+    <form autocomplete="off" [formGroup]="CompensationForm" (ngSubmit)="addReason()"
+        *ngIf="rbac.allowedToAccess('Compensation Reason.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter compensation reason"
-                    formControlName="Reason" aria-label="reason" aria-describedby="reason" maxlength="101" 
+                    formControlName="Reason" aria-label="reason" aria-describedby="reason" maxlength="101"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="reason">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="CompensationForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="CompensationForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
-            <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid" class="error-msg">
+            <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid"
+                class="error-msg">
                 <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">
                     {{ 'Compensation Reason is required' | translate }}
                 </div>
@@ -19,13 +22,14 @@
                 {{ 'Please limit your input to 100 characters' | translate }}
             </div>
             <div *ngIf="CompensationForm.get('Reason')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
+                {{ 'Field cannot start with a space' | translate }}
             </div>
         </div>
     </form>
 
     <!--Data Content-->
     <div class="custom-settings-data-table">
+        @if(!loader){
         <table class="w-100">
             <thead>
                 <tr>
@@ -40,13 +44,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(reason)" *ngIf="rbac.allowedToAccess('Compensation Reason.update')">
+                                <a (click)="openupdate(reason)"
+                                    *ngIf="rbac.allowedToAccess('Compensation Reason.update')">
                                     <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(reason)" *ngIf="rbac.allowedToAccess('Compensation Reason.delete')">
+                                <a (click)="opendelete(reason)"
+                                    *ngIf="rbac.allowedToAccess('Compensation Reason.delete')">
                                     <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
                                 </a>
                             </div>
@@ -56,6 +62,10 @@
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
     </div>
 </div>
 
@@ -73,26 +83,31 @@
             </div>
             <div class="custom-main-popup-content">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation Reason'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation
+                        Reason'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateReason"
-                        placeholder="Please enter compensation reason" 
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
-                        <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid" class="error-msg">
-                            <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">
-                                {{ 'Compensation Reason is required' | translate }}
-                            </div>
+                        placeholder="Please enter compensation reason"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        maxlength="101">
+                    <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">
+                            {{ 'Compensation Reason is required' | translate }}
                         </div>
-                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['maxCharacters']" class="error-msg">
-                            {{ 'Please limit your input to 100 characters' | translate }}
-                        </div>
-                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['pattern']" class="error-msg">
-                            {{ 'Field cannot start with a space' | translate }}
-                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('UpdateReason')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('UpdateReason')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateReason(modal)" [disabled]="updateForm.invalid">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateReason(modal)"
+                        [disabled]="updateForm.invalid">
                         {{'Update'|translate}}</button>
                 </div>
             </div>
@@ -108,7 +123,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

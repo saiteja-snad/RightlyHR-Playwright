@@ -14,10 +14,11 @@ import { Subscription } from 'rxjs';
 import { JobLocation } from './locationModule';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './location.component.html',
   styleUrl: './location.component.scss',
 })
@@ -30,6 +31,7 @@ export class LocationComponent implements OnInit, OnDestroy {
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteLoc: any = null;
+  loader = false;
   subscription!: Subscription;
   constructor(
     private modalService: NgbModal,
@@ -66,8 +68,12 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
   
   getLocation() {
+    this.loader = true;
     this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
       this.locationDetail = data;
+      this.loader = false;
+    }, (error: any) => {
+      this.loader = false;  
     });
   }
   //ADD

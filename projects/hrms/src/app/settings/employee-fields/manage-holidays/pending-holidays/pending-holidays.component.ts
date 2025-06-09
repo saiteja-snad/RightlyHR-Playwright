@@ -6,10 +6,11 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-pending-holidays',
-  imports: [CommonModule, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './pending-holidays.component.html',
   styleUrl: './pending-holidays.component.scss'
 })
@@ -17,7 +18,7 @@ import { RbacService } from '../../../../services/rbac.service';
 export class PendingHolidaysComponent {
   subscription!: Subscription
   allHolidays = [] as any;
-
+loading = false;
   constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit() {
@@ -25,11 +26,14 @@ export class PendingHolidaysComponent {
   }
 
   getAllHolidays() {
+    this.loading = true;
     this.subscription = this.http.getData('orgHolidays').subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.allHolidays = data.filter((status: { status: string; }) => status.status === 'Pending for submission').reverse();
       }, error: (err: any) => {
         console.error(err);
+        this.loading = false;
       }
     })
   }

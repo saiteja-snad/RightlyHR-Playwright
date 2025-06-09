@@ -9,10 +9,11 @@ import { Subscription } from 'rxjs';
 import {JobtypeData } from './jobtype-module';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-jobtype',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './jobtype.component.html',
   styleUrl: './jobtype.component.scss'
 })
@@ -26,6 +27,7 @@ export class JobtypeComponent {
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
   subscription!: Subscription;
+  loader = false;
   constructor(
     private modalService: NgbModal, 
     private fb: FormBuilder, 
@@ -48,11 +50,17 @@ export class JobtypeComponent {
   }
 
   getJobtype() {
+    this.loader = true;
     this.subscription = this.http.getData('Jobtype').subscribe({
       next: (data: any) => {
+        this.loader = false;
         console.log(data);
         this.JobtypeDetail = data;
       },
+      error: (error: any) => {
+        this.loader = false;
+        
+      }
     });
   }
  

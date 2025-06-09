@@ -201,7 +201,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to approve Recall request?' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
       <div class="custom-main-popup-content">
@@ -228,7 +228,7 @@
           (!isLoading) { {{ 'Approve' | translate }} } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Submitting'|translate}}</div>
+            <div>{{'Approving Recall Request...'|translate}}</div>
           </div>
           }
         </button>
@@ -242,7 +242,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to reject this request?</p>
+      <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
     </div>
 
     <form autocomplete="off" [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
@@ -275,7 +275,7 @@
           } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Submitting'|translate}}</div>
+            <div>{{'Rejecting Recall Request...'|translate}}</div>
           </div>
           }
         </button>
@@ -289,7 +289,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to process this request?</p>
+      <p class="confirmation-text">{{'Are you sure you want to process this request?' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
       <div class="custom-main-popup-content">
@@ -323,7 +323,7 @@
           } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Submitting'|translate}}</div>
+            <div>{{'Processing Recall Request...'|translate}}</div>
           </div>
           }
         </button>

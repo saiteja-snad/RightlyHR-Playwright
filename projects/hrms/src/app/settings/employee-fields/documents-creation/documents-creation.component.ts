@@ -14,9 +14,10 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-documents-creation',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, CommonModule, NoDataFoundComponent, NgbPopoverModule],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, CommonModule, NoDataFoundComponent, NgbPopoverModule, DataLoaderContentComponent],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })
@@ -93,14 +94,17 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
   }
 
   onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
+    this.dataLoad=true
     console.log(folder,mainFolderName);
     
     if (!folder) {
       return;
     }
     if (folder.subfolders && folder.subfolders?.length > 0) {
+      this.dataLoad = false;
       this.selectedFolder = folder.subfolders as IFolders[];
     } else {
+      this.dataLoad = false;
       this.selectedFolder = [] as IFolders[];
     }
     if (folder.isDirectory) {

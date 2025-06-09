@@ -9,9 +9,10 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-degree',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './degree.component.html',
   styleUrl: './degree.component.scss',
 })
@@ -20,7 +21,7 @@ export class DegreeComponent implements OnInit {
   @ViewChild('updatepopup') updatepopup: any;
   degreedetails = [] as any[];
   updateDegreeDetails = {} as any;
-
+  loader = false;
   subscription!: Subscription;
   degree = {} as any;
 
@@ -55,11 +56,14 @@ this.degreeFrom = this.fb.group({
     }
 
   getdegree() {
+    this.loader = true;
     this.subscription = this.http.getData("Degree").subscribe({
        next:(data: any) => {
          this.degreedetails = data as any[];
+          this.loader = false;
        },
        error: (reason: any) => {
+          this.loader = false;
          console.log(reason);
        }
      })

@@ -11,9 +11,10 @@ import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-on-be-half-of-reject',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './on-be-half-of-reject.component.html',
   styleUrl: './on-be-half-of-reject.component.scss'
 })
@@ -23,6 +24,7 @@ export class OnBeHalfOfRejectComponent {
   cadidateEmployeeId!: number;
   subscription!: Subscription;
   rejectedLeaves: any = [];
+  loading: boolean = false;
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -65,6 +67,7 @@ export class OnBeHalfOfRejectComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
@@ -74,7 +77,9 @@ export class OnBeHalfOfRejectComponent {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{ console.log(reason)
+        this.loading = false;
+      }
     });
   }
 

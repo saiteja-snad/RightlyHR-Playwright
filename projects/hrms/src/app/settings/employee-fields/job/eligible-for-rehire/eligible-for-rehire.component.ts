@@ -9,10 +9,11 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-eligible-for-rehire',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './eligible-for-rehire.component.html',
   styleUrl: './eligible-for-rehire.component.scss'
 })
@@ -22,6 +23,7 @@ export class EligibleForRehireComponent {
   EligibilityForm!: FormGroup;
   updateForm!: FormGroup;
   EligibilityDetail: any[] = [];
+  loading = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteeligibility: any = null;
@@ -48,8 +50,13 @@ export class EligibleForRehireComponent {
   }
 
   getEligibility() {
+    this.loading = true;
     this.http.getData('Eligibleforrehire').subscribe((data: any) => {
       this.EligibilityDetail = data;
+      this.loading = false;
+    }, (error: any) => {  
+      this.loading = false;
+     
     });
   }
   //ADD

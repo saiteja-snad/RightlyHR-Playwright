@@ -8,9 +8,10 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
    selector: 'app-pending-weekends',
-   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
    templateUrl: './pending-weekends.component.html',
    styleUrl: './pending-weekends.component.scss'
 })
@@ -18,7 +19,7 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 export class PendingWeekendsComponent implements OnInit, OnDestroy {
    weekendsList: IWeekends[] = [];
    destroy$: Subject<boolean> = new Subject<boolean>();
-
+   loading = false;
    constructor(
       private router: Router,
       private http: HttpService,
@@ -39,10 +40,17 @@ export class PendingWeekendsComponent implements OnInit, OnDestroy {
    }
 
    getAllWeekend() {
+      this.loading = true;
       this.http.getData(`OrgWeekendHeader/getAll`).pipe(takeUntil(this.destroy$)).subscribe({
          next: (data: any) => {
+            this.loading = false;
             this.weekendsList = data.filter((item: any) => item.status === 'Pending for submission');
+         },
+          error: (error) => {
+            this.loading = false;
+            console.error('Error fetching weekends:', error);
          }
+
       })
    }
 

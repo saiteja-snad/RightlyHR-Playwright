@@ -60,7 +60,8 @@
                             <td>{{ subFolder.createdOn | dateformat }}</td>
                             @if(rbac.allowedToAccess('Document Tab.delete')){
                             <td>
-                                <button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
+                                <button class="custom-btn btn-primary"
+                                    (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
                             </td>
                             }
                             }
@@ -69,11 +70,15 @@
                         }
                         @else{
                         <tr>
-                           <app-no-data-found />
+                            <app-no-data-found />
                         </tr>
                         }
                     </tbody>
                 </table>
+                }
+                
+                @else {
+                <app-data-loader-content />
                 }
             </div>
         </div>

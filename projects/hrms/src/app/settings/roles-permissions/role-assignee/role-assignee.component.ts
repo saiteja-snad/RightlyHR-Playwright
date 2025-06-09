@@ -17,11 +17,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
+import { SettingsLoaderComponent } from "../../../shared/settings-loader/settings-loader.component";
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-role-assignee',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent,
-     NoDataFoundComponent, TranslateModule, NgbPopoverModule, SettingsHeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule,
+    NoDataFoundComponent, TranslateModule, NgbPopoverModule, SettingsHeaderComponent, Skeleton],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None

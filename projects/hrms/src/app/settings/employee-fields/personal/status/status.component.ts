@@ -8,9 +8,10 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-status',
-  imports: [CommonModule,TranslateModule,ReactiveFormsModule],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent],
   templateUrl: './status.component.html',
   styleUrl: './status.component.scss'
 })
@@ -19,6 +20,7 @@ export class StatusComponent {
   updateForm!: FormGroup;
   statusForm!: FormGroup;
   submitted = false;
+  loading = false;
   status = {} as any;
   statusDeletedata = {} as any;
   subscription!: Subscription;
@@ -42,11 +44,14 @@ export class StatusComponent {
   }
 
   getstatus() {
+    this.loading= true;
     this.subscription = this.http.getData("Status").subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.statusdetails = data as [];
       },
       error: (reason: any) => {
+        this.loading = false;
         console.log(reason);
       }
     })

@@ -6,6 +6,7 @@
 
     <div class="custom-main-component-container">
         <div class="custom-table-content">
+            @if(!loader){
             <table class="w-100">
                 <thead>
                     <tr>
@@ -39,12 +40,14 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li (click)="openupdateDialog(subloc)" *ngIf="rbac.allowedToAccess('Sub Location.update')">
+                                        <li (click)="openupdateDialog(subloc)"
+                                            *ngIf="rbac.allowedToAccess('Sub Location.update')">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-pencil me-2"></i>Update
                                             </a>
                                         </li>
-                                        <li (click)="opendelete(subloc)" *ngIf="rbac.allowedToAccess('Sub Location.delete')">
+                                        <li (click)="opendelete(subloc)"
+                                            *ngIf="rbac.allowedToAccess('Sub Location.delete')">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-trash3 me-2"></i>Delete
                                             </a>
@@ -56,6 +59,10 @@
                     </ng-container>
                 </tbody>
             </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
         </div>
     </div>
 </div>
@@ -82,12 +89,14 @@
                         {{ 'Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select formControlName="AddSubLocation" [options]="locationDetail" optionLabel="jobLocationName"
-                            optionValue="id" placeholder="Please select location" class="custom-select w-100" [filter]="true"
-                            filterBy="jobLocationName"></p-select>
+                        <p-select formControlName="AddSubLocation" [options]="locationDetail"
+                            optionLabel="jobLocationName" optionValue="id" placeholder="Please select location"
+                            class="custom-select w-100" [filter]="true" filterBy="jobLocationName"></p-select>
                     </div>
-                    <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('AddSubLocation')?.errors?.['required']">{{'Location is required'|translate}}</div>
+                    <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="AddForm.get('AddSubLocation')?.errors?.['required']">{{'Location is
+                            required'|translate}}</div>
                     </div>
                 </div>
 
@@ -97,9 +106,10 @@
                         {{ 'Sub Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="AddLocation"
-                        placeholder=" Please enter sub location " 
-                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101"/>
-                    <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid" class="error-msg">
+                        placeholder=" Please enter sub location "
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101" />
+                    <div *ngIf="AddForm.get('AddLocation')?.touched && AddForm.get('AddLocation')?.invalid"
+                        class="error-msg">
                         <div *ngIf="AddForm.get('AddLocation')?.errors?.['required']">
                             {{ 'Sub Location is required' | translate }}
                         </div>
@@ -108,8 +118,8 @@
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                     <div *ngIf="AddForm.get('AddLocation')?.errors?.['pattern']" class="error-msg">
-                            {{ 'Field cannot start with a space' | translate }}
-                     </div>
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
                 </div>
                  <!--Address field-->
                  <div class="mb-3">
@@ -169,9 +179,9 @@
                         {{ 'Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select formControlName="updateLocation" [options]="locationDetail" optionLabel="jobLocationName" optionValue="id"
-                            placeholder="Please select location" class="custom-select w-100" [filter]="true"
-                            filterBy="jobLocationName"></p-select>
+                        <p-select formControlName="updateLocation" [options]="locationDetail"
+                            optionLabel="jobLocationName" optionValue="id" placeholder="Please select location"
+                            class="custom-select w-100" [filter]="true" filterBy="jobLocationName"></p-select>
                     </div>
                     <!-- Location Validation Error -->
                     <div *ngIf="updateForm.get('updateLocation')?.touched && updateForm.get('updateLocation')?.invalid"
@@ -188,10 +198,11 @@
                         {{ 'Sub Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateSubLocation"
-                        placeholder="Please enter sub location" 
-                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101"/>
+                        placeholder="Please enter sub location"
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101" />
                     <!-- Sub Location Validation Error -->
-                    <div *ngIf="updateForm.get('UpdateSubLocation')?.touched && updateForm.get('UpdateSubLocation')?.invalid" class="error-msg">
+                    <div *ngIf="updateForm.get('UpdateSubLocation')?.touched && updateForm.get('UpdateSubLocation')?.invalid"
+                        class="error-msg">
                         <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['required']">
                             {{ 'Sub Location is required' | translate }}
                         </div>
@@ -199,9 +210,9 @@
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
-                     <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['pattern']" class="error-msg">
-                            {{ 'Field cannot start with a space' | translate }}
-                     </div>
+                    <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
                 </div>
                 <!-- Address Field -->
                  <div class="mb-3">
@@ -247,7 +258,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

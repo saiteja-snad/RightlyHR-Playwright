@@ -4,13 +4,13 @@
     </div>
 
     <div class="component-data-content">
-        <div class="component-header mb-4">Emergency Details</div>
+        <div class="component-header mb-4">Emergency Contacts</div>
 
         <form autocomplete="off" [formGroup]="contactForm" (ngSubmit)="updateEmpDetails()">
             <div class="custom-main-sub-content">
                 <!-- Contact 1 -->
                 <div class="component-header my-3">
-                    <span>Contact 1</span>
+                    <span>Primary</span>
                 </div>
 
                 <div formGroupName="contact1" class="row">
@@ -80,7 +80,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="Relationdetails" optionLabel="relationship1"
                                 optionValue="relationship1" formControlName="relationship"
-                                placeholder="Please select relation" class="form-select custom-select"></p-select>
+                                placeholder="Please select relation" class="form-select custom-select" appendTo="body"></p-select>
                         </div>
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.relationship')?.invalid && (contactForm.get('contact1.relationship')?.touched || contactForm.get('contact1.relationship')?.dirty)">
@@ -91,7 +91,7 @@
                 </div>
 
                 <!-- Contact 2 -->
-                <div class="component-header my-3">Contact 2</div>
+                <div class="component-header my-3">Secondary</div>
 
                 <div formGroupName="contact2" class="row">
 
@@ -165,7 +165,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="Relationdetails" optionLabel="relationship1"
-                                optionValue="relationship1" formControlName="relationship"
+                                optionValue="relationship1" formControlName="relationship" appendTo="body"
                                 placeholder="Please select relation" class="form-select custom-select">
                             </p-select>
                         </div>
@@ -178,7 +178,7 @@
                 </div>
             </div>
             <div class="footer-btn-content d-flex justify-content-between gap-3 pt-3">
-                <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Education Details</button>
+                <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Academics</button>
                 <button type="submit" class="custom-btn btn-primary px-5" [disabled]="contactForm.invalid||!selectedDialCode||!this.selectedDialCode1">Next</button>
             </div>
         </form>

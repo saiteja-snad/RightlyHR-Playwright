@@ -21,6 +21,8 @@ import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
 import { OfferletterdashboardpipePipe } from '../../../Pipes/offerletterdashboardpipe.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { RbacService } from '../../../services/rbac.service';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-document-history-offer-letter',
@@ -31,7 +33,9 @@ import { RbacService } from '../../../services/rbac.service';
     FormsModule,
     DateformatPipe,
     OfferletterdashboardpipePipe,
-  ],
+    NoDataFoundComponent,
+    DataLoaderContentComponent
+],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
 })
@@ -43,7 +47,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   loginuserdata = {} as any;
   selectedValuesOfOffer = {} as any;
   employeedata = {} as any;
-
+  isloading: boolean = false;
   constructor(
     private router: Router,
     private modalService: NgbModal,
@@ -84,17 +88,24 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       return null;
     };
 }
+
   //to get all offer Letters
   getOfferLetters() {
+    this.isloading = true;
     this.subscription = this.http
       .getData('OfferLetter/getAllNames/approverNames')
       .subscribe({
         next: (data: any) => {
+          this.isloading = false;
           console.log(data);
           this.offerLetters = data;
         },
         error: (reason: any) => {
+          this.isloading = false;
           console.log(reason);
+        },
+        complete: () => {
+          this.isloading = false;
         },
       });
   }

@@ -27,6 +27,7 @@
 
     <!--Data Content-->
     <div class="custom-settings-data-table">
+        @if (!loading) {
         <table class="w-100">
             <thead>
                 <tr>
@@ -57,6 +58,10 @@
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
     </div>
 </div>
 

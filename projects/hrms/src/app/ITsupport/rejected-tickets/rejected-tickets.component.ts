@@ -14,10 +14,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-rejected-tickets',
-  imports: [CommonModule, RouterModule, Select, NoDataFoundComponent, FormsModule,ReactiveFormsModule, ItsupportPipe, DateformatPipe,TranslateModule],
+  imports: [CommonModule, RouterModule, Select, NoDataFoundComponent, FormsModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, TranslateModule, DataLoaderContentComponent],
   templateUrl: './rejected-tickets.component.html',
   styleUrl: './rejected-tickets.component.scss'
 })
@@ -40,7 +41,7 @@ export class RejectedTicketsComponent {
     selectedTickets: any = {};
     itTicketDetails = {} as any;
     selectedAssigneeId: any;
-  
+    dataloading: boolean = false;
     constructor(
       private readonly http: HttpService,
       private readonly modalService: NgbModal,
@@ -105,12 +106,19 @@ export class RejectedTicketsComponent {
     }
   
     getuserticketsbyempid() {
+      this.dataloading = true;
       let EmpId = parseInt(this.empinfo.employeeId);
       this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
         next: (data: any) => {
+          this.dataloading = false;
           this.tickets = data.filter((ticket: any) => ticket.ticketStatus === 'Rejected');
         },
         error: (err: any) => {
+          this.dataloading = false;
+          console.error(err);
+        },
+        complete: () => {
+          this.dataloading = false;
         }
       })
     }

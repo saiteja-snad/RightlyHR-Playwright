@@ -364,7 +364,7 @@ fileupload(event: any, index: number): void {
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expense request submitted successfully! ');
+              this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
               this.getexpensesheaderbyid(this.empinfo.employeeId);
             }
           },
@@ -380,7 +380,7 @@ fileupload(event: any, index: number): void {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expense request submitted successfully! ');
+              this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
               this.newExpenseForm.reset();
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

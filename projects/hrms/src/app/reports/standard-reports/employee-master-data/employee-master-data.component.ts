@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { ReportsService } from '../../../services/reports/reports.service';
@@ -19,17 +19,17 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
-
 @Component({
   selector: 'app-employee-master-data',
   imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe,
-    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ],
+    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent,],
   templateUrl: './employee-master-data.component.html',
-  styleUrl: './employee-master-data.component.scss'
+  styleUrl: './employee-master-data.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   subscription!: Subscription
   loggedInUser = {} as IemployeeDetails
@@ -40,10 +40,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   employeeMasterData = [] as any[];
   masterDataForm!: FormGroup;
   dataload = false;
-  spinnerLoader1= false;
-  spinnerLoader2= false;
-  disableBtn= false;
-
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -55,7 +54,6 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
   employeeStatusOptions = [
     { label: 'All Employees', value: '' },
     { label: 'Active', value: 'Active' },
@@ -66,9 +64,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   localeOptions: any;
 
   constructor(
-    private authService: AuthService, 
-    private reportsService: ReportsService, 
-    private fb: FormBuilder, 
+    private authService: AuthService,
+    private reportsService: ReportsService,
+    private fb: FormBuilder,
     private http: HttpService,
     private modal: OpenModalService,
     public rbac: RbacService,
@@ -85,13 +83,11 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     // this.getStandardReports();
-
     this.masterDataForm.patchValue({
       empStatus: 'All Employees',
     });
-
-    this.masterDataForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.masterDataForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     });
   }
 
@@ -101,9 +97,6 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       empStatus: [''],
     });
   }
-
-
-
 
   //method to get All the reports
   // getStandardReports() {
@@ -121,32 +114,26 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   //     },
   //     complete: ()=>{
   //       this.dataload = false;
-        
   //     }
   //   });
   // }
 
   onSubmit(form: FormGroup) {
-    this.spinnerLoader1= true;
+    this.spinnerLoader1 = true;
     const formData = form.value;
-  
     const isEmptyStatus = !formData.empStatus;
     const isEmptyDateRange = !formData.dateOfJoining;
-  
     if (isEmptyStatus && isEmptyDateRange) {
       return;
     }
-  
     this.dataload = true;
-  
     const request: IStandardReportRequest = {
       dateRange: {
         startDate: formData.dateOfJoining?.startDate || null,
         endDate: formData.dateOfJoining?.endDate || null
       },
-      employeeStatus: formData.empStatus === 'All Employees'? '' : formData.empStatus
+      employeeStatus: formData.empStatus === 'All Employees' ? '' : formData.empStatus
     };
-  
     this.subscription = this.reportsService.getStandardReports(request).subscribe({
       next: (res: any) => {
         if (res) {
@@ -156,40 +143,34 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.dataload = false;
-        this.spinnerLoader1= false;
-        this.disableBtn= true;
+        this.spinnerLoader1 = false;
+        this.disableBtn = true;
         this.employeeMasterData = [];
       },
       complete: () => {
         this.dataload = false;
-        this.spinnerLoader1= false;
-        this.disableBtn= false;
+        this.spinnerLoader1 = false;
+        this.disableBtn = false;
       }
     });
-  }  
+  }
 
   onClickEmpMasterExport() {
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     let { arrayBuffer, fileName } = this.exportTableToExcel("employeeMasterData", "Employee_master_data")
-
     this.uploadReports(arrayBuffer, fileName)
     this.createReportLog("Employee Master Data")
   }
 
- 
-
- exportTableToExcel(tableId: string, name?: string) {
+  exportTableToExcel(tableId: string, name?: string) {
     let { sheetName, fileName } = this.getFileName(name);
     let targetTableElm = document.getElementById(tableId);
-    
     // First convert the table to a worksheet
     let ws = XLSX.utils.table_to_sheet(targetTableElm, <XLSX.Table2SheetOpts>{
       sheet: sheetName,
     });
-    
     // Convert headers to uppercase and ensure they are properly formatted
     const range = XLSX.utils.decode_range(ws['!ref']!);
-    
     // Format header row (first row) with bold font
     for (let C = range.s.c; C <= range.e.c; ++C) {
       let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
@@ -197,39 +178,32 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         // Convert to uppercase
         ws[cellAddress].v = ws[cellAddress].v.toString().toUpperCase();
         ws[cellAddress].w = ws[cellAddress].v;
-        
         // Add bold style to header
         ws[cellAddress].s = { font: { bold: true } };
       }
     }
-    
     // Create a new workbook with the formatted worksheet
     let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
-    
     // Write the file
     XLSX.writeFile(wb, `${fileName}.xlsx`);
-    
     // Also return the array buffer for upload
     let arrayBuffer = XLSX.write(wb, {
       bookType: 'xlsx',
       type: 'array',
     });
     return { arrayBuffer, fileName };
-}
+  }
 
-
-    // Function to convert headers to uppercase
+  // Function to convert headers to uppercase
   private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
     const range = XLSX.utils.decode_range(ws['!ref']!);
-
     for (let C = range.s.c; C <= range.e.c; ++C) {
       let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
       let cell = ws[cellAddress];
-
       if (cell && cell.v) {
-        cell.v = cell.v.toString().toUpperCase(); 
-        cell.w = cell.v; 
+        cell.v = cell.v.toString().toUpperCase();
+        cell.w = cell.v;
       }
     }
   }
@@ -243,7 +217,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       fileName
     };
   };
-  navigation(){
+
+  navigation() {
     this.router.navigate(['/reports']);
   }
 
@@ -255,7 +230,6 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       }
     );
-
     let filePath = `/FusionDocuments/Employee Documents/Reports/${this.loggedInUser.employeeId}`;
     this.subscription = this.http
       .uploadFileWithQuery(
@@ -268,7 +242,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
           this.ReportEmail(data.path, fileName);
         },
         error: (reason: any) => {
-          this.spinnerLoader2= false;
+          this.spinnerLoader2 = false;
           alert('file upload  is failed');
         },
       });
@@ -286,12 +260,9 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       senderEmail: loggedInUser.workEmail,
     };
     if (loggedInUser.middleName) {
-
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-
     } else {
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-
     }
     this.subscription = this.http
       .postdata(`CustomEmail/Reports`, reportdata)
@@ -306,18 +277,17 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       reportsType: "Standard Reports",
       reportsName: reportName
     }
-
     this.subscription = this.http.postdata("ReportsLog", req).subscribe({
-      next: (res: any) => { 
+      next: (res: any) => {
         this.modal.openSuccessModal('Employee Master Data downlaoded successfully');
-        this.spinnerLoader2  =  false;
+        this.spinnerLoader2 = false;
       },
       error: (err) => {
-        this.spinnerLoader2= false;
+        this.spinnerLoader2 = false;
         this.modal.openErrorModal('Failed to download employee masted data');
       },
-      complete: () => { 
-        this.spinnerLoader2= false;
+      complete: () => {
+        this.spinnerLoader2 = false;
       }
     })
   }

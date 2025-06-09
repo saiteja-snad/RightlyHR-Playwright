@@ -12,9 +12,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveEmployeeComponent } from '../prospective-employees/add-prospective-employee/add-prospective-employee.component';
 import { AddProspectiveInternComponent } from '../prospective-interns/add-prospective-intern/add-prospective-intern.component';
 import { EmployeeStatusCount } from '../../Interfaces/dashboard.modal';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-employee-management-layout',
-  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent,Skeleton],
   templateUrl: './employee-management-layout.component.html',
   styleUrl: './employee-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -42,10 +43,11 @@ export class EmployeeManagementLayoutComponent {
   EmployeeInfoDataOptions: any;
   totalEmployeesCount: any;
   employeesStatusCount: EmployeeStatusCount = {} as EmployeeStatusCount;
-
+  loading: boolean = false;
   constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
   ngOnInit(): void {
+    
     this.cardItems = this.cardItems.filter(
       (tab) =>
         tab.permission &&
@@ -58,6 +60,7 @@ export class EmployeeManagementLayoutComponent {
 
   //function for to get the Employees count based on the status
   getEmployeeStatusCount() {
+    this.loading = true;
     this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
       next: (data: any) => {
         this.employeesStatusCount = data.data as EmployeeStatusCount;
@@ -101,7 +104,13 @@ export class EmployeeManagementLayoutComponent {
         this.updateCardItems();
 
       },
-      error: (reason) => console.log(reason),
+      error:(error: any) => {
+        this.loading = false;
+        console.error('Error fetching employee status count:', error);
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 
@@ -121,6 +130,7 @@ export class EmployeeManagementLayoutComponent {
   }
 
   updateCardItems() {
+    this.loading = false;
     this.cardItems = [
       {
         label: 'Active Employees',
@@ -184,6 +194,7 @@ export class EmployeeManagementLayoutComponent {
   }
 
   initChart() {
+    this.loading = false;
     const backgroundColors = this.cardItems.map(item => item.employeementTypeColor);
     this.totalEmployeesCount = this.employeesStatusCount?.totalCount;
     this.EmployeeInfoData = {
@@ -201,6 +212,7 @@ export class EmployeeManagementLayoutComponent {
   }
 
   filterTabsByRbac(): void {
+
     this.cardItems = this.cardItems.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;

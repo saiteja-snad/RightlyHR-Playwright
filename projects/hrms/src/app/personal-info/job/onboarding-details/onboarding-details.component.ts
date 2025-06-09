@@ -14,10 +14,11 @@ import moment from 'moment';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule,ReactiveFormsModule,Select],
+  imports: [CommonModule,ReactiveFormsModule,Select,Skeleton],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
@@ -40,6 +41,7 @@ export class OnboardingDetailsComponent {
   isEditing = false;
   empyployeedata={} as any;
   employeestatus:any
+  loading: boolean = false;
   offerletttersentdate:any
   noticePeriodStatus = [
     { name: 'Yes', value: true },
@@ -188,11 +190,11 @@ export class OnboardingDetailsComponent {
   
 
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
-    console.log(this.empinfo);
-
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         console.log(data);
         this.empdata = data;
         this.employeestatus=data?.empstatus?.toLowerCase()
@@ -203,6 +205,7 @@ export class OnboardingDetailsComponent {
         this.patchForm(data);
       },
       error: (err: any) => {
+        this.loading = false;
         console.log(err);
       }
     });

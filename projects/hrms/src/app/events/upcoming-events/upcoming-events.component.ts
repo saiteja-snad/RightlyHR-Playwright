@@ -18,10 +18,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule,NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule,NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent,Skeleton],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })

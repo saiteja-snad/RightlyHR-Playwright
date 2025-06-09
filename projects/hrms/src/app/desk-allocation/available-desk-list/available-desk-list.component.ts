@@ -325,7 +325,7 @@ export class AvailableDeskListComponent {
       this.http.postdata('DeskAllocationItem', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted Successfully');
+          this.conformationPopup.openSuccessModal('Desk Allocation Request Approved Successfully');
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null,null,this.Status);
           this.assiginForm.reset();

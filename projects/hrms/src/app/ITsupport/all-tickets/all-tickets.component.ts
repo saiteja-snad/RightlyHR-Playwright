@@ -72,8 +72,8 @@ export class AllTicketsComponent {
       team: [{ value: '', disabled: true }, [Validators.required]],
       type: [{ value: '', disabled: true }, [Validators.required]],
       priority: [{ value: '', disabled: true }, [Validators.required]],
-      subject: [{ value: '', disabled: true }, [Validators.required]],
-      description: [{ value: '', disabled: true }, [Validators.required]],
+      subject: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\S.*$/)]],
+      description: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\S.*$/)]],
       comments: [''],
       assignedto: [null],
       ticketStatus: ['', [Validators.required]]

@@ -9,18 +9,18 @@
     <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <th>Ticket ID</th>
-                <th>Ticket Priority</th>
-                <th>Subject</th>
-                <th>Requester</th>
-                <th>Requested Date</th>
-                <th>Department</th>
-                <th>Team</th>
-                <th>Assignee</th>
-                <th>Status</th>
-                <th>Updated Date</th>
+                <th>{{'Ticket ID' | translate}}</th>
+                <th>{{'Ticket Priority' | translate}}</th>
+                <th>{{'Subject' | translate}}</th>
+                <th>{{'Requester' | translate}}</th>
+                <th>{{'Requested Date' | translate}}</th>
+                <th>{{'Department' | translate}}</th>
+                <th>{{'Team' | translate}}</th>
+                <th>{{'Assignee' | translate}}</th>
+                <th>{{'Status'| translate}}</th>
+                <th>{{'Updated Date' | translate}}</th>
                 @if(rbac.allowedToAccess('All Tickets Tab.update')){
-                <th>Action</th>
+                <th>{{'Action' | translate}}</th>
                 }
             </thead>
             <tbody>
@@ -72,7 +72,7 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li (click)="openModal(updatetickets, ticket)">
                                         <a class="dropdown-item">
-                                        <i class="bi bi-pencil me-2"></i>Update
+                                        <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
                                         </a>
                                     </li>
                                 </ul>
@@ -98,7 +98,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">{{this.selectedTickets.ticketStatus}} Ticket</p>
+                <p class="popup-heading mb-0">{{this.selectedTickets.ticketStatus}} {{'Ticket' | translate}}</p>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -319,7 +319,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+            <p class="confirmation-text"> {{'Are you sure you want to cancel?' | translate}}</p>
         </div>
 
         <div class="custom-modal-footer">

@@ -250,7 +250,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Is it a planned leave?</p>
+            <p class="confirmation-text">{{'Are you sure you want to proceed with the approval?' | translate}}</p>
         </div>
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
@@ -298,7 +298,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Approving Selected Leave Requests...'}}</span>
                     </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
@@ -314,7 +314,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to reject?</p>
+            <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
         </div>
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
@@ -342,7 +342,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Rejecting Selected Leave Requests...'}}</span>
                     </div>
                     }@else {
                     <span>{{'Reject'| translate}}</span>

@@ -313,7 +313,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
           this.getexpensesheaderbyemployeeid();
         },
         error: (error: any) => {
@@ -330,7 +330,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll()
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();

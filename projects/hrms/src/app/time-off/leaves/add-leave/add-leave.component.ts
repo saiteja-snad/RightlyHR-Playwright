@@ -1021,7 +1021,7 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
       this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
         next: (data: any) => {
           if (data) {
-            this.conformationPopup.openSuccessModal('Leave Requested successfully');
+            this.conformationPopup.openSuccessModal('Leave request submitted successfully!');
             setTimeout(() => {
               this.modalService.dismissAll();
               this.leaveForm.reset();

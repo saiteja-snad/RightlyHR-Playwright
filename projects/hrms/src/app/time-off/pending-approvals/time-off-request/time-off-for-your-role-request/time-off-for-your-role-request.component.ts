@@ -38,11 +38,12 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
     TableModule,
     DataLoaderContentComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -73,7 +74,6 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   onRowsChange() {
     this.first = 0;
   }
-
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -288,7 +288,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   previousSearchValue: string = '';
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
@@ -361,7 +361,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Leave Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -430,7 +430,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Leave Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -477,7 +477,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage
         }))
       }
-      message = 'Processing Leave Requests...';
+      message = 'Processing Selected Leave Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -490,7 +490,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Leave Request...';
+      message = 'Processing Selected Leave Requests...';
     }
 
     this.conformationPopup.openLoaderModal(message);
@@ -500,7 +500,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Leave Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }

@@ -204,17 +204,9 @@
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary"
           (click)="openconfirmationModel(confirmation)">{{'Cancel'|translate}}</button>
-        <button type="button" class="custom-btn btn-primary" [disabled]="requestForm.invalid||isLoader"
+        <button type="button" class="custom-btn btn-primary" [disabled]="requestForm.invalid"
           (click)="openconfirmationModelNew(sucessconfirmation)">
-          @if(!isLoader){
           {{'Submit'|translate}}
-          }
-          @else {
-            <div class="button-loader-content">
-              <div class="spinner-border button-spinner text-light" role="status"></div>
-              <div>{{'Submitting'|translate}}</div>
-            </div>
-          }
         </button>
       </div>
     </form>

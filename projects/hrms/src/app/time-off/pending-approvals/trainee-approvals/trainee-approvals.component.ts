@@ -18,25 +18,17 @@ import { RbacService } from '../../../services/rbac.service';
 import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-trainee-approvals',
-  imports: [
-    DateformatPipe,
-    CommonModule,
-    ReactiveFormsModule,
-    NgbPopoverModule,
-    PaginatorModule,
-    FormsModule,
-    TranslateModule,
-    NoDataFoundComponent,
-    TraineesearchfilterPipe,
-    TraineeApprovalsTabsComponent,
-  ],
+  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
+    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, DataLoaderContentComponent],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss',
 })
+
 export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   isLoading = false;
   private customsetup: any;
@@ -55,6 +47,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   myApproverComments = {} as any;
   discontinue: any;
   extend: any;
+  loading: boolean = false;
   isempeffectivevaild: boolean = true;
   rejectForm!: FormGroup;
   rejectSeparationForm!: FormGroup;
@@ -358,20 +351,20 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   }
 
   getAllPendingApprovals() {
+    this.loading = true;
     let loggedInUser = this.authService.getToken();
-    let EmployeeId = loggedInUser.employeeId;
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`
-      )
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.Trainees.next(data.data as Itraineeapproval[]);
-          this.noRecalllength = this.Trainees;
-        },
-        error: (reason) => console.log(reason),
-      });
+    let EmployeeId = loggedInUser.employeeId
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
+      next: (data: any) => {
+        this.loading = false;
+        this.Trainees.next(data.data as Itraineeapproval[])
+        this.noRecalllength = this.Trainees;
+      },
+      error: (reason) => {
+        console.log(reason)
+        this.loading = false;
+      },
+    });
   }
 
   initializationrejectForm() {

@@ -14,6 +14,7 @@ import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDays
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
+import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -25,7 +26,8 @@ import { Skeleton } from 'primeng/skeleton';
     Carousel,
     ChartModule,
     DateformatPipe,
-    Skeleton
+    Skeleton,
+    AccordionModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

@@ -1,8 +1,5 @@
 <div class="custom-main-component-container">
-
-
   <div class="component-header-content">
-
     <div class="heading-content">
       <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Global Permissions</div>
@@ -18,6 +15,7 @@
       }
     </div>
   </div>
+
   <!-- filters data -->
   <!-- <div class="d-flex align-items-center gap-2 mb-3">
       <div class="d-flex gap-2 align-item-center custom-p-select-content w-50">
@@ -56,61 +54,49 @@
             </div>
       <div>
         <button type="button" class="custom-btn btn-primary" (click)="getAllGlobalPermissions()" >Generate</button>
-      </div>
- 
+      </div> 
     </div> -->
-
 
   <!--Module Information-->
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
 
-
   <div class="custom-table-content">
+    @if(!loading){
     <table class="w-100">
       <thead>
         <tr>
-
           <th>Permission Requested Date</th>
           <th>Permission Type</th>
           <th>Duration(In Hrs)</th>
           <th>Applicable For</th>
           <th>Department/Location</th>
           <th>Team/Sub Location</th>
-          
           <th>Request Type</th>
           <th>Reason</th>
-
           <th>List of Employees</th>
-         
-           <th>Requested By</th>
-           <th>Request Raised Date</th>
-
-
+          <th>Requested By</th>
+          <th>Request Raised Date</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         @if(globalpermissions.length > 0){
         <tr *ngFor="let item of globalpermissions | globalpermissions : searchValue">
-         
           <td>
             <span *ngIf="item.permissionRequestedDate !== '0001-01-01T00:00:00'; else permissiondate">
               {{item.permissionRequestedDate? (item.permissionRequestedDate | dateformat):'-' }}
             </span>
             <ng-template #permissiondate>-</ng-template>
           </td>
-
-           <td>{{item.requestType?item.requestType:'-'}}</td>
-           <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
-       
-        
+          <td>{{item.requestType?item.requestType:'-'}}</td>
+          <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
           <td>{{item.selectType?item.selectType:'-'}}</td>
-            <td>{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}</td>
+          <td>{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}</td>
           <td>{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}</td>
           <td>{{item.type?item.type:'-'}}</td>
-            <td class="text-center">
+          <td class="text-center">
             <div>
               <span *ngIf="item.meta;else res">
                 <a type="button" [ngbPopover]="reason">
@@ -129,31 +115,32 @@
                 <a type="button" (click)="openmodal(allemployeelist);getEmployeeNames(item.employeeIds)">
                   <app-info-icon />
                 </a>
-
               </span>
               <ng-template #emp>-</ng-template>
             </div>
           </td>
-            <td>
-            
+          <td>
             <span *ngIf="item.firstName;else requestby">{{item?.firstName ??''}} {{item?.middleName??''}}
               {{item?.lastName ??''}}</span>
             <ng-template #requestby>-</ng-template>
           </td>
-          
-        
-            <td> {{item.requestedDate?(item.requestedDate|dateformat):'-'}}</td>
+          <td> {{item.requestedDate?(item.requestedDate|dateformat):'-'}}</td>
         </tr>
         }
         @else {
         <tr>
-          <app-no-data-found></app-no-data-found>
+          <app-no-data-found />
         </tr>
         }
       </tbody>
     </table>
+  }
+  @else {
+ <app-data-loader-content />
+  }
   </div>
 </div>
+
 <ng-template #allemployeelist let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">

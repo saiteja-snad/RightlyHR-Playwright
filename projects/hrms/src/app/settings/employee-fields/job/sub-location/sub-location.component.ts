@@ -22,6 +22,7 @@ export class SubLocationComponent {
   subscription!: Subscription;
   SubLocationdetails = [] as any;
   JobroleDetails = [] as any;
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
@@ -72,8 +73,10 @@ export class SubLocationComponent {
   }
 
   getSubLocation() {
+    this.loader = true;
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
+        this.loader = false;
         console.log(data);
         this.SubLocationdetails = data.sort((a: any, b: any) => {
           // First sort by location name
@@ -85,6 +88,10 @@ export class SubLocationComponent {
           return locationComparison;
         });
       },
+      error: (error: any) => {
+        this.loader = false;
+       
+      }
     });
   }
   //ADD

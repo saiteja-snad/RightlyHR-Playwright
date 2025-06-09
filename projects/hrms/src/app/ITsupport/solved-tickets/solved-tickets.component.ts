@@ -14,10 +14,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-solved-tickets',
-  imports: [CommonModule, RouterModule, Select, NoDataFoundComponent, FormsModule,ReactiveFormsModule, ItsupportPipe, DateformatPipe,TranslateModule],
+  imports: [CommonModule, RouterModule, Select, NoDataFoundComponent, FormsModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, TranslateModule, DataLoaderContentComponent],
   templateUrl: './solved-tickets.component.html',
   styleUrl: './solved-tickets.component.scss'
 })
@@ -26,6 +27,7 @@ export class SolvedTicketsComponent {
   searchValue!:string;
   empinfo = {} as Ipersonal;
   tickets= [] as Ticket[];
+  dataloader: boolean = false;
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor: any[] = [];
@@ -105,12 +107,16 @@ export class SolvedTicketsComponent {
   }
 
   getuserticketsbyempid() {
+    this.dataloader = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.dataloader = false;
         this.tickets = data.filter((ticket: any) => ticket.ticketStatus === 'Closed');
       },
       error: (err: any) => {
+        this.dataloader = false;
+        console.error(err);
       }
     })
   }

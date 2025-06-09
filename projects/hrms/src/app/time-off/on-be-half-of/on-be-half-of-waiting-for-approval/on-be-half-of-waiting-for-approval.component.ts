@@ -11,6 +11,7 @@ import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-on-be-half-of-waiting-for-approval',
   imports: [
@@ -22,7 +23,8 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DropdownModule,
     DateformatPipe,
     NoDataFoundComponent,
-    InfoIconComponent
+    InfoIconComponent,
+    DataLoaderContentComponent
 ],
   templateUrl: './on-be-half-of-waiting-for-approval.component.html',
   styleUrl: './on-be-half-of-waiting-for-approval.component.scss',
@@ -34,6 +36,7 @@ export class OnBeHalfOfWaitingForApprovalComponent {
   subscription!: Subscription;
   waitingForApprovalLeaves: any = [];
   totalRecords = 100;
+  loading: boolean = false;
   first: any = 0;
   rows: any = 10;
   options = [
@@ -80,8 +83,10 @@ export class OnBeHalfOfWaitingForApprovalComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
+          this.loading = false;
           if (Array.isArray(response)) {
             this.waitingForApprovalLeaves = response.filter(
               (item) => item.status.toLowerCase() === 'waiting for approval'
@@ -90,7 +95,13 @@ export class OnBeHalfOfWaitingForApprovalComponent {
             console.error('Invalid response format');
           }
         },
-        error: (reason: any) => console.log(reason),
+        error: (reason: any) =>{
+           console.log(reason)
+         
+        },
+        complete: () => {
+           this.loading = false;
+        }
     });
   }
 }

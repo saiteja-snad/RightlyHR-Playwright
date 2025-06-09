@@ -1,145 +1,141 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!-- Header -->
-       <div class="heading-content">
-      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+    <div class="heading-content">
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i
+            class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Yearly Summary Report</div>
-     
     </div>
 
     <form autocomplete="off" [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport()">
-        <div class="d-flex align-items-center gap-3">
-          @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')){
-          <button type="reset" class="clear-all-btn"  [disabled]="
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')){
+        <button type="reset" class="clear-all-btn" [disabled]="
             !yearlyReportForm.get('employee')?.value &&
             !yearlyReportForm.get('manager')?.value &&
             !yearlyReportForm.get('leaveCategory')?.value &&
             !yearlyReportForm.get('year')?.value" (click)="clearAllFilters()">
-            Clear All
-          </button>
+          Clear All
+        </button>
 
-          <!-- Employee -->
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
-                filterBy="fullName" [filter]="true" formControlName="employee"
-                placeholder="Please select employee" filterPlaceholder="Search employee">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-
-          <!-- Team Manager -->
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-               formControlName="manager" placeholder="Please select manager"
-                class="form-select custom-select" filterPlaceholder="Search manager">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-
-          <!-- Leave Category -->
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="uniqueLeaveCategory" optionLabel="label"
-                formControlName="leaveCategory" placeholder="Please select leave category"
-                class="form-select custom-select" [filter]="true" filterPlaceholder="Search leave type">
-              </p-select>
-            </div>
-          </div>
-
-          <!-- Year -->
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
-                placeholder="Select year" class="form-select custom-select">
-              </p-select>
-            </div>
-          </div>
-          }
-          <!-- Buttons -->
-          <div class="d-flex gap-2">
-            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')){
-            <button type="submit" class="custom-btn btn-secondary" [disabled]="isYearlyGenerateDisabled">
-              @if(spinnerLoader1){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'}}</span>
-              }@else {
-              <span>{{'Generate'}}</span>
-              }
-            </button>
-            }
-            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')
-             && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
-            <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
-              [disabled]="filteredYearlyRecord.length == 0 || disableBtn">
-              @if(spinnerLoader2){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'}}</span>
-              }@else {
-              <span>{{'Export'}}</span>
-              }
-            </button>
-            }
+        <!-- Employee -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
+              filterBy="fullName" [filter]="true" formControlName="employee" placeholder="Please select employee"
+              filterPlaceholder="Search employee">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
           </div>
         </div>
+
+        <!-- Team Manager -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+              filterPlaceholder="Search manager">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Leave Category -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="uniqueLeaveCategory" optionLabel="label" formControlName="leaveCategory"
+              placeholder="Please select leave category" class="form-select custom-select" [filter]="true"
+              filterPlaceholder="Search leave type">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Year -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
+              placeholder="Select year" class="form-select custom-select">
+            </p-select>
+          </div>
+        </div>
+        }
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-secondary" [disabled]="isYearlyGenerateDisabled">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+
+          @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view') && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+            [disabled]="filteredYearlyRecord.length == 0 || disableBtn">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
     </form>
   </div>
 
-
-
-
-
-      @if (isLoading) {
-      <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
-      </div>
-      }@else {
-      <div class="custom-table-content">
-        <table id="wfhReportTable" class="content w-100">
-          <thead>
-              <th>Employee ID</th>
-              <th>Employee Name</th>
-              <th>Department</th>
-              <th>Team Manager</th>
-              <th>Location</th>
-              <th>Sub Location</th>
-              <th>Shift</th>
-              <th>Year</th>
-              <th>Leave Type</th>
-              <th>Entitled</th>
-              <th>Avail</th>
-              <th>Balance</th>
-          </thead>
-          <tbody>
-            @if (filteredYearlyRecord && filteredYearlyRecord.length > 0) {
-            @for (record of filteredYearlyRecord; track record) {
-            <tr>
-              <td>{{ record.fusionEmpId ?? '-' }}</td>
-              <td>{{ record.employeeName ?? '-' }}</td>
-              <td>{{ record.department ?? '-' }}</td>
-              <td>{{ record.teamManagerName ?? '-' }}</td>
-              <td>{{ record.location ?? '-' }}</td>
-              <td>{{ record.subLocation ?? '-' }}</td>
-              <td>{{ record.shift ?? '-' }}</td>
-              <td>{{ record.year ? record.year : '-' }}</td>
-              <td>{{ record.leaveType ?? '-' }}</td>
-              <td>{{ record.entitled ?? '-' }}</td>
-              <td>{{ record.availed ?? '-' }}</td>
-              <td>{{ record.balance ?? '-' }}</td>
-            </tr>
-            }
-            } @else {
-            <tr>
-                <app-no-data-found></app-no-data-found>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-      }
-    </div>
+  <div class="custom-table-content">
+    @if (isLoading) {
+    <table id="wfhReportTable" class="content w-100">
+      <thead>
+        <th>Employee ID</th>
+        <th>Employee Name</th>
+        <th>Department</th>
+        <th>Team Manager</th>
+        <th>Location</th>
+        <th>Sub Location</th>
+        <th>Shift</th>
+        <th>Year</th>
+        <th>Leave Type</th>
+        <th>Entitled</th>
+        <th>Avail</th>
+        <th>Balance</th>
+      </thead>
+      <tbody>
+        @if (filteredYearlyRecord && filteredYearlyRecord.length > 0) {
+        @for (record of filteredYearlyRecord; track record) {
+        <tr>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.teamManagerName ?? '-' }}</td>
+          <td>{{ record.location ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
+          <td>{{ record.shift ?? '-' }}</td>
+          <td>{{ record.entitlementYear ? record.entitlementYear : '-' }}</td>
+          <td>{{ record.leaveType ?? '-' }}</td>
+          <td>{{ record.entitled ?? '-' }}</td>
+          <td>{{ record.availed ?? '-' }}</td>
+          <td>{{ record.balanced ?? '-' }}</td>
+        </tr>
+        }
+        } @else {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+    @else{
+    <app-data-loader-content />
+    }
+  </div>
+</div>

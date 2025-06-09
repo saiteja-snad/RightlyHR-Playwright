@@ -11,9 +11,10 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-asset-vendor',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './asset-vendor.component.html',
   styleUrl: './asset-vendor.component.scss'
 })
@@ -26,6 +27,7 @@ export class AssetVendorComponent {
   vendor = new BehaviorSubject<Vendor[]>([]);
   destroy$: Subject<boolean> = new Subject<boolean>();
   empinfo: any;
+  loading = false;
 
   constructor(
     public router: Router, 
@@ -131,11 +133,14 @@ export class AssetVendorComponent {
   }
 
   getvendor() {
+    this.loading = true;
     this.http.getData('AssetVendor').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.vendor.next(res)
+        this.loading = false;
       },
       error: (errormessage) => {
+        this.loading = false;
         console.log(errormessage);
       }
     });

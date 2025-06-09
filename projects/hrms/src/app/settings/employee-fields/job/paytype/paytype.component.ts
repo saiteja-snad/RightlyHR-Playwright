@@ -9,10 +9,11 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-paytype',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './paytype.component.html',
   styleUrl: './paytype.component.scss'
 })
@@ -22,6 +23,7 @@ export class PaytypeComponent {
   PaytypeForm!: FormGroup;
   updateForm!: FormGroup;
   PaytypeDetail: any[] = [];
+  loading = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeletetype: any = null;
@@ -48,8 +50,13 @@ export class PaytypeComponent {
   }
 
   gePayType() {
+    this.loading = true;
     this.http.getData('PayType').subscribe((data: any) => {
       this.PaytypeDetail = data;
+      this.loading = false;
+    }, (error: any) => {
+      this.loading = false;
+    
     });
   }
   //ADD

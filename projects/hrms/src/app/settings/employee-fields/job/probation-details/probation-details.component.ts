@@ -11,9 +11,10 @@ import { environment } from '../../../../../environments/environment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-probation-details',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
@@ -21,6 +22,7 @@ export class ProbationDetailsComponent {
   subscription!: Subscription;
   getProbationconfigValues = [] as any;
   ProbationDetails = [] as any;
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeletedetail: any = null;
@@ -67,19 +69,21 @@ export class ProbationDetailsComponent {
   }
 
   getProbationDetails() {
+    this.loader = true;
     this.subscription = this.http
       .getData('ProbationFlow/settingsprobationconfiggetall')
       .subscribe({
         next: (data: any) => {
+          this.loader = false;
           this.ProbationDetails = data;
         },
-        error: (err: any) => {
-          // console.log(err);
-
-        },
-        complete: () => {
-          this.getProbationDetailstoselectthevalue();
-        },
+      error: (err: any) => {
+        // console.log(err);
+        this.loader = false;
+      },
+      complete: () => {
+        this.getProbationDetailstoselectthevalue();
+      },
       });
   }
   // allowOnlyNumbers(event: KeyboardEvent): void {

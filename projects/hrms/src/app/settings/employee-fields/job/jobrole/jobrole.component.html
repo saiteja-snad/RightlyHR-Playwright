@@ -7,6 +7,7 @@
   
   <div class="custom-main-component-container">
     <div class="custom-table-content">
+         @if(!loader){
       <table class="w-100" *ngIf="rbac.allowedToAccess('Job Role.view')">
         <thead>
           <tr>
@@ -46,6 +47,10 @@
           </ng-container>
         </tbody>
       </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
   </div>
 </div>

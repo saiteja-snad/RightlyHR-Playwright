@@ -23,6 +23,7 @@
   </div>
 
   <div class="custom-table-content">
+    @if (!isDataLoaded) {
     <table class="w-100">
       <thead>
         <tr>
@@ -45,7 +46,7 @@
         </tr>
       </thead>
       <tbody>
-        @if (!isDataLoaded) {
+        
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
@@ -100,7 +101,7 @@
           && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
           !==
           'trainee inactive' )){
-          <td class="text-center">
+          <td  class="text-center">
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
               !recallbuttonConditions &&
@@ -139,12 +140,13 @@
           </td>
         </tr>
         }
-        }
+      
+      </tbody>
+    </table>
+      }
         @else {
         <app-data-loader-content />
         }
-      </tbody>
-    </table>
   </div>
 </div>
 

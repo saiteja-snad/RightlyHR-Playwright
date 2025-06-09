@@ -277,10 +277,6 @@ export const permissionsData = [
 
   //On Behalf Of Sub Tabs Section
   { fields: 'Waiting For Approval (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Approved (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Processed (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Rejected (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Cancelled (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Button', View: false, Update: false, Create: false, Delete: false },
 
 

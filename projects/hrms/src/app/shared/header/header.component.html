@@ -51,11 +51,11 @@
             <div class="dropdown">
                 <div class="profile-dropdown" type="button">
                     <div class="text-end">
-                        <p-skeleton width="3rem" height="1rem" class="mb-2"></p-skeleton>
-                        <p-skeleton width="3rem" height="1rem"></p-skeleton>
+                        <p-skeleton width="3.5rem" height="0.5rem" styleClass="mb-1"></p-skeleton>
+                        <p-skeleton width="2rem" height="0.25rem"></p-skeleton>
                     </div>
                     <div>
-                        <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                        <p-skeleton shape="circle" size="1.5rem"></p-skeleton>
                     </div>
                 </div>
                 <ul class="dropdown-menu">
@@ -87,7 +87,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="images\logout-image.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Would you like to exit now?</p>
+            <p class="confirmation-text">{{'Would you like to exit now?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'| translate}}</button>

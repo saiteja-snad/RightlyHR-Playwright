@@ -15,10 +15,11 @@ import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-open-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './open-tickets.component.html',
   styleUrl: './open-tickets.component.scss'
 })
@@ -28,6 +29,7 @@ export class OpenTicketsComponent {
   searchValue!:string;
   empinfo = {} as Ipersonal;
   tickets= [] as Ticket[];
+  dataloading: boolean = false;
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor: any[] = [];
@@ -107,12 +109,19 @@ export class OpenTicketsComponent {
   }
 
   getuserticketsbyempid() {
+    this.dataloading = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.dataloading = false;
         this.tickets = data.filter((ticket: any) => ticket.ticketStatus === 'Open');
       },
       error: (err: any) => {
+        this.dataloading = false;
+        console.error(err);
+      },
+      complete: () => {
+        this.dataloading = false;
       }
     })
   }

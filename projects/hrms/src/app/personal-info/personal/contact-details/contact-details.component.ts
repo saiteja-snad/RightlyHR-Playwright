@@ -12,11 +12,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
+import { Skeleton } from 'primeng/skeleton';
 
 
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -29,7 +30,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   employedata: any
   buttons = false;
   loading = true;
-
+  dataLoader = false;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -119,22 +120,30 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   getEmployeeId(): void {
+    this.dataLoader = true;
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employedata = data;
         this.patchForm(data);
         this.loading = false;
-        this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
-    
+        this.dataLoader = false;
+        this.selectedworkcoutrycode.set(data.workphonecountryflag);    
         this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
        
       },
       error: (reason) =>{
         console.log(reason);
         this.loading = false;
+        this.dataLoader = false;
         console.error('Error fetching employee data:', reason)
-      } 
+      } ,
+      complete: () => {
+        this.loading = false;
+        this.dataLoader = false;
+        
+      }
     });
   }
 

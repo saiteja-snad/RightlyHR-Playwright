@@ -21,10 +21,11 @@ import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model'
 import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })
@@ -43,6 +44,7 @@ export class ClaimsandexpensesForYouRequestComponent
   ];
   subscription!: Subscription;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  loading: boolean = false;
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
   selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -78,14 +80,18 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   getAllPendingApprovals() {
+    this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        this.loading = false;
         this.expenseheaderpending = (response.data as ExpenseApprovalResponse[]).filter((item) =>
           item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected'
         );
       },
-      error: (reason) => console.log(reason),
+      error: (reason) =>{
+        this.loading = false;
+      },
     });
   }
 

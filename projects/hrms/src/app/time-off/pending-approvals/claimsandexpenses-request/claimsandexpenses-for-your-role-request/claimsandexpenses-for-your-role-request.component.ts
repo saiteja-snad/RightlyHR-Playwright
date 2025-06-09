@@ -21,10 +21,11 @@ import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitesp
 import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
@@ -45,10 +46,11 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   destroy$: Subject<boolean> = new Subject<boolean>();
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
+  loading: boolean = false;
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  
+
   expenseImageUrl: any;
   expenseViewURL: any;
   expenseheaderiteams!: IExpenseHeaders;
@@ -58,8 +60,8 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   @ViewChild('commentspopup') modalContent: any;
   subscription!: Subscription;
 
-  constructor(private modalService: NgbModal,private signalService: SignalsService, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
-     private sanitizer: DomSanitizer, public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private signalService: SignalsService, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
+    private sanitizer: DomSanitizer, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -79,16 +81,25 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   getAllPendingApprovals() {
+    this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=ROLE`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        this.loading = false;
         this.expenseheaderpending = (response.data as ExpenseApprovalResponse[]).filter(
           (item) =>
             item.approvalHeader.status != 'Processed' &&
             item.approvalHeader.status != 'Rejected'
         );
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        this.loading = false;
+
+      },
+      complete: () => {
+        this.loading = false;
+
+      },
     });
   }
 
@@ -123,7 +134,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-        currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+        currentStage: parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
       this.sharedModalService.openLoaderModal('Approving Expense Request...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -132,7 +143,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal('Expense Request Approved Successfully');
           this.approveForm.reset();
-           this.http.setnewcountDetails()
+          this.http.setnewcountDetails()
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
@@ -157,7 +168,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         status: 'Rejected',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-        currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+        currentStage: parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
       this.sharedModalService.openLoaderModal('Rejecting Expense...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -188,7 +199,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
-      currentStage : parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
+      currentStage: parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
     };
     this.sharedModalService.openLoaderModal('Processing Request...');
     this.http.putData(`PendingApproval/process/${request?.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -213,7 +224,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static',});
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', });
     this.approverComments = value;
   }
 
@@ -270,10 +281,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     });
   }
 
- 
+
   onViewAttachement(url: any) {
     const lowerUrl = url?.toLowerCase();
-  
+
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)

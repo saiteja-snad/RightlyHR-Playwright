@@ -84,7 +84,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   selectedLeavesItems: AttendanceRequest[] = [];
   multiSelect = false;
   requestBody = {} as any;
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   requestSummary!: any;
   constructor(
@@ -101,13 +101,13 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
     this.intializeApproveForm();
   }
-  
+
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -131,7 +131,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -176,12 +176,12 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  
+
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -242,17 +242,18 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-           if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.compOffselect = response.data;
-          }else{
+          } else {
             this.leaves.next([]);
-            this.compOffselect  = [];
+            this.compOffselect = [];
           }
         },
-        error: (reason) =>{
+        error: (reason) => {
           this.dataload = false;
-           console.error(reason)},
+          console.error(reason)
+        },
         complete: () => {
           this.dataload = false;
         },
@@ -274,12 +275,12 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.selectedLeaveData = request;
   }
 
-  
+
 
 
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves =  this.compOffselect ?? [];
+    let leaves = this.compOffselect ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
@@ -317,7 +318,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message = 'Processing Compoff  Requests...';
+      message = 'Processing Selected CompOff Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -331,7 +332,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Compoff Request...';
+      message = 'Processing Selected CompOff Requests...';
     }
     this.sharedModalService.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
@@ -340,7 +341,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.requestSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-            this.signalService.handleResponse(this.requestSummary, 'Compoff Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -400,7 +401,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, ' Compoff Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -468,7 +469,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Compoff Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

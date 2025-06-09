@@ -9,10 +9,11 @@ import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-salutation',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule,],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './salutation.component.html',
   styleUrl: './salutation.component.scss'
 })
@@ -24,6 +25,7 @@ export class SalutationComponent implements OnInit {
   deletesalutation={} as any;
   subscription!: Subscription;
   isEditMode = false;
+  loader = false;
 
 // salDeletedata: any;
 constructor(
@@ -56,11 +58,14 @@ constructor(
     }
    
   getsaluation() {
+    this.loader = true;
     this.subscription = this.http.getData("Title").subscribe({
        next: (data: any) => {
+          this.loader = false;
          this.saluationdetails = data as Iroles[]
        },
        error: (reason: any) => {
+          this.loader = false;
          console.log(reason);
        }
      })

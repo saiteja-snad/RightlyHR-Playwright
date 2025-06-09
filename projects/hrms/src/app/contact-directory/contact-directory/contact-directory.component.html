@@ -5,6 +5,35 @@
   
   <div class="contact-directory-content">
     <div>
+       @if (loading) {
+      <!-- Skeleton for departments -->
+      <div *ngFor="let skel of [1,2]" class="department-card mb-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="img-content">
+            <p-skeleton width="40px" height="40px" shape="circle"></p-skeleton>
+          </div>
+          <div>
+            <p-skeleton width="160px" height="20px"></p-skeleton>
+          </div>
+        </div>
+        <div class="grid-container">
+          <!-- Skeleton for employee cards -->
+          <div *ngFor="let empSkel of [1,2,3]" class="contact-card mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <div>
+                <p-skeleton width="36px" height="36px" shape="circle"></p-skeleton>
+              </div>
+              <div class="flex-grow-1">
+                <p-skeleton width="100px" height="16px" class="mb-2"></p-skeleton>
+                <p-skeleton width="140px" height="14px" class="mb-2"></p-skeleton>
+                <p-skeleton width="100px" height="14px"></p-skeleton>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+     @else {
       <div class="department-card mb-3" *ngFor="let dept of contactData">
         <div class="d-flex align-items-center gap-3 mb-3">
           <div class="img-content">
@@ -37,6 +66,7 @@
           </div>
         </div>
       </div>
+    }
     </div>
   </div>
 </div>

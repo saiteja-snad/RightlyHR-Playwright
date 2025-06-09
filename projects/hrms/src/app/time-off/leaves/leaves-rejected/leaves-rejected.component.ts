@@ -70,16 +70,23 @@ export class LeavesRejectedComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     let empid =  this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Rejected');
         } else {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{ console.log(reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 

@@ -150,7 +150,7 @@ DateValidator(): ValidatorFn {
             next: (data: any) => {
               this.postEducationdata = data as Ieducation;
               this.modalService.dismissAll();
-              this.openPopup.openSuccess("Education Details added successfully");
+              this.openPopup.openSuccess("Academic record added successfully");
               this.getData.getEducation.set(true);
               this.educationForm.reset();
             },

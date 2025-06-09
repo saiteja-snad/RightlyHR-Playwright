@@ -74,7 +74,7 @@ export class DraftsExpensesComponent {
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
-      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
+      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
       approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
@@ -84,7 +84,7 @@ export class DraftsExpensesComponent {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       expenseId: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
+      item_Name: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],

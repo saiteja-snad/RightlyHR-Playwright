@@ -39,7 +39,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false
   loading = false
   selectedIdentityTypetoUpdate: any;
-  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService,
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -48,7 +48,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.initializeupdateForm();
     this.vadationfotidentitytype()
-    this. vadationfoforupdatetidentitytype() 
+    this.vadationfoforupdatetidentitytype()
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -56,7 +56,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-   
+
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
@@ -74,8 +74,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityNumber: ['', [
         Validators.required,
         this.invalidIdentityNumberValidator(),
-        
-      ]],
+     ]],
       identityAttachment: ['', Validators.required]
     });
   }
@@ -86,8 +85,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityupdateType: [{ value: null, disabled: true }, Validators.required],
       identityupdateNumber: ['', [Validators.required,
       this.invalidIdentityNumberValidator(),
-      Validators.minLength(this.IdentityMinNumber)
-        , Validators.maxLength(this.IdentityMaxNumber)
+     
       ]],
       identityupdateAttachment: [null, attachmentValidators]
     });
@@ -131,7 +129,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         ]);
       }
 
-      identityNumberControl?.updateValueAndValidity({ emitEvent: false });
+     identityNumberControl?.updateValueAndValidity({ emitEvent: false });
     });
   }
 
@@ -315,9 +313,9 @@ vadationfoforupdatetidentitytype() {
         this.getIdentityByEmpid()
         this.conformationPopup.openSuccessModal('Identity details added successfully');
       },
-      error: () => {
+      error: (error) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal('Identity details added failed');
+        this.conformationPopup.openErrorModal( error.error.Message ||  'Identity details added failed');
       }
     });
   }
@@ -435,7 +433,7 @@ vadationfoforupdatetidentitytype() {
       },
       error: (err: any) => {
         this.spinnerLoader = false
-      
+
         this.conformationPopup.openErrorModal('Failed to update identity details');
       }
     });

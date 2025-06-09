@@ -911,7 +911,7 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
           },
           error: (error) => {
             console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal("Cannot reallocate to the same Employee")
+            this.conformationPopup.openErrorModal(error.error.message || 'Cannot reallocate to the same Employee');
           },
 
         });

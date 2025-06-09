@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
     <!--letter main container-->
-    <div class="main-letter-content gap-4 d-flex w-100">
+    <div class="main-letter-content">
         <!-- letter content-->
-        <div class="card letter-fields-content p-4">
+        <div class="card letter-fields-content">
             <form autocomplete="off" [formGroup]="probationConfirmationForm"
                 (ngSubmit)="postProbationLetterFormSubmit()">
                 <!-- Employee Name -->
@@ -123,7 +123,7 @@
         </div>
 
         <!--Letter Content-->
-        <div class="card letter-data-content p-4">
+        <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
                     <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter': probationLetterData.Copys}">

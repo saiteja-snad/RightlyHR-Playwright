@@ -16,10 +16,11 @@ import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
-     DateformatPipe, NgxDocViewerModule, NoDataFoundComponent],
+    DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './onboarding-request.component.html',
   styleUrl: './onboarding-request.component.scss'
 })
@@ -38,6 +39,8 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   reRequestForm!: FormGroup;
   rerequestdisplayforrejected: boolean = false;
   modelref!: NgbModal;
+  loading: boolean = false;
+  // For modal view
   @ViewChild('viewmodel') viewmodel!: NgbModal;
   
   constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
@@ -107,9 +110,11 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   //function to get the details of the document
   getdocumentdeatilsbyempid() {
+  this.loading = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`OnBoardingDocuments/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.documentData.next(data);
         this.subscription = this.documentData.subscribe((documents: any[]) => {
           let disablerejectvalue = !documents.some((element: any) => {
@@ -117,6 +122,11 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
           });
           this.rerequestdisplayforrejected = disablerejectvalue;
         });
+      },
+
+      error: (reason: any) => {
+        this.loading = false;
+        console.log(reason);
       },
     });
   }

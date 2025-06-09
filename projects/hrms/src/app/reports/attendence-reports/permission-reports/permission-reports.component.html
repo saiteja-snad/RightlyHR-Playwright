@@ -2,148 +2,147 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <!-- Header -->
 
-         <div class="heading-content">
-      <div class="commpoment-name" (click)="navigation()">  Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+    <div class="heading-content">
+      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i
+            class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Permission Report</div>
     </div>
 
-      <form autocomplete="off" [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
-        <div class="d-flex align-items-center gap-3">
-          @if(rbac.allowedToAccess('Permission Report - Generate.view')){
-          <button type="reset" class="clear-all-btn"  [disabled]="
+    <form autocomplete="off" [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Permission Report - Generate.view')){
+        <button type="reset" class="clear-all-btn" [disabled]="
             !permissionReportForm.get('dateRange')?.value &&
             !permissionReportForm.get('employee')?.value &&
             !permissionReportForm.get('manager')?.value &&
             !permissionReportForm.get('team')?.value" (click)="clearAllFilters()">
-            Clear All
-          </button>
-          <!-- Date Range -->
-          <div class="d-flex align-items-center gap-2">
-            <div>
-              <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
-                placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'"
-                [endKey]="'endDate'" readonly />
-            </div>
-          </div>
-
-          <!-- Employee -->
-          @if(rbac.allowedToAccess('Attendance All Employees List(Permission).view')){
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-                formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
-                filterPlaceholder="Search employee">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-          }
-          <!-- Team Manager -->
-          @if(rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="teamManagerDetails" [filter]="true" optionLabel="fullName"
-                filterBy="fullName" filterBy="fullName" formControlName="manager" placeholder="Please select manager"
-                class="form-select custom-select" filterPlaceholder="Search manager">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-          }
-          <!--My Team  -->
-           @if(rbac.allowedToAccess('My Team Report(Permission).view') &&!rbac.allowedToAccess('Attendance All Employees List(Permission).view') 
-         && !rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
-          <div class="d-flex align-items-center gap-2">
-            <div class="custom-p-select-content">
-              <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName"
-                filterBy="fullName" formControlName="team" placeholder="Please select employee"
-                class="form-select custom-select" filterPlaceholder="Search employee" (onChange)="onClick($event)">
-                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-              </p-select>
-            </div>
-          </div>
-          }
-        }
-          <!-- Buttons -->
-          <div class="d-flex gap-2">
-            @if(rbac.allowedToAccess('Permission Report - Generate.view')){
-            <button type="submit" class="custom-btn btn-secondary" [disabled]="isPermissionGenerateDisabled">
-              @if(spinnerLoader1){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'}}</span>
-              }@else {
-              <span>{{'Generate'}}</span>
-              }
-            </button>
-            }
-            @if(rbac.allowedToAccess('Permission Report - Generate.view') && rbac.allowedToAccess('Permission Report - Export.view')){
-            <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPemrissionReport()"
-              [disabled]="filteredPermissionData.length == 0 || disableBtn">
-              @if(spinnerLoader2){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'}}</span>
-              }@else {
-              <span>{{'Export'}}</span>
-              }
-            </button>
-            }
+          Clear All
+        </button>
+        <!-- Date Range -->
+        <div class="d-flex align-items-center gap-2">
+          <div>
+            <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
+              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" placeholder="Please select date"
+              formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
           </div>
         </div>
-      </form>
+
+        <!-- Employee -->
+        @if(rbac.allowedToAccess('Attendance All Employees List(Permission).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+        <!-- Team Manager -->
+        @if(rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="teamManagerDetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              filterBy="fullName" formControlName="manager" placeholder="Please select manager"
+              class="form-select custom-select" filterPlaceholder="Search manager">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+        <!--My Team  -->
+        @if(rbac.allowedToAccess('My Team Report(Permission).view') &&!rbac.allowedToAccess('Attendance All Employees
+        List(Permission).view')
+        && !rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee" (onChange)="onClick($event)">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>
+        }
+        }
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Permission Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-secondary" [disabled]="isPermissionGenerateDisabled">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+          @if(rbac.allowedToAccess('Permission Report - Generate.view') && rbac.allowedToAccess('Permission Report -
+          Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPemrissionReport()"
+            [disabled]="filteredPermissionData.length == 0 || disableBtn">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </form>
   </div>
 
 
 
- 
+  <div class="custom-table-content">
+    @if(!isLoading){
+    <table id="leaveReportTable" class="w-100">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Employee Name</th>
+          <th>Department</th>
+          <th>Team Manager</th>
+          <th>Location</th>
+          <th>Sub Location</th>
+          <th>Utilization Count</th>
+          <th>Total Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (!filteredPermissionData || filteredPermissionData.length === 0) {
+        <tr>
+          <td colspan="9" class="text-center">
+            <app-no-data-found></app-no-data-found>
+          </td>
+        </tr>
+        }
+        @else {
+        @for (record of filteredPermissionData; track $index) {
+        <tr>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.teamManager ?? '-' }}</td>
+          <td>{{ record.location ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
+          <td>{{ record.utilizedCount ?? '-' }}</td>
+          <td>{{record.totalDuration ?? '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
 
-      @if (isLoading) {
-      <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
-      </div>
-      }@else {
-      <div class="custom-table-content">
-        <table id="leaveReportTable" class="w-100">
-          <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Employee Name</th>
-              <th>Department</th>
-              <th>Team Manager</th>
-              <th>Location</th>
-              <th>Sub Location</th>
-              <th>Utilization Count</th>
-              <th>Total Duration</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (!filteredPermissionData || filteredPermissionData.length === 0) {
-            <tr>
-              <td colspan="9" class="text-center">
-                <app-no-data-found></app-no-data-found>
-              </td>
-            </tr>
-            }
-            @else {
-            @for (record of filteredPermissionData; track $index) {
-            <tr>
-              <td>{{ record.fusionEmpId ?? '-' }}</td>
-              <td>{{ record.employeeName ?? '-' }}</td>
-              <td>{{ record.department ?? '-' }}</td>
-              <td>{{ record.teamManager ?? '-' }}</td>
-              <td>{{ record.location ?? '-' }}</td>
-              <td>{{ record.subLocation ?? '-' }}</td>
-              <td>{{ record.utilizedCount ?? '-' }}</td>
-              <td>{{record.totalDuration ?? '-' }}</td>
-            </tr>
-            }
-            }
-          </tbody>
-        </table>
-      </div>
-      }
-    </div>
-  
+</div>

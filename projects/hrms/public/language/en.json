@@ -450,5 +450,9 @@
   "IT Support" : "IT Support",
   "My Tickets" : "My Tickets",
   "Add New Ticket" : "Add New Ticket",
-  "Description must not contain only spaces" : "Description must not contain only spaces"
+  "Description must not contain only spaces" : "Description must not contain only spaces",
+  "Would you like to exit now?" : "Would you like to exit now?",
+  "Cancelling Leave..." : "Cancelling Leave...",
+  "Cancelling WFH..." : "Cancelling WFH...",
+  "Cancelling Permission..." : "Cancelling Permission..."
 }

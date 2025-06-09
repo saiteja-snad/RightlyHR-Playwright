@@ -323,7 +323,7 @@ pendingCount = 0;
           next: (res: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request submitted successfully'
+              'Comp Off request submitted successfully!'
             );
             this.http.tirggerCountSignal.update((status) => ({
               ...status,

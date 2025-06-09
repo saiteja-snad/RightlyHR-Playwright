@@ -29,6 +29,7 @@
 
     <!--Data Content-->
     <div class="custom-table-content w-50">
+         @if(!loading){
         <table class="w-100">
             <thead>
                 <th>Asset Category</th>
@@ -66,6 +67,10 @@
                 </ng-template>
             </tbody>
         </table>
+          }
+  @else {
+     <app-data-loader-content />
+  }
     </div>
 </div>
 

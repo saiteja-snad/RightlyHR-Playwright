@@ -10,10 +10,11 @@ import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-published-dsts',
-  imports: [NoDataFoundComponent, CommonModule,TranslateModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, DataLoaderContentComponent],
   templateUrl: './published-dsts.component.html',
   styleUrl: './published-dsts.component.scss',
 })
@@ -21,7 +22,7 @@ export class PublishedDstsComponent implements OnInit, OnDestroy {
   publishedDSTs = [] as ManageDST[];
   allDSTs = [] as ManageDST[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  loading = false;
   constructor(
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -39,14 +40,21 @@ export class PublishedDstsComponent implements OnInit, OnDestroy {
   }
 
   getAllDayLight() {
+    this.loading = true;
     this.http
       .getData('OrgDayLight/getAll')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
+          this.loading = false;
           this.allDSTs = data;
           this.filterPublishedDSTs();
         },
+        error: (error) => {
+          this.loading = false;
+          console.error('Error fetching DSTs:', error);
+        },
+
       });
   }
 

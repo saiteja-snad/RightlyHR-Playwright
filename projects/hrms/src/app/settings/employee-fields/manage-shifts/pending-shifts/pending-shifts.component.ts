@@ -7,9 +7,10 @@ import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-pending-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule,NgbPopoverModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, NgbPopoverModule, DataLoaderContentComponent],
   templateUrl: './pending-shifts.component.html',
   styleUrl: './pending-shifts.component.scss'
 })
@@ -18,6 +19,7 @@ export class PendingShiftsComponent {
   subscription!: Subscription;
   shiftsData: any[] = [];
   pendingsubmittedshifts: any;
+  loading = false;
 
   constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
@@ -31,9 +33,11 @@ export class PendingShiftsComponent {
   }
 
   getShifts(): void {
+    this.loading = true;
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
         this.shiftsData = data;
+        this.loading = false;
         // this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
         this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission")
           .map((item: any) => {
@@ -42,7 +46,8 @@ export class PendingShiftsComponent {
               shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A' // fallback if missing
             };
           });
-      }, error(err) {
+      }, error:(err)=> {
+        this.loading = false;
         console.log("expensesheadererror", err)
       },
     });

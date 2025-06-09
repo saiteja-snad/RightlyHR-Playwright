@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-  @if(!loader){
+
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -8,6 +8,7 @@
   </div>
 
   <div class="custom-table-content">
+    @if(!loader){
     <table class="w-100">
       <thead>
         <tr>
@@ -69,12 +70,13 @@
         </ng-template>
       </tbody>
     </table>
-  </div>
-  }@else {
-  <div class="custom-compoent-data-loader">
+    }@else {
+
     <app-data-loader-content />
+
+    }
   </div>
-  }
+
 </div>
 
 <ng-template #activeForm let-modal>
@@ -86,7 +88,7 @@
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
       <button type="button" class="custom-btn btn-primary"
-      (click)="updateFormDetails(seletedid);modal.dismiss()">{{'Yes'|translate}}</button>
+        (click)="updateFormDetails(seletedid);modal.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal,NgbModalRef  } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { AuthService } from '../../../services/auth.service';
@@ -43,6 +43,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     { item_id: 3, item_text: 'Option 3', selectedAllGroup: 'Group 1' },
     { item_id: 4, item_text: 'Option 4', selectedAllGroup: 'Group 1' }
   ];
+  private modalRef: NgbModalRef | null = null;
   dropdownSettings = {};
   permissionHours: { duration: number }[] = [];
   selectedPermissionId!: any;
@@ -411,6 +412,10 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Request submitted sucessfully')
         },
         error: (err: any) => {
+           if (this.modalRef) {
+              this.modalRef.close(); // or this.modalRef.dismiss();
+              this.modalRef = null;
+            }
           this.conformationPopup.openErrorModal(err.error.message);
           this.isLoader = false;
         },
@@ -429,12 +434,16 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
 
   //function to open the model popup
   openconfirmationModel(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true,backdrop: 'static' });
   }
 
   //function to open the confirmation model popup before submitting the request 
   openconfirmationModelforsubmit(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true,backdrop: 'static' });
+  }
+
+  openconfirmationModelNew(content: any) {
+    this.modalRef =  this.modalService.open(content, { centered: true ,backdrop: 'static'});
   }
 
   //function to close the lists

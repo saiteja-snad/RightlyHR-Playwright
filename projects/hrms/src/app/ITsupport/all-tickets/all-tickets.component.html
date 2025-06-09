@@ -20,7 +20,7 @@
                 <th>Status</th>
                 <th>Updated Date</th>
                 @if(rbac.allowedToAccess('All Tickets Tab.update')){
-                <th>Action(s)</th>
+                <th>Action</th>
                 }
             </thead>
             <tbody>
@@ -236,6 +236,9 @@
                         <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
                             <div class="error-msg">{{'Subject is required' | translate}}</div>
                         </div>
+                        <div *ngIf="itSupportForm.get('subject')?.hasError('pattern')">
+                            <div class="error-msg">{{'Subject must not contain only spaces' | translate}}</div>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -280,6 +283,9 @@
                         <div
                             *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
                             <div class="error-msg">{{'Description is required' | translate}}</div>
+                        </div>
+                         <div *ngIf="itSupportForm.get('description')?.hasError('pattern')">
+                            <div class="error-msg">{{'Description must not contain only spaces' | translate}}</div>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">

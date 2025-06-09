@@ -26,7 +26,7 @@
                     <th>{{'Total Amount' | translate}}</th>
                     <th>{{'Status' | translate}}</th>
                     @if(rbac.allowedToAccess('Draft Tab.update')){
-                    <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+                    <th class="text-center">{{"Action" | translate}}</th>
                        }
                 </thead>
                 <tbody>
@@ -94,6 +94,9 @@
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['maxlength']">
                                 Expense title must be less than 50 characters
                             </div>
+                            <div *ngIf="newExpenseForm.controls['expensesTitle']?.errors?.['pattern']">
+                                Expense title must not contain only spaces
+                            </div>
                         </div>
                     </div>
 
@@ -144,8 +147,7 @@
 
                             <!-- Expense Item -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Expense Item' | translate}}<span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Item' | translate}}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
@@ -156,11 +158,13 @@
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                         Expense item must be less than 50 characters
                                     </div>
-                                     <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
-                                    class="error-msg">
-                                    <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
-                                        Expense Type is required</div>
-                                </div>
+                                    <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
+                                        Expense title must not contain only spaces
+                                    </div>
+                                    <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched" class="error-msg">
+                                        <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
+                                            Expense Type is required</div>
+                                    </div>
                                 </div>
                             </div>
 

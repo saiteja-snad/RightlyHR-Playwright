@@ -24,6 +24,8 @@
             #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" aria-describedby="basic-addon1">
     </div>
     <div class="custom-table-content">
+        @if(!loading){
+
         <table class="w-100">
             <thead>
                 <tr>
@@ -80,6 +82,12 @@
                 </tr>
             </ng-template>
         </table>
+        }
+        @else {
+
+        <app-data-loader-content />
+
+        }
     </div>
 </div>
 

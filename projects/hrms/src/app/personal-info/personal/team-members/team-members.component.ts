@@ -17,6 +17,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { CommonModule } from '@angular/common';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-team-members',
@@ -30,7 +31,8 @@ import { AccessNavigationService } from '../../../services/access-navigation.ser
     SearchfilterPipe,
     ReactiveFormsModule,
     DateformatPipe,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
 })
@@ -59,6 +61,7 @@ export class TeamMembersComponent {
   joiningDate: any;
   jobdetailes: any = [];
   selectedemployeid: any;
+  loading = false;
   constructor(
     private http: HttpService,
     private accessNav: AccessNavigationService,
@@ -201,6 +204,7 @@ export class TeamMembersComponent {
   }
 
    getAllTeammembersList() {
+    this.loading = true;
     const EmployeeId = this.empinfo.employeeId;
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
@@ -210,6 +214,7 @@ export class TeamMembersComponent {
           // const filteredData = (responseData as Iteammembers[]).filter(
           //   (member) => member['isAccess'] === true
           // );
+          this.loading = false;
           this.teamMemberArray = responseData.map((employee: any) => ({
             ...employee,
             jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
@@ -224,6 +229,7 @@ export class TeamMembersComponent {
         },
         (error) => {
           console.error(error);
+          this.loading = false;
         }
       );
   }

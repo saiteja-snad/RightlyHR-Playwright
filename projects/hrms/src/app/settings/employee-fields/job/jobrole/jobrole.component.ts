@@ -11,17 +11,19 @@ import { jobRoleDATA } from './jobrole-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-jobrole',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './jobrole.component.html',
   styleUrls: ['./jobrole.component.scss']
 })
 export class JobroleComponent {
   subscription!: Subscription;
   gradedetails = [] as any;
+  loader = false;
   JobroleDetails = [] as any;
   isEditMode = false;
   selectedId: number | null = null;
@@ -56,13 +58,19 @@ export class JobroleComponent {
   }
 
   getJobrole() {
+    this.loader = true;
     this.subscription = this.http
       .getData('DesignationGradeMapper?sort=designationName')
       .subscribe({
         next: (data: any) => {
+          this.loader = false;
           this.JobroleDetails = data;
           this.sortDesignations();
         },
+        error: (error: any) => {
+          this.loader = false;
+          
+        }
       });
   }
   // Method to open the add modal dialog

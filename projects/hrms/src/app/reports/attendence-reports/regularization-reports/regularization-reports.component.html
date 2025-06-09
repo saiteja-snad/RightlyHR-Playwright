@@ -97,15 +97,8 @@
       </form>
   </div>
 
-
- 
-
-      @if (isLoading) {
-      <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
-      </div>
-      }@else {
       <div class="custom-table-content">
+        @if(isLoading){
         <table id="leaveReportTable" class="content w-100">
           <thead>
               <th>Employee ID</th>
@@ -139,6 +132,10 @@
             }
           </tbody>
         </table>
-      </div>
       }
+      @else {
+  <app-data-loader-content />
+      }
+      </div>
+      
     </div>

@@ -12,9 +12,10 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-leaves-rejected',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-rejected.component.html',
   styleUrl: './leaves-rejected.component.scss'
 })
@@ -28,6 +29,7 @@ export class LeavesRejectedComponent {
   selectempid = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  loading: boolean = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -68,30 +70,46 @@ export class LeavesRejectedComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     let empid =  this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Rejected');
         } else {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{ console.log(reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 
     getDataByEMPLPID() {
+    this.loading = true;
     let empid =   this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Rejected');
         } else {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{ console.log(reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+
+
     });
   }
 }

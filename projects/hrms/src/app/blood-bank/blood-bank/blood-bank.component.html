@@ -12,8 +12,20 @@
     <div class="custom-component-right-content">
         <div class="cards-container">
             @if (shimmer) {
-            <div>
-                <p-skeleton width="26rem" height="5rem" borderRadius="12px" />
+            <div *ngFor="let skel of [1,2,3,4]" class="blood-bank-card mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="blood-group">
+                        <p-skeleton  class="name-text m-0"></p-skeleton>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="mb-1">
+                            <p-skeleton width="120px" height="18px"></p-skeleton>
+                        </div>
+                        <div>
+                            <p-skeleton width="180px" height="14px"></p-skeleton>
+                        </div>
+                    </div>
+                </div>
             </div>
             }
             @else {

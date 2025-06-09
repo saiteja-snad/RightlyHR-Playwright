@@ -22,10 +22,10 @@ import { ChartModule } from 'primeng/chart';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-leaves',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,Skeleton,RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -91,7 +91,7 @@ export class LeavesComponent {
   //graph
   leaveCategoryData: any;
   leaveCategoryOptions: any;
-
+  loadingGraph: boolean = false;
   constructor(
     private http: HttpService,
     private conformationPopup: OpenModalService,
@@ -327,9 +327,11 @@ export class LeavesComponent {
   }
 
   getCategoryDetails() {
+    this.loadingGraph = true;
     this.subscription = this.http.getData(`LeaveEntitlements/employee/${this.empdata.employeeId}`).subscribe({
       next: (response: any) => {
         if (response.success) {
+          this.loadingGraph = false;
           this.categoryDetails = response.data as ICategoryDetails[];
           this.calculateProbationLeavs(this.categoryDetails);
           this.logOptionalLeaveDays(this.categoryDetails);
@@ -337,8 +339,12 @@ export class LeavesComponent {
         }
       },
       error: (reason: any) => {
+        this.loadingGraph = false;
+        console.error('Error fetching category details:', reason);
       },
-      complete: () => { }
+      complete: () => {
+        this.loadingGraph = false;
+       }
     })
   }
 

@@ -15,10 +15,11 @@ import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-desk-for-you-request',
-  imports: [CommonModule, NoDataFoundComponent, FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule, SearchfilterPipe, SearchfordeskPipe],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
   templateUrl: './desk-for-you-request.component.html',
   styleUrl: './desk-for-you-request.component.scss'
 })
@@ -26,6 +27,7 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   employdata: any
   deskiteam: any
   updataid: any
+  loading: boolean = false;
   assiginemploye: any
   deskheaderpending: Entity[] = [];
   deskid: any;
@@ -50,12 +52,15 @@ searchValue: any;
   }
 
   getexpensespendingforyou(): void {
+    this.loading = true;
     this.http.getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=EMP`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.deskheaderpending = (data.data as Entity[]).filter(item => 
           item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         // this.filterPendingExpenses()
       }, error: (err) => {
+        this.loading = false;
         console.log("expensesheadererror");
       },
     });

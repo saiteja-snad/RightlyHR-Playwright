@@ -1,5 +1,9 @@
 import { PMS_CONFIGURATION_TABS } from "../permission-route.constants";
 
+const currentDate = new Date();
+const month = currentDate.toLocaleString('default', { month: 'long' }); // e.g. June
+const year = currentDate.getFullYear(); 
+
 export const MODULE_INFOS = {
     //Settings Employee Fields Module Info
     SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO: "Define and manage core employee data sections such as personal details, job info, documents, and policies. Central hub for configuring fields that shape the employee profile structure.",
@@ -143,12 +147,12 @@ export const MODULE_INFOS = {
     INACTIVE_EMPLOYEES_MODULE_INFO: "The Inactive Employees page displays essential details of employees who are no longer active, including ID, name, work email, phone number, location, shift, and designation. It also provides an option to generate documents such as experience letters and relieving letters for each inactive employee.",
     PROBATION_EMPLOYEES_MODULE_INFO: "The Probation Employees page displays details of employees currently on probation, including ID, name, email, phone number, probation dates, and designation. It also allows generating documents related to probation status directly from the list.",
     PROSPECTIVE_TRAINEES_MODULE_INFO: "The Prospective Trainees page displays key details such as ID, name, email, phone number, location, designation, training duration, and sub-status. It allows adding new prospective trainees and tracking their onboarding stages.",
-    ACTIVE_TRAINEES_MODULE_INFO: "The Active Trainee page displays essential details of current trainees, including ID, name, contact information, location, training status, and designation. Clicking on a trainee’s profile navigates to a detailed view of their profile for further information.",
+    ACTIVE_TRAINEES_MODULE_INFO: "The Active Trainees page displays essential details of current trainees, including ID, name, contact information, location, training status, and designation. Clicking on a trainee’s profile navigates to a detailed view of their profile for further information.",
     INACTIVE_TRAINEES_MODULE_INFO: "The Inactive Trainees page displays a list of trainees who are no longer active, including ID, name, personal email, phone number, location, shift, and designation. It allows users to review past trainee records for reference and administrative purposes.",
     CURRENT_OPENINGS_MODULE_INFO: "The Current Openings section allows HR to post jobs and manage job listings categorized as Active or Inactive. It also tracks applicant statuses through stages like Applied, Interview Process, Rejected, On Hold, Request for Onboarding, Onboarded, and Archive, with search functionality for applicants.",
 
     //Attendance Module Info 
-    ATTENDANCE_MODULE_INFO: "The Attendance section displays a day-wise record for the selected month (May 2025), showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.",
+    getAttendanceModuleInfo: (month: string, year: number) =>`The Attendance section displays a day-wise record for the selected month (${month}, ${year}), showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.`,
 
     //My info Personal Module info 
     PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO: "The Basic Information section captures essential employee details such as Employee ID, Salutation, First Name, Middle Name, Last Name, Gender, Date of Birth, Blood Group, and Marital Status. This section allows users to update these fields and save or cancel changes as needed.",

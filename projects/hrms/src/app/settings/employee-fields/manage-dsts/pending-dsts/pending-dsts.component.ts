@@ -9,10 +9,11 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-pending-dsts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, DataLoaderContentComponent],
   templateUrl: './pending-dsts.component.html',
   styleUrl: './pending-dsts.component.scss',
 })
@@ -20,7 +21,7 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
   pendingDSTs = [] as ManageDST[];
   allDSTs = [] as ManageDST[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  loading = false;
   constructor(
     private http: HttpService,
     private sharedModalService: OpenModalService,
@@ -38,10 +39,16 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
   }
 
   getAllDayLight() {
+    this.loading = true;
     this.http.getData('OrgDayLight/getAll').pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.allDSTs = data;
         this.filterPendingDSTs();
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('Error fetching DSTs:', error);
       },
     });
   }

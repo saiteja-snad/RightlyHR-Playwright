@@ -10,11 +10,12 @@ import { CommonModule } from '@angular/common';
 import { probitionData } from './provition-module';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 
 @Component({
   selector: 'app-probationstatus',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './probationstatus.component.html',
   styleUrl: './probationstatus.component.scss'
 })
@@ -25,6 +26,7 @@ export class ProbationstatusComponent {
   updateForm!: FormGroup;
   probitiontypeDetail: any[] = [];
   isEditMode = false;
+  loader = false;
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
   subscription!: Subscription;
@@ -50,11 +52,17 @@ export class ProbationstatusComponent {
   }
 
   getprobitiontype() {
+    this.loader = true;
     this.subscription = this.http.getData('ProbationStatus').subscribe({
       next: (data: any) => {
         console.log(data);
+        this.loader = false;
         this.probitiontypeDetail = data;
       },
+      error: (error: any) => {
+        this.loader = false;
+        
+      }
     });
   }
  

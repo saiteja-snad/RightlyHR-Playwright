@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-identitytype',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './identitytype.component.html',
   styleUrl: './identitytype.component.scss'
 })
@@ -21,6 +22,7 @@ export class IdentitytypeComponent {
   @ViewChild('updatepopup') updatepopup: any;
   IdentityForm!: FormGroup;
   updateForm!: FormGroup;
+  loading = false;
   IdentityDetail: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
@@ -48,8 +50,13 @@ export class IdentitytypeComponent {
   }
 
   getIdentityType() {
+    this.loading = true;
     this.http.getData('IdentityType').subscribe((data: any) => {
       this.IdentityDetail = data;
+      this.loading = false;
+    }, (error: any) => {  
+      this.loading = false;
+      
     });
   }
   //ADD

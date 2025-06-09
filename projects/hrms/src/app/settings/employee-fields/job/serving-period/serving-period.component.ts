@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-serving-period',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent],
   templateUrl: './serving-period.component.html',
   styleUrl: './serving-period.component.scss'
 })
@@ -20,6 +21,7 @@ export class ServingPeriodComponent {
   subscription!: Subscription;
   servingPeriodDetails = [] as any;
   JobroleDetails = [] as any;
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteserving: any = null;
@@ -162,14 +164,20 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
     });
   }
   getServingPeriod() {
+    this.loader = true;
     this.subscription = this.http.getData('ServingPeriods').subscribe({
       next: (data: any) => {
         console.log(data);
+        this.loader = false;
         this.servingPeriodDetails = data.sort((a: any, b: any) => {
           // Sort by serving period type alphabetically
           return a.servingPeriodType.localeCompare(b.servingPeriodType);
         });
       },
+      error: (reason: any) => {
+        this.loader = false;
+        
+      }
     });
   }
   //ADD

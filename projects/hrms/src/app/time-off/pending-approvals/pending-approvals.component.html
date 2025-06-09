@@ -1,11 +1,13 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-space-between align-items-center mb-4 pt-2">
+    <div class="component-header-content">
         @if (router.url !== '/time-off/pending-approvals/assessmentform') {
         <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
             <div class="component-header">Pending Approvals</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
@@ -15,10 +17,12 @@
         @else {
         <div class="heading-content">
             <div class="commpoment-name cursor" (click)="navigate()">Time off
-            <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+                <span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
             <div class="component-header">Assessment Form</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />

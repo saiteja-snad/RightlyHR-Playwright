@@ -20,13 +20,14 @@
         </div>
 
         <div class="custom-setting-right-content">
-            <form autocomplete="off" [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)"
-                class="mb-4">
+            <form autocomplete="off" [formGroup]="createAssigneeForm" autocomplete="off"
+                (ngSubmit)="createAssignee(createAssigneeForm)" class="mb-4">
                 <div class="d-flex align-items-center gap-2">
                     <div class="custom-p-select-content">
                         <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
-                            optionLabel="fullName" placeholder="Please select employee" class="w-100" [filter]="true" filterBy="fullName" 
-                            [showClear]="true" filterPlaceholder="Search employee" resetFilterOnHide="true">
+                            optionLabel="fullName" placeholder="Please select employee" class="w-100" [filter]="true"
+                            filterBy="fullName" [showClear]="true" filterPlaceholder="Search employee"
+                            resetFilterOnHide="true">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                             <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                         </p-select>
@@ -41,9 +42,7 @@
             <!--Table content-->
             <ng-container *ngIf="dataLoad; else maincontent">
                 <ng-template #loadingSpinner>
-                    <div class="custom-compoent-data-loader">
-                        <app-data-loader-content />
-                    </div>
+                    <app-data-loader-content />
                 </ng-template>
                 <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
             </ng-container>
@@ -52,28 +51,24 @@
                 <div class="custom-table-content">
                     <table class="w-100">
                         <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Action</th>
-                            </tr>
+                            <th>Name</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
                             @if(roleAssigneeUsers.length > 0){
-                                <tr *ngFor="let user of roleAssigneeUsers">
-                                    <td>{{ user.firstName }}
-                                        <span *ngIf="user.middleName"> {{ user.middleName }} </span>
-                                        {{ user.lastName }}
-                                    </td>
-                                    <td (click)="onUserClick(user)">
-                                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
-                                    </td>
-                                </tr>
+                            <tr *ngFor="let user of roleAssigneeUsers">
+                                <td>{{ user.firstName }}
+                                    <span *ngIf="user.middleName"> {{ user.middleName }} </span>
+                                    {{ user.lastName }}
+                                </td>
+                                <td (click)="onUserClick(user)">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </td>
+                            </tr>
                             }@else {
-                                <tr>
-                                    <td colspan="2">
-                                        <app-no-data-found></app-no-data-found>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <app-no-data-found></app-no-data-found>
+                            </tr>
                             }
                         </tbody>
                     </table>

@@ -80,7 +80,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="Relationdetails" optionLabel="relationship1"
                                 optionValue="relationship1" formControlName="relationship"
-                                placeholder="Please select relation" class="form-select custom-select"></p-select>
+                                placeholder="Please select relation" class="form-select custom-select" appendTo="body"></p-select>
                         </div>
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.relationship')?.invalid && (contactForm.get('contact1.relationship')?.touched || contactForm.get('contact1.relationship')?.dirty)">
@@ -165,7 +165,7 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="Relationdetails" optionLabel="relationship1"
-                                optionValue="relationship1" formControlName="relationship"
+                                optionValue="relationship1" formControlName="relationship" appendTo="body"
                                 placeholder="Please select relation" class="form-select custom-select">
                             </p-select>
                         </div>

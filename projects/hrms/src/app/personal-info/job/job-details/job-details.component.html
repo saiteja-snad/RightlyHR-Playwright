@@ -29,15 +29,13 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-
                     @if ( showSaperationDots ) {
                     @if(canAccess('update','job') || canAccess('delete','job')|| canAccess('view','separation') ){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                     && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
                     !=='trainee inactive' )){
-                    <th *ngIf="!showSaperationDots" class="text-center">{{"Action" | translate}}<span
-                            class="text-lowercase">(s)</span></th>
+                    <th *ngIf="!showSaperationDots" class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
                     }
                     }
                     }

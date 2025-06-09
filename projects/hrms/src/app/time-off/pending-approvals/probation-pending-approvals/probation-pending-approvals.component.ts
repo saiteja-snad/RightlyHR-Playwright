@@ -294,8 +294,8 @@ openModalView(){
     return true;
   }
 
-  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
-     if(extendedDate){
+getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextendedcount:number): string {
+     if(extendedDate ){
       lastWorkingDate = extendedDate;
     }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)

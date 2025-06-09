@@ -600,10 +600,11 @@ export class AssetsManagmentComponent {
   }
 
   cleardata() {
-    this.assetForm.reset();
     this.modalService.dismissAll();
     this.isToggledWarranty = false
     this.isToggledamc = false
+    this.assetForm.reset();
+    this.initialform();
   }
 
 initChart(): void {

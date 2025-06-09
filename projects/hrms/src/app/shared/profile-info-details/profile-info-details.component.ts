@@ -15,8 +15,8 @@ import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs
 import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-profile-info-details',
-  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PersonalPersonalTabsComponent,
-    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent, Skeleton],
+  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent,Skeleton, PersonalPersonalTabsComponent,
+    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
 })
@@ -37,7 +37,6 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   profilePic: any;
   isloading: boolean = false;
-
   constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,
     public rbac: RbacService, private router: Router) { }
 
@@ -72,7 +71,7 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getEmployeeId() {
+getEmployeeId() {
     this.isloading = true;
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -91,10 +90,12 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
 
+ 
   getJobDetails() {
     this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);

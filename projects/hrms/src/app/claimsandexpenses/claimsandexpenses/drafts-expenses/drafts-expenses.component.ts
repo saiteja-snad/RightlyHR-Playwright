@@ -84,7 +84,7 @@ export class DraftsExpensesComponent {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       expenseId: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
@@ -312,7 +312,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.conformationPopup.openSuccessModal('Expenses request submitted successfully!');
           this.getexpensesheaderbyemployeeid();
         },
         error: (error: any) => {
@@ -329,7 +329,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll()
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.conformationPopup.openSuccessModal('Expenses request submitted successfully!');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
@@ -388,7 +388,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+          this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
           this.getexpensesheaderbyemployeeid();
           // Call the get function after posting
         },
@@ -407,7 +407,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.http.setnewcountDetails();
           this.modalService.dismissAll()
-          this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+          this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
@@ -504,7 +504,7 @@ fileuploadhide :any;
 
   patchExpenseItem(item: any): void {
     this.expenseItems.push(this.fb.group({
-      item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       expenseId: [item.expenseId, Validators.required],
       item_Description: [item.item_Description],
       expense_Date: [this.datepipe.transform(item.expense_Date, 'yyyy-MM-dd'), Validators.required],

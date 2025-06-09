@@ -285,85 +285,97 @@
         </div>
 
         <div class="custom-main-popup-content">
-            @if(punchPairs.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">Biometric Logs</th>
-                            </tr>
-                            <tr>
-                                <th>In</th>
-                                <th>Out</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of punchPairs">
-                                <td class="log-time">{{ log.in }}</td>
-                                <td class="log-time">{{ log.out }}</td>
-                                <td class="duration-time">{{ log.duration }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
-            @if(permissions_list.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">Permission(s)</th>
-                            </tr>
-                            <tr>
-                                <th>Type</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of permissions_list">
-                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
-                                <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
+            <p-accordion value="0">
+                @if(punchPairs.length>0){
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Biometric Logs</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>In</th>
+                                            <th>Out</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of punchPairs">
+                                            <td class="log-time">{{ log.in }}</td>
+                                            <td class="log-time">{{ log.out }}</td>
+                                            <td class="duration-time">{{ log.duration }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
 
-            @if(regularization_list.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">Regularization(s)</th>
-                            </tr>
-                            <tr>
-                                <th>Type</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of regularization_list">
-                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
-                                <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
+                @if(permissions_list.length>0){
+                <p-accordion-panel value="1">
+                    <p-accordion-header>Permission(s)</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Duration</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of permissions_list">
+                                            <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            </td>
+                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
+
+                @if(regularization_list.length>0){
+                <p-accordion-panel value="2">
+                    <p-accordion-header>Regularization(s)</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Duration</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of regularization_list">
+                                            <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            </td>
+                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
+            </p-accordion>
         </div>
     </div>
 </ng-template>

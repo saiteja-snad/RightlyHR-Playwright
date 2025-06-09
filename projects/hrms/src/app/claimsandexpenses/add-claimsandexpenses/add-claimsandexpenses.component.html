@@ -37,6 +37,9 @@
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['maxlength']">
                                 Expense title must be less than 50 characters
                             </div>
+                            <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['pattern']">
+                                Expense title must not contain only spaces
+                            </div>
                         </div>
                     </div>
 
@@ -71,16 +74,13 @@
                         <div class="row mb-3">
                             <!-- Expense Type -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="expensetype" optionValue="expenseId" optionLabel="expenseType"
-                                        (onChange)="onchangeexpnes($event, i)" appendTo="body"
-                                        placeholder="Please select expense type" formControlName="item_expense"
-                                        class="form-select custom-select"></p-select>
+                                        (onChange)="onchangeexpnes($event, i)" appendTo="body" placeholder="Please select expense type"
+                                        formControlName="item_expense" class="form-select custom-select"></p-select>
                                 </div>
-                                <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
-                                    class="error-msg">
+                                <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched" class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
                                         Expense Type is required</div>
                                 </div>
@@ -101,7 +101,7 @@
                                         Expense item must be less than 50 characters
                                     </div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
-                                        Expense item is invalid
+                                        Expense title must not contain only spaces
                                     </div>
                                 </div>
 

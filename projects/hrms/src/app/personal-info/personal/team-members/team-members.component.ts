@@ -200,7 +200,7 @@ export class TeamMembersComponent {
     return `${year}-${month}-${day}`;
   }
 
-  getAllTeammembersList() {
+   getAllTeammembersList() {
     const EmployeeId = this.empinfo.employeeId;
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)

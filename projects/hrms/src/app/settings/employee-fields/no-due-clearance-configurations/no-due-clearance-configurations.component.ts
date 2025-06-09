@@ -13,6 +13,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-no-due-clearance-configurations',
@@ -45,7 +46,8 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     private fb: FormBuilder,
     private modal: OpenModalService,
     public rbac: RbacService,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    public readonly router: Router
   ) { }
   currentItem: any;
   ngOnInit(): void {
@@ -523,6 +525,10 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
 
   clearData() {
     this.modalService.dismissAll();
+  }
+
+  navigateToSettings() {
+    this.router.navigate(['/settings'])
   }
 
   ngOnDestroy(): void {

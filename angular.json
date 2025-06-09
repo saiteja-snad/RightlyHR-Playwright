@@ -95,6 +95,69 @@
                 }
               ]
             },
+             "uat-internal-beta": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "10mb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/preonboarding/environments/environment.ts",
+                  "with": "projects/preonboarding/environments/environment.uat.internal.beta.ts"
+                }
+              ]
+            },
+             "uat-internal-gama": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "10mb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/preonboarding/environments/environment.ts",
+                  "with": "projects/preonboarding/environments/environment.uat.internal.gama.ts"
+                }
+              ]
+            },
+             "uat-internal-delta": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "10mb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/preonboarding/environments/environment.ts",
+                  "with": "projects/preonboarding/environments/environment.uat.internal.delta.ts"
+                }
+              ]
+            },
             "dev": {
               "budgets": [
                 {
@@ -239,6 +302,69 @@
                 {
                   "replace": "projects/hrms/src/environments/environment.ts",
                   "with": "projects/hrms/src/environments/environment.uat.internal.alpha.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+             "uat-internal-beta": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms/src/environments/environment.ts",
+                  "with": "projects/hrms/src/environments/environment.uat.internal.beta.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+             "uat-internal-gama": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms/src/environments/environment.ts",
+                  "with": "projects/hrms/src/environments/environment.uat.internal.gama.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+             "uat-internal-delta": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms/src/environments/environment.ts",
+                  "with": "projects/hrms/src/environments/environment.uat.internal.delta.ts"
                 }
               ],
               "budgets": [

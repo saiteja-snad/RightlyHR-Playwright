@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
         <div class="pt-2">
-            <p class="popup-heading mb-0">Update Experience Details</p>
+            <p class="popup-heading mb-0">Update Employment History</p>
         </div>
         <div>
             <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
@@ -131,17 +131,13 @@
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
-                            class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input px-0"
-                        (change)="onChangeexperience($event);onChange($event)">
+                    <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span class="text-danger">*</span></label>
+                    <input type="file" class="form-control custom-input px-0" (change)="onChangeexperience($event);onChange($event)">
                     <div *ngIf="this.experienceData.attachment" class="file-name my-1">
-                        <span>File Name: {{getFileName(this.experienceData.attachment)}}</span>
+                        File Name: {{getFileName(this.experienceData.attachment)}}
                     </div>
-                    <div class="error-msg"
-                        *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
-                        Please choose a file</div>
-                    <div class="error-msg" *ngIf="showErrorforpdf">Only PDF and image files are allowed.</div>
+                    <div class="error-msg" *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">Please choose a file</div>
+                    <div class="error-msg" *ngIf="showErrorforpdf">Only Pdf/Image files are allowed.</div>
                     <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB.</div>
                 </div>
             </div>

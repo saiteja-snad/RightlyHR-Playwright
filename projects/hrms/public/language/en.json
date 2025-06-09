@@ -437,5 +437,18 @@
   "The Trainee Onboard Request section displays trainee onboarding details, including the request date, training start and end dates, extended dates if applicable, and current status. It also allows tracking of training feedback for evaluation and onboarding decisions." : "The Trainee Onboard Request section displays trainee onboarding details, including the request date, training start and end dates, extended dates if applicable, and current status. It also allows tracking of training feedback for evaluation and onboarding decisions.",
   "The Team Leave Balance section displays the yearly leave balance for team members, including allowed, utilized, booked, and available days. It also shows counts for rejected and cancelled leaves, helping managers track and manage team leave efficiently." : "The Team Leave Balance section displays the yearly leave balance for team members, including allowed, utilized, booked, and available days. It also shows counts for rejected and cancelled leaves, helping managers track and manage team leave efficiently.",
   "The Team Leave Summary section provides a monthly and yearly overview of each team member’s leave activities, including total leaves taken, work-from-home days, permission hours, and regularization hours. It helps managers monitor attendance and ensure policy adherence." : "The Team Leave Summary section provides a monthly and yearly overview of each team member’s leave activities, including total leaves taken, work-from-home days, permission hours, and regularization hours. It helps managers monitor attendance and ensure policy adherence.",
-  "The Org Leave Balance section displays the leave entitlements of employees across different categories for the selected manager and year. It includes allowed, utilized, booked, and available days for each leave type, offering a comprehensive organizational leave overview." : "The Org Leave Balance section displays the leave entitlements of employees across different categories for the selected manager and year. It includes allowed, utilized, booked, and available days for each leave type, offering a comprehensive organizational leave overview."
+  "The Org Leave Balance section displays the leave entitlements of employees across different categories for the selected manager and year. It includes allowed, utilized, booked, and available days for each leave type, offering a comprehensive organizational leave overview." : "The Org Leave Balance section displays the leave entitlements of employees across different categories for the selected manager and year. It includes allowed, utilized, booked, and available days for each leave type, offering a comprehensive organizational leave overview.",
+  "Ticket ID" : "Ticket ID",
+  "Ticket Priority" : "Ticket Priority",
+  "Subject" : "Subject",
+  "Requester" : "Requester",
+  "Assignee" : "Assignee",
+  "Updated Date" : "Updated Date",
+  "Action" : "Action",
+  "Ticket" : "Ticket",
+  "Are you sure you want to cancel?" : "Are you sure you want to cancel?",
+  "IT Support" : "IT Support",
+  "My Tickets" : "My Tickets",
+  "Add New Ticket" : "Add New Ticket",
+  "Description must not contain only spaces" : "Description must not contain only spaces"
 }

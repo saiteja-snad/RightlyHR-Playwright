@@ -27,7 +27,7 @@ import { IAttendance, IdayLogs } from './attendance-modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
-
+import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-attendance-view',
   imports: [
@@ -46,7 +46,8 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
     TohoursPipe,
     DatePicker,
     ModuleInformationComponent,
-    InfoIconComponent
+    InfoIconComponent,
+    AccordionModule
 ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',

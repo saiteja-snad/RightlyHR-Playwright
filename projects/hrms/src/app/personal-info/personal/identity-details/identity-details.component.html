@@ -106,8 +106,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
-                            [minlength]="IdentityMinNumber" class="form-control custom-input"
+                        <input type="text" formControlName="identityNumber" 
+                          class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number" (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
@@ -115,18 +115,19 @@
                                 Identity Number is required
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['minlength']">
-                                  Invalid Identity Number
+                                Invalid Identity Number
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['maxlength']">
-                                  Invalid Identity Number
+                               Invalid Identity Number
+                            </div>
+                                <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
+                                Invalid format based on selected Identity Type.
                             </div>
                             <div class="error-msg"
                                 *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
                                 Identity Number cannot be all zeroes
                             </div>
-                               <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
-                                Invalid format based on selected Identity Type.
-                            </div>
+                           
                         </div>
                     </div>
 
@@ -192,21 +193,21 @@
                     <div class="col-md-6 mb-3">
                         <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityupdateNumber" [maxlength]="IdentityMaxNumber"
-                            [minlength]="IdentityMinNumber" class="form-control custom-input" id="identityNumber"
-                            placeholder="Please enter identity number"  (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
+                        <input type="text" formControlName="identityupdateNumber" 
+                          class="form-control custom-input" id="identityNumber"
+                            placeholder="Please enter Identity Number"  (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateNumber')?.invalid && identityupdateForm.get('identityupdateNumber')?.touched">
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['required']">
                                 Identity Number is required
                             </div>
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['minlength']">
-                                 Invalid Identity Number
-                            </div>
-                            <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
                                   Invalid Identity Number
                             </div>
-                                   <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['pattern']">
+                            <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
+                                 Invalid Identity Number
+                            </div>
+                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['pattern']">
                                   Invalid format based on selected Identity Type
                             </div>
                             <div class="error-msg"

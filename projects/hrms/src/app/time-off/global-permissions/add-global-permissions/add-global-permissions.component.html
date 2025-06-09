@@ -155,7 +155,7 @@
                 class="error-msg">*</span></label>
             <input type="date" class="form-control" formControlName="permissionDate" id="requsteddate"
               aria-label="Default select example" onkeydown="return false" autocomplete="off" startKey="start"
-              (click)="setDateValidation()" [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
+               [min]="minDate" [max]="maxDate" endKey="end" showCancel="true" />
             <div class="error-msg"
               *ngIf="requestForm.get('permissionDate')?.touched && requestForm.get('permissionDate')?.invalid">
               Permission Date is required

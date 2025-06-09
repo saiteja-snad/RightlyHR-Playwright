@@ -43,7 +43,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     { item_id: 3, item_text: 'Option 3', selectedAllGroup: 'Group 1' },
     { item_id: 4, item_text: 'Option 4', selectedAllGroup: 'Group 1' }
   ];
-  private modalRef: NgbModalRef | null = null;
   dropdownSettings = {};
   permissionHours: { duration: number }[] = [];
   selectedPermissionId!: any;

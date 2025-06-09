@@ -7,10 +7,11 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { Subscription } from 'rxjs';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { HolidayTabsComponent } from '../../shared/holiday-tabs/holiday-tabs.component';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-publicholidays',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent, DataLoaderContentComponent,Skeleton],
   templateUrl: './publicholidays.component.html',
   styleUrl: './publicholidays.component.scss'
 })

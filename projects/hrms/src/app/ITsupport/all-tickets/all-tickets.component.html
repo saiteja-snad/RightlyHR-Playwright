@@ -2,11 +2,12 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
-            aria-describedby="basic-addon1">
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
+        @if(!dataloading){
         <table class="w-100">
             <thead>
                 <th>Ticket ID</th>
@@ -25,30 +26,30 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="(tickets | itsupport: searchValue) as filteredTickets">
-                <tr *ngFor="let ticket of filteredTickets">
-                    <td>{{ticket.id || '-'}}</td>
-                    <td>
-                        <ul class="mb-0">
-                            <li [ngClass]="{
+                    <tr *ngFor="let ticket of filteredTickets">
+                        <td>{{ticket.id || '-'}}</td>
+                        <td>
+                            <ul class="mb-0">
+                                <li [ngClass]="{
                                     'high': ticket.priority === 'High',
                                     'medium': ticket.priority === 'Medium',
                                     'low': ticket.priority === 'Low',
                                     'urgent': ticket.priority === 'Urgent'
                                 }">
-                                <b>{{ticket.priority || '-'}}</b>
-                            </li>
-                        </ul>
-                    </td>
-                    <td>{{ticket.subject || '-'}}</td>
-                    <td>{{ticket.employeeName || '-'}}</td>
-                    <td>{{ticket.createdAt | dateformat}} </td>
-                    <td>{{ticket.departmentName || '-'}}</td>
-                    <td>{{ticket.subdepartmentName || '-'}}</td>
-                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
-                    <td>{{ticket.ticketStatus || '-'}}</td>
-                    <td>{{ticket.updatedAt | dateformat}}</td>
-                    @if(rbac.allowedToAccess('All Tickets Tab.update')){
-                    <!-- <td class="text-center" *ngIf="rbac.allowedToAccess('All Tickets Tab.update')">
+                                    <b>{{ticket.priority || '-'}}</b>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>{{ticket.subject || '-'}}</td>
+                        <td>{{ticket.employeeName || '-'}}</td>
+                        <td>{{ticket.createdAt | dateformat}} </td>
+                        <td>{{ticket.departmentName || '-'}}</td>
+                        <td>{{ticket.subdepartmentName || '-'}}</td>
+                        <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
+                        <td>{{ticket.ticketStatus || '-'}}</td>
+                        <td>{{ticket.updatedAt | dateformat}}</td>
+                        @if(rbac.allowedToAccess('All Tickets Tab.update')){
+                        <!-- <td class="text-center" *ngIf="rbac.allowedToAccess('All Tickets Tab.update')">
                         <ng-container *ngIf="ticket.ticketStatus !== 'Closed'; else noAction">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
@@ -63,34 +64,38 @@
                             </ul>
                         </div>
                     </td> -->
-                    <td class="text-center" *ngIf="rbac.allowedToAccess('All Tickets Tab.update')">
-                        <ng-container *ngIf="ticket.ticketStatus !== 'Closed'; else noAction">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openModal(updatetickets, ticket)">
-                                        <a class="dropdown-item">
-                                        <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </ng-container>
-                        <ng-template #noAction>
-                        <!-- No action -->
-                        </ng-template>
-                    </td>
- 
-                }
-                </tr>
-                <tr *ngIf="filteredTickets.length === 0">
-                    <app-no-data-found></app-no-data-found>
-                </tr>
-            </ng-container>
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('All Tickets Tab.update')">
+                            <ng-container *ngIf="ticket.ticketStatus !== 'Closed'; else noAction">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openModal(updatetickets, ticket)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ng-container>
+                            <ng-template #noAction>
+                                <!-- No action -->
+                            </ng-template>
+                        </td>
+
+                        }
+                    </tr>
+                    <tr *ngIf="filteredTickets.length === 0">
+                        <app-no-data-found></app-no-data-found>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content></app-data-loader-content>
+        }
     </div>
 </div>
 

@@ -21,10 +21,11 @@ import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitesp
 import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
@@ -45,6 +46,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   destroy$: Subject<boolean> = new Subject<boolean>();
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
+  loading: boolean = false;
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
@@ -79,16 +81,25 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   getAllPendingApprovals() {
+    this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=ROLE`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        this.loading = false;
         this.expenseheaderpending = (response.data as ExpenseApprovalResponse[]).filter(
           (item) =>
             item.approvalHeader.status != 'Processed' &&
             item.approvalHeader.status != 'Rejected'
         );
       },
-      error: (reason) => console.log(reason),
+      error: (reason) =>{
+        this.loading = false;
+       
+      },
+      complete: () => {
+        this.loading = false;
+      
+      },
     });
   }
 

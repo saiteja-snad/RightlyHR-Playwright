@@ -9,11 +9,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-address-info',
-  imports: [CommonModule, ReactiveFormsModule,],
+  imports: [CommonModule, ReactiveFormsModule,Skeleton],
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })
@@ -25,7 +25,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   permanentAddress: any;
   subscription!: Subscription
   empinfo: any
-
+  loading: boolean = false;
   employedata={} as any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
@@ -117,13 +117,22 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   }
 
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+         this.loading = false;
         this.employedata = data;
         this.patchForm(data);
+       
       },
-      error: (reason: any) => console.error('Error fetching employee data:', reason),
+      error: (reason: any) => {console.error('Error fetching employee data:', reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+        console.log('Employee data fetched successfully');
+      }
     });
   }
 

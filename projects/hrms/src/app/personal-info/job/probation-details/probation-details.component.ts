@@ -15,10 +15,11 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-probation-details',
   standalone: true,
-  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent],
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
@@ -32,6 +33,7 @@ export class ProbationDetailsComponent implements OnInit {
   probationExtendTimes: any;
   appcomment = {} as any;
   loggedinuser = {} as any;
+  loading = false;
 
   constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
      private modalService: NgbModal,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
@@ -76,10 +78,16 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   getProbationRequest() {
+    this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId)
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.getProbationRequestDetails = data;
+        this.loading = false;
+      },
+      error: (err: any) => {
+        console.log(err);
+        this.loading = false;
       }
     })
   }

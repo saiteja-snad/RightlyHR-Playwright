@@ -12,9 +12,10 @@ import { AssetCategory } from '../../../Interfaces/assets-management.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsLoaderComponent } from "../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-asset-catagory',
-  imports: [ReactiveFormsModule, CommonModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [ReactiveFormsModule, CommonModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, SettingsLoaderComponent],
   templateUrl: './asset-catagory.component.html',
   styleUrl: './asset-catagory.component.scss'
 })

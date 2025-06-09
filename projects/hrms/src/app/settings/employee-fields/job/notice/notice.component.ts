@@ -9,10 +9,11 @@ import { Subscription } from 'rxjs';
 import { NoticeData } from './notice-module';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-notice',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './notice.component.html',
   styleUrl: './notice.component.scss'
 })
@@ -22,6 +23,7 @@ export class NoticeComponent {
   noticeperiodForm!: FormGroup;
   updateForm!: FormGroup;
   noticeperiodDetail: any[] = [];
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
@@ -48,9 +50,15 @@ export class NoticeComponent {
   }
 
   getNoticeperiod() {
+    this.loader = true;
     this.subscription = this.http.getData('Noticeperiod').subscribe({
       next: (data: any) => {
         this.noticeperiodDetail = data;
+        this.loader = false;
+      },
+      error: (error: any) => {
+        this.loader = false;
+     
       }
     });
   }

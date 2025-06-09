@@ -50,7 +50,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  
+
   expenseImageUrl: any;
   expenseViewURL: any;
   expenseheaderiteams!: IExpenseHeaders;
@@ -60,8 +60,8 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   @ViewChild('commentspopup') modalContent: any;
   subscription!: Subscription;
 
-  constructor(private modalService: NgbModal,private signalService: SignalsService, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
-     private sanitizer: DomSanitizer, public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private signalService: SignalsService, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
+    private sanitizer: DomSanitizer, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -92,13 +92,13 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             item.approvalHeader.status != 'Rejected'
         );
       },
-      error: (reason) =>{
+      error: (reason) => {
         this.loading = false;
-       
+
       },
       complete: () => {
         this.loading = false;
-      
+
       },
     });
   }
@@ -134,7 +134,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-        currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+        currentStage: parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
       this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -143,7 +143,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal('Request Approved Successfully');
           this.approveForm.reset();
-           this.http.setnewcountDetails()
+          this.http.setnewcountDetails()
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
@@ -168,7 +168,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         status: 'Rejected',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-        currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+        currentStage: parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
       this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -199,7 +199,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
-      currentStage : parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
+      currentStage: parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
     };
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`PendingApproval/process/${request?.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -224,7 +224,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static',});
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', });
     this.approverComments = value;
   }
 
@@ -281,10 +281,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     });
   }
 
- 
+
   onViewAttachement(url: any) {
     const lowerUrl = url?.toLowerCase();
-  
+
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)

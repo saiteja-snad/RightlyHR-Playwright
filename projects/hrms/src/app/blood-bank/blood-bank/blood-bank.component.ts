@@ -20,7 +20,7 @@ export class BloodBankComponent implements OnInit {
   subscription!: Subscription
   bloodBankData: any;
   searchTerm: any = '';
-  shimmer = true;
+  shimmer =false
 
   constructor(public router: Router,
     private http: HttpService, public formValidation: FormValidationService,) { }
@@ -30,16 +30,25 @@ export class BloodBankComponent implements OnInit {
   }
 
   getBloodbank() {
+
+    this.shimmer = true;
     this.subscription = this.http.getData(`EmployeeData/ActiveEmployees`).subscribe({
       next: (data: any) => {
         this.bloodBankData = data;
+        this.shimmer = false;
       },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      error: (reason) =>{console.error('Error fetching employee data:', reason)
+        this.shimmer = false;
+      } ,
+      complete: () => {
+         this.shimmer = false;
+      }
     });
-    this.shimmer = false;
+   
   }
   
 filteredBloodDetails() {
+  this.shimmer = false
   const filtered = this.bloodBankData
     .filter((item: any) => item.bloodGroup) // show only items with a blood group
     .filter((item: any) => {

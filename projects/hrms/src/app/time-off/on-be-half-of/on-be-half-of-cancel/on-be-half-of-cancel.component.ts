@@ -12,10 +12,11 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-on-be-half-of-cancel',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './on-be-half-of-cancel.component.html',
   styleUrl: './on-be-half-of-cancel.component.scss'
 })
@@ -28,6 +29,7 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  loading: boolean = false;
   cadidateEmployeeId!: number;
   options = [
     { label: 10, value: 10 },
@@ -66,9 +68,11 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   }
 
   getDataByLPID() {
+    this.loading = true;
     let empid = this.cadidateEmployeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         console.log(response);
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status.toLowerCase() === 'cancelled');
@@ -76,7 +80,9 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{ console.log(reason)
+        this.loading = false;
+      }
     });
   }
 

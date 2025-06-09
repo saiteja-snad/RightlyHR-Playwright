@@ -289,7 +289,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
           recall: true,
         }));
         this.conformationPopup.openSuccessModal(
-          'Recall Request Processed Successfull'
+          'Recall Request Processed Successfully'
         );
         this.isLoading = false;
         this.signalService.recallSeparationForYouTriggerSignal.set(true);

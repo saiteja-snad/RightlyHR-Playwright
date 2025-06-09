@@ -9,10 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ICompensation } from './compensation-reason.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-compensation-reason',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './compensation-reason.component.html',
   styleUrl: './compensation-reason.component.scss'
 })
@@ -21,6 +22,7 @@ export class CompensationReasonComponent {
   @ViewChild('updatepopup') updatepopup: any;
   CompensationForm!: FormGroup;
   updateForm!: FormGroup;
+  loader = false;
   CompensationReason: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
@@ -49,8 +51,13 @@ export class CompensationReasonComponent {
 
   
   getReason() {
+    this.loader = true;
     this.http.getData('CompensationReason').subscribe((data: any) => {
       this.CompensationReason = data;
+      this.loader = false;
+    }, (error: any) => {    
+      this.loader = false;
+    
     });
   }
   //ADD

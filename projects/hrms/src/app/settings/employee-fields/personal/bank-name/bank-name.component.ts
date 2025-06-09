@@ -9,10 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IBank } from './bank-name.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-bank-name',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './bank-name.component.html',
   styleUrl: './bank-name.component.scss',
 })
@@ -22,6 +23,7 @@ export class BankNameComponent implements OnInit {
   bankdetails = [] as any[];
   updateBankdetails = {} as any;
   selectedDeleteBank = {} as any;
+  loader = false;
   subscription!: Subscription;
   bank = [] as any[];
   selectedId: number | null = null;
@@ -49,12 +51,15 @@ export class BankNameComponent implements OnInit {
     this.getBank();
   }
   getBank() {
+    this.loader = true;
     this.subscription = this.http.getData('Bank').subscribe({
       next: (data: any) => {
         this.bankdetails = data as any[];
+        this.loader = false;
       },
       error: (reason: any) => {
         console.log(reason);
+        this.loader = false;
       },
     });
   }

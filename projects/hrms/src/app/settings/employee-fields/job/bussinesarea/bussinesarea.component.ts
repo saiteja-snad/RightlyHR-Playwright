@@ -9,10 +9,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { BusinessData } from './bussiness.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-bussinesarea',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './bussinesarea.component.html',
   styleUrl: './bussinesarea.component.scss'
 })
@@ -27,6 +28,7 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
   selectedId: number | null = null;
   selectedDeletebus: any = null;
   subscription!: Subscription;
+  loader = false;
   constructor(
     private modalService: NgbModal, 
     private fb: FormBuilder, 
@@ -49,8 +51,14 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
   }
 
   getBusiness() {
+    this.loader = true;
     this.http.getData('Bussinesarea').subscribe((data: any) => {
       this.BussinesDetail = data;
+      this.loader = false;
+    }, (error: any) => {      
+
+      this.loader = false;
+  
     });
   }
   //ADD

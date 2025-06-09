@@ -14,10 +14,11 @@ import { Subscription } from 'rxjs';
 import { gradeDATA } from './grade-modeL';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-grade',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent],
   templateUrl: './grade.component.html',
   styleUrl: './grade.component.scss',
 })
@@ -26,6 +27,7 @@ export class GradeComponent {
   gradedetails = [] as any;
   JobroleDetails = [] as any;
   isEditMode = false;
+  loader = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
   @ViewChild('addpopup') addpopup: any;
@@ -76,10 +78,17 @@ export class GradeComponent {
     });
   }
   getgradeid() {
+    this.loader = true;
     this.subscription = this.http.getData('GradeTable').subscribe({
       next: (data: any) => {
         console.log(data);
+        this.loader = false;
         this.gradedetails = data;
+      },
+
+      error: (error: any) => {
+        this.loader = false;
+     
       },
     });
   }

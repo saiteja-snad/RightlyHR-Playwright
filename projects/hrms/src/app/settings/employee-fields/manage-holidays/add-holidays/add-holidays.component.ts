@@ -183,6 +183,8 @@ checkDuplicate(): void {
       authorizedDate: new Date().toISOString(),
       authorizedstatus: 'string',
       shiftID: formValue.shift,
+      lastModifedby: parseInt(this.empinfo.employeeId),
+      lastModifeddate: new Date(),
       orgHolidaysItems: formValue.holidays.map((item: any) => ({
         holidayName: item.holidayName,
         holidayDate: item.holidayDate,

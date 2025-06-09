@@ -20,9 +20,10 @@ import { environment } from '../../../environments/environment';
 import dayjs from 'dayjs';
 import { HttpParams } from '@angular/common/http';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent, ModuleInformationComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, InfoIconComponent, ModuleInformationComponent, DataLoaderContentComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
@@ -40,6 +41,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
   subLocationsDropdown: any[] = [];
   departmentDetails: IDepartment[] = [];
   teamDetails: any[] = [];
+  loading: boolean = false;
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },
@@ -182,6 +184,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
 
   //function to get the globalpermissions details
   getAllGlobalPermissions() {
+    this.loading = true;
     let params = new HttpParams();
     // Helper function to conditionally add parameters
     const addParamIfExists = (
@@ -201,9 +204,11 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     params = addParamIfExists(params, 'subdepartment', this.teamId);
     this.subscription = this.http.getData(`v2/GlobalPermissions/getGlobalPermissions?${params}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         this.globalpermissions = response.data.requestedBy as Iglobalpermissions[];
         this.totalRecords = response.totalRecords;
-      }, error(err: any) {
+      }, error:(err: any)=> {
+        this.loading = false;
         console.log("errors", err);
       },
     })

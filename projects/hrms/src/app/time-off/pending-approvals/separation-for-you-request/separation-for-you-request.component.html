@@ -178,7 +178,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{"Are you sure you want to approve Separation Request?" | translate}}</p>
+            <p class="confirmation-text">{{"Are you sure you want to approve separation request?" | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" name="acceptForm" #acceptForm="ngForm"
@@ -344,7 +344,7 @@
                         <div class="button-loader-content" *ngIf="isLoading">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{'Approving Separation Request..' | translate}}</span>
                         </div>
                         }
                     </button>
@@ -360,7 +360,7 @@
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon" />
             <p class="confirmation-text">
-                {{ 'Are you sure you want to reject this request?' | translate }}
+                {{ 'Do you really want to reject separation request?' | translate }}
             </p>
         </div>
 
@@ -403,7 +403,7 @@
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{ 'Loading...' }}</span>
+                            <span>{{ 'Rejecting Separation Request...' | translate}}</span>
                         </div>
                         }
                     </button>
@@ -610,7 +610,7 @@
                         <div class="button-loader-content" *ngIf="isLoading">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{'Processing Separation Request...'}}</span>
                         </div>
                         }
                     </button>

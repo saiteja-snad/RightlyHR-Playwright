@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { SelectModule } from 'primeng/select';
 import * as XLSX from 'xlsx';
 import { AuthService } from '../../services/auth.service';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { Ipersonal, IStatus } from './custom-model';
 import { CalendarModule } from 'primeng/calendar';
 import { environment } from '../../../environments/environment';
@@ -14,9 +14,7 @@ import dayjs from 'dayjs';
 import { AccordionModule } from 'primeng/accordion';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { NavigationEnd, Router } from '@angular/router';
-import { MODULE_INFOS } from '../../shared/modules-info';
+import { Router } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 interface FieldGroup {
   name: string;
@@ -35,16 +33,14 @@ interface FieldGroup {
     NgxDaterangepickerBootstrapDirective,
     AccordionModule,
     NoDataFoundComponent,
-    ModuleInformationComponent,
     NgbPopoverModule
-],
+  ],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class CustomReportsComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
   reportForm!: FormGroup;
   private destroy$ = new Subject<boolean>();
   activeRangeDates: Date[] | undefined;
@@ -55,7 +51,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     direction: 'ltr',
     clearLabel: 'Clear', // could be rtl
   };
-  activeIndex:any;
+  activeIndex: any;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -306,7 +302,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     public rbac: RbacService,
     public readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
@@ -315,8 +311,6 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.getCustomReportDetails();
     this.getStatus();
     this.showPersonalData();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
   }
 
   inititalizeForm() {
@@ -324,33 +318,12 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       status: ['All Employees'],
       dateOfJoining: [null],
     });
-
     this.reportForm.get('status')?.valueChanges.subscribe(() => {
       this.reportForm.get('dateOfJoining')?.reset();
     });
-
     this.reportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/reports/custom-reports': MODULE_INFOS.CUSTOM_REPORTS_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   showPersonalData() {
@@ -365,30 +338,26 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   showJobData() {
     this.showCard = false;
     this.JobShowCard = true;
-  
     const defaultFields = ['Employee ID', 'First Name', 'Middle Name', 'Last Name'];
-  
     // Ensure no duplicates
     const fieldSet = new Set([...defaultFields, ...this.selectedFields]);
     this.selectedFields = Array.from(fieldSet);
-  
     if (this.fieldGroups['basicInfo']) {
       this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields];
     }
   }
-  
 
   getCustomReportDetails(): void {
     this.http.getData('Employeedata/Reports/EmployeeData').pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data: any) => {
-          this.emp = data;
-          this.copyData = JSON.parse(JSON.stringify(this.emp));
-          this.filteredData = JSON.parse(JSON.stringify(this.emp));
-        },
-        error: (err: any) => {
-          console.error('Error fetching report data:', err);
-        },
-      });
+      next: (data: any) => {
+        this.emp = data;
+        this.copyData = JSON.parse(JSON.stringify(this.emp));
+        this.filteredData = JSON.parse(JSON.stringify(this.emp));
+      },
+      error: (err: any) => {
+        console.error('Error fetching report data:', err);
+      },
+    });
   }
 
   dateofJoiningRangeFilter(value: any) {
@@ -471,42 +440,34 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     // const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;
     // Step 1: Filter employees based on DoJ if date range is provided
     const statusRaw = this.reportForm.get('status')?.value;
-const empStatus = statusRaw?.toString().trim().toLowerCase();
-
-const startDate = formData.dateOfJoining?.startDate
-  ? new Date(formData.dateOfJoining.startDate)
-  : null;
-
-const endDate = formData.dateOfJoining?.endDate
-  ? new Date(formData.dateOfJoining.endDate)
-  : null;
-
-const filteredEmployees = this.emp.filter((user: Ipersonal) => {
-  // Determine the date field to use based on the selected status
-  let dateToCheck: Date | null = null;
-
-  if (empStatus === 'active' && user.dateOfJoining) {
-    dateToCheck = new Date(user.dateOfJoining);
-  } else if (empStatus === 'inactive' && user.lastworkingday) {
-    dateToCheck = new Date(user.lastworkingday);
-  }
-
-  // If date filtering is not applicable (dateToCheck is null), include the employee
-  if (!dateToCheck || isNaN(dateToCheck.getTime())) return true;
-
-  // Apply date range filter only if a valid range is provided
-  if (empStatus === 'active' && (startDate || endDate)) {
-    if (startDate && dateToCheck < startDate) return false;
-    if (endDate && dateToCheck > endDate) return false;
-  }
-
-  if (empStatus === 'inactive' && (startDate || endDate)) {
-    if (startDate && dateToCheck < startDate) return false;
-    if (endDate && dateToCheck > endDate) return false;
-  }
-
-  return true;
-});
+    const empStatus = statusRaw?.toString().trim().toLowerCase();
+    const startDate = formData.dateOfJoining?.startDate
+      ? new Date(formData.dateOfJoining.startDate)
+      : null;
+    const endDate = formData.dateOfJoining?.endDate
+      ? new Date(formData.dateOfJoining.endDate)
+      : null;
+    const filteredEmployees = this.emp.filter((user: Ipersonal) => {
+      // Determine the date field to use based on the selected status
+      let dateToCheck: Date | null = null;
+      if (empStatus === 'active' && user.dateOfJoining) {
+        dateToCheck = new Date(user.dateOfJoining);
+      } else if (empStatus === 'inactive' && user.lastworkingday) {
+        dateToCheck = new Date(user.lastworkingday);
+      }
+      // If date filtering is not applicable (dateToCheck is null), include the employee
+      if (!dateToCheck || isNaN(dateToCheck.getTime())) return true;
+      // Apply date range filter only if a valid range is provided
+      if (empStatus === 'active' && (startDate || endDate)) {
+        if (startDate && dateToCheck < startDate) return false;
+        if (endDate && dateToCheck > endDate) return false;
+      }
+      if (empStatus === 'inactive' && (startDate || endDate)) {
+        if (startDate && dateToCheck < startDate) return false;
+        if (endDate && dateToCheck > endDate) return false;
+      }
+      return true;
+    });
 
     filteredEmployees.forEach((user: Ipersonal) => {
       const data: { [key: string]: any } = {};
@@ -747,13 +708,12 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
     const data: Blob = new Blob([buffer], { type: 'application/octet-stream' });
     const link: HTMLAnchorElement = document.createElement('a');
     link.href = window.URL.createObjectURL(data);
-    link.download = `${
-      this.loggedInUser.employeeId
-    }_${new Date().getTime()}_custom_reports.xlsx`;
+    link.download = `${this.loggedInUser.employeeId
+      }_${new Date().getTime()}_custom_reports.xlsx`;
     link.click();
     // Create file for potential upload
     const reportFile = new File(
-      [data],`${this.loggedInUser.employeeId}_${new Date().getTime()}__custom_reports.xlsx`,
+      [data], `${this.loggedInUser.employeeId}_${new Date().getTime()}__custom_reports.xlsx`,
       { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', }
     );
     this.spinnerLoader2 = false;
@@ -765,7 +725,7 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return dateString;
       const day = date.getDate().toString().padStart(2, '0');
-      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const month = monthNames[date.getMonth()];
       const year = date.getFullYear().toString();
       return `${day}-${month}-${year}`;
@@ -773,7 +733,8 @@ const filteredEmployees = this.emp.filter((user: Ipersonal) => {
       return dateString;
     }
   }
- navigation(){
+
+  navigation() {
     this.router.navigate(['/reports']);
   }
 

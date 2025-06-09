@@ -9,10 +9,11 @@ import { Subscription } from 'rxjs';
 import {backgroundcheckData } from './background-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-backgroundcheck',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './backgroundcheck.component.html',
   styleUrl: './backgroundcheck.component.scss'
 })
@@ -22,6 +23,7 @@ export class BackgroundcheckComponent {
 
   BackgroundCheckForm!: FormGroup;
   updateForm!: FormGroup;
+  loader = false;
   BackgroundCheckDetail: any[] = [];
   isEditMode = false;
   selectedId: number | null = null;
@@ -51,10 +53,16 @@ export class BackgroundcheckComponent {
 
   // GET
   BackgroundChecktype(): void {
+    this.loader = true;
     this.subscription = this.http.getData('Background').subscribe({
       next: (data: any) => {
         console.log(data);
+        this.loader = false;
         this.BackgroundCheckDetail = data;
+      },
+      error: (error: any) => {
+        this.loader = false;
+     
       }
     });
   }

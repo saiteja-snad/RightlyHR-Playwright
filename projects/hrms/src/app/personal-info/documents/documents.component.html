@@ -2,6 +2,13 @@
    <div class="employee-fields-main-container d-flex gap-3 w-100">
       <div class="folders-container">
          <p class="component-sub-header">Folders</p>
+         <ng-container *ngIf="loading; else foldersList">
+            <div *ngFor="let skel of [1,2,3]" class="folder-content px-2 mb-2">
+               <p-skeleton width="32px" height="32px" shape="circle" class="me-2"></p-skeleton>
+               <p-skeleton width="120px" height="20px"></p-skeleton>
+            </div>
+         </ng-container>
+          <ng-template #foldersList>
          @for(folder of folders; track $index){
          <!-- Loop through main folders -->
          <div (click)="toggleFolder(folder)" class="folder-content cursor px-2"
@@ -27,6 +34,7 @@
             </ng-template>
          </div>
          }
+         </ng-template>
       </div>
 
       <div class="custom-setting-right-content p-3">

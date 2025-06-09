@@ -17,16 +17,17 @@ import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule,Skeleton, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
 export class DocumentsComponent {
   subscription!: Subscription;
-  spinnerLoader=false;
+  spinnerLoader = false;
   selectedMainFolder = {} as IFolders
   isMainfolderTouched: boolean = false;
   folders = [] as IFolders[];
@@ -34,25 +35,25 @@ export class DocumentsComponent {
   selectedFolder = [] as IFolders[];
   mainDir = {} as ICreateSubDir;
   Files = [] as IFolders[];
-  loading=false
+  loading = false
   empdata: any;
   searchfolder!: string;
   uploadfrom!: FormGroup;
   file: any;
   showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    this.getEmpInfoFromRoute();  
+    this.getEmpInfoFromRoute();
     this.getMainFolders()
     this.initializejobForm();
 
   }
   initializejobForm(): void {
     this.uploadfrom = this.fb.group({
-      filename: ['',Validators.required],
-   
+      filename: ['', Validators.required],
+
     });
   }
 
@@ -65,14 +66,15 @@ export class DocumentsComponent {
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empdata = JSON.parse(localStorage.getItem("personaldata") || '{}');
-      
+
     } else if (fullPath.startsWith('/myinfo')) {
       this.empdata = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-      
+
     }
   }
 
   getMainFolders(dirPath?: string) {
+    this.loading = true;
     dirPath = dirPath ? dirPath : '/FusionDocuments';
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
       next: (data: any) => {
@@ -80,11 +82,13 @@ export class DocumentsComponent {
         this.folders.forEach((folder: any) => {
           folder.expanded = false;
           this.getFolders(folder.name, folder);
+          this.loading = false;
         });
         this.selectedFolder = this.folders[0]['subfolders'] as IFolders[];
       },
       error: (error) => {
         console.error(error);
+        this.loading = false;
       }
     });
   }
@@ -101,25 +105,25 @@ export class DocumentsComponent {
     });
   }
 
-  
-  
+
+
   toggleFolder(folder: any): void {
-    this.Files=[]// or however you're using getVisibleFiles
-    this.selectedFile=null
+    this.Files = []// or however you're using getVisibleFiles
+    this.selectedFile = null
     // Collapse all other folders
     this.folders.forEach((f) => {
       if (f !== folder) {
         f.expanded = false; // Collapse other folders
       }
     });
-  
+
     folder.expanded = !folder.expanded;
     this.selectedMainFolder = folder;
     if (!folder.subfolders || folder.subfolders.length === 0) {
-      this.Files=[]// or however you're using getVisibleFiles
-      this.selectedFile=null
+      this.Files = []// or however you're using getVisibleFiles
+      this.selectedFile = null
     }
-   
+
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;
@@ -133,19 +137,25 @@ export class DocumentsComponent {
   getVisibleFiles() {
     return this.Files.filter(file => file && !file.isNotVisible);
   }
-
   getAllFiles() {
-    this.loading=true
+    this.loading = true
+
+    // Check if it's organization policy folder by checking the full path
+    const isOrgPolicyFolder = this.selectedFile?.name.includes('FusionDocuments/organizationPolicy');
+    // Fix the template literal syntax
+    const queryPath = isOrgPolicyFolder
+      ? `${this.selectedFile?.name}`  // Just use the folder name for organization policy
+      : `${this.selectedFile?.name}/${this.empdata.employeeId}`; // Append employee ID for other folders
     if (!this.selectedFile?.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile?.name}/${this.empdata.employeeId}`)
+        .getDataWithQuery('FileSystem/Files', queryPath)
         .subscribe({
           next: (data: any) => {
-            this.loading=false
+            this.loading = false
             this.Files = data as IFolders[];
           },
           error: (err: any) => {
-            this.loading=false
+            this.loading = false
             this.Files = [];
           },
         });
@@ -169,28 +179,29 @@ export class DocumentsComponent {
     }
   }
 
+
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
     });
   }
-  
+
   filechange(event: any) {
     this.file = event.target.files[0];
-    if ( this.file) {
+    if (this.file) {
       const fileSizeInMB = this.file.size / (1024 * 1024);
       if (fileSizeInMB > 25) {
         this.file = null;
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
         this.uploadfrom.get('filename')?.reset();
         this.uploadfrom.get('filename')?.markAsUntouched();
-        
+
         return;
       }
     }
 
-    
+
   }
 
   filterFolder() {
@@ -217,7 +228,7 @@ export class DocumentsComponent {
 
   fileUploaded() {
     if (this.selectedFile?.name) {
-        this.spinnerLoader=true;
+      this.spinnerLoader = true;
       let filePath = `${this.selectedFile?.name}/${this.empdata.employeeId}`;
 
       this.subscription = this.http
@@ -228,18 +239,18 @@ export class DocumentsComponent {
         )
         .subscribe({
           next: (data: any) => {
-      
-              this.spinnerLoader=false;
-              this.getAllFiles();
-              this.uploadfrom.reset();
-              this.conformationPopup.openSuccessModal(
-                'File uploaded successfully',
-              );
-              this.modalService.dismissAll();
-            
+
+            this.spinnerLoader = false;
+            this.getAllFiles();
+            this.uploadfrom.reset();
+            this.conformationPopup.openSuccessModal(
+              'File uploaded successfully',
+            );
+            this.modalService.dismissAll();
+
           },
           error: (reason: any) => {
-            this.spinnerLoader=false;
+            this.spinnerLoader = false;
             this.conformationPopup.openErrorModal(reason.error.message,)
           },
 

@@ -7,6 +7,7 @@
     </div>
 
     <div class="custom-table-content">
+        @if(!isloading){
         <!--search input-->
         <table class="w-100">
             <thead>
@@ -81,44 +82,22 @@
                             </ul>
                         </div>
 
-                        <!-- <div class="d-flex gap-2 justify-content-center">
-                            @if(rbac.allowedToAccess('Offer Letter Download.view')) {
-                            <button class="custom-btn btn-primary"
-                                (click)="onSelectDownload(offerLetter)">Download</button>
-                            }
-                            @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
-                            @if(offerLetter.status=='Approved'){
-                            <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release
-                                Offer</button>
-                            }
-                            }
-                            @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
-                            @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' &&
-                            offerLetter?.status !== 'Released') {
-                            <button class="custom-btn btn-primary-approve"
-                                (click)="updateOfferDetails(offerLetter)">Approve</button>
-                            }
-                            }
-                            @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
-                            @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' &&
-                            offerLetter.status!='Released')){
-                            <button class="custom-btn btn-primary-reject"
-                                (click)="SelectData(offerLetter);openModal(rejectpopup)">Reject</button>
-                            }
-                            }
-                        </div> -->
-                    </td>
+                   </td>
                     }
                 </tr>
                 }
                 }
                 @else {
-                <tr>
-                    <td colspan="8">No Data Found</td>
-                </tr>
+              <tr>
+            <app-no-data-found />
+          </tr>
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>
 }

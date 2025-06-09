@@ -12,15 +12,17 @@ import { AssetCategory } from '../../../Interfaces/assets-management.model';
 import { Select } from 'primeng/select';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-sub-catagory',
-  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select],
+  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DataLoaderContentComponent],
   templateUrl: './sub-catagory.component.html',
   styleUrl: './sub-catagory.component.scss'
 })
 
 export class SubCatagoryComponent {
   assetcataeryForm!: FormGroup;
+  loading = false;
   assetCategorys: any[] = [];
   assetcataeryupdateForm!: FormGroup
   categoridata = new BehaviorSubject<any[]>([]);
@@ -103,15 +105,18 @@ cleardata(){
   }
 
   getsubcategorys() {
+    this.loading = true;
     this.http.getData('AssetCategory')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
+          this.loading = false;
           this.categoridata.next([]);
           this.categoridata.next(data);
           this.filterCategoryData()
         },
         error: (reason: any) => {
+          this.loading = false;
           console.log(reason);
         },
       });

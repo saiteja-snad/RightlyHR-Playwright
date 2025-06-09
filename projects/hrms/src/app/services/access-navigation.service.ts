@@ -96,9 +96,7 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/team/my-team-members');
-        }
+       
 
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
           return (route = '/myinfo/onboarding-request');

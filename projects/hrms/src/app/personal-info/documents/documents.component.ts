@@ -17,10 +17,11 @@ import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule,Skeleton, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
@@ -73,6 +74,7 @@ export class DocumentsComponent {
   }
 
   getMainFolders(dirPath?: string) {
+    this.loading = true;
     dirPath = dirPath ? dirPath : '/FusionDocuments';
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
       next: (data: any) => {
@@ -80,11 +82,13 @@ export class DocumentsComponent {
         this.folders.forEach((folder: any) => {
           folder.expanded = false;
           this.getFolders(folder.name, folder);
+          this.loading = false;
         });
         this.selectedFolder = this.folders[0]['subfolders'] as IFolders[];
       },
       error: (error) => {
         console.error(error);
+        this.loading = false;
       }
     });
   }

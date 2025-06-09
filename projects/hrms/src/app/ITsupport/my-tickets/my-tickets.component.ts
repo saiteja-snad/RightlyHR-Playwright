@@ -16,10 +16,11 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ItsuporrtHeaderTabsComponent } from "../../shared/itsuporrt-header-tabs/itsuporrt-header-tabs.component";
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-my-tickets',
   imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule,
-     TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent],
+    TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -30,6 +31,7 @@ export class MyTicketsComponent {
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
   tickets: any = [];
+
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   employeedetails: any = [];
@@ -46,6 +48,7 @@ export class MyTicketsComponent {
   postDetails: any = {};
   itTicketDetails = {} as any;
   selectedSubDepartmentId: any;
+  dataloader= false;
   typeDetails = [
     { value: 'Issue', label: 'Issue' },
     { value: 'Incident', label: 'Incident' },
@@ -274,13 +277,20 @@ export class MyTicketsComponent {
   }
 
   getuserticketsbyempid() {
+    this.dataloader = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getnamesbyEmpId/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.dataloader = false;
         this.tickets = data;
       },
       error: (err: any) => {
+        this.dataloader = false;
         console.log(err);
+      },
+      complete: () => {
+        this.dataloader = false;
+        // You can perform any additional actions after the data is fetched
       }
     })
   }

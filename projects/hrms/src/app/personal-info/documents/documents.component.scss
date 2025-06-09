@@ -1,10 +1,11 @@
 .custom-setting-right-content {
-    height: calc(100dvh - 15rem);
+    height: calc(100dvh - 10rem);
+    padding: 0.625rem !important;
 }
 
 .folders-container{
     width: 22rem;
-    height: calc(100dvh - 15rem);
+    height: calc(100dvh - 10rem);
     overflow: auto;
 }
 

@@ -9,10 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OvertimeData } from './overtime-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-overtime',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './overtime.component.html',
   styleUrl: './overtime.component.scss'
 })
@@ -24,6 +25,8 @@ export class OvertimeComponent implements OnInit,OnDestroy {
   updateForm!: FormGroup;
   overtimeDetail: any[] = [];
   isEditMode = false;
+  loading = false;
+  
   selectedId: number | null = null;
   selectedDeleteovr: any = null;
   subscription!: Subscription;
@@ -49,8 +52,13 @@ export class OvertimeComponent implements OnInit,OnDestroy {
   }
 
   getovertime() {
+    this.loading = true;
     this.http.getData('Overtime').subscribe((data: any) => {
       this.overtimeDetail = data;
+      this.loading = false;
+    }, (error: any) => {
+      this.loading = false;
+      
     });
   }
   //ADD

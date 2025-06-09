@@ -13,11 +13,12 @@
                         [disabled]="saluationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             }
-            <div *ngIf="saluationForm.get('saluation')?.touched && saluationForm.get('saluation')?.invalid" class="error-msg">
+            <div *ngIf="saluationForm.get('saluation')?.touched && saluationForm.get('saluation')?.invalid"
+                class="error-msg">
                 <div *ngIf="saluationForm.get('saluation')?.errors?.['required']">
                     {{ 'Salutation is required' | translate }}
                 </div>
-                 <!-- <span *ngIf="saluationForm.get('saluation')?.errors?.['pattern']">Enter valid data</span> -->
+                <!-- <span *ngIf="saluationForm.get('saluation')?.errors?.['pattern']">Enter valid data</span> -->
             </div>
             <div *ngIf="saluationForm.get('saluation')?.errors?.['pattern']" class="error-msg">
                 {{ 'Field cannot start with a space' | translate }}
@@ -30,6 +31,7 @@
 
     <!--Data Content-->
     <div class="custom-settings-data-table">
+        @if(!loader){
         <table class="w-100">
             <thead>
                 <tr>
@@ -60,6 +62,10 @@
                 }
             </tbody>
         </table>
+        }@else {
+        
+            <app-settings-loader/>
+        }
     </div>
 </div>
 

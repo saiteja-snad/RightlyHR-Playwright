@@ -55,6 +55,7 @@
 
     <div class="d-flex gap-3">
         <div class="custom-table-content attendance-log-content">
+            @if(!dataLoader){
             <table class="w-100">
                 <thead>
                     <th>Date</th>
@@ -64,8 +65,7 @@
                     <th>Logs</th>
                     <th class="text-end pe-5">Status</th>
                 </thead>
-                <tbody>
-                    @if(!dataLoader){
+                <tbody>           
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
@@ -134,12 +134,12 @@
                     @else {
                     <app-no-data-found />
                     }
-                    }
-                    @else {
-                    <app-data-loader-content />
-                    }
                 </tbody>
             </table>
+            }
+            @else {
+                <app-data-loader-content />
+            }
         </div>
 
         @if(statusCounts$.value.length>0){ 
@@ -192,8 +192,7 @@
                 (ngSubmit)="applyRgularization(regularizationForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="Date" class="form-label custom-label pt-2 mb-2">Date<span
-                                class="text-danger">*</span></label>
+                        <label for="Date" class="form-label custom-label">Date<span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="permissionDate" id="Date"
                             (keydown)="false" placeholder="Select Date" />
                         <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
@@ -201,15 +200,12 @@
                             Permission Date is required.
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="duration" class="form-label custom-label pt-2 mb-2">Duration<span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
+                        <label for="duration" class="form-label custom-label">Duration<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
                             <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
-                                placeholder="Please select duration" class="form-select custom-select" />
+                                placeholder="Please select duration" class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid"
                             class="error-msg">Duration is required.
@@ -217,12 +213,12 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="leaveType" class="form-label custom-label pt-2 mb-2">Regularization Category<span
+                        <label for="leaveType" class="form-label custom-label">Regularization Category<span
                                 class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
+                        <div class="custom-p-select-content w-100">
                             <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
                                 placeholder="Please select regularization type" id="leaveType"
-                                class="form-select custom-select" />
+                                class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
                             class="error-msg">Regularization Type is required.
@@ -230,8 +226,7 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label pt-2 mb-2">Reason<span
-                                class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
                             placeholder="Type here" maxlength="250" placeholder="Reason for regularization"
                             (input)="formsValidation.validateInput(regularizationForm.get('reason'))"></textarea>

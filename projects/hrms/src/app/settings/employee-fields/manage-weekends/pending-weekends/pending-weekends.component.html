@@ -7,6 +7,7 @@
     </div>
 
     <div class="custom-table-content">
+        @if (!loading) {
         <table class="w-100">
             <thead>
                 <tr>
@@ -17,54 +18,61 @@
                     <th>{{"weekends" | translate}}</th>
                     <th>{{"status" | translate}}</th>
                     <th>{{"added by" | translate}}</th>
-                    <th class="text-center" *ngIf="rbac.allowedToAccess('Weekends Pending Tab.update')">{{"Action" | translate}}</th>
+                    <th class="text-center" *ngIf="rbac.allowedToAccess('Weekends Pending Tab.update')">{{"Action" |
+                        translate}}</th>
                 </tr>
             </thead>
             <tbody>
                 @if(weekendsList.length > 0){
-                    @for(weekend of weekendsList; track weekend){
-                        <tr>
-                            <td>{{ weekend.applicableyear }}</td>
-                            <td>{{ weekend.jobLocationName }}</td>
-                            <td>{{ weekend.jobSubLocationName }}</td>
-                            <td>{{ weekend.shiftName }}</td>
-                            <td>
-                                <div class="d-flex align-items-center gap-1">
-                                   <div>{{ weekend.orgWeekendItems.length }}</div>
-                                   <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null"><i class="bi bi-info-circle-fill cursor"></i></div>
-                                </div>
-                                <ng-template #popContent>
-                                    <div >
-                                        {{ getShiftNames(weekend) }}
-                                    </div>
-                                </ng-template>
-                            </td>
-                            <td>{{ weekend.status }}</td>
-                            <td>{{ weekend.firstName }} {{ weekend.middleName? weekend.middleName : '' }} {{ weekend.lastName }}</td>
-                            <td class="text-center" *ngIf="rbac.allowedToAccess('Weekends Pending Tab.update')">
-                                <div class="dropdown">
-                                    <span type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </span>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li (click)="openUpdate(weekend)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>{{"Update" | translate}}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        }
+                @for(weekend of weekendsList; track weekend){
+                <tr>
+                    <td>{{ weekend.applicableyear }}</td>
+                    <td>{{ weekend.jobLocationName }}</td>
+                    <td>{{ weekend.jobSubLocationName }}</td>
+                    <td>{{ weekend.shiftName }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-1">
+                            <div>{{ weekend.orgWeekendItems.length }}</div>
+                            <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null"><i
+                                    class="bi bi-info-circle-fill cursor"></i></div>
+                        </div>
+                        <ng-template #popContent>
+                            <div>
+                                {{ getShiftNames(weekend) }}
+                            </div>
+                        </ng-template>
+                    </td>
+                    <td>{{ weekend.status }}</td>
+                    <td>{{ weekend.firstName }} {{ weekend.middleName? weekend.middleName : '' }} {{ weekend.lastName }}
+                    </td>
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('Weekends Pending Tab.update')">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openUpdate(weekend)">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-pencil me-2"></i>{{"Update" | translate}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
                 }@else {
-                    <tr>
-                        <td colspan="8">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="8">
+                        <app-no-data-found></app-no-data-found>
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>

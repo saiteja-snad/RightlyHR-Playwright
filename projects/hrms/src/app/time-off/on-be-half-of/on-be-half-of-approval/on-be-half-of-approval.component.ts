@@ -11,9 +11,10 @@ import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-on-be-half-of-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './on-be-half-of-approval.component.html',
   styleUrl: './on-be-half-of-approval.component.scss'
 })
@@ -26,6 +27,7 @@ export class OnBeHalfOfApprovalComponent {
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
+  loading: boolean = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -63,17 +65,24 @@ export class OnBeHalfOfApprovalComponent {
   }
 
   getDataByLPID() {
+    this.loading = true;
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         console.log(response)
         if (Array.isArray(response)) {
           this.approvedLeaves = response.filter(item => item.status.toLowerCase() === 'approved');
           let pendingCount = this.approvedLeaves.length;
         } else {
           console.error("Invalid response format");
+
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{ console.log(reason)
+        this.loading = false;
+        this.approvedLeaves = [];
+        console.error("Error fetching data:", reason);
+      }
     });
   }
 }

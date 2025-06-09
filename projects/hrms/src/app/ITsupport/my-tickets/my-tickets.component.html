@@ -226,19 +226,19 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
-                                class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <input type="text" class="form-control custom-input" formControlName="subject"
-                                placeholder="Please enter subject" [maxlength]="50" />
+                            <input type="text" class="form-control custom-input" formControlName="subject" placeholder="Please enter subject"
+                                [maxlength]="50" />
                         </div>
-                        <div
-                            *ngIf="itSupportForm.get('subject')?.hasError('required') && itSupportForm.get('subject')?.touched">
+                        <div *ngIf="itSupportForm.get('subject')?.hasError('required') && itSupportForm.get('subject')?.touched">
                             <div class="error-msg">{{ 'Subject is required' | translate }}</div>
+                        </div>
+                        <div *ngIf="itSupportForm.get('subject')?.hasError('pattern')">
+                            <div class="error-msg">{{ 'Subject must not contain only spaces' | translate }}</div>
                         </div>
                         <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
                         </div>
-
                     </div>
 
                     <div class="col-md-12 mb-3">
@@ -250,8 +250,10 @@
                              && itSupportForm.get('description')?.touched">
                             <div class="error-msg ">{{'Description is required' | translate}}</div>
                         </div>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
+                        <div *ngIf="itSupportForm.get('description')?.hasError('pattern')">
+                            <div class="error-msg ">Description must not contain only spaces</div>
                         </div>
+                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250</div>
                     </div>
                 </div>
 

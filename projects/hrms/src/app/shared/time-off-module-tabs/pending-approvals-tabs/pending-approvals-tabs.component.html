@@ -4,13 +4,11 @@
       <div class="nav-link" (click)="navigateToAccessedRoute(tab.route)"
         [class.active-nav-link]="isActiveRoute(tab.route)">
         <img [src]="tab.icon" alt="Icon" class="icon mb-2">
-        <div class="d-flex gap-1">
-          {{ tab.label }}
-         <div class="count">
+        <div>{{ tab.label }}</div>
+        <div class="count">
           @if(tab.count && tab.count > 0) {({{ tab.count }})}
           @else if(tab.label=='No Due Clearance Requests'){({{nodue_Request_data.length}})}
           @else {(0)}
-        </div>
         </div>
       </div>
       <div class="tabs-border-bottom"></div>

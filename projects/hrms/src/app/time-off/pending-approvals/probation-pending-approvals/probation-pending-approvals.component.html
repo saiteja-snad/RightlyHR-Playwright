@@ -191,8 +191,8 @@
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate,selectedData.probationExtendedDate)"
-                        [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration,selectedData.probationExtendedDate)"
+                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate,empdata.probationEndDate,selectedData.probationextendedcount)"
+                        [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration,empdata.probationEndDate)"
                         [(ngModel)]="selectedData.extenddate" required>
                     <div class="error-msg"
                         *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && ProcessacceptForm.submitted)">

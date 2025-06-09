@@ -2,8 +2,6 @@
   <div class="component-header-content align-items-center gap-3 flex-wrap mb-3">
     <!--Header-->
     <div class="heading-content">
-      <!-- <div class="commpoment-name">Org Hierarchy<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
-      </div> -->
       <div class="component-header">Organizational Hierarchy</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -63,8 +61,6 @@
         </ul>
       </div>
       }
-
-
     </div>
   </div>
 
@@ -102,9 +98,8 @@
                 <div>
                   <p class="name mb-2">{{ node?.data?.name }}</p>
                   <p class="jobrole mb-1">{{ node?.data?.title }}</p>
-                      <!-- <p class="jobrole mb-0 text-nowrap">DOJ:{{ node?.data?.doj | dateformat }}</p> -->
-                   <p class="jobrole mb-0" *ngIf="compensationyesorno">{{ node?.data?.compensationamount }}</p>
-
+                  <!-- <p class="jobrole mb-0 text-nowrap">DOJ:{{ node?.data?.doj | dateformat }}</p> -->
+                  <p class="jobrole mb-0" *ngIf="compensationyesorno">{{ node?.data?.compensationamount }}</p>
                 </div>
               </div>
               <!-- <div class="p-2 text-center ">

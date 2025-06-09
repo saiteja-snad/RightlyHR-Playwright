@@ -1,110 +1,117 @@
 <div class="custom-main-component-container">
-<form autocomplete="off" [formGroup]="noticeperiodForm" (ngSubmit)="addNoticeperiod()"
-    *ngIf="rbac.allowedToAccess('Notice Period.create')">
-    <!-- Add Input-->
-    <div class="mb-4">
-        <div class="custom-settings-add-input input-group">
-            <input type="text" class="form-control custom-input" placeholder="Please enter notice period"
-                formControlName="noticeperiod" aria-label="noticeperiod" aria-describedby="noticeperiod" maxlength="101"
-                (keydown)="formValidations.restrictInput($event)">
-            <span class="input-group-text" id="noticeperiod">
-                <button type="submit" class="custom-btn btn-primary"
-                    [disabled]="noticeperiodForm.invalid">{{'Add'|translate}}</button>
-            </span>
-        </div>
-        <div *ngIf="noticeperiodForm.get('noticeperiod')?.touched && noticeperiodForm.get('noticeperiod')?.invalid"
-            class="error-msg">
-            <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['required']">
-                {{ 'Notice Period is required' | translate }}
+    <form autocomplete="off" [formGroup]="noticeperiodForm" (ngSubmit)="addNoticeperiod()"
+        *ngIf="rbac.allowedToAccess('Notice Period.create')">
+        <!-- Add Input-->
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter notice period"
+                    formControlName="noticeperiod" aria-label="noticeperiod" aria-describedby="noticeperiod"
+                    maxlength="101" (keydown)="formValidations.restrictInput($event)">
+                <span class="input-group-text" id="noticeperiod">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="noticeperiodForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-        </div>
-        <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['maxCharacters']" class="error-msg">
-            {{ 'Please limit your input to 100 characters' | translate }}
-        </div>
-        <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['pattern']" class="error-msg">
+            <div *ngIf="noticeperiodForm.get('noticeperiod')?.touched && noticeperiodForm.get('noticeperiod')?.invalid"
+                class="error-msg">
+                <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['required']">
+                    {{ 'Notice Period is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
+            </div>
+            <div *ngIf="noticeperiodForm.get('noticeperiod')?.errors?.['pattern']" class="error-msg">
                 {{ 'Field cannot start with a space' | translate }}
+            </div>
+
+
         </div>
-        
+    </form>
 
+    <!--Data Content-->
+    <div class="custom-settings-data-table">
+        @if(!loader){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="col-span-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (notice of noticeperiodDetail; track $index) {
+                <tr>
+                    <td class="w-75">{{ notice.period}}</td>
+                    <td class="w-25">
+                        <div class="d-flex gap-4">
+                            <!--Update-->
+                            <div>
+                                <a (click)="openupdate(notice)" *ngIf="rbac.allowedToAccess('Notice Period.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
+                            </div>
+                            <!--Delete-->
+                            <div>
+                                <a (click)="openDelete(notice)" *ngIf="rbac.allowedToAccess('Notice Period.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
     </div>
-</form>
-
-  <!--Data Content-->
-  <div class="custom-settings-data-table">
-    <table class="w-100">
-        <thead>
-            <tr>
-                <th class="col-span-2"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (notice of noticeperiodDetail; track $index) {
-            <tr>
-                <td class="w-75">{{ notice.period}}</td>
-                <td class="w-25">
-                    <div class="d-flex gap-4">
-                        <!--Update-->
-                        <div>
-                            <a (click)="openupdate(notice)" *ngIf="rbac.allowedToAccess('Notice Period.update')">
-                                <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
-                            </a>
-                        </div>
-                        <!--Delete-->
-                        <div>
-                            <a (click)="openDelete(notice)" *ngIf="rbac.allowedToAccess('Notice Period.delete')">
-                                <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
-                            </a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            }
-        </tbody>
-    </table>
-  </div>
 </div>
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-  <form autocomplete="off" [formGroup]="updateForm">
-      <div class="custom-main-popup-container" ngbAutofocus>
-          <div class="custom-poup-header-content popup-header-border">
-              <div>
-                  <p class="popup-heading mb-0">{{'Update Notice Period'|translate}}</p>
-              </div>
-              <div>
-                  <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-              </div>
-          </div>
+    <form autocomplete="off" [formGroup]="updateForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div>
+                    <p class="popup-heading mb-0">{{'Update Notice Period'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
 
-        <div class="custom-main-popup-content">
-            <div class="mb-4">
-                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Notice Period'|translate}}
-                    <span class="error-msg">*</span></label>
-                <input type="text" class="form-control custom-input" formControlName="updatenoticeperiod"
-                    placeholder="Please enter notice period" maxlength="101"
-                    (keydown)="formValidations.restrictInput($event)">
-                <div *ngIf="updateForm.get('updatenoticeperiod')?.touched && updateForm.get('updatenoticeperiod')?.invalid"
-                    class="error-msg">
-                    <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['required']">
-                        {{ 'Notice Period is required' | translate }}
+            <div class="custom-main-popup-content">
+                <div class="mb-4">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Notice
+                        Period'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="updatenoticeperiod"
+                        placeholder="Please enter notice period" maxlength="101"
+                        (keydown)="formValidations.restrictInput($event)">
+                    <div *ngIf="updateForm.get('updatenoticeperiod')?.touched && updateForm.get('updatenoticeperiod')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['required']">
+                            {{ 'Notice Period is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
                     </div>
                 </div>
-                <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['maxCharacters']" class="error-msg">
-                    {{ 'Please limit your input to 100 characters' | translate }}
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateNoticeperiod(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
-                <div *ngIf="updateForm.get('updatenoticeperiod')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-                </div>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary" (click)="updateNoticeperiod(modal)"
-                    [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
             </div>
         </div>
-      </div>
-  </form>
+    </form>
 </ng-template>
 
 <!--Delete Confirmation popup-->
@@ -115,7 +122,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

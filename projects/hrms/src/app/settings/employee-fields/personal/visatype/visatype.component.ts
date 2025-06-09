@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-visatype',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './visatype.component.html',
   styleUrl: './visatype.component.scss'
 })
@@ -22,15 +23,16 @@ export class VisatypeComponent {
   VisaForm!: FormGroup;
   updateForm!: FormGroup;
   VisaDetail: any[] = [];
+  loading = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteVisa: any = null;
   subscription!: Subscription;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
-    private conformationPopup: OpenModalService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
   ) {
@@ -38,7 +40,7 @@ export class VisatypeComponent {
   }
   ngOnInit(): void {
     this.VisaForm = this.fb.group({
-      Visatype: ['', [Validators.required,  this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      Visatype: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
       Visatype: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
@@ -48,8 +50,13 @@ export class VisatypeComponent {
   }
 
   getVisa() {
+    this.loading = true;
     this.http.getData('Visatype').subscribe((data: any) => {
       this.VisaDetail = data;
+      this.loading = false;
+    }, (error: any) => {
+      this.loading = false;
+
     });
   }
   //ADD

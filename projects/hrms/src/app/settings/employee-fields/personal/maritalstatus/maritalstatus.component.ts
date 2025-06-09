@@ -9,29 +9,31 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IMaritialStatus } from './maritalstatus.model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 
 @Component({
   selector: 'app-maritalstatus',
-  imports: [CommonModule,FormsModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './maritalstatus.component.html',
   styleUrl: './maritalstatus.component.scss'
 })
 export class MaritalstatusComponent {
-  
+
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   MaritalStatusForm!: FormGroup;
   updateForm!: FormGroup;
   MaritalStatusDetail: any[] = [];
+  loading = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeletestatus: any = null;
   subscription!: Subscription;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
-    private conformationPopup: OpenModalService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
   ) {
@@ -45,7 +47,7 @@ export class MaritalstatusComponent {
       ]]
     });
     this.updateForm = this.fb.group({
-      MaritalStatus: ['',[
+      MaritalStatus: ['', [
         Validators.required,
         this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)
       ]]
@@ -55,9 +57,16 @@ export class MaritalstatusComponent {
   }
 
   getMaritialStatus() {
+    this.loading = true;
     this.http.getData('Maritalstatus').subscribe((data: any) => {
       this.MaritalStatusDetail = data;
-    });
+      this.loading = false;
+    }
+      , (error: any) => {
+        this.loading = false;
+        console.error(error);
+      });
+
   }
   //ADD
   addMaritalStatus() {

@@ -39,41 +39,60 @@
                 </div>
             </form>
 
-            <!--Table content-->
-            <ng-container *ngIf="dataLoad; else maincontent">
-                <ng-template #loadingSpinner>
-                    <app-data-loader-content />
-                </ng-template>
-                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-            </ng-container>
 
-            <ng-template #maincontent>
-                <div class="custom-table-content">
-                    <table class="w-100">
-                        <thead>
+            <div class="custom-table-content">
+                @if(!dataLoad){
+                <table class="w-100">
+                    <thead>
+                        <tr>
                             <th>Name</th>
                             <th>Action</th>
-                        </thead>
-                        <tbody>
-                            @if(roleAssigneeUsers.length > 0){
-                            <tr *ngFor="let user of roleAssigneeUsers">
-                                <td>{{ user.firstName }}
-                                    <span *ngIf="user.middleName"> {{ user.middleName }} </span>
-                                    {{ user.lastName }}
-                                </td>
-                                <td (click)="onUserClick(user)">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
-                                </td>
-                            </tr>
-                            }@else {
-                            <tr>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(roleAssigneeUsers.length > 0){
+                        <tr *ngFor="let user of roleAssigneeUsers">
+                            <td>{{ user.firstName }}
+                                <span *ngIf="user.middleName"> {{ user.middleName }} </span>
+                                {{ user.lastName }}
+                            </td>
+                            <td (click)="onUserClick(user)">
+                                <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                            </td>
+                        </tr>
+                        }@else {
+                        <tr>
+                            <td colspan="2">
                                 <app-no-data-found></app-no-data-found>
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </ng-template>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                }
+                @else {
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th><p-skeleton width="6rem" height="1.5rem"></p-skeleton></th>
+                            <th class="text-center"><p-skeleton width="6rem" height="1.5rem"></p-skeleton></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr *ngFor="let skel of [1,2,3,4]">
+                            <td>
+                                <p-skeleton width="150px" height="18px"></p-skeleton>
+                            </td>
+                            <td  class="text-center">
+                                <p-skeleton width="24px" height="24px" shape="circle"></p-skeleton>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                }
+            </div>
+
         </div>
     </div>
 </div>

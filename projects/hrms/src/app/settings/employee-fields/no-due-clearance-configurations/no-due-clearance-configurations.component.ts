@@ -14,10 +14,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-no-due-clearance-configurations',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, SelectModule, MultiSelectModule,TranslateModule],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, SelectModule, MultiSelectModule, TranslateModule, DataLoaderContentComponent],
   templateUrl: './no-due-clearance-configurations.component.html',
   styleUrl: './no-due-clearance-configurations.component.scss'
 })
@@ -30,6 +31,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   selectedUsersCount!: number;
   employeeData = {} as any;
   noDueList: INoDue[] = [];
+  loading = false;
   roles: IRoles[] = [];
   selectedDeleteRole: any = null;
   departmentList: IDepartment[] = [];
@@ -57,12 +59,15 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   }
 
   getAllNoDues() {
+    this.loading = true;
     this.http.getData('NoDueCleranceConfiguration').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.noDueList = res as INoDue[];
+          this.loading = false;
       },
       error: (err) => {
         console.error(err);
+        this.loading = false;
       }
     });
   }

@@ -54,6 +54,7 @@ export class DraftsExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   searchTerm: any = '';
+  loader=false
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   expense = new BehaviorSubject<IExpenses[]>([]);
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
@@ -460,12 +461,15 @@ fileuploadhide :any;
   }
 
   getexpensesheaderbyemployeeid(): void {
+    this.loader=true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Draft&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
+          this.loader=false
           this.expenesEmplyeedata.next(data)
-        }, error(err) {
+        }, error:(err)=> {
+          this.loader=false
           console.log("expensesheadererror", err)
         },
       });

@@ -42,7 +42,7 @@ export default [
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent), canActivate: [PermissionsGuard],data: { permission: 'Team.view' } },
             { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent), canActivate: [PermissionsGuard],data: { permission: 'Pre Onboard Documents.view' } },
             { path: 'signature-authority', loadComponent: () => import('./job/signature-authority/signature-authority.component').then((m) => m.SignatureAuthorityComponent)},
-            { path: 'appointment-details', loadComponent: () => import('./job/appointment-details/appointment-details.component').then((m) => m.AppointmentDetailsComponent)},
+            // { path: 'appointment-details', loadComponent: () => import('./job/appointment-details/appointment-details.component').then((m) => m.AppointmentDetailsComponent)},
             { path: 'probation-frequency', loadComponent: () => import('./job/probation-frequency/probation-frequency.component').then((m) => m.ProbationFrequencyComponent)},
             { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)}
         ]

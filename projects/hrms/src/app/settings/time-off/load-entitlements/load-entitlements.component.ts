@@ -24,7 +24,7 @@ export class LoadEntitlementsComponent {
   isDropdownOpen: boolean = false;
   currentDate: Date = new Date();
   loggedinuser = {} as any;
-
+  loading: boolean = false;
   constructor(
     private http: HttpService,
     private renderer: Renderer2,
@@ -205,6 +205,7 @@ export class LoadEntitlementsComponent {
   leavePolicyRecords: any[] = [];
   // Method to process API response data and populate leavePolicyRecords
   processLeavePolicyData(data: any) {
+   
     if (Array.isArray(data)) {
       this.leavePolicyRecords = data.map((record: any) => {
         const entitledLeaves = this.calculateEntitlement(

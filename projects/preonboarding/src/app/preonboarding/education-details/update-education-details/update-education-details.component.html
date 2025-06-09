@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
         <div class="pt-2">
-            <p class="popup-heading mb-0">Update Education Details</p>
+            <p class="popup-heading mb-0">Update Academic Record</p>
         </div>
         <div>
             <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
@@ -11,7 +11,7 @@
         <form autocomplete="off" [formGroup]="educationForm" (ngSubmit)="updateEducation()">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="education" class="form-label custom-label mb-2">Education<span class="text-danger">*</span></label>
+                    <label for="education" class="form-label custom-label mb-2">Qualification<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="degreeDetails" optionLabel="degreeName" optionValue="degreeName" id="education" formControlName="education" 
                           placeholder="Please select education" class="form-select custom-select"></p-select>

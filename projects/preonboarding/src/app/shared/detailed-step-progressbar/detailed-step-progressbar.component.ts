@@ -19,9 +19,9 @@ export class DetailedStepProgressbarComponent {
     { id: 1, name: 'Personal Details' },
     { id: 2, name: 'Onboarding Documents' },
     { id: 3, name: 'Offer Letter' },
-    { id: 4, name: 'Education' },
-    { id: 5, name: 'Emergency Details' },
-    { id: 6, name: 'Experience' },
+    { id: 4, name: 'Academics' },
+    { id: 5, name: 'Emergency Contacts' },
+    { id: 6, name: 'Employment History' },
     { id: 7, name: 'Review' },
     { id: 8, name: 'Appointment Letter' },
   ];

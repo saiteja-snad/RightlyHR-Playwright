@@ -339,7 +339,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+               this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -408,7 +408,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+               this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -448,7 +448,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message =  'Processing Selected WFH Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -462,7 +462,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message =  'Processing Selected WFH Requests...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -477,7 +477,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-             this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+             this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }

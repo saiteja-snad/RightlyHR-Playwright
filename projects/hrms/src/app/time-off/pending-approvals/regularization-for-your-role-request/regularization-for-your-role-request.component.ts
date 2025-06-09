@@ -441,7 +441,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -580,7 +580,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
         <div class="pt-2">
-            <p class="popup-heading mb-0">Update Education Details</p>
+            <p class="popup-heading mb-0">Update Academic record</p>
         </div>
         <div>
             <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
@@ -11,7 +11,7 @@
         <form autocomplete="off" [formGroup]="educationForm" (ngSubmit)="updateEducation()">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="education" class="form-label custom-label mb-2">Education<span class="text-danger">*</span></label>
+                    <label for="education" class="form-label custom-label mb-2">Qualification<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="degreeDetails" optionLabel="degreeName" optionValue="degreeName" id="education" formControlName="education" 
                           placeholder="Please select education" class="form-select custom-select"></p-select>
@@ -70,14 +70,14 @@
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label for="attachment" class="form-label custom-label mb-2">Attachment(Image and PDF only)<span
+                    <label for="attachment" class="form-label custom-label mb-2">Attachment(Upload the Image and PDF)<span
                             class="text-danger">*</span></label>
                     <input type="file" class="form-control custom-input px-0" id="attachment" (change)="fileAttachment($event);fileChange($event)">
                     <div class="file-name my-1">
                         <span>File Name: {{getFileName(this.educationData.attachment)}}</span>
                     </div>
                     <div class="error-msg" *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">Please choose a file</div>
-                    <div class="error-msg" *ngIf="showErrorforpdf">Only PDF and image files are allowed</div>
+                    <div class="error-msg" *ngIf="showErrorforpdf">Only Pdf/Image files are allowed</div>
                     <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB</div>
                 </div>
             </div>

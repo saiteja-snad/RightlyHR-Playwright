@@ -463,7 +463,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Leave Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -477,7 +477,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Approval Failed');
+            this.conformationPopup.openErrorModal('Leave Request Approval Failed');
           }
           this.spinnerLoader = false;
         },
@@ -533,7 +533,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Leave Request Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -547,7 +547,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Rejected Failed');
+            this.conformationPopup.openErrorModal('Leave Request Rejected Failed');
           }
           this.spinnerLoader = false;
           form.resetForm();
@@ -580,7 +580,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage
         }))
       }
-      message = 'Processing Requests, Please wait...';
+      message = 'Processing Leave Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -593,7 +593,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Request, Please wait...';
+      message = 'Processing Leave Request...';
     }
     this.conformationPopup.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
@@ -602,7 +602,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Leave Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -616,7 +616,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Processed Failed');
+            this.conformationPopup.openErrorModal('Leave Request Processed Failed');
           }
         },
         complete: () => {

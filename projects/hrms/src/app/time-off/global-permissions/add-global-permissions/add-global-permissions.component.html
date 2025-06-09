@@ -6,7 +6,7 @@
   </div>
 
   <div class="custom-main-popup-content">
-    <form autocomplete="off" [formGroup]="requestForm" (ngSubmit)="onSubmit()">
+    <form autocomplete="off" [formGroup]="requestForm" >
       <div>
         <!-- Request Type Dropdown -->
         <div class="mb-3">
@@ -205,7 +205,7 @@
         <button type="button" class="custom-btn btn-secondary"
           (click)="openconfirmationModel(confirmation)">{{'Cancel'|translate}}</button>
         <button type="button" class="custom-btn btn-primary" [disabled]="requestForm.invalid||isLoader"
-          (click)="openconfirmationModel(sucessconfirmation)">
+          (click)="openconfirmationModelNew(sucessconfirmation)">
           @if(!isLoader){
           {{'Submit'|translate}}
           }

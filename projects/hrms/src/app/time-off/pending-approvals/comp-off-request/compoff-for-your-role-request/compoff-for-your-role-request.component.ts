@@ -314,7 +314,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message =  'Processing Compoff Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -328,7 +328,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message =  'Processing Compoff Request...';
     }
     this.sharedModalService.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
@@ -341,7 +341,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');;
+            this.signalService.handleResponse(this.requestSummary, 'Compoff Request Processed Successfully');;
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -405,7 +405,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Compoff Request Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -473,7 +473,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-             this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+             this.signalService.handleResponse(this.requestSummary, 'Compoff Request Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

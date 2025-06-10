@@ -157,7 +157,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   initializeForm(): void {
     this.separationRequestForm = this.fb.group({
-      appliedDate: [null, Validators.required],
+      appliedDate: [new Date().toISOString().substring(0, 10), Validators.required],
       jobRole: [{ value: null, disabled: true }],
       departmentName: [{ value: '', disabled: true }],
       team: [{ value: null, disabled: true }],

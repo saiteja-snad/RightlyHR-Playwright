@@ -216,7 +216,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
             const formattedBday = `${this.changeYear}-${String(bday.getMonth() + 1).padStart(2, '0')}-${String(bday.getDate()).padStart(2, '0')}`;
             events.push({
               title: (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
-                `${allEventsData[j].firstName} ${allEventsData[j].lastName}'s` + ` Birthday`,
+                `${allEventsData[j].firstName} ${allEventsData[j]?.middleName ?? ''
+                  } ${allEventsData[j].lastName}'s` + ` Birthday`,
               start: formattedBday,
               color: '#E1E8FE',
               textColor: 'black',
@@ -253,7 +254,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
             events.push({
               title:
                 (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
-                `${allEventsData[j].firstName} ${allEventsData[j].lastName} joined as ${allEventsData[j].jobRole}`,
+                `${allEventsData[j].firstName}${allEventsData[j]?.middleName ?? ''
+                  }  ${allEventsData[j].lastName} joined as ${allEventsData[j].jobRole}`,
               start: formattedJoinDate,
               color: '#FEE1F7',
               textColor: 'black',

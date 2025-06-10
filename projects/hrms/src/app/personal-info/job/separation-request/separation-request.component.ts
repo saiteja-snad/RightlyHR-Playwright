@@ -20,14 +20,26 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-separation-request',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule,
-    DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    NgbPopoverModule,
+    ReactiveFormsModule,
+    FormsModule,
+    PaginatorModule,
+    DropdownModule,
+    DateformatPipe,
+    NgxDocViewerModule,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    InfoIconComponent,
+  ],
   templateUrl: './separation-request.component.html',
-  styleUrl: './separation-request.component.scss'
+  styleUrl: './separation-request.component.scss',
 })
-
 export class SeparationRequestComponent implements OnInit, OnDestroy {
   getSeparationDetails = new BehaviorSubject<ISeparation[]>([]);
   subscription!: Subscription;
@@ -35,7 +47,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   empdata = {} as Ipersonal;
   substatus: any;
   status: any;
-  loading = false
+  loading = false;
   recallbuttonConditions = false;
   recallandearlyrelievingbuttonConditions = false;
   isLastWorkingDatePassed = false;
@@ -49,8 +61,16 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   isLoading = false;
   profileForm!: FormGroup;
   isDataLoaded = false;
-  constructor(private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,
-    private modalService: NgbModal, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
+    private modalService: NgbModal,
+    public rbac: RbacService,
+    public permissionRouteService: AccessForEmployeeinfoService,
+    private router: Router,
+    public formValidations: FormValidationsService
+  ) {
     // Initialize any required services or dependencies here
   }
 
@@ -60,8 +80,14 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.getEmpInfoFromRoute();
   }
 
-  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
-    const value = this.permissionRouteService.canAccessField(action, permission);
+  canAccess(
+    action: 'view' | 'create' | 'update' | 'delete',
+    permission: string
+  ) {
+    const value = this.permissionRouteService.canAccessField(
+      action,
+      permission
+    );
     return value;
   }
   getEmpInfoFromRoute(): void {
@@ -69,12 +95,12 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
-      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
       this.getEmployeeId();
       this.getNodueClearance();
       this.fetchSeparationDetails();
     } else if (fullPath.startsWith('/myinfo')) {
-      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
       this.getEmployeeId();
       this.fetchSeparationDetails();
       this.getNodueClearance();
@@ -83,11 +109,23 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   formInitialization() {
     this.recallreason = this.fb.group({
-      recallReason: [null, [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      recallReason: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(250)
+        ],
+      ],
     });
     this.earlyReleivingform = this.fb.group({
       earlyReleivingDate: [null, [Validators.required]],
-      earlyReleivingReason: [null, [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      earlyReleivingReason: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(250)
+        ],
+      ],
     });
     // this.profileForm = this.fb.group({
     //   emails: ['', [Validators.required, Validators.email]],
@@ -95,8 +133,11 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     // });
 
     this.profileForm = this.fb.group({
-      emails: ['', [Validators.required, Validators.email, this.duplicateEmailValidator]],
-      noduerequestedemails: this.fb.array([])
+      emails: [
+        '',
+        [Validators.required, Validators.email, this.duplicateEmailValidator],
+      ],
+      noduerequestedemails: this.fb.array([]),
     });
   }
 
@@ -106,19 +147,30 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   addAlias() {
     this.formemailsfornodue.push(
-      this.fb.control('', [Validators.required, Validators.email, this.duplicateEmailValidator])
+      this.fb.control('', [
+        Validators.required,
+        Validators.email,
+        this.duplicateEmailValidator,
+      ])
     );
   }
 
   openModallg(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size:'lg' });
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+      keyboard: false
+    });
   }
 
   removeSection(index: number) {
     this.formemailsfornodue.removeAt(index);
   }
 
-  duplicateEmailValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  duplicateEmailValidator: ValidatorFn = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
     if (!control?.parent) return null;
 
     const form = control.parent;
@@ -129,23 +181,29 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
     const allEmails = [
       mainEmailControl.value?.toLowerCase().trim(),
-      ...formArray.controls.map(c => c.value?.toLowerCase().trim())
+      ...formArray.controls.map((c) => c.value?.toLowerCase().trim()),
     ].filter(Boolean);
 
     const currentEmail = control.value?.toLowerCase().trim();
 
-    const isDuplicate = allEmails.filter(email => email === currentEmail).length > 1;
+    const isDuplicate =
+      allEmails.filter((email) => email === currentEmail).length > 1;
 
     return isDuplicate ? { duplicate: true } : null;
   };
 
   //function to open the modal
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
   }
 
   openModalLg(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false
+    });
   }
 
   // removeSection(index: number) {
@@ -167,28 +225,33 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   //   );
   // }
 
-
   requestNoDue(f: FormGroup) {
     this.isLoading = true;
     const noduereq = {
       requestedBy: this.empdata.employeeId,
       raisedFor: this.empdata.employeeId,
-      requiredEmails: `${this.profileForm.value.emails}, ${this.profileForm.value.noduerequestedemails.join(', ')}`,
+      requiredEmails: `${
+        this.profileForm.value.emails
+      }, ${this.profileForm.value.noduerequestedemails.join(', ')}`,
     };
-    this.subscription = this.http.postdata('NoDueClearanceForm', noduereq).subscribe({
-      next: (data: any) => {
-         this.isLoading = false;
-        this.profileForm.reset();
-        this.formemailsfornodue.clear();
-        this.modalService.dismissAll();
-        this.getNodueClearance();
-        this.conformationPopup.openSuccessModal('No due request raised successfully');
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('reason.error.Message');
-        const modalElement = document.getElementById('errorhide');
-      },
-    });
+    this.subscription = this.http
+      .postdata('NoDueClearanceForm', noduereq)
+      .subscribe({
+        next: (data: any) => {
+          this.isLoading = false;
+          this.profileForm.reset();
+          this.formemailsfornodue.clear();
+          this.modalService.dismissAll();
+          this.getNodueClearance();
+          this.conformationPopup.openSuccessModal(
+            'No Due Request Raised Successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal('reason.error.Message');
+          const modalElement = document.getElementById('errorhide');
+        },
+      });
   }
 
   //function to get the notice period duration
@@ -199,9 +262,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`ServingPeriods`).subscribe({
       next: (res: any) => {
         let noduevalue = res.find((ele: any) => {
-          return (
-            ele.servingPeriodType?.toLowerCase() == 'button before no due'
-          );
+          return ele.servingPeriodType?.toLowerCase() == 'button before no due';
         });
         let durationValue = res.find((ele: any) => {
           return ele.servingPeriodType?.toLocaleLowerCase() == 'notice period';
@@ -224,50 +285,52 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to get the nodue list
 
-
   //funtion to check the valudation
-
 
   //function to get employee by id
   getEmployeeId() {
     let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data as Ipersonal;
-        console.log(this.empdata);
-        // this.isLastWorkingDate(this.empdata.lastworkingday);
-      },
-      error: (err: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data faild');
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.empdata = data as Ipersonal;
+          console.log(this.empdata);
+          // this.isLastWorkingDate(this.empdata.lastworkingday);
+        },
+        error: (err: any) => {
+          this.conformationPopup.openErrorModal('Insertion of data faild');
+        },
+      });
   }
-  
+
   nodueclearancedetails = [] as any;
   getNodueClearance() {
-    let employeeId = parseInt(this.empinfo.employeeId)
-    this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.nodueclearancedetails = data;
-      }
-    })
+    let employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http
+      .getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.nodueclearancedetails = data;
+        },
+      });
   }
 
   shouldShowButton(date: string): boolean {
-    console.log(date)
+    console.log(date);
     let lastworkingdate = date;
-    const shouldShow = (this.isLastWorkingDate(lastworkingdate));
+    const shouldShow = this.isLastWorkingDate(lastworkingdate);
     return shouldShow;
   }
 
   shouldShowStatusBasedButton(): boolean {
     const match = this.separationDetails?.some((detail: { status: string }) => {
       const status = detail.status?.toLowerCase().trim();
-      console.log("Checking status:", status);
+      console.log('Checking status:', status);
       return status === 'processed' || status === 'early relieving processed';
     });
-    console.log("Status match found?", match);
+    console.log('Status match found?', match);
     return match ?? false;
   }
 
@@ -275,20 +338,22 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     if (lastWorkingDate) {
       const endDate = new Date(lastWorkingDate);
       const buttonEnabledDate = new Date(endDate);
-      buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.nodueDuration));
+      buttonEnabledDate.setDate(
+        endDate.getDate() - parseInt(this.nodueDuration)
+      );
       const currentDate = new Date();
       console.log(this.nodueDuration);
 
       // Check if the current date is between buttonEnabledDate and endDate
-      const isComplete = currentDate >= buttonEnabledDate && currentDate <= endDate;
-      console.log(isComplete)
+      const isComplete =
+        currentDate >= buttonEnabledDate && currentDate <= endDate;
+      console.log(isComplete);
       // Check if the current date is past the last working date
       const isPastLastWorkingDate = currentDate > endDate;
       console.log(isPastLastWorkingDate);
 
       // Return true if either condition is met
       return isComplete || isPastLastWorkingDate;
-
     }
     return false;
   }
@@ -298,51 +363,59 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   fetchSeparationDetails(): void {
     this.isDataLoaded = true;
     const EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.isDataLoaded = false;
-          this.separationDetails = data;
-          this.shouldShowStatusBasedButton();
-          console.log(this.separationDetails)
-          this.getSeparationDetails.next(data);
-          this.substatus = this.getSeparationDetails.value.map(
-            (application: { status: any }) => application.status.toLowerCase()
-          );
-          const seperationStatus1 = [
-            'waiting for approval', 'approved', 'processed', 'recalled processed',
-            'early relieving processed', 'extended',
-          ];
-          this.status = seperationStatus1.some((value) =>
-            this.substatus.includes(value)
-          );
-          console.log(this.status)
-          this.checkStatus();
-          data.forEach((ele: any) => {
-            if ((ele?.status?.toLowerCase() == 'waiting for approval' || ele?.status?.toLowerCase() == 'approved') &&
-              ele.recallStatus?.toLowerCase() == 'earlyrelieving') {
-              this.recallandearlyrelievingbuttonConditions = true;
+    this.subscription = this.http
+      .getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.isDataLoaded = false;
+            this.separationDetails = data;
+            this.shouldShowStatusBasedButton();
+            console.log(this.separationDetails);
+            this.getSeparationDetails.next(data);
+            this.substatus = this.getSeparationDetails.value.map(
+              (application: { status: any }) => application.status.toLowerCase()
+            );
+            const seperationStatus1 = [
+              'waiting for approval',
+              'approved',
+              'processed',
+              'recalled processed',
+              'early relieving processed',
+              'extended',
+            ];
+            this.status = seperationStatus1.some((value) =>
+              this.substatus.includes(value)
+            );
+            console.log(this.status);
+            this.checkStatus();
+            data.forEach((ele: any) => {
+              if (
+                (ele?.status?.toLowerCase() == 'waiting for approval' ||
+                  ele?.status?.toLowerCase() == 'approved') &&
+                ele.recallStatus?.toLowerCase() == 'earlyrelieving'
+              ) {
+                this.recallandearlyrelievingbuttonConditions = true;
+              }
+              if (
+                (ele?.status?.toLowerCase() == 'recalled' ||
+                  ele?.status?.toLowerCase() == 'approved') &&
+                ele.recallStatus?.toLowerCase() == 'recalled'
+              ) {
+                this.recallbuttonConditions = true;
+              }
+            });
+            const current = this.formatDate(moment());
+            if (this.formatDate(this.empdata.lastworkingday < current)) {
+              this.isLastWorkingDatePassed = true;
             }
-            if ((ele?.status?.toLowerCase() == 'recalled' || ele?.status?.toLowerCase() == 'approved') &&
-              ele.recallStatus?.toLowerCase() == 'recalled') {
-              this.recallbuttonConditions = true;
-            }
-          });
-          const current = this.formatDate(moment());
-          if (this.formatDate(this.empdata.lastworkingday < current)) {
-            this.isLastWorkingDatePassed = true;
           }
-        }
-
-      },
-      error: (err: any) => {
-        this.isDataLoaded = false;
-        this.getSeparationDetails.next([]);
-      },
-
-
-    });
-
+        },
+        error: (err: any) => {
+          this.isDataLoaded = false;
+          this.getSeparationDetails.next([]);
+        },
+      });
   }
 
   //function to check the status of the request
@@ -362,12 +435,17 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal for the comments
   approverCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'xl',
+      backdrop: 'static',
+      keyboard: false
+    });
 
     const roleOrder: { [key: string]: number } = {
-      'RM': 1,
-      'TM': 2,
-      'EM': 3  // 'EM' is displayed as HR in the UI
+      RM: 1,
+      TM: 2,
+      EM: 3, // 'EM' is displayed as HR in the UI
     };
 
     this.appover_comments = Value.map((ele: any) => {
@@ -383,22 +461,21 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     });
   }
 
-
   //function to store the disaciption values
   decription(value: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
     this.decription_Storing_Variable = value;
   }
 
   //function to select data of perticular record to  recall the request
   recallRequest(data: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
   }
 
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
     this.postEarlyRelievingRequest = data;
     console.log(this.postEarlyRelievingRequest.appliedDate);
   }
@@ -406,20 +483,19 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   get formattedAppliedDate(): string {
     const date = this.postEarlyRelievingRequest?.appliedDate;
     console.log(date);
-    const dt = this.formatDate(date)
+    const dt = this.formatDate(date);
     console.log(dt);
     return dt;
   }
 
   closepopup(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' })
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
   }
   popupclose() {
     this.profileForm.reset();
     this.recallreason.reset();
     this.earlyReleivingform.reset();
     this.modalService.dismissAll();
-
   }
   //function to recall the request
   postRecallRequest() {
@@ -446,26 +522,31 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       parentId: this.selectRecallrequest.id,
       moduleId: environment.RecallrequestmoduleId,
     };
-    this.subscription = this.http.postdata(`SeparationRequests`, payLoad).subscribe({
-      next: (res: any) => {
-        if (res) {
+    this.subscription = this.http
+      .postdata(`SeparationRequests`, payLoad)
+      .subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.isLoading = false;
+            this.modalService.dismissAll();
+            this.recallreason.reset();
+            this.conformationPopup.openSuccessModal(
+              'Recall Request raised successfully'
+            );
+            this.fetchSeparationDetails();
+          }
+        },
+        error: (err: any) => {
           this.isLoading = false;
-          this.modalService.dismissAll();
-          this.recallreason.reset();
-          this.conformationPopup.openSuccessModal('Recall request raised successfully');
-          this.fetchSeparationDetails();
-        }
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(err.error.message)
-      },
-    });
+          this.conformationPopup.openErrorModal(err.error.message);
+        },
+      });
   }
 
-  difference = 0
+  difference = 0;
   getBlockedFutureDate(lastWorkingDate: string): string {
-    let earlyrelievingdate = this.earlyReleivingform.get('earlyReleivingDate')?.value;
+    let earlyrelievingdate =
+      this.earlyReleivingform.get('earlyReleivingDate')?.value;
     if (earlyrelievingdate && this.postEarlyRelievingRequest.appliedDate) {
       const d1 = moment(this.postEarlyRelievingRequest.appliedDate);
       const d2 = moment(earlyrelievingdate);
@@ -473,14 +554,16 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     } else {
       this.difference = 0;
     }
-    const formattedDate = moment(lastWorkingDate).startOf('day').format('YYYY-MM-DD');
+    const formattedDate = moment(lastWorkingDate)
+      .startOf('day')
+      .format('YYYY-MM-DD');
     return formattedDate;
   }
 
   //function to raise the early relieving request
   postEarlyrelieving() {
     this.isLoading = true;
-    let currentDate = moment()
+    let currentDate = moment();
     let payLoad = {
       // id: this.selectRecallrequest.id,
       employeeId: this.postEarlyRelievingRequest.employeeId,
@@ -496,27 +579,35 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       jobId: this.postEarlyRelievingRequest.jobId,
       currentApprover: this.postEarlyRelievingRequest.currentApprover,
       isEarlyRelieving: true,
-      isAcceptEarlyRelieving: this.postEarlyRelievingRequest.isAcceptEarlyRelieving,
-      earlyRelievingDate: this.earlyReleivingform.get('earlyReleivingDate')?.value,
+      isAcceptEarlyRelieving:
+        this.postEarlyRelievingRequest.isAcceptEarlyRelieving,
+      earlyRelievingDate:
+        this.earlyReleivingform.get('earlyReleivingDate')?.value,
       parentId: this.postEarlyRelievingRequest.id,
-      reasonForEarlyRelieving: this.earlyReleivingform.get('earlyReleivingReason')?.value,
-      moduleId: environment.SeparationrequestmoduleId
-    }
-    this.subscription = this.http.postdata(`SeparationRequests`, payLoad).subscribe({
-      next: (res: any) => {
-        if (res) {
+      reasonForEarlyRelieving: this.earlyReleivingform.get(
+        'earlyReleivingReason'
+      )?.value,
+      moduleId: environment.SeparationrequestmoduleId,
+    };
+    this.subscription = this.http
+      .postdata(`SeparationRequests`, payLoad)
+      .subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.isLoading = false;
+            this.modalService.dismissAll();
+            this.earlyReleivingform.reset();
+            this.conformationPopup.openSuccessModal(
+              'Early Relieving Request raised successfully'
+            );
+            this.fetchSeparationDetails();
+          }
+        },
+        error: (err: any) => {
           this.isLoading = false;
-          this.modalService.dismissAll();
-          this.earlyReleivingform.reset();
-          this.conformationPopup.openSuccessModal('Early relieving request raised successfully');
-          this.fetchSeparationDetails();
-        }
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(err.error.message);
-      }
-    })
+          this.conformationPopup.openErrorModal(err.error.message);
+        },
+      });
   }
 
   ngOnDestroy(): void {

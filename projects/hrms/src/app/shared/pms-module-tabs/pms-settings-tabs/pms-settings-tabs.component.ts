@@ -42,7 +42,6 @@ export class PmsSettingsTabsComponent implements OnInit {
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       const value = this.rbac.allowedToAccess(permissionString);
-      console.log(value);
       return value;
     });
   }

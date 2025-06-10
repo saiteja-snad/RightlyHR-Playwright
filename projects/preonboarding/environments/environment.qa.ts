@@ -11,6 +11,6 @@ export const environment = {
       redirectUrl:'/uservalidation',
       baseUrl:'https://localhost:44371/',
       scopeUri:["api://21fc6080-e28a-4f0c-ab3c-62473864fa10/api-access"],
-      dateformat:'dd-MMM-yyyy'
+      dateformat:'MMM d, y'
   };
   

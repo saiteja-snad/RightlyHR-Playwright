@@ -11,10 +11,11 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-sub-location',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NgbPopoverModule, InfoIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NgbPopoverModule, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './sub-location.component.html',
   styleUrl: './sub-location.component.scss'
 })
@@ -22,6 +23,7 @@ export class SubLocationComponent {
   subscription!: Subscription;
   SubLocationdetails = [] as any;
   JobroleDetails = [] as any;
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
@@ -43,15 +45,15 @@ export class SubLocationComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
+      AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
       AddSubLocation: ['', Validators.required, Validators.pattern(/^[^\s].*$/)],
-      AddAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250),Validators.pattern(/^[^\s].*$/)]],
+      AddAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250), Validators.pattern(/^[^\s].*$/)]],
     });
 
     this.updateForm = this.fb.group({
-      UpdateSubLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
-      updateLocation: [null, [Validators.required, ]],
-      UpdateAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250),Validators.pattern(/^[^\s].*$/)]],
+      UpdateSubLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
+      updateLocation: [null, [Validators.required,]],
+      UpdateAddress: ['', [Validators.required, this.formValidations.maxCharactersValidator(250), Validators.pattern(/^[^\s].*$/)]],
     });
     this.getSubLocation();
     this.getLocation();
@@ -72,8 +74,10 @@ export class SubLocationComponent {
   }
 
   getSubLocation() {
+    this.loader = true;
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
+        this.loader = false;
         console.log(data);
         this.SubLocationdetails = data.sort((a: any, b: any) => {
           // First sort by location name
@@ -85,6 +89,10 @@ export class SubLocationComponent {
           return locationComparison;
         });
       },
+      error: (error: any) => {
+        this.loader = false;
+
+      }
     });
   }
   //ADD
@@ -106,7 +114,7 @@ export class SubLocationComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        const errorMessage= error.error?.Message;
+        const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
       }
     });
@@ -118,21 +126,16 @@ export class SubLocationComponent {
   // Method to open the update modal dialog
   openupdateDialog(jobroletypelist: any) {
     this.selectedId = jobroletypelist.id;
-    console.log(jobroletypelist.jobLocationId);
-    console.log(this.locationDetail);
-    console.log(this.locationDetail.find((loc: { id: number; }) => loc.id == jobroletypelist.jobLocationId));
-    
-    this.updateForm.patchValue({ 
+    this.updateForm.patchValue({
       updateLocation: jobroletypelist.jobLocationId,
       UpdateSubLocation: jobroletypelist.jobSubLocationName
     });
-  
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
       centered: true
     });
   }
-  
+
   //  UPDATE
   updateSublocation(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
@@ -146,7 +149,6 @@ export class SubLocationComponent {
 
       this.subscription = this.http.postdata('SubLocation/UPDATER', request).subscribe({
         next: () => {
-
           this.getSubLocation();
           modal.close();
           this.conformationPopup.openSuccessModal('Sub location updated successfully');
@@ -165,29 +167,26 @@ export class SubLocationComponent {
     this.selectedDeleteRole = jobroletypelist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
+
   onDelete(modal: any) {
     if (!this.selectedDeleteRole) return;
-
-    this.subscription = this.http
-      .getData(`SubLocation/deleteById/${this.selectedDeleteRole.id}`)
+    this.subscription = this.http.getData(`SubLocation/deleteById/${this.selectedDeleteRole.id}`)
       .subscribe({
         next: () => {
           modal.close();
           this.getSubLocation();
           this.conformationPopup.openSuccessModal('Sub location deleted successfully');
-
         },
         error: (error: any) => {
           const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-
         }
       });
   }
+
   closeDelete(modal: any) {
     modal.dismiss();
   };
-
 
   resetForm() {
     this.AddForm.reset();
@@ -200,5 +199,4 @@ export class SubLocationComponent {
       this.subscription.unsubscribe();
     }
   }
-
 }

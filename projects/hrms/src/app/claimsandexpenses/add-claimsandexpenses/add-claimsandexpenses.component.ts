@@ -66,7 +66,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
-      expensesTitle: [null, [Validators.required, Validators.maxLength(50)]],
+      expensesTitle: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
@@ -76,7 +76,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       item_expense: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
@@ -233,67 +233,74 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     });
   }
 fileuploadhide :any;
-    fileupload(event: any, index: number): void {
-    const file = event.target.files[0]; // Get the selected file
-     const d: Date = new Date();
-     if (!file) {
-        this.fileuploadhide = true;
-    //    const control = this.expenseItems.at(index)?.get('attachment_url');
-    // control?.setValue(null);
-    // control?.markAsTouched();
-     //control?.updateValueAndValidity();
-     }
- 
- 
-    const allowedTypes = [
-      'image/jpeg',
-      'image/png',
-      'application/pdf'
-    ];
-    const maxSizeInMB = 25;
-    const fileSizeInMB = file.size / (1024 * 1024);
- 
-    // File type validation
-    if (!allowedTypes.includes(file.type)) {
-      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
-      this.expenseItems.at(index)?.get('attachment_url')?.reset();
-      this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
-      event.target.value = ''; // Reset the file input
-      return;
-    }
- 
-    // File size validation
-    if (fileSizeInMB > maxSizeInMB) {
-      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-      this.expenseItems.at(index)?.get('attachment_url')?.reset();
-      this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
-      event.target.value = ''; // Reset the file input
-      return;
-    }
- 
-    const filepath = `/Expenses/${this.empinfo.employeeId}`;
-    // Upload the file
-    const fileUpload$ = this.http.uploadFileWithQuery(
-      'FileSystem/uploadfiletodirectory',
-      filepath,
-      file
-    );
-    fileUpload$.subscribe({
-      next: (data: any) => {
-        // Assuming data.path contains the uploaded file path
-        const uploadedFilePath = data.path;
-       
-        this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
-      },
-      error: (error: any) => {
-        console.error('Error uploading file:', error);
-        this.conformationPopup.openErrorModal('Error uploading file.');
-        this.expenseItems?.at(index)?.get('attachment_url')?.setValue(null); // Reset the attachment_url if upload fails
-      }
-    });
+fileupload(event: any, index: number): void {
+  const file = event.target.files[0]; // Get the selected file
+
+  const control = this.expenseItems.at(index)?.get('attachment_url');
+
+  // Handle file dialog cancel or no file selected
+  if (!file) {
+    this.fileuploadhide = true;
+    control?.reset();
+    control?.setErrors({ required: true });
+    control?.markAsTouched();
+    control?.updateValueAndValidity();
+    return;
   }
 
- 
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'application/pdf'
+  ];
+  const maxSizeInMB = 25;
+  const fileSizeInMB = file.size / (1024 * 1024);
+
+  // File type validation
+  if (!allowedTypes.includes(file.type)) {
+    this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+    control?.reset();
+    control?.markAsTouched();
+    control?.updateValueAndValidity();
+    event.target.value = ''; // Reset the file input
+    return;
+  }
+
+  // File size validation
+  if (fileSizeInMB > maxSizeInMB) {
+    this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+    control?.reset();
+    control?.markAsTouched();
+    control?.updateValueAndValidity();
+    event.target.value = ''; // Reset the file input
+    return;
+  }
+
+  const filepath = `/Expenses/${this.empinfo.employeeId}`;
+  // Upload the file
+  const fileUpload$ = this.http.uploadFileWithQuery(
+    'FileSystem/uploadfiletodirectory',
+    filepath,
+    file
+  );
+
+  fileUpload$.subscribe({
+    next: (data: any) => {
+      const uploadedFilePath = data.path;
+      control?.setValue(uploadedFilePath);
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+    },
+    error: (error: any) => {
+      console.error('Error uploading file:', error);
+      this.conformationPopup.openErrorModal('Error uploading file.');
+      control?.reset(); // Reset the control if upload fails
+      control?.setErrors({ required: true });
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+    }
+  });
+}
 
   onchangeexpnes(event: any, index: number) {
     const selectedId = event.value;
@@ -357,7 +364,7 @@ fileuploadhide :any;
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
               this.getexpensesheaderbyid(this.empinfo.employeeId);
             }
           },
@@ -373,7 +380,7 @@ fileuploadhide :any;
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+              this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
               this.newExpenseForm.reset();
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
@@ -444,7 +451,7 @@ fileuploadhide :any;
               this.http.setnewcountDetails();
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');
+              this.conformationPopup.openSuccessModal(' Expenses request  saved as draft successfully!');
               // this.filterAllExpenses()
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
@@ -464,7 +471,7 @@ fileuploadhide :any;
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

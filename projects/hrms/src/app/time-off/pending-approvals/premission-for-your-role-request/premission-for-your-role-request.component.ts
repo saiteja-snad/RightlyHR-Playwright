@@ -342,7 +342,7 @@ export class PremissionForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -383,7 +383,7 @@ export class PremissionForYourRoleRequestComponent
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message =  'Processing Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -397,7 +397,7 @@ export class PremissionForYourRoleRequestComponent
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message =  'Processing Request...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -412,7 +412,7 @@ export class PremissionForYourRoleRequestComponent
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'Premission Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -472,7 +472,7 @@ export class PremissionForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Regularization Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

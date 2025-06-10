@@ -12,9 +12,10 @@ import { PersonalPersonalTabsComponent } from "../personalinfo-tabs/personal-per
 import { MyInfoPersonalTabsComponent } from "../myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component";
 import { MyinfoJobTabsComponent } from "../myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
 import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs/personal-job-tabs.component";
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-profile-info-details',
-  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PersonalPersonalTabsComponent,
+  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent,Skeleton, PersonalPersonalTabsComponent,
     MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
@@ -35,7 +36,7 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
   img: any;
   empdata = {} as any;
   profilePic: any;
-
+  isloading: boolean = false;
   constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,
     public rbac: RbacService, private router: Router) { }
 
@@ -70,25 +71,37 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getEmployeeId() {
+getEmployeeId() {
+    this.isloading = true;
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.isloading = false;
         this.empdata = data;
         if (this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
       },
-      error: reason => console.log(reason)
+      error: (reason)=>{ console.log(reason)
+        this.isloading = false;
+        
+      },
+      complete: () => {
+        this.isloading = false;
+      }
     });
   }
+
 
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
 
+ 
   getJobDetails() {
+    this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
+        this.isloading = false;
         let jobdetails = data;
         this.jobdata = jobdetails[0]
         this.jobRole = jobdetails[0]?.jobRole
@@ -106,6 +119,13 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
         else if (jobdetails[0]?.fName) {
           this.Reportingmanager = `${jobdetails[0]?.fName}  ${jobdetails[0]?.mName}`
         }
+      },
+      error: (reason: any) => {
+        this.isloading = false;
+      
+      },
+      complete: () => {
+        this.isloading = false;
       }
     })
   }

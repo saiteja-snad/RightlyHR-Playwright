@@ -8,9 +8,10 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
    selector: 'app-published-weekends',
-   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent],
+   imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
    templateUrl: './published-weekends.component.html',
    styleUrl: './published-weekends.component.scss'
 })
@@ -18,6 +19,7 @@ import { RbacService } from '../../../../services/rbac.service';
 export class PublishedWeekendsComponent {
    weekendsList: IWeekends[] = [];
    destroy$: Subject<boolean> = new Subject<boolean>();
+   loading = false;
 
    constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
@@ -26,10 +28,17 @@ export class PublishedWeekendsComponent {
    }
 
    getAllWeekend() {
+      this.loading = true;
       this.http.getData(`OrgWeekendHeader/getAll`).pipe(takeUntil(this.destroy$)).subscribe({
          next: (data: any) => {
+            this.loading = false;
             this.weekendsList = data.filter((item: any) => item.status === 'Published');
+         },
+         error: (error) => {
+            this.loading = false;
+            console.error('Error fetching weekends:', error);
          }
+
       })
    }
 

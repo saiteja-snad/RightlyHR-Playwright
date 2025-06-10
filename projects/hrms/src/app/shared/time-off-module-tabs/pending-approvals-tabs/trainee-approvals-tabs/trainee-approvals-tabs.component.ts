@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, signal } from '@angular/core';
+import { Component, computed, effect, Signal, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subject } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-trainee-approvals-tabs',
@@ -29,11 +30,11 @@ export class TraineeApprovalsTabsComponent {
   //   { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals' },
   // ];
 
-  constructor(public readonly router: Router, private http: HttpService) { 
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) { 
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().separation) {
+      if (this.signalService.traineeDetailsTriggerSignal()) {
         this.getAllTraineePendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, separation: false }));
+       this.signalService.traineeDetailsTriggerSignal.set(false);
       }
     });
   }

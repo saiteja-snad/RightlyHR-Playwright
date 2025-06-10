@@ -11,9 +11,10 @@ import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, PmsTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, PmsTabsComponent, Skeleton],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -26,6 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   profilePic: any;
   img: any;
   spinnerLoader = false;
+  isloading: boolean = false;
   @ViewChild('logoutpopup') logoutpopup: any;
 
   constructor(
@@ -37,7 +39,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private modalservie: NgbModal,
     private conformationPopup: OpenModalService,
     private accessNav: AccessNavigationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -55,6 +57,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/unauthorized']);
     }
+    this.handleAction();
+  }
+
+  handleAction() {
+    // Close dropdown manually via DOM
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    dropdownMenu?.classList.remove('show');
+    dropdownToggle?.classList.remove('show');
   }
 
   onSelectprofilePicDownload(employee: any) {
@@ -73,29 +84,44 @@ export class HeaderComponent implements OnInit, OnDestroy {
         });
     }
   }
-
   getEmployeeId() {
+    this.isloading = true;
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
       .getData(`Employeedata/${employeeId}`)
       .subscribe({
         next: (data: any) => {
+          this.isloading = false;
           this.empdata = data;
           this.imageUrl = this.empdata.profileUrl;
           this.onSelectprofilePicDownload(this.empdata);
         },
-        error: (reason) => console.log(reason),
+        error: (reason: any) => {
+          this.isloading = false
+        },
+        complete: () => {
+          this.isloading = false;
+        },
       });
   }
 
-  getJobDetails() {
+ getJobDetails() {
+    this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
       .getData(`JobDetails/Empname/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
+          this.isloading = false;
           let jobdetails = data;
           this.jobRole = jobdetails[0]?.jobRole;
+        },
+        error: (reason: any) => {
+          console.error(reason);
+          this.isloading = false;
+        },
+        complete: () => {
+          this.isloading = false;
         },
       });
   }
@@ -179,29 +205,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
-  }
-
-  showPmsTabs(): boolean {
-    const includeRoutes = [
-      '/pms/review-cycle',
-      '/pms/review-cycle/create',
-      '/pms/review-cycle/update',
-      '/pms/review-cycle/view',
-      '/pms/apprisal',
-      '/pms/myPerformance/pending-review',
-      '/pms/myPerformance/completed-review',
-      '/pms/team-performance/pending-review',
-      '/pms/team-performance/completed-review',
-    ];
-    return includeRoutes.includes(this.router.url);
-  }
-
-  showPmsConfigurationTabs(): boolean {
-    const includeRoutes = [
-      '/pmsconfiguration/assessor',
-      '/pmsconfiguration/increment',
-    ];
-    return includeRoutes.includes(this.router.url);
   }
 
   navigateToAccessedRoute(route: string) {

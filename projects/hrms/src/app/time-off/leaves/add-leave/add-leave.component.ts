@@ -25,8 +25,8 @@ import { LeavesApprovaltabsComponent } from '../../../shared/time-off-module-tab
   templateUrl: './add-leave.component.html',
   styleUrl: './add-leave.component.scss'
 })
-export class AddLeaveComponent implements OnInit,OnDestroy{
-    subscription!: Subscription;
+export class AddLeaveComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
   leaveFormData = {} as Ileavesdatas;
   employeeiddetails = [] as any;
@@ -81,7 +81,7 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
   model: any;
   disableSubmitButton: boolean = false;
   @ViewChild('leaveForm') work!: NgForm;
- dataType:any;
+  dataType: any;
   constructor(
     private http: HttpService,
     private conformationPopup: OpenModalService,
@@ -89,10 +89,10 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
     private authService: AuthService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public router:Router,
-    private signalService:SignalsService
-  ) { 
-     effect(() => {
+    public router: Router,
+    private signalService: SignalsService
+  ) {
+    effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
         this.getCategoryDetails();
@@ -104,13 +104,13 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
       }
     });
   }
- @Input() updateData: any;
- minDate:any;
+  @Input() updateData: any;
+  minDate: any;
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     console.log(this.updateData);
-    this.minDate=moment(this.updateData.date).format('YYYY-MM-DD');
+    this.minDate = moment(this.updateData.date).format('YYYY-MM-DD');
     console.log(this.minDate)
     this.getCategoryDetails();
     this.initializeForm();
@@ -153,8 +153,8 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
       startdate: [{ value: this.updateData.date, disabled: true }],
       enddate: [{ value: this.updateData.date, disabled: true }],
       halfdayavailing: ['', Validators.required],
-      availing: [{ value: '',  }],
-      fulldayavailing: [{ value: '2',}],
+      availing: [{ value: '', }],
+      fulldayavailing: [{ value: '2', }],
       reason: ['', [Validators.required]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -162,10 +162,10 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
   }
 
   updateHalfDayOptions() {
-  
+
     const start = this.leaveForm?.get('startdate')?.value;
     const end = this.leaveForm?.get('enddate')?.value;
-      console.log(start)
+    console.log(start)
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
       this.leaveForm.get('halfdayavailing')?.enable();
@@ -793,8 +793,8 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
       else {
         diff -= 0;
       }
-      if (this.orgholidays?.orgHolidaysItems?.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') && 
-         (holiday.isOptional === false || holiday.isOptional === null))) {
+      if (this.orgholidays?.orgHolidaysItems?.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') &&
+        (holiday.isOptional === false || holiday.isOptional === null))) {
         this.isNonOptionalHolidaySelected = true;
       } else {
         this.isNonOptionalHolidaySelected = false;
@@ -858,7 +858,7 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
   }
 
   chooseDayType(daytype: any) {
-    this.dataType=daytype
+    this.dataType = daytype
     this.isDayTypeselected = true;
     if (daytype === 'half') {
       this.disableSubmitButton = false;
@@ -1021,11 +1021,11 @@ export class AddLeaveComponent implements OnInit,OnDestroy{
       this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
         next: (data: any) => {
           if (data) {
-            this.conformationPopup.openSuccessModal('Leave Requested successfully');
+            this.conformationPopup.openSuccessModal('Leave request submitted successfully!');
             setTimeout(() => {
               this.modalService.dismissAll();
               this.leaveForm.reset();
-             window.location.reload();
+              window.location.reload();
             }, 2000);
             this.isLoading = false;
           }

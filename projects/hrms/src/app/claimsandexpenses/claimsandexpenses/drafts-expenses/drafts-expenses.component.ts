@@ -54,6 +54,7 @@ export class DraftsExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   searchTerm: any = '';
+  loader=false
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   expense = new BehaviorSubject<IExpenses[]>([]);
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
@@ -74,7 +75,7 @@ export class DraftsExpensesComponent {
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
-      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
+      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
       approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
@@ -84,7 +85,7 @@ export class DraftsExpensesComponent {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       expenseId: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
@@ -312,7 +313,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
           this.getexpensesheaderbyemployeeid();
         },
         error: (error: any) => {
@@ -329,7 +330,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll()
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
@@ -388,7 +389,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+          this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
           this.getexpensesheaderbyemployeeid();
           // Call the get function after posting
         },
@@ -407,7 +408,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.http.setnewcountDetails();
           this.modalService.dismissAll()
-          this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+          this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
@@ -460,12 +461,15 @@ fileuploadhide :any;
   }
 
   getexpensesheaderbyemployeeid(): void {
+    this.loader=true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Draft&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
+          this.loader=false
           this.expenesEmplyeedata.next(data)
-        }, error(err) {
+        }, error:(err)=> {
+          this.loader=false
           console.log("expensesheadererror", err)
         },
       });
@@ -504,7 +508,7 @@ fileuploadhide :any;
 
   patchExpenseItem(item: any): void {
     this.expenseItems.push(this.fb.group({
-      item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       expenseId: [item.expenseId, Validators.required],
       item_Description: [item.item_Description],
       expense_Date: [this.datepipe.transform(item.expense_Date, 'yyyy-MM-dd'), Validators.required],

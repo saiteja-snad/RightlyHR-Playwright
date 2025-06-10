@@ -81,10 +81,10 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   selectedLeavesItems: AttendanceRequest[] = [];
   multiSelect = false;
   requestBody = {} as any;
-  requestSummary!:any;
+  requestSummary!: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
 
   constructor(
@@ -94,8 +94,8 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalService: SignalsService,
-    public formsValidation:FormValidationsService
-  ) {}
+    public formsValidation: FormValidationsService
+  ) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
@@ -105,7 +105,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -129,7 +129,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -178,7 +178,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -239,17 +239,18 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.wfhsselects = response.data;
-          }else{
+          } else {
             this.leaves.next([]);
-            this.wfhsselects  = [];
+            this.wfhsselects = [];
           }
         },
         error: (reason) => {
           this.dataload = false;
-          console.error(reason)},
+          console.error(reason)
+        },
         complete: () => {
           this.dataload = false;
         },
@@ -257,7 +258,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   }
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves =  this.wfhsselects ?? [];
+    let leaves = this.wfhsselects ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
@@ -280,7 +281,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     return this.leaves.getValue();
   }
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
 
@@ -339,7 +340,8 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
+
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -369,7 +371,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     this.spinnerLoader = true;
     if (rejectForm.valid) {
-     const formData = rejectForm.value;
+      const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
       if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
@@ -408,11 +410,11 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
-           
+
           },
           error: (reason: any) => {
             this.rejectForm.reset();
@@ -423,7 +425,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           complete: () => {
             this.spinnerLoader = false;
             this.searchValue = null;
-             this.selectedLeavesItems = [];
+            this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.selectedLeaveData = {} as AttendanceRequest;
             this.signalService.wfhForYouTriggerSignal.set(true);
@@ -448,7 +450,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message = 'Processing Selected WFH Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -462,7 +464,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message = 'Processing Selected WFH Requests...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -477,11 +479,11 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-             this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
-         
+
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -497,6 +499,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         },
       });
   }
+  
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

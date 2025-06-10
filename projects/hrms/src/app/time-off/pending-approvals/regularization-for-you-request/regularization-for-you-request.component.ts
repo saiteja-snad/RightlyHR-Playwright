@@ -366,7 +366,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -437,7 +437,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.sharedModalService.openSuccessModal('Request Processed Successfully');
+            this.sharedModalService.openSuccessModal('Regularization Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -451,7 +451,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.sharedModalService.openErrorModal(reason.error.message)
           }
           else {
-            this.sharedModalService.openErrorModal('Request Processed Failed');
+            this.sharedModalService.openErrorModal('Regularization Request Processed Failed');
           }
         },
         complete: () => {
@@ -505,7 +505,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -520,7 +520,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
               this.sharedModalService.openErrorModal(reason.error.message)
             }
             else {
-              this.sharedModalService.openErrorModal('Request Rejected Failed');
+              this.sharedModalService.openErrorModal('Regularization Request Rejected Failed');
             }
           },
           complete: () => {

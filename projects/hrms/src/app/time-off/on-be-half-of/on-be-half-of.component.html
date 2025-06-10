@@ -33,7 +33,7 @@
 
     @if(categoryDetails && categoryDetails.length > 0){
     <div class="graph-grid w-100 mb-3">
-        <div class="total-leave-balance-graph-content">
+        <!-- <div class="total-leave-balance-graph-content">
             <div class="chart-content">
                 <p-chart type="doughnut" [data]="leaveCategoryData" [options]="leaveCategoryOptions"
                     class="doughnut-chart" />
@@ -52,12 +52,13 @@
                 </li>
                 }
             </ul>
-        </div>
-        <div class="cards-grid-container">
+        </div> -->
+         <div class="cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">
                 <div>
-                    <p class="leave-content-text m-0 mb-2">{{ item.category.name }}</p>
+                    <p class="leave-content-text text-wrap m-0 mb-2" [style.color]="item.category.categoryColor">{{
+                        item.category.name }}</p>
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
                             <p class="m-0">Booked</p>
@@ -76,12 +77,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
+                <div class="progress-content">
+                    <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
                  getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
-                    <span class="progress-value">
-                        <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
-                        <span class="total-leaves-text">/{{item.allowedDays}}</span>
-                    </span>
+                        <span class="progress-value">
+                            <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                            <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                        </span>
+                    </div>
                 </div>
             </div>
             }
@@ -270,8 +273,11 @@
                         <p class="error-msg" *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
                             The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
                     </ng-template>
-                    <p class="custom-label">Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                    
                 </div>
+                @if(selectedleave && selectedleave.category){
+                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                }
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">
                         {{'Cancel'| translate}}</button>

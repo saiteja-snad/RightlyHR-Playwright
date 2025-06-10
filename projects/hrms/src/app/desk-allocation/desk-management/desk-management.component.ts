@@ -70,11 +70,11 @@ export class DeskManagementComponent {
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       //{ label: 'All', route: '/desk/management/all-desks', icon: '/desk-icon/all-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
-      { label: 'Available', route: '/desk/management/available-desks', icon: '/desk-icon/Available-icon.png', backgroundcolour: '#25BBFF', permission: { feature: 'Desk Allocation - Available', action: 'view' }, count$: this.http.deskAvailableCountSubject },
-      { label: 'Allocated', route: '/desk/management/allocated-desk', icon: '/desk-icon/Allocated-icon.png', backgroundcolour: '#FCD643', permission: { feature: 'Desk Allocation - Allocated', action: 'view' }, count$: this.http.deskAllocatedCountSubject },
-      { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', icon: '/desk-icon/Under-Maintannace-icon.png', backgroundcolour: '#FF338A', permission: { feature: 'Desk Allocation - Under Maintenance', action: 'view' }, count$: this.http.deskUndermaindanaenceCountSubject },
-      { label: 'Inactive', route: '/desk/management/inactive-desk', icon: '/desk-icon/workspace-icon.png', backgroundcolour: '#338DF8', permission: { feature: 'Desk Allocation - Inactive', action: 'view' }, count$: this.http.deskinactiveCountSubject },
-      { label: 'Waiting For Approval', route: '/desk/management/waiting-for-approval-desks', icon: '/time-off-icon/waiting-for-approval-icon.png', backgroundcolour: '#AEFF69', permission: { feature: 'Desk Allocation - Waiting For Approval', action: 'view' }, count$: this.http.deskWiatingforapprovalCountsubject }
+      { label: 'Available', route: '/desk/management/available-desks', icon: '/desk-icon/Available-icon.png', backgroundcolour: '#40c965', permission: { feature: 'Desk Allocation - Available', action: 'view' }, count$: this.http.deskAvailableCountSubject },
+      { label: 'Allocated', route: '/desk/management/allocated-desk', icon: '/desk-icon/Allocated-icon.png', backgroundcolour: '#4183e6', permission: { feature: 'Desk Allocation - Allocated', action: 'view' }, count$: this.http.deskAllocatedCountSubject },
+      { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', icon: '/desk-icon/Under-Maintannace-icon.png', backgroundcolour: '#fcb734', permission: { feature: 'Desk Allocation - Under Maintenance', action: 'view' }, count$: this.http.deskUndermaindanaenceCountSubject },
+      { label: 'Inactive', route: '/desk/management/inactive-desk', icon: '/desk-icon/workspace-icon.png', backgroundcolour: '#eb443c', permission: { feature: 'Desk Allocation - Inactive', action: 'view' }, count$: this.http.deskinactiveCountSubject },
+      { label: 'Waiting For Approval', route: '/desk/management/waiting-for-approval-desks', icon: '/time-off-icon/waiting-for-approval-icon.png', backgroundcolour: '#FF4400', permission: { feature: 'Desk Allocation - Waiting For Approval', action: 'view' }, count$: this.http.deskWiatingforapprovalCountsubject }
     ];
     // Filter navTabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab =>
@@ -370,7 +370,7 @@ export class DeskManagementComponent {
             this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
             this.getAllDesks(this.page, this.pageSize, null, null, 'All');
             this.getcount(null, null);
-            this.navigateToAsset();
+           
             this.deskForm.reset();
             this.isToggled = false;
             this.http.setnewdeskDetails();
@@ -469,9 +469,6 @@ getcount(locationId: string | null, subLocationId: string | null) {
 
   }
 
-  navigateToAsset() {
-    this.router.navigate(['/desk/management/all-desks']);
-  }
 
   //close dailog open
   openConfirmationModal(content: any) {

@@ -134,9 +134,9 @@
             </ng-template>
         </p-table>
         }@else{
-        <div class="loader-placeholder-content">
+       
             <app-data-loader-content />
-        </div>
+      
         }
     </div>
 </div>
@@ -145,7 +145,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to proceed with the approval?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
             <div class="custom-main-popup-content">
@@ -169,7 +169,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Approving Selected Permission Requests...'}}</span>
                     </div>
                     }@else {
                     <span>{{'Approve'| translate }}</span>
@@ -184,7 +184,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+            <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">
@@ -208,7 +208,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Rejecting Selected Permission Requests...'}}</span>
                     </div>
                     }@else {
                     <span>{{'Reject' | translate}}</span>

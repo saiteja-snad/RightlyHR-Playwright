@@ -9,11 +9,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { RbacService } from '../../../../services/rbac.service';
 import { IPolicy } from './policies.model';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 
 @Component({
   selector: 'app-pending-policies',
-  imports: [CommonModule, NoDataFoundComponent, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, NoDataFoundComponent, TranslateModule, NgbPopoverModule, DataLoaderContentComponent],
   templateUrl: './pending-policies.component.html',
   styleUrl: './pending-policies.component.scss'
 })
@@ -21,6 +22,7 @@ export class PendingPoliciesComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription
   allPolicies: IPolicy[] = [];
+  loading = false;
 
   constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService) { }
   
@@ -38,14 +40,16 @@ export class PendingPoliciesComponent implements OnInit, OnDestroy {
   }
 
   getAllPolicies() {
+  this.loading = true;
     this.subscription = this.http.getData('orgPolicies').subscribe({
       next: (data: any) => {
-        console.log(data);
+        this.loading = false;
         this.allPolicies = data.filter(
           (status: { status: string; }) => status.status === 'Pending for submission'
         );
         console.log(this.allPolicies);
       }, error: (err: any) => {
+        this.loading = false;
         console.error(err);
       }
     })

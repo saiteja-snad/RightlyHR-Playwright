@@ -3,7 +3,8 @@
         <!--header-->
 
         <div class="heading-content">
-            <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name" (click)="navigation()">Reports<span class="ms-1">
+                <i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">Job Location Wise Data </div>
         </div>
         <div>
@@ -30,8 +31,7 @@
                                 filterBy="jobLocationName" [filter]="true" [showClear]="false"
                                 formControlName="location" placeholder="Please select location"
                                 class="form-select custom-select">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
-                                    }}</ng-template>
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                             </p-select>
                         </div>
@@ -39,14 +39,12 @@
 
                     <!-- Sub Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label for="subLocation" class="custom-label text-nowrap m-0">{{ "Sub Location" | translate
-                            }}</label>
+                        <label for="subLocation" class="custom-label text-nowrap m-0">{{ "Sub Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
                                 formControlName="subLocation" placeholder="Please select sub location">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                                    }}</ng-template>
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
                         </div>
@@ -64,8 +62,8 @@
                             }
                         </button>
                         }
-                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')
-                         && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
+                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && 
+                        rbac.allowedToAccess('Job Location Wise Data - Export.view')){
                         <button type="button" class="custom-btn btn-primary"
                             [disabled]="locationReportList.length === 0 || disableBtn"
                             (click)="onClickJobLocationExport() ">
@@ -83,112 +81,97 @@
         </div>
     </div>
 
-
-
-            <ng-container *ngIf="dataload; else maincontent">
-                <ng-template #loadingSpinner>
-                    <div class="custom-compoent-data-loader">
-                        <app-data-loader-content />
-                    </div>
-                </ng-template>
-                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-            </ng-container>
-            <ng-template #maincontent>
-                <div class="custom-table-content">
-                    <table class="w-100" id="jobLocation">
-                        <thead>
-                            <tr>
-                            <th>Employee ID</th>
-                            <th>Salutation</th>
-                            <th>First Name</th>
-                            <th>Middle Name</th>
-                            <th>Last Name</th>
-                            <th>Status</th>
-                            <th>Date Of Joining</th>
-                            <th>Address Line 1(current)</th>
-                            <th>Address Line 2(current)</th>
-                            <th>City(current)</th>
-                            <th>State(current)</th>
-                            <th>Country(current)</th>
-                            <th>ZipCode(current)</th>
-                            <th>Address Line 1(permanent)</th>
-                            <th>Address Line 2(permanent)</th>
-                            <th>City(permanent)</th>
-                            <th>State(permanent)</th>
-                            <th>Country(permanent)</th>
-                            <th>ZipCode(permanent)</th>
-                            <th>Work Number</th>
-                            <th>Mobile Number</th>
-                            <th>Work Email</th>
-                            <th>Job Effective Date</th>
-                            <th>Job Role</th>
-                            <th>Grade Name</th>
-                            <th>Department</th>
-                            <th>Team</th>
-                            <th>Team Manager</th>
-                            <th>Reporting To</th>
-                            <th>Location</th>
-                            <th>Sub Location</th>
-                            <th>Shift</th>
-                            <th>Shift Code</th>
-                            <th>Job Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if(locationReportList.length > 0){
-                            <ng-container>
-                                @for(emp of locationReportList; track emp){
-                                <tr>
-                                    <td>{{ emp.fusionEmpId ? emp.fusionEmpId : '-' }}</td>
-                                    <td>{{ emp.title ? emp.title : '-' }}</td>
-                                    <td>{{ emp.firstName ? emp.firstName : '-' }}</td>
-                                    <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
-                                    <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
-                                    <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
-                                    <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
-                                    <td>{{ emp.currentAddressLine1 ? emp.currentAddressLine1 : '-' }}</td>
-                                    <td>{{ emp.currentAddressLine2 ? emp.currentAddressLine2 : '-' }}</td>
-                                    <td>{{ emp.currentCity ? emp.currentCity : '-' }}</td>
-                                    <td>{{ emp.currentState ? emp.currentState : '-' }}</td>
-                                    <td>{{ emp.currentCountry ? emp.currentCountry : '-' }}</td>
-                                    <td>{{ emp.currentZipCode ? emp.currentZipCode : '-' }}</td>
-                                    <td>{{ emp.permanentAddressLine1 ? emp.permanentAddressLine1 : '-' }}</td>
-                                    <td>{{ emp.permanentAddressLine2 ? emp.permanentAddressLine2 : '-' }}</td>
-                                    <td>{{ emp.permanentCity ? emp.permanentCity : '-' }}</td>
-                                    <td>{{ emp.permanentState ? emp.permanentState : '-' }}</td>
-                                    <td>{{ emp.permanentCountry ? emp.permanentCountry : '-' }}</td>
-                                    <td>{{ emp.permanentZipCode ? emp.permanentZipCode : '-' }}</td>
-                                    <td> {{
-                                        extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -')
-                                        }}</td>
-                                    <td> {{
-                                        extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -')
-                                        }}</td>
-                                    <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
-                                    <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | date:'MM-dd-yyyy') : '-' }}
-                                    </td>
-                                    <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
-                                    <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
-                                    <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
-                                    <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
-                                    <td>{{ emp.teamManager? emp.teamManager: '-'}}</td>
-                                    <td>{{ emp.reportingManager ? emp.reportingManager : '-' }}</td>
-                                    <td>{{ emp.jobLocationName ? emp.jobLocationName : '-' }}</td>
-                                    <td>{{ emp.jobSubLocationName ? emp.jobSubLocationName : '-' }}</td>
-                                    <td>{{ emp.shiftName ? emp.shiftName : '-' }}</td>
-                                    <td>{{ emp.shiftCode ? emp.shiftCode : '-' }}</td>
-                                    <td>{{ emp.jobType ? emp.jobType : '-' }}</td>
-                                </tr>
-                                }
-                            </ng-container>
-                            }@else {
-                            <tr>
-                                <app-no-data-found></app-no-data-found>
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </ng-template>
-        </div>
-    
+    <div class="custom-table-content">
+        @if(!dataload){
+        <table class="w-100" id="jobLocation">
+            <thead>
+                <th>Employee ID</th>
+                <th>Salutation</th>
+                <th>First Name</th>
+                <th>Middle Name</th>
+                <th>Last Name</th>
+                <th>Status</th>
+                <th>Date Of Joining</th>
+                <th>Address Line 1(current)</th>
+                <th>Address Line 2(current)</th>
+                <th>City(current)</th>
+                <th>State(current)</th>
+                <th>Country(current)</th>
+                <th>ZipCode(current)</th>
+                <th>Address Line 1(permanent)</th>
+                <th>Address Line 2(permanent)</th>
+                <th>City(permanent)</th>
+                <th>State(permanent)</th>
+                <th>Country(permanent)</th>
+                <th>ZipCode(permanent)</th>
+                <th>Work Number</th>
+                <th>Mobile Number</th>
+                <th>Work Email</th>
+                <th>Job Effective Date</th>
+                <th>Job Role</th>
+                <th>Grade Name</th>
+                <th>Department</th>
+                <th>Team</th>
+                <th>Team Manager</th>
+                <th>Reporting To</th>
+                <th>Location</th>
+                <th>Sub Location</th>
+                <th>Shift</th>
+                <th>Shift Code</th>
+                <th>Job Type</th>
+            </thead>
+            <tbody>
+                @if(locationReportList.length > 0){
+                <ng-container>
+                    @for(emp of locationReportList; track emp){
+                    <tr>
+                        <td>{{ emp.fusionEmpId ? emp.fusionEmpId : '-' }}</td>
+                        <td>{{ emp.title ? emp.title : '-' }}</td>
+                        <td>{{ emp.firstName ? emp.firstName : '-' }}</td>
+                        <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
+                        <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
+                        <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
+                        <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.currentAddressLine1 ? emp.currentAddressLine1 : '-' }}</td>
+                        <td>{{ emp.currentAddressLine2 ? emp.currentAddressLine2 : '-' }}</td>
+                        <td>{{ emp.currentCity ? emp.currentCity : '-' }}</td>
+                        <td>{{ emp.currentState ? emp.currentState : '-' }}</td>
+                        <td>{{ emp.currentCountry ? emp.currentCountry : '-' }}</td>
+                        <td>{{ emp.currentZipCode ? emp.currentZipCode : '-' }}</td>
+                        <td>{{ emp.permanentAddressLine1 ? emp.permanentAddressLine1 : '-' }}</td>
+                        <td>{{ emp.permanentAddressLine2 ? emp.permanentAddressLine2 : '-' }}</td>
+                        <td>{{ emp.permanentCity ? emp.permanentCity : '-' }}</td>
+                        <td>{{ emp.permanentState ? emp.permanentState : '-' }}</td>
+                        <td>{{ emp.permanentCountry ? emp.permanentCountry : '-' }}</td>
+                        <td>{{ emp.permanentZipCode ? emp.permanentZipCode : '-' }}</td>
+                        <td>{{ extractPhoneCode(emp.workPhoneCountryCode) + (emp.workPhone ? ' ' + emp.workPhone : ' -') }}</td>
+                        <td>{{ extractPhoneCode(emp.mobilePhoneCountryCode) + (emp.contactnumber ? ' ' + emp.contactnumber : ' -') }}</td>
+                        <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
+                        <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | date:'MM-dd-yyyy') : '-' }}</td>
+                        <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
+                        <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
+                        <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
+                        <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
+                        <td>{{ emp.teamManager? emp.teamManager: '-'}}</td>
+                        <td>{{ emp.reportingManager ? emp.reportingManager : '-' }}</td>
+                        <td>{{ emp.jobLocationName ? emp.jobLocationName : '-' }}</td>
+                        <td>{{ emp.jobSubLocationName ? emp.jobSubLocationName : '-' }}</td>
+                        <td>{{ emp.shiftName ? emp.shiftName : '-' }}</td>
+                        <td>{{ emp.shiftCode ? emp.shiftCode : '-' }}</td>
+                        <td>{{ emp.jobType ? emp.jobType : '-' }}</td>
+                    </tr>
+                    }
+                </ng-container>
+                }@else {
+                <tr>
+                    <app-no-data-found />
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>

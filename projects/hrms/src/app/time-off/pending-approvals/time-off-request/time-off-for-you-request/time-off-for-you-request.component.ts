@@ -34,7 +34,7 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
     TableModule,
     DataLoaderContentComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -159,13 +159,13 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedProducts = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -189,7 +189,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -238,9 +238,9 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
-      this.multiSelect= false;
+      this.multiSelect = false;
       this.selectedProducts = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.updateTableSelectionState([]);
     }
   }
@@ -295,6 +295,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(checkbalancepopup, {
       centered: true,
       backdrop: 'static',
+      size: 'lg'
     });
     let employeeId = Value.entity.leaveempId;
     this.http
@@ -305,6 +306,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.leaveEntitlementsList = res.data.find(
             (ele: any) => ele.category.id === Value.entity.leaveCategoryId
           );
+          console.log(this.leaveEntitlementsList)
           // Check if isProbationAllowed is explicitly true or null
           const isProbationAllowed =
             this.leaveEntitlementsList?.category?.isProbationAllowed;
@@ -461,7 +463,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -475,7 +477,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Approval Failed');
+            this.conformationPopup.openErrorModal('Leave Request Approval Failed');
           }
           this.spinnerLoader = false;
         },
@@ -531,7 +533,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -545,7 +547,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Rejected Failed');
+            this.conformationPopup.openErrorModal('Leave Request Rejected Failed');
           }
           this.spinnerLoader = false;
           form.resetForm();
@@ -578,7 +580,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage
         }))
       }
-      message = 'Processing Requests, Please wait...';
+      message = 'Processing Selected Leave Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -591,7 +593,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Request, Please wait...';
+      message = 'Processing Selected Leave Requests...';
     }
     this.conformationPopup.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
@@ -600,7 +602,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -614,7 +616,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Processed Failed');
+            this.conformationPopup.openErrorModal('Leave Request Processed Failed');
           }
         },
         complete: () => {

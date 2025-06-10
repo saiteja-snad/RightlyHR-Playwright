@@ -1,13 +1,14 @@
 <div class="custom-main-component-container">
     <div class="custom-table-content">
+        @if(!loading) {
         <table class="w-100">
             <thead>
                 <th>Date</th>
                 <th>Leave Type</th>
                 <th>Duration</th>
                 <th>Availed</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th class="text-center text-nowrap">Start Date</th>
+                <th class="text-center text-nowrap">End Date</th>
                 <th class="text-center">Reason</th>
                 <th class="text-center">Rejected Reason</th>
                 <th>Status</th>
@@ -21,8 +22,8 @@
                     <td>{{item.duration}}</td>
                     <td>{{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' : 
                     item.durationType == 3 ? 'Second Half' : 'Unknown' }}</td>
-                    <td>{{item.startdate| dateformat}}</td>
-                    <td>{{item.enddate| dateformat}}</td>
+                    <td class="text-center text-nowrap">{{item.startdate| dateformat}}</td>
+                    <td class="text-center text-nowrap">{{item.enddate| dateformat}}</td>
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason1">
@@ -54,5 +55,9 @@
                 }
             </tbody>
         </table>
+    }
+    @else {
+        <app-data-loader-content></app-data-loader-content>
+    }
     </div>
 </div>

@@ -13,9 +13,10 @@ import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { SignalsService } from '../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-desk-for-your-role-request',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
   templateUrl: './desk-for-your-role-request.component.html',
   styleUrl: './desk-for-your-role-request.component.scss'
 })
@@ -28,6 +29,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   deskheaderpending: any[] = [];
   deskid: any;
   selectedexpenesid: any;
+  loading: boolean = false;
   subscription!: Subscription;
   rejectForm!: FormGroup;
   searchValue:any
@@ -49,11 +51,14 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   getexpensespendingforyou(): void {
+    this.loading = true;
     this.http.getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=ROLE`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.deskheaderpending = (data.data as any[]).filter(item => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         // this.filterPendingExpenses()
       }, error: (err) => {
+        this.loading = false;
         console.log("expensesheadererror")
       },
     });
@@ -79,7 +84,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Request Processed Successfully")
+        this.conformationPopup.openSuccessModal("Desk Allocation Request Processed Successfully")
          this.getexpensespendingforyou()
         this.signalService.deskForRoleTriggerSignal.set(true);
         this.updatedeskitem()
@@ -141,7 +146,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
         this.signalService.deskForRoleTriggerSignal.set(true);
-        this.conformationPopup.openSuccessModal("Request Rejected Successfully");
+        this.conformationPopup.openSuccessModal("Desk Rejected Successfully");
         this.rejectForm.reset();
       },
       error: (error: any) => {

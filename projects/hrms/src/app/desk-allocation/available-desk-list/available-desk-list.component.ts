@@ -108,8 +108,14 @@ export class AvailableDeskListComponent {
     this.getdatabyentriyundermaintance();
     this.getdatabyentriy();
     this.getdatabyentriyrealse();
+      this.http.deskDetailesadded$.subscribe(() => {
+      this.getFilteredData();
+    });
     // this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, null,null);
     this.getFilteredData();
+      this.http.deskDetailesadded$.subscribe(() => {
+      this.getFilteredData();
+    });
     this.assiginForm.get('shifts')?.valueChanges.subscribe((seletshift) => {
       this.shift = seletshift
       this.selectedEmployee = null
@@ -322,7 +328,7 @@ export class AvailableDeskListComponent {
       this.http.postdata('DeskAllocationItem', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted Successfully');
+          this.conformationPopup.openSuccessModal('Desk Allocation Request Approved Successfully');
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null,null,this.Status);
           this.assiginForm.reset();

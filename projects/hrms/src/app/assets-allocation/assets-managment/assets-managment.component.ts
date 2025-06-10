@@ -82,10 +82,10 @@ export class AssetsManagmentComponent {
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#25BBFF', permission: { feature: 'Asset Management - Available', action: 'view' } },
-      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#FCD643', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
-      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF338A', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
-      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#338DF8', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#40c965', permission: { feature: 'Asset Management - Available', action: 'view' } },
+      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#4183e6', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
+      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#fcb734', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
+      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#eb443c', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
     ];
     // Filter navTabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab =>
@@ -600,10 +600,11 @@ export class AssetsManagmentComponent {
   }
 
   cleardata() {
-    this.assetForm.reset();
     this.modalService.dismissAll();
     this.isToggledWarranty = false
     this.isToggledamc = false
+    this.assetForm.reset();
+    this.initialform();
   }
 
 initChart(): void {

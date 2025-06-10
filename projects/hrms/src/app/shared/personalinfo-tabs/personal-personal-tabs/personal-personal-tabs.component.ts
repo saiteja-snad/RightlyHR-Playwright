@@ -27,7 +27,7 @@ export class PersonalPersonalTabsComponent {
       { label: 'Identity Info', link: '/personalinfo/personal/identity-details', icon: '/my-info-icons/identity-verification-icon.png', permission: { feature: 'Employee Info Identity Details', action: 'view' } },
       { label: 'Bank Info', link: '/personalinfo/personal/bank-details', icon: '/my-info-icons/bank-details-icon.png', permission: { feature: 'Employee Info Bank Details', action: 'view' } },
       { label: 'Academics', link: '/personalinfo/personal/education-details', icon: '/my-info-icons/education-icon.png', permission: { feature: 'Employee Info Education Details', action: 'view' } },
-      { label: 'Visa Details', link: '/personalinfo/personal/visa-details', icon: '/my-info-icons/visa.png', permission: { feature: 'Employee Info Visa Details', action: 'view' } },
+      // { label: 'Visa Details', link: '/personalinfo/personal/visa-details', icon: '/my-info-icons/visa.png', permission: { feature: 'Employee Info Visa Details', action: 'view' } },
     ];
     this.filterTabsByRbac();
   }

@@ -10,13 +10,14 @@
     </div>
 
     <div class="custom-table-content">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
                     <th>Request Date</th>
                     <th>Training Start Date</th>
                     <th>Training End Date</th>
-                    <th>Training Extenstion Date</th>
+                    <th>Training Extension Date</th>
                     <th>Status</th>
                     <th>Training Feedback</th>
                     <th></th>
@@ -67,6 +68,10 @@
                 </ng-template>
             </tbody>
         </table>
+    }
+    @else {
+         <app-data-loader-content />
+    }
     </div>
 </div>
 

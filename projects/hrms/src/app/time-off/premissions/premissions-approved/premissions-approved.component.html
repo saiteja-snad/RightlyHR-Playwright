@@ -42,8 +42,10 @@
                         <td class="text-center">-</td>
                         }
                         <td>{{permissionRequest.type}}</td>
-                        <td>{{permissionRequest.status}}</td>
-                    </tr>
+                        <td> <span *ngIf="permissionRequest.status === 'Processed';else templateNamestatus">Approved</span>
+                            <ng-template #templateNamestatus>{{permissionRequest.status}}</ng-template>
+                        </td>
+                        </tr>
                 </ng-container>
 
                 <ng-template #noDataTemplate>

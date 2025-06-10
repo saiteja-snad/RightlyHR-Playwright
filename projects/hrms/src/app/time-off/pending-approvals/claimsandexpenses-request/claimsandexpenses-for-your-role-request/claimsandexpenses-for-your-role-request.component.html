@@ -7,6 +7,7 @@
   </div>
 
   <div class="custom-table-content">
+    @if(!loading){
     <table class="w-100">
       <thead>
         <th>Employee Name</th>
@@ -16,7 +17,8 @@
         <th>Status</th>
         <th class="text-center">View Expense </th>
         <th class="text-center">Approver Comments</th>
-        @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
+        @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') 
+        || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
         <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
           }  
       </thead>
@@ -54,7 +56,8 @@
                 </ng-template>
               </div>
             </td>
-            @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
+            @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') 
+            || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
             <td class="text-center">
               <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown">
@@ -95,6 +98,10 @@
         </ng-template>
       </tbody>
     </table>
+    }
+    @else {
+      <app-data-loader-content />
+    }
   </div>
 </div>
 

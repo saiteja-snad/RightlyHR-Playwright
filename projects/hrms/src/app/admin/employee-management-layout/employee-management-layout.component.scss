@@ -121,5 +121,6 @@
 }
 
 .custom-table-content {
-    height: calc(100dvh - 23.5rem);
+    height: calc(100dvh - 22.75rem);
+    min-height: 45vh;
 }

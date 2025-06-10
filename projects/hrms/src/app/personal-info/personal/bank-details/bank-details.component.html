@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Bank Details</span></div>
+        <div><span class="component-sub-header">Bank Info</span></div>
          @if(canAccess('create','bank') ){
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
@@ -84,10 +84,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Add New Bank Details</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();bankDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <p class="popup-heading mb-0">Add Bank Info</p>
             </div>
         </div>
         <div class="custom-main-popup-content ">
@@ -126,8 +123,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input" id="accountNo"
-                            formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{12,20}$">
+                        <input type="text" class="form-control custom-input" id="accountNo"
+                            formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{12,20}$" [maxlength]="18" [minlength]="8">
                             <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
                             <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">Account Number is
@@ -136,6 +133,14 @@
                             <div class="error-msg"
                                 *ngIf="bankDetailsForm.get('accountNo')?.errors?.['invalidbankNumber'] && bankDetailsForm.get('accountNo')?.touched">
                                 Account Number cannot be all zeroes
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['minlength']">
+                                Identity Number must be at least 8 digits
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['maxlength']">
+                                Identity Number cannot exceed 18 digits
                             </div>
                         </div>
                     </div>
@@ -202,11 +207,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div >
-                <p class="popup-heading mb-0">Update Bank Details</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();bankDetailsUpdateForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <p class="popup-heading mb-0">Update Bank Info</p>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -243,8 +244,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="number" class="form-control custom-input" id="accountNoupdate"
-                            formControlName="accountNoupdate" placeholder="Please enter account number">
+                        <input type="test" class="form-control custom-input" id="accountNoupdate"
+                            formControlName="accountNoupdate" placeholder="Please enter account number" [maxlength]="18" [minlength]="8">
                             <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
                             <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">
@@ -256,6 +257,14 @@
                             <div
                                 *ngIf="bankDetailsForm.get('accountNo')?.errors?.['invalidbankNumber'] && bankDetailsForm.get('accountNo')?.touched">
                                 Account Number cannot be all zeroes
+                            </div>
+                             <div class="error-msg"
+                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['minlength']">
+                                Identity Number must be at least 8 digits
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['maxlength']">
+                                Identity Number cannot exceed 18 digits
                             </div>
                         </div>
                     </div>
@@ -273,8 +282,7 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
-                            only)<span class="text-danger">*</span></label>
+                        <label for="attachment" class="form-label custom-label mb-2">Attachment (Upload the Image/PDF)<span class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input px-0" formControlName="attachmentupdate"
                             (change)="onBankProofSelected($event)">
 
@@ -285,7 +293,7 @@
                         <div class="custom-file-name my-2" *ngIf="displayblankdocument">{{ displayblankdocument.name || displayblankdocument }}</div>
                        
                         <div class="d-flex justify-content-between align-items-center mt-3">
-                            <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
+                            <p class="note-text"><span class="note">Note:</span> Only Pdf/Image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
                     </div>
@@ -322,7 +330,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text mb-4">Are you sure you want to delete the Bank details?</p>
+            <p class="confirmation-text mb-4">Are you sure you want to delete the Bank Info?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

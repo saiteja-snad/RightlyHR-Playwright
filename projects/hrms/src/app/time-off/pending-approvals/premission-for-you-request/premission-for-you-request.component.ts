@@ -17,7 +17,6 @@ import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
 import { Table, TableModule } from 'primeng/table';
-import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
 
@@ -330,7 +329,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -370,7 +369,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message =  'Processing Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -384,7 +383,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message =  'Processing Request...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -400,7 +399,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'Premission Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -464,7 +463,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
             }

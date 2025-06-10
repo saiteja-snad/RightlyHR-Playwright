@@ -1,130 +1,152 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
         <div class="pt-2">
-            <p class="popup-heading mb-0">Update Experience Details</p>
+            <p class="popup-heading mb-0">Update Employment History</p>
         </div>
         <div>
             <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
     </div>
-    <div class="custom-main-popup-content p-4">
-        <form autocomplete="off" [formGroup]="experienceForm" (ngSubmit)="updateExpDetails()">
+    <form autocomplete="off" [formGroup]="experienceForm" (ngSubmit)="updateExpDetails()">
+        <div class="custom-main-popup-content pt-3 px-4">
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" (change)="checkboxCondition($event)" id="checkDefault" formControlName="isPresent" />
+                        <input class="form-check-input" type="checkbox" (change)="checkboxCondition($event)"
+                            id="checkDefault" formControlName="isPresent" />
                         <label class="form-check-label custom-label" for="checkDefault">Currently Working</label>
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Company Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="companyName">
-                    <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched" class="error-msg">
+                    <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched"
+                        class="error-msg">
                         Company Name is required
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">Employment Type<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Employment Type<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="JobemploymenttypeDetails" optionLabel="jobType1" optionValue="jobType1"
-                            formControlName="employmentType" placeholder="Please select employment type" class="form-select custom-select">
+                            formControlName="employmentType" placeholder="Please select employment type"
+                            class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div *ngIf="experienceForm.get('employmentType')?.invalid && experienceForm.get('employmentType')?.touched" class="error-msg">
+                    <div *ngIf="experienceForm.get('employmentType')?.invalid && experienceForm.get('employmentType')?.touched"
+                        class="error-msg">
                         Employment Type is required
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">From Date<span class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" onkeydown="return false;" formControlName="fromDate" (change)="oncheckdates(experienceForm.get('fromDate')?.value)">
-                    <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched" class="error-msg">
+                    <input type="date" class="form-control custom-input" onkeydown="return false;"
+                        formControlName="fromDate" (change)="oncheckdates(experienceForm.get('fromDate')?.value)">
+                    <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched"
+                        class="error-msg">
                         From Date is required
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">To Date<span class="text-danger" *ngIf="!isDisabletoDate">*</span></label>
-                    <input type="date" class="form-control custom-input" onkeydown="return false;" formControlName="toDate" [min]="startDatevalidate" [disabled]="isDisabletoDate">
-                    <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched" class="error-msg">
+                    <label class="form-label custom-label mb-2">To Date<span class="text-danger"
+                            *ngIf="!isDisabletoDate">*</span></label>
+                    <input type="date" class="form-control custom-input" onkeydown="return false;"
+                        formControlName="toDate" [min]="startDatevalidate" [disabled]="isDisabletoDate">
+                    <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched"
+                        class="error-msg">
                         To Date is required
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobTitle">
-                    <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched" class="error-msg">
+                    <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched"
+                        class="error-msg">
                         Job Role is required
                     </div>
                 </div>
-        
+
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Roles & Responsibilities</label>
-                    <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter roles & responsibilities"></textarea>
-                    <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched" class="error-msg">
+                    <textarea class="form-control custom-input" formControlName="description"
+                        placeholder="Please enter roles & responsibilities"></textarea>
+                    <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched"
+                        class="error-msg">
                         Roles & Responsibilities is required
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <p class="popup-heading mb-0">Previous Employer Details</p>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Name</label>
-                    <input type="text" class="form-control custom-input" formControlName="previousContactName" placeholder="Please enter contact name">
-                    <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched" class="error-msg">
+                    <input type="text" class="form-control custom-input" formControlName="previousContactName"
+                        placeholder="Please enter contact name">
+                    <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched"
+                        class="error-msg">
                         Contact Name is required
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"  [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig" class="country-input"
-                         (onCountryChange)="onCountryChange($event)"></lib-country-list>
+                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                            [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
+                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list>
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                             placeholder="Please enter your mobile number" id="phonenumbers"
                             aria-describedby="phonenumbers"
                             [value]="experienceForm.get('previousContactNumber')?.value ? formatPhoneNumber(experienceForm.get('previousContactNumber')?.value) : ''"
-                            autocomplete="off" >
+                            autocomplete="off">
                     </div>
                     <div class="error-msg my-1"
                         *ngIf="experienceForm.get('previousContactNumber')?.invalid &&  (experienceForm.get('previousContactNumber')?.touched || experienceForm.get('previousContactNumber')?.dirty)">
-                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('required')">Mobile number is required.</div>
-                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('pattern')">Please enter a valid mobile number.</div>
+                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('required')">Mobile number is
+                            required.</div>
+                        <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('pattern')">Please enter a
+                            valid mobile number.</div>
                         <div *ngIf="experienceForm.get('previousContactNumber')?.hasError('invalidPhoneNumber')">
                             The phone number is not valid for the selected country.
                         </div>
                     </div>
                 </div>
-        
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Work Email</label>
-                    <input type="email" class="form-control custom-input" formControlName="previousContactEmail" placeholder="Please enter work email">
-                    <div *ngIf="experienceForm.get('previousContactEmail')?.invalid && experienceForm.get('previousContactEmail')?.touched" class="error-msg">
+                    <input type="email" class="form-control custom-input" formControlName="previousContactEmail"
+                        placeholder="Please enter work email">
+                    <div *ngIf="experienceForm.get('previousContactEmail')?.invalid && experienceForm.get('previousContactEmail')?.touched"
+                        class="error-msg">
                         Work Email is required
                     </div>
                 </div>
-                
+
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span class="text-danger">*</span></label>
                     <input type="file" class="form-control custom-input px-0" (change)="onChangeexperience($event);onChange($event)">
                     <div *ngIf="this.experienceData.attachment" class="file-name my-1">
-                        <span>File Name: {{getFileName(this.experienceData.attachment)}}</span>
+                        File Name: {{getFileName(this.experienceData.attachment)}}
                     </div>
                     <div class="error-msg" *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">Please choose a file</div>
-                    <div class="error-msg" *ngIf="showErrorforpdf">Only PDF and image files are allowed.</div>
+                    <div class="error-msg" *ngIf="showErrorforpdf">Only Pdf/Image files are allowed.</div>
                     <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB.</div>
                 </div>
             </div>
-            <div class="d-flex justify-content-end gap-3 pt-3">
-                <button type="button" class="custom-btn btn-secondary px-4" (click)="close()">Close</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="experienceForm.invalid||showErrorforpdf||showErrorforsize">Update</button>
-            </div>
-        </form>
-    </div>
+        </div>
+        
+        <div class="d-flex justify-content-end gap-3 px-4 py-3">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="close()">Close</button>
+            <button type="submit" class="custom-btn btn-primary px-5"
+                [disabled]="experienceForm.invalid||showErrorforpdf||showErrorforsize">Update</button>
+        </div>
+    </form>
 </div>

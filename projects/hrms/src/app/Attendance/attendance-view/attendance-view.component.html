@@ -198,7 +198,7 @@
                             (keydown)="false" placeholder="Select Date" />
                         <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
                             class="error-msg">
-                            Permission Date is required.
+                            Permission Date is required
                         </div>
                     </div>
 
@@ -209,7 +209,7 @@
                                 placeholder="Please select duration" class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid"
-                            class="error-msg">Duration is required.
+                            class="error-msg">Duration is required
                         </div>
                     </div>
 
@@ -222,7 +222,7 @@
                                 class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
-                            class="error-msg">Regularization Type is required.
+                            class="error-msg">Regularization Type is required
                         </div>
                     </div>
 
@@ -240,10 +240,10 @@
                         <div class="error-msg"
                             *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
-                                Reason is required.
+                                Reason is required
                             </div>
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['maxlength']">
-                                Reason cannot exceed 250 characters.
+                                Reason cannot exceed 250 characters
                             </div>
                         </div>
                     </div>
@@ -315,7 +315,7 @@
         
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
-                    <p-accordion-header>Permission(s)</p-accordion-header>
+                    <p-accordion-header>Permissions</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -344,7 +344,7 @@
         
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
-                    <p-accordion-header>Regularization(s)</p-accordion-header>
+                    <p-accordion-header>Regularizations</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -359,7 +359,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of regularization_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>

@@ -274,9 +274,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Approve reason<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for approval<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approval reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
                         pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
                         required></textarea>
@@ -285,7 +285,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Approve reason is required
+                        Reason for approval is required
                     </div>
                 </div>
             </div>

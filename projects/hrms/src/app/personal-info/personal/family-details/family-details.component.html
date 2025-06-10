@@ -133,7 +133,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary " (click)="modal.dismiss()">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="familyDetailsForm.invalid">Add</button>
                 </div>
             </form>
         </div>

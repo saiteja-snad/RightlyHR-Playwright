@@ -10,6 +10,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-update-policies',
@@ -19,8 +20,9 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     ReactiveFormsModule,
     TranslateModule,
     NgbPopoverModule,
-    ToggleSwitchModule
-  ],
+    ToggleSwitchModule,
+    InfoIconComponent
+],
   templateUrl: './update-policies.component.html',
   styleUrl: './update-policies.component.scss',
 })

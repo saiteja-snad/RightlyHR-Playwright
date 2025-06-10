@@ -33,9 +33,8 @@
                         <td>{{ item.status }}</td>
                         <td class="text-center">
                             <span *ngIf="item.feedbackComments;else feedbackComment">
-                                <div 
-                                    (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
-                                    <i class="bi bi-info-circle-fill "></i>
+                                <div (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
+                                    <app-info-icon />
                                 </div>
                             </span>
                             <ng-template #feedbackComment>-</ng-template>

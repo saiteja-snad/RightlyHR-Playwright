@@ -13,6 +13,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-permissions-cancellation',
@@ -25,8 +26,9 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    TranslateModule
-  ],
+    TranslateModule,
+    InfoIconComponent
+],
   templateUrl: './permissions-cancellation.component.html',
   styleUrl: './permissions-cancellation.component.scss',
 })

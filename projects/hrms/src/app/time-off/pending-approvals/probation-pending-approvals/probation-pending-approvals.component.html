@@ -30,7 +30,7 @@
                             <div *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
                                 <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
                                 <div (click)="handleData(item)" (click)="approverComments(item.entity?.prApproverComments)">
-                                    <i class="bi bi-info-circle-fill info-icon"></i>
+                                    <app-info-icon />
                                 </div>
                                 <!-- </div> -->
                             </div>
@@ -106,8 +106,7 @@
                             <td>
                                 <div>
                                     <span class="ms-2" *ngIf="comment?.comments;else popupcomments">
-                                        <i class="bi bi-info-circle-fill info-icon" triggers="mouseenter:mouseleave"
-                                            ngbPopover="{{comment?.comments}}"></i>
+                                        <app-info-icon triggers="mouseenter:mouseleave" ngbPopover="{{comment?.comments}}" />
                                     </span>
                                     <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>

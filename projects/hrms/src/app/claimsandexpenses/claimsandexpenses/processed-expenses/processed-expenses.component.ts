@@ -11,10 +11,11 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })

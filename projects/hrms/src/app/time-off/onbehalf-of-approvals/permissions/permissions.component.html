@@ -77,7 +77,7 @@
                     <td class="text-center">
                         <div *ngIf="leave?.entity?.regularizationApproverComments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave?.entity?.regularizationApproverComments,commentspopup)">
-                                <i class="bi bi-info-circle-fill cursor-pointer"></i>
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>

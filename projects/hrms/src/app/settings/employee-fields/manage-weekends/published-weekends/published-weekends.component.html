@@ -32,7 +32,7 @@
                         <div class="d-flex align-items-center gap-1">
                             <div>{{ weekend.orgWeekendItems.length }}</div>
                             <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null">
-                                <i class="bi bi-info-circle-fill cursor"></i>
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #popContent>
@@ -67,9 +67,7 @@
                 }
                 }@else {
                 <tr>
-                    <td colspan="8">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
+                    <app-no-data-found></app-no-data-found>
                 </tr>
                 }
             </tbody>

@@ -102,12 +102,12 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
           this.familyDetailsForm.reset();
           this.modalService.dismissAll();
           this.getfamilyDetailsByEmployeid();
-          this.conformationPopup.openSuccessModal('Family details added successfully');
+          this.conformationPopup.openSuccessModal('Family members added successfully');
 
         },
         error: (err: any) => {
           console.error('Error saving family details:', err);
-          this.conformationPopup.openErrorModal('Family details added failed');
+          this.conformationPopup.openErrorModal('Family members added failed');
 
         },
       });
@@ -215,7 +215,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           this.getfamilyDetailsByEmployeid();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Family details updated successfully')
+          this.conformationPopup.openSuccessModal('Family members updated successfully')
 
         },
         error: (err: any) => {
@@ -241,11 +241,11 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           this.modalService.dismissAll()
           this.getfamilyDetailsByEmployeid()
-          this.conformationPopup.openSuccessModal('Family details deleted successfully')
+          this.conformationPopup.openSuccessModal('Family members deleted successfully')
         },
         error: (err: any) => {
           console.log(err);
-          this.conformationPopup.openErrorModal('Family details deleted failed')
+          this.conformationPopup.openErrorModal('Family members deleted failed')
         },
       });
   }

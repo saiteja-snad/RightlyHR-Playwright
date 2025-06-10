@@ -339,7 +339,11 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
+              if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -406,7 +410,11 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
+              if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Request Rejected Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -473,7 +481,11 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.requestSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-            this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
+            if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
           }

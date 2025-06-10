@@ -441,7 +441,11 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
+              if (this.selectedProducts.length > 1) {
+               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -512,7 +516,11 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Regularization Request Processed Successfully');
+            if (this.selectedProducts.length > 1) {
+               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Processed Successfully');
+              } else {
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Processed Successfully');
+              }
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -580,7 +588,11 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
+              if (this.selectedProducts.length > 1) {
+               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
+              } else {
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Rejected Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
             }

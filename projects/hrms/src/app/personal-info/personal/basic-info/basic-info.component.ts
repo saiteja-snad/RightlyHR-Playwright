@@ -54,16 +54,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public permission: AccessForEmployeeinfoService, private router: Router,) { }
 
   ngOnInit(): void {
-
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.getGender();
     this.getMaritaldetails();
     this.getTitle();
     this.basicInfoForm.disable();
-  
-
-
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
       console.log(data)
       this.empyployeedata.dob = null
@@ -213,7 +209,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const updatePayload = {
       ...this.empyployeedata,
       employeeId: this.empinfo.employeeId,
-      fusionEmpId: formValue.fusionEmpId,
+      fusionEmpId: formValue.fusionEmpId || this.empyployeedata.fusionEmpId,
       title: formValue.salutation.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,

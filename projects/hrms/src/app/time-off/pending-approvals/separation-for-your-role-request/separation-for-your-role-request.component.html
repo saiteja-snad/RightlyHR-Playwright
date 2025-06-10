@@ -212,7 +212,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
-                        pattern="^[^\s].*" required></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -250,7 +250,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        pattern="^[^\s].*"></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250
                     </div>
@@ -282,7 +282,7 @@
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"
                         required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250
@@ -333,7 +333,7 @@
                         {{'Comments' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250"
-                        [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
+                        [(ngModel)]="selectedSpRequestData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
@@ -478,7 +478,7 @@
                         translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        pattern="^[^\s].*" #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments"
+                        (keydown)="formsValidation.restrictInitialSpace($event)" #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments"
                         rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
@@ -517,7 +517,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        pattern="^[^\s].*"></textarea>
+                       (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -547,7 +547,7 @@
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"
                         required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>

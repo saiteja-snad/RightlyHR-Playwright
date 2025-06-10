@@ -141,7 +141,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
-            (click)="visaForm.reset();modal.dismiss()">Close</button>
+            (click)="visaForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="visaForm.invalid || spinnerLoader ">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -221,7 +221,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
-            (click)="visaupdateForm.reset();modal.dismiss()">Close</button>
+            (click)="visaupdateForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="visaupdateForm.invalid || spinnerLoader ">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

@@ -66,7 +66,7 @@
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <i class="bi bi-info-circle-fill" ></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{leave?.entity?.notes}} </p>
@@ -77,7 +77,7 @@
                         <div *ngIf="leave?.entity?.regularizationApproverComments[0]?.comments;else permissionComments">
                             <a type="button"
                                 (click)="comments(leave?.entity?.regularizationApproverComments,commentspopup)">
-                                 <i class="bi bi-info-circle-fill" ></i>
+                                 <app-info-icon />
                             </a>
                         </div>
                         <ng-template #permissionComments>-</ng-template>

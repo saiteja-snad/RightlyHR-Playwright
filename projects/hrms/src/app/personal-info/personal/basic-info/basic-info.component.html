@@ -9,14 +9,16 @@
 
       @if(canAccessfield('update','basicinfo')){
       <div>
-        <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+        <a (click)="showButtons()">
+          <img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon">
+        </a>
       </div>
       }
       }
       @if(buttons){
       <div class="d-flex justify-content-end gap-2">
         <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid"
+        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid ||salutationValidationcheck"
           (click)="updateBasicInfo()">Save</button>
       </div>
       }

@@ -3,13 +3,12 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { ISeparation, ISeparationRequest } from '../separation-for-you-request/separation-for-you-request';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Ipersonal } from '../../../Interfaces/members-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -20,10 +19,11 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-recall-for-your-role-request',
   imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, FormsModule, ReactiveFormsModule,
-    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, PendingapprovalsseparationPipe,DataLoaderContentComponent],
+    PaginatorModule, DropdownModule, NoDataFoundComponent, PendingapprovalsseparationPipe, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './recall-for-your-role-request.component.html',
   styleUrl: './recall-for-your-role-request.component.scss',
 })

@@ -18,7 +18,7 @@
         <th class="text-center">View Expense </th>
         <th class="text-center">Approver Comments</th>
         @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-        <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+        <th class="text-center">{{"Action" | translate}}</th>
           }  
       </thead>
       <tbody>
@@ -216,7 +216,7 @@
               <th>Expense Amount</th>
               <th>Status</th>
               <th>Receipt Number</th>
-              <th class="text-center">Action(S)</th>
+              <th class="text-center">Action</th>
             </tr>
           </thead>
           <tbody>

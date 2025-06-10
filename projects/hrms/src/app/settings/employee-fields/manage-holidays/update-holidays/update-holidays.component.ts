@@ -28,6 +28,7 @@ export class UpdateHolidaysComponent {
   isdisabled = true;
   shiftDropdown: any[] = [];
   isDuplicateholidayName: boolean[] = [];
+   initialPoliciesState: any;
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
@@ -61,6 +62,11 @@ export class UpdateHolidaysComponent {
         })
       );
     });
+
+     this.holidays.valueChanges.subscribe(() => {
+    const currentState = JSON.stringify(this.holidays.getRawValue());
+    this.hidePublishCloneButtons = currentState === this.initialPoliciesState ? false : true;
+  });
   }
 
   // this method used for year generate dynamically 
@@ -341,6 +347,9 @@ get holidaysArray(): FormArray {
               shift: this.shiftDropdown.find((x: any) => x.id === this.updateHolidaysData.shiftID),
             });
           }
+
+           this.initialPoliciesState = JSON.stringify(this.holidays.getRawValue());
+        this.hidePublishCloneButtons = false;
         },
         error: (err: any) => {
           this.shiftDropdown = [];

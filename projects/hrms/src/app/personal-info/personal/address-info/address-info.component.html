@@ -10,7 +10,7 @@
       && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
       
       <div>
-        <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+        <a (click)="enableForm()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
        </div>
       }}
       @if(buttons && (employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'

@@ -17,7 +17,7 @@
         <th>Sub Location</th>
         <th>Desk Status</th>
         @if(rbac.allowedToAccess('Inactive Mark as Available.view') || rbac.allowedToAccess('Inactive View Desk Details.view')){
-          <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+          <th class="text-center">{{"Action" | translate}}</th>
         }
       </thead>
       <tbody>

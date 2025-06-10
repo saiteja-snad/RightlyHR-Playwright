@@ -42,6 +42,7 @@ export class UpdateShiftComponent {
   hoildaylist: any;
   sublocatiodis = false;
   disableupdate = true;
+  initialPoliciesState: any;
   constructor(
     private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private http: HttpService,
     private conformationPopup: OpenModalService, private modalService: NgbModal) { }
@@ -56,6 +57,11 @@ ngOnInit(): void {
   } else {
     this.geAllLocations(); // No shift to patch, just load locations
   }
+
+ this.shiftForm.valueChanges.subscribe(() => {
+    const currentState = JSON.stringify(this.shiftForm.getRawValue());
+    this.hideBUTTON = currentState === this.initialPoliciesState ? false : true;
+  });
 }
 
   yearsList() {
@@ -182,6 +188,8 @@ ngOnInit(): void {
           this.disableupdate = false;
         }
       }
+        this.initialPoliciesState = JSON.stringify(this.shiftForm.getRawValue());
+        this.hideBUTTON = false;
     },
     error: (err: any) => console.error('Error loading shift data', err)
   });
@@ -281,6 +289,8 @@ ngOnInit(): void {
   }
 
   publish() {
+    this.initialPoliciesState = JSON.stringify(this.shifts.getRawValue());
+    this.hideBUTTON = false;
     let publishItem = {
       Category: 'shifts',
       refentityId: this.shiftForm.value.shifts[0].headerID

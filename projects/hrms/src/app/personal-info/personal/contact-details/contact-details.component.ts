@@ -130,7 +130,9 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.dataLoader = false;
         this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
-        this.selectedpersonalnumbercode.set(data.contactnumbercountryflag);
+    
+        this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
+       
       },
       error: (reason) =>{
         console.log(reason);

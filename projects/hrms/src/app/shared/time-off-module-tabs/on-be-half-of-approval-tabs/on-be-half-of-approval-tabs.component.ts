@@ -8,9 +8,10 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { CancelledComponent } from '../../../time-off/leaves/cancelled/cancelled.component';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 @Component({
   selector: 'app-on-be-half-of-approval-tabs',
-  imports: [CommonModule, RouterModule, TabsModule],
+  imports: [CommonModule, RouterModule, TabsModule, SidetabsloadersComponent],
   templateUrl: './on-be-half-of-approval-tabs.component.html',
   styleUrl: './on-be-half-of-approval-tabs.component.scss'
 })
@@ -26,6 +27,7 @@ export class OnBeHalfOfApprovalTabsComponent {
   approvedCount: any;
   rejectedCount: any;
   cancelledCount: any;
+  loading=false
   navLinks: any[] = [
     { label: 'Waiting For Approval', route: 'waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
     { label: 'Approved', route: 'approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
@@ -64,8 +66,10 @@ export class OnBeHalfOfApprovalTabsComponent {
   }
 
   getDataByLPID() {
+    this.loading=true
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
+        this.loading=false
         if (Array.isArray(response)) {
           // Count based on status
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
@@ -87,16 +91,21 @@ export class OnBeHalfOfApprovalTabsComponent {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{
+         console.log(reason)
+         this.loading=false
+      }
     });
   }
 
   filterTabsByRbac(): void {
+     this.loading=true
     this.filteredTabs = this.navLinks.filter(tab => {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+    this.loading=false  
   }
 }

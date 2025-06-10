@@ -176,31 +176,56 @@
 <!-- checkbalancepopup -->
 <!-- <ng-template #checkbalancepopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
+        <div class="custom-poup-header-content popup-header-border justify-content-end">
             <div>
-                <p class="popup-heading mb-0">Leave Balance</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content">
-            <div class="mb-3">Entitiled : {{this.leaveEntitlementsList.allowedDays}}</div>
-            <div class="mb-3">Booked : {{this.leaveEntitlementsList.booked}}</div>
-            <div class="mb-3">Processed : {{this.leaveEntitlementsList.utilizedDays}}</div>
-            <div class="mb-3" *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);
-            else  untilizeddays">Available : {{ this.leaveEntitlementsList.probationLeaves -
-                this.leaveEntitlementsList.utilizedDays }}
-            </div>
-            <ng-template #untilizeddays>
-                <div>Available : {{ this.leaveEntitlementsList.allowedDays - this.leaveEntitlementsList.utilizedDays }}
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="custom-popup-header"> @if(leaveEntitlementsList.category?.isProbationAllowed &&
+                leaveEntitlementsList.probationLeaves > 0){
+                Leave Balances({{leaveEntitlementsList?.category?.name}})
+                }@else{
+                Leave Balances({{leaveEntitlementsList?.category?.name}})
+                }</div>
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Entitiled</th>
+                                <th>Booked</th>
+                                <th>Processed</th>
+                                <th>Available</th>
+                                <th *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                    Probation Leaves
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{this.leaveEntitlementsList.allowedDays}}</td>
+                                <td class="log-time">{{this.leaveEntitlementsList.booked}}</td>
+                                <td class="log-time">{{this.leaveEntitlementsList.utilizedDays}}</td>
+                                <td class="log-time">
+                                    <div *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);
+                                     else  untilizeddays">{{ this.leaveEntitlementsList.probationLeaves -
+                                        this.leaveEntitlementsList.utilizedDays }}</div>
+                                    <ng-template #untilizeddays>
+                                        <div>{{ this.leaveEntitlementsList.allowedDays -
+                                            this.leaveEntitlementsList.utilizedDays }}</div>
+                                    </ng-template>
+                                </td>
+                                <td class="log-time"
+                                    *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                    {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
+                                    leaveEntitlementsList.probationLeaves : 'N/A' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </ng-template>
-            <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0"
-                class="mb-3">
-                Probation Leaves : {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
-                leaveEntitlementsList.probationLeaves : 'N/A' }}
             </div>
         </div>
     </div>
@@ -302,11 +327,10 @@
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for approval<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approval reason"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" required pattern="^\S.*"
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
+                        name="Reasons" #Reasons="ngModel" maxlength="250" required 
                         [(ngModel)]="selectedLeaveData.comments"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
-                        (keypress)="formsValidation.restrictInput($event)">
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)">
                     </textarea>
 
                     <div class="textarea-count-text">
@@ -353,9 +377,8 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
-                        pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
-                        (keypress)="formsValidation.restrictInput($event)" required></textarea>
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" 
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -385,31 +408,33 @@
     </div>
 </ng-template>
 
+<!-- Leave Summary -->
 <ng-template #leaveSummary let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss('Cross click')">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
-
-        <div class="custom-main-popup-content">
-            <div class="row">
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Total Records' | translate}}</b></p>
-                    <p>{{ responseSummary.totalRecordCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Success Records'|translate}}</b> </p>
-                    <p>{{ responseSummary.successRecordsCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Failed Records' | translate}}</b></p>
-                    <p>{{ responseSummary.failureRecordsCount }}</p>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -335,8 +335,8 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
                         {{'Reject Reason' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter reject reason" name="notes" #notes="ngModel" [maxLength]="250" (keydown)="formsValidation.restrictInitialSpace($event)"
-                        [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
+                        placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250"
+                        [(ngModel)]="selectedSpRequestData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
@@ -521,7 +521,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                       (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
                     <div class="error-msg"

@@ -348,6 +348,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -410,12 +413,15 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
               if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
-            } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
-            }
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.approveForm.reset();
@@ -488,6 +494,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;

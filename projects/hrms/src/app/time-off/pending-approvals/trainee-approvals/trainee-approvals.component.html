@@ -125,7 +125,7 @@
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
                     [(ngModel)]="selectedLeaveData.trcomments"
-                    (input)="blockLeadingSpace($event,selectedLeaveData.trcomments)" rows="3" required></textarea>
+                    (keydown)="formsValidation.restrictInitialSpace($event)" rows="3" required></textarea>
                 <div class="textarea-count-text">
                     {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                 <div class="error-msg"
@@ -196,7 +196,7 @@
                         <span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide Feedback" name="Extendreason" #Extendreason="ngModel"
-                        [(ngModel)]="selectedLeaveData.trcomments" required rows="3" maxlength="250"></textarea>
+                        [(ngModel)]="selectedLeaveData.trcomments" (keydown)="formsValidation.restrictInitialSpace($event)"  required rows="3" maxlength="250"></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || 
@@ -209,7 +209,7 @@
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
                         name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
                         placeholder="Please provide the reason" #Descriptiondetails="ngModel" autocomplete="off"
-                        [(ngModel)]="selectedLeaveData.rejectedReason" required></textarea>
+                        [(ngModel)]="selectedLeaveData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">{{selectedLeaveData.rejectedReason?.length ?
                         selectedLeaveData.rejectedReason.length : 0}} /250</div>
                     <div class="error-msg"

@@ -22,6 +22,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -76,6 +77,7 @@ export class ProbationPendingApprovalsComponent {
     public rbac: RbacService,
     private authService: AuthService,
     private openModalService:OpenModalService, 
+    public formsValidation: FormValidationsService,
   ) {}
 
   openModal(content: any) {

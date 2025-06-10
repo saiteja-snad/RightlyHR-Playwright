@@ -162,17 +162,14 @@
                     @if(statusCounts$.value.length<=0){ <tr>
                         <app-no-data-found />
                         </tr>
-                        }
-                        }
-                        @else {
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                        }
-                        }
-                        @else {
-                        <app-data-loader-content />
-                        }
+                    }
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                    }
                 </tbody>
             </table>
         </div>

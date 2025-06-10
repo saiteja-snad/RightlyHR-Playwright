@@ -92,7 +92,7 @@
                     <span class="text-danger">*</span></label>
                 <textarea id="exampleFormControlTextarea1" class="form-control custom-input"
                     formControlName="AcceptReason" maxlength="250" placeholder="Please enter comments"
-                    rows="3"></textarea>
+                    rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ AcceptForm.get('AcceptReason')?.value?.length || 0 }} /250
                 </div>

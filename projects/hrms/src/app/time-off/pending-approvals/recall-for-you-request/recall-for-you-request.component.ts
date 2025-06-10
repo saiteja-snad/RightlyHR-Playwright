@@ -20,17 +20,29 @@ import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalss
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-recall-for-you-request',
-  imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-    PaginatorModule, DropdownModule, NoDataFoundComponent, PendingapprovalsseparationPipe, DataLoaderContentComponent, InfoIconComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    RouterModule,
+    NgbPopoverModule,
+    ReactiveFormsModule,
+    FormsModule,
+    PaginatorModule,
+    DropdownModule,
+    NoDataFoundComponent,
+    PendingapprovalsseparationPipe,
+    DataLoaderContentComponent,
+    InfoIconComponent,
+  ],
   templateUrl: './recall-for-you-request.component.html',
   styleUrl: './recall-for-you-request.component.scss',
 })
-
 export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
-  searchValue!:string;
+  searchValue!: string;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -54,9 +66,16 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   recallAcceptForm!: FormGroup;
   rejectSeparationForm!: FormGroup;
 
-  constructor(private authService: AuthService, private http: HttpService, private conformationPopup: OpenModalService,
-    private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService,private signalService:SignalsService
-  ) { }
+  constructor(
+    private authService: AuthService,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+    private signalService: SignalsService,
+    public formsValidation: FormValidationsService,
+  ) {}
 
   ngOnInit(): void {
     this.formInializer();
@@ -66,18 +85,22 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   //function to initalize the form
   formInializer() {
     this.recallAcceptFormForProcess = this.fb.group({
-      recallReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/), noWhitespaceValidator]
-      ]
+      recallReason: [
+        null,
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
     this.recallAcceptForm = this.fb.group({
-      AcceptReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/), noWhitespaceValidator]
-      ]
+      AcceptReason: [
+        null,
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
     this.rejectSeparationForm = this.fb.group({
-      notes: [null, [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/), noWhitespaceValidator]
-      ]
+      notes: [
+        null,
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
@@ -87,7 +110,11 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   openModalXLarge(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static',});
+    this.modalService.open(content, {
+      centered: true,
+      size: 'xl',
+      backdrop: 'static',
+    });
   }
   onRowsChange() {
     this.first = 0;
@@ -98,12 +125,12 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  resetForm(){
+  resetForm() {
     this.recallAcceptForm.reset();
     this.modalService.dismissAll();
   }
 
-  close(){
+  close() {
     this.rejectSeparationForm.reset();
     this.modalService.dismissAll();
   }
@@ -113,19 +140,24 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     this.isDataLoader = true;
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    let moduleId = environment.RecallrequestmoduleId
-    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`).subscribe({
-      next: (data: any) => {
-        this.recall_For_You_Details.next(
-          data.data.filter((item: any) =>
-            item.approvalHeader.status != 'Processed' &&
-            item.approvalHeader.status != 'Rejected'
-          )
-        );
-        this.isDataLoader = false;
-      },
-      error: (reason) => console.log(reason),
-    });
+    let moduleId = environment.RecallrequestmoduleId;
+    this.subscription = this.http
+      .getData(
+        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.recall_For_You_Details.next(
+            data.data.filter(
+              (item: any) =>
+                item.approvalHeader.status != 'Processed' &&
+                item.approvalHeader.status != 'Rejected'
+            )
+          );
+          this.isDataLoader = false;
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
   //function to get the approver comments
@@ -156,9 +188,14 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
       this.selectedSpRequestData.spExtendedDate
     );
     this.getEmployeedatabyid(this.selectedSpRequestData);
-    if (this.selectedSpRequestData.sprecalledStatus.toLowerCase() == 'separation') {
+    if (
+      this.selectedSpRequestData.sprecalledStatus.toLowerCase() == 'separation'
+    ) {
       this.requestType = 'Separation Request';
-    } else if (this.selectedSpRequestData.sprecalledStatus.toLowerCase() == 'earlyrelieving') {
+    } else if (
+      this.selectedSpRequestData.sprecalledStatus.toLowerCase() ==
+      'earlyrelieving'
+    ) {
       this.requestType = 'Early Relieving Request';
     }
   }
@@ -166,15 +203,19 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   //function to get the employeedata
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.spRequestEmployeeId;
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data as Ipersonal;
-        this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
-      },
-      error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error.message);
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.empdata = data as Ipersonal;
+          this.empdata.dateOfJoining = this.formatDate(
+            this.empdata.dateOfJoining
+          );
+        },
+        error: (err: any) => {
+          this.conformationPopup.openErrorModal(err.error.message);
+        },
+      });
   }
 
   //function to format the date
@@ -185,7 +226,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   handleAccept() {
     let loggedinuser = this.authService.getToken();
     this.isLoading = true;
-    this.jsonData = JSON.stringify({status: 'Approved'});
+    this.jsonData = JSON.stringify({ status: 'Approved' });
     let requestBody = {
       status: 'Approved',
       comments: this.recallAcceptForm.get('AcceptReason')?.value,
@@ -194,31 +235,39 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
       meta: this.jsonData,
       approvedBy: loggedinuser.employeeId.toString(),
-      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(
+        this.requesthandler.approvalHeader.currentapprovalStage
+      ),
     };
-    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.isLoading = false;
-        this.recallAcceptForm.reset();
-        this.modalService.dismissAll();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          recall: true,
-        }));
-        this.conformationPopup.openSuccessModal('Recall Request Approved Successfully');
-        this.getAllPendingApprovals();
-        this.signalService.recallSeparationForYouTriggerSignal.set(true);
-        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
-        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
-
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal(reason.error.message);
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.isLoading = false;
+          this.recallAcceptForm.reset();
+          this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
+          this.conformationPopup.openSuccessModal(
+            'Recall Request Approved Successfully'
+          );
+          this.getAllPendingApprovals();
+          this.signalService.recallSeparationForYouTriggerSignal.set(true);
+          this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+          this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
+        },
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
   handlerecallReject() {
@@ -231,30 +280,39 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
       comments: this.rejectSeparationForm.get('notes')?.value,
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
-      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(
+        this.requesthandler.approvalHeader.currentapprovalStage
+      ),
     };
-    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
-      next: (response: any) => {
-        this.rejectSeparationForm.reset();
-        this.modalService.dismissAll();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          recall: true,
-        }));
-        this.conformationPopup.openSuccessModal('Recall Request Rejected Successfully');
-        this.getAllPendingApprovals();
-        this.signalService.recallSeparationForYouTriggerSignal.set(true);
-        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
-        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
-      },
-      error: (reason: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(reason.error.message);
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (response: any) => {
+          this.rejectSeparationForm.reset();
+          this.modalService.dismissAll();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
+          this.conformationPopup.openSuccessModal(
+            'Recall Request Rejected Successfully'
+          );
+          this.getAllPendingApprovals();
+          this.signalService.recallSeparationForYouTriggerSignal.set(true);
+          this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+          this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
   handlerecallProcess() {
@@ -266,44 +324,57 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
     let requestBody: any = {
       status: 'Processed',
       comments: this.recallAcceptFormForProcess.get('recallReason')?.value,
-      isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
+      isAcceptEarly:
+        this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
-      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(
+        this.requesthandler.approvalHeader.currentapprovalStage
+      ),
     };
     if (this.selectedSpRequestData.spIsAcceptEarlyRelieving === true) {
-      requestBody.lastWorkingDate = this.selectedSpRequestData.spearlyReliveingDate;
+      requestBody.lastWorkingDate =
+        this.selectedSpRequestData.spearlyReliveingDate;
     }
-    if (this.selectedSpRequestData.spIsAcceptEarlyRelieving === null || this.selectedSpRequestData.spIsAcceptEarlyRelieving === ''
-       || this.selectedSpRequestData.spIsAcceptEarlyRelieving === false) {
-      requestBody.lastWorkingDate = this.selectedSpRequestData.spRequestLastWorkingDate;
+    if (
+      this.selectedSpRequestData.spIsAcceptEarlyRelieving === null ||
+      this.selectedSpRequestData.spIsAcceptEarlyRelieving === '' ||
+      this.selectedSpRequestData.spIsAcceptEarlyRelieving === false
+    ) {
+      requestBody.lastWorkingDate =
+        this.selectedSpRequestData.spRequestLastWorkingDate;
     }
-    this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.recallAcceptFormForProcess.reset();
-        this.modalService.dismissAll();
-        this.getAllPendingApprovals();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          recall: true,
-        }));
-        this.conformationPopup.openSuccessModal(
-          'Recall Request Processed Successfully'
-        );
-        this.isLoading = false;
-        this.signalService.recallSeparationForYouTriggerSignal.set(true);
-        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
-        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
-      },
-      error: (reason: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(reason.error.message);
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.recallAcceptFormForProcess.reset();
+          this.modalService.dismissAll();
+          this.getAllPendingApprovals();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            recall: true,
+          }));
+          this.conformationPopup.openSuccessModal(
+            'Recall Request Processed Successfully'
+          );
+          this.isLoading = false;
+          this.signalService.recallSeparationForYouTriggerSignal.set(true);
+          this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+          this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
   ngOnDestroy(): void {

@@ -926,19 +926,18 @@ select:focus {
         padding: 0.625rem;
         font-weight: 400;
         font-size: var(--fontsize14);
-        color: var(--primary-color);
-        border-bottom: 1px solid #C8D5E4;
+        color: #4D4D4D;
+        border-bottom: 2px solid #E4EAF3;
     }
 
-    .dropdown-item:last-child {
-        border-bottom: none !important;
+    li:last-child .dropdown-item {
+        border-bottom: none;
     }
 
     .dropdown-item:hover {
-        background-color: #F0F4F8;
+        background-color: #FFFFFF;
     }
 }
-
 // Select Styling 
 
 // table stylings

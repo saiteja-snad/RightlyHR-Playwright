@@ -12,9 +12,10 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule,],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule,Skeleton],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -47,13 +48,13 @@ export class DeskManagementComponent {
   deskData: any;
   deskDataOptions: any;
   totaldeskCount: any;
-
+ loading=false
   constructor(private readonly fb: FormBuilder, public http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
     private router: Router, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-  
+   
     this.intialdesk()
     this.intiallocationandsublocation()
     this.getjobLocationList()
@@ -67,6 +68,7 @@ export class DeskManagementComponent {
   }
 
   initializeNavTabs(): void {
+    this.loading=true
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       //{ label: 'All', route: '/desk/management/all-desks', icon: '/desk-icon/all-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
@@ -81,6 +83,7 @@ export class DeskManagementComponent {
       tab.permission && tab.permission.feature && tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.loading=false
   }
 
   initiateUpdateModuleInfo() {
@@ -486,6 +489,7 @@ getcount(locationId: string | null, subLocationId: string | null) {
 
 
 initChart(): void {
+  this.loading=true
   combineLatest([
     this.http.deskAvailableCountSubject,
     this.http.deskAllocatedCountSubject,
@@ -516,6 +520,7 @@ initChart(): void {
       cutout: '70%',
     };
   });
+  this.loading=false
 }
 
   

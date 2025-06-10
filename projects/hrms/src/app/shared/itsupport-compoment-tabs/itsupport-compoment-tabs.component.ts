@@ -6,9 +6,10 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { RbacService } from '../../services/rbac.service';
+import { SidetabsloadersComponent } from "../sidetabsloaders/sidetabsloaders.component";
 @Component({
   selector: 'app-itsupport-compoment-tabs',
-  imports: [CommonModule, TabsModule, RouterModule],
+  imports: [CommonModule, TabsModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './itsupport-compoment-tabs.component.html',
   styleUrl: './itsupport-compoment-tabs.component.scss'
 })
@@ -26,6 +27,7 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
   ticketsOpen: any[] = [];
   ticketsAwaitOnUser: any[] = [];
   navTabs: any[] = [];
+  loading=false
   defaultRoute: string = '';
   // Original unfiltered tab structure with permissions
   private allTabs = [
@@ -50,9 +52,11 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
   }
 
   getuserticketsbyempid() {
+    this.loading=true
     const EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.ticketsClosed = data.filter((ticket: any) => ticket.ticketStatus === 'Closed');
         this.closedTicketCount = this.ticketsClosed.length;
         this.ticketsOpen = data.filter((ticket: any) => ticket.ticketStatus === 'Open');
@@ -90,6 +94,7 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
       
       error: (err: any) => {
         console.error(err);
+        this.loading=false
       }
     });
   }

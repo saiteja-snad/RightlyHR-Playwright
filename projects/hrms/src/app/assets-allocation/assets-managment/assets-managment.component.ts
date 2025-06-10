@@ -14,9 +14,10 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
+  imports: [CommonModule, TabsModule, Select, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -54,6 +55,7 @@ export class AssetsManagmentComponent {
   maxpurchesDate: any;
   assetData: any;
   assetDataOptions: any;
+  loading=false
 
   constructor(private readonly fb: FormBuilder, public http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
     public formValidation: FormValidationService, public rbac: RbacService, public readonly router: Router) { }
@@ -79,6 +81,7 @@ export class AssetsManagmentComponent {
   }
 
   initializeNavTabs(): void {
+    this.loading=true
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
@@ -92,6 +95,7 @@ export class AssetsManagmentComponent {
       tab.permission && tab.permission.feature && tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.loading=false
   }
 
   initialform() {
@@ -610,6 +614,7 @@ export class AssetsManagmentComponent {
   }
 
   initChart() {
+    this.loading=true 
     const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
     const backgroundColors = chartTabs.map(item => item.backgroundcolour);
 
@@ -634,6 +639,7 @@ export class AssetsManagmentComponent {
     this.assetDataOptions = {
       cutout: '70%',
     };
+    this.loading=false
   }
 
   ngOnDestroy(): void {

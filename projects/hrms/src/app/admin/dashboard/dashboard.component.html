@@ -107,14 +107,25 @@
           <p-carousel [value]="eventItems" [numVisible]="1" [numScroll]="1" showNavigators="false" [circular]="true"
             [autoplayInterval]="3000">
             <ng-template let-event pTemplate="item">
-              <div class="event-name">
+              <div class="accordian-text">
                 <ng-container [ngSwitch]="event.type">
-                  <span *ngSwitchCase="'Birthday'">{{ event.name }} <br>{{'Celebrating Birthday today...'| translate}}</span>
-                  <span *ngSwitchCase="'Work Anniversary'">{{ event.name }} <br>{{'Celebrating Work Anniversary today...'| translate}}</span>
-                  <span *ngSwitchCase="'New Joinee'">{{ event.name }} <br>{{'Welcome Onboard...'| translate}}</span>
-                  <span *ngSwitchCase="'Marriage Anniversary'">{{ event.name }} <br>
-                    {{'Celebrating their Marriage Anniversary today...'| translate}}</span>
-                  <span *ngSwitchDefault>{{ event.quotationname }}</span>
+                  <div *ngSwitchCase="'Birthday'">
+                    <p class="event-name mb-2">{{ event.name }}</p>
+                    <p class="m-0">{{'Celebrating Birthday today...'| translate}}</p>
+                  </div>
+                  <div *ngSwitchCase="'Work Anniversary'">
+                    <p class="event-name mb-2">{{ event.name }}</p>
+                    <p class="m-0">{{'Celebrating Work Anniversary today...'| translate}}</p>
+                  </div>
+                  <div *ngSwitchCase="'New Joinee'">
+                    <p class="event-name mb-2">{{ event.name }}</p>
+                    <p class="m-0">{{'Welcome Onboard...'| translate}}</p>
+                  </div>
+                  <div *ngSwitchCase="'Marriage Anniversary'">
+                    <p class="event-name mb-2">{{ event.name }}</p>
+                    <p class="m-0">{{'Celebrating their Marriage Anniversary today...'| translate}}</p>
+                  </div>
+                  <div *ngSwitchDefault class="event-name">{{ event.quotationname }}</div>
                 </ng-container>
               </div>
             </ng-template>

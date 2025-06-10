@@ -123,8 +123,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="accountNo"
-                            formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{12,20}$" [maxlength]="18" [minlength]="8">
+                        <input type="number" class="form-control custom-input" id="accountNo"
+                            formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{9,18}$">
                             <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
                             <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">Account Number is
@@ -247,15 +247,15 @@
                         <input type="test" class="form-control custom-input" id="accountNoupdate"
                             formControlName="accountNoupdate" placeholder="Please enter account number" [maxlength]="18" [minlength]="8">
                             <div class="error-msg"
-                            *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
-                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">
+                            *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.invalid && bankDetailsUpdateForm.get('accountNoupdate')?.touched">
+                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['required']">
                                 Account Number is required
                             </div>
-                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['pattern']">
+                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['pattern']">
                                 Enter valid account number
                             </div>
                             <div
-                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['invalidbankNumber'] && bankDetailsForm.get('accountNo')?.touched">
+                                *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['invalidbankNumber'] && bankDetailsUpdateForm.get('accountNoupdate')?.touched">
                                 Account Number cannot be all zeroes
                             </div>
                              <div class="error-msg"

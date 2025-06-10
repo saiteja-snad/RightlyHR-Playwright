@@ -20,6 +20,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-regularization-for-your-role-request',
   imports: [
@@ -34,8 +35,9 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     PermissionsearchPipe,
     DataLoaderContentComponent,
     TableModule,
-    NoDataFoundComponent
-  ],
+    NoDataFoundComponent,
+    InfoIconComponent
+],
   templateUrl: './regularization-for-your-role-request.component.html',
   styleUrl: './regularization-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,

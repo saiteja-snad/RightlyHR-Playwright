@@ -52,8 +52,7 @@
             </span>
             <ng-template #noLocation>-</ng-template>
           </td>
-
-          <!-- Sub Location -->
+         <!-- Sub Location -->
           <td>
             <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">
               {{ act.jobDetails?.[0]?.subLocation }}

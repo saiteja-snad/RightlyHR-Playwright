@@ -1,3 +1,8 @@
+.document-history-layout {
+    display: flex;
+    gap: 0.75rem;
+}
+
 .nav-link {
     width: 100%;
 
@@ -6,12 +11,12 @@
     }
 }
 
-.component-left-tabs-container{
+.component-left-tabs-container {
     height: calc(100vh - 24rem);
     min-height: 56vh;
 }
 
 .custom-table-content {
     height: calc(100dvh - 26.75rem);
-    min-height: 50vh;
+    min-height: 50.5vh;
 }

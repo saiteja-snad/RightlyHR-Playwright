@@ -348,8 +348,8 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" 
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"

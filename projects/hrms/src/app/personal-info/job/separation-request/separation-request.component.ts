@@ -160,6 +160,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       centered: true,
       backdrop: 'static',
       size: 'lg',
+      keyboard: false
     });
   }
 
@@ -193,7 +194,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
   }
 
   openModalLg(content: any) {
@@ -201,6 +202,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       centered: true,
       size: 'lg',
       backdrop: 'static',
+      keyboard: false
     });
   }
 
@@ -437,6 +439,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       centered: true,
       size: 'xl',
       backdrop: 'static',
+      keyboard: false
     });
 
     const roleOrder: { [key: string]: number } = {
@@ -460,19 +463,19 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to store the disaciption values
   decription(value: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
     this.decription_Storing_Variable = value;
   }
 
   //function to select data of perticular record to  recall the request
   recallRequest(data: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
   }
 
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
     this.postEarlyRelievingRequest = data;
     console.log(this.postEarlyRelievingRequest.appliedDate);
   }
@@ -486,7 +489,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
 
   closepopup(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',keyboard: false });
   }
   popupclose() {
     this.profileForm.reset();

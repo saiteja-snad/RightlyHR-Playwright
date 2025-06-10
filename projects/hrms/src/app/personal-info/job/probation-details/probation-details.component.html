@@ -141,8 +141,7 @@
                             <td>
                                 <div>
                                     <span class="ms-2" *ngIf="comment?.comments;else popupcomments">
-                                        <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
-                                            ngbPopover="{{comment?.comments}}"></i>
+                                        <app-info-icon triggers="mouseenter:mouseleave" ngbPopover="{{comment?.comments}}"/>
                                     </span>
                                     <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>

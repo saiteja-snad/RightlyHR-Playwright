@@ -37,19 +37,29 @@
           <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}
           </td>
           <td>
+            @if(act.jobDetails!.length > 0){
             @for(jobDetail of act?.jobDetails;track jobDetail.id){
             {{ jobDetail?.lopcation?jobDetail?.lopcation:'-' }}
             }
+          }@else {
+            <span>-</span>
+          }
           </td>
           <td>
+            @if(act.jobDetails!.length > 0){
             @for(jobDetail of act?.jobDetails;track jobDetail.id){
             {{ jobDetail?.subLocation?jobDetail?.subLocation:'-'}}
-            }
+            }}@else {
+            <span>-</span>
+          }
           </td>
           <td>
+            @if(act.jobDetails!.length > 0){
             @for(jobDetail of act?.jobDetails; track jobDetail.id){
             {{ jobDetail?.jobRole?jobDetail?.jobRole:'-'}}
-            }
+            }}@else {
+            <span>-</span>
+          }
           </td>
           <td>{{act.substatus?act.substatus:'-'}}</td>
         </tr>

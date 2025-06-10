@@ -3,7 +3,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 110%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,8 +11,8 @@
 }
 
 .no-data-image {
-    width: 197px;
-    height: 171px;
+    width: 196px;
+    height: 170px;
 }
 
 .no-data-text {
@@ -22,4 +22,16 @@
     letter-spacing: 0%;
     text-transform: capitalize;
     color: #555555;
+}
+
+@media (max-width: 1280px) and (max-height: 800px) {
+    .no-data-placeholder-container {
+        width: 100% !important;
+        height: 120% !important;
+    }
+
+    .no-data-image {
+        width: 150px !important;
+        height: 120px !important;
+    }
 }

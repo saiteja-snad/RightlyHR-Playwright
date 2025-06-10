@@ -20,7 +20,7 @@
         <th>Display Color</th>
         <th>Expires After (Days)</th>
         <th>Status</th>
-        <th *ngIf="rbac.allowedToAccess('Leave Category Pending Tab.update')">Action(S)</th>
+        <th *ngIf="rbac.allowedToAccess('Leave Category Pending Tab.update')">Action</th>
       </thead>
       <tbody>
         <ng-container *ngIf="(submissiondata).length; else noResults">
@@ -55,7 +55,7 @@
         </ng-container>
         <ng-template #noResults>
           <tr>
-            <td colspan="9"><app-no-data-found></app-no-data-found></td>
+            <app-no-data-found />
           </tr>
         </ng-template>
       </tbody>

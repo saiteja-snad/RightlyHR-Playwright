@@ -13,9 +13,10 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-onboarding-requests',
-  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './onboarding-requests.component.html',
   styleUrl: './onboarding-requests.component.scss'
 })

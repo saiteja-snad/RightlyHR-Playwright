@@ -15,10 +15,10 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { SignalsService } from '../../../services/signals.service';
-import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-premissions-waiting-for-approval',
@@ -33,7 +33,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-  ],
+    InfoIconComponent
+],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss',
 })

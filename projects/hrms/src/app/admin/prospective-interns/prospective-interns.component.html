@@ -38,31 +38,26 @@
               <span class="d-inline-block">-</span>
             </ng-template>
           </td>
+          <!-- Location -->
           <td>
-            <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.lopcation; else locationColumn">
-                {{ jobDetail?.lopcation }}
-              </span>
-              <ng-template #locationColumn>
-                -
-              </ng-template>
-            </div>
+            <span *ngIf="act.jobDetails?.[0]?.lopcation; else noLocation">
+              {{ act.jobDetails?.[0]?.lopcation }}
+            </span>
+            <ng-template #noLocation>-</ng-template>
           </td>
+         <!-- Sub Location -->
           <td>
-            <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.subLocation ; else sublocation">{{ jobDetail?.subLocation}} </span>
-            </div>
-            <ng-template #sublocation>
-              -
-            </ng-template>
+            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">
+              {{ act.jobDetails?.[0]?.subLocation }}
+            </span>
+            <ng-template #noSubLocation>-</ng-template>
           </td>
+            <!-- Designation -->
           <td>
-            <div *ngFor="let jobDetail of act?.jobDetails">
-              <span *ngIf="jobDetail?.jobRole ; else jobrole">{{ jobDetail?.jobRole}} </span>
-            </div>
-            <ng-template #jobrole>
-              -
-            </ng-template>
+            <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">
+              {{ act.jobDetails?.[0]?.jobRole }}
+            </span>
+            <ng-template #noRole>-</ng-template>
           </td>
           <td><span *ngIf="act?.durationOfTrainee; else notice">{{act?.durationOfTrainee}}</span>
             <ng-template #notice>-</ng-template>

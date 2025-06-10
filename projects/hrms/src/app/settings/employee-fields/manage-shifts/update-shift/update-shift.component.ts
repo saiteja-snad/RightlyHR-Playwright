@@ -57,12 +57,53 @@ ngOnInit(): void {
   } else {
     this.geAllLocations(); // No shift to patch, just load locations
   }
-
- this.shiftForm.valueChanges.subscribe(() => {
-    const currentState = JSON.stringify(this.shiftForm.getRawValue());
+  this.shifts.valueChanges.subscribe(() => {
+    const currentState = JSON.stringify(this.shifts.getRawValue());
     this.hideBUTTON = currentState === this.initialPoliciesState ? false : true;
   });
-}
+  }
+
+  patchShiftForm(data: any) {
+
+    this.shiftForm.patchValue({
+      year: data.applicableyear,
+      location: data.locationId,
+      // subLocation: data.subLocationId,
+    });
+    console.log(data.locationId);
+    const selectedLocation = this.locations.find(loc => loc.id === data.locationId);
+    console.log(selectedLocation);
+    if (selectedLocation) {
+      this.subLocations = selectedLocation.subLocations || [];
+
+      const matchedSub = this.subLocations.find(sub => sub.id === data.subLocationId);
+      if (matchedSub) {
+        this.shiftForm.patchValue({ subLocation: matchedSub.id });
+      } else {
+        this.disableupdate = false;
+      }
+    }
+
+    this.shifts.clear();
+
+    data.orgShiftsItems.forEach((item: any) => {
+      this.shifts.push(this.fb.group({
+        shiftCode: [item.code, Validators.required],
+        shiftName: [item.shiftName, Validators.required],
+        color: [item.color],
+        startTime: [item.shiftStartTime, Validators.required],
+        endTime: [item.shiftEndTime, Validators.required],
+        gracePeriod: [item.allowedGracePeriod, Validators.required],
+        latesAllowed: [item.latesAllowed, Validators.required],
+        breakTime: [item.allowedBreakTime, Validators.required],
+        halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
+        fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
+      }));
+    });
+
+     this.initialPoliciesState = JSON.stringify(this.shifts.getRawValue());
+    this.hideBUTTON = false;
+  }
 
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
@@ -189,8 +230,6 @@ ngOnInit(): void {
           this.disableupdate = false;
         }
       }
-        this.initialPoliciesState = JSON.stringify(this.shiftForm.getRawValue());
-        this.hideBUTTON = false;
     },
     error: (err: any) => console.error('Error loading shift data', err)
   });
@@ -292,8 +331,7 @@ ngOnInit(): void {
   }
 
   publish() {
-    this.initialPoliciesState = JSON.stringify(this.shifts.getRawValue());
-    this.hideBUTTON = false;
+    console.log(this.shiftForm.value);
     let publishItem = {
       Category: 'shifts',
       refentityId: this.shiftForm.value.id
@@ -383,6 +421,7 @@ onLocationChange(selectedLocationId: number | null) {
       if (selectedShiftData) {
         this.patchShiftForm(selectedShiftData);
       }
+      
 
       // if (shiftId) {
       //   // Only call getShiftById once locations are ready

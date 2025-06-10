@@ -21,7 +21,7 @@
         <th>Approver</th>
         @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') ||
         rbac.allowedToAccess('Allocated View Desk Details.view')){
-        <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+        <th class="text-center">{{"Action" | translate}}</th>
         }
       </thead>
       <tbody>

@@ -2,7 +2,7 @@ export const environment = {
   production: false,
 
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
-  ApiUrl: 'https://snadqaapi.onpremise.snadhr.com/api/',
+  ApiUrl: 'https://localhost:44374/api/',
   webSocketUrl: 'ws://fusionplusdevapi.onpremise.snadhr.com',
  
   modules: [

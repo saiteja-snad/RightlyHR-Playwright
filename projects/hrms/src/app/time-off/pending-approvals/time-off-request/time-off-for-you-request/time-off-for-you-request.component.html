@@ -138,9 +138,7 @@
             </ng-template>
         </p-table>
         }@else {
-        
             <app-data-loader-content />
-       
         }
     </div>
 </div>
@@ -242,23 +240,20 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="custom-popup-header">
+                @if(leaveEntitlementsList.category?.isProbationAllowed &&
+                leaveEntitlementsList.probationLeaves > 0){
+                Leave Balances({{leaveEntitlementsList?.category?.name}})
+                }@else{
+                Leave Balances({{leaveEntitlementsList?.category?.name}})
+                }
+            </div>
             <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
                         <thead>
-                            @if(leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0){
                             <tr>
-                                <th colspan="5" class="custom-popup-header">Leave Balances({{leaveEntitlementsList?.category?.name}})</th>
-                            </tr>
-                            }@else{
-                            <tr>
-                                <th colspan="4" class="custom-popup-header">Leave Balances({{leaveEntitlementsList?.category?.name}})</th>
-                            </tr>
-                            }
-
-                            <tr class="custom-popup-header">
                                 <th class="text-center">Entitled</th>
                                 <th class="text-center">Booked</th>
                                 <th class="text-center">Processed</th>

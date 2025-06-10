@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ISeparation, ISeparationRequest } from '../separation-for-you-request/separation-for-you-request';
 import { CommonModule } from '@angular/common';
@@ -39,6 +39,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
   ],
   templateUrl: './recall-for-your-role-request.component.html',
   styleUrl: './recall-for-your-role-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;

@@ -1308,10 +1308,10 @@
                                 *ngIf="per.fields === 'Waiting For Approval (WFH)' 
                                                 || per.fields === 'Approved (WFH)' || per.fields === 'Processed (WFH)' || per.fields==='Cancel (WFH)'
                                                 || per.fields === 'Rejected (WFH)' || per.fields === 'Request WFH Button' || per.fields === 'My Team (WFH)'">
-                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                                        [disabled]="true">
+                                        [disabled]="true" (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
                                 </td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
@@ -2933,10 +2933,9 @@
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
                                         (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id || [
-                            'Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
+                            'Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details','Employee Info Job Details',
                             'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request',
-                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details'
-                ].includes(per.fields)">
+                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details','Employee Info Job Details'].includes(per.fields)">
                                 </td>
                             </tr>
                         </ng-container>

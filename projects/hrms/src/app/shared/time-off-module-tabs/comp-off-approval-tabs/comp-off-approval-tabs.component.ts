@@ -5,10 +5,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-comp-off-approval-tabs',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './comp-off-approval-tabs.component.html',
   styleUrl: './comp-off-approval-tabs.component.scss',
 })
@@ -21,6 +22,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
   selectempid: any;
+  loading=false
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService) {
@@ -57,9 +59,11 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
+    this.loading=true
     let empId = this.empinfo.employeeId;
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
+        this.loading=false
         this.compOff = response;
         this.waitingForApprovalCompOffCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
         this.approvalCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
@@ -67,6 +71,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
         this.processedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
       },
       error: (error) => {
+        this.loading=false
         console.error('Error fetching data:', error);
         this.compOff = []; // Set to empty array on error
       },

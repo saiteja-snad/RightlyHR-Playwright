@@ -202,6 +202,7 @@ export class AddProspectiveEmployeeComponent {
               locationid: this.postProspectiveEmpDetails.locationid,
               sublocationid: this.employeeForm.get('subLocation')?.value,
               jobRole: this.employeeForm.get('designation')?.value,
+              gradeName: this.gradeIdValue.gradeName,
             };
             this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
               next: (data: any) => {

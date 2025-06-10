@@ -279,6 +279,7 @@ export class LeavesComponent {
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
       .subscribe({
         next: (response: any) => {
+          console.log(response)
           if (response && response.length) {
             // No filter
             this.getEmployeeInfo = response.map((employee: any) => ({

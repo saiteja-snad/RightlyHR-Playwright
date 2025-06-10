@@ -247,7 +247,7 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
         empId: this.Employeeinfo.employeeId,
         isDeleted: false,
         eventTitle: formdata.eventTitle,
-        attachmentUrl: formdata.imageUrl || null
+        attachmentUrl: formdata.imageUrl || this.selectedImagePreview
       };
 
       const file = this.eventAttachment;

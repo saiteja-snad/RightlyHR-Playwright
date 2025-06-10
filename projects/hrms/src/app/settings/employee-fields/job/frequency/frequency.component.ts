@@ -9,9 +9,10 @@ import { Subscription } from 'rxjs';
 import { frequenceData } from './frequency-model';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 @Component({
   selector: 'app-frequency',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
   templateUrl: './frequency.component.html',
   styleUrl: './frequency.component.scss'
 })
@@ -25,7 +26,7 @@ export class FrequencyComponent {
   selectedId: number | null = null;
   selectedDeletefreq: any = null;
   subscription!: Subscription;
-
+  loading = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -47,9 +48,14 @@ export class FrequencyComponent {
   }
 
   getFrequencies() {
+    this.loading = true;
     this.subscription = this.http.getData('Frequency').subscribe({
       next: (data: any) => {
         this.FrequencyDetail = data;
+        this.loading = false;
+      }, error: (error: any) => {
+        this.loading = false;
+       
       }
     });
   }

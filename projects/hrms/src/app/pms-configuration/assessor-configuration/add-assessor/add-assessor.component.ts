@@ -11,7 +11,6 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { IReviewCycle } from '../../increment-percentage/add-increment/increment.modal';
 import { IDesignationNames } from './add-assessor.modal';
-import moment from 'moment';
 @Component({
   selector: 'app-add-assessor',
   imports: [CommonModule, FormsModule, Select, TranslateModule],

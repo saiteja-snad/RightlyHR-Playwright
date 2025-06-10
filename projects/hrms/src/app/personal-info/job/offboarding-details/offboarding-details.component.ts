@@ -9,10 +9,11 @@ import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { Router } from '@angular/router';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-offboarding-details',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,Skeleton],
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })
@@ -21,6 +22,7 @@ export class OffboardingDetailsComponent {
   isEditing: boolean = false;
   offboardingForm!: FormGroup
   empinfo: any
+  loading: boolean = false;
   empdata: Ipersonal = {} as Ipersonal;
   previousEmpData: Ipersonal = {} as Ipersonal;
   subscription!: Subscription
@@ -91,11 +93,12 @@ export class OffboardingDetailsComponent {
   }
 
   getEmployeeId(): void {
+    this.loading= true;
     const employeeId = parseInt(this.empinfo.employeeId);
-    console.log(this.empinfo);
-
+  
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         console.log(data);
         this.previousEmpData = JSON.parse(JSON.stringify(data));
         this.empdata = data as Ipersonal;
@@ -120,7 +123,7 @@ export class OffboardingDetailsComponent {
       },
       error: (err: any) => {
         console.log(err);
-
+        this.loading = false;
       }
     });
   }

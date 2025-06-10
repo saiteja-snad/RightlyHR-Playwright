@@ -6,9 +6,10 @@ import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { Router } from '@angular/router';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-pre-onboaring-details',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,Skeleton],
   standalone: true,
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'
@@ -18,7 +19,7 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
   empinfo: any;
   preOnboardingForm!: FormGroup;
   buttons: boolean = false;
-
+  loading: boolean = false;
   empdata: Ipersonal = {} as Ipersonal;
   previousEmpData: Ipersonal = {} as Ipersonal;
   appointmentDetails: any;
@@ -111,6 +112,7 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
 
 
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     console.log(this.empinfo);
 
@@ -119,7 +121,7 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
         console.log(data);
         this.previousEmpData = JSON.parse(JSON.stringify(data));
         this.empdata = data as Ipersonal;
-
+        this.loading = false;
         // Format dates
         this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
         this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
@@ -133,6 +135,7 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log(err);
+        this.loading = false;
       }
     });
   }

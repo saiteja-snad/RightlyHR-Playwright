@@ -12,15 +12,16 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-leaves-waiting-for-approval',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule,
+    PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-waiting-for-approval.component.html',
   styleUrl: './leaves-waiting-for-approval.component.scss'
 })
@@ -35,6 +36,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   lpdata = [] as Ilpid[];
   cancelForm!: FormGroup;
   selectedFields = {} as any;
+  loading: boolean = false;
   permissionForLoggedInUser: boolean = true;
   options = [
     { label: 10, value: 10 },
@@ -51,15 +53,15 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
   isLoading = false;
-  constructor(private http: HttpService, public formsValidation: FormValidationsService, private signalService: SignalsService, private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder) { }
+
+  constructor(private http: HttpService, public formsValidation: FormValidationsService, private signalService: SignalsService,
+    private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
-
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
-        console.log('Updated employee ID:', id);
         // Example: this.loadEmployeeDetails(id);
         this.getDataByLPEMPID();
       }
@@ -71,6 +73,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   formInializer() {
     this.cancelForm = this.fb.group({
       cancelReason: [null,
@@ -78,14 +81,16 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       ]
     });
   }
+
   isBeforeToday(date: string | Date): boolean {
     return moment().isSameOrBefore(moment(date), 'day');
   }
+
   onClick(data: any, content: any) {
     this.selectedFields = data
-    console.log(this.selectedFields);
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   //function to cancle the leave
   cancelLeaveSubmit() {
     this.isLoading = true;
@@ -97,23 +102,18 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`, payload).subscribe({
       next: (res: any) => {
-        console.log(res);
         if (res) {
           this.cancelForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Leave cancellation successfully!')
+          this.conformationPopup.openSuccessModal('Leave Cancellation Successfull');
           this.getDataByLPID();
           setTimeout(() => {
             window.location.reload();
           }, 2000);
-
-
         }
         this.signalService.timecountTriggerSignal.set(true);
-
       },
       error: (err: any) => {
-        console.log(err)
         this.isLoading = false;
         this.cancelForm.reset();
         this.modalService.dismissAll();
@@ -128,14 +128,16 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.getDataByLPID();
       },
-
     })
   }
+
   getDataByLPID() {
+    this.loading = true;
     let empid = this.empdata.employeeId;
     this.permissionForLoggedInUser = true;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        this.loading = false;
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
           console.error("Invalid response this lpdata ", this.lpdata);
@@ -143,7 +145,12 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 
@@ -162,6 +169,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason)
     });
   }
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {
@@ -169,5 +177,3 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     }
   }
 }
-
-

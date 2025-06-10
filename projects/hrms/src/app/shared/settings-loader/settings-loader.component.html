@@ -1,0 +1,21 @@
+<table class="w-100">
+    <thead>
+        <tr>
+            <th class="col-span-2"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr *ngFor="let skel of [1,2,3,4]">
+            <td class="w-75">
+                <p-skeleton width="150px" height="18px"></p-skeleton>
+            </td>
+            <td class="w-25">
+                <div class="d-flex gap-4">
+                    <p-skeleton width="24px" height="24px" shape="circle"></p-skeleton>
+                    <p-skeleton width="24px" height="24px" shape="circle"></p-skeleton>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

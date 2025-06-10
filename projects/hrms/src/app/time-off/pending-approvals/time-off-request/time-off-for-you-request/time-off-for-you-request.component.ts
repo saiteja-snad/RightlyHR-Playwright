@@ -34,7 +34,7 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
     TableModule,
     DataLoaderContentComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -159,13 +159,13 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   //   }
   // }
 
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedProducts = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -189,7 +189,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -238,9 +238,9 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
-      this.multiSelect= false;
+      this.multiSelect = false;
       this.selectedProducts = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.updateTableSelectionState([]);
     }
   }
@@ -295,7 +295,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(checkbalancepopup, {
       centered: true,
       backdrop: 'static',
-      size:'lg'
+      size: 'lg'
     });
     let employeeId = Value.entity.leaveempId;
     this.http
@@ -463,7 +463,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Leave Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -533,7 +533,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Leave Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -580,7 +580,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage
         }))
       }
-      message = 'Processing Leave Requests...';
+      message = 'Processing Selected Leave Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -593,7 +593,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Leave Request...';
+      message = 'Processing Selected Leave Requests...';
     }
     this.conformationPopup.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
@@ -602,7 +602,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Leave Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }

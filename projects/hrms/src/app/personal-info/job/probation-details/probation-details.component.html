@@ -6,6 +6,7 @@
 
     <!--table Content-->
     <div class="custom-table-content">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -49,9 +50,9 @@
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <!--status pending-->
-                                @if(probation.status === 'Pending' &&
-                                shouldprobationShowButton(probation.probationEndDate) && probation.status!='Extended'){
                                 @if(canAccess('view','request')){
+                                @if(probation.status === 'Pending' &&
+                                shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
@@ -61,7 +62,7 @@
                                 <!--status Rejected-->
                                 @if(canAccess('view','re-request')){
                                 @if(probation.status === 'Rejected' &&
-                                shouldprobationShowButton(probation.probationEndDate)){
+                                shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Re-Request for Probation Confirmation</a>
@@ -70,7 +71,7 @@
                                 <!--status extended-->
                                 @if(canAccess('view','request')){
                                 @if(probation.status === 'Extended' &&
-                                shouldprobationShowButton(probation.probationEndDate)){
+                                shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
@@ -96,6 +97,10 @@
                 }
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>
 
@@ -127,12 +132,12 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let comment of appcomment">
-                            <td class="text-center">{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
+                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
                                 '-'}}</td>
-                            <td class="text-center">{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
+                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
                                 number:'1.2-2') : '-'}}</td>
-                            <td class="text-center">{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
-                            <td class="text-center">{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) :
+                            <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
+                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) :
                                 'NA'}}
                             </td>
                             <td class="text-center">

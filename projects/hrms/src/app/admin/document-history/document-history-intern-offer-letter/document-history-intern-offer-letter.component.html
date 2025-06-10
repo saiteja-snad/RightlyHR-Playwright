@@ -1,86 +1,86 @@
 @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')){
-    <div class="custom-main-component-container">
-        <div class="input-group custom-search mb-2">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th class="text-nowrap">{{'Date'|translate}}</th>
-                        <th>{{'Name'|translate}}</th>
-                        <th>{{'Location'|translate}}</th>
-                        <th>{{'Sub Location'|translate}}</th>
-                        <th>{{'Designation'|translate}}</th>
-                        <th>{{'Duration Of Training'|translate}}</th>
-                        <th>{{'Status'|translate}}</th>
-                        <th>{{'Sub Status'|translate}}</th>
-                        @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') || 
-                        rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
-                        rbac.allowedToAccess('Trainee Offer Letter Approve.view') || 
-                        rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
-                        <th class="text-center">{{'Action'|translate}}</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(traineeofferletters.length > 0){
-                    @for (traineeofferLetter of traineeofferletters | offerletterdashboardpipe : searchValue; 
-                    track traineeofferLetter.id){
-                    <tr>
-                        <td class="text-nowrap">{{traineeofferLetter.offerSentDate | dateformat }}</td>
-                        <td>{{traineeofferLetter.employeeName ?traineeofferLetter.employeeName:'-'}}</td>
-                        <td>{{traineeofferLetter.workLocation?traineeofferLetter?.workLocation:'-' }}</td>
-                        <td>{{traineeofferLetter.subLocation?traineeofferLetter.subLocation:'-' }} </td>
-                        <td>{{traineeofferLetter.jobRole?traineeofferLetter.jobRole:'-'}}</td>
-                        <td>{{traineeofferLetter.durationOfTraining?traineeofferLetter.durationOfTraining:'-'}}</td>
-                        <td>{{traineeofferLetter.status?traineeofferLetter.status:'-'}} </td>
-                        <td>{{traineeofferLetter.empSubstatus?traineeofferLetter.empSubstatus:'-'}} </td>
-                        @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') || 
-                        rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
-                        rbac.allowedToAccess('Trainee Offer Letter Approve.view') || 
-                        rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
-                        <td class="text-center">
-                            <div class="dropdown">
+<div class="custom-main-component-container">
+    <div class="input-group custom-search mb-2">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+    <div class="custom-table-content">
+        @if(!loading){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">{{'Date'|translate}}</th>
+                    <th>{{'Name'|translate}}</th>
+                    <th>{{'Location'|translate}}</th>
+                    <th>{{'Sub Location'|translate}}</th>
+                    <th>{{'Designation'|translate}}</th>
+                    <th>{{'Duration Of Training'|translate}}</th>
+                    <th>{{'Status'|translate}}</th>
+                    <th>{{'Sub Status'|translate}}</th>
+                    @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') ||
+                    rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
+                    rbac.allowedToAccess('Trainee Offer Letter Approve.view') ||
+                    rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
+                    <th class="text-center">{{'Action'|translate}}</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if(traineeofferletters.length > 0){
+                @for (traineeofferLetter of traineeofferletters | offerletterdashboardpipe : searchValue;
+                track traineeofferLetter.id){
+                <tr>
+                    <td class="text-nowrap">{{traineeofferLetter.offerSentDate | dateformat }}</td>
+                    <td>{{traineeofferLetter.employeeName ?traineeofferLetter.employeeName:'-'}}</td>
+                    <td>{{traineeofferLetter.workLocation?traineeofferLetter?.workLocation:'-' }}</td>
+                    <td>{{traineeofferLetter.subLocation?traineeofferLetter.subLocation:'-' }} </td>
+                    <td>{{traineeofferLetter.jobRole?traineeofferLetter.jobRole:'-'}}</td>
+                    <td>{{traineeofferLetter.durationOfTraining?traineeofferLetter.durationOfTraining:'-'}}</td>
+                    <td>{{traineeofferLetter.status?traineeofferLetter.status:'-'}} </td>
+                    <td>{{traineeofferLetter.empSubstatus?traineeofferLetter.empSubstatus:'-'}} </td>
+                    @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') ||
+                    rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
+                    rbac.allowedToAccess('Trainee Offer Letter Approve.view') ||
+                    rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
+                    <td class="text-center">
+                        <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Download.view')) {
-                                        <li (click)="onSelectDownload(traineeofferLetter)"
-                                    >
+                                <li (click)="onSelectDownload(traineeofferLetter)">
                                     <a class="dropdown-item">{{'Download' | translate}}</a>
                                 </li>
-                            }
-                             @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
+                                }
+                                @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
                                 @if(traineeofferLetter.status=='Approved'){
-                                       <li (click)="releaseTraineeOfferLetter(traineeofferLetter)"
-                                    >
+                                <li (click)="releaseTraineeOfferLetter(traineeofferLetter)">
                                     <a class="dropdown-item">{{'Release Offer' | translate}}</a>
                                 </li>
                                 }}
-                              @if(rbac.allowedToAccess('Trainee Offer Letter Approve.view')) {
-                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected'
+                                @if(rbac.allowedToAccess('Trainee Offer Letter Approve.view')) {
+                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !==
+                                'Rejected'
                                 &&
                                 traineeofferLetter?.status !== 'Released') {
-                                     <li (click)="updateTraineeOfferDetails(traineeofferLetter)" >
+                                <li (click)="updateTraineeOfferDetails(traineeofferLetter)">
                                     <a class="dropdown-item">
                                         {{'Approve' | translate}}</a>
                                 </li>
                                 }}
-                                  @if(rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
+                                @if(rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                                 @if((traineeofferLetter.status!='Approved'&&
                                 traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
-                                      <li (click)="SelectData(traineeofferLetter);openModal(rejectpopup)" >
+                                <li (click)="SelectData(traineeofferLetter);openModal(rejectpopup)">
                                     <a class="dropdown-item">
                                         {{'Reject' | translate}}</a>
                                 </li>
                                 }}
                             </ul>
                         </div>
-                            <!-- <div class="d-flex gap-2 justify-content-center">
+                        <!-- <div class="d-flex gap-2 justify-content-center">
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Download.view')) {
                                 <button class="custom-btn btn-primary"
                                     (click)="onSelectDownload(traineeofferLetter)">Download</button>}
@@ -103,19 +103,25 @@
                                     (click)="SelectData(traineeofferLetter);openModal(rejectpopup)">Reject</button>
                                 }}
                             </div> -->
-                        </td>}
-                    </tr>
-                    }
-                    }
-                    @else {
-                    <tr>
-                        <td colspan="8">No Data Found</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </td>}
+                </tr>
+                }
+                }
+                @else {
+                <tr>
+
+                    <app-no-data-found />
+                </tr>
+
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
+</div>
 }
 <!--reject popup-->
 <ng-template #rejectpopup let-modal>
@@ -125,7 +131,8 @@
                 <p class="popup-heading mb-0">Reject Reason</p>
             </div>
             <div>
-                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -134,7 +141,7 @@
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
                     <textarea type="text" name="rejectReason" class="form-control"
                         placeholder="Please provide reason for rejection" rows="3" maxlength="250"
-                        formControlName="comments" ></textarea>
+                        formControlName="comments"></textarea>
                     <div class="mt-2 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>
                     </div>
@@ -144,11 +151,13 @@
                     </div>
                     <div class="error-msg" *ngIf="rejectDocument.get('comments')?.hasError('leadingSpace')">
                         Please enter valid input
-                      </div>
+                    </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>

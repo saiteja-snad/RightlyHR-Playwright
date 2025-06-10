@@ -1,5 +1,5 @@
 <div class="profile-info-card-main-container w-100">
-  @if(!isloading){
+    @if(!isloading){
     <div class="card profile-card mb-2">
         <div class="image-content">
             <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
@@ -11,7 +11,8 @@
             </div>
         </div>
         <div class="profile-content text-nowrap">
-            <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}</p>
+            <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
+                {{empdata?.lastName}}</p>
             <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
             <p class="label-text text-truncate mb-2">
                 <i class="bi bi-envelope me-2"></i>
@@ -53,26 +54,48 @@
             </p>
         </div>
     </div>
-}
-@else {
+    }
+    @else {
     <div class="card profile-card mb-2">
         <div class="image-content">
-            <p-skeleton shape="circle" size="6rem" class="mb-2"></p-skeleton>
+            <p-skeleton shape="circle" size="5rem" styleClass="mb-2"></p-skeleton>
             <div class="edit-icon-content">
-                <p-skeleton shape="circle" size="2rem"></p-skeleton>
+                <p-skeleton shape="circle" size="1rem" class="edit-icon cursor"></p-skeleton>
             </div>
         </div>
+
         <div class="profile-content text-nowrap">
-            <p-skeleton width="8rem" height="1.5rem" class="mb-2"></p-skeleton>
-            <p-skeleton width="6rem" height="1.2rem" class="mb-2"></p-skeleton>
-            <p-skeleton width="12rem" height="1rem" class="mb-2"></p-skeleton>
-            <p-skeleton width="10rem" height="1rem" class="mb-2"></p-skeleton>
-            <p-skeleton width="10rem" height="1rem" class="mb-2"></p-skeleton>
-            <p-skeleton width="14rem" height="1rem" class="mb-2"></p-skeleton>
-            <p-skeleton width="10rem" height="1rem" class="mb-2"></p-skeleton>
+            <div class="name text-center m-0 mb-2 d-flex justify-content-center">
+                <p-skeleton width="12rem" height="1rem"></p-skeleton>
+            </div>
+            <div class="name text-center m-0 mb-2 d-flex justify-content-center">
+                <p-skeleton width="8rem" height="0.75rem"></p-skeleton>
+            </div>
+            <p-skeleton width="14rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="12rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="12rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="10rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+
         </div>
     </div>
-}
+    }
+    @if(isloading) {
+    <div class="manager-card mb-2">
+        <div class="accent-bar"></div>
+        <div class="w-100">
+            <p-skeleton width="8rem" height="1rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="10rem" height="1rem"></p-skeleton>
+        </div>
+    </div>
+    <div class="manager-card mb-2">
+        <div class="accent-bar1"></div>
+        <div class="w-100">
+            <p-skeleton width="8rem" height="1rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="10rem" height="1rem"></p-skeleton>
+        </div>
+    </div>
+    }
+    @else {
     <div class="manager-card mb-2">
         <div class="accent-bar"></div>
         <div class="w-100">
@@ -81,14 +104,14 @@
                 {{reportesto?.middlename || ''}} {{reportesto?.lastname}}</p>
         </div>
     </div>
-
     <div class="manager-card mb-2">
-        <div class="accent-bar1" [style.background]=""></div>
+        <div class="accent-bar1"></div>
         <div class="w-100">
             <p class="label-name mb-1">Reporting Manager</p>
             <p class="label-name count-text m-0">{{Reportingmanager || 'NA'}}</p>
         </div>
     </div>
+    }
 
     <div class="card custom-background-card p-2 mb-3">
         <div *ngIf="isActive('myinfo')">

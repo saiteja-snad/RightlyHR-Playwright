@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
@@ -16,13 +15,13 @@ import moment from 'moment';
 import { environment } from '../../../../environments/environment';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
-
 @Component({
   selector: 'app-add-global-permissions',
   imports: [CommonModule, ReactiveFormsModule, MultiSelectModule, FormsModule, Select, TranslateModule],
   templateUrl: './add-global-permissions.component.html',
   styleUrl: './add-global-permissions.component.scss'
 })
+
 export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   issubmitdiable = false;
@@ -58,8 +57,8 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   teamWiseEmployeesDetails = [] as any;
   requestcount!: number;
   isLoader = false;
+
   constructor(
-    private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
     private http: HttpService,
@@ -68,6 +67,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public formValidation: FormValidationService
   ) { }
+
   ngOnInit(): void {
     this.initalizingForm();
     this.getAllEmployees();
@@ -75,6 +75,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.permissionsDuration();
     this.setupValidationOnClear();
   }
+
   setupValidationOnClear() {
     const control = this.requestForm.get('selectedOptions');
     control?.valueChanges.subscribe(value => {
@@ -94,7 +95,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       control?.updateValueAndValidity();
     }
   }
-  
+
   openModal() {
     this.requestForm.reset();
     this.wasEmployeeDropdownTouched = false;
@@ -134,7 +135,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     const location = this.requestForm.get('location');
     const sublocation = this.requestForm.get('sublocation');
     const locationEmployees = this.requestForm.get('selectedOptions');
-
     if (selectType === 'Department/Team') {
       this.getDepartment();
       departmentControl?.setValidators([Validators.required]);
@@ -160,7 +160,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
       locationEmployees?.clearValidators();
       this.jobLocationList();
     }
-
     // Update the validity of the form controls
     departmentControl?.updateValueAndValidity();
     teamControl?.updateValueAndValidity();
@@ -233,8 +232,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     console.log(ValuesForSublocation);
     this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation} `).subscribe({
       next: (data: any) => {
-        this.subLocationsDropdown = data.jobSubLocations
-        console.log(this.subLocationsDropdown);
+        this.subLocationsDropdown = data.jobSubLocations;
       },
       error: (err: any) => {
         this.locationWiseEmployeesDetails = [];
@@ -336,7 +334,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
   getDepartment() {
     this.subscription = this.http.getData("Department").subscribe({
       next: (data: any) => {
-        console.log(data);
         this.departmentDetails = data as IDepartment[];
         //this.allDepartments = this.departmentDetails.map(item => item.departmentName)
       },
@@ -356,7 +353,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         this.teamDetails = data;
       },
       error: (err: any) => {
-        console.log(err)
         this.teamWiseEmployeesDetails = [];
         this.teamDetails = [];
         this.requestForm.get('teamEmpselectedOptions')?.setValue(null);
@@ -392,7 +388,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "requestedDate": currentDate,
         "type": formData.requestType,
         "permissionRequestedDate": formData.permissionDate,
-
         "moduleId": environment.permissionsModuleId,
         "referenceTypeId": this.selectedPermissionId,
         "duration": formData.duration?.toString(),
@@ -405,46 +400,45 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         "deptId_locationId": deptId_locationId,
         "teamId_sublocId": teamId_sublocationId,
       }
-      this.http
-        .postdata(`GlobalPermissions/postGlobalPermissions`, payLoad)
-        .subscribe({
-          next: (response: any) => {
-            this.isLoader = false;
-            this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(
-              'Request submitted sucessfully'
-            );
-          },
-          error: (err: any) => {
-            if (this.modalRef) {
-              this.modalRef.close(); // or this.modalRef.dismiss();
-              this.modalRef = null;
-            }
-            this.conformationPopup.openErrorModal(err.error.message);
-            this.isLoader = false;
-          },
-          complete: () => {
-            this.requestForm.reset();
-            this.http.tirggerCountSignal.update((status) => ({
-              ...status,
-              global: true,
-            }));
-          },
-        });
+      this.http.postdata(`GlobalPermissions/postGlobalPermissions`, payLoad).subscribe({
+        next: (response: any) => {
+          this.isLoader = false;
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Request submitted sucessfully')
+        },
+        error: (err: any) => {
+          if (this.modalRef) {
+            this.modalRef.close(); // or this.modalRef.dismiss();
+            this.modalRef = null;
+          }
+          this.conformationPopup.openErrorModal(err.error.message);
+          this.isLoader = false;
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        complete: () => {
+          this.requestForm.reset();
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            global: true,
+          }));
+
+        },
+      })
     }
   }
 
   //function to open the model popup
   openconfirmationModel(content: any) {
-    this.modalService.open(content, { centered: true,backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   openconfirmationModelNew(content: any) {
-    this.modalRef =  this.modalService.open(content, { centered: true ,backdrop: 'static'});
+    this.modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   //function to open the confirmation model popup before submitting the request 
   openconfirmationModelforsubmit(content: any) {
-    this.modalService.open(content, { centered: true,backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   //function to close the lists
@@ -456,12 +450,6 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
     this.departmentDetails = [];
     this.teamDetails = [];
     this.teamWiseEmployeesDetails = [];
-  }
-
-  //function to set the current month
-  setDateValidation() {
-    this.minDate = moment().startOf('month').format('YYYY-MM-DD');
-    // Get the end of the current month
     this.maxDate = moment().endOf('month').format('YYYY-MM-DD');
   }
 

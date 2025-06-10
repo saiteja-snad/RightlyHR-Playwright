@@ -14,7 +14,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   export const MY_INFO_JOB_ROUTES = [
     { permission: 'My Info Pre-Onboarding Details.view', route: '/myinfo/job/pre-onboarding-details' },
     { permission: 'My Info Onboarding Details.view', route: '/myinfo/job/onboarding-details' },
-    { permission: 'My Info Offboarding Details.view', route: '/myinfo/job/employmentType' },
+    // { permission: 'My Info Offboarding Details.view', route: '/myinfo/job/employmentType' },
     { permission: 'My Info Job Details.view', route: '/myinfo/job/job-details' },
     { permission: 'My Info Separation Request Details.view', route: '/myinfo/job/separation-details' },
     { permission: 'My Info No Due Clearance Details.view', route: '/myinfo/job/no-due-clearance-details' },

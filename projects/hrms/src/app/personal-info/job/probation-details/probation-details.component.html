@@ -30,7 +30,12 @@
                     <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
                     <td>{{probation.probationDays ? probation.probationDays : '-'}}</td>
                     <td>{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
-                    <td>{{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}</td>
+                     <td>@if(probation.status == 'Processed'){
+                        {{empdata.probationEndDate ? (empdata.probationEndDate | dateformat) : '-'}}
+                        } @else {
+                        {{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}
+                    }
+                </td>
                     <td>{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
                     <td class="text-center">
                         @if(probation.approvers && probation.approvers.length > 0;){

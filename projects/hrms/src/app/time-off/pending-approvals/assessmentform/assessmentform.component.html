@@ -211,7 +211,7 @@
         
          
         </div>
-         <!-- @if(selected_approve.probationextendedcount<probationExtensionTimes){ -->
+         @if(selected_approve.probationextendedcount<probationExtensionTimes){
           <div class="mb-3" *ngIf="extend">
           <label for="exampleFormControlInput1" class="form-label custom-label">{{'Extend Date' | translate}}
             <span class="text-danger">*</span>
@@ -219,7 +219,7 @@
           <input class="form-control custom-input" type="date" aria-label="Default select example" id="extenddate"
             placeholder="" name="extenddate" #extenddate="ngModel" (keypress)="letters($event)"
             [(ngModel)]="selected_approve.extenddate" [min]="getBlockedFutureDate(selected_approve.probationEndDate,employeedata.probationEndDate,selected_approve.probationextendedcount)"
-            [max]="getBlockedFutureDateupto(selected_approve.probationEndDate,probationExtensionDuration,employeedata.probationEndDate)" required>
+            [max]="getBlockedFutureDateupto(selected_approve.probationEndDate,probationExtensionDuration,employeedata.probationEndDate)"  required>
           <div class="error-msg"
             *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptForm.submitted)">
             {{'Extend date is required' | translate}}
@@ -250,7 +250,7 @@
        
         </div>
 
-         <!-- } -->
+         }
        
         <div class="mb-3" *ngIf="discontinue">
           <label for="Descriptiondetails" class="form-label custom-label">{{'Reject Reason' | translate}}

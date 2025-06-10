@@ -116,15 +116,10 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   isprobationEndDateComplete(probationEndDate: string) {
-    
-
     if (probationEndDate) {
-      const [day, month, yearAndTime] = probationEndDate.split("-");
-      const [year, time] = yearAndTime.split(" ");
-      const endDate = new Date(`${year}-${month}-${day}T${time}`);
-      // const endDate = new Date(probationEndDate);
-      let buttonEnabledDate = endDate;
-      // buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.probationProbationNotiperiodDuration));
+      const endDate = new Date(probationEndDate);
+      const buttonEnabledDate = new Date(endDate);
+      buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.probationProbationNotiperiodDuration));
       const currentDate = new Date();
       const isComplete = currentDate >= buttonEnabledDate;
       return isComplete;

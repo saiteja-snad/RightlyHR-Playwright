@@ -228,7 +228,7 @@
           (!isLoading) { {{ 'Approve' | translate }} } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Approving Recall Request...'|translate}}</div>
+            <div>{{'Loading...'|translate}}</div>
           </div>
           }
         </button>
@@ -275,7 +275,7 @@
           } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Rejecting Recall Request...'|translate}}</div>
+            <div>{{'Loading...'|translate}}</div>
           </div>
           }
         </button>
@@ -323,7 +323,7 @@
           } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Processing Recall Request...'|translate}}</div>
+            <div>{{'Loading...'|translate}}</div>
           </div>
           }
         </button>

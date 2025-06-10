@@ -114,7 +114,7 @@
                     (!isLoading) { {{ 'Approve' | translate }} } @else {
                     <div class="button-loader-content">
                         <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-                        <div>{{'Approving No Due Request...'|translate}}</div>
+                        <div>{{'Loading...'|translate}}</div>
                     </div>
                     }
                 </button>
@@ -155,7 +155,7 @@
                     } @else {
                     <div class="button-loader-content">
                         <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-                        <div>{{'Rejecting No Due Request...'|translate}}</div>
+                        <div>{{'Loading...'|translate}}</div>
                     </div>
                     }
                 </button>

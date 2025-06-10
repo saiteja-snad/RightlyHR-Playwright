@@ -110,7 +110,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
       identityNumberControl?.clearValidators();
 
-      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'Pan') {
         // Allow alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
@@ -139,7 +139,7 @@ vadationfoforupdatetidentitytype() {
     const identityNumberControl = this.identityupdateForm.get('identityupdateNumber');
     identityNumberControl?.clearValidators();
 
-    if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+    if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'Pan') {
       // Allow alphanumeric + special characters
       identityNumberControl?.setValidators([
         Validators.required,

@@ -22,16 +22,30 @@ import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
-  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent, DataLoaderContentComponent],
+  imports: [
+    DateformatPipe,
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NoDataFoundComponent,
+    PaginatorModule,
+    DropdownModule,
+    NgbPopoverModule,
+    TranslateModule,
+    NgxDocViewerModule,
+    SearchfordeskPipe,
+    InfoIconComponent,
+    DataLoaderContentComponent,
+  ],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })
-
 export class ClaimsandexpensesForYouRequestComponent
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -59,8 +73,16 @@ export class ClaimsandexpensesForYouRequestComponent
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
-    private sanitizer: DomSanitizer, public rbac: RbacService, private signalService: SignalsService) { }
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private sharedModalService: OpenModalService,
+    private sanitizer: DomSanitizer,
+    public rbac: RbacService,
+    private signalService: SignalsService,
+    public formsValidation: FormValidationsService,
+  ) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -69,38 +91,55 @@ export class ClaimsandexpensesForYouRequestComponent
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250,), noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
   }
 
   getAllPendingApprovals() {
     this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=EMP`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        this.loading = false;
-        this.expenseheaderpending = (response.data as ExpenseApprovalResponse[]).filter((item) =>
-          item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected'
-        );
-      },
-      error: (reason) =>{
-        this.loading = false;
-      },
-    });
+    this.http
+      .getData(
+        `PendingApproval/employee/${EmployeeId}?moduleId=19&approvedType=EMP`
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          this.expenseheaderpending = (
+            response.data as ExpenseApprovalResponse[]
+          ).filter(
+            (item) =>
+              item.approvalHeader.status != 'Processed' &&
+              item.approvalHeader.status != 'Rejected'
+          );
+        },
+        error: (reason) => {
+          this.loading = false;
+        },
+      });
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'xl',
+      backdrop: 'static',
+    });
   }
 
   openModalview(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'xl',
+      backdrop: 'static',
+    });
   }
 
   onRowsChange() {
@@ -131,30 +170,42 @@ export class ClaimsandexpensesForYouRequestComponent
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-        currentStage: parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+        currentStage: parseInt(
+          this.selectedLeaveData.approvalHeader.currentapprovalStage
+        ),
       };
-      this.sharedModalService.openLoaderModal('Approving Expense Request...');
-      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response: any) => {
-          this.modalService.dismissAll();
-          this.http.setnewcountDetails()
-          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
-          this.sharedModalService.openSuccessModal('Expense Request Approved Successfully');
-          this.approveForm.reset();
-          this.selectedLeaveData = {} as ExpenseApprovalResponse;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            expenses: true,
-          }));
-        },
-        error: (reason: any) => {
-          this.modalService.dismissAll();
-          this.sharedModalService.openErrorModal(reason.error.Message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-        },
-      });
+      this.sharedModalService.openLoaderModal(
+        'Approving Request, Please wait...'
+      );
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.http.setnewcountDetails();
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal(
+              'Request Approved Successfully'
+            );
+            this.approveForm.reset();
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
     }
   }
 
@@ -165,22 +216,74 @@ export class ClaimsandexpensesForYouRequestComponent
         status: 'Rejected',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-        currentStage: parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+        currentStage: parseInt(
+          this.selectedLeaveData.approvalHeader.currentapprovalStage
+        ),
       };
-      this.sharedModalService.openLoaderModal('Rejecting Expense...');
-      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response: any) => {
+      this.sharedModalService.openLoaderModal(
+        'Rejecting Request, Please wait...'
+      );
+      this.http
+        .putData(
+          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
+          requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            this.http.setnewcountDetails();
+            this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
+            this.sharedModalService.openSuccessModal(
+              'Request Rejected Successfully'
+            );
+            this.rejectForm.reset();
+            this.selectedLeaveData = {} as ExpenseApprovalResponse;
+            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+              ...status,
+              expenses: true,
+            }));
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+          },
+          complete: () => {
+            this.getAllPendingApprovals();
+          },
+        });
+    }
+  }
+
+  handleProcess(request: ExpenseApprovalResponse) {
+    let requestBody = {
+      status: 'Processed',
+      approvedBy: this.empinfo.employeeId.toString(),
+      currentStage: parseInt(
+        this.selectedLeaveData?.approvalHeader?.currentapprovalStage
+      ),
+    };
+    this.sharedModalService.openLoaderModal(
+      'Processing Request, Please wait...'
+    );
+    this.http
+      .putData(
+        `PendingApproval/process/${request.approvalHeader?.id}`,
+        requestBody
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respone: any) => {
           this.modalService.dismissAll();
-          this.http.setnewcountDetails()
+          this.http.setnewcountDetails();
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
-          this.sharedModalService.openSuccessModal('Expense Rejected Successfully');
-          this.rejectForm.reset();
-          this.selectedLeaveData = {} as ExpenseApprovalResponse;
+          this.sharedModalService.openSuccessModal(
+            'Request Processed Successfully'
+          );
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             expenses: true,
           }));
-
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -190,52 +293,29 @@ export class ClaimsandexpensesForYouRequestComponent
           this.getAllPendingApprovals();
         },
       });
-    }
-  }
-
-  handleProcess(request: ExpenseApprovalResponse) {
-    let requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-      currentStage: parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
-    };
-    this.sharedModalService.openLoaderModal('Processing Request...');
-    this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (respone: any) => {
-        this.modalService.dismissAll();
-        this.http.setnewcountDetails()
-        this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
-        this.sharedModalService.openSuccessModal('Expense Processed Successfully');
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          expenses: true,
-        }));
-      },
-      error: (reason: any) => {
-        this.modalService.dismissAll();
-        this.sharedModalService.openErrorModal(reason.error.Message);
-      },
-      complete: () => {
-        this.getAllPendingApprovals();
-      },
-    });
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', });
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+    });
     this.approverComments = value;
   }
 
   viewItem(expid: number) {
     this.updataid = expid;
-    this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.expenseheaderiteams = data;
-      },
-      error(err) {
-        console.log('expensesheadererror', err);
-      },
-    });
+    this.http
+      .getitembyid(`Expenses_Header/getby_Expense_ID`, expid)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.expenseheaderiteams = data;
+        },
+        error(err) {
+          console.log('expensesheadererror', err);
+        },
+      });
   }
 
   onSelectDownload(file: any): void {
@@ -250,7 +330,9 @@ export class ClaimsandexpensesForYouRequestComponent
         const contentDisposition = res.headers.get('content-disposition');
         let fileName = 'defaultFileName.pdf'; // Default filename
         if (contentDisposition) {
-          const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+          const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(
+            contentDisposition
+          );
           if (fileNameMatch !== null && fileNameMatch[1]) {
             fileName = fileNameMatch[1].replace(/['"]/g, '');
           }
@@ -277,21 +359,22 @@ export class ClaimsandexpensesForYouRequestComponent
     });
   }
 
-
-
-
-
   onViewAttachement(url: any) {
     const lowerUrl = url?.toLowerCase();
 
-    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+    if (
+      lowerUrl?.endsWith('jpg') ||
+      lowerUrl?.endsWith('jpeg') ||
+      lowerUrl?.endsWith('png')
+    ) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)
         .subscribe({
           next: (res: any) => {
             const blob = new Blob([res['body']], { type: 'image/png' });
             const objectURL = URL.createObjectURL(blob);
-            this.expenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.expenseImageUrl =
+              this.sanitizer.bypassSecurityTrustUrl(objectURL);
             this.expenseViewURL = null;
             this.toggleViewModal();
           },
@@ -310,12 +393,16 @@ export class ClaimsandexpensesForYouRequestComponent
   }
   toggleViewModal() {
     this.modalService.dismissAll();
-    this.openModal(this.viewattamchment)
+    this.openModal(this.viewattamchment);
   }
   isImageFile(url: any): boolean {
     if (!url) return false;
     const lowerUrl = url.toLowerCase();
-    return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
+    return (
+      lowerUrl.endsWith('.jpg') ||
+      lowerUrl.endsWith('.jpeg') ||
+      lowerUrl.endsWith('.png')
+    );
   }
 
   ngOnDestroy(): void {

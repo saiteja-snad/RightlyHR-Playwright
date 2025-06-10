@@ -36,7 +36,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TableModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -58,8 +58,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
-  @ViewChild('dt') table!: Table; 
-  requestSummary!:any;
+  @ViewChild('dt') table!: Table;
+  requestSummary!: any;
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
@@ -70,7 +70,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   selectedLeavesItems: PermissionRequestResponse[] = [];
   multiSelect = false;
   requestBody = {} as any;
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   constructor(
     private modalService: NgbModal,
@@ -79,21 +79,21 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalService: SignalsService,
-    public formsValidation:FormValidationsService
-  ) {}
+    public formsValidation: FormValidationsService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-  
+
 
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -117,7 +117,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -166,7 +166,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -189,14 +189,14 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     return this.selectedLeavesItems?.every(
       (item) =>
         item.approvalHeader.currentapprovalStage !==
-          item.approvalHeader.finalapprovalStage
+        item.approvalHeader.finalapprovalStage
     );
   }
   canBulkProcess(): boolean {
     return this.selectedLeavesItems?.every(
       (item) =>
         item.approvalHeader.currentapprovalStage ===
-          item.approvalHeader.finalapprovalStage
+        item.approvalHeader.finalapprovalStage
     );
   }
   intializeApproveForm() {
@@ -227,12 +227,12 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.permissionsselect = response.data;
-          }else{
+          } else {
             this.leaves.next([]);
-            this.permissionsselect  = [];
+            this.permissionsselect = [];
           }
         },
         error: (reason) => {
@@ -248,15 +248,15 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
 
 
 
-getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
+  getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.permissionsselect ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
-         item.entity?.fusionempId?.toLowerCase().includes(search) ||
-      item.entity?.raisedForName?.toLowerCase().includes(search) ||
-      item.entity?.type?.toLowerCase().includes(search)
+        item.entity?.fusionempId?.toLowerCase().includes(search) ||
+        item.entity?.raisedForName?.toLowerCase().includes(search) ||
+        item.entity?.type?.toLowerCase().includes(search)
       );
     }
 
@@ -274,7 +274,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openApproveModal(content: any, request: PermissionRequestResponse) {
@@ -338,6 +338,9 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;
@@ -375,7 +378,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests...';
+      message = 'Processing Requests, Please wait...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -389,7 +392,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
           },
         ],
       };
-      message =  'Processing Request...';
+      message = 'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -412,6 +415,9 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -480,6 +486,9 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;

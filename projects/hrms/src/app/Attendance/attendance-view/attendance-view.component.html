@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
+            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){({{empName}})}</p>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
             </div>
@@ -162,17 +162,14 @@
                     @if(statusCounts$.value.length<=0){ <tr>
                         <app-no-data-found />
                         </tr>
-                        }
-                        }
-                        @else {
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                        }
-                        }
-                        @else {
-                        <app-data-loader-content />
-                        }
+                    }
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                    }
                 </tbody>
             </table>
         </div>

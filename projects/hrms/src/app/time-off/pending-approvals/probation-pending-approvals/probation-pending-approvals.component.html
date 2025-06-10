@@ -181,7 +181,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide comments" name="earlyrelievingreason"
                         #earlyrelievingreason="ngModel" maxlength="250" [(ngModel)]="selectedData.comments"
-                        (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
+                        (ngModelChange)="ifreasonnull(selectedData.comments)" (keydown)="formsValidation.restrictInitialSpace($event)"  required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
@@ -212,7 +212,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedData.comments" maxlength="250"
-                        (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
+                        (ngModelChange)="ifreasonnull(selectedData.comments)"  (keydown)="formsValidation.restrictInitialSpace($event)" required rows="3"></textarea>
                     <div class="textarea-count-text">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && ProcessacceptForm.submitted)
                      || (Extendreason.errors?.['pattern']) ">{{'Feedback for Extend is required' | translate}}</div>
@@ -225,7 +225,7 @@
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
                         name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
                         placeholder="Please provide reason" #Descriptiondetails="ngModel" autocomplete="off"
-                        (ngModelChange)="ifreasonnull(selectedData.rejectedReason)"
+                        (ngModelChange)="ifreasonnull(selectedData.rejectedReason)"  (keydown)="formsValidation.restrictInitialSpace($event)"
                         [(ngModel)]="selectedData.rejectedReason" required></textarea>
                     <div class="textarea-count-text">{{selectedData.rejectedReason?.length ?
                         selectedData.rejectedReason.length : 0}}/250</div>

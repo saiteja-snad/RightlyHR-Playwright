@@ -35,7 +35,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     TableModule,
     NoDataFoundComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './regularization-for-you-request.component.html',
   styleUrl: './regularization-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -262,7 +262,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
-      this.multiSelect= false;
+      this.multiSelect = false;
       this.selectedProducts = [];
       this.hasSelectedAllOnce = false;
       this.updateTableSelectionState([]);
@@ -367,12 +367,15 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
               if (this.selectedProducts.length > 1) {
-               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
               } else {
                 this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Approved Successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {
@@ -448,6 +451,9 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -514,12 +520,15 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
               if (this.selectedProducts.length > 1) {
-               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
               } else {
                 this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Rejected Successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {

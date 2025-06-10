@@ -16,10 +16,21 @@ import { RbacService } from '../../../services/rbac.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-nodue-approval-details',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-    PaginatorModule, NoDataFoundComponent, NodueDetailsPipe, DateformatPipe, DataLoaderContentComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    NgbPopoverModule,
+    ReactiveFormsModule,
+    FormsModule,
+    PaginatorModule,
+    NoDataFoundComponent,
+    NodueDetailsPipe,
+    DateformatPipe,
+    DataLoaderContentComponent,
+  ],
   templateUrl: './nodue-approval-details.component.html',
   styleUrl: './nodue-approval-details.component.scss',
 })
@@ -30,7 +41,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
-  loading=false
+  loading = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -43,9 +54,16 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedNoDueData = {} as any;
 
-  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private signalService:SignalsService, private http: HttpService, 
-    private authService: AuthService, private fb: FormBuilder, public rbac: RbacService
-  ) { }
+  constructor(
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    private signalService: SignalsService,
+    private http: HttpService,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+    public formsValidation: FormValidationsService,
+  ) {}
 
   ngOnInit(): void {
     this.formInializer();
@@ -59,8 +77,8 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
         null,
         [
           Validators.required,
-          Validators.maxLength(250),
-          Validators.pattern(/^(?!\s).*$/),
+          Validators.maxLength(250)
+          
         ],
       ],
     });
@@ -69,23 +87,27 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
         null,
         [
           Validators.required,
-          Validators.maxLength(250),
-          Validators.pattern(/^(?!\s).*$/),
+          Validators.maxLength(250)
+          
         ],
       ],
     });
   }
 
   getAllPendingApprovalsNoDue() {
-    this.loading=true
+    this.loading = true;
     let loggedInuser = this.authService.getToken();
     const EmployeeId = loggedInuser.employeeId;
-    this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-      this.loading=false
-        this.nodue_Request_data.next(data);
-      },
-    });
+    this.subscription = this.http
+      .getData(
+        `NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.loading = false;
+          this.nodue_Request_data.next(data);
+        },
+      });
   }
 
   openModal(Values: any, content: any) {
@@ -96,7 +118,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   openModals(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  
+
   onRowsChange() {
     this.first = 0;
   }
@@ -106,12 +128,12 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-    resetForm(){
+  resetForm() {
     this.AcceptForm.reset();
     this.modalService.dismissAll();
   }
 
-  close(){
+  close() {
     this.rejectForm.reset();
     this.modalService.dismissAll();
   }
@@ -121,30 +143,40 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     const date = moment();
     let loggedInuser = this.authService.getToken();
     (this.selectedNoDueData.status = 'Approved'),
-    (this.selectedNoDueData.processedBy = loggedInuser.employeeId),
-    (this.selectedNoDueData.processdByFusionEmpId = loggedInuser.fusionEmpId);
+      (this.selectedNoDueData.processedBy = loggedInuser.employeeId),
+      (this.selectedNoDueData.processdByFusionEmpId = loggedInuser.fusionEmpId);
     this.selectedNoDueData.processedDate = date;
-    this.selectedNoDueData.processedByName = `${loggedInuser.firstName ?? ''} ${loggedInuser.middleName ?? ''} ${loggedInuser.lastName ?? ''}`;
-    this.selectedNoDueData.comments = this.AcceptForm.get('AcceptReason')?.value;
-    this.subscription = this.http.postdata(`NoDueClearanceForm/pendingApprovalsUpdate`, this.selectedNoDueData).subscribe({
-      next: (respone: any) => {
-        this.isLoading = false;
-        this.modalService.dismissAll();
-        this.AcceptForm.reset();
-        this.signalService.noDueTriggerSignal.set(true);
-        this.signalService.noDueSideNavCountTriggerSignal.set(true);
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          nodue: true,
-        }));
-        this.conformationPopup.openSuccessModal('No Due Request Approved Successfully');
-        this.getAllPendingApprovalsNoDue();
-      },
-      error: (reason: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(reason.error.message);
-      },
-    });
+    this.selectedNoDueData.processedByName = `${loggedInuser.firstName ?? ''} ${
+      loggedInuser.middleName ?? ''
+    } ${loggedInuser.lastName ?? ''}`;
+    this.selectedNoDueData.comments =
+      this.AcceptForm.get('AcceptReason')?.value;
+    this.subscription = this.http
+      .postdata(
+        `NoDueClearanceForm/pendingApprovalsUpdate`,
+        this.selectedNoDueData
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.isLoading = false;
+          this.modalService.dismissAll();
+          this.AcceptForm.reset();
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
+          this.conformationPopup.openSuccessModal(
+            'No Due Request Approved Successfully'
+          );
+          this.getAllPendingApprovalsNoDue();
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+      });
   }
 
   //function to reject the nodue
@@ -156,30 +188,39 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
       (this.selectedNoDueData.processedBy = loggedInuser.employeeId),
       (this.selectedNoDueData.processdByFusionEmpId = loggedInuser.fusionEmpId);
     this.selectedNoDueData.processedDate = date;
-    this.selectedNoDueData.processedByName = `${loggedInuser.firstName ?? ''} ${loggedInuser.middleName ?? ''} ${loggedInuser.lastName ?? ''}`;
+    this.selectedNoDueData.processedByName = `${loggedInuser.firstName ?? ''} ${
+      loggedInuser.middleName ?? ''
+    } ${loggedInuser.lastName ?? ''}`;
     this.selectedNoDueData.comments = this.AcceptForm.get('notes')?.value;
-    this.subscription = this.http.postdata(`NoDueClearanceForm/pendingApprovalsUpdate`, this.selectedNoDueData).subscribe({
-      next: (data: any) => {
-        this.isLoading = false;
-        this.modalService.dismissAll();
-        this.rejectForm.reset();
-        this.signalService.noDueTriggerSignal.set(true);
-        this.signalService.noDueSideNavCountTriggerSignal.set(true);
+    this.subscription = this.http
+      .postdata(
+        `NoDueClearanceForm/pendingApprovalsUpdate`,
+        this.selectedNoDueData
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.isLoading = false;
+          this.modalService.dismissAll();
+          this.rejectForm.reset();
+          this.signalService.noDueTriggerSignal.set(true);
+          this.signalService.noDueSideNavCountTriggerSignal.set(true);
 
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          nodue: true,
-        }));
-        this.conformationPopup.openSuccessModal('No Due Request Rejected Successfully');
-        this.getAllPendingApprovalsNoDue();
-      },
-      error: (reason: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openSuccessModal(reason.error.message);
-      },
-    });
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            nodue: true,
+          }));
+          this.conformationPopup.openSuccessModal(
+            'No Due Request Rejected Successfully'
+          );
+          this.getAllPendingApprovalsNoDue();
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openSuccessModal(reason.error.message);
+        },
+      });
   }
-  
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

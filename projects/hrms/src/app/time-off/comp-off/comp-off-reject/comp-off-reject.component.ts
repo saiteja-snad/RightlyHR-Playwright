@@ -55,10 +55,10 @@ export class CompOffRejectComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
       if (id) {
-        // Use the new employee ID here
         this.selectemp = id;
         console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
+        this.getCompOffRequest();
+      }else{
         this.getCompOffRequest();
       }
     });
@@ -76,10 +76,10 @@ export class CompOffRejectComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    let empId = this.empinfo.employeeId || this.selectemp;
+    console.log('Fetching rejected comp off requests...');
+    let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http
-      .getData(`Timeoff/getCompoffRequests/${empId}`)
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
@@ -92,8 +92,9 @@ export class CompOffRejectComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.dataload = false;
-          console.error('Error fetching data:', error);
+          this.rejectedCompOffRequestsCount= 0;
           this.rejectedCompOffRequests = [];
+          console.error('Error fetching data:', error);
         },
         complete: () => {
           this.dataload = false;

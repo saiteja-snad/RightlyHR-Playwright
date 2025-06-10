@@ -40,7 +40,7 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
   compOff = [] as any;
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
-  selectemp = {} as IJob;
+  selectemp : any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
   options = [
@@ -55,10 +55,9 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
       if (id) {
-        // Use the new employee ID here
         this.selectemp = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
+        this.getCompOffRequest();
+      }else{
         this.getCompOffRequest();
       }
     });
@@ -76,7 +75,8 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    let empId = this.empinfo.employeeId || this.selectemp;
+    // let empId = this.empinfo.employeeId || this.selectemp;
+    let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
     this.http
       .getData(`Timeoff/getCompoffRequests/${empId}`)
@@ -92,8 +92,9 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.dataload = false;
-          console.error('Error fetching data:', error);
+          this.processedCompOffRequestsCount= 0;
           this.processedCompOffRequests = [];
+          console.error('Error fetching data:', error);
         },
         complete: () => {
           this.dataload = false;

@@ -109,7 +109,7 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
         <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-          formControlName="comments" maxlength="250"></textarea>
+          formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
         <!-- Character counter -->
             <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
           <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
@@ -138,7 +138,7 @@
         <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
           <span class="text-danger">*</span></label>
         <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-          formControlName="comments" maxlength="250"></textarea>
+          formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
           <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
           <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments is required.</div>
           <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters.</div>

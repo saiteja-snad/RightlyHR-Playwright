@@ -46,7 +46,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     TableModule,
     DataLoaderContentComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
 })
@@ -68,7 +68,7 @@ export class PermissionsComponent {
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
-  @ViewChild('dt') table!: Table; 
+  @ViewChild('dt') table!: Table;
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
@@ -81,7 +81,7 @@ export class PermissionsComponent {
   requestSummary!: any;
   dataload = false;
   searchValue: any | null;
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   constructor(
     private modalService: NgbModal,
@@ -151,13 +151,13 @@ export class PermissionsComponent {
 
 
 
- 
+
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -181,7 +181,7 @@ export class PermissionsComponent {
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -226,12 +226,12 @@ export class PermissionsComponent {
     }
   }
 
-  
+
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -265,25 +265,26 @@ export class PermissionsComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.permissionsselects = response.data;
-          }else{
+          } else {
             this.leaves.next([]);
-            this.permissionsselects=[];
+            this.permissionsselects = [];
           }
         },
         error: (reason) => {
           this.dataload = false;
-          console.log(reason)},
-        complete : () =>{
+          console.log(reason)
+        },
+        complete: () => {
           this.dataload = false;
         }
       });
   }
 
   openModal(content: any) {
-     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {
@@ -348,7 +349,7 @@ export class PermissionsComponent {
           status: 'Approved',
           comments: comments,
           moduleId: environment.permissionsModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -359,7 +360,7 @@ export class PermissionsComponent {
           requestProcessedBy: approvedBy,
           status: 'Approved',
           comments: comments,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           moduleId: environment.permissionsModuleId,
           headerRequests: [
             {
@@ -381,9 +382,12 @@ export class PermissionsComponent {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary,'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;
@@ -415,7 +419,7 @@ export class PermissionsComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.permissionsModuleId,
-        onBehalfOfApproval : true,
+        onBehalfOfApproval: true,
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -427,7 +431,7 @@ export class PermissionsComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.permissionsModuleId,
-        onBehalfOfApproval : true,
+        onBehalfOfApproval: true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,
@@ -450,9 +454,12 @@ export class PermissionsComponent {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary,'Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -482,7 +489,7 @@ export class PermissionsComponent {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.permissionsModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -493,7 +500,7 @@ export class PermissionsComponent {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           moduleId: environment.permissionsModuleId,
           headerRequests: [
             {
@@ -515,9 +522,12 @@ export class PermissionsComponent {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary,'Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;

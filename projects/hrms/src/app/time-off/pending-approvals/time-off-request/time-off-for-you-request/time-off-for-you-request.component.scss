@@ -1,0 +1,22 @@
+.custom-popup-header {
+  padding: 0.75rem 1rem !important;
+  background-color: var(--table-header-bg-color) !important;
+  font-weight: 600;
+  font-size: var(--fontsize14);
+  vertical-align: middle;
+  color: var(--table-header-color) !important;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  border: 2px solid #D1D8E3 !important;
+  border-bottom: 0px !important;
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+  max-height: 30vh;
+  overflow-y: hidden;
+  border: 1px solid #D1D8E3;
+  border-top: 0rem !important;
+  border-bottom: 2px solid #D1D8E3 !important;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}

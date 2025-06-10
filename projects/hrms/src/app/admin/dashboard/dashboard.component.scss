@@ -17,7 +17,7 @@
     .welcome-text {
         font-weight: 500;
         font-size: var(--fontsize20);
-        color: #000000;
+        color: #696969;
 
         .name {
             color: var(--primary-color);
@@ -28,6 +28,7 @@
     .gesture-text {
         font-weight: 400;
         font-size: var(--fontsize14);
+        color: #909090;
     }
 
     .dashboard-grid {
@@ -263,6 +264,12 @@
             .event-name {
                 font-weight: 700;
                 color: var(--primary-color);
+            }
+
+            .accordian-text {
+                color: #919191;
+                font-weight: 400;
+                font-size: 12px;
             }
         }
 

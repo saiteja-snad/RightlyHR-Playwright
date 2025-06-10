@@ -3,6 +3,7 @@
     height: 44px;
     border-radius: 8px;
 }
+
 .custom-table-content {
     .p-datatable-thead>tr>th {
         background-color: var(--table-header-bg-color) !important;
@@ -31,4 +32,12 @@
         background: #06274F !important;
         border-color: #06274F !important;
     }
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+    max-height: 30vh;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 2px solid #D1D8E3;
+    border-bottom: 2px solid #D1D8E3 !important;
 }

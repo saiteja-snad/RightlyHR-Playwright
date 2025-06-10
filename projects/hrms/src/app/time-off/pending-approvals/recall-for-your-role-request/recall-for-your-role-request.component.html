@@ -208,7 +208,7 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="AcceptReason" maxlength="250"
-          placeholder="Please enter comments" rows="3"></textarea>
+          placeholder="Please enter comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
@@ -250,7 +250,7 @@
         <label for="comments" class="form-label custom-label mb-2">Comments
           <span class="text-danger">*</span></label>
         <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter comments"
-          formControlName="notes" rows="3" maxlength="250"></textarea>
+          formControlName="notes" rows="3" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
         <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">

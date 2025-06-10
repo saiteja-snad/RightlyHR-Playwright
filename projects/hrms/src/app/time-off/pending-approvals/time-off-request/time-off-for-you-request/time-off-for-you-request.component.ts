@@ -461,7 +461,11 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
+            if(this.selectedProducts.length > 1){
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
+            }else{
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave Request Approved Successfully');
+            }            
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -531,7 +535,11 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            if(this.selectedProducts.length > 1){
             this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
+            } else{
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Request Rejected Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -600,7 +608,11 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            if(this.selectedProducts.length > 1){
             this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
+            }else{
+            this.signalService.handleResponse(this.responseSummary, 'Selected Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
           }

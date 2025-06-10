@@ -151,9 +151,6 @@ export class OnboardingDetailsComponent {
     // Listen to changes
     this.onboardingForm.get('remoteLogin')?.valueChanges.subscribe(value => {
       this.filterWorkLocationOptions(value);
-
-      // Optionally reset workLocation field
-      this.onboardingForm.get('workLocation')?.setValue(null);
     });
   }
 
@@ -227,7 +224,6 @@ export class OnboardingDetailsComponent {
     const workLocation = this.worklocation.find((item: any) => item.value === data?.workLocation);
     console.log(workLocation);
     this.onboardingForm.patchValue({
-  
       dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       branchLocation: data?.branchCode,
       probationEndDate: this.formatDateToLocal(data.probationEndDate),
@@ -240,15 +236,13 @@ export class OnboardingDetailsComponent {
       pt: this.ptdata.find((item: any) => item.value === data?.pt),
       totalExperience: data.totalYearsOfExperience,
       remoteLogin: data.allowWFH,
-      workLocation:data?.workLocation ,
+      workLocation:data?.workLocation,
       wfhmanger: data.wfhManagerId,
       trainingEndDate: moment(data.trainingEndDate).format('yyyy-MM-DD'),
       empType: data.empType,
       durationOfTrainee: data.durationOfTrainee
     });
     console.log(this.onboardingForm.value); // Check values in the onboardingForm
-  
-    
   }
 
   
@@ -414,7 +408,6 @@ export class OnboardingDetailsComponent {
       allowWFH: this.onboardingForm.get('remoteLogin')?.value ?? this.empdata.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empdata.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empdata.wfhManagerId,
-      
     };
     if (payload.empstatus === 'Active' && payload.substatus === 'Offer Letter Accepted') {
       payload.substatus = 'Probation' 

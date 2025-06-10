@@ -163,10 +163,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       team: [{ value: null, disabled: true }],
       teamManager: [{ value: null, disabled: true }],
       reportingManager: [{ value: '', disabled: true }],
-      description: [null, [Validators.required, Validators.maxLength(400), Validators.pattern(/^(?!\s).*$/)]],
+      description: [null, [Validators.required, Validators.maxLength(400)]],
       isEarlyRelieving: [false],
       earlyRelievingDate: [null, Validators.required],
-      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400), Validators.pattern(/^(?!\s).*$/)]]
+      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400)]]
     });
     // Disable early relieving fields by default
     this.toggleEarlyRelievingFields(false);

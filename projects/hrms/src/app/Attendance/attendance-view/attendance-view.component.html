@@ -3,7 +3,7 @@
         <div class="heading-content">
             <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
             </div>
         </div>
 

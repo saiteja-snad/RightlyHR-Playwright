@@ -8,9 +8,10 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-pending-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, NgbPopoverModule, DataLoaderContentComponent],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, NgbPopoverModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './pending-shifts.component.html',
   styleUrl: './pending-shifts.component.scss'
 })

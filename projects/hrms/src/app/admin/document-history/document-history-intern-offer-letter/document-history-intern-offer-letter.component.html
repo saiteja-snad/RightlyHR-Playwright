@@ -51,7 +51,7 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Download.view')) {
                                 <li (click)="onSelectDownload(traineeofferLetter)">
-                                    <a class="dropdown-item">{{'Download' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-download me-2"></i>{{'Download' | translate}}</a>
                                 </li>
                                 }
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {

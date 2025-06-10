@@ -20,6 +20,7 @@ import { Table, TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-premission-for-you-request',
@@ -35,7 +36,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     PermissionsearchPipe,
     DataLoaderContentComponent,
     TableModule,
-  ],
+    InfoIconComponent
+],
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,

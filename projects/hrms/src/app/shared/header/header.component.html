@@ -4,12 +4,16 @@
         <div>
             <img src="/logos/rightlyhr-full-logo.png" alt="Company Logo" class="company-logo-image">
         </div>
-
-         <!--Header profile content-->
+      <div class="d-flex gap-4 align-items-center">
+          <div>
+            <button class="custom-btn btn-primary" >Switch to RightlyHR 2.O</button>
+        </div>
+        <!--Header profile content-->
         @if(!isloading){
         <div class="header-profile-dropdown-content">
             <div class="dropdown">
-                <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-auto-close="outside">
                     <div class="text-end">
                         <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
                         </p>
@@ -80,6 +84,7 @@
             </div>
         </div>
         }
+      </div>
     </div>
 </div>
 

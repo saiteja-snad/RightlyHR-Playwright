@@ -83,8 +83,8 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   requestBody = {} as any;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
-  requestSummary!:any;
-  hasSelectedAllOnce = false; 
+  requestSummary!: any;
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   constructor(
     private modalService: NgbModal,
@@ -93,14 +93,14 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalService: SignalsService,
-    public formsValidation:FormValidationsService
-  ) {}
+    public formsValidation: FormValidationsService
+  ) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
     this.intializeApproveForm();
   }
- 
+
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
     this.modalService.open(approverPopup, {
@@ -135,7 +135,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -159,7 +159,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -204,12 +204,12 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  
+
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -242,17 +242,18 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.compOffselect = response.data;
-          }else{
+          } else {
             this.leaves.next([]);
-            this.compOffselect  = [];
+            this.compOffselect = [];
           }
         },
         error: (reason) => {
           this.dataload = false;
-          console.error(reason)},
+          console.error(reason)
+        },
         complete: () => {
           this.dataload = false;
         },
@@ -260,9 +261,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
 
- getFilteredAndSortedLeaves(): AttendanceRequest[] {
+  getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves =  this.compOffselect ?? [];
+    let leaves = this.compOffselect ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
@@ -286,7 +287,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openApproveModal(content: any, request: AttendanceRequest) {
@@ -314,7 +315,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Selected CompOff Requests...';
+      message = 'Processing Selected CompOff Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -328,7 +329,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message =  'Processing Selected CompOff Requests...';
+      message = 'Processing Selected CompOff Requests...';
     }
     this.sharedModalService.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
@@ -348,6 +349,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -410,12 +414,15 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
               if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
-            } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
-            }
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.approveForm.reset();
@@ -481,13 +488,16 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
-            } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Rejected Successfully');
-            }
+              if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Rejected Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;

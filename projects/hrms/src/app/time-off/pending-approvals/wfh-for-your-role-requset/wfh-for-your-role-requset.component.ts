@@ -346,6 +346,9 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
             }
           },
           error: (reason: any) => {
@@ -419,6 +422,9 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
             }
            
           },
@@ -492,6 +498,9 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
          
         },

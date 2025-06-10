@@ -9,6 +9,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-view-policies',
@@ -18,8 +19,9 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     ReactiveFormsModule,
     TranslateModule,
     NgbPopoverModule,
-    ToggleSwitchModule
-  ],
+    ToggleSwitchModule,
+    InfoIconComponent
+],
   templateUrl: './view-policies.component.html',
   styleUrl: './view-policies.component.scss',
 })

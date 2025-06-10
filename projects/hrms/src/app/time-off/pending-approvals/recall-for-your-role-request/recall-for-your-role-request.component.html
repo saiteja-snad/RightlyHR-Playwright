@@ -44,7 +44,7 @@
               @if(item.entity?.spRecallReason){
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{item.entity?.spRecallReason}}</p>
@@ -58,7 +58,7 @@
               <div>
                 <a type="button"
                   (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                  <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                  <app-info-icon />
                 </a>
               </div>
               }
@@ -156,7 +156,7 @@
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                   <a type="button" [ngbPopover]="reason">
-                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                    <app-info-icon />
                   </a>
                   <ng-template #reason>
                     <p class="mb-0">{{comment?.comments}} </p>

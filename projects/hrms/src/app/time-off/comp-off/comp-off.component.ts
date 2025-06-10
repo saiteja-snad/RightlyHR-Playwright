@@ -324,7 +324,7 @@ pendingCount = 0;
           next: (res: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Comp Off request submitted successfully!'
+              'Comp off request submitted successfully!'
             );
             this.http.tirggerCountSignal.update((status) => ({
               ...status,
@@ -337,7 +337,7 @@ pendingCount = 0;
             this.spinnerLoader = false;
             if (
               err.error.message.toLowerCase() ==
-              'you already applied to same category for same day'
+              'you have already applied to same category for same day'
             ) {
               this.sharedModalService.openErrorModal(
                 'Same date range already exists'

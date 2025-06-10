@@ -215,7 +215,8 @@ export class TeamMembersComponent {
           //   (member) => member['isAccess'] === true
           // );
           this.loading = false;
-          this.teamMemberArray = responseData.map((employee: any) => ({
+          const myTeam = responseData.filter((e: any) => e.isAccess);
+          this.teamMemberArray = myTeam.map((employee: any) => ({
             ...employee,
             jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
             fullName: `${

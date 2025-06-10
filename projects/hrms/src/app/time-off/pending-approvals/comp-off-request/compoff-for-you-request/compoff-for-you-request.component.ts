@@ -341,9 +341,9 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           this.requestSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
             if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Processed Successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Processed Successfully');
             }
           } else {
             this.openModal(this.leaveSummary);

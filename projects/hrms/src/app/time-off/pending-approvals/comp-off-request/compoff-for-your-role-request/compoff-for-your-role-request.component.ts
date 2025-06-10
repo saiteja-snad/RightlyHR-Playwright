@@ -482,9 +482,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
                if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Rejected Successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Rejected Successfully');
             }
             } else {
               this.openModal(this.leaveSummary);

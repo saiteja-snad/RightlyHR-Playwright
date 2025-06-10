@@ -50,8 +50,7 @@
                     <th>End Date</th>
                     <th class="text-center">Reason</th>
                     <th class="text-center">Approver Comments</th>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For
-                    You (Time Off).delete'))){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
                     <th>Action</th>
                     }
                 </tr>
@@ -87,8 +86,7 @@
                         </div>
                         <ng-template #noComments>-</ng-template>
                     </td>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') ||
-                    rbac.allowedToAccess('For You (Time Off).delete'))){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') ||rbac.allowedToAccess('For You (Time Off).delete'))){
                     <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
@@ -282,6 +280,7 @@
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="custom-main-popup-content">
+                <h6 class="text-center ps-3 pe-3 inactive-poptext"> Is it a planned leave?</h6>
                 <div class="d-flex gap-3 py-3 justify-content-center">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
@@ -301,9 +300,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Approve reason<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for approval<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approval reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" required pattern="^\S.*"
                         [(ngModel)]="selectedLeaveData.comments"
                         (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
@@ -315,7 +314,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Approve reason is required
+                        Reason for approval is required
                     </div>
                 </div>
             </div>
@@ -345,7 +344,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
+            <p class="confirmation-text">{{'Do you really want to reject selected request?' | translate}}</p>
         </div>
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">

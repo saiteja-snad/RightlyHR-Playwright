@@ -28,12 +28,9 @@ export class MyinfoJobTabsComponent implements OnInit {
     this.filterTabs();
     this.filterTabsByRbac();
   }
-
- filterTabs(): void {
-  const { empstatus } = this.empinfo;
-
+filterTabs(): void {
   const allTabs = [
-    { label: 'Pre Onboarding Info', link: '/myinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'My Info Pre-Onboarding Details', action: 'view' } },
+    { label: 'PreOnboarding Info', link: '/myinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'My Info Pre-Onboarding Details', action: 'view' } },
     { label: 'Onboarding Info', link: '/myinfo/job/onboarding-details', icon: '/images/onboarding.png', permission: { feature: 'My Info Onboarding Details', action: 'view' } },
     { label: 'Compensations', link: '/myinfo/job/compensation-details', icon: '/images/compensation.png', permission: { feature: 'My Info Compensation Details', action: 'view' } },
     { label: 'Probation Info', link: '/myinfo/job/probation-details', icon: '/images/probation.png', permission: { feature: 'My Info Probation Details', action: 'view' } },
@@ -42,31 +39,15 @@ export class MyinfoJobTabsComponent implements OnInit {
     { label: 'Assigned Assets', link: '/myinfo/job/assets-details', icon: '/images/assets-list.png', permission: { feature: 'My Info Asset Details', action: 'view' } },
     { label: 'Employment History', link: '/myinfo/job/past-experiences', icon: '/images/experience.png', permission: { feature: 'My Info Previous Experience Details', action: 'view' } },
     { label: 'Certifications', link: '/myinfo/job/certifications', icon: '/images/certificate.png', permission: { feature: 'My Info Certification Details', action: 'view' } },
-    { label: 'Desk Info', link: '/myinfo/job/desk-details', icon: '/images/desk.png', permission: { feature: 'My Info Desk Details', action: 'view' } },
+    { label: 'Desk info', link: '/myinfo/job/desk-details', icon: '/images/desk.png', permission: { feature: 'My Info Desk Details', action: 'view' } },
     { label: 'Separation Request', link: '/myinfo/job/separation-details', icon: '/images/sepration-request.png', permission: { feature: 'My Info Separation Request Details', action: 'view' } },
-    { label: 'No Due Clearance', link: '/myinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'My Info No Due Clearance Details', action: 'view' } },
-    { label: 'Offboarding', link: '/myinfo/job/employmentType', icon: '/images/offboarding.png', permission: { feature: 'My Info Offboarding Details', action: 'view' } },
-    { label: 'Onboarding Documents', link: '/myinfo/job/onboarding-verification', icon: '/my-info-icons/onboarding-icon.png', permission: { feature: 'My Info Documents Verification', action: 'view' } },
+    { label: 'No Due Clearance Info', link: '/myinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'My Info No Due Clearance Details', action: 'view' } },
+    // { label: 'Offboarding Info', link: '/myinfo/job/employmentType', icon: '/images/offboarding.png', permission: { feature: 'My Info Offboarding Details', action: 'view' } },
+
   ];
-
-  const statusesToRemoveOffboarding = ['Active', 'Trainee Active', 'Prospective', 'Trainee Prospective'];
-  const statusesToShowOnboardingDocs = ['Prospective', 'Trainee Prospective'];
-
-  this.navTabs = allTabs.filter(tab => {
-    // Hide Offboarding tab for specific statuses
-    if (statusesToRemoveOffboarding.includes(empstatus) && tab.label === 'Offboarding') {
-      return false;
-    }
-
-    // Show Onboarding Documents tab only for Prospective & Trainee Prospective
-    if (tab.label === 'Onboarding Documents' && !statusesToShowOnboardingDocs.includes(empstatus)) {
-      return false;
-    }
-
-    return true;
-  });
+  
+  this.navTabs = allTabs;
 }
-
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {

@@ -110,7 +110,7 @@
                             }
                             @else {
                             <p-select [options]="allEmployees" resetFilterOnHide="true" [filter]="true"
-                                filterBy="firstName" optionLabel="fullName" optionValue="employeeId"
+                                filterBy="fullName" optionLabel="fullName" optionValue="employeeId"
                                 (onChange)="colleagueDetails($event.value)" placeholder="Please select employee"
                                 formControlName="colleaguename" class="custom-select w-100" [dataKey]="'fusionEmpId'">
                                 <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} 

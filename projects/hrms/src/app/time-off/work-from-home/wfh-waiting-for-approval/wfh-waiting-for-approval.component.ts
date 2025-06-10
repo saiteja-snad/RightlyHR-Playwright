@@ -191,9 +191,16 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
           if (res) {
             this.cancelForm.reset();
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(
-              'WFH cancelled successfully'
-            );
+
+            if (res.data.failureRecords.length > 0) {
+              this.conformationPopup.openErrorModal(
+                res.data.failureRecords[0].message
+              );
+            } else {
+              this.conformationPopup.openSuccessModal(
+                'WFH cancelled successfully'
+              );
+            }
             this.getWFHRequests();
           }
           this.http.wfhTriggerSignal.set(true);

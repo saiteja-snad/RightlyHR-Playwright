@@ -82,9 +82,9 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   inititializeForm() {
     this.dstForm = this.fb.group({
       year: [ { value: '', disabled: true }, Validators.required],
-      location: ['' , Validators.required],
-      subLocation: [ '' , Validators.required],
-      shift: [ null , Validators.required],
+      location: [{ value: '', disabled: true } , Validators.required],
+      subLocation: [ { value: '', disabled: true } , Validators.required],
+      shift: [ { value: '', disabled: true } , Validators.required],
       momentRows: this.fb.array([]),
     });
 
@@ -161,7 +161,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.dstForm.get('shift')?.markAsTouched();
-          this.dstForm.get('shift')?.enable();
+        
           this.shiftDetails = res.flatMap(
             (header: any) => header.orgShiftsItems ?? []
           );

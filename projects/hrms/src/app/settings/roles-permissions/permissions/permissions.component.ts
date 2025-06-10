@@ -769,6 +769,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   reportsTabsFields = [
     'Standard Reports',
     'Custom Reports',
+    'Policy Reports',
     'Attendance reports',
     'Monthly Attendance Reports',
       'Org Leave Balance',

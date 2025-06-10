@@ -149,7 +149,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="identityForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
@@ -238,7 +238,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid">Update</button>
                 </div>

@@ -341,7 +341,11 @@ export class PremissionForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
+             if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -411,7 +415,11 @@ export class PremissionForYourRoleRequestComponent
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+           if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -471,7 +479,11 @@ export class PremissionForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Regularization Requests Rejected Successfully');
+              if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
             }

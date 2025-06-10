@@ -73,11 +73,11 @@ export class UserValidationComponent {
           }, 2000);
 
         } else {
-          this.navigateBasedOnPermission();
+          this.router.navigate(['/unauthorized']);
         }
       },
       error: (err) => {
-        this.navigateBasedOnPermission();
+        this.router.navigate(['/unauthorized']);
       },
     });
   }

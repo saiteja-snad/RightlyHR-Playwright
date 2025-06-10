@@ -342,7 +342,11 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');;
+            if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -406,7 +410,11 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
+              if (this.selectedLeavesItems.length > 1) {
               this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
+            }
             } else {
               this.openModal(this.leaveSummary);
             }
@@ -474,7 +482,11 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
+               if (this.selectedLeavesItems.length > 1) {
               this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Rejected Successfully');
+            }
             } else {
               this.openModal(this.leaveSummary);
             }

@@ -24,8 +24,8 @@
               <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
               <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
               <td class="text-center">
-                <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
-                  (click)="comments_Function(exp.expenseApproverComments);opencommentsModal(viewcomments)" ></i>
+                <app-info-icon *ngIf="exp.expenseApproverComments.length>0; else na" 
+                  (click)="comments_Function(exp.expenseApproverComments);opencommentsModal(viewcomments)" />
                 <ng-template #na>
                   N/A
                 </ng-template>

@@ -21,6 +21,7 @@ import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalss
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-separation-for-you-request',
@@ -35,8 +36,9 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     NoDataFoundComponent,
     ReactiveFormsModule,
     PendingapprovalsseparationPipe,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    InfoIconComponent
+],
   templateUrl: './separation-for-you-request.component.html',
   styleUrl: './separation-for-you-request.component.scss',
 })

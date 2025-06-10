@@ -90,7 +90,7 @@
                 <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100 px-0"
                   accept=".pdf,image/*" />
                 <div [ngbPopover]="newPopContent" triggers="click" placement="top">
-                  <i class="bi bi-info-circle-fill cursor"></i>
+                  <app-info-icon />
                 </div>
               </div>
               <ng-template #newPopContent>

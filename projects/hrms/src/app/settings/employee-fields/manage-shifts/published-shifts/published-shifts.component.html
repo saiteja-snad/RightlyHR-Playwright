@@ -28,8 +28,7 @@
                     <td>{{ shift.locationName }}</td>
                     <td>{{ shift.subLocationName }}</td>
                     <td class="text-center">
-                        <i class="bi bi-info-circle-fill cursor" data-toggle="tooltip"
-                            title="{{getShiftNames(shift)}}"></i>
+                        <app-info-icon data-toggle="tooltip" title="{{getShiftNames(shift)}}"/>
                     </td>
                     <td>{{ shift.status }}</td>
                     <td>{{ shift.addedbyName }}</td>

@@ -22,8 +22,7 @@
                 <th>{{'Early Relieving Reason' | translate}}</th>
                 <th>{{'Request Type' | translate}}</th>
                 <th>{{'Approver History' | translate}}</th>
-                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || 
-                rbac.allowedToAccess('For Role (Separation Requests).delete')) {
+                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role (Separation Requests).delete')) {
                 <th>Action</th>
                 }
             </thead>
@@ -49,7 +48,7 @@
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spRequestDescription}}</p>
@@ -64,7 +63,7 @@
                             @if(item.entity?.spEarlyRelievingReason){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
@@ -80,7 +79,7 @@
                             <div>
                                 <a type="button"
                                     (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                             </div>
                             }
@@ -629,12 +628,10 @@
                             <td>
                                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                                     <a type="button" [ngbPopover]="reason">
-                                        <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                        <app-info-icon />
                                     </a>
                                     <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{comment?.comments}} </p>
-                                        </div>
+                                        <p class="mb-0">{{comment?.comments}} </p>
                                     </ng-template>
                                 </div>
                                 <ng-template #popupcomments>{{'NA' | translate}}</ng-template>

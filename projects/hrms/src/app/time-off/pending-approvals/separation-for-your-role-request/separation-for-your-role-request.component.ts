@@ -24,6 +24,7 @@ import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalss
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-separation-for-your-role-request',
   imports: [
@@ -38,7 +39,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     DateformatPipe,
     PendingapprovalsseparationPipe,
     DataLoaderContentComponent,
-  ],
+    InfoIconComponent
+],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
 })

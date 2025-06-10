@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -20,10 +19,11 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-recall-for-you-request',
   imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, PendingapprovalsseparationPipe,DataLoaderContentComponent],
+    PaginatorModule, DropdownModule, NoDataFoundComponent, PendingapprovalsseparationPipe, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './recall-for-you-request.component.html',
   styleUrl: './recall-for-you-request.component.scss',
 })

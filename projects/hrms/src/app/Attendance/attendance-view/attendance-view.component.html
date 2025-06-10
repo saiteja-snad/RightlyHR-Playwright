@@ -3,8 +3,7 @@
         <div class="heading-content">
             <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
             </div>
         </div>
 
@@ -281,15 +280,15 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content custom-accordians">
             <p-accordion value="0">
                 @if(punchPairs.length>0){
                 <p-accordion-panel value="0">
                     <p-accordion-header>Biometric Logs</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>In</th>
@@ -303,25 +302,24 @@
                                             <td class="log-time">{{ log.out }}</td>
                                             <td class="duration-time">{{ log.duration }}</td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="popup-table-footer">
+                                Total Duration: <b>{{ logsDuration }}</b>
                             </div>
                         </div>
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-
+        
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
                     <p-accordion-header>Permission(s)</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>Type</th>
@@ -343,14 +341,14 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-
+        
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
                     <p-accordion-header>Regularization(s)</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>Type</th>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -39,6 +39,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
   ],
   templateUrl: './recall-for-you-request.component.html',
   styleUrl: './recall-for-you-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;

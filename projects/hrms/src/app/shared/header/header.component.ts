@@ -10,11 +10,10 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
 import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule,Skeleton, PmsTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule,Skeleton],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -35,7 +34,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authService: AuthService, private modalservie: NgbModal, private conformationPopup: OpenModalService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
-
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId()
     this.getJobDetails()
@@ -200,7 +198,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openlogoutModal() {
-    this.modalservie.open(this.logoutpopup, { centered: true });
+    this.modalservie.open(this.logoutpopup, { centered: true , backdrop: 'static', keyboard: false });
   }
 
   isActiveRoute(link: string): boolean {

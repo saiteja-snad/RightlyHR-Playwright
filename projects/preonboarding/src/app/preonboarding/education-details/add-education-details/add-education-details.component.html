@@ -93,7 +93,7 @@
         
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="reset" class="custom-btn btn-secondary px-4" (click)="close()">Close</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || !file||showErrorforpdf||showErrorforsize">Add</button>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || !file||showErrorforpdf||showErrorforsize || submissionInProgress">Add</button>
             </div>
         </form> 
     </div>

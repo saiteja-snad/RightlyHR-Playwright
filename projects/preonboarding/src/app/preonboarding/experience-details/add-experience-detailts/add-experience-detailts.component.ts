@@ -49,6 +49,8 @@ export class AddExperienceDetailtsComponent {
   showErrorr = false;
   required=true;
   startDatevalidate:any;
+  submissionInProgress = false;
+
   constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { }
 
   ngOnInit(): void {
@@ -181,53 +183,59 @@ DateValidator(): ValidatorFn {
   }
 
   postExpDetails() {
-    const formData = this.experienceForm.value;
-    const payload = {
-      ...formData,
-      empId: parseInt(this.prosempdata.employeeId),
-      isDeleted: false,
-      attachment: '',
-      countryCode : this.selectedCountryCode,
+  if (this.submissionInProgress) return; 
+  this.submissionInProgress = true;
 
-    };
-    const submitData = (finalPayload: any) => {
-      this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
+  const formData = this.experienceForm.value;
+  const payload = {
+    ...formData,
+    empId: parseInt(this.prosempdata.employeeId),
+    isDeleted: false,
+    attachment: '',
+    countryCode: this.selectedCountryCode,
+  };
+
+  const submitData = (finalPayload: any) => {
+    this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
+      next: (data: any) => {
+        this.modalService.dismissAll();
+        this.openPopup.openSuccess("Employment history added successfully");
+        this.getData.getExperience.set(true);
+        this.experienceForm.reset();
+        this.submissionInProgress = false; 
+      },
+      error: (error: any) => {
+        console.log('Save failed:', error);
+        if (error.status == 409) {
+          this.openPopup.openError(error.error);
+        } else if (error.status == 400) {
+          this.openPopup.openError(error.error.message);
+        } else {
+          this.openPopup.openError("Insertion of data is failed");
+        }
+        this.submissionInProgress = false; 
+      }
+    });
+  };
+
+  if (this.file) {
+    const filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
+    this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file)
+      .subscribe({
         next: (data: any) => {
-          this.modalService.dismissAll();
-          this.openPopup.openSuccess("Employment history added successfully");
-          this.getData.getExperience.set(true);
-          this.experienceForm.reset();
+          payload.attachment = data.path;
+          submitData(payload);
         },
         error: (error: any) => {
-          console.log('Save failed:', error);
-          if (error.status == 409) {
-            this.openPopup.openError(error.error);
-          } else if (error.status == 400) {
-            this.openPopup.openError(error.error.message);
-          } else {
-            this.openPopup.openError("Insertion of data is failed");
-          }
-        },
-        complete: () => {
+          this.openPopup.openError("File upload failed");
+          this.submissionInProgress = false; 
         }
       });
-    };
-    if (this.file) {
-      const filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
-      this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file)
-        .subscribe({
-          next: (data: any) => {
-            payload.attachment = data.path;
-            submitData(payload);
-          },
-          error: (error: any) => {
-            this.openPopup.openError("File upload failed");
-          }
-        });
-    } else {
-      submitData(payload);
-    }
+  } else {
+    submitData(payload);
   }
+}
+
 
   // mobile number functions
   onCountryChange(country: any) {

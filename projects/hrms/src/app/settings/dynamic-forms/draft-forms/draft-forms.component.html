@@ -17,7 +17,7 @@
           <th>{{'Updated By' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           @if(rbac.allowedToAccess('Draft Forms.update') || rbac.allowedToAccess('Draft Forms.delete') || rbac.allowedToAccess('Mark As Active Action.view')){
-          <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
+          <th class="text-center">{{'Action' | translate}}</th>
           }
         </tr>
       </thead>

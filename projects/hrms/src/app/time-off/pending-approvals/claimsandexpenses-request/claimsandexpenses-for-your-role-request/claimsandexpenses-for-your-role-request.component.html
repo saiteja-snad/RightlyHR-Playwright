@@ -19,7 +19,7 @@
         <th class="text-center">Approver Comments</th>
         @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') 
         || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-        <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+        <th class="text-center">{{"Action" | translate}}</th>
           }  
       </thead>
       <tbody>

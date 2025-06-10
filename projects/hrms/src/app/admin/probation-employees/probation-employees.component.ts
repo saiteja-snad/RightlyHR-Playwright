@@ -47,6 +47,8 @@ export class ProbationEmployeesComponent {
     })
   }
 
+  
+
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);

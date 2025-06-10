@@ -21,7 +21,7 @@
                         <th class="text-center">Primary Bank</th>
                         @if(canAccess('update','bank') || canAccess('delete','bank')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
-                       <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>}}
+                       <th class="text-center">{{"Action" | translate}}</th>}}
                     </tr>
                 </thead>
                 <tbody>
@@ -124,7 +124,7 @@
                         <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
                         <input type="number" class="form-control custom-input" id="accountNo"
-                            formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{12,20}$">
+                            formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{9,18}$">
                             <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
                             <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">Account Number is
@@ -179,7 +179,7 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsForm.reset();modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -239,15 +239,15 @@
                         <input type="number" class="form-control custom-input" id="accountNoupdate"
                             formControlName="accountNoupdate" placeholder="Please enter account number">
                             <div class="error-msg"
-                            *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
-                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">
+                            *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.invalid && bankDetailsUpdateForm.get('accountNoupdate')?.touched">
+                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['required']">
                                 Account Number is required
                             </div>
-                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['pattern']">
+                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['pattern']">
                                 Enter valid account number
                             </div>
                             <div
-                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['invalidbankNumber'] && bankDetailsForm.get('accountNo')?.touched">
+                                *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['invalidbankNumber'] && bankDetailsUpdateForm.get('accountNoupdate')?.touched">
                                 Account Number cannot be all zeroes
                             </div>
                         </div>
@@ -294,7 +294,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary " (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary " (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsUpdateForm.invalid&& !displayblankdocument && bankDetailsUpdateForm.get('attachmentupdate')?.invalid ">
                         @if (spinnerLoader) {
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

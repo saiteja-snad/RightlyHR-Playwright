@@ -34,6 +34,7 @@ import { Table, TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-wfh-for-your-role-requset',
@@ -48,7 +49,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     ReactiveFormsModule,
     DataLoaderContentComponent,
     TableModule,
-  ],
+    InfoIconComponent
+],
   templateUrl: './wfh-for-your-role-requset.component.html',
   styleUrl: './wfh-for-your-role-requset.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -339,9 +341,16 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
+               if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
             }
           },
           error: (reason: any) => {
@@ -408,9 +417,16 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-               this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
+               if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Request Rejected Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
             }
            
           },
@@ -477,9 +493,16 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-             this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
+             if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
          
         },

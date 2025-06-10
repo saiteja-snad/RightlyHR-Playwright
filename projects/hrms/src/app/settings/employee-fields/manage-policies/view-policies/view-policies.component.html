@@ -74,7 +74,7 @@
                                     [value]="getPolicyAttachmentName(holiday.get('policyFile')?.value)"
                                     [disabled]="true" />
                                 <div [ngbPopover]="popContent" triggers="click" placement="top">
-                                    <i class="bi bi-info-circle-fill cursor"></i>
+                                    <app-info-icon />
                                 </div>
                             </div>
                             <ng-template #popContent>

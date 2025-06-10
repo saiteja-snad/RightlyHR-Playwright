@@ -10,7 +10,7 @@
            
                @if(canAccess('update','onboarding')){
                 <div >
-                <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+                <a (click)="showButtons()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
             </div>
             }
           
@@ -197,7 +197,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="name"
+                        <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="value"
                             optionValue="value" placeholder="Select Work Location" class="form-select custom-select">
                         </p-select>
                     </div>

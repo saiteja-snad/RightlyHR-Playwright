@@ -9,9 +9,10 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Skeleton } from 'primeng/skeleton';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-phonebook',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule,Skeleton],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent],
   templateUrl: './phonebook.component.html',
   styleUrl: './phonebook.component.scss'
 })

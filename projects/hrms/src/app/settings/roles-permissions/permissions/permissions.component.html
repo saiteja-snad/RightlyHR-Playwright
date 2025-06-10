@@ -44,8 +44,7 @@
                                     <input type="checkbox" #selectall
                                         (change)="toggleSelectAll(sidebarFields, selectall?.checked, isSidebarCheckboxDisabled.bind(this))"
                                         [checked]="isAllSelected(sidebarFields)"
-                                        [indeterminate]="isSomeSelected(sidebarFields)" [disabled]="!roleToFilter?.id"
-                                        >
+                                        [indeterminate]="isSomeSelected(sidebarFields)" [disabled]="!roleToFilter?.id">
                                     <div>
                                         Settings Sidebar
                                     </div>
@@ -702,7 +701,8 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Dashboard' 
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'Dashboard' 
                             || per.fields === 'My Info' || per.fields === 'Events' 
                             || per.fields === 'Time-Off'    || per.fields === 'Expenses' 
                             || per.fields === 'Reports' || per.fields === 'Policies' 
@@ -1413,8 +1413,7 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center"
-                                *ngIf="per.fields === 'Waiting For Approval (Permissions)' 
+                            <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Permissions)' 
                                             || per.fields === 'Approved (Permissions)'  ||per.fields==='Cancel (Permissions)'
                                             || per.fields === 'Rejected (Permissions)' || per.fields === 'Request Permission Button'
                                             || per.fields === 'My Team (Permissions)' ">
@@ -1455,8 +1454,7 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center"
-                                *ngIf="per.fields === 'Waiting For Approval (Regularization)' 
+                            <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Regularization)' 
                                             || per.fields === 'Approved (Regularization)'  
                                             || per.fields === 'Rejected (Regularization)' || per.fields === 'Processed (Regularization)' 
                                             || per.fields === 'My Team (Regularization)'">
@@ -2312,8 +2310,7 @@
                             <th colspan="5" class="custom-header">Policy Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center"
-                                *ngIf="per.fields === 'Policy Acknowledgement Report'   ">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Policy Acknowledgement Report'   ">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -2944,8 +2941,7 @@
                                         (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id || [
                             'Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
                             'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request',
-                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details'
-                ].includes(per.fields)">
+                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details','Employee Info Job Details'].includes(per.fields)">
                                 </td>
                             </tr>
                         </ng-container>

@@ -20,7 +20,7 @@
                 <th>Desk Status</th>
                 @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') ||
                 rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
-                <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+                <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
             <tbody>

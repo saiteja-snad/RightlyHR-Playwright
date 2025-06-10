@@ -24,8 +24,8 @@
         }
 
         .profile-img {
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 2rem;
+            height: 2rem;
             border-radius: 50%;
         }
     }
@@ -100,7 +100,7 @@
                 font-size: 12px;
                 text-decoration: underline;
                 text-decoration-style: solid;
-                color: #0B3A83;
+                color: #0B3A83 !important;
             }
 
             .logout-icon {

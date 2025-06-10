@@ -21,6 +21,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -37,7 +39,8 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     TranslateModule,
     Select,
     DateformatPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    InfoIconComponent
 ],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
@@ -54,7 +57,6 @@ export class ProbationPendingApprovalsComponent {
   first: any = 0;
   rows: any = 10;
   loading: boolean = false;
-
   isempeffectivevaild: boolean = true;
   options = [
     { label: 10, value: 10 },
@@ -75,6 +77,7 @@ export class ProbationPendingApprovalsComponent {
     public rbac: RbacService,
     private authService: AuthService,
     private openModalService:OpenModalService, 
+    public formsValidation: FormValidationsService,
   ) {}
 
   openModal(content: any) {

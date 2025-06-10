@@ -257,6 +257,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('gender').subscribe({
       next: (data: any) => {
         this.Gender = data as IGender[];
+        this.getEmployeeId()
       },
     });
   }

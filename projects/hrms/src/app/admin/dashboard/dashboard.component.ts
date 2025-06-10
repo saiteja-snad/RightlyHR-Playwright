@@ -78,6 +78,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   attendanceLoader = false;
   chartLoader = false;
   eventsLoader = false;
+  intialLoading = false
 
   constructor(
     private router: Router,
@@ -87,6 +88,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
+    this.intialLoading = true;
     this.employeedata = JSON.parse(
       localStorage.getItem('rightlyHrUser') || '{}'
     );
@@ -104,6 +106,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.setIconBasedOnTime();
+    
+
     this.intervalId = setInterval(() => {
       this.currentTime = new Date();
     }, 1000);
@@ -115,6 +119,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
     this.loadEvents();
     this.getEmployeeStatusCount();
+    this.intialLoading = false;
   }
 
   initiateUpdateModuleInfo() {
@@ -151,11 +156,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   //function for to get the Employees count based on the status
   getEmployeeStatusCount() {
-    this.chartLoader = true;
+   
     this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
       next: (data: any) => {
         this.employeesStatusCount = data.data as EmployeeStatusCount;
-        this.chartLoader = false;
+        this.chartLoader = true;
         this.Active = 0;
         this.Inactive = 0;
         this.ACTDATA = 0;
@@ -194,9 +199,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           console.warn('statusWiseCount is not an array:', statusList);
         }
         this.updateCardItems();
+       
       },
       error: (reason) => {
-        this.chartLoader = false;
+      this.chartLoader = false;
       },
     });
   }
@@ -378,6 +384,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   updateCardItems() {
+    
     this.cardItems = [
       {
         label: 'Active',
@@ -460,6 +467,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.EmployeeInfoDataOptions = {
       cutout: '70%',
     };
+
+    this.chartLoader = false;
   }
 
   filterTabsByRbac(): void {

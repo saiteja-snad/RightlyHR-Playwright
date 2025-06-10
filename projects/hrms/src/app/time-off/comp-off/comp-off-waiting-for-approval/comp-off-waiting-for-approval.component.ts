@@ -61,15 +61,10 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
       if (id) {
-        // Use the new employee ID here
         this.selectemp = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getCompOffEMPRequest();
+        this.getCompOffRequest();
       } else {
-        this.empinfo = JSON.parse(
-          localStorage.getItem('rightlyHrUser') ?? '{}'
-        );
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
         this.getCompOffRequest();
       }
     });
@@ -84,37 +79,36 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  // getCompOffRequest() {
+  //   let empId = this.empinfo.employeeId;
+  //   this.dataload = true;
+  //   this.http
+  //     .getData(`Timeoff/getCompoffRequests/${empId}`)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response: any) => {
+  //         this.compOff = response;
+  //         this.waitingForApprovalCompOff = this.compOff.filter(
+  //           (element: { status: string }) =>
+  //             element.status === 'Waiting for Approval'
+  //         );
+  //         this.waitingForApprovalCompOffCount =
+  //           this.waitingForApprovalCompOff.length;
+  //       },
+  //       error: (error) => {
+  //         this.dataload = false;
+  //         this.waitingForApprovalCompOff = [];
+  //         console.error('Error fetching data:', error);
+  //       },
+  //       complete: () => {
+  //         this.dataload = false;
+  //       },
+  //     });
+  // }
   getCompOffRequest() {
-    let empId = this.empinfo.employeeId;
+    let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http
-      .getData(`Timeoff/getCompoffRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.compOff = response;
-          this.waitingForApprovalCompOff = this.compOff.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          );
-          this.waitingForApprovalCompOffCount =
-            this.waitingForApprovalCompOff.length;
-        },
-        error: (error) => {
-          this.dataload = false;
-          console.error('Error fetching data:', error);
-          this.waitingForApprovalCompOff = [];
-        },
-        complete: () => {
-          this.dataload = false;
-        },
-      });
-  }
-  getCompOffEMPRequest() {
-    let empId = this.selectemp;
-    this.dataload = true;
-    this.http
-      .getData(`Timeoff/getCompoffRequests/${empId}`)
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {

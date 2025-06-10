@@ -22,4 +22,6 @@ export const environment = {
   dateformat: 'MMM d, y',
   paidLeaveCategoryId: 109,
   mandatoryLeaveCategoryId: 110,
+  oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
+
 };

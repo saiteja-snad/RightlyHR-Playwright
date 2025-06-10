@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -8,9 +8,16 @@ import { MsalService } from '@azure/msal-angular';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { RbacService } from '../../services/rbac.service';
 import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, MY_INFO_PERSONAL_ROUTES, MY_INFO_TEAM_MEMBERS } from '../../permission-route.constants';
+import { environment } from '../../../environments/environment';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { WelcomePopupComponent } from '../../shared/welcome-popup/welcome-popup.component';
 @Component({
   selector: 'app-user-validation',
-  imports: [FormsModule, CommonModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    WelcomePopupComponent
+  ],
   templateUrl: './user-validation.component.html',
   styleUrl: './user-validation.component.scss'
 })
@@ -18,18 +25,22 @@ import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, 
 export class UserValidationComponent {
   subscription!: Subscription;
   name!: string;
+  loginReposne: any
   myInfoRoutes = MY_INFO_PERSONAL_ROUTES;
-  myInfoJobRoutes=MY_INFO_JOB_ROUTES;
-  myInfoDocumentsRoutes=MY_INFO_DOCUMENTS_ROUTES;
-  myInfoTeamMembersRoutes=MY_INFO_TEAM_MEMBERS;
+  myInfoJobRoutes = MY_INFO_JOB_ROUTES;
+  myInfoDocumentsRoutes = MY_INFO_DOCUMENTS_ROUTES;
+  myInfoTeamMembersRoutes = MY_INFO_TEAM_MEMBERS;
   myInfoOnBoradRequest = MY_INFO_ONBOARD_REQUEST;
+  @ViewChild('new_feature_validation_popup', { static: true }) newFeatureValidationPopup: any;
+
 
   constructor(
     private _msalService: MsalService,
     private router: Router,
     private http: HttpService,
     private accessNav: AccessNavigationService,
-    private rbac:RbacService
+    private rbac: RbacService,
+    private modalService: NgbModal,
   ) { }
 
   async ngOnInit() {
@@ -60,18 +71,34 @@ export class UserValidationComponent {
     this.subscription = this.http.getUserDetails(email).subscribe({
       next: (response: any) => {
         if (response.empdatum) {
+          this.loginReposne = response;
           this.name = `${response.empdatum.firstName} ${response.empdatum.middleName ?? ''} ${response.empdatum.lastName ?? ''}`;
           localStorage.setItem('rightlyHrRoleClaims', JSON.stringify(response.claims));
           localStorage.setItem('rightlyHrUser', JSON.stringify(response.empdatum));
           localStorage.setItem('rightlyHrUserRoles', JSON.stringify(response.roles));
-          setTimeout(() => {
-            if (response.roles.length <= 0) {
-              this.router.navigate(['/unauthorized']);
-            }  else {
-              this.navigateBasedOnPermission();
-            }
-          }, 2000);
+          if (response.enableNewVersion) {
+            if (!response.betaConfiguration) {
+              this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
+            } else if (response.betaConfiguration && response.betaConfiguration.popUpShown) {
+              // setTimeout(() => {
+              //   if (response.roles.length <= 0) {
+              //     this.router.navigate(['/unauthorized']);
+              //   } else {
 
+              //     this.navigateBasedOnPermission();
+              //   }
+              // }, 2000);
+
+
+              this.stayBack()
+
+            } else {
+               this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
+              // this.navigateToOldUIApplication();
+            }
+          } else {
+            this.stayBack()
+          }
         } else {
           this.router.navigate(['/unauthorized']);
         }
@@ -83,79 +110,79 @@ export class UserValidationComponent {
   }
 
 
- navigateBasedOnPermission() {
-  const primaryPermissions = [
-    { permission: 'Dashboard.view', route: '/admin' },
-    { permission: 'Employees.view', route: '/employee-management/active-employees' }
-  ];
+  navigateBasedOnPermission() {
+    const primaryPermissions = [
+      { permission: 'Dashboard.view', route: '/admin' },
+      { permission: 'Employees.view', route: '/employee-management/active-employees' }
+    ];
 
-  const permissionsWithRoutes = [
-    { permission: 'Events.view', route: '/events' },
-    { permission: 'Calendar.view', route: '/calendar-view' },
-    { permission: 'Attendance.view', route: '/attendance' },
-    { permission: 'Reports.view', route: '/reports' },
-    { permission: 'Time-Off.view', route: '/time-off' },
-    { permission: 'Org Hierarchy.view', route: '/organization-chart' },
-    { permission: 'IT Support.view', route: '/it-support' },
-    { permission: 'Desk Allocation.view', route: '/desk' },
-    { permission: 'Asset Management.view', route: '/assets-management' },
-    { permission: 'Expenses.view', route: '/claimsandexpenses' },
-    { permission: 'PMS.view', route: '/pms' },
-    { permission: 'PMS Configurations.view', route: '/pmsconfiguration' },
-    { permission: 'Holidays.view', route: '/holidays' },
-    { permission: 'Contacts Directory.view', route: '/contacts-directory' },
-    { permission: 'Blood Bank.view', route: '/blood-bank' },
-    { permission: 'Phone Book.view', route: '/phonebook' },
-    { permission: 'Settings Icon.view', route: '/settings' }
-  ];
+    const permissionsWithRoutes = [
+      { permission: 'Events.view', route: '/events' },
+      { permission: 'Calendar.view', route: '/calendar-view' },
+      { permission: 'Attendance.view', route: '/attendance' },
+      { permission: 'Reports.view', route: '/reports' },
+      { permission: 'Time-Off.view', route: '/time-off' },
+      { permission: 'Org Hierarchy.view', route: '/organization-chart' },
+      { permission: 'IT Support.view', route: '/it-support' },
+      { permission: 'Desk Allocation.view', route: '/desk' },
+      { permission: 'Asset Management.view', route: '/assets-management' },
+      { permission: 'Expenses.view', route: '/claimsandexpenses' },
+      { permission: 'PMS.view', route: '/pms' },
+      { permission: 'PMS Configurations.view', route: '/pmsconfiguration' },
+      { permission: 'Holidays.view', route: '/holidays' },
+      { permission: 'Contacts Directory.view', route: '/contacts-directory' },
+      { permission: 'Blood Bank.view', route: '/blood-bank' },
+      { permission: 'Phone Book.view', route: '/phonebook' },
+      { permission: 'Settings Icon.view', route: '/settings' }
+    ];
 
-  const myInfoPermissions = [
-    ...this.myInfoRoutes,
-    ...this.myInfoJobRoutes,
-    ...this.myInfoDocumentsRoutes,
-    ...this.myInfoTeamMembersRoutes,
-    ...this.myInfoOnBoradRequest
-  ];
+    const myInfoPermissions = [
+      ...this.myInfoRoutes,
+      ...this.myInfoJobRoutes,
+      ...this.myInfoDocumentsRoutes,
+      ...this.myInfoTeamMembersRoutes,
+      ...this.myInfoOnBoradRequest
+    ];
 
-  // Step 1: Check Dashboard or Employees
-  for (const item of primaryPermissions) {
-    if (this.rbac.allowedToAccess(item.permission)) {
-      const finalRoute = this.goToAccessibleRoute(item.route);
-      if (finalRoute) {
-        this.router.navigate([finalRoute]);
-        return;
+    // Step 1: Check Dashboard or Employees
+    for (const item of primaryPermissions) {
+      if (this.rbac.allowedToAccess(item.permission)) {
+        const finalRoute = this.goToAccessibleRoute(item.route);
+        if (finalRoute) {
+          this.router.navigate([finalRoute]);
+          return;
+        }
       }
     }
-  }
 
-  // Step 2: Check My Info permissions
-  for (const item of myInfoPermissions) {
-    if (this.rbac.allowedToAccess(item.permission)) {
-      const myInfoRoute = this.goToAccessibleRoute('/myinfo');
-      if (myInfoRoute) {
-        this.router.navigate([myInfoRoute]);
-        return;
+    // Step 2: Check My Info permissions
+    for (const item of myInfoPermissions) {
+      if (this.rbac.allowedToAccess(item.permission)) {
+        const myInfoRoute = this.goToAccessibleRoute('/myinfo');
+        if (myInfoRoute) {
+          this.router.navigate([myInfoRoute]);
+          return;
+        }
       }
     }
-  }
 
-  // Step 3: Check remaining permissions
-  for (const item of permissionsWithRoutes) {
-    if (this.rbac.allowedToAccess(item.permission)) {
-      const finalRoute = item.route === '/settings'
-        ? item.route
-        : this.goToAccessibleRoute(item.route);
+    // Step 3: Check remaining permissions
+    for (const item of permissionsWithRoutes) {
+      if (this.rbac.allowedToAccess(item.permission)) {
+        const finalRoute = item.route === '/settings'
+          ? item.route
+          : this.goToAccessibleRoute(item.route);
 
-      if (finalRoute) {
-        this.router.navigate([finalRoute]);
-        return;
+        if (finalRoute) {
+          this.router.navigate([finalRoute]);
+          return;
+        }
       }
     }
-  }
 
-  // Step 4: Fallback
-  this.router.navigate(['/unauthorized']);
-}
+    // Step 4: Fallback
+    this.router.navigate(['/unauthorized']);
+  }
 
 
 
@@ -163,6 +190,42 @@ export class UserValidationComponent {
     return this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
   }
 
+
+  onClickGetStarted() {
+    this.subscription = this.http.postdata('BetaUser/post', { employeeId: this.loginReposne.empdatum.employeeId, popUpShown: true }).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.modalService.dismissAll();
+        this.stayBack()
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    })
+  }
+
+
+  navigateToOldUIApplication() {
+    window.location.href = environment.oldVersionUrl || 'https://snad.rightlyhr.com/uservalidation';
+  }
+
+  stayBack() {
+    this.modalService.dismissAll();
+
+    if (this.loginReposne.roles) {
+      setTimeout(() => {
+        if (this.loginReposne.roles.length <= 0) {
+          this.router.navigate(['/unauthorized']);
+        } else {
+
+          this.navigateBasedOnPermission();
+        }
+      }, 2000);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+
+  }
 
 
   ngOnDestroy(): void {

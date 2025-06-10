@@ -6,10 +6,11 @@ import { TabsModule } from 'primeng/tabs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-wfh-approvaltabs',
-  imports: [RouterModule, CommonModule, TabsModule],
+  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
   templateUrl: './wfh-approvaltabs.component.html',
   styleUrl: './wfh-approvaltabs.component.scss',
 })
@@ -25,6 +26,7 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   filteredTabs: any[] = [];
   cancelWFHRequestsCount = 0;
   empinfo = {} as IJob;
+  loading=false
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService) {
@@ -56,6 +58,7 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
 
 
   getCompOffRequest() {
+    this.loading=true
     let empId = this.empinfo.employeeId;
     this.http.getData(`Timeoff/getWorkFromHomeRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
@@ -74,12 +77,13 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
           this.cancelWFHRequestsCount = cancelled.length
 
           this.updateNavTabs();
-
+          this.loading=false
         } else {
           console.error('Invalid response format');
         }
       },
       error: (reason: any) => {
+        this.loading=true
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
       }
     });

@@ -31,7 +31,9 @@ export class AddEducationDetailsComponent {
   degreeDetails = [] as any;
   showError: boolean = false;
   showErrorr: boolean = false;
-startDatevalidate:any
+  startDatevalidate:any
+  submissionInProgress = false;
+
   constructor(private modalService: NgbModal,private formValidationService:FormValidationService, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData: DataService) { }
 
   ngOnInit(): void {
@@ -129,47 +131,55 @@ DateValidator(): ValidatorFn {
 
   //function to post the Education Details
   postEducation() {
-    if (this.educationForm.valid && this.educationAttachment) {
-      this.postEducationdata = {
-        ...this.educationForm.value,
-        degree: this.educationForm.value.education,
-        university: this.educationForm.value.university,
-        specialization: this.educationForm.value.specialization,
-        gpa: this.educationForm.value.gpa,
-        degreeStartDate: this.educationForm.value.startDate,
-        degreeEndDate: this.educationForm.value.endDate,
-        employeeId: parseInt(this.empinfo.employeeId),
+  if (this.submissionInProgress) return; // Prevent double click
+
+  if (this.educationForm.valid && this.educationAttachment) {
+    this.submissionInProgress = true;
+
+    this.postEducationdata = {
+      ...this.educationForm.value,
+      degree: this.educationForm.value.education,
+      university: this.educationForm.value.university,
+      specialization: this.educationForm.value.specialization,
+      gpa: this.educationForm.value.gpa,
+      degreeStartDate: this.educationForm.value.startDate,
+      degreeEndDate: this.educationForm.value.endDate,
+      employeeId: parseInt(this.empinfo.employeeId),
+    };
+
+    let filepath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
+    
+    this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file).subscribe({
+      next: (data: any) => {
+        this.postEducationdata.attachment = data.path;
+
+        this.subscription = this.http.postData("PreonboardingEducation", this.postEducationdata).subscribe({
+          next: (data: any) => {
+            this.submissionInProgress = false;
+            this.postEducationdata = data as Ieducation;
+            this.modalService.dismissAll();
+            this.openPopup.openSuccess("Academic record added successfully");
+            this.getData.getEducation.set(true);
+            this.educationForm.reset();
+          },
+          error: (reason: any) => {
+            this.submissionInProgress = false; 
+            console.log(reason);
+            this.openPopup.openError(reason.error?.Message || "Something went wrong");
+          }
+        });
+      },
+      error: (err) => {
+        this.submissionInProgress = false; 
+        this.openPopup.openError(err.error?.Message || "File upload failed");
       }
-      this.postEducationdata.employeeId = parseInt(this.empinfo.employeeId);
-      let filepath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
-      this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file).subscribe({
-        next: (data: any) => {
-          this.postEducationdata.attachment = data.path;
-          this.postEducationdata.employeeId = this.empinfo.employeeId;
-          this.subscription = this.http.postData("PreonboardingEducation", this.postEducationdata).subscribe({
-            next: (data: any) => {
-              this.postEducationdata = data as Ieducation;
-              this.modalService.dismissAll();
-              this.openPopup.openSuccess("Academic record added successfully");
-              this.getData.getEducation.set(true);
-              this.educationForm.reset();
-            },
-            error: (reason: any) => {
-              console.log(reason);
-              if (reason.status == 500) {
-                this.openPopup.openError(reason.error.Message);
-              }
-              else if (reason.status == 400) {
-                this.openPopup.openError(reason.error.Message);
-              }
-            }
-          });
-        },
-      });
-    } else {
-      this.openPopup.openError("Please fill all the required fields");
-    }
+    });
+
+  } else {
+    this.openPopup.openError("Please fill all the required fields");
   }
+}
+
 
   close(): void {
     this.educationForm.reset();

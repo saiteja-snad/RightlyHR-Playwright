@@ -50,7 +50,7 @@
                                     </tr>
                                     <tr>
                                         <td>Blood Group</td>
-                                        <td>{{empDetails?.bloodGroup ? empDetails?.middleName: 'N/A'}}</td>
+                                        <td>{{empDetails?.bloodGroup ?? 'N/A'}}</td>
                                     </tr>
                                     <tr *ngFor="let aplication of appliccationData">
                                         <td>Location</td>

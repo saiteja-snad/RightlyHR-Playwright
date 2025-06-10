@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Onboarding Request</span></div>
+        <div><span class="component-sub-header">Onboarding Verification</span></div>
         @if((this.rbac.allowedToAccess('Request for Onboard Button.view') &&
         empdata?.empstatus?.toLowerCase() == 'trainee active' && dynamicData.value.length <= 0)||buttonviewwhenExtended){ 
         <div class="custom-add-btn" (click)="requestForOnboard()">

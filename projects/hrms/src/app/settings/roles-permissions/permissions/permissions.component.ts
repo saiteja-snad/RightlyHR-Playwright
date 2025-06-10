@@ -1664,6 +1664,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         'Employee Info Onboarding Request Details',
       ].includes(per.fields);
     }
+     if (action === 'Delete') {
+      // Only enabled for fields NOT in the disabled list
+      return !this.roleToFilter?.id || [
+        'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
+        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
+        'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
+        'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
+        'Employee Info Onboarding Request Details','Employee Info Job Details'
+      ].includes(per.fields);
+    }
     return false;
   }
 

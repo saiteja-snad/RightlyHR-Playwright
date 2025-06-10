@@ -48,15 +48,14 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TableModule,
     InfoIconComponent
-],
+  ],
 
   templateUrl: './premission-for-your-role-request.component.html',
   styleUrl: './premission-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class PremissionForYourRoleRequestComponent
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -84,9 +83,9 @@ export class PremissionForYourRoleRequestComponent
   multiSelect = false;
   requestBody = {} as any;
   @ViewChild('leaveSummary') leaveSummary: any;
-  @ViewChild('dt') table!: Table; 
-  requestSummary!:any;
-  hasSelectedAllOnce = false; 
+  @ViewChild('dt') table!: Table;
+  requestSummary!: any;
+  hasSelectedAllOnce = false;
   previousSearchValue: string = '';
   constructor(
     private modalService: NgbModal,
@@ -95,19 +94,19 @@ export class PremissionForYourRoleRequestComponent
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalService: SignalsService,
-    public formsValidation:FormValidationsService
-  ) {}
+    public formsValidation: FormValidationsService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
- selectCheck(value: any) {
+  selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       return;
     }
 
@@ -131,7 +130,7 @@ export class PremissionForYourRoleRequestComponent
         this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
 
-      this.hasSelectedAllOnce = true; 
+      this.hasSelectedAllOnce = true;
 
       let dominantStage = stages[0];
       let maxCount = stageMap[dominantStage].length;
@@ -180,7 +179,7 @@ export class PremissionForYourRoleRequestComponent
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
-      this.hasSelectedAllOnce = false; 
+      this.hasSelectedAllOnce = false;
       this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
@@ -241,12 +240,12 @@ export class PremissionForYourRoleRequestComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-           if(response.data.length > 0){
+          if (response.data.length > 0) {
             this.leaves.next(response.data);
             this.permissionsselects = response.data;
-          }else{
+          } else {
             this.leaves.next([]);
-            this.permissionsselects  = [];
+            this.permissionsselects = [];
           }
         },
         error: (reason) => {
@@ -265,9 +264,9 @@ export class PremissionForYourRoleRequestComponent
 
     if (search) {
       leaves = leaves.filter(item =>
-         item.entity?.fusionempId?.toLowerCase().includes(search) ||
-      item.entity?.raisedForName?.toLowerCase().includes(search) ||
-      item.entity?.type?.toLowerCase().includes(search)
+        item.entity?.fusionempId?.toLowerCase().includes(search) ||
+        item.entity?.raisedForName?.toLowerCase().includes(search) ||
+        item.entity?.type?.toLowerCase().includes(search)
       );
     }
 
@@ -285,8 +284,8 @@ export class PremissionForYourRoleRequestComponent
   }
 
 
-   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openApproveModal(content: any, request: PermissionRequestResponse) {
@@ -341,13 +340,16 @@ export class PremissionForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-             if (this.selectedLeavesItems.length > 1) {
+              if (this.selectedLeavesItems.length > 1) {
                 this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
               } else {
                 this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Approved Successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.approveForm.reset();
@@ -386,7 +388,7 @@ export class PremissionForYourRoleRequestComponent
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message =  'Processing Requests, Please wait...';
+      message = 'Processing Requests, Please wait...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -400,7 +402,7 @@ export class PremissionForYourRoleRequestComponent
           },
         ],
       };
-      message =  'Processing Request, Please wait...';
+      message = 'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(
       message
@@ -415,15 +417,18 @@ export class PremissionForYourRoleRequestComponent
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-           if (this.selectedLeavesItems.length > 1) {
+            if (this.selectedLeavesItems.length > 1) {
               this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Processed Successfully');
             } else {
               this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Processed Successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
-          
+
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -443,7 +448,7 @@ export class PremissionForYourRoleRequestComponent
   handleReject(rejectForm: FormGroup): void {
     this.spinnerLoader = true;
     if (rejectForm.valid) {
-       const formData = rejectForm.value;
+      const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
       if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
@@ -486,6 +491,9 @@ export class PremissionForYourRoleRequestComponent
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {

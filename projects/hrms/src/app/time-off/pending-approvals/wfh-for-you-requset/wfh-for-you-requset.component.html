@@ -262,24 +262,26 @@
             <div>
                 <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
             </div>
-            <!-- <div>
-                <a (click)="modal.dismiss('Cross click');requestSummary = null">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div> -->
         </div>
-        <div class="custom-main-popup-content">
-            <div class="row">
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Total Records' | translate}}</b></p>
-                    <p>{{ requestSummary?.totalRecordCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Success Records'|translate}}</b> </p>
-                    <p>{{ requestSummary?.successRecordsCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Failed Records' | translate}}</b></p>
-                    <p>{{ requestSummary?.failureRecordsCount }}</p>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ requestSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ requestSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ requestSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

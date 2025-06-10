@@ -345,6 +345,9 @@ bulkapprove(approverPopup: any) {
             this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -413,6 +416,9 @@ bulkapprove(approverPopup: any) {
             this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -485,6 +491,9 @@ bulkapprove(approverPopup: any) {
             this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;

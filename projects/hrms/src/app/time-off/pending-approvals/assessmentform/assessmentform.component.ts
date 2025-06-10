@@ -119,11 +119,14 @@ getEmployeeId(EmployeeId:number): void {
           let duration = data.find((ele: any) => {
             return ele.configValueId === extensionId;
           });
+          console.log(duration);
           this.probationExtensionDuration = duration.noOfDays;
+          console.log(this.probationExtensionDuration);
             let extendTimes = data.find((ele: any) => {
             return ele.configValueId === extensionPeriodTimes;
           });
           this.probationExtensionTimes = extendTimes.noOfDays;
+          console.log(this.probationExtensionTimes);
         },
       });
   }

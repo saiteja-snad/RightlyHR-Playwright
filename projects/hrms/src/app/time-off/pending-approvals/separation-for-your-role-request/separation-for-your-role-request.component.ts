@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -9,10 +9,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import {
-  ISeparation,
-  ISeparationRequest,
-} from '../separation-for-you-request/separation-for-you-request';
+import { ISeparation, ISeparationRequest } from '../separation-for-you-request/separation-for-you-request';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -43,6 +40,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 ],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class SeparationForYourRoleRequestComponent {

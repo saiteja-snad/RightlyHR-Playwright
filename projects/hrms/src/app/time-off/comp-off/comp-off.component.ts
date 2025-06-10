@@ -258,14 +258,16 @@ export class CompOffComponent implements OnInit, OnDestroy {
     futureDate.setDate(currentDate.getDate() + days);
     return futureDate.toISOString().split('T')[0];
   }
-pendingCount = 0;
+
+  pendingCount = 0;
   compOff: any[] = [];
   ApprovedCount = 0;
   rejectedCount = 0;
   ProcessedCount = 0;
   disaplyapplybutton=true;
+
   onCheckemployee(employeedId:any){
-      this.http.setEmployeeIdCompOff(employeedId);
+    this.http.setEmployeeIdCompOff(employeedId);
     this.ProcessedCount=0;
     this.rejectedCount=0;
     this.ApprovedCount=0;
@@ -280,8 +282,8 @@ pendingCount = 0;
       this.getCompOffRequest(this.empinfo.employeeId);
     }
   }
-  getCompOffRequest(employeeId?: any) {
 
+  getCompOffRequest(employeeId?: any) {
     let empId = employeeId;
     console.log(empId);
     this.subscription = this.http.getData(`Timeoff/getCompoffRequests/${empId}`).subscribe({

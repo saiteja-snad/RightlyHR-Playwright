@@ -44,6 +44,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   pendingDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
   isdisabled = true;
+   initialPoliciesState: any;
   @ViewChild('cancelpopup') cancelpopup!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
@@ -71,6 +72,11 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     this.handleFormValueChanges();
 
     this.getAllLocations();
+
+     this.momentRows.valueChanges.subscribe(() => {
+    const currentState = JSON.stringify(this.momentRows.getRawValue());
+    this.hidePublishCloneButtons = currentState === this.initialPoliciesState ? false : true;
+  });
   }
 
   inititializeForm() {
@@ -163,6 +169,8 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
             (s) => s.id === this.pendingDST?.shiftId
           );
           this.dstForm.patchValue({ shift: matchedShift ?? null });
+           this.initialPoliciesState = JSON.stringify(this.momentRows.getRawValue());
+          this.hidePublishCloneButtons = false;
         },
         error: (err) => {
           console.error('Error fetching shifts:', err);

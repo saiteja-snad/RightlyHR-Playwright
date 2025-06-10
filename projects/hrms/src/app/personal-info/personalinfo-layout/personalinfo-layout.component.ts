@@ -597,7 +597,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'probation-details': 'Probation Info',
     'separation-details': 'Separation Request ',
     'employee-off-boarding': 'Employee Offboarding',
-    'tranee-onboarding-requests': 'Trainee Onboarding Verification',
+    'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'team-members': 'Team Members',
     // Documents
     'documents': 'Documents',
@@ -679,7 +679,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/desk-details': MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
       '/personalinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/personalinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
-      '/personalinfo/job/tranee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
+      '/personalinfo/job/trainee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
       '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,

@@ -68,7 +68,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
-      accountName: ['', [Validators.required,]],
+      accountName: ['', [Validators.required,Validators.maxLength(50)]],
       accountNo: ['', [Validators.required, Validators.pattern('^[0-9]{9,18}$'),]],
       ifscCode: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'), this.invalidIfscCodeValidator(),]],
       isPrimary: [false],
@@ -80,7 +80,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
-      accountNameupdate: ['', [Validators.required,]],
+      accountNameupdate: ['', [Validators.required,Validators.maxLength(50)]],
       accountNoupdate: ['', [Validators.required, Validators.pattern('^[0-9]{9,18}$'),]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
       isPrimaryupdate: [false],

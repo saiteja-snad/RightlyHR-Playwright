@@ -95,7 +95,7 @@
                                 class="text-danger">*</span></label>
 
                         <div class="custom-p-select-content">
-                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" filterBy="bankName1"
+                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" [resetFilterOnHide]="true" filterBy="bankName1"
                                 formControlName="bankName" placeholder="Please select bank name"
                                 class="form-select custom-select"></p-select>
                         </div>
@@ -217,7 +217,7 @@
                         <label for="bankNameupdate" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" filterBy="bankName1"
+                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" [resetFilterOnHide]="true" filterBy="bankName1"
                                 formControlName="bankNameupdate" placeholder="Please select bank name"
                                 class="form-select custom-select"></p-select>
                         </div>
@@ -231,7 +231,7 @@
                         <label for="accountNameupdate" class="form-label custom-label mb-2">Account Holder's Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="accountNameupdate"
-                            formControlName="accountNameupdate" placeholder="Please enter account holder's name">
+                            formControlName="accountNameupdate" placeholder="Please enter account holder's name"  (keypress)="restrictInput($event)">
                             <div class="error-msg"
                             *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.invalid && bankDetailsUpdateForm.get('accountNameupdate')?.touched">
                             <div *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.errors?.['required']">Account

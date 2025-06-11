@@ -57,25 +57,21 @@
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
                                 @if(traineeofferLetter.status=='Approved'){
                                 <li (click)="releaseTraineeOfferLetter(traineeofferLetter)">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Release Offer' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' | translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Approve.view')) {
-                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !==
-                                'Rejected'
-                                &&
-                                traineeofferLetter?.status !== 'Released') {
+                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected'
+                                && traineeofferLetter?.status !== 'Released') {
                                 <li (click)="updateTraineeOfferDetails(traineeofferLetter)">
-                                    <a class="dropdown-item">
-                                        <i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                                 @if((traineeofferLetter.status!='Approved'&&
                                 traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
                                 <li (click)="SelectData(traineeofferLetter);openModal(rejectpopup)">
-                                    <a class="dropdown-item">
-                                        <i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                 </li>
                                 }}
                             </ul>

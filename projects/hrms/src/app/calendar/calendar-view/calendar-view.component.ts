@@ -27,14 +27,14 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-calendar-view',
-  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule,NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class CalendarViewComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   calendarOptions!: CalendarOptions;
   eventsPromise!: Promise<EventInput[]>;
   @ViewChild(FullCalendarComponent) fullcalendar!: FullCalendarComponent;
@@ -69,12 +69,12 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     this.initiateUpdateModuleInfo();
   }
 
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
@@ -210,58 +210,79 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
       for (let index = 0; index < results?.length; index++) {
         const allEventsData: any = results[index];
         for (let j = 0; j < allEventsData?.length; j++) {
+        
           // Birthdays
           if (index === 0 && this.showBirthdays) {
             const bday = new Date(allEventsData[j].dob);
             const formattedBday = `${this.changeYear}-${String(bday.getMonth() + 1).padStart(2, '0')}-${String(bday.getDate()).padStart(2, '0')}`;
+
+            const nameParts = [
+              allEventsData[j]?.firstName,
+              allEventsData[j]?.middleName,
+              allEventsData[j]?.lastName
+            ].filter(Boolean).join(' ');
+
+            const fusionEmpId = allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId}) ` : '';
+
             events.push({
-              title: (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
-                `${allEventsData[j].firstName} ${allEventsData[j]?.middleName ?? ''
-                  } ${allEventsData[j].lastName}'s` + ` Birthday`,
+              title: `${fusionEmpId}${nameParts}'s Birthday`,
               start: formattedBday,
               color: '#E1E8FE',
               textColor: 'black',
-              display: 'calendar/birthday.png',
+              display: 'calendar/birthday.png'
             });
           }
           // Anniversaries
+
           if (index === 1 && this.showAnniversaries) {
             const joinDate = new Date(allEventsData[j].dateOfJoining);
             const formattedJoinDate = `${this.changeYear}-${String(joinDate.getMonth() + 1).padStart(2, '0')}-${String(joinDate.getDate()).padStart(2, '0')}`;
+
             if (allEventsData[j]?.anniversaryYearCount > 0) {
+              const nameParts = [
+                allEventsData[j]?.firstName,
+                allEventsData[j]?.middleName,
+                allEventsData[j]?.lastName
+              ].filter(Boolean).join(' ');
+
+              const fusionEmpId = allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId}) ` : '';
+              const yearCount = allEventsData[j].anniversaryYearCount;
+              const suffix = this.getOrdinalSuffix(yearCount);
+
               events.push({
-                title:
-                  (allEventsData[j].fusionEmpId ? ` (${allEventsData[j].fusionEmpId})` : '') +
-                  ` ${allEventsData[j]?.firstName ?? ''} ${allEventsData[j]?.middleName ?? ''
-                  } ${allEventsData[j]?.lastName ?? ''}'s` +
-                  ` ${allEventsData[j].anniversaryYearCount
-                  }${this.getOrdinalSuffix(
-                    allEventsData[j].anniversaryYearCount
-                  )} Work Anniversary`,
+                title: `${fusionEmpId}${nameParts}'s ${yearCount}${suffix} Work Anniversary`,
                 start: formattedJoinDate,
                 color: '#FEE7E1',
                 textColor: 'black',
-                display: 'calendar/milestone.png',
+                display: 'calendar/milestone.png'
               });
             }
           }
+
+
           // New Joinees
           if (index === 2 && this.showJoinees) {
             const joinDate = new Date(allEventsData[j].dateOfJoining);
-            const formattedJoinDate = `${this.changeYear}-${String(
-              joinDate.getMonth() + 1
-            ).padStart(2, '0')}-${String(joinDate.getDate()).padStart(2, '0')}`;
+            const formattedJoinDate = `${this.changeYear}-${String(joinDate.getMonth() + 1).padStart(2, '0')}-${String(joinDate.getDate()).padStart(2, '0')}`;
+
+            const nameParts = [
+              allEventsData[j]?.firstName,
+              allEventsData[j]?.middleName,
+              allEventsData[j]?.lastName
+            ].filter(Boolean).join(' ');
+
+            const fusionEmpId = allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId}) ` : '';
+            const jobRole = allEventsData[j].jobRole ?? '';
+
             events.push({
-              title:
-                (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
-                `${allEventsData[j].firstName}${allEventsData[j]?.middleName ?? ''
-                  }  ${allEventsData[j].lastName} joined as ${allEventsData[j].jobRole}`,
+              title: `${fusionEmpId}${nameParts} joined as ${jobRole}`,
               start: formattedJoinDate,
               color: '#FEE1F7',
               textColor: 'black',
-              display: 'calendar/new-joinees.png',
+              display: 'calendar/new-joinees.png'
             });
           }
+
         }
         // Holidays (index === 3)
         const holidaysResult = results[3] as { orgHolidaysItems: any[] };

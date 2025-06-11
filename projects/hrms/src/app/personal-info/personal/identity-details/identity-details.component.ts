@@ -74,7 +74,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityNumber: ['', [
         Validators.required,
         this.invalidIdentityNumberValidator(),
-     ]],
+      ]],
       identityAttachment: ['', Validators.required]
     });
   }
@@ -85,7 +85,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityupdateType: [{ value: null, disabled: true }, Validators.required],
       identityupdateNumber: ['', [Validators.required,
       this.invalidIdentityNumberValidator(),
-     
+
       ]],
       identityupdateAttachment: [null, attachmentValidators]
     });
@@ -106,60 +106,87 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
   vadationfotidentitytype() {
     this.identityForm.get('identityType')?.valueChanges.subscribe(selected => {
-      const identityNumberControl = this.identityForm.get('identityNumber')
-
+      const identityNumberControl = this.identityForm.get('identityNumber');
       identityNumberControl?.clearValidators();
 
-      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'Pan') {
-        // Allow alphanumeric + special characters
+      if (selected?.identityType1 === 'Passport') {
+        // Passport: Alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
           Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
           Validators.maxLength(10),
           Validators.minLength(10)
         ]);
+      } else if (selected?.identityType1 === 'Pan') {
+        // PAN: CamelCase pattern (example: AbcDef1234)
+        identityNumberControl?.setValidators([
+          Validators.required,
+
+          Validators.maxLength(10),
+          Validators.minLength(10)
+        ]);
       } else {
-        // Allow numbers only
+        // Other types: Only numbers
         identityNumberControl?.setValidators([
           Validators.required,
           Validators.pattern(/^[0-9]+$/),
           Validators.maxLength(this.IdentityMaxNumber),
           Validators.minLength(this.IdentityMinNumber)
-         
         ]);
       }
 
-     identityNumberControl?.updateValueAndValidity({ emitEvent: false });
+      identityNumberControl?.updateValueAndValidity({ emitEvent: false });
     });
+  }
+  toUppercase(controlName: string) {
+    const control = this.identityForm.get(controlName);
+    if (control && control.value) {
+      control.setValue(control.value.toUpperCase(), { emitEvent: false });
+    }
+  }
+
+  toUppercaseforupdate(controlName: string) {
+    const control = this.identityupdateForm.get(controlName);
+    if (control && control.value) {
+      control.setValue(control.value.toUpperCase(), { emitEvent: false });
+    }
   }
 
 
-vadationfoforupdatetidentitytype() {
-  this.identityupdateForm.get('identityupdateType')?.valueChanges.subscribe(selected => {
-    const identityNumberControl = this.identityupdateForm.get('identityupdateNumber');
-    identityNumberControl?.clearValidators();
+  vadationfoforupdatetidentitytype() {
+    this.identityupdateForm.get('identityupdateType')?.valueChanges.subscribe(selected => {
+      const identityNumberControl = this.identityupdateForm.get('identityupdateNumber');
+      identityNumberControl?.clearValidators();
 
-    if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'Pan') {
-      // Allow alphanumeric + special characters
-      identityNumberControl?.setValidators([
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
-        Validators.maxLength(10),
-        Validators.minLength(10)
-      ]);
-    } else {
-      // Allow numbers only
-      identityNumberControl?.setValidators([
-        Validators.required,
-        Validators.pattern(/^[0-9]+$/),
-        Validators.maxLength(this.IdentityMaxNumber),
-        Validators.minLength(this.IdentityMinNumber)
-      ]);
-    }
+     if (selected?.identityType1 === 'Passport') {
+        // Passport: Alphanumeric + special characters
+        identityNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/),
+          Validators.maxLength(10),
+          Validators.minLength(10)
+        ]);
+      } else if (selected?.identityType1 === 'Pan') {
+        // PAN: CamelCase pattern (example: AbcDef1234)
+        identityNumberControl?.setValidators([
+          Validators.required,
 
-    identityNumberControl?.updateValueAndValidity({ emitEvent: false }); // Prevents recursive valueChanges
-  });
-}
+          Validators.maxLength(10),
+          Validators.minLength(10)
+        ]);
+      } else {
+        // Other types: Only numbers
+        identityNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^[0-9]+$/),
+          Validators.maxLength(this.IdentityMaxNumber),
+          Validators.minLength(this.IdentityMinNumber)
+        ]);
+      }
+
+      identityNumberControl?.updateValueAndValidity({ emitEvent: false }); // Prevents recursive valueChanges
+    });
+  }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -315,7 +342,7 @@ vadationfoforupdatetidentitytype() {
       },
       error: (error) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal( error.error.Message ||  'Identity details added failed');
+        this.conformationPopup.openErrorModal(error.error.Message || 'Identity details added failed');
       }
     });
   }

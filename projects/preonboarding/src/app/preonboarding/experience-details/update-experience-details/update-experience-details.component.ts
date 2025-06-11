@@ -227,7 +227,7 @@ DateValidator(): ValidatorFn {
             this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
               next: (data: any) => {
                 this.modalService.dismissAll();
-                this.openPopup.openSuccess("Experience details updated successfully");
+                this.openPopup.openSuccess("Employment history updated successfully");
                 this.getData.getExperience.set(true);
                 this.experienceForm.reset();
               },
@@ -252,7 +252,7 @@ DateValidator(): ValidatorFn {
       this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.openPopup.openSuccess("Experience details updated successfully");
+          this.openPopup.openSuccess("Employment history updated successfully");
           this.getData.getExperience.set(true);
           this.experienceForm.reset();
         },

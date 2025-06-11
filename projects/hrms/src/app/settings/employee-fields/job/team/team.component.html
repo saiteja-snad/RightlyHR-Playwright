@@ -6,6 +6,7 @@
   
   <div class="custom-main-component-container">
     <div class="custom-table-content">
+         @if(!loader){
       <table class="w-100">
         <thead>
           <tr>
@@ -13,7 +14,7 @@
             <th>Team Name</th>
             <th>Team Manager</th>
             <th class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || 
-              rbac.allowedToAccess('Team.delete')">Action<span class="text-lowercase">(S)</span></th>
+              rbac.allowedToAccess('Team.delete')">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -45,6 +46,10 @@
           </ng-container>
         </tbody>
       </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
   </div>
 </div>

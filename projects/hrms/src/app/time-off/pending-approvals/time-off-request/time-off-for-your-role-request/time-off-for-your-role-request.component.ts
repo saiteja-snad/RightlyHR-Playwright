@@ -23,6 +23,7 @@ import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-time-off-for-your-role-request',
   imports: [
@@ -38,11 +39,12 @@ import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.compone
     TableModule,
     DataLoaderContentComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -73,7 +75,6 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   onRowsChange() {
     this.first = 0;
   }
-
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -83,6 +84,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
+    public formsValidation: FormValidationsService,
     public rbac: RbacService, private signalService: SignalsService
   ) { }
 
@@ -288,7 +290,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   previousSearchValue: string = '';
-  hasSelectedAllOnce = false; 
+  hasSelectedAllOnce = false;
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
@@ -361,9 +363,16 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+            if(this.selectedProducts.length > 1){
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
+            }else{
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave Request Approved Successfully');
+            } 
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -376,7 +385,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Approval Failed');
+            this.conformationPopup.openErrorModal('Leave Request Approval Failed');
           }
           this.spinnerLoader = false;
         },
@@ -430,9 +439,16 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+           if(this.selectedProducts.length > 1){
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
+            } else{
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Request Rejected Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -445,7 +461,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
           else {
-            this.conformationPopup.openErrorModal('Request Rejected Failed');
+            this.conformationPopup.openErrorModal('Leave Request Rejected Failed');
           }
           this.spinnerLoader = false;
         },
@@ -477,7 +493,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage
         }))
       }
-      message = 'Processing Requests, Please wait...';
+      message = 'Processing Selected Leave Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -490,7 +506,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Request, Please wait...';
+      message = 'Processing Selected Leave Requests...';
     }
 
     this.conformationPopup.openLoaderModal(message);
@@ -500,9 +516,16 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+           if(this.selectedProducts.length > 1){
+            this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
+            }else{
+            this.signalService.handleResponse(this.responseSummary, 'Selected Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {

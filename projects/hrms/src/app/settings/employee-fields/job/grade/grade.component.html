@@ -3,16 +3,17 @@
     <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
       *ngIf="rbac.allowedToAccess('Grade Details.create')">{{'Add' | translate}}</button>
   </div>
-  
+
   <div class="custom-main-component-container">
     <div class="custom-table-content">
+      @if(!loader){
       <table class="w-100">
         <thead>
           <tr>
             <th>Grade Name</th>
             <th>Job grade</th>
             <th class="text-center" *ngIf="rbac.allowedToAccess('Grade Details.update') || 
-              rbac.allowedToAccess('Grade Details.delete')">Action<span class="text-lowercase">(S)</span> </th>
+              rbac.allowedToAccess('Grade Details.delete')">Action </th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,10 @@
           </ng-container>
         </tbody>
       </table>
+      }
+      @else {
+      <app-data-loader-content />
+      }
     </div>
   </div>
 </div>
@@ -80,17 +85,18 @@
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
           <div *ngIf="AddForm.get('Addgrade')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-            </div>
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
-      
+
         <!-- Job Grade Field -->
         <div class="mb-3">
           <label for="jobgrade" class="form-label custom-label mb-2">
             {{ 'Job Grade' | translate }}<span class="error-msg">*</span>
           </label>
-          <input type="text" class="form-control custom-input" formControlName="jobgrade" placeholder="Please enter job grade"
-            maxlength="101" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
+          <input type="text" class="form-control custom-input" formControlName="jobgrade"
+            placeholder="Please enter job grade" maxlength="101"
+            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
           <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg">
             <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">
               {{ 'Job Grade is required' | translate }}
@@ -100,8 +106,8 @@
             {{ 'Max 100 characters allowed' | translate }}
           </div>
           <div *ngIf="AddForm.get('jobgrade')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-            </div>
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
         <!-- Buttons -->
         <div class="custom-modal-footer">
@@ -140,17 +146,18 @@
           <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
             placeholder="Please enter grade name" maxlength="101"
             (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-            <div *ngIf="updateForm.get('Updatejobrole')?.touched && updateForm.get('Updatejobrole')?.invalid" class="error-msg">
-              <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">
-                {{ 'Job Grade is required' | translate }}
-              </div>
+          <div *ngIf="updateForm.get('Updatejobrole')?.touched && updateForm.get('Updatejobrole')?.invalid"
+            class="error-msg">
+            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">
+              {{ 'Job Grade is required' | translate }}
             </div>
-            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
-              {{ 'Max 100 characters allowed' | translate }}
-            </div>
-            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-            </div>
+          </div>
+          <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Max 100 characters allowed' | translate }}
+          </div>
+          <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
 
         <div class="mb-3">
@@ -160,7 +167,8 @@
           <input type="text" class="form-control custom-input" formControlName="updategraderole"
             placeholder="Please enter job grade" maxlength="101" (keydown)="formValidations.restrictInput($event); 
             formValidations.blockNonAlphabets($event)" />
-          <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid" class="error-msg">
+          <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid"
+            class="error-msg">
             <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">
               {{ 'Job Grade is required' | translate }}
             </div>
@@ -169,12 +177,13 @@
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
           <div *ngIf="updateForm.get('updategraderole')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-            </div>
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
-        
+
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' | translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' |
+            translate}}</button>
           <button type="button" class="custom-btn btn-primary" (click)="updateJobroletype(modal)"
             [disabled]="updateForm.invalid">{{'Update' | translate}}
           </button>

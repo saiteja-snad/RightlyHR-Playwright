@@ -14,6 +14,7 @@ import { IJob } from '../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../Interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
 import { SignalsService } from '../../services/signals.service';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-claimsandexpenes-pending-approval-tabs',
@@ -29,20 +30,19 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
 
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
-
   navTabs = computed(() => {
-    const data = this.pendingApprovalCount().find(
-      (item) => item.moduleId === 19
-    );
-    return [
-      { label: 'For You ', link: 'for-you', count: data?.forYou ?? 0 },
-      {
-        label: 'For Your Role',
-        link: 'for-your-role',
-        count: data?.forYourRole ?? 0,
-      },
-    ];
-  });
+  const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
+  const allTabs = [
+    { label: 'For You', link: 'for-you', count: data?.forYou ?? 0, permission: { feature: 'For You (Claims and Expenses)', action: 'view' } },
+    { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0, permission: { feature: 'For Role (Claims and Expenses)', action: 'view' } }
+  ];
+
+  return allTabs.filter(
+    tab =>
+      tab.permission &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+  );
+});
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -52,7 +52,8 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
   constructor(
     public readonly router: Router,
     private http: HttpService,
-    private signalService:SignalsService
+    private signalService:SignalsService,
+    private rbac: RbacService
   ) {
      effect(() => {
       if (this.signalService.claimsandexpensesForRoleTriggerSignal() || this.signalService.clamisandexpensesForYouTriggerSignal()) {

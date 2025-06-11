@@ -147,7 +147,7 @@
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA/CGPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpa"
-              placeholder="Please enter GPA">
+              placeholder="Please enter GPA/CGPA">
             <div class="error-msg" *ngIf="educationForm.get('gpa')?.invalid && educationForm.get('gpa')?.touched">
               GPA/CGPA is required and should be between 1 and 10
             </div>
@@ -194,7 +194,7 @@
 
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary px-4"
-            (click)="educationForm.reset();modal.dismiss()">Close</button>
+            (click)="educationForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || spinnerLoader">
 
             @if (spinnerLoader) {
@@ -267,7 +267,7 @@
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA/CGPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpaupdate"
-              placeholder="Please enter GPA">
+              placeholder="Please enter GPA/CGPA">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('gpaupdate')?.invalid && educationupdateForm.get('gpaupdate')?.touched">
               GPA/CGPA is required and should be between 1 and 10
@@ -318,7 +318,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary "
-            (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
+            (click)="educationupdateForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary "
             [disabled]="educationupdateForm.invalid && !displalyeducationattachment && educationupdateForm.get('attachmentupdate')?.invalid || spinnerLoader">
 
@@ -340,7 +340,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
-      <p class="confirmation-text mb-4">Are you sure you want to delete the Education Details?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to delete the Academic?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

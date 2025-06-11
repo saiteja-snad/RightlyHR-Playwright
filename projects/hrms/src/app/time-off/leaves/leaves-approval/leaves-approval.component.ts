@@ -12,9 +12,10 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-leaves-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-approval.component.html',
   styleUrl: './leaves-approval.component.scss'
 })
@@ -28,6 +29,7 @@ export class LeavesApprovalComponent {
   selectempid = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  loading: boolean = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -55,15 +57,16 @@ export class LeavesApprovalComponent {
         console.log('Updated employee ID:', id);
         // Example: this.loadEmployeeDetails(id);
         this.getDataByEmpLPID();
-      }else{
-   this.loggedinuser = this.authService.getToken();
-    this.empdata = this.loggedinuser;
-    this.getDataByLPID();
+      } else {
+        this.loggedinuser = this.authService.getToken();
+        this.empdata = this.loggedinuser;
+        this.getDataByLPID();
       }
     });
   }
 
   getDataByLPID() {
+    this.loading = true;
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
@@ -72,22 +75,37 @@ export class LeavesApprovalComponent {
         } else {
           console.error("Invalid response format");
         }
+        this.loading = false;
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {console.log(reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 
-    getDataByEmpLPID() {
+  getDataByEmpLPID() {
+    this.loading = true;
     let empid = this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
         } else {
           console.error("Invalid response format");
         }
+        this.loading = false;
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => {
+        console.log(reason)
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 }

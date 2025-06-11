@@ -78,12 +78,10 @@
       <div class="custom-table-content mb-3">
         <table class="w-100">
           <thead>
-            <tr>
-              <th>Increment Percentage/Rating</th>
-              <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
-              <th class="text-center">Action(s)</th>
-              <th></th>
-            </tr>
+            <th>Increment Percentage/Rating</th>
+            <th class="text-center" *ngFor="let item of ratingrangeloop">{{ item }}</th>
+            <th class="text-center">Action</th>
+            <th></th>
           </thead>
           <tbody>
             <!-- Iterate through FormArray (ratingscaledetails) -->
@@ -177,8 +175,7 @@
         }
         @else {
         <div class="d-flex">
-          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-          </div>
+          <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
           <div> {{'Submitting'|translate}}</div>
         </div>
         }

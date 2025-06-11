@@ -8,9 +8,11 @@ import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Skeleton } from 'primeng/skeleton';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-phonebook',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent],
   templateUrl: './phonebook.component.html',
   styleUrl: './phonebook.component.scss'
 })
@@ -19,6 +21,7 @@ export class PhonebookComponent {
   phonebookData: any;
   searchphone: any = '';
   imageUrl: any;
+  loaders= false;
   constructor(public router: Router,
     private http: HttpService, private sanitizer: DomSanitizer, public formValidation: FormValidationService,) { }
   ngOnInit(): void {
@@ -26,8 +29,10 @@ export class PhonebookComponent {
   }
 
   getPhoneBook() {
+    this.loaders = true;
     this.subscription = this.http.getData(`EmployeeData/TraineeActiveEmployees/Active`).subscribe({
       next: (data: any) => {
+        this.loaders = false;
         // Step 1: Map and prepare employee objects
         this.phonebookData = data.map((emp: any) => {
           const profilePath = emp.profileUrl || '';
@@ -55,7 +60,13 @@ export class PhonebookComponent {
           }
         });
       },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      error: (reason) =>{
+         console.error('Error fetching employee data:', reason)
+          this.loaders = false;
+      },
+      complete: () => {
+        this.loaders = false;
+      }
     });
   }
   // extractdata

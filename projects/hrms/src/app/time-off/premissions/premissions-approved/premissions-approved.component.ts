@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {  FormsModule } from '@angular/forms';
-import {  NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
@@ -13,8 +13,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
-
-
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-premissions-approved',
   imports: [
@@ -26,11 +25,13 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    TranslateModule
+    TranslateModule,
+    InfoIconComponent
   ],
   templateUrl: './premissions-approved.component.html',
   styleUrl: './premissions-approved.component.scss',
 })
+
 export class PremissionsApprovedComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -48,14 +49,13 @@ export class PremissionsApprovedComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
 
-  constructor(private http: HttpService, public rbac: RbacService) {}
+  constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.http.selectedEmployeeIdPermission$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
-        console.log('Updated employee ID:', id);
         // Example: this.loadEmployeeDetails(id);
         this.getDataempPermissions();
       } else {
@@ -66,9 +66,11 @@ export class PremissionsApprovedComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -119,6 +121,7 @@ export class PremissionsApprovedComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

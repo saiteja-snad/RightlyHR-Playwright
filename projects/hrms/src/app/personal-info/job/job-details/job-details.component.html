@@ -127,10 +127,10 @@
                                     <li (click)="openModalupdate(updatejobmodal, item)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>}
-                                    @if(canAccess('delete','job')){
+                                    <!-- @if(canAccess('delete','job')){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
-                                    </li>}
+                                    </li>} -->
                                     @if(canAccess('view','separation')){
 
                                     <li (click)="openModalforSeparationupdate(seprationModal, item)">
@@ -169,10 +169,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add Job Info</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -331,7 +327,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="jobDetailsForm.invalid">Submit</button>
                 </div>
@@ -347,10 +343,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Job Info</p>
             </div>
-            <!-- <div>
-                <a (click)="modal.dismiss();jobDetailsupdateForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div> -->
         </div>
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="jobDetailsupdateForm">
@@ -507,7 +499,7 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                     <button type="button" (click)="updateJobDetails()" class="custom-btn btn-primary"
                         [disabled]="jobDetailsupdateForm.invalid">Update</button>
                 </div>
@@ -524,7 +516,7 @@
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
             <!-- <div>
-                <a (click)="confirmationopenModal(closeconformation)"><img src="icons/close.png" alt="Close Icon"
+                <a (click)="confirmationopenModal(closeconformation)"><img src="icons/close.png" alt="Cancel Icon"
                         class="close-icon"></a>
             </div> -->
         </div>
@@ -607,7 +599,7 @@
 
                     <div class="col-md-6" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
                         <div class="mb-3">
-                            <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Relieving Date
+                            <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Early Relieving Date
                                 <span class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="earlyRelievingDate"
                                 [min]="separationRequestForm.get('appliedDate')?.value"
@@ -615,7 +607,7 @@
                                 formControlName="earlyRelievingDate" />
                             <div class="error-msg"
                                 *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
-                                Expected Relieving Date is required
+                                Expected Early Relieving Date is required
                             </div>
                         </div>
                     </div>

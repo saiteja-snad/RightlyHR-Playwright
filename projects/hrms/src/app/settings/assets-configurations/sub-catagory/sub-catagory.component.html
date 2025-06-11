@@ -8,13 +8,14 @@
   </div>
 
   <div class="custom-table-content">
+     @if(!loading){
     <table class="w-100">
       <thead>
         <tr>
           <th>Asset Category</th>
           <th>Asset Sub Category</th>
           <th *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || 
-          rbac.allowedToAccess('Asset Sub Catagory.delete')">Action(s)</th>
+          rbac.allowedToAccess('Asset Sub Catagory.delete')">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -47,6 +48,10 @@
         </ng-template>
       </tbody>
     </table>
+      }
+  @else {
+     <app-data-loader-content />
+  }
   </div>
 </div>
 

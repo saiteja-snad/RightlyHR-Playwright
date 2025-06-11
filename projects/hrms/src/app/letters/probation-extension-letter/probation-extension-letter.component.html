@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <!--letter content-->
-    <div class="main-letter-content gap-4 d-flex w-100">
-        <div class="card letter-fields-content p-4">
+    <div class="main-letter-content">
+        <div class="card letter-fields-content">
             <form autocomplete="off" [formGroup]="probationExtensionForm"
                 (ngSubmit)="postProbationExtensionLetterFormSubmit()">
                 <!-- Employee Name -->
@@ -64,8 +64,7 @@
 
                 <div>
                     <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
-                        Designation,
-                        Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
+                        Designation, Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 pt-3">
@@ -100,7 +99,7 @@
             </form>
         </div>
 
-        <div class="card letter-data-content p-4">
+        <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
                     <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">

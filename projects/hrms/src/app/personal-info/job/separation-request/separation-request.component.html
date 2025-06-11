@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div > <span class="component-sub-header"> Separation Details</span></div>
+    <div > <span class="component-sub-header"> Separation Request</span></div>
     @if(canAccess('view','raisenodue')){
     <ng-container
       *ngIf="(shouldShowButton(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0) && shouldShowStatusBasedButton()">
@@ -23,6 +23,7 @@
   </div>
 
   <div class="custom-table-content">
+    @if (!isDataLoaded) {
     <table class="w-100">
       <thead>
         <tr>
@@ -45,7 +46,7 @@
         </tr>
       </thead>
       <tbody>
-        @if (!isDataLoaded) {
+        
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
@@ -100,7 +101,7 @@
           && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
           !==
           'trainee inactive' )){
-          <td class="text-center">
+          <td  class="text-center">
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
               !recallbuttonConditions &&
@@ -139,12 +140,13 @@
           </td>
         </tr>
         }
-        }
+      
+      </tbody>
+    </table>
+      }
         @else {
         <app-data-loader-content />
         }
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -215,8 +217,7 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment.comments; else popupcomments">
-                  <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
-                    ngbPopover="{{ comment?.comments }}" container="body"></i>
+                  <app-info-icon  triggers="mouseenter:mouseleave" ngbPopover="{{ comment?.comments }}" container="body"/>
                 </div>
                 <ng-template #popupcomments>NA</ng-template>
               </td>
@@ -263,8 +264,8 @@
       <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
-            placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
+          <textarea class="form-control custom-input" id="recallreason" maxlength="250" 
+            placeholder="Please enter recall reason" (keydown)="formValidations.restrictInitialSpace($event)"  name="recallReason" formControlName="recallReason"></textarea>
           <div class="textarea-count-text">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
           <div class="error-msg"
             *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
@@ -319,8 +320,8 @@
         </div>
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason for Early Relieving<span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" maxlength="400" pattern="^(?!\s).*" rows="3"
-            placeholder="Please provide early relieving reason...." name="Reason"
+          <textarea class="form-control custom-input" maxlength="250"  rows="3"
+            placeholder="Please provide early relieving reason...." (keydown)="formValidations.restrictInitialSpace($event)" name="Reason"
             formControlName="earlyReleivingReason"></textarea>
           <div class="textarea-count-text">{{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }}/400
           </div>

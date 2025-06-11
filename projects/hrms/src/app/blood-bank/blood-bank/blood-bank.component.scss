@@ -1,10 +1,10 @@
 .custom-component-right-content {
-    height: calc(100vh - 12.75rem);
+    height: calc(100vh - 11.25rem);
 
     .cards-container {
         align-items: center;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
         gap: 1rem;
     }
 
@@ -21,8 +21,52 @@
         background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
         border: 1px solid #DCE3E9;
 
+
+
+
         .blood-group {
             background: #EA362C1A;
+            font-weight: 700;
+            font-size: var(--fontsize14);
+            color: #EA362C;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .name {
+            font-weight: 600;
+            font-size: var(--fontsize13);
+            color: #181817;
+        }
+
+        .email {
+            font-weight: 400;
+            font-size: var(--fontsize10);
+            color: var(--primary-color);
+        }
+    }
+}
+
+.cards-container-shimmer {
+    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 1rem;
+
+
+    .blood-bank-card-shimerr {
+        width: 100%;
+        height: max-content;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+        border: 1px solid #DCE3E9;
+
+
+
+
+        .blood-group {
+            background:  #DCE3E9;
             font-weight: 700;
             font-size: var(--fontsize14);
             color: #EA362C;

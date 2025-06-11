@@ -466,7 +466,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Serving Period',
     'Consultancy',
     'Signature Authority',
-    'Settings Job Probation Details'
+    'Settings Job Probation Details',
+    'Signature Authority'
   ];
   settingsEmployeePersonalFields = [
     'Salutation',
@@ -556,7 +557,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management',
     'Holidays',
     'Attendance',
-    'Blood Bank'
+    'Blood Bank',
+    'Phone Book',
+    'Contacts Directory'
 
   ];
   expensesModuleTabs = [
@@ -653,6 +656,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Request Leave Button',
     'Cancelled (Time Off)',
     'My Team (Time Off)',
+    'My Team (Regularization)'
   
   ];
 
@@ -765,6 +769,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   reportsTabsFields = [
     'Standard Reports',
     'Custom Reports',
+    'Policy Reports',
     'Attendance reports',
     'Monthly Attendance Reports',
       'Org Leave Balance',
@@ -1515,19 +1520,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  isItSupportteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    if (action === 'Update') {
-      // Only enabled if role is selected and your custom logic (if any)
-      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
-    }
-    return false;
-  }
+  
 
   isHolidaysActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
@@ -1644,19 +1637,54 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         'No Due Form', 'Employee Info Separation Request'
       ].includes(per.fields);
     }
-    if (action === 'Create' || action === 'Delete') {
+    if ( action === 'Delete') {
       // Only enabled for fields NOT in the disabled list
       return !this.roleToFilter?.id || [
         'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
         'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
         'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
         'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
-        'Employee Info Onboarding Request Details'
+        'Employee Info Onboarding Request Details','Employee Info Job Details'
+      ].includes(per.fields);
+    }
+       if (action === 'Create' ) {
+      // Only enabled for fields NOT in the disabled list
+      return !this.roleToFilter?.id || [
+        'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
+        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
+        'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
+        'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
+        'Employee Info Onboarding Request Details',
+      ].includes(per.fields);
+    }
+     if (action === 'Delete') {
+      // Only enabled for fields NOT in the disabled list
+      return !this.roleToFilter?.id || [
+        'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
+        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
+        'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
+        'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
+        'Employee Info Onboarding Request Details','Employee Info Job Details'
       ].includes(per.fields);
     }
     return false;
   }
 
+  isItSupportteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    if (action === 'Update') {
+      // Only enabled if role is selected and your custom logic (if any)
+      return !this.roleToFilter?.id || [
+      'Solved Tickets Tab'
+    ].includes(per.fields);
+    }
+    return false;
+  }
   isEmployeeInfoPersonalActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
   if (action === 'View' || action === 'Update') {
     return !this.roleToFilter?.id;

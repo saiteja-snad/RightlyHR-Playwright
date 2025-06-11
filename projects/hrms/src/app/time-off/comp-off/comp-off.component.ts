@@ -259,14 +259,16 @@ export class CompOffComponent implements OnInit, OnDestroy {
     futureDate.setDate(currentDate.getDate() + days);
     return futureDate.toISOString().split('T')[0];
   }
-pendingCount = 0;
+
+  pendingCount = 0;
   compOff: any[] = [];
   ApprovedCount = 0;
   rejectedCount = 0;
   ProcessedCount = 0;
   disaplyapplybutton=true;
+
   onCheckemployee(employeedId:any){
-      this.http.setEmployeeIdCompOff(employeedId);
+    this.http.setEmployeeIdCompOff(employeedId);
     this.ProcessedCount=0;
     this.rejectedCount=0;
     this.ApprovedCount=0;
@@ -281,8 +283,8 @@ pendingCount = 0;
       this.getCompOffRequest(this.empinfo.employeeId);
     }
   }
-  getCompOffRequest(employeeId?: any) {
 
+  getCompOffRequest(employeeId?: any) {
     let empId = employeeId;
     console.log(empId);
     this.subscription = this.http.getData(`Timeoff/getCompoffRequests/${empId}`).subscribe({
@@ -324,7 +326,7 @@ pendingCount = 0;
           next: (res: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request submitted successfully'
+              'Comp off request submitted successfully!'
             );
             this.http.tirggerCountSignal.update((status) => ({
               ...status,
@@ -337,7 +339,7 @@ pendingCount = 0;
             this.spinnerLoader = false;
             if (
               err.error.message.toLowerCase() ==
-              'you already applied to same category for same day'
+              'you have already applied to same category for same day'
             ) {
               this.sharedModalService.openErrorModal(
                 'Same date range already exists'

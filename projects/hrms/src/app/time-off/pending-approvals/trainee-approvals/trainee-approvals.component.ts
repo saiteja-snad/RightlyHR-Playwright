@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit, Signal } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Itraineeapproval } from '../../../Interfaces/traineedetails.model';
@@ -18,16 +18,19 @@ import { RbacService } from '../../../services/rbac.service';
 import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../services/signals.service';
+import { FormValidationsService } from '../../../services/form-validations.service';
 
 @Component({
   selector: 'app-trainee-approvals',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
+    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, DataLoaderContentComponent],
   templateUrl: './trainee-approvals.component.html',
-  styleUrl: './trainee-approvals.component.scss'
+  styleUrl: './trainee-approvals.component.scss',
 })
 
-export class TraineeApprovalsComponent {
+export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   isLoading = false;
   private customsetup: any;
   private datePipe: DatePipe;
@@ -45,9 +48,10 @@ export class TraineeApprovalsComponent {
   myApproverComments = {} as any;
   discontinue: any;
   extend: any;
+  loading: boolean = false;
   isempeffectivevaild: boolean = true;
-  rejectForm!: FormGroup
-  rejectSeparationForm!: FormGroup
+  rejectForm!: FormGroup;
+  rejectSeparationForm!: FormGroup;
   Status!: any;
   comments = [] as any;
   noRecalllength = [] as any;
@@ -63,7 +67,7 @@ export class TraineeApprovalsComponent {
   ];
 
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
-    private authService: AuthService, public rbac: RbacService) {
+    private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
   }
@@ -75,10 +79,10 @@ export class TraineeApprovalsComponent {
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
-      trcomments: ['', Validators.required, noWhitespaceValidator],
-      rejectedReason: ['', Validators.required, noWhitespaceValidator]
+      trcomments: ['', Validators.required],
+      rejectedReason: ['', Validators.required]
     });
-    this.rejectForm.valueChanges.subscribe(val => {
+    this.rejectForm.valueChanges.subscribe((val) => {
       this.selectedLeaveData.extenddate = val.extenddate;
       this.selectedLeaveData.trcomments = val.trcomments;
       this.selectedLeaveData.rejectedReason = val.rejectedReason;
@@ -94,7 +98,7 @@ export class TraineeApprovalsComponent {
       inputElement.dispatchEvent(nativeEvent);
     }
   }
-  
+
   transform(value: any, ...args: unknown[]): unknown {
     if (value) {
       return this.datePipe.transform(value, this.customsetup);
@@ -110,20 +114,23 @@ export class TraineeApprovalsComponent {
     this.modalService.dismissAll();
   }
 
-commentsFunction(value: any, content: any) {
-  const commentsArray = Array.isArray(value) ? value : [value];
-  this.myApproverComments = commentsArray.map((ele: any) => {
-    const parsedMetaData = ele.meta ? JSON.parse(ele.meta) : {};
-    return {
-      ...ele,
-      metadata: parsedMetaData
-    };
-  });
+  commentsFunction(value: any, content: any) {
+    const commentsArray = Array.isArray(value) ? value : [value];
+    this.myApproverComments = commentsArray.map((ele: any) => {
+      const parsedMetaData = ele.meta ? JSON.parse(ele.meta) : {};
+      return {
+        ...ele,
+        metadata: parsedMetaData,
+      };
+    });
 
-  this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
-  this.comments = commentsArray;
-}
-
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
+    this.comments = commentsArray;
+  }
 
   onRowsChange() {
     this.first = 0;
@@ -173,58 +180,70 @@ commentsFunction(value: any, content: any) {
     let requestBody = {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
-      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(
+        this.requesthandler.approvalHeader.currentapprovalStage
+      ),
     };
 
-    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Request Accepted Successfully');
-      },
-      error: (reason: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(reason.error.message);
-      },
-      complete: () => {
-        this.isLoading = false;
-        f.reset();
-        this.getAllPendingApprovals();
-        this.selectedLeaveData.trcomments = '';
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal(
+            'Request Accepted Successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+          f.reset();
+          this.getAllPendingApprovals();
+          this.selectedLeaveData.trcomments = '';
+          this.signalService.traineeDetailsTriggerSignal.set(true);
+        },
+      });
   }
 
   //function to send the rejected status and comments
   handleReject(f: NgForm) {
-    this.isLoading = true
+    this.isLoading = true;
     let requestBody = {
       status: 'Rejected',
       comments: this.selectedLeaveData.rejectedReason,
-      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(
+        this.requesthandler.approvalHeader.currentapprovalStage
+      ),
     };
-    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Request Rejected Successfully');
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
-      },
-      error: (reason: any) => {
-        this.isLoading = false
-        this.conformationPopup.openErrorModal(reason.error.message)
-      },
-      complete: () => {
-        this.isLoading = false;
-        this.getAllPendingApprovals();
-        this.selectedLeaveData = {};
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal(
+            'Request Rejected Successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+          this.getAllPendingApprovals();
+          this.signalService.traineeDetailsTriggerSignal.set(true);
+          this.selectedLeaveData = {};
+        },
+      });
   }
 
   //function to send the processed status
@@ -233,34 +252,40 @@ commentsFunction(value: any, content: any) {
       status: 'Processed',
       currentStage: parseInt(request.approvalHeader.currentapprovalStage),
     };
-    this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Processed Successfully')
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal(reason.error.message)
-      },
-      complete: () => {
-        this.getAllPendingApprovals();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/process/${request.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.conformationPopup.openSuccessModal(
+            'Request Processed Successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+          this.signalService.traineeDetailsTriggerSignal.set(true);
+        },
+      });
   }
 
   //function to get the employeedata
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.empId;
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data as Ipersonal;
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.empdata = data as Ipersonal;
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   openModal(content: any) {
@@ -282,45 +307,54 @@ commentsFunction(value: any, content: any) {
       status: 'Processed',
       comments: this.selectedLeaveData.trcomments,
       trainingEndDate: this.selectedLeaveData.extenddate,
-      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(
+        this.requesthandler.approvalHeader.currentapprovalStage
+      ),
     };
-    this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Request Extend Successfully');
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal(reason.error.message)
-      },
-      complete: () => {
-        this.getAllPendingApprovals();
-        this.selectedLeaveData = {};
-
-      },
-    });
+    this.subscription = this.http
+      .putData(
+        `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
+        requestBody
+      )
+      .subscribe({
+        next: (respone: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal(
+            'Request Extend Successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+          this.signalService.traineeDetailsTriggerSignal.set(true);
+          this.selectedLeaveData = {};
+        },
+      });
   }
 
   initializeForm(): void {
     this.rejectSeparationForm = this.fb.group({
       // extenddate: [this.selectedLeaveData.extenddate, [Validators.required, this.extendDateValidator.bind(this)]],
-      trcomments: [this.selectedLeaveData.trcomments, [Validators.required, Validators.pattern(/^[a-zA-Z0-9 ]+$/)]]
+      trcomments: [this.selectedLeaveData.trcomments, [Validators.required]]
     });
   }
 
   getAllPendingApprovals() {
+    this.loading = true;
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=15&approvedType=EMP`).subscribe({
       next: (data: any) => {
-        console.log(data);
+        this.loading = false;
         this.Trainees.next(data.data as Itraineeapproval[])
         this.noRecalllength = this.Trainees;
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        console.log(reason)
+        this.loading = false;
+      },
     });
   }
 
@@ -334,5 +368,11 @@ commentsFunction(value: any, content: any) {
       Extendreason: new FormControl('', Validators.required),
       Descriptiondetails: new FormControl('', Validators.required),
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

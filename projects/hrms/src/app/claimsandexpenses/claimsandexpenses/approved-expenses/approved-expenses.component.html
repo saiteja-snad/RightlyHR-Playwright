@@ -25,11 +25,9 @@
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
             <td class="text-center">
-              <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
-                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)"></i>
-              <ng-template #na>
-                N/A
-              </ng-template>
+              <app-info-icon *ngIf="exp.expenseApproverComments.length>0; else na"
+                 (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)"/>
+              <ng-template #na>N/A</ng-template>
             </td>
             <td class="text-center">
               <div class="dropdown">
@@ -85,7 +83,7 @@
             <th>Expense Amount</th>
             <th>Status</th>
             <th>Receipt Number</th>
-            <th class="text-center">Action<span class="text-lowercase">(s)</span></th>   
+            <th class="text-center">Action</th>   
           </thead>
           <tbody>
             <tr *ngFor="let item of expenseheaderiteams?.expenseitem">

@@ -48,7 +48,6 @@ import {
   EMPLOYEE_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_JOB_ROUTES,
   INVITE_NEW_USER_TABS,
-
   MY_INFO_JOB_ROUTES,
   MY_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_DOCUMENTS_ROUTES,
@@ -96,9 +95,7 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/team/my-team-members');
-        }
+       
 
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
           return (route = '/myinfo/onboarding-request');
@@ -255,6 +252,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/policies':
+        if (this.rbac.allowedToAccess('Policies.view')) {
+          return (route = '/policies');
+        }
+        break;
+        
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {

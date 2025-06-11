@@ -12,9 +12,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-onboarding-requests',
-  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule],
+  imports: [DateformatPipe, CommonModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './onboarding-requests.component.html',
   styleUrl: './onboarding-requests.component.scss'
 })
@@ -24,6 +26,7 @@ export class OnboardingRequestsComponent {
   dynamicData=new BehaviorSubject<any>([]);
   currentdateformate!: string
   empinfo = {} as IJob;
+  loading: boolean = false;
   onboardDuration: any;
   Readyforonboardbutton: boolean = false;
   issIssueDateValid: boolean = true;
@@ -309,17 +312,20 @@ readyforonboardRequest() {
   }
 
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     console.log(this.empinfo);
 
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.loading = false;
         this.empdata = data;
         // this.patchForm(data);
       },
       error: (err: any) => {
         console.log(err);
+        this.loading = false;
       }
     });
 

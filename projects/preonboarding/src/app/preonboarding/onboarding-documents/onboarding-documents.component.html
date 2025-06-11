@@ -79,14 +79,11 @@
 
         <div class="footer-btn-content d-flex justify-content-between gap-2 pt-4 px-4">
             <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Personal Details</button>
-          
             <!-- @if(this.prosempdata.substatus.toLowerCase() == 'Requested Documents' || this.prosempdata.substatus.toLowerCase() == 'Documents Rejected'){
             <button type="submit" class="custom-btn btn-primary py-2 px-5"
                 [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected"
                 (click)="openConfirmation()">Submit</button>
             }  -->
-           
-
             @if(((this.prosempdata?.empstatus?.toLowerCase() == 'prospective')||(this.prosempdata?.empstatus?.toLowerCase() == 'trainee prospective')) &&
              ((prosempdata.substatus?.toLowerCase() === 'requested documents' 
             || prosempdata.substatus?.toLowerCase() === 'documents rejected') )){
@@ -155,22 +152,16 @@
                         <label for="documentFile" class="form-label custom-label mb-2">Upload Document<span
                                 class="text-danger">*</span></label>
                         <input type="file" class="form-control custom-input px-0" (change)="onDocAttachmentSelected($event)"
-                            accept=".pdf,image/*,.png" (change)="onChanges($event)"
-                            formControlName="docFile">
-                            @if(this.documentSelectFields.documentUrl){
-                                <div class="file-name custom-label my-1" >
-                                    <p>
-                                  <span>File Name: {{getFileName(this.documentSelectFields.documentUrl)}}</span></p>
-                               </div>
-                            }
-                         
-                            @if(showErrorrforsize){
-                               <div class="error-msg my-1">The file size should be less than 25MB.</div>
-                            }
-                            @if(showErrorforpdf){
-                              <div class="error-msg my-1">Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.</div>
-                            }
-                            
+                            accept=".pdf,image/*,.png" (change)="onChanges($event)" formControlName="docFile">
+                        @if(this.documentSelectFields.documentUrl){
+                        <div class="custom-label file-name my-1">File Name: {{getFileName(this.documentSelectFields.documentUrl)}}</div>
+                        }
+                        @if(showErrorrforsize){
+                        <div class="error-msg my-1">The file size should be less than 25MB.</div>
+                        }
+                        @if(showErrorforpdf){
+                        <div class="error-msg my-1">Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.</div>
+                        }
                     </div>
                     <div class="mb-4">
                         <p class="note-text"><span class="note me-2">Note:</span> Only Pdf and image are allowed. The

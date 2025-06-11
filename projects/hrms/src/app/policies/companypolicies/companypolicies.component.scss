@@ -5,7 +5,8 @@
 }
 
 .custom-table-content {
-    height: calc(100dvh - 9.5rem) !important;
+    height: calc(100dvh - 8rem) !important;
+    min-height: 45vh;
 }
 
 .modal-image {

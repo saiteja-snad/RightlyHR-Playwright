@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormsModule,
+  FormGroup,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,10 +30,10 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { AddLeaveComponent } from '../../time-off/leaves/add-leave/add-leave.component';
 import { IAttendance, IdayLogs } from './attendance-modal';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
-import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
-
+import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
+import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-attendance-view',
   imports: [
@@ -46,15 +52,15 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
     TohoursPipe,
     DatePicker,
     ModuleInformationComponent,
-    InfoIconComponent
-],
+    InfoIconComponent,
+    AccordionModule,
+  ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-
 export class AttendanceViewComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   dataLoader = false;
   subscription!: Subscription;
   yearOptions = [
@@ -121,8 +127,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
     public readonly router: Router
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     // Get current date
@@ -145,23 +150,40 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.initiateUpdateModuleInfo();
   }
 
-
-  initiateUpdateModuleInfo(){
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const monthName = monthNames[this.selectedMonth - 1];
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
-      '/attendance': MODULE_INFOS.ATTENDANCE_MODULE_INFO
+      '/attendance': MODULE_INFOS.getAttendanceModuleInfo(
+        monthName,
+        this.selectedYear
+      ),
     };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
+      url.includes(route)
+    );
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
@@ -185,7 +207,14 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       permissionDate: [{ value: null, disable: true }, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
-      reason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
+      reason: [
+        null,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(250),
+        ],
+      ],
     });
     this.getDuration();
   }
@@ -202,7 +231,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-//function to get the attendance criteria
+
+  //function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
     const param = [
@@ -337,8 +367,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
-      }${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
+      employee.middleName ? ' ' + employee.middleName : ''
+    }${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
@@ -369,9 +400,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         },
       });
   }
-getStatusClass(color:any){
-return color
-}
+
+  getStatusClass(color: any) {
+    return color;
+  }
+
   //function to bind color for the each status
   // getStatusClass(status: string): string {
   //   switch (status?.toLowerCase()) {
@@ -432,9 +465,11 @@ return color
               .map((employee: any) => {
                 return {
                   ...employee,
-                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName??''} ${employee.middleName ? employee.middleName + ' ' : ''
-                    }${employee.lastName}`,
+                  fullName: `${
+                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName ?? ''} ${
+                    employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
                 };
               });
           }
@@ -460,16 +495,18 @@ return color
             this.get_Employeelist_forTM = myTeam.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
+                fullName: `${
+                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${
+                  employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
               };
             });
           }
         },
       });
   }
-  
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

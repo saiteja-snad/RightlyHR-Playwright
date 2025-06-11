@@ -5,7 +5,7 @@
         <div class="heading-content">
             <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
-            <div class="component-header">{{'Leave Balance'|translate}}</div>
+            <div class="component-header">{{'Leaves'|translate}}</div>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
                     class="module-icon">
@@ -13,7 +13,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-              @if (rbac.allowedToAccess('My Team (Time Off).view')) {
+            @if (rbac.allowedToAccess('My Team (Time Off).view')) {
             <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
@@ -38,32 +38,14 @@
     </ng-template>
 
     @if (rbac.allowedToAccess('Time Off Module.view')) {
+    @if(!loadingGraph){
     <div class="graph-grid w-100 mb-3">
-        <div class="total-leave-balance-graph-content">
-            <div class="chart-content">
-                <p-chart type="doughnut" [data]="leaveCategoryData" [options]="leaveCategoryOptions"
-                    class="doughnut-chart" />
-                <div class="total-count-content">
-                    <p class="count m-0 p-0 mb-2">{{totalAvailableLeaves}}</p>
-                    <p class="total-count-text m-0 p-0">Total Leaves</p>
-                </div>
-            </div>
-            <ul class="mb-0 list-style-none ps-3">
-                @for (item of categoryDetails; track $index) {
-                <li>
-                    <div class="d-flex align-items-center gap-2">
-                        <div [style.color]="item.category.categoryColor"><i class="bi bi-circle-fill"></i></div>
-                        <div class="leave-category-text">{{ item.category.name }}</div>
-                    </div>
-                </li>
-                }
-            </ul>
-        </div>
         <div class="cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="leaves-category-card">
                 <div>
-                    <p class="leave-content-text m-0 mb-2" [style.color]="item.category.categoryColor">{{ item.category.name }}</p>
+                    <p class="leave-content-text text-wrap m-0 mb-2" [style.color]="item.category.categoryColor">{{
+                        item.category.name }}</p>
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
                             <p class="m-0">Booked</p>
@@ -78,21 +60,53 @@
                             @if (!item.category.isProbationAllowed) {
                             <p class="m-0">Processed</p>
                             <p class="m-0">{{item.utilizedDays}}</p>
+                            }@else {
+                                <p class="m-0">Processed</p>
+                                <p class="m-0">{{item.utilizedDays}}</p>
                             }
                         </div>
                     </div>
                 </div>
-                <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
+                <div class="progress-content">
+                    <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' '  +
                  getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
-                    <span class="progress-value">
-                        <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
-                        <span class="total-leaves-text">/{{item.allowedDays}}</span>
-                    </span>
+                        <span class="progress-value">
+                            <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>
+                            <span class="total-leaves-text">/{{item.allowedDays}}</span>
+                        </span>
+                    </div>
                 </div>
             </div>
             }
         </div>
     </div>
+    }
+    @else {
+
+    <div class="graph-grid w-100 mb-3">
+        <div class="cards-grid-container">
+            <div class="leaves-category-card" *ngFor="let i of [1,2,3,4]">
+                <div>
+                    <p-skeleton width="7rem" height="1.2rem" styleClass="mb-2"></p-skeleton>
+                    <div class="d-flex gap-2">
+                        <div class="leave-category-text">
+                            <p-skeleton width="3rem" height="1rem" styleClass="mb-2"></p-skeleton>
+                            <p-skeleton width="2rem" height="1.2rem"></p-skeleton>
+                        </div>
+                        <div class="separator"></div>
+                        <div class="leave-category-text">
+                            <p-skeleton width="3rem" height="1rem" styleClass="mb-2"></p-skeleton>
+                            <p-skeleton width="2rem" height="1.2rem"></p-skeleton>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-content mt-3">
+                    <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
     }
 
     <div class="d-flex w-100 gap-3">
@@ -115,9 +129,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Request Leave'| translate}}</p>
-            </div>
-            <div>
-                <a (click)="cleardata()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -173,7 +184,7 @@
                         <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="enddate"
-                            [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
+                            [min]="minEndDate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
                         <div class="error-msg"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
                             End Date is required
@@ -286,8 +297,10 @@
                             <p class="error-msg" *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
                                 The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
                         </ng-template>
-                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
                     </div>
+                    @if(selectedleave && selectedleave.category){
+                        <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                    }
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
@@ -316,7 +329,7 @@
         </div>
 
         <div class="custom-modal-footer">
-            <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="cleardata();modal.dismiss()">Yes</button>
         </div>
     </div>

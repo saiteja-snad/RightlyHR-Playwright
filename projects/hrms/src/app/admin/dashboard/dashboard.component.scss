@@ -1,3 +1,7 @@
+.custom-margin {
+    margin-top: 0.75rem;
+}
+
 .dashboard-diplay-section {
     width: 100%;
     min-height: 15rem;
@@ -13,7 +17,7 @@
     .welcome-text {
         font-weight: 500;
         font-size: var(--fontsize20);
-        color: #000000;
+        color: #696969;
 
         .name {
             color: var(--primary-color);
@@ -24,6 +28,7 @@
     .gesture-text {
         font-weight: 400;
         font-size: var(--fontsize14);
+        color: #909090;
     }
 
     .dashboard-grid {
@@ -93,6 +98,7 @@
             letter-spacing: 0%;
             width: max-content;
             border-bottom-left-radius: 0.5rem;
+            color: var(--primary-color);
         }
 
         .icon {
@@ -193,6 +199,11 @@
                 letter-spacing: 0%;
                 color: #747474;
             }
+
+            .count-text {
+                font-weight: 600 !important;
+                color: var(--primary-color) !important;
+            }
         }
 
         .employee-type-grid {
@@ -253,6 +264,12 @@
             .event-name {
                 font-weight: 700;
                 color: var(--primary-color);
+            }
+
+            .accordian-text {
+                color: #919191;
+                font-weight: 400;
+                font-size: 12px;
             }
         }
 

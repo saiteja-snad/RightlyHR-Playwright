@@ -15,10 +15,11 @@ import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-all-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, TranslateModule, ItsupportPipe, DateformatPipe],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, TranslateModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './all-tickets.component.html',
   styleUrl: './all-tickets.component.scss'
 })
@@ -31,6 +32,7 @@ export class AllTicketsComponent {
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor: any[] = [];
+  dataloading: boolean = false;
   status = [
     { value: 'Open', label: 'Open' },
     { value: 'Closed', label: 'Closed' },
@@ -72,8 +74,8 @@ export class AllTicketsComponent {
       team: [{ value: '', disabled: true }, [Validators.required]],
       type: [{ value: '', disabled: true }, [Validators.required]],
       priority: [{ value: '', disabled: true }, [Validators.required]],
-      subject: [{ value: '', disabled: true }, [Validators.required]],
-      description: [{ value: '', disabled: true }, [Validators.required]],
+      subject: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\S.*$/)]],
+      description: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(/^\S.*$/)]],
       comments: [''],
       assignedto: [null],
       ticketStatus: ['', [Validators.required]]
@@ -81,13 +83,22 @@ export class AllTicketsComponent {
   }
 
   getuserticketsbyempid() {
+    this.dataloading = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.dataloading = false;
         this.tickets = data;
       },
       error: (err: any) => {
+        this.dataloading = false;
+        console.error(err);
+      },
+      complete: () => {
+        this.dataloading = false;
+       
       }
+
     })
   }
 

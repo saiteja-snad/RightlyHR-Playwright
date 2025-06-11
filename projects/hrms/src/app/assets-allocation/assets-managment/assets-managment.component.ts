@@ -14,9 +14,10 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
+  imports: [CommonModule, TabsModule, Select, RouterModule,Skeleton, ReactiveFormsModule, NgbPopoverModule, FormsModule, ModuleInformationComponent, ChartModule],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -54,6 +55,7 @@ export class AssetsManagmentComponent {
   maxpurchesDate: any;
   assetData: any;
   assetDataOptions: any;
+  loading=false
 
   constructor(private readonly fb: FormBuilder, public http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,
     public formValidation: FormValidationService, public rbac: RbacService, public readonly router: Router) { }
@@ -79,19 +81,21 @@ export class AssetsManagmentComponent {
   }
 
   initializeNavTabs(): void {
+    this.loading=true
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
       // { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject, icon: '/desk-icon/all-icon.png', permission: { feature: 'Asset Management - All', action: 'view' } },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#25BBFF', permission: { feature: 'Asset Management - Available', action: 'view' } },
-      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#FCD643', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
-      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF338A', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
-      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#338DF8', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject, icon: '/assets-icon/available-icon.png', backgroundcolour: '#53D33A', permission: { feature: 'Asset Management - Available', action: 'view' } },
+      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject, icon: '/assets-icon/Allocated-icon.png', backgroundcolour: '#1064CA', permission: { feature: 'Asset Management - Allocated', action: 'view' } },
+      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject, icon: '/assets-icon/Maintenance-icon.png', backgroundcolour: '#FF8000', permission: { feature: 'Asset Management - Under Maintenance', action: 'view' } },
+      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject, icon: '/assets-icon/Inactive-icon.png', backgroundcolour: '#FF2E22', permission: { feature: 'Asset Management - Inactive', action: 'view' } },
     ];
     // Filter navTabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab =>
       tab.permission && tab.permission.feature && tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.loading=false
   }
 
   initialform() {
@@ -600,38 +604,37 @@ export class AssetsManagmentComponent {
   }
 
   cleardata() {
-    this.assetForm.reset();
     this.modalService.dismissAll();
     this.isToggledWarranty = false
     this.isToggledamc = false
+    this.assetForm.reset();
+    this.initialform();
   }
 
-initChart(): void {
-  combineLatest([
-    this.http.avilableassetCountSubject,
-    this.http.allocatedassetCountSubject,
-    this.http.undermatinaceassetCountSubject,
-    this.http.inactiveaceassetCountSubject
-  ]).subscribe(([available, allocated, underMaintenance, inactive]) => {
+initChart() {
+    this.loading=true
     const chartTabs = this.allNavTabs.filter(tab => !!tab.backgroundcolour);
     const backgroundColors = chartTabs.map(item => item.backgroundcolour);
-
     this.assetData = {
       datasets: [
         {
-          data: [available ?? 0, allocated ?? 0, underMaintenance ?? 0, inactive ?? 0],
+          data: [
+            this.http.avilableassetCountSubject.value ?? 0,
+            this.http.allocatedassetCountSubject.value ?? 0,
+            this.http.undermatinaceassetCountSubject.value ?? 0,
+            this.http.inactiveaceassetCountSubject.value ?? 0,
+          ],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         }
       ]
     };
-
     this.assetDataOptions = {
       cutout: '70%',
     };
-  });
-}
-
+    this.loading=false
+  }
+ 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

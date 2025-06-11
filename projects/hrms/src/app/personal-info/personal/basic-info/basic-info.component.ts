@@ -12,6 +12,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import {Router } from '@angular/router';
+import { Skeleton } from 'primeng/skeleton';
 
 
 
@@ -19,7 +20,7 @@ import {Router } from '@angular/router';
 
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, ReactiveFormsModule, Select,Skeleton],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
@@ -46,22 +47,19 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   dateofbirth: any
   changeingdob: any;
   currentdata=new Date()
+  loading: boolean = false;
   constructor(private modalService: NgbModal, private fb: FormBuilder,
     public formValidation: FormValidationService,
    
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public permission: AccessForEmployeeinfoService, private router: Router,) { }
 
   ngOnInit(): void {
-
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.getGender();
     this.getMaritaldetails();
     this.getTitle();
     this.basicInfoForm.disable();
-  
-
-
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
       console.log(data)
       this.empyployeedata.dob = null
@@ -148,16 +146,23 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
 
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.empyployeedata = data;
         this.patchForm(data);
         this.dateofbirth = this.formatDateToLocal(this.empyployeedata.dob)
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
         this.changemaritalstatus();
       },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      error: (error: any) => {
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
     });
   }
 
@@ -204,7 +209,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const updatePayload = {
       ...this.empyployeedata,
       employeeId: this.empinfo.employeeId,
-      fusionEmpId: formValue.fusionEmpId,
+      fusionEmpId: formValue.fusionEmpId || this.empyployeedata.fusionEmpId,
       title: formValue.salutation.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
@@ -245,6 +250,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('gender').subscribe({
       next: (data: any) => {
         this.Gender = data as IGender[];
+        this.getEmployeeId()
       },
     });
   }
@@ -283,20 +289,40 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
   }
 
+
+  
+
   showButtons(): void {
     this.buttons = !this.buttons;
-  
+    const fullPath = this.router.url;
+    
     if (this.buttons) {
       this.basicInfoForm.enable();
-            this.basicInfoForm.get('employeeId')?.disable();
+      
+      // Always disable employeeId field
+      this.basicInfoForm.get('employeeId')?.disable();
+      
+      // Handle different route cases
+      if (fullPath.startsWith('/myinfo')) {
+        this.basicInfoForm.get('fusionEmpId')?.disable();
+      }
+      
+      // Personal info route specific logic for fusionEmpId
+      if (fullPath.startsWith('/personalinfo/personal')) {
+        if (!this.rbac.allowedToAccess('Employee Info Basic Information.view')) {
+          this.basicInfoForm.get('fusionEmpId')?.disable();
+        }
+        if (this.rbac.allowedToAccess('Employee Info Basic Information.update')) {
+          this.basicInfoForm.get('fusionEmpId')?.enable();
+        }
+      }
     } else {
-            this.basicInfoForm.get('employeeId')?.disable();
+      this.basicInfoForm.get('employeeId')?.disable();
       this.basicInfoForm.disable();
       this.basicInfoForm.reset();
       this.getEmployeeId();
     }
   }
-  
 
   ngOnDestroy() {
     if (this.subscription) {

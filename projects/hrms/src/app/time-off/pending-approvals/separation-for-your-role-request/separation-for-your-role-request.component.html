@@ -22,8 +22,7 @@
                 <th>{{'Early Relieving Reason' | translate}}</th>
                 <th>{{'Request Type' | translate}}</th>
                 <th>{{'Approver History' | translate}}</th>
-                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || 
-                rbac.allowedToAccess('For Role (Separation Requests).delete')) {
+                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role (Separation Requests).delete')) {
                 <th>Action</th>
                 }
             </thead>
@@ -49,7 +48,7 @@
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spRequestDescription}}</p>
@@ -64,7 +63,7 @@
                             @if(item.entity?.spEarlyRelievingReason){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
@@ -80,7 +79,7 @@
                             <div>
                                 <a type="button"
                                     (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                             </div>
                             }
@@ -149,7 +148,7 @@
         <div class="result-popup-content" ngbAutofocus>
             <div>
                 <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to approve Separation Request?' | translate}}</p>
+                <p class="confirmation-text">{{"Are you sure you want to approve separation request?" | translate}}</p>
             </div>
             <form autocomplete="off" name="acceptForm" #acceptForm="ngForm"
                 (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
@@ -313,7 +312,7 @@
                         <div class="button-loader-content" *ngIf="isLoading">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{'Loading...' | translate}}</span>
                         </div>
                         }
                     </button>
@@ -327,7 +326,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to reject this request?' | translate}}</p>
+            <p class="confirmation-text">{{ 'Do you really want to reject separation request?' | translate }}</p>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" name="Separationrequestrejected" class="w-100" #Separationrequestrejected="ngForm"
@@ -336,8 +335,8 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
                         {{'Reject Reason' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter reject reason" name="notes" #notes="ngModel" [maxLength]="250" (keydown)="formsValidation.restrictInitialSpace($event)"
-                        [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
+                        placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250"
+                        [(ngModel)]="selectedSpRequestData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
@@ -355,7 +354,7 @@
                         <div class="button-loader-content" *ngIf="isLoading">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
+                            <span>{{'Loading...' | translate}}</span>
                         </div>
                         }
                     </button>
@@ -522,7 +521,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                       (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -576,7 +575,7 @@
                     @else {
                     <div class="button-loader-content" *ngIf="isLoading">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </div>
                     }
                 </button>
@@ -629,12 +628,10 @@
                             <td>
                                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                                     <a type="button" [ngbPopover]="reason">
-                                        <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                        <app-info-icon />
                                     </a>
                                     <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{comment?.comments}} </p>
-                                        </div>
+                                        <p class="mb-0">{{comment?.comments}} </p>
                                     </ng-template>
                                 </div>
                                 <ng-template #popupcomments>{{'NA' | translate}}</ng-template>

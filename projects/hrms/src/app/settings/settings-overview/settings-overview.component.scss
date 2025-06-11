@@ -32,9 +32,11 @@
         .subject-text {
             font-weight: 400;
             font-size: var(--fontsize12);
-            line-height: 100%;
-            letter-spacing: 1%;
             color: #404040 !important;
         }
     }
+}
+
+.custom-component-right-content{
+    height: calc(100vh - 8rem) !important;
 }

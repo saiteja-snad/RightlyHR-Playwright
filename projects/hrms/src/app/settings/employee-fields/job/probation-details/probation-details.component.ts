@@ -11,9 +11,10 @@ import { environment } from '../../../../../environments/environment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-probation-details',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
@@ -21,10 +22,11 @@ export class ProbationDetailsComponent {
   subscription!: Subscription;
   getProbationconfigValues = [] as any;
   ProbationDetails = [] as any;
+  loader = false;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeletedetail: any = null;
-  configValueId:number | null = null;
+  configValueId: number | null = null;
   @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
@@ -32,9 +34,9 @@ export class ProbationDetailsComponent {
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -45,18 +47,18 @@ export class ProbationDetailsComponent {
   ngOnInit(): void {
     this.AddForm = this.fb.group({
       Type: ['', [Validators.required]],
-     // Duration: ['', [Validators.required, Validators.pattern(/^\d+$/)]]
+      // Duration: ['', [Validators.required, Validators.pattern(/^\d+$/)]]
 
-  Duration: ['', [
-    Validators.required,
-    Validators.pattern(/^\d+$/)  // only digits allowed
-  ]]
+      Duration: ['', [
+        Validators.required,
+        Validators.pattern(/^\d+$/)  // only digits allowed
+      ]]
 
 
     });
 
     this.updateForm = this.fb.group({
-      Type: ['',{ disabled: true },[Validators.required]],
+      Type: ['', { disabled: true }, [Validators.required]],
       Duration: ['', [
         Validators.required,
         Validators.pattern(/^\d+$/)  // only digits allowed
@@ -67,15 +69,17 @@ export class ProbationDetailsComponent {
   }
 
   getProbationDetails() {
+    this.loader = true;
     this.subscription = this.http
       .getData('ProbationFlow/settingsprobationconfiggetall')
       .subscribe({
         next: (data: any) => {
+          this.loader = false;
           this.ProbationDetails = data;
         },
       error: (err: any) => {
         // console.log(err);
-
+        this.loader = false;
       },
       complete: () => {
         this.getProbationDetailstoselectthevalue();
@@ -96,15 +100,15 @@ export class ProbationDetailsComponent {
     });
   }
   getProbationDetailstoselectthevalue() {
-    const moduleId=environment.ProbationrequestmoduleId;
+    const moduleId = environment.ProbationrequestmoduleId;
     this.subscription = this.http.getData(`ProbationFlow/settingsconfigvalue/${moduleId}`).subscribe({
       next: (data: any) => {
         // console.log(data);
         this.getProbationconfigValues = data;
         this.getProbationconfigValues = this.getProbationconfigValues.filter(
-          (item: any) => !this.ProbationDetails.find((selectedItem: any) => selectedItem.configValueId  == item.id)
+          (item: any) => !this.ProbationDetails.find((selectedItem: any) => selectedItem.configValueId == item.id)
         );
-    },
+      },
       error: (err) => {
         // console.error('Error fetching data:', err);
       }
@@ -125,7 +129,7 @@ export class ProbationDetailsComponent {
       configValueId: String(this.postProbationData.configValueId),
       isDeleted: false,
     };
-    
+
     this.subscription = this.http.postdata('ProbationFlow/settingsprobationconfigpost', request).subscribe({
       next: () => {
 
@@ -159,30 +163,30 @@ export class ProbationDetailsComponent {
       centered: true
     });
   }
-  
+
   //  UPDATE
   updateJobroletype(modal: any) {
-    if (this.updateForm.valid && this.selectedId) {
-      const request  = {
-        value: this.updateForm.value.Type.trim(),
-        noOfDays: this.updateForm.value.Duration,
-        configValueId: this.configValueId,
-        id:this.selectedId,
-        isDeleted : false
-      };
-console.log("request",request);
-      this.subscription = this.http.postdata('ProbationFlow/settingsprobationconfigupdate', request).subscribe({
-        next: () => {
-          modal.close();
-          this.conformationPopup.openSuccessModal('Probation Details updated successfully');
-          this.getProbationDetails();
-          // this.resetForm();
-        },
-        error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
-        }
-      });
-    }
+
+    const request = {
+      value: this.updateForm.value.Type.trim(),
+      noOfDays: this.updateForm.value.Duration,
+      configValueId: this.configValueId,
+      id: this.selectedId,
+      isDeleted: false
+    };
+    console.log("request", request);
+    this.subscription = this.http.postdata('ProbationFlow/settingsprobationconfigupdate', request).subscribe({
+      next: () => {
+        modal.close();
+        this.conformationPopup.openSuccessModal('Probation Details updated successfully');
+        this.getProbationDetails();
+        // this.resetForm();
+      },
+      error: (error: any) => {
+        this.conformationPopup.openErrorModal('Insertion of data failed');
+      }
+    });
+
   }
   // Method to open the delete modal dialog
   // DELETE

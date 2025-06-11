@@ -70,13 +70,8 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
-  localeOptions: any = {
-    applyLabel: 'ok',
-    format: environment.dateformat.toUpperCase(),
-    direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
-  };
+  localeOptions: any;
+  
 
   months = [
     { value: 1, name: 'January' },
@@ -108,6 +103,12 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.localeOptions = {
+      applyLabel: 'ok',
+      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getEmployeeId();

@@ -5,10 +5,23 @@
 
   <div class="holidays-container">
     <ng-container *ngIf="loading; else maincontent">
-      <ng-template #loadingSpinner>
-        <div class="loader-placeholder-content text-center">
-          <div>
-            <app-data-loader-content />
+        <ng-template #loadingSpinner>
+        <div class="holidays-content">
+          <div *ngFor="let skel of [1,2,3,4]" class="holiday-card mb-3">
+            <div class="d-flex gap-3 mb-2">
+              <div class="calender-icon">
+                <p-skeleton width="36px" height="36px" shape="circle"></p-skeleton>
+              </div>
+              <div class="pt-3 flex-grow-1">
+                <p-skeleton width="120px" height="20px" class="mb-2"></p-skeleton>
+              </div>
+            </div>
+            <!-- <div class="date pt-1">
+              <p-skeleton width="140px" height="16px"></p-skeleton>
+            </div>
+            <div class="corner-pattern">
+              <p-skeleton width="80px" height="32px"></p-skeleton>
+            </div> -->
           </div>
         </div>
       </ng-template>
@@ -72,8 +85,8 @@
       </ng-container>
 
       <ng-template #noDataTemplate>
-        <div class="no-data-wrapper">
-          <app-no-data-found></app-no-data-found>
+        <div>
+          <app-no-data-found/>
         </div>
       </ng-template>
     </ng-template>

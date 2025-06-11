@@ -6,64 +6,57 @@
             [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
 
-    <ng-container *ngIf="(expenesEmplyeedata | async) === null; else maincontent">
-        <ng-template #loadingSpinner>
-            <div class="loader-placeholder-content text-center">
-                <div>
-                    <app-data-loader-content />
-                </div>
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
+    <div class="custom-table-content">
+        @if(!loader){
+        <table class="w-100">
+            <thead>
+                <th>{{'Expense Title' | translate}}</th>
+                <th>{{'Expense Date' | translate}}</th>
+                <th>{{'Total Amount' | translate}}</th>
+                <th>{{'Status' | translate}}</th>
+                @if(rbac.allowedToAccess('Draft Tab.update')){
+                <th class="text-center">{{"Action" | translate}}</th>
+                }
+            </thead>
+            <tbody>
+                <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let exp of expenesEmplyeedata | async">
+                        <td>{{ exp.expenses_Title }}</td>
+                        <td>{{ exp.applied_date | dateformat }}</td>
+                        <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+                        <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
+                        </td>
+                        @if(rbac.allowedToAccess('Draft Tab.update')){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li><a class="dropdown-item"
+                                            (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
+                                            <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-container>
+                <!-- No Data Found Template -->
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
 
-    <ng-template #maincontent>
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <th>{{'Expense Title' | translate}}</th>
-                    <th>{{'Expense Date' | translate}}</th>
-                    <th>{{'Total Amount' | translate}}</th>
-                    <th>{{'Status' | translate}}</th>
-                    @if(rbac.allowedToAccess('Draft Tab.update')){
-                    <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
-                       }
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
-                        <tr *ngFor="let exp of expenesEmplyeedata | async">
-                            <td>{{ exp.expenses_Title }}</td>
-                            <td>{{ exp.applied_date | dateformat }}</td>
-                            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
-                            <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
-                            </td>
-                            @if(rbac.allowedToAccess('Draft Tab.update')){
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li><a class="dropdown-item"
-                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
-                                                <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                            }
-                        </tr>
-                    </ng-container>
-                    <!-- No Data Found Template -->
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
-        </div>
-    </ng-template>
 </div>
 
 <ng-template #updateModal let-modal>
@@ -93,6 +86,9 @@
                                 Expense title is required</div>
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['maxlength']">
                                 Expense title must be less than 50 characters
+                            </div>
+                            <div *ngIf="newExpenseForm.controls['expensesTitle']?.errors?.['pattern']">
+                                Expense title must not contain only spaces
                             </div>
                         </div>
                     </div>
@@ -144,8 +140,7 @@
 
                             <!-- Expense Item -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Expense Item' | translate}}<span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Item' | translate}}<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
@@ -156,11 +151,13 @@
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                         Expense item must be less than 50 characters
                                     </div>
-                                     <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
-                                    class="error-msg">
-                                    <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
-                                        Expense Type is required</div>
-                                </div>
+                                    <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
+                                        Expense title must not contain only spaces
+                                    </div>
+                                    <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched" class="error-msg">
+                                        <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
+                                            Expense Type is required</div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -244,26 +241,27 @@
                                 <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                         class="text-danger">*</span></label>
 
-                                <input type="file" class="form-control custom-input px-0"
-                                     accept=".pdf, image/*" (change)="fileupload($event, i)">
+                                <input type="file" class="form-control custom-input px-0" accept=".pdf, image/*"
+                                    (change)="fileupload($event, i)">
 
                                 <div *ngIf="fileuploadhide">
-                                <div class="error-msg"
-                                    *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
-                                    File is required
-                                </div>
+                                    <div class="error-msg"
+                                        *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
+                                        File is required
+                                    </div>
                                 </div>
                                 <div *ngIf="filehidedonload">
-                                <div class="d-flex gap-3 mt-3" *ngIf="item.get('attachment_url')?.value">
-                                    <a type="button" class="download-text"
-                                        (click)="onSelectDownload(item.get('attachment_url'))">
-                                        <i class="bi bi-download me-2"></i>Download
-                                    </a>
-                                    <a type="button" class="download-text"  *ngIf="isImageFile(item.get('attachment_url')?.value)"
-                                        (click)="onViewAttachement(item.get('attachment_url')?.value)">
-                                        <i class="bi bi-eye-fill me-2"></i>View
-                                    </a>
-                                </div>
+                                    <div class="d-flex gap-3 mt-3" *ngIf="item.get('attachment_url')?.value">
+                                        <a type="button" class="download-text"
+                                            (click)="onSelectDownload(item.get('attachment_url'))">
+                                            <i class="bi bi-download me-2"></i>Download
+                                        </a>
+                                        <a type="button" class="download-text"
+                                            *ngIf="isImageFile(item.get('attachment_url')?.value)"
+                                            (click)="onViewAttachement(item.get('attachment_url')?.value)">
+                                            <i class="bi bi-eye-fill me-2"></i>View
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -17,10 +17,11 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { PmsTabsComponent } from "../../shared/pms-module-tabs/pms-tabs/pms-tabs.component";
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent, NgbPopoverModule, PmsTabsComponent],
   templateUrl: './apprisal-list.component.html',
   styleUrl: './apprisal-list.component.scss',
   encapsulation: ViewEncapsulation.None,

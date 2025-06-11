@@ -14,10 +14,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule,Skeleton],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -36,6 +37,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   formattedPhoneNumber: string = '';
   selectedCountryCode: any;
   loading = true;
+  dataloader: boolean = false;
   selectedCountryConfig: { hideCode: boolean; hideName: boolean; dialCode?: string } = {
     hideCode: true,
     hideName: true
@@ -58,14 +60,10 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getEmpInfoFromRoute();
-   
-    this.getFamilyRelations();
     this.initializeForm();
-  
+    this.getFamilyRelations();
+    this.getEmpInfoFromRoute();
     this.emergencyContactForm.get('contact1Phone')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
-   
-   
   }
   showButtons() {
     this.buttons = !this.buttons
@@ -105,21 +103,31 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   getEmployeeId(): void {
+    this.dataloader = true;
     this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.dataloader = false;
         this.employedata = data;
-        this.patchForm(data);
         this.loading = false;
         this.selectedemergencycoutrycode.set(data.emergencyNumberCountryFlag);
         this.selectedemergency1coutrycode.set(data.emergencyPhoneCountryFlag);
-       
+        if (this.familyRelations.length) {
+        this.patchForm(data); 
+      }
       },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      error: (reason) =>{ console.error('Error fetching employee data:', reason)
+        this.dataloader = false
+      },
+      complete: () => {
+        
+        this.dataloader = false;
+      }
     });
   }
   patchForm(data: any): void {
+    
     const contact1Relationship = this.familyRelations.find(
       (relation) => relation.relationship1 === data.relationShip
     ) || null;
@@ -140,7 +148,6 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       contact2Phone: data.emergencyNumber1 || '', // Bind second emergency contact phone
       contact2Relationship: contact2Relationship || '', // Bind second emergency contact relationship
     });
-
   }
 
   enableForm(): void {
@@ -220,6 +227,9 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.familyRelations = data as IRelation[];
+          if (this.employedata) {
+            this.patchForm(this.employedata); // Only patch after relations are available
+          }
         },
       });
   }

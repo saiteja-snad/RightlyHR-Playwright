@@ -139,10 +139,13 @@ body {
 //header stylings starts
 .header-main-container {
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: 0.325rem 0.75rem;
     background-color: var(--header-background-color);
-}
 
+    .company-logo-image {
+        height: 2.5rem;
+    }
+}
 //header stylings Ends
 
 //Side Bar Stylings
@@ -488,6 +491,7 @@ body {
     border-radius: 0.5rem;
     overflow-y: auto;
     background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
 }
 
 .download-icon {
@@ -504,10 +508,17 @@ body {
 }
 
 .component-header-content {
+    position: sticky;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    top: 0;
+    z-index: 10;
+    min-height: 3.5rem;
+    background-color: var(--body-bg-color);
+    padding: 0.5rem 0rem;
+    gap: 0.5rem;
 }
 
 .heading-content {
@@ -523,6 +534,7 @@ body {
         font-size: var(--fontsize14);
         color: #6F809C;
         cursor: pointer;
+        text-wrap: nowrap;
     }
 
     .bi-chevron-double-right {
@@ -534,6 +546,7 @@ body {
         font-weight: 700;
         font-size: var(--fontsize18);
         color: var(--primary-color);
+        text-wrap: nowrap;
     }
 
     .popover {
@@ -608,6 +621,8 @@ body {
 }
 
 .component-edit-icon {
+    width: 1.5rem;
+    height: 1.5rem;
     font-size: var(--fontsize16);
 }
 
@@ -799,6 +814,7 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
+
 // Select Styling 
 
 // p select stylings
@@ -903,23 +919,25 @@ select:focus {
 }
 
 .custom-dropdown-menu {
-    border: 1px solid var(--primary-color);
-    background-color: var(--body-bg-color);
+    border: 2px solid #CCD5E3;
     padding: 0rem 0.625rem;
 
     .dropdown-item {
         padding: 0.625rem;
-        font-weight: 600;
+        font-weight: 400;
         font-size: var(--fontsize14);
-        color: var(--primary-color);
-        border-bottom: 1px solid #C8D5E4;
+        color: #4D4D4D;
+        border-bottom: 2px solid #E4EAF3;
+    }
+
+    li:last-child .dropdown-item {
+        border-bottom: none;
     }
 
     .dropdown-item:hover {
-        background-color: #F0F4F8;
+        background-color: #FFFFFF;
     }
 }
-
 // Select Styling 
 
 // table stylings
@@ -1053,8 +1071,6 @@ select:focus {
             .label-text {
                 font-weight: 400;
                 font-size: 12px;
-                line-height: 100%;
-                letter-spacing: 0%;
                 vertical-align: middle;
                 color: #989898;
             }
@@ -1104,11 +1120,20 @@ select:focus {
 
 // letter main content
 .main-letter-content {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+
     .letter-fields-content {
-        width: 27rem;
+        width: 24rem;
         height: calc(100dvh - 8.25rem);
         overflow-x: hidden;
         overflow-y: auto;
+        padding: 1.125rem;
+
+        .custom-btn {
+            font-size: var(--fontsize12) !important;
+        }
     }
 
     .letter-data-content {
@@ -1116,6 +1141,7 @@ select:focus {
         flex: 1;
         height: calc(100dvh - 8.25rem);
         overflow: auto;
+        padding: 1.125rem;
 
         .letter-sub-data-content {
             display: flex;
@@ -1287,7 +1313,7 @@ select:focus {
 //My Info Stylings
 .user-profile-content {
     width: 20rem;
-    height: calc(100dvh - 9rem);
+    height: calc(100dvh - 8rem);
     border: 1px solid #CCDAEC;
     background-color: var(--white-color);
     border-radius: 0.5rem;
@@ -1297,7 +1323,7 @@ select:focus {
 
 .myinfo-main-content {
     width: calc(100% - 20rem);
-    height: calc(100dvh - 9rem);
+    height: calc(100dvh - 8rem);
     overflow-y: auto;
     border: 1px solid #CCDAEC;
     border-radius: 0.5rem;
@@ -1366,11 +1392,12 @@ select:focus {
     padding: 1rem;
     background-color: #FFFFFF;
     border-radius: 0.5rem;
+    position: relative;
 
     .holidays-content {
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
         gap: 1rem;
-        flex-wrap: wrap;
 
         .holiday-card {
             width: 20rem;
@@ -2105,55 +2132,6 @@ input[type=number]::-webkit-outer-spin-button {
     cursor: pointer;
 }
 
-.popup-table {
-    &-wrapper {
-        width: 100%;
-        height: max-content;
-        border: 1px solid #767676;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-
-        .popup-table-content {
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                border: 1px solid #767676;
-                border-radius: 0.5rem;
-                overflow: hidden;
-
-                th,
-                td {
-                    text-align: center;
-                    padding: 0.5rem;
-                    border: 1px solid #767676;
-                    font-size: var(--fontsize15);
-                }
-
-                th {
-                    color: #141414;
-                    font-weight: 500;
-                    background-color: #E0E6ED !important;
-                }
-
-                .custom-popup-header {
-                    background-color: #305889 !important;
-                    color: #fff !important;
-                    font-weight: 600;
-                    border-top-left-radius: 0.5rem;
-                    border-top-right-radius: 0.5rem;
-                }
-            }
-        }
-
-        .log-time {
-            color: #585858 !important;
-        }
-
-        .duration-time {
-            color: #232222 !important;
-        }
-    }
-}
 
 .menu-grid-content {
     width: 100%;
@@ -2497,8 +2475,6 @@ input[type=number]::-webkit-outer-spin-button {
     .label-name {
         font-weight: 600;
         font-size: var(--fontsize12);
-        line-height: 100%;
-        letter-spacing: 0%;
         color: #555353;
     }
 
@@ -2517,4 +2493,100 @@ input[type=number]::-webkit-outer-spin-button {
     // // --p-toggleswitch-checked-hover-border-color: blue;
     // --p-toggleswitch-checked-background: #cce4ff;
     --p-toggleswitch-handle-checked-background: white;
+}
+
+// Attendance accordian
+.custom-accordians {
+    // accordian styling
+    .p-accordionpanel {
+        border-style: none !important;
+        border-width: none !important;
+        border-color: none !important;
+        margin-bottom: 1rem;
+    }
+
+    .p-accordionheader {
+        padding: 0.625rem 1.25rem !important;
+        background-color: var(--table-header-bg-color) !important;
+        font-weight: 600;
+        font-size: var(--fontsize14);
+        line-height: 100%;
+        letter-spacing: 0%;
+        vertical-align: middle;
+        color: var(--table-header-color) !important;
+        border-radius: 0.5rem;
+        border: 2px solid #D1D8E3 !important;
+    }
+
+    .p-accordionpanel:not(.p-disabled).p-accordionpanel-active>.p-accordionheader {
+        background: #DCE5F5 !important;
+        color: #3B3B3B !important;
+        border-bottom-left-radius: 0rem !important;
+        border-bottom-right-radius: 0rem !important;
+        border-bottom: none !important;
+    }
+
+    .p-accordioncontent-content {
+        padding: 0rem !important;
+    }
+
+    .p-icon {
+        transform: rotate(180deg);
+    }
+}
+
+.popup-table-wrapper {
+    width: 100%;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 0rem;
+
+    .popup-table-scroll-container {
+        max-height: 30vh;
+        overflow-y: auto;
+        border: 1px solid #D1D8E3;
+        border-bottom: 0rem !important;
+    }
+
+    .popup-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+
+        th,
+        td {
+            text-align: center;
+            padding: 0.5rem;
+            border: 1px solid #D1D8E3;
+            font-size: var(--fontsize12);
+        }
+
+        th {
+            background-color: #EEF3FB;
+            color: #141414;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .log-time {
+            color: #585858;
+        }
+
+        .duration-time {
+            color: #232222;
+        }
+    }
+
+    .popup-table-footer {
+        text-align: center;
+        padding: 0.5rem;
+        border: 2px solid #D1D8E3;
+        border-top: 1px solid #D1D8E3;
+        color: #3B3B3B;
+        font-size: var(--fontsize14);
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+    }
 }

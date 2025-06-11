@@ -7,114 +7,109 @@
             aria-describedby="basic-addon1">
     </div>
 
-    <ng-container *ngIf="loading; else maincontent">
-        <ng-template #loadingSpinner>
-            <div class="loader-placeholder-content text-center">
-                <div>
-                    <app-data-loader-content />
-                </div>
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
 
-    <ng-template #maincontent>
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <th>Desk ID</th>
-                    <th>Desk Type</th>
-                    <th>Location</th>
-                    <th>Sub Location</th>
-                    <th>Desk Status</th>
-                    @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') ||
-                    rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
-                       <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
-                    }
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
-                        <tr *ngFor="let desk of desklist | async">
-                            <td>{{ desk.deskName }}</td>
-                            <td>{{ desk.deskType }}</td>
-                            <td>{{ desk.location?.jobLocationName }}</td>
-                            <td>{{ desk.subLocation?.jobSubLocationName }}</td>
-                            <td>{{ desk.deskStatus }}</td>
-                            @if(rbac.allowedToAccess('Available Request for Allocation.view') ||
-                            rbac.allowedToAccess('Available Inactive desk.view') ||
-                            rbac.allowedToAccess('Available Schedule for Maintenance.view') ||
-                            rbac.allowedToAccess('Available View Desk Details.view')){
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <ng-container *ngIf="desk.deskStatus==='Available'">
-                                            @if(rbac.allowedToAccess('Available Request for Allocation.view')){
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
-                                                    Request for Allocation
-                                                </a>
-                                            </li>
-                                            }
-                                            @if(rbac.allowedToAccess('Available Inactive desk.view')){
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
-                                                    Inactive desk
-                                                </a>
-                                            </li>
-                                            }
-                                            @if(rbac.allowedToAccess('Available Schedule for Maintenance.view')){
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
-                                                    Schedule for Maintenance
-                                                </a>
-                                            </li>
-                                            }
-                                        </ng-container>
+
+    <div class="custom-table-content">
+        @if(!loading){
+        <table class="w-100">
+            <thead>
+                <th>Desk ID</th>
+                <th>Desk Type</th>
+                <th>Location</th>
+                <th>Sub Location</th>
+                <th>Desk Status</th>
+                @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') ||
+                rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
+                <th class="text-center">{{"Action" | translate}}</th>
+                }
+            </thead>
+            <tbody>
+                <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let desk of desklist | async">
+                        <td>{{ desk.deskName }}</td>
+                        <td>{{ desk.deskType }}</td>
+                        <td>{{ desk.location?.jobLocationName }}</td>
+                        <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+                        <td>{{ desk.deskStatus }}</td>
+                        @if(rbac.allowedToAccess('Available Request for Allocation.view') ||
+                        rbac.allowedToAccess('Available Inactive desk.view') ||
+                        rbac.allowedToAccess('Available Schedule for Maintenance.view') ||
+                        rbac.allowedToAccess('Available View Desk Details.view')){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <ng-container *ngIf="desk.deskStatus==='Available'">
+                                        @if(rbac.allowedToAccess('Available Request for Allocation.view')){
                                         <li>
                                             <a class="dropdown-item"
-                                                (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                                                View Desk Details
+                                                (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
+                                                Request for Allocation
                                             </a>
                                         </li>
-                                    </ul>
-                                </div>
-                            </td>
-                            }
-                        </tr>
-                    </ng-container>
-                    <!-- No Data Found Template -->
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
-        </div>
-      <div class="pagination-content" *ngIf="((desklist | async) ?? []).length > 0">
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-        <div class="d-flex align-items-center gap-3 p-2">
-          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-            (ngModelChange)="onPageSizeChange($event)">
-            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-            </option>
-          </select>
-          <span class="pagination-label text-nowrap">
-            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
-            collectionSize }}
-          </span>
-        </div>
-        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-          (onPageChange)="onPageChange($event)"></p-paginator>
-      </div>
+                                        }
+                                        @if(rbac.allowedToAccess('Available Inactive desk.view')){
+                                        <li>
+                                            <a class="dropdown-item"
+                                                (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
+                                                Inactive desk
+                                            </a>
+                                        </li>
+                                        }
+                                        @if(rbac.allowedToAccess('Available Schedule for Maintenance.view')){
+                                        <li>
+                                            <a class="dropdown-item"
+                                                (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
+                                                Schedule for Maintenance
+                                            </a>
+                                        </li>
+                                        }
+                                    </ng-container>
+                                    <li>
+                                        <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                                            View Desk Details
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-container>
+                <!-- No Data Found Template -->
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
-    </ng-template>
+    <div class="pagination-content" *ngIf="((desklist | async) ?? []).length > 0">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
+                    }} of {{
+                    collectionSize }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+
 </div>
 
 <ng-template #assigindesk let-modal>
@@ -123,12 +118,11 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Allocate Desk</p>
             </div>
-           
+
         </div>
 
         <div class="custom-main-popup-content">
-            <form autocomplete="off" [formGroup]="assiginForm"
-                (ngSubmit)="postAllocateAssets(assiginForm)">
+            <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAllocateAssets(assiginForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">Select Shift<span
@@ -148,8 +142,8 @@
                         <label for="asseTID" class="form-label custom-label mb-2">Select Employee<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"   [resetFilterOnHide]="true"
-                                filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
+                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
                                 formControlName="employeeid" placeholder="Please select employee"
                                 class="form-select custom-select"></p-select>
                         </div>
@@ -164,9 +158,10 @@
                             Select Approver<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"   [resetFilterOnHide]="true"
-                                filterBy="employeeName" formControlName="approvid" placeholder="Please select approver"
-                                class="form-select custom-select" (onChange)="onApprovalSelects($event)"></p-select>
+                            <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="employeeName" formControlName="approvid"
+                                placeholder="Please select approver" class="form-select custom-select"
+                                (onChange)="onApprovalSelects($event)"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="assiginForm.get('approvid')?.invalid && assiginForm.get('approvid')?.touched">
@@ -276,8 +271,7 @@
             <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary"
-                (click)="modal.dismiss()">No</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary"
                 (click)="conformationpoppup();modal.dismiss()">Yes</button>
         </div>
@@ -294,14 +288,16 @@
         </div>
 
         <div class="custom-main-popup-content  p-4">
-            <form autocomplete="off" [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
+            <form autocomplete="off" [formGroup]="undermaintancedata"
+                (ngSubmit)="undermaintancedesk(undermaintancedata)">
                 <div class="row ">
                     <div class="col-md-12 mb-3">
                         <label for="Department" class="form-label custom-label mb-2">Select Reason <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="deskundermaintence" optionLabel="value" formControlName="assetundermatince"
-                                placeholder="Please select reason" class="form-select custom-select"></p-select>
+                            <p-select [options]="deskundermaintence" optionLabel="value"
+                                formControlName="assetundermatince" placeholder="Please select reason"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="undermaintancedata.controls['assetundermatince'].invalid && (undermaintancedata.controls['assetundermatince'].touched || undermaintancedata.controls['assetundermatince'].dirty)">
@@ -310,7 +306,7 @@
                                 Reason is required</div>
                         </div>
                     </div>
-        
+
                     <div class="col-12 ">
                         <label class="form-label custom-label mb-2">
                             Additional Comments
@@ -348,12 +344,13 @@
                             <div class="error-msg">Start date is required</div>
                         </div>
                     </div>
-        
+
                     <div class="col-md-6 mb-3">
                         <label for="endate" class="form-label custom-label mb-2">End Date</label>
                         <input id="enddate" type="date" class="form-control custom-input" formControlName="enddate"
                             [min]="undermaintancedata.get('startdate')?.value" class="form-control custom-input">
-                        <div *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
+                        <div
+                            *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
                             <div class="error-msg">End date is required</div>
                         </div>
                         <div *ngIf="datesShouldNotBeEqual">
@@ -364,9 +361,10 @@
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(conformationpopup)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="undermaintancedata.invalid">Submit</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="undermaintancedata.invalid">Submit</button>
                 </div>
-        
+
             </form>
         </div>
     </div>

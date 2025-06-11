@@ -20,6 +20,9 @@ import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -35,7 +38,9 @@ import { environment } from '../../../../environments/environment';
     ProbationformViewComponent,
     TranslateModule,
     Select,
-    DateformatPipe
+    DateformatPipe,
+    DataLoaderContentComponent,
+    InfoIconComponent
 ],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
@@ -51,6 +56,7 @@ export class ProbationPendingApprovalsComponent {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
+  loading: boolean = false;
   isempeffectivevaild: boolean = true;
   options = [
     { label: 10, value: 10 },
@@ -71,6 +77,7 @@ export class ProbationPendingApprovalsComponent {
     public rbac: RbacService,
     private authService: AuthService,
     private openModalService:OpenModalService, 
+    public formsValidation: FormValidationsService,
   ) {}
 
   openModal(content: any) {
@@ -94,6 +101,7 @@ export class ProbationPendingApprovalsComponent {
   }
 
   getAllPendingApprovals() {
+    this.loading = true;
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     this.subscription = this.http
@@ -102,6 +110,7 @@ export class ProbationPendingApprovalsComponent {
       )
       .subscribe({
         next: (data: any) => {
+          this.loading = false;
           this.probationDetails = data.data.filter(
             (item: any) =>
               item.approvalHeader.status != 'Processed' &&
@@ -109,7 +118,10 @@ export class ProbationPendingApprovalsComponent {
           );
           // this.filterPendingApprovalsByModule();
         },
-        error: (reason) => console.log(reason),
+        error: (reason) =>{ console.log(reason)
+          this.loading = false;
+        
+        },
       });
   }
 
@@ -294,8 +306,8 @@ openModalView(){
     return true;
   }
 
-  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
-     if(extendedDate){
+getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextendedcount:number): string {
+     if(extendedDate ){
       lastWorkingDate = extendedDate;
     }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
@@ -345,7 +357,7 @@ openModalView(){
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation request processed successfully';
+      successMessage = 'Probation Status Processed Successfully';
     }
     if (this.selectedData.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -353,7 +365,7 @@ openModalView(){
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation request rejected successfully';
+      successMessage = 'Probation Request Rejected Successfully';
     }
     if (this.selectedData.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -362,7 +374,7 @@ openModalView(){
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation extended successfully';
+      successMessage = 'Probation Request Extended Successfully';
     }
     let requestBody = {
       status: 'Processed',

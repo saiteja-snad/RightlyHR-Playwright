@@ -1,10 +1,9 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
+            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){({{empName}})}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
             </div>
         </div>
 
@@ -59,17 +58,17 @@
 
     <div class="d-flex gap-3">
         <div class="custom-table-content attendance-log-content">
+            @if(!dataLoader){
             <table class="w-100">
                 <thead>
                     <th>Date</th>
                     <th>First In</th>
                     <th>Last Out</th>
                     <th>Duration</th>
-                    <th>Info</th>
+                    <th>Logs</th>
                     <th class="text-end pe-5">Status</th>
                 </thead>
-                <tbody>
-                    @if(!dataLoader){
+                <tbody>           
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
@@ -137,12 +136,12 @@
                     @else {
                     <app-no-data-found />
                     }
-                    }
-                    @else {
-                    <app-data-loader-content />
-                    }
                 </tbody>
             </table>
+            }
+            @else {
+                <app-data-loader-content />
+            }
         </div>
 
         @if(statusCounts$.value.length>0){
@@ -163,17 +162,14 @@
                     @if(statusCounts$.value.length<=0){ <tr>
                         <app-no-data-found />
                         </tr>
-                        }
-                        }
-                        @else {
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                        }
-                        }
-                        @else {
-                        <app-data-loader-content />
-                        }
+                    }
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                    }
                 </tbody>
             </table>
         </div>
@@ -194,44 +190,41 @@
                 (ngSubmit)="applyRgularization(regularizationForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="Date" class="form-label custom-label mb-2">Date<span
-                                class="text-danger">*</span></label>
+                        <label for="Date" class="form-label custom-label">Date<span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="permissionDate" id="Date"
                             (keydown)="false" placeholder="Select Date" />
                         <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
                             class="error-msg">
-                            Permission Date is required.
+                            Permission Date is required
                         </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="duration" class="form-label custom-label  mb-2">Duration<span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
+                        <label for="duration" class="form-label custom-label">Duration<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
                             <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
-                                placeholder="Please select duration" class="form-select custom-select" />
+                                placeholder="Please select duration" class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid"
-                            class="error-msg">Duration is required.
+                            class="error-msg">Duration is required
                         </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="leaveType" class="form-label custom-label  mb-2">Regularization
-                            Category<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
+                        <label for="leaveType" class="form-label custom-label">Regularization Category<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
                             <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
                                 placeholder="Please select regularization type" id="leaveType"
-                                class="form-select custom-select" />
+                                class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
-                            class="error-msg">Regularization Type is required.
+                            class="error-msg">Regularization Type is required
                         </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label pt-2 mb-2">Reason<span
-                                class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
                             placeholder="Type here" maxlength="250" placeholder="Reason for regularization"
                             (input)="formsValidation.validateInput(regularizationForm.get('reason'))"></textarea>
@@ -244,10 +237,10 @@
                         <div class="error-msg"
                             *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
-                                Reason is required.
+                                Reason is required
                             </div>
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['maxlength']">
-                                Reason cannot exceed 250 characters.
+                                Reason cannot exceed 250 characters
                             </div>
                         </div>
                     </div>
@@ -284,86 +277,97 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
-            @if(punchPairs.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">Biometric Logs</th>
-                            </tr>
-                            <tr>
-                                <th>In</th>
-                                <th>Out</th>
-                                <th>Duration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of punchPairs">
-                                <td class="log-time">{{ log.in }}</td>
-                                <td class="log-time">{{ log.out }}</td>
-                                <td class="duration-time">{{ log.duration }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
-            @if(permissions_list.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">Permission(s)</th>
-                            </tr>
-                            <tr>
-                                <th>Type</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of permissions_list">
-                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
-                                <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
-
-            @if(regularization_list.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">Regularization(s)</th>
-                            </tr>
-                            <tr>
-                                <th>Type</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of regularization_list">
-                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
-                                <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
+        <div class="custom-main-popup-content custom-accordians">
+            <p-accordion value="0">
+                @if(punchPairs.length>0){
+                <p-accordion-panel value="0">
+                    <p-accordion-header>Biometric Logs</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
+                                    <thead>
+                                        <tr>
+                                            <th>In</th>
+                                            <th>Out</th>
+                                            <th>Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of punchPairs">
+                                            <td class="log-time">{{ log.in }}</td>
+                                            <td class="log-time">{{ log.out }}</td>
+                                            <td class="duration-time">{{ log.duration }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="popup-table-footer">
+                                Total Duration: <b>{{ logsDuration }}</b>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
+        
+                @if(permissions_list.length>0){
+                <p-accordion-panel value="1">
+                    <p-accordion-header>Permissions</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Duration</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of permissions_list">
+                                            <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            </td>
+                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
+        
+                @if(regularization_list.length>0){
+                <p-accordion-panel value="2">
+                    <p-accordion-header>Regularizations</p-accordion-header>
+                    <p-accordion-content>
+                        <div class="popup-table-wrapper">
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Duration</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let log of regularization_list">
+                                            <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
+                                            </td>
+                                            <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </p-accordion-content>
+                </p-accordion-panel>
+                }
+            </p-accordion>
         </div>
     </div>
 </ng-template>

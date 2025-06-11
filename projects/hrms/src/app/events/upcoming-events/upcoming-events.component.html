@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <div class="heading-content">
+    <div class="heading-content py-2">
       <div class="component-header">Events</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -20,9 +20,37 @@
 
   <ng-container *ngIf="(getEventsData$ | async) === null; else maincontent">
     <ng-template #loadingSpinner>
-      <div class="loader-placeholder-content text-center">
+      <div >
         <div>
-          <app-data-loader-content />
+          <div class="card events-section-card">
+            <div class="mb-4">
+              <p-skeleton width="180px" height="20px"></p-skeleton>
+            </div>
+            <div class="d-flex flex-wrap gap-4">
+              <div *ngFor="let skel of [1,2,3]" class="card event-card mb-3">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex gap-3 align-items-center">
+                    <div class="card event-icon-card">
+                      <p-skeleton width="40px" height="40px" shape="circle"></p-skeleton>
+                    </div>
+                    <div>
+                      <p-skeleton width="120px" height="18px"  styleClass="mb-2"></p-skeleton>
+                      <p-skeleton width="100px" height="14px"></p-skeleton>
+                    </div>
+                  </div>
+                  <p-skeleton width="24px" height="24px" shape="circle"></p-skeleton>
+                </div>
+                <div class="mt-3">
+                  <p-skeleton width="100%" height="16px" styleClass="mb-2" ></p-skeleton>
+                  <p-skeleton width="80%" height="16px"></p-skeleton>
+                </div>
+                <hr class="vr-line m-0">
+                <div class="pt-3 mt-auto">
+                  <p-skeleton width="100%" height="120px"></p-skeleton>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </ng-template>
@@ -53,7 +81,7 @@
                       }}</p>
                   </div>
                 </div>
-                @if(rbac.allowedToAccess('Events(Upcoming Events).update') || 
+                @if(rbac.allowedToAccess('Events(Upcoming Events).update') ||
                 rbac.allowedToAccess('Events(Upcoming Events).delete')){
                 <div class="dropdown">
                   <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -105,7 +133,7 @@
                     }}</p>
                 </div>
               </div>
-              @if(rbac.allowedToAccess('Events(Upcoming Events).update') || 
+              @if(rbac.allowedToAccess('Events(Upcoming Events).update') ||
               rbac.allowedToAccess('Events(Upcoming Events).delete')){
               <div class="dropdown">
                 <a class="dropdown-click" data-bs-toggle="dropdown" aria-expanded="false">
@@ -139,7 +167,7 @@
       <div class="no-data-wrapper" *ngIf="(getEventsData$ | async)?.length === 0">
         <div class="no-data-placeholder-container">
           <div class="text-center">
-            <img src="images\events.png" alt="No Data" class="no-data-image mb-4" />
+            <app-no-data-found />
           </div>
         </div>
       </div>

@@ -1,13 +1,14 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content">
+    @if(!loading){
     <table class="w-100">
       <thead>
         <th>Date</th>
         <th>Leave Type</th>
         <th>Duration</th>
         <th>Availed</th>
-        <th>Start Date</th>
-        <th>End Date</th>
+        <th class="text-center text-nowrap">Start Date</th>
+        <th class="text-center text-nowrap">End Date</th>
         <th class="text-center">Reason</th>
         <th>Status</th>
         <th class="text-center">Action</th>
@@ -22,8 +23,8 @@
           <td>{{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
             item.durationType == 3 ? 'Second Half' : 'Unknown' }}
           </td>
-          <td>{{item.startdate | dateformat}}</td>
-          <td>{{item.enddate | dateformat}}</td>
+          <td class="text-center text-nowrap">{{item.startdate | dateformat}}</td>
+          <td class="text-center text-nowrap">{{item.enddate | dateformat}}</td>
           <td class="text-center">
             <div>
               <div type="button" [ngbPopover]="reason">
@@ -65,6 +66,10 @@
         }
       </tbody>
     </table>
+  }
+  @else {
+    <app-data-loader-content />
+  }
   </div>
 </div>
 
@@ -80,13 +85,12 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
         <textarea class="form-control custom-input" formControlName="cancelReason"  [minlength]="10"
-          [maxlength]="250" placeholder="Please enter leave cancellation reason....." rows="3" (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))"></textarea>
+          [maxlength]="250" placeholder="Please enter cancellation reason" rows="3" (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
           *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
-          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
-            required</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Cancellation reason is required</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
             allowed</ng-container>
             <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">Reason must be atleast 10 characters</ng-container>

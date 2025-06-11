@@ -5,8 +5,9 @@
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
             placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
     </div>
-    
+
     <div class="custom-table-content">
+        @if(!dataloader){
         <table class="w-100">
             <thead>
                 <tr>
@@ -26,8 +27,8 @@
                     <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
                     @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                     <td class="text-center">
-                        <span class="download-text" (click)="onSelectDownload(appointmentLetter)">
-                            <i class="bi bi-download clip-icon me-2"></i>Download</span>
+                        <span (click)="onSelectDownload(appointmentLetter)">
+                            <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
                         <!-- <button class="custom-btn btn-primary"
                                             >Download</button> -->
                     </td>}
@@ -36,11 +37,15 @@
                 }
                 @else {
                 <tr>
-                    <td colspan="8">No Data Found</td>
+                    <app-no-data-found />
                 </tr>
                 }
             </tbody>
         </table>
+    }
+        @else {
+            <app-data-loader-content />
+        }
     </div>
 </div>
 }

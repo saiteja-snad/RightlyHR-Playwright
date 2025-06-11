@@ -1,76 +1,83 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div><span class="component-sub-header">{{'Manage Shifts'|translate}}</span></div>
-      <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Shifts Pending Tab.create')">
-        <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
-      </div>
-    </div>
-  
-    <div class="custom-table-content">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>{{'Year'|translate}}</th>
-            <th>{{'Location'|translate}}</th>
-            <th>{{'Sub Location'|translate}}</th>
-            <th class="text-center">{{'Shift Name'|translate}}</th>
-            <th>{{'Status'|translate}}</th>
-            <th>{{'Added By'|translate}}</th>
-            @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
-            <th class="text-center">{{'Action'|translate}}</th>
-            }
-          </tr>
-        </thead>
-        <tbody>
-          @if (shiftsData!.length > 0) {
-          @for (shift of pendingsubmittedshifts; track shift.id) {
-          <tr>
-            <td>{{ shift.applicableyear }}</td>
-            <td>{{ shift.locationName }}</td>
-            <td>{{ shift.subLocationName }}</td>
-            <!-- <td>
-              <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip" title="{{getShiftNames(shift)}}"></i>
-            </td> -->
-             <td class="text-center">
-                                <div>
-                                   <!-- <div>{{ shift.orgWeekendItems.length }}</div> -->
-                                   <div [ngbPopover]="popContent" *ngIf="getShiftNames(shift) !== null"><i class="bi bi-info-circle-fill cursor"></i></div>
-                                </div>
-                                <ng-template #popContent>
-                                    <div >
-                                        {{ getShiftNames(shift) }}
-                                    </div>
-                                </ng-template>
-                            </td>
-            <!-- <td>{{ shift.shiftName }}</td> -->
-            <td>{{ shift.status }}</td>
-            <td>{{ shift.addedbyName }}</td>
-            @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
-            <td class="text-center">
-              <div class="dropdown">
-                <a data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li>
-                    <a class="dropdown-item" (click)="updateShift(shift.id)">
-                      <i class="bi bi-pencil me-2"></i>Update
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          }
-          </tr>
-          }
-          } @else {
-          <tr>
-            <td colspan="6">
-              <app-no-data-found></app-no-data-found>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">{{'Manage Shifts'|translate}}</span></div>
+    <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Shifts Pending Tab.create')">
+      <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
   </div>
+
+  <div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{'Year'|translate}}</th>
+          <th>{{'Location'|translate}}</th>
+          <th>{{'Sub Location'|translate}}</th>
+          <th class="text-center">{{'Shift Name'|translate}}</th>
+          <th>{{'Status'|translate}}</th>
+          <th>{{'Added By'|translate}}</th>
+          @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
+          <th class="text-center">{{'Action'|translate}}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @if (shiftsData!.length > 0) {
+        @for (shift of pendingsubmittedshifts; track shift.id) {
+        <tr>
+          <td>{{ shift.applicableyear }}</td>
+          <td>{{ shift.locationName }}</td>
+          <td>{{ shift.subLocationName }}</td>
+          <!-- <td>
+              <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip" title="{{getShiftNames(shift)}}"></i>
+            </td> -->
+          <td class="text-center">
+            <div>
+              <!-- <div>{{ shift.orgWeekendItems.length }}</div> -->
+              <div [ngbPopover]="popContent" *ngIf="getShiftNames(shift) !== null">
+                <app-info-icon />
+              </div>
+            </div>
+            <ng-template #popContent>
+              <div>
+                {{ getShiftNames(shift) }}
+              </div>
+            </ng-template>
+          </td>
+          <!-- <td>{{ shift.shiftName }}</td> -->
+          <td>{{ shift.status }}</td>
+          <td>{{ shift.addedbyName }}</td>
+          @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
+          <td class="text-center">
+            <div class="dropdown">
+              <a data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </a>
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li>
+                  <a class="dropdown-item" (click)="updateShift(shift.id)">
+                    <i class="bi bi-pencil me-2"></i>Update
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </td>
+          }
+        </tr>
+        }
+        } @else {
+        <tr>
+          <td colspan="6">
+            <app-no-data-found></app-no-data-found>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
+</div>

@@ -6,19 +6,9 @@
             (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
 
-    <ng-container *ngIf="loading; else maincontent">
-        <ng-template #loadingSpinner>
-            <div class="loader-placeholder-content text-center">
-                <div>
-                    <app-data-loader-content />
-                </div>
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-
-    <ng-template #maincontent>
+  
         <div class="custom-table-content">
+            @if (!loading) {
             <table class="w-100">
                 <thead>
                     <th>Asset Category</th>
@@ -32,7 +22,7 @@
                     @if(rbac.allowedToAccess('Under Maintenance Mark as Available Asset.view') ||
                     rbac.allowedToAccess('Under Maintenance View Asset Details.view')
                     || rbac.allowedToAccess('Under Maintenance Update Asset Details.view')){
-                    <th class="text-center">Action(s)</th>
+                    <th class="text-center">Action</th>
                     }
                 </thead>
                 <tbody>
@@ -100,6 +90,10 @@
                     </ng-template>
                 </tbody>
             </table>
+        }
+        @else {
+            <app-data-loader-content />
+        }
         </div>
     
     <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
@@ -119,7 +113,7 @@
           (onPageChange)="onPageChange($event)"></p-paginator>
       </div>
     </div>
-    </ng-template>
+  
 </div>
 
 <ng-template #addassetes let-modal>

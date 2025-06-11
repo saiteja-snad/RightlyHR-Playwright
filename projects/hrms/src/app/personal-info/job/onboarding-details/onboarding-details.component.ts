@@ -14,10 +14,11 @@ import moment from 'moment';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule,ReactiveFormsModule,Select],
+  imports: [CommonModule,ReactiveFormsModule,Select,Skeleton],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
@@ -40,6 +41,7 @@ export class OnboardingDetailsComponent {
   isEditing = false;
   empyployeedata={} as any;
   employeestatus:any
+  loading: boolean = false;
   offerletttersentdate:any
   noticePeriodStatus = [
     { name: 'Yes', value: true },
@@ -149,9 +151,6 @@ export class OnboardingDetailsComponent {
     // Listen to changes
     this.onboardingForm.get('remoteLogin')?.valueChanges.subscribe(value => {
       this.filterWorkLocationOptions(value);
-
-      // Optionally reset workLocation field
-      this.onboardingForm.get('workLocation')?.setValue(null);
     });
   }
 
@@ -188,11 +187,11 @@ export class OnboardingDetailsComponent {
   
 
   getEmployeeId(): void {
+    this.loading = true;
     const employeeId = parseInt(this.empinfo.employeeId);
-    console.log(this.empinfo);
-
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading = false;
         console.log(data);
         this.empdata = data;
         this.employeestatus=data?.empstatus?.toLowerCase()
@@ -203,6 +202,7 @@ export class OnboardingDetailsComponent {
         this.patchForm(data);
       },
       error: (err: any) => {
+        this.loading = false;
         console.log(err);
       }
     });
@@ -224,7 +224,6 @@ export class OnboardingDetailsComponent {
     const workLocation = this.worklocation.find((item: any) => item.value === data?.workLocation);
     console.log(workLocation);
     this.onboardingForm.patchValue({
-  
       dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       branchLocation: data?.branchCode,
       probationEndDate: this.formatDateToLocal(data.probationEndDate),
@@ -237,15 +236,13 @@ export class OnboardingDetailsComponent {
       pt: this.ptdata.find((item: any) => item.value === data?.pt),
       totalExperience: data.totalYearsOfExperience,
       remoteLogin: data.allowWFH,
-      workLocation:data?.workLocation ,
+      workLocation:data?.workLocation,
       wfhmanger: data.wfhManagerId,
       trainingEndDate: moment(data.trainingEndDate).format('yyyy-MM-DD'),
       empType: data.empType,
       durationOfTrainee: data.durationOfTrainee
     });
     console.log(this.onboardingForm.value); // Check values in the onboardingForm
-  
-    
   }
 
   
@@ -411,7 +408,6 @@ export class OnboardingDetailsComponent {
       allowWFH: this.onboardingForm.get('remoteLogin')?.value ?? this.empdata.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empdata.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empdata.wfhManagerId,
-      
     };
     if (payload.empstatus === 'Active' && payload.substatus === 'Offer Letter Accepted') {
       payload.substatus = 'Probation' 

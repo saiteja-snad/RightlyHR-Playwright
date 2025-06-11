@@ -1,11 +1,13 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+         <div><span class="component-sub-header">{{'Onboarding Verification' |translate }}</span></div>
         <button *ngIf="isActive('personalinfo/personal/onboarding-verification') && (empdata?.empstatus?.toLowerCase() =='prospective' 
             || empdata?.empstatus?.toLowerCase() =='trainee prospective')  && empdata?.substatus?.toLowerCase() =='documents rejected'" 
             class="custom-btn btn-primary" (click)="openModal(request)">{{'Re-Request Documents'|translate}}</button>
     </div>
     <!--Input search-->
     <div class="custom-table-content">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -17,7 +19,7 @@
                     @if( (rbac.allowedToAccess('Employee Info Documents Verification.update')
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')) && shouldShowActionColumn
                     ){
-                    <th>{{'ACTION'|translate}}</th>
+                    <th>{{'Action'|translate}}</th>
                 }
                 </tr>
             </thead>
@@ -84,6 +86,10 @@
                 }
             </tbody>
         </table>
+    }
+    @else {
+         <app-data-loader-content />
+    }
     </div>
 </div>
 
@@ -93,9 +99,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{documentSelectFields.documentType }}</p>
-            </div>
-            <div>
-                <a (click)="reload()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -118,9 +121,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Reject Reason</p>
-            </div>
-            <div>
-                <a (click)="closeModal(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -171,9 +171,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
-            </div>
-            <div>
-                <a (click)="reRequestForm.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">

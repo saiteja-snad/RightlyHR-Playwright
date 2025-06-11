@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     webSocketUrl: 'ws://https://fusionplusqaapi.onpremise.snadhr.com',
-    ApiUrl: 'https://localhost:44374/api/',
+    ApiUrl: 'https://snadqaapi.onpremise.snadhr.com/api/',
    
     viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
     modules: [
@@ -38,13 +38,15 @@ export const environment = {
     SeparationrequestmoduleId: 13,
     RecallrequestmoduleId: 14,
     ProbationrequestmoduleId: 18,
-    ProbationExtensionId: 2,
     ProbationNoticePeriodId: 0,
-    ProbationbuttonbeforeId: 3,
-    ProbationExtendPeriodTimes: 1,
+    ProbationbuttonbeforeId: 1,
+    ProbationExtensionId: 2,
+    ProbationExtendPeriodTimes: 3,
     PMSrequestmoduleId:24,
     deskAllocationModuleId:23,
     expensesModuleId:19,  
     remoteLoginModuleId:11,
-    globalPermissionsModuleID:21
+    globalPermissionsModuleID:21,
+  oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
+
 };

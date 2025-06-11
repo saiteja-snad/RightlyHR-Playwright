@@ -10,7 +10,7 @@ import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import moment from 'moment';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-import {Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment';
@@ -31,13 +31,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
   teamDropdownValues: any[] = [];
-  loading=false
+  loading = false
   teamManagerDropdownValues: any[] = [];
   selectedDepartmentId: number = 0;
   jobDetailsForm!: FormGroup;
   subscription!: Subscription;
   empinfo: any;
-  employedata:any
+  employedata: any
   departmentDetails = [] as IDepartment[];
   JobroleDetails: any;
   JobtypeDetails = [] as IJobtype[];
@@ -80,10 +80,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   selectedlocationid: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService, public formValidations: FormValidationsService,public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService,private router: Router) { }
+    private http: HttpService, public formValidations: FormValidationsService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    
     this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializejobForm();
@@ -91,9 +90,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getDepartment();
     this.getJobtype();
     this.getReportingTo();
-    
     this.getjobLocationList();
-    this.getJobDetails();
     this.getJobDesignation();
     this.getnoticePeriodData();
     this.getSeparationRequest();
@@ -117,9 +114,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
+      this.getJobDetails();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
+      this.getJobDetails();
     }
   }
 
@@ -157,16 +156,16 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   initializeForm(): void {
     this.separationRequestForm = this.fb.group({
-      appliedDate: [null, Validators.required],
+      appliedDate: [new Date().toISOString().substring(0, 10), Validators.required],
       jobRole: [{ value: null, disabled: true }],
       departmentName: [{ value: '', disabled: true }],
       team: [{ value: null, disabled: true }],
       teamManager: [{ value: null, disabled: true }],
       reportingManager: [{ value: '', disabled: true }],
-      description: [null, [Validators.required, Validators.maxLength(400), Validators.pattern(/^(?!\s).*$/)]],
+      description: [null, [Validators.required, Validators.maxLength(400)]],
       isEarlyRelieving: [false],
       earlyRelievingDate: [null, Validators.required],
-      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400), Validators.pattern(/^(?!\s).*$/)]]
+      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400)]]
     });
     // Disable early relieving fields by default
     this.toggleEarlyRelievingFields(false);
@@ -202,19 +201,19 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
       firstName: this.employedata.firstName,
       lastName: this.employedata.lastName,
-      middleName:this.employedata.middleName,
+      middleName: this.employedata.middleName,
       senderEmail: loggedInUser.workEmail,
-      senderName: loggedInUser.firstName + ' '+loggedInUser.middleName+' '+ loggedInUser.lastName,
+      senderName: loggedInUser.firstName + ' ' + loggedInUser.middleName + ' ' + loggedInUser.lastName,
       employeeId: this.empinfo.employeeId,
     }
 
-    if(loggedInUser.middleName){
+    if (loggedInUser.middleName) {
 
-      EmailData.senderName =`${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName ??''}`
-     
-    }else{
-      EmailData.senderName =`${loggedInUser.firstName} ${loggedInUser.lastName ??''}`
-     
+      EmailData.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName ?? ''}`
+
+    } else {
+      EmailData.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName ?? ''}`
+
     }
     this.subscription = this.http.postdata(`CustomEmail/jobtab`, EmailData).subscribe({
       next: (data: any) => {
@@ -237,7 +236,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     if (!isEarlyRelieving) {
       this.separationRequestForm.get('earlyRelievingDate')?.reset();
       this.separationRequestForm.get('earlyRelievingDate')?.setErrors(null);
-  
+
       this.separationRequestForm.get('reasonForEarlyRelieving')?.reset();
       this.separationRequestForm.get('reasonForEarlyRelieving')?.setErrors(null);
     }
@@ -248,7 +247,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.employedata=data
+        this.employedata = data
         this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
@@ -256,10 +255,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', keyboard: false });
   }
   confirmationopenModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   getDepartment() {
@@ -358,7 +357,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
               : `${manager.firstName} ${manager.lastName}` || '',
           }));
           this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager Id
-          
+
           this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });
         }
         else {
@@ -402,13 +401,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getGradeid = designation?.gradeId; // Store the selected grade ID
     if (designation) {
       this.jobDetailsForm.patchValue({ grade: designation.gradeId }); // Update the grade in the form
-    
+
       // Call the API to fetch the grade name based on gradeId
       this.getGradeNameById(designation.gradeId);
     } else {
       this.selectedGradeName = ''; // Reset if no designation is found
       this.jobDetailsForm.patchValue({ grade: '' });
-  
+
     }
   }
 
@@ -420,14 +419,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     );
     this.getGradeid = designation?.gradeId; // Store the selected grade ID
     if (designation) {
-    
+
       this.jobDetailsupdateForm.patchValue({ grade: designation.gradeName });
       // Call the API to fetch the grade name based on gradeId
       this.getGradeNameById(designation.gradeId);
     } else {
       this.selectedGradeName = ''; // Reset if no designation is found
-  
-      this.jobDetailsupdateForm.patchValue({ grade:''});
+
+      this.jobDetailsupdateForm.patchValue({ grade: '' });
     }
   }
 
@@ -457,14 +456,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   subLocationsDropdown: any = [] // To store the dynamically fetched sub-locations
   getSubLocationByid(selectedLocation: any): void {
-    this.selectedlocationid=selectedLocation.id
+    this.selectedlocationid = selectedLocation.id
     this.jobDetailsForm.get('subLocation')?.reset()
     this.jobDetailsForm.get('shift')?.reset()
     this.jobDetailsupdateForm.get('subLocation')?.reset()
     this.jobDetailsupdateForm.get('shiftName')?.reset()
     this.jobDetailsupdateForm.get('shiftName')?.setValue(null);
-    this.shiftDropdown=[]
-    
+    this.shiftDropdown = []
+
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
@@ -492,7 +491,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       this.jobDetailsForm.get('subLocation')?.reset()
       this.jobDetailsupdateForm.get('subLocation')?.reset()
       this.jobDetailsForm.get('shift')?.reset()
-     this.jobDetailsupdateForm.get('shiftName')?.reset()
+      this.jobDetailsupdateForm.get('shiftName')?.reset()
       //this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
     }
   }
@@ -517,7 +516,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         error: (err: any) => {
           this.shiftDropdown = []; // Reset on error
           this.jobDetailsForm.get('shift')?.reset()
-       
+
           this.jobDetailsupdateForm.get('shiftName')?.reset()
         },
       });
@@ -566,22 +565,22 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       this.jobDetailsForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
   }
-  closeAll(){
+  closeAll() {
     this.separationRequestForm.reset();
     this.modalService.dismissAll();
   }
   getJobDetails() {
-    this.loading=true
+    this.loading = true
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.loading=false
+        console.log(data);
+        this.loading = false
         this.jobdetails.next(data);
         console.log(this.jobdetails.value);
-
       },
-      error:(data:any)=>{
-        this.loading=false
+      error: (data: any) => {
+        this.loading = false
       }
     });
   }
@@ -624,6 +623,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
       grade: this.selectedJobRoleObj?.gradeName,
     });
+    console.log(this.jobDetailsupdateForm.value);
     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationId}`).subscribe({
       next: (res: any) => {
         if (!res?.jobSubLocations || res.jobSubLocations.length === 0) {
@@ -683,14 +683,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       }
     });
     // Open the modal
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
   }
 
 
 
   //function to open the separation popup
   openModalforSeparationupdate(content: any, data: any): void {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
     console.log('separation', data)
     this.postSeparationRequest = data
     this.separationRequestForm.patchValue({
@@ -701,19 +701,17 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       teamManager: `${data?.firstName ?? ''} ${data?.middleName ?? ''} ${data?.lastName ?? ''}`,
       reportingManager: `${data?.fName ?? ''} ${data?.mName ?? ''} ${data?.lName ?? ''}`,
     });
-    let currentDate = moment();
-    this.postSeparationRequest.appliedDate = this.separationRequestForm.get('appliedDate')?.value || currentDate.format('YYYY-MM-DD');
-    this.onCheckNotiesperiod(this.postSeparationRequest.appliedDate);
   }
 
   //function to check the noticeperiod valid upto
   onCheckNotiesperiod(Value: any) {
     if (Value) {
       let noticePeriodValidupto = this.noticeperiodDuration;
-      let currentDate = moment(this.postSeparationRequest.appliedDate);
+      let currentDate = moment(Value);
       let futureDate = currentDate.add(noticePeriodValidupto, 'days');
       let formatedate = this.formatDate(futureDate);
       this.postSeparationRequest.lastworkingday = formatedate;
+      console.log('lastworkingday', this.postSeparationRequest.lastworkingday);
     }
   }
 
@@ -762,6 +760,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   //function to post the separation request form
   postSeparationRequestForm() {
     this.isLoading = true;
+    const appliedDate = this.separationRequestForm.get('appliedDate')?.value;
+
+    if (appliedDate) {
+      this.onCheckNotiesperiod(appliedDate);
+    }
+
     if (this.postSeparationRequest.isEarlyRelieving !== true) {
       (this.postSeparationRequest.reasonForEarlyRelieving = null),
         (this.postSeparationRequest.earlyRelievingDate = null);
@@ -815,7 +819,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       jobRole: empexperimentdata.jobRole,
     };
     // Open the delete confirmation modal
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   updateJobDetails(): void {
@@ -831,8 +835,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       shiftId: formData.shiftName?.id ?? this.selectedData?.shiftName?.id,
       locationid: formData.location.id ?? this.selectedData?.locationid,
       sublocationid: formData.subLocation.id ?? this.selectedData.sublocationid,
-      gradeId: this.getGradeid  ?? this.selectedData.gradeId,
-      teamManagerId:  this.teammangerid ?? this.selectedData?.teamManagerId,
+      gradeId: this.getGradeid ?? this.selectedData.gradeId,
+      teamManagerId: this.teammangerid ?? this.selectedData?.teamManagerId,
       updateddate: this.selectedData.updateddate,
       createddate: this.selectedData.createddate,
       jobTypeId: formData.jobType.sno ?? this.selectedData.jobTypeId,
@@ -840,7 +844,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     // Make the POST request to delete the job details
     this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
       next: (data: any) => {
-         this.jobEmailsent()
+        console.log(data)
+        this.jobEmailsent()
         this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Job details updated successfully');
         this.getJobDetails();
@@ -875,7 +880,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.getJobDetails();
         this.http.setBasicDetails();
         // Close the modal
-      
+
       },
       error: (err: any) => {
         console.error('Error deleting job details:', err);

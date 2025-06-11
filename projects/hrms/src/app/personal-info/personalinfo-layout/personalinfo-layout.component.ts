@@ -20,7 +20,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
@@ -51,7 +51,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   subHeader: string = '';
   loginEmployee = {} as any;
-  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute, public fieldpremission: AccessForEmployeeinfoService) { }
+
+  constructor(private http: HttpService, private authService: AuthService, private router: Router,
+     private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
+      public fieldpremission: AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
@@ -59,15 +62,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     });
     this.setSubHeader();
     this.fieldpremission.checkrouters.next(this.route.snapshot.routeConfig?.path || '')
-    console.log('current Route: ', this.route.snapshot.routeConfig?.path || '');
     if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
     }
     else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     }
-
-
     this.loginEmployee = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.initializeForm();
     this.initialzerevoke();
@@ -163,8 +163,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     );
   }
-
-
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -341,7 +339,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             this.router.navigate(['/admin/dashboard']);
           }, 3000);
         }
-
       },
       error: (err: any) => {
         console.log(err);
@@ -477,9 +474,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   onBackSubmit() {
-
     if (this.headerName === 'Team member info') {
-      this.router.navigate(['/myinfo/personal/team-members']);
+      this.router.navigate(['/myinfo/job/team-members']);
       return;
     }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -522,20 +518,18 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   assignHeading() {
     const currentPath = this.router.url;
-
     if (currentPath.startsWith('/myinfo')) {
       this.headerName = "My Info";
       this.showBackIcon = false;  // Hide back icon for personalinfo
       return;
     }
-
     // Now we know route is NOT personalinfo, so we check admin logic
     if (currentPath.startsWith('/personalinfo')) {
       this.showBackIcon = true; // Show back icon for admin
       let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
-
       if (routestatus.empType === 'Probation' && routestatus.empstatus === 'Active') {
         this.headerName = "Probation Employee";
       } else {
@@ -572,12 +566,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             break;
           default:
             this.headerName = "Team member info";
-
         }
       }
     }
-
   }
+
   // Map route paths to sub-header names
   subHeaderMap: { [key: string]: string } = {
     'basic-info': 'Basic Info',
@@ -613,14 +606,13 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
 
   };
+
   setSubHeader() {
     // Get the last segment of the current URL
     const urlSegments = this.router.url.split('/');
     const lastSegment = urlSegments[urlSegments.length - 1];
     this.subHeader = this.subHeaderMap[lastSegment] || '';
   }
-
-
 
   navigation() {
     localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
@@ -632,19 +624,16 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
-
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-
     const routeToInfoMap: { [key: string]: string } = {
+      // My Info perosnal
       '/myinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
       '/myinfo/personal/address-info': MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
       '/myinfo/personal/contact-details': MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
@@ -654,8 +643,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
       '/myinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
       '/myinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
-      '/myinfo/personal/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-
+      // My Info Job
       '/myinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/job-details': MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
@@ -668,12 +656,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/job/desk-details': MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
       '/myinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/myinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
-
+      '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
-
-
+      // Personal Info perosnal
       '/personalinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
-      '/personalinfo/personal/onboarding-verification': MODULE_INFOS.PERSONAL_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
+      '/personalinfo/job/onboarding-verification': MODULE_INFOS. JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
       '/personalinfo/personal/address-info': MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
       '/personalinfo/personal/contact-details': MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
       '/personalinfo/personal/emergency-contact-details': MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
@@ -682,8 +670,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
       '/personalinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
       '/personalinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
-      '/personalinfo/personal/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
-
+      // Personal Info Job
       '/personalinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/job-details': MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
@@ -696,18 +683,16 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/desk-details': MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
       '/personalinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/personalinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
-      '/personalinfo/job/tranee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
-
+      '/personalinfo/job/trainee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
+      '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
-
     };
-
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   ngOnDestroy(): void {
-
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

@@ -68,7 +68,7 @@
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                 <i class="bi bi-info-circle-fill" ></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{leave?.entity?.notes}} </p>
@@ -79,7 +79,7 @@
                         <div *ngIf="leave?.entity?.regularizationApproverComments[0]?.comments;else permissionComments">
                             <a type="button"
                                 (click)="comments(leave?.entity?.regularizationApproverComments,commentspopup)">
-                                 <i class="bi bi-info-circle-fill" ></i>
+                                <app-info-icon />
                             </a>
                         </div>
                         <ng-template #permissionComments>-</ng-template>
@@ -127,9 +127,9 @@
             </ng-template>
         </p-table>
         }@else{
-            <div class="loader-placeholder-content">
+          
                 <app-data-loader-content />
-            </div>
+           
         }
     </div>
 </div>
@@ -138,7 +138,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to proceed with the approval?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
             <div class="custom-main-popup-content">
@@ -162,7 +162,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </div>
                     }@else {
                     <span>{{'Approve'| translate }}</span>
@@ -177,7 +177,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
+            <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">
@@ -201,7 +201,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </div>
                     }@else {
                     <span>{{'Reject' | translate}}</span>
@@ -247,24 +247,26 @@
             <div>
                 <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss('Cross click');requestSummary = null">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
-        <div class="custom-main-popup-content">
-            <div class="row">
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Total Records' | translate}}</b></p>
-                    <p>{{ requestSummary?.totalRecordCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Success Records'|translate}}</b> </p>
-                    <p>{{ requestSummary?.successRecordsCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Failed Records' | translate}}</b></p>
-                    <p>{{ requestSummary?.failureRecordsCount }}</p>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ requestSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ requestSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ requestSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

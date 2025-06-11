@@ -6,135 +6,131 @@
       aria-describedby="basic-addon1">
   </div>
 
-  <ng-container *ngIf="loading; else maincontent">
-    <ng-template #loadingSpinner>
-      <div class="loader-placeholder-content text-center">
-        <div>
-          <app-data-loader-content/>
-        </div>
-      </div>
-    </ng-template>
-    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-  </ng-container>
-
-  <ng-template #maincontent>
-    <div class="custom-table-content">
-      <table class="w-100">
-        <thead>
-            <th>Asset Category</th>
-            <th>Asset Sub Category</th>
-            <th>Serial Number</th>
-            <th>Asset Status</th>
-            <th>Allocated To</th>
-            <th>Asset ID</th>
-            <th>Location </th>
-            <th>Sub Location </th>
-              @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release Asset.view') || 
-                rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset Details.view')){
-              <th class="text-center">Action(s)</th>
-                }          
-        </thead>
-        <tbody>
-          <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
-            <tr *ngFor="let asset of assetslist | async">
-              <td>{{ asset.assetCategory }}</td>
-              <td>{{ asset.assetSubCategory }}</td>
-              <td>{{ asset.serialNumber }}</td>
-              <td>{{ asset.status }}</td>
-              <td>
-                <ng-container *ngIf="asset.assignedTo; else unassigned">
-                  {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
-                  asset.assignedTo.lastName }}
-                </ng-container>
-                <ng-template #unassigned>
-                  N/A
-                </ng-template>
-              </td>
-              <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
-              <td>{{ asset.locationName }}</td>
-              <td>{{ asset?.sublocationName || 'N/A' }}</td>
-                @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release Asset.view') || 
-                rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset Details.view')){
-              <td class="text-center">
-                <div class="dropdown">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <ng-container *ngIf="asset.status === 'Allocated'">
-                       @if(rbac.allowedToAccess('Allocated Reallocate Asset.view')){
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(reallocateanasset ); viewasset(asset.id); storeassetid = asset.id; selectedAsset = asset;viewassetdata(asset.id); viewasetsdata(asset)">
-                          Reallocate Asset
-                        </a>
-                      </li>
-                    }
-                     @if(rbac.allowedToAccess('Allocated Release Asset.view')){
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(releaseassets); viewasset(asset.id); storeassetid = asset.id; selectedAsset = asset;viewassetdata(asset.id);viewasetsdata(asset)">
-                          Release Asset
-                        </a>
-                      </li>
-                    }
-                    </ng-container>
-                   @if(rbac.allowedToAccess('Allocated View Asset Details.view')){
-                    <li>
-                      <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
-                        View Asset Details
-                      </a>
-                    </li>
-                  }
-                   @if(rbac.allowedToAccess('Allocated Update Asset Details.view')){
+  <div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+      <thead>
+        <th>Asset Category</th>
+        <th>Asset Sub Category</th>
+        <th>Serial Number</th>
+        <th>Asset Status</th>
+        <th>Allocated To</th>
+        <th>Asset ID</th>
+        <th>Location </th>
+        <th>Sub Location </th>
+        @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release
+        Asset.view') ||
+        rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset
+        Details.view')){
+        <th class="text-center">Action</th>
+        }
+      </thead>
+      <tbody>
+        <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let asset of assetslist | async">
+            <td>{{ asset.assetCategory }}</td>
+            <td>{{ asset.assetSubCategory }}</td>
+            <td>{{ asset.serialNumber }}</td>
+            <td>{{ asset.status }}</td>
+            <td>
+              <ng-container *ngIf="asset.assignedTo; else unassigned">
+                {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
+                asset.assignedTo.lastName }}
+              </ng-container>
+              <ng-template #unassigned>
+                N/A
+              </ng-template>
+            </td>
+            <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
+            <td>{{ asset.locationName }}</td>
+            <td>{{ asset?.sublocationName || 'N/A' }}</td>
+            @if(rbac.allowedToAccess('Allocated Reallocate Asset.view') || rbac.allowedToAccess('Allocated Release
+            Asset.view') ||
+            rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset
+            Details.view')){
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <ng-container *ngIf="asset.status === 'Allocated'">
+                    @if(rbac.allowedToAccess('Allocated Reallocate Asset.view')){
                     <li>
                       <a class="dropdown-item"
-                        (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
-                        Update
+                        (click)="openModal(reallocateanasset ); viewasset(asset.id); storeassetid = asset.id; selectedAsset = asset;viewassetdata(asset.id); viewasetsdata(asset)">
+                        Reallocate Asset
                       </a>
                     </li>
+                    }
+                    @if(rbac.allowedToAccess('Allocated Release Asset.view')){
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openModal(releaseassets); viewasset(asset.id); storeassetid = asset.id; selectedAsset = asset;viewassetdata(asset.id);viewasetsdata(asset)">
+                        Release Asset
+                      </a>
+                    </li>
+                    }
+                  </ng-container>
+                  @if(rbac.allowedToAccess('Allocated View Asset Details.view')){
+                  <li>
+                    <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
+                      View Asset Details
+                    </a>
+                  </li>
                   }
-                  </ul>
-                </div>
-              </td>
+                  @if(rbac.allowedToAccess('Allocated Update Asset Details.view')){
+                  <li>
+                    <a class="dropdown-item"
+                      (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
+                      Update
+                    </a>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
             }
-            </tr>
-          </ng-container>
+          </tr>
+        </ng-container>
 
-          <ng-template #noDataTemplate>
-            <tr>
-              <app-no-data-found />
-            </tr>
-          </ng-template>
-        </tbody>
-      </table>
-    </div>
+        <ng-template #noDataTemplate>
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
 
- 
-    <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-        <div class="d-flex align-items-center gap-3 p-2">
-          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-            (ngModelChange)="onPageSizeChange($event)">
-            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-            </option>
-          </select>
-          <span class="pagination-label text-nowrap">
-            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
-            collectionSize }}
-          </span>
-        </div>
-        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-          (onPageChange)="onPageChange($event)"></p-paginator>
+
+  <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+          </option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+          collectionSize }}
+        </span>
       </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
     </div>
-  </ng-template>
+  </div>
 </div>
 
 <ng-template #addassetes let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
-      <div >
+      <div>
         <p class="popup-heading mb-0">Update an Asset</p>
       </div>
       <div>
@@ -206,8 +202,9 @@
           <div class="col-md-6 mb-2">
             <label for="assetModel" class="form-label custom-label mb-2 custom-label mb-2">Asset Model<span
                 class="error-msg">*</span></label>
-            <input id="assetModel" formControlName="assetModel" (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" autocomplete="off" class="form-control custom-input custom-input"
-              placeholder="Enter asset model">
+            <input id="assetModel" formControlName="assetModel"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" autocomplete="off"
+              class="form-control custom-input custom-input" placeholder="Enter asset model">
             <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
               <div class="error-msg">Asset Model is required</div>
             </div>
@@ -219,8 +216,9 @@
           <div class="col-md-6  mb-2">
             <label for="serialnumber" class="form-label custom-label mb-2 custom-label mb-2">Serial Number<span
                 class="error-msg">*</span></label>
-            <input id="serialnumber" formControlName="serialnumber" (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" class="form-control custom-input custom-input"
-              placeholder="Enter serial number">
+            <input id="serialnumber" formControlName="serialnumber"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
+              class="form-control custom-input custom-input" placeholder="Enter serial number">
             <div *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
               <div class="error-msg">Serial Number is required</div>
             </div>
@@ -246,7 +244,7 @@
             <label for="purchasedate" class="form-label custom-label mb-2 custom-label mb-2">Purchase Date<span
                 class="error-msg">*</span></label>
             <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
-              class="form-control custom-input custom-input"  [min]="minpurchesDate"[max]="maxpurchesDate">
+              class="form-control custom-input custom-input" [min]="minpurchesDate" [max]="maxpurchesDate">
             <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
               <div class="error-msg">Purchase Date is required</div>
             </div>
@@ -358,7 +356,8 @@
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
             <input type="text" formControlName="contactnumber" class="form-control custom-input custom-input"
               maxlength="15" minlength="10" (paste)="formValidation.validatePaste($event)"
-              (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off" placeholder="AMC Vendor Contact" />
+              (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off"
+              placeholder="AMC Vendor Contact" />
             <div class="error-msg"
               *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
               AMC Vendor Contact is required
@@ -369,15 +368,16 @@
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
               AMC Vendor Contact must be 10 to 15 digits
             </div>
-             <!-- Pattern error for Mobile number length -->
-             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
+            <!-- Pattern error for Mobile number length -->
+            <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
               AMC Vendor Contact is not valid
             </div>
           </div>
         </div>
 
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary " (click)="openclosemodal(updatecloseconformation)">Cancel</button>
+          <button type="button" class="custom-btn btn-secondary "
+            (click)="openclosemodal(updatecloseconformation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid
            || (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
            (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
@@ -390,10 +390,10 @@
 </ng-template>
 
 <!-- update close  popup -->
- <ng-template #updatecloseconformation let-model>
+<ng-template #updatecloseconformation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/reject.png"  alt="failure icon" class="confirmation-icon mb-4">
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
@@ -508,7 +508,7 @@
 <ng-template #releaseassets let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
-      <div >
+      <div>
         <p class="popup-heading mb-0">Release an Asset</p>
       </div>
       <div>
@@ -540,8 +540,9 @@
               Additional Comments
             </label>
             <div class="textarea-container">
-              <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)" 
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+              <textarea class="form-control custom-input" formControlName="reason"
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
               <div>
                 <div class="error-msg" *ngIf="releaseform.get('reason')?.invalid && releaseform.get('reason')?.touched">
                   <div *ngIf="releaseform.get('reason')?.errors?.['required']">
@@ -560,8 +561,7 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(relaseconformation)">Cancel</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="openModal(relaseconformation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">Submit</button>
         </div>
       </form>
@@ -572,7 +572,7 @@
 <ng-template #relaseconformation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/reject.png"  alt="failure icon" class="confirmation-icon mb-4">
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
     <div class="custom-modal-footer">
@@ -594,7 +594,7 @@
         <p class="popup-heading mb-0">Reallocate Asset</p>
       </div>
       <div>
-        <a (click)="modal.dismiss();assiginForm.reset();;openModal(updateconformation)"><img src="icons/close.png"
+        <a (click)="modal.dismiss();assiginForm.reset();openModal(updateconformation)"><img src="icons/close.png"
             alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
@@ -615,9 +615,10 @@
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true" filterBy="employeeName"
-                (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
-                placeholder="Please select employee" class="form-select custom-select"></p-select>
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
+                [resetFilterOnHide]="true" filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
+                formControlName="mReportingto" placeholder="Please select employee"
+                class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="reassiginForm.get('mReportingto')?.invalid && reassiginForm.get('mReportingto')?.touched">
               <div class="error-msg">Employee ID is required</div>

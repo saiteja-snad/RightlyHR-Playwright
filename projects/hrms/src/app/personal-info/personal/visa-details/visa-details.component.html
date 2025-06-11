@@ -22,7 +22,7 @@
           <th>Status</th>
           @if(canAccess('update','visa') || 
           canAccess('delete','visa')){
-           <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+           <th class="text-center">{{"Action" | translate}}</th>
           }
         </tr>
       </thead>
@@ -81,10 +81,6 @@
     <div class="custom-poup-header-content popup-header-border">
       <div>
         <p class="popup-heading mb-0">Add Visa Details</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss();visaForm.reset()"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content ">
@@ -145,7 +141,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
-            (click)="visaForm.reset();modal.dismiss()">Close</button>
+            (click)="visaForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="visaForm.invalid || spinnerLoader ">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -165,10 +161,6 @@
     <div class="custom-poup-header-content popup-header-border">
       <div>
         <p class="popup-heading mb-0">Update Visa Details</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss();visaupdateForm.reset()"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content ">
@@ -229,7 +221,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
-            (click)="visaupdateForm.reset();modal.dismiss()">Close</button>
+            (click)="visaupdateForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="visaupdateForm.invalid || spinnerLoader ">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

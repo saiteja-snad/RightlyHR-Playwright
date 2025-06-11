@@ -1,20 +1,24 @@
 <div class="custom-main-component-container">
+  @if(!loading){
   <div class="card custom-background-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="component-sub-header">Basic Information</div>
-      @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !==
+      <div class="component-sub-header">Basic Info</div>
+      @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' &&
+      empyployeedata?.empstatus?.toLowerCase() !==
       'trainee inactive' )){
 
       @if(canAccessfield('update','basicinfo')){
       <div>
-        <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+        <a (click)="showButtons()">
+          <img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon">
+        </a>
       </div>
       }
       }
       @if(buttons){
       <div class="d-flex justify-content-end gap-2">
         <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid"
+        <button type="submit" class="custom-btn btn-primary" [disabled]="basicInfoForm.invalid ||salutationValidationcheck"
           (click)="updateBasicInfo()">Save</button>
       </div>
       }
@@ -51,8 +55,8 @@
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="titledetails" optionLabel="titlename" placeholder="Please select salutation"
-              formControlName="salutation"  class="form-select custom-select" (onChange)="onsalutationvalidation()"
-              ></p-select>
+              formControlName="salutation" class="form-select custom-select"
+              (onChange)="onsalutationvalidation()"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('salutation')?.invalid && basicInfoForm.get('salutation')?.touched"
             class="error-msg">
@@ -96,7 +100,8 @@
           <label for="gender" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName"
-              placeholder="Please select gender" (onChange)="onsalutationvalidation()" formControlName="gender" class="form-select custom-select"></p-select>
+              placeholder="Please select gender" (onChange)="onsalutationvalidation()" formControlName="gender"
+              class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('gender')?.invalid && basicInfoForm.get('gender')?.touched" class="error-msg">
             Gender is required
@@ -147,7 +152,7 @@
           <label for="maritalStatus" class="form-label custom-label mb-2">Married date<span
               class="text-danger">*</span></label>
           <input type="date" class="form-control custom-input" id="dob" formControlName="marriageDate"
-            [min]="getdateofbirth()"   [max]="currentdata | date:'yyyy-MM-dd'"  onkeypress="return false" />
+            [min]="getdateofbirth()" [max]="currentdata | date:'yyyy-MM-dd'" onkeypress="return false" />
           <div *ngIf="basicInfoForm.get('marriageDate')?.invalid && basicInfoForm.get('marriageDate')?.touched"
             class="error-msg">
             Married date is required
@@ -156,4 +161,24 @@
       </div>
     </form>
   </div>
+  }
+  @else {
+  <div class="card custom-background-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <p-skeleton width="10rem" height="2rem"></p-skeleton>
+      <div class="d-flex gap-2">
+        <p-skeleton width="2.5rem" height="2.5rem"></p-skeleton>
+        <p-skeleton width="6rem" height="2.5rem"></p-skeleton>
+      </div>
+    </div>
+    <form>
+      <div class="row">
+        <div class="col-md-6 col-lg-4 mb-3" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]">
+          <p-skeleton width="7rem" height="1rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="100%" height="2rem"></p-skeleton>
+        </div>
+      </div>
+    </form>
+  </div>
+  }
 </div>

@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header">Onboarding Info</span></div>
+        <div><span class="component-sub-header">Trainee Onboarding Verification</span></div>
         @if((this.rbac.allowedToAccess('Request for Onboard Button.view') &&
         empdata?.empstatus?.toLowerCase() == 'trainee active' && dynamicData.value.length <= 0)||buttonviewwhenExtended){ 
         <div class="custom-add-btn" (click)="requestForOnboard()">
@@ -10,13 +10,14 @@
     </div>
 
     <div class="custom-table-content">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
                     <th>Request Date</th>
                     <th>Training Start Date</th>
                     <th>Training End Date</th>
-                    <th>Training Extenstion Date</th>
+                    <th>Training Extension Date</th>
                     <th>Status</th>
                     <th>Training Feedback</th>
                     <th></th>
@@ -32,9 +33,8 @@
                         <td>{{ item.status }}</td>
                         <td class="text-center">
                             <span *ngIf="item.feedbackComments;else feedbackComment">
-                                <div 
-                                    (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
-                                    <i class="bi bi-info-circle-fill "></i>
+                                <div (click)="fustiontostorefeedback(item.feedbackComments,EmployeeComments)">
+                                    <app-info-icon />
                                 </div>
                             </span>
                             <ng-template #feedbackComment>-</ng-template>
@@ -67,6 +67,10 @@
                 </ng-template>
             </tbody>
         </table>
+    }
+    @else {
+         <app-data-loader-content />
+    }
     </div>
 </div>
 

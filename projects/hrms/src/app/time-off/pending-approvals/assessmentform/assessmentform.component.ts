@@ -56,7 +56,7 @@ export class AssessmentformComponent {
   @ViewChild('formsavepopup') formsavepopup!: any;
   @ViewChild('cancelmodal') cancelmodal!: any;
   Status: any;
-
+  employeedata ={} as any;
   constructor(
     private router: Router,
     private http: HttpService,
@@ -70,13 +70,14 @@ export class AssessmentformComponent {
     config.keyboard = false;
   }
 
-  ngOnInit(): void {
+   ngOnInit(): void {
     this.loggedindata = this.authService.getToken();
     this.getProbationExtendDays();
     let data = localStorage.getItem('formdata');
     if (data) {
       this.formemployeedetails = JSON.parse(data);
       this.getFormDetails(this.formemployeedetails?.entity?.employeeId);
+      this.getEmployeeId(this.formemployeedetails?.entity?.employeeId);
       this.selected_approve = this.formemployeedetails.entity;
     }
   }
@@ -95,6 +96,16 @@ export class AssessmentformComponent {
       });
   }
 
+getEmployeeId(EmployeeId:number): void {
+    const employeeId = EmployeeId;
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.employeedata = data;
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
 
   getProbationExtendDays() {
     let extensionId = environment.ProbationExtensionId;
@@ -108,7 +119,9 @@ export class AssessmentformComponent {
           let duration = data.find((ele: any) => {
             return ele.configValueId === extensionId;
           });
+          console.log(duration);
           this.probationExtensionDuration = duration.noOfDays;
+          console.log(this.probationExtensionDuration);
             let extendTimes = data.find((ele: any) => {
             return ele.configValueId === extensionPeriodTimes;
           });
@@ -845,17 +858,22 @@ export class AssessmentformComponent {
     this.selected_approve.rejectedReason = '';
   }
 
-   getBlockedFutureDate(lastWorkingDate: string): string {
-    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
+  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string,probationextendedcount:number): string {
+     if(extendedDate && probationextendedcount>=0){
+      lastWorkingDate = extendedDate;
+    }
+    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day'); // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
-
-  getBlockedFutureDateupto(startDate: string, duration: number): string {
+  
+  getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
     console.log("probation: ",startDate, duration);
-    
-    const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
+     if(extendedDate){
+      startDate = extendedDate;
+    }
+    const startDateObj = moment(startDate).startOf('day').add(1, 'day'); // Set time to start of day (midnight)
     // Add the duration (e.g., 90 days) to the start date
     const futureDate = startDateObj.add(duration, 'days');
     // Format the future date as "YYYY-MM-DD"

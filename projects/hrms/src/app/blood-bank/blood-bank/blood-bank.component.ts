@@ -8,9 +8,10 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Skeleton } from 'primeng/skeleton';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-blood-bank',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent],
   templateUrl: './blood-bank.component.html',
   styleUrl: './blood-bank.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -20,7 +21,7 @@ export class BloodBankComponent implements OnInit {
   subscription!: Subscription
   bloodBankData: any;
   searchTerm: any = '';
-  shimmer = true;
+  shimmer =false
 
   constructor(public router: Router,
     private http: HttpService, public formValidation: FormValidationService,) { }
@@ -30,16 +31,25 @@ export class BloodBankComponent implements OnInit {
   }
 
   getBloodbank() {
+
+    this.shimmer = true;
     this.subscription = this.http.getData(`EmployeeData/ActiveEmployees`).subscribe({
       next: (data: any) => {
         this.bloodBankData = data;
+        this.shimmer = false;
       },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      error: (reason) =>{console.error('Error fetching employee data:', reason)
+        this.shimmer = false;
+      } ,
+      complete: () => {
+         this.shimmer = false;
+      }
     });
-    this.shimmer = false;
+   
   }
   
 filteredBloodDetails() {
+  this.shimmer = false
   const filtered = this.bloodBankData
     .filter((item: any) => item.bloodGroup) // show only items with a blood group
     .filter((item: any) => {

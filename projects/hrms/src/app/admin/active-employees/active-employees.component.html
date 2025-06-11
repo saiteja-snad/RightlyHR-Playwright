@@ -39,69 +39,43 @@
               -
             </ng-template>
           </td>
-          <td><span *ngIf="act.contactnumber;else contactnumb">{{act.mobilePhoneCountryCode}} {{act.contactnumber}}</span>
+          <td><span *ngIf="act.contactnumber;else contactnumb">{{act.mobilePhoneCountryCode}}
+              {{act.contactnumber}}</span>
             <ng-template #contactnumb>
               -
             </ng-template>
           </td>
+          <!-- Location -->
           <td>
-            <ng-container *ngIf="act?.jobDetails ; else noData">
-              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
-                  <ng-template #location>
-                    -
-                  </ng-template>
-                </span>
-              </div>
-            </ng-container>
-            <ng-template #noData>
-              <div>-</div>
-            </ng-template>
+            <span *ngIf="act.jobDetails?.[0]?.lopcation; else noLocation">
+              {{ act.jobDetails?.[0]?.lopcation }}
+            </span>
+            <ng-template #noLocation>-</ng-template>
           </td>
+         <!-- Sub Location -->
           <td>
-            <ng-container *ngIf="act?.jobDetails ; else noData">
-              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                <span *ngIf="first">
-                  <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
-                  <ng-template #subloaction>
-                    <div>-</div>
-                  </ng-template>
-                </span>
-              </div>
-            </ng-container>
-            <ng-template #noData>
-              <div>-</div>
-            </ng-template>
+            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">
+              {{ act.jobDetails?.[0]?.subLocation }}
+            </span>
+            <ng-template #noSubLocation>-</ng-template>
           </td>
+
+          <!-- Shift Name -->
           <td>
-            <ng-container *ngIf="act?.jobDetails ; else noData">
-              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                <span *ngIf="first">
-                  <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
-                  <ng-template #shift>
-                    <div>-</div>
-                  </ng-template>
-                </span>
-              </div>
-            </ng-container>
-            <ng-template #noData>
-              <div>-</div>
-            </ng-template>
+            <span *ngIf="act.jobDetails?.[0]?.shiftName; else noShift">
+              {{ act.jobDetails?.[0]?.shiftName }}
+            </span>
+            <ng-template #noShift>-</ng-template>
           </td>
+
+          <!-- Designation -->
           <td>
-            <ng-container *ngIf="act?.jobDetails ; else noData">
-              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
-                  <ng-template #jobrole>
-                    -
-                  </ng-template>
-                </span>
-              </div>
-            </ng-container>
-            <ng-template #noData>
-              <div>-</div>
-            </ng-template>
+            <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">
+              {{ act.jobDetails?.[0]?.jobRole }}
+            </span>
+            <ng-template #noRole>-</ng-template>
           </td>
+
         </tr>
         }
         @if ((Active | activeEmployee : searchValue).length === 0) {

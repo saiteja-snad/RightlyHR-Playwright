@@ -14,32 +14,31 @@
     <div class="w-100">
         <!--Input search-->
         <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
                 (ngModelChange)="onSearchTextChange()" aria-label="Search">
         </div>
 
         <div class="custom-table-content">
+            @if(!dataload){
             <table class="w-100">
                 <thead>
-                    <tr>
-                        <th>Review Cycle Name</th>
-                        <th>Department</th>
-                        <th>Team</th>
-                        <th>Location</th>
-                        <th>Sub Location</th>
-                        <th>Rating Scale</th>
-                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') ||
-                        rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
-                        rbac.allowedToAccess('Increment View(Status - Initiated).view') ||
-                        rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
-                        <th>Action<span class="text-lowercase">(S)</span></th>
-                        }
-                    </tr>
+                    <th>Review Cycle Name</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Rating Scale</th>
+                    @if (rbac.allowedToAccess('Increment Update(Status - Created).view') ||
+                    rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                    rbac.allowedToAccess('Increment View(Status - Initiated).view') ||
+                    rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
+                    <th>Action</th>
+                    }
                 </thead>
                 <tbody>
-                    @if(!dataload){
+        
                     @if(IncementalDetailsget.length>0){
                     @for (item of IncementalDetailsget; track $index) {
                     <tr>
@@ -96,12 +95,12 @@
                         <app-no-data-found></app-no-data-found>
                     </tr>
                     }
-                    }
-                    @else {
-                    <app-data-loader-content />
-                    }
                 </tbody>
             </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
         </div>
 
         @if(IncementalDetailsget.length > 0){

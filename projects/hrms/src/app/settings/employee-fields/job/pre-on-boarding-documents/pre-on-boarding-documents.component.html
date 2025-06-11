@@ -6,7 +6,9 @@
 
     <!-- Table -->
     <div class="custom-main-component-container">
+
         <div class="custom-table-content">
+            @if(!loader){
             <table class="w-100">
                 <thead>
                     <tr>
@@ -14,7 +16,7 @@
                         <th>Applicable To Experienced/Fresher/Trainee</th>
                         <th>Is Mandatory</th>
                         <th>Is Identity</th>
-                        <th class="text-center">Action<span class="text-lowercase">(S)</span></th>
+                        <th class="text-center"  *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,10 +41,10 @@
                             <!-- isIdentityDocument logic -->
                             <td>{{ preonboarding.isIdentityDocument ? 'Yes' : 'No' }}</td>
                             <!-- Action(S) dropdown -->
-                            <td class="text-center">
+                            <td class="text-center"  *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">
                                 <div class="dropdown">
                                     <span type="button" data-bs-toggle="dropdown"
-                                        *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update') || rbac.allowedToAccess('Pre Onboard Documents.delete')">
+                                       >
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
@@ -65,6 +67,11 @@
                     </ng-container>
                 </tbody>
             </table>
+
+            }
+            @else {
+         <app-data-loader-content />
+            }
         </div>
     </div>
 </div>
@@ -95,7 +102,8 @@
                         formValidations.blockNonAlphabets($event)" />
                     <!-- <div class="textarea-count-text">{{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100 -->
                     <!-- </div> -->
-                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid" class="error-msg">
+                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid"
+                        class="error-msg">
                         <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['required']">
                             {{ 'Document Name is required' | translate }}
                         </div>
@@ -178,12 +186,14 @@
                         placeholder="Please enter document name " maxlength="101"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <!-- <div>{{updateForm.get('UpdatePreOnboardDocuments')?.value?.length || 0}}/100</div> -->
-                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.touched && updateForm.get('UpdatePreOnboardDocuments')?.invalid" class="error-msg">
+                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.touched && updateForm.get('UpdatePreOnboardDocuments')?.invalid"
+                        class="error-msg">
                         <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['required']">
                             {{ 'Document Name is required' | translate }}
                         </div>
                     </div>
-                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['maxCharacters']" class="error-msg">
+                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['maxCharacters']"
+                        class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                     <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['pattern']" class="error-msg">
@@ -192,7 +202,8 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' | translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' |
+                        translate}}</button>
                     <button type="button" class="custom-btn btn-primary" (click)="updatePreOnboarding(modal)"
                         [disabled]="updateForm.invalid">{{'Update' | translate}}
                     </button>

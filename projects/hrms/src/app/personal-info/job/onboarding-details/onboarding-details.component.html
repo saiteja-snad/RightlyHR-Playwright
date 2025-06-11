@@ -1,4 +1,5 @@
 <div class="custom-main-component-container">
+    @if(!loading){
     <div class="card custom-background-card p-4 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
@@ -9,7 +10,7 @@
            
                @if(canAccess('update','onboarding')){
                 <div >
-                <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+                <a (click)="showButtons()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
             </div>
             }
           
@@ -196,7 +197,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="name"
+                        <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="value"
                             optionValue="value" placeholder="Select Work Location" class="form-select custom-select">
                         </p-select>
                     </div>
@@ -225,6 +226,24 @@
             </div>
         </form>
     </div>
+}
+  @else {
+  <div class="card custom-background-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <p-skeleton width="10rem" height="2rem"></p-skeleton>
+      
+    </div>
+    <form>
+      <div class="row">
+        <div class="col-md-6 col-lg-4 mb-3" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13]">
+          <p-skeleton width="7rem" height="1rem"styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="100%" height="2rem"></p-skeleton>
+        </div>
+      </div>
+    </form>
+  </div>
+  }
+
 
     <div class="card custom-background-card p-4" *ngIf="empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active'">
         <div class="d-flex justify-content-between align-items-center mb-3">

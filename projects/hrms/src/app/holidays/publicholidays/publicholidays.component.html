@@ -6,9 +6,22 @@
   <div class="holidays-container">
     <ng-container *ngIf="loading; else maincontent">
       <ng-template #loadingSpinner>
-        <div class="loader-placeholder-content text-center">
-          <div>
-            <app-data-loader-content />
+        <div class="holidays-content">
+          <div *ngFor="let skel of [1,2,3,4]" class="holiday-card mb-3">
+            <div class="d-flex gap-3 mb-2">
+              <div class="calender-icon">
+                <p-skeleton width="36px" height="36px" shape="circle"></p-skeleton>
+              </div>
+              <div class="pt-3 flex-grow-1">
+                <p-skeleton width="120px" height="20px" class="mb-2"></p-skeleton>
+              </div>
+            </div>
+            <!-- <div class="date pt-1">
+              <p-skeleton width="140px" height="16px"></p-skeleton>
+            </div>
+            <div class="corner-pattern">
+              <p-skeleton width="80px" height="32px"></p-skeleton>
+            </div> -->
           </div>
         </div>
       </ng-template>
@@ -23,7 +36,7 @@
               <div class="d-flex gap-3 mb-2">
                 <div class="calender-icon">
                   <svg width="36" height="36" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20.8531" cy="20.8487" r="20.3726"  [attr.fill]="'url(#paint0_linear_' + i + ')'" />
+                    <circle cx="20.8531" cy="20.8487" r="20.3726" [attr.fill]="'url(#paint0_linear_' + i + ')'" />
                     <path d="M26.5375 12.6367V14.3739M16.1143 12.6367V14.3739" stroke="white" stroke-width="1.95449"
                       stroke-linecap="round" stroke-linejoin="round" />
                     <path
@@ -37,9 +50,9 @@
                     <path d="M13.5098 17.8477H29.1446" stroke="white" stroke-width="1.95449" stroke-linecap="round"
                       stroke-linejoin="round" />
                     <defs>
-                      <linearGradient [attr.id]="'paint0_linear_' + i" x1="41.2257" y1="21.3225" x2="-49.2666" y2="21.3225"
-                        gradientUnits="userSpaceOnUse">
-                        <stop [attr.stop-color]="holidayColors[i % holidayColors.length]"/>
+                      <linearGradient [attr.id]="'paint0_linear_' + i" x1="41.2257" y1="21.3225" x2="-49.2666"
+                        y2="21.3225" gradientUnits="userSpaceOnUse">
+                        <stop [attr.stop-color]="holidayColors[i % holidayColors.length]" />
                         <stop offset="1" stop-color="white" />
                       </linearGradient>
                     </defs>
@@ -49,7 +62,7 @@
                   <p class="holiday-name m-0 mt-1">{{ item.holidayName }}</p>
                 </div>
               </div>
-      
+
               <div class="date pt-1">
                 <p>{{ item.holidayDate | date : "EEEE, dd MMMM" }}</p>
               </div>
@@ -72,7 +85,7 @@
       </ng-container>
 
       <ng-template #noDataTemplate>
-        <div class="no-data-wrapper">
+        <div>
           <app-no-data-found></app-no-data-found>
         </div>
       </ng-template>

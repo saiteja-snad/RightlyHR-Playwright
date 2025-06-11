@@ -44,7 +44,7 @@
               @if(item.entity?.spRecallReason){
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{item.entity?.spRecallReason}}</p>
@@ -58,7 +58,7 @@
               <div>
                 <a type="button"
                   (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                  <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                  <app-info-icon />
                 </a>
               </div>
               }
@@ -156,7 +156,7 @@
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                   <a type="button" [ngbPopover]="reason">
-                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                    <app-info-icon />
                   </a>
                   <ng-template #reason>
                     <p class="mb-0">{{comment?.comments}} </p>
@@ -201,14 +201,14 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to approve Recall request?' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="AcceptReason" maxlength="250"
-          placeholder="Please enter comments" rows="3"></textarea>
+          placeholder="Please enter comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
@@ -228,7 +228,7 @@
           (!isLoading) { {{ 'Approve' | translate }} } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Submitting'|translate}}</div>
+            <div>{{'Loading...'|translate}}</div>
           </div>
           }
         </button>
@@ -242,7 +242,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to reject this request?</p>
+      <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
     </div>
 
     <form autocomplete="off" [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
@@ -250,7 +250,7 @@
         <label for="comments" class="form-label custom-label mb-2">Comments
           <span class="text-danger">*</span></label>
         <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter comments"
-          formControlName="notes" rows="3" maxlength="250"></textarea>
+          formControlName="notes" rows="3" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
         <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
@@ -275,7 +275,7 @@
           } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Submitting'|translate}}</div>
+            <div>{{'Loading...'|translate}}</div>
           </div>
           }
         </button>
@@ -289,7 +289,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to process this request?</p>
+      <p class="confirmation-text">{{'Are you sure you want to process this request?' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
       <div class="custom-main-popup-content">
@@ -323,7 +323,7 @@
           } @else {
           <div class="button-loader-content">
             <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-            <div>{{'Submitting'|translate}}</div>
+            <div>{{'Loading...'|translate}}</div>
           </div>
           }
         </button>

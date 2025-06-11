@@ -8,10 +8,11 @@ import { AttendanceRequest, ApprovalStatusCount } from '../../../../Interfaces/t
 import { HttpService } from '../../../../services/http.service';
 import { SignalsService } from '../../../../services/signals.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SidetabsloadersComponent } from "../../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-wfh-request-tabs',
-  imports: [CommonModule,RouterModule,TabsModule],
+  imports: [CommonModule, RouterModule, TabsModule, SidetabsloadersComponent],
   templateUrl: './wfh-request-tabs.component.html',
   styleUrl: './wfh-request-tabs.component.scss'
 })
@@ -19,6 +20,7 @@ import { RbacService } from '../../../../services/rbac.service';
 export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   empinfo = {} as IJob;
   roleWfh: AttendanceRequest[] = [];
+  loading=false
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   // navTabs = computed(() => {
@@ -73,6 +75,7 @@ navTabs = computed(() => {
   }
 
   getAllWFHPendingApprovalsCount() {
+    this.loading=true
     const employeeId = parseInt(this.empinfo.employeeId);
     const moduleId = 2;
     
@@ -87,8 +90,12 @@ navTabs = computed(() => {
             { moduleId: 2, moduleName: 'WFH', forYou: 0, forYourRole: 0, totalCount: 0 },
           ]);
         }
+        this.loading=false
       },
-      error: (err) => console.error('Error fetching approvals:', err),
+      error: (err) =>{
+         console.error('Error fetching approvals:', err)
+         this.loading=false
+      },
     });
   }
   

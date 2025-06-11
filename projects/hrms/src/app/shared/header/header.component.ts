@@ -34,7 +34,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authService: AuthService, private modalservie: NgbModal, private conformationPopup: OpenModalService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
-
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId()
     this.getJobDetails()
@@ -199,7 +198,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openlogoutModal() {
-    this.modalservie.open(this.logoutpopup, { centered: true,backdrop:'static' });
+    this.modalservie.open(this.logoutpopup, { centered: true , backdrop: 'static', keyboard: false });
   }
 
   isActiveRoute(link: string): boolean {

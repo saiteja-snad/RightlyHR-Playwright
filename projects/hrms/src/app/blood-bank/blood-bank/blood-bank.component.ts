@@ -8,9 +8,10 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Skeleton } from 'primeng/skeleton';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-blood-bank',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent],
   templateUrl: './blood-bank.component.html',
   styleUrl: './blood-bank.component.scss',
   encapsulation: ViewEncapsulation.None,

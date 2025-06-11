@@ -252,15 +252,14 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early
-        Relieving'}} Request?</p>
+      <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
-            placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
+          <textarea class="form-control custom-input" id="recallreason" maxlength="250" 
+            placeholder="Please enter recall reason" (keydown)="formValidations.restrictInitialSpace($event)"  name="recallReason" formControlName="recallReason"></textarea>
           <div class="textarea-count-text">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
           <div class="error-msg"
             *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
@@ -315,8 +314,8 @@
         </div>
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason for Early Relieving<span class="error-msg">*</span></label>
-          <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" rows="3"
-            placeholder="Please provide early relieving reason...." name="Reason"
+          <textarea class="form-control custom-input" maxlength="250"  rows="3"
+            placeholder="Please provide early relieving reason...." (keydown)="formValidations.restrictInitialSpace($event)" name="Reason"
             formControlName="earlyReleivingReason"></textarea>
           <div class="textarea-count-text">{{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }}/250
           </div>

@@ -10,12 +10,13 @@
     </div>
 
     <div class="custom-component-right-content">
-        <div class="cards-container">
+        <div class="cards-container-shimmer">
             @if (shimmer) {
-            <div *ngFor="let skel of [1,2,3,4]" class="blood-bank-card mb-3">
+            <!-- Loading Shimmer Skeletons -->
+            <div *ngFor="let skel of [1,2,3,4,5,6,7,8,9,10]" class="blood-bank-card-shimerr mb-3">
                 <div class="d-flex align-items-center gap-2">
                     <div class="blood-group">
-                        <p-skeleton  class="name-text m-0"></p-skeleton>
+                        <p-skeleton class="name-text m-0"></p-skeleton>
                     </div>
                     <div class="flex-grow-1">
                         <div class="mb-1">
@@ -29,29 +30,31 @@
             </div>
             }
             @else {
+            @if (filteredBloodDetails().length > 0) {
+            <!-- Data Cards -->
             <div class="blood-bank-card" *ngFor="let item of filteredBloodDetails()">
                 <ng-container *ngIf="item.bloodGroup">
                     <div class="d-flex align-items-center gap-2">
                         <div class="blood-group" [ngStyle]="{
-                    'background-color': 
-                        item.bloodGroup === 'A+' ? 'rgba(184, 58, 52, 0.2)' :
-                        item.bloodGroup === 'A-' ? 'rgba(242, 100, 25, 0.2)' :
-                        item.bloodGroup === 'B+' ? 'rgba(74, 153, 74, 0.2)' :
-                        item.bloodGroup === 'B-' ? 'rgba(112, 209, 112, 0.2)' :
-                        item.bloodGroup === 'AB+' ? 'rgba(51, 107, 153, 0.2)' :
-                        item.bloodGroup === 'AB-' ? 'rgba(93, 154, 217, 0.2)' :
-                        item.bloodGroup === 'O+' ? 'rgba(196, 128, 58, 0.2)' :
-                        item.bloodGroup === 'O-' ? 'rgba(247, 185, 107, 0.2)' : '',
-                    'color':
-                        item.bloodGroup === 'A+' ? '#b83a34' :
-                        item.bloodGroup === 'A-' ? '#f26419' :
-                        item.bloodGroup === 'B+' ? '#4a994a' :
-                        item.bloodGroup === 'B-' ? '#70d170' :
-                        item.bloodGroup === 'AB+' ? '#336b99' :
-                        item.bloodGroup === 'AB-' ? '#5d9ada' :
-                        item.bloodGroup === 'O+' ? '#c4803a' :
-                        item.bloodGroup === 'O-' ? '#db861e' : ''
-                }">
+                'background-color': 
+                  item.bloodGroup === 'A+' ? 'rgba(184, 58, 52, 0.2)' :
+                  item.bloodGroup === 'A-' ? 'rgba(242, 100, 25, 0.2)' :
+                  item.bloodGroup === 'B+' ? 'rgba(74, 153, 74, 0.2)' :
+                  item.bloodGroup === 'B-' ? 'rgba(112, 209, 112, 0.2)' :
+                  item.bloodGroup === 'AB+' ? 'rgba(51, 107, 153, 0.2)' :
+                  item.bloodGroup === 'AB-' ? 'rgba(93, 154, 217, 0.2)' :
+                  item.bloodGroup === 'O+' ? 'rgba(196, 128, 58, 0.2)' :
+                  item.bloodGroup === 'O-' ? 'rgba(247, 185, 107, 0.2)' : '',
+                'color':
+                  item.bloodGroup === 'A+' ? '#b83a34' :
+                  item.bloodGroup === 'A-' ? '#f26419' :
+                  item.bloodGroup === 'B+' ? '#4a994a' :
+                  item.bloodGroup === 'B-' ? '#70d170' :
+                  item.bloodGroup === 'AB+' ? '#336b99' :
+                  item.bloodGroup === 'AB-' ? '#5d9ada' :
+                  item.bloodGroup === 'O+' ? '#c4803a' :
+                  item.bloodGroup === 'O-' ? '#db861e' : ''
+              }">
                             <p class="name-text m-0">{{ item.bloodGroup }}</p>
                         </div>
                         <div>
@@ -66,6 +69,12 @@
                 </ng-container>
             </div>
             }
+            @else {
+            <!-- No Data Found -->
+            <app-no-data-found />
+            }
+            }
         </div>
+
     </div>
 </div>

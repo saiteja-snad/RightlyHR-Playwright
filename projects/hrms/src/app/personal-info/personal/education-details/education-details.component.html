@@ -194,7 +194,7 @@
 
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary px-4"
-            (click)="educationForm.reset();modal.dismiss()">Close</button>
+            (click)="educationForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || spinnerLoader">
 
             @if (spinnerLoader) {
@@ -318,7 +318,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary "
-            (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
+            (click)="educationupdateForm.reset();modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary "
             [disabled]="educationupdateForm.invalid && !displalyeducationattachment && educationupdateForm.get('attachmentupdate')?.invalid || spinnerLoader">
 

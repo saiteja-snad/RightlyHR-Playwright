@@ -40,7 +40,7 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
   compOff = [] as any;
   approvalCompOffRequestsCount = 0;
   empinfo = {} as IJob;
-  selectemp = {} as IJob;
+  selectemp: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
   options = [
@@ -55,14 +55,12 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
       if (id) {
-        // Use the new employee ID here
         this.selectemp = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
         this.getCompOffRequest();
+      }else{
+         this.getCompOffRequest();
       }
     });
-
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
   }
@@ -77,10 +75,10 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    let empId = this.empinfo.employeeId || this.selectemp;
+    // let empId = this.empinfo.employeeId || this.selectemp;
+   let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http
-      .getData(`Timeoff/getCompoffRequests/${empId}`)
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
@@ -88,13 +86,13 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
           this.approvalCompOffRequests = this.compOff.filter(
             (element: { status: string }) => element.status === 'Approved'
           );
-          this.approvalCompOffRequestsCount =
-            this.approvalCompOffRequests.length;
+          this.approvalCompOffRequestsCount = this.approvalCompOffRequests.length;
         },
         error: (error) => {
           this.dataload = false;
-          console.error('Error fetching data:', error);
+          this.approvalCompOffRequestsCount= 0;
           this.approvalCompOffRequests = [];
+          console.error('Error fetching data:', error);
         },
         complete: () => {
           this.dataload = false;

@@ -1,0 +1,16 @@
+<div class="custom-sub-tabs-container">
+    <ul class="nav flex-column">
+
+        <li class="nav-item " *ngFor="let skel of [1,2,3,4,5,6]">
+            <div class="nav-link ">
+                <p-skeleton width="2rem" height="2rem" shape="circle" styleClass="me-1 mb-1"></p-skeleton>
+                <div class="flex-grow-1">
+                    <p-skeleton width="4rem" height="0.5rem" styleClass="mb-1"></p-skeleton>
+                    <p-skeleton width="4rem" height="0.5rem" ></p-skeleton>
+                </div>
+            </div>
+            <div class="tabs-border-bottom"></div>
+        </li>
+
+    </ul>
+</div>

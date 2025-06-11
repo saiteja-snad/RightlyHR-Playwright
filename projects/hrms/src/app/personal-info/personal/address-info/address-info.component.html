@@ -7,7 +7,7 @@
       </div>
         @if(canAccess('update','address')){
       @if(!buttons && (employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-      && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+      && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
       
       <div>
         <a (click)="enableForm()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>

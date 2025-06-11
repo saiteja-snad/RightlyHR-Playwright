@@ -756,7 +756,7 @@ a {
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
     font-weight: 400;
-    font-size: var(--fontsize14);
+    font-size: var(--fontsize12);
     vertical-align: middle;
     color: #222222;
     background-color: var(--input-bg-color);
@@ -768,6 +768,7 @@ a {
 
 .custom-input::placeholder {
     color: #A1A1A1;
+    font-weight: 200;
 }
 
 input:focus,
@@ -790,7 +791,7 @@ select:focus {
     .custom-input-group-search {
         border: none;
         padding: 0.4rem 1rem;
-        font-size: var(--fontsize14);
+        font-size: var(--fontsize12);
         background-color: var(--white-color) !important;
     }
 
@@ -798,7 +799,7 @@ select:focus {
         border: none;
         padding: 0.4rem 0.4rem 0.4rem 0rem;
         font-weight: 400;
-        font-size: var(--fontsize14);
+        font-size: var(--fontsize12);
         vertical-align: middle;
     }
 
@@ -810,7 +811,7 @@ select:focus {
 
 .custom-select {
     font-weight: 400;
-    font-size: var(--fontsize14);
+    font-size: var(--fontsize12);
     vertical-align: middle;
     color: #222222;
 }
@@ -856,8 +857,8 @@ select:focus {
 
     .p-inputtext:focus {
         border: 1px solid var(--input-border-color) !important;
-        font-weight: 400;
-        font-size: var(--fontsize14);
+        font-weight: 200;
+        font-size: var(--fontsize12);
         vertical-align: middle;
         color: #222222;
     }
@@ -900,8 +901,8 @@ select:focus {
 
     .p-inputtext:focus {
         border: 1px solid var(--input-border-color) !important;
-        font-weight: 400;
-        font-size: var(--fontsize14);
+        font-weight: 200;
+        font-size: var(--fontsize12);
         vertical-align: middle;
         color: #222222;
     }
@@ -1125,7 +1126,7 @@ select:focus {
     gap: 1rem;
 
     .letter-fields-content {
-        width: 24rem;
+        width: 20rem;
         height: calc(100dvh - 8.25rem);
         overflow-x: hidden;
         overflow-y: auto;
@@ -1502,7 +1503,6 @@ input[type="file"] {
         }
     }
 }
-
 //pagenation stylings
 
 // custom phone number input with country code stylings
@@ -1511,16 +1511,16 @@ input[type="file"] {
     border-radius: 0.5rem;
 
     .custom-input {
-        font-size: 15px !important;
+        font-size: 13px !important;
         padding: 0.25rem 0.5rem 0.25rem 0.25rem;
         border: none !important;
+        border-top-left-radius: 0rem !important;
+        border-bottom-left-radius: 0rem !important;
     }
 
     .ipv_selected-item {
         font-weight: 400;
-        font-size: 14px;
-        line-height: 100%;
-        letter-spacing: 0%;
+        font-size: 12px;
         vertical-align: middle;
         border-radius: 0.25rem;
         border: none !important;
@@ -1557,7 +1557,6 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
-
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE

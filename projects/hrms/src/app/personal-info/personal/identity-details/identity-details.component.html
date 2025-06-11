@@ -106,7 +106,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityNumber" 
+                        <input type="text" formControlName="identityNumber"   (input)="toUppercase('identityNumber')"
                           class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number" (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
@@ -193,7 +193,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityupdateNumber" 
+                        <input type="text" formControlName="identityupdateNumber" (input)="toUppercaseforupdate('identityupdateNumber')"
                           class="form-control custom-input" id="identityNumber"
                             placeholder="Please enter Identity Number"  (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"

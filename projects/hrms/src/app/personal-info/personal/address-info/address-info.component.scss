@@ -13,3 +13,8 @@ input:focus,select:focus,.form-check-input {
     letter-spacing: -0%;
     color: rgba(6, 39, 79, 1);
 }
+
+input[type="text"] {
+    text-transform: capitalize;
+}
+ 

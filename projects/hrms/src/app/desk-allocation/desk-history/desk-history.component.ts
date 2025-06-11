@@ -53,7 +53,7 @@ export class DeskHistoryComponent {
   }
 
   navigateassets() {
-    this.router.navigate(['/desk/management/all-desks']);
+    this.router.navigate(['/desk/management/available-desks']);
   }
 
   ngOnDestroy(): void {

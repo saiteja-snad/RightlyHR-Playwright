@@ -9,7 +9,7 @@
       </div>
       @if(!buttons && canAccess('update','emergency')){
       @if((employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-      employedata?.empstatus?.toLowerCase() !== 'trainee inactive' && employedata?.substatus?.toLowerCase() === 'offerletter accepted')){
+      employedata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
       <div >
         <a (click)="enableForm()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
       </div>

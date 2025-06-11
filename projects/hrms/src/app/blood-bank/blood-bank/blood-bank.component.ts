@@ -1,17 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Skeleton } from 'primeng/skeleton';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 @Component({
   selector: 'app-blood-bank',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './blood-bank.component.html',
   styleUrl: './blood-bank.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -34,12 +37,30 @@ export class BloodBankComponent implements OnInit {
     { group: 'O+', count: 0, bgColor: 'rgba(196, 128, 58, 0.1)', textColor: '#C4803A' },
     { group: 'O-', count: 0, bgColor: 'rgba(255, 147, 11, 0.1)', textColor: '#FF930B' }
   ];
+  moduleinfo: any;
 
   constructor(public router: Router,
     private http: HttpService, public formValidation: FormValidationService,) { }
 
   ngOnInit(): void {
     this.getBloodbank();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter((event: any) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/blood-bank': MODULE_INFOS.Bloodbank_MODULE_INFO
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getBloodbank() {

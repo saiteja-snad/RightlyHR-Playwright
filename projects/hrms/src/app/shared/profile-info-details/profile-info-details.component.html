@@ -42,7 +42,7 @@
                 <i class="bi bi-telephone me-2"></i>
                 <span class="link-text">
                     <span *ngIf="empdata?.workPhone">
-                        <u>{{ empdata?.workPhoneCountryCode + ' ' + empdata?.workPhone }}</u>
+                        <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u>
                     </span>
                     <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
                         <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>

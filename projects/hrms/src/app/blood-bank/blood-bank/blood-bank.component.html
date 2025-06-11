@@ -30,9 +30,11 @@
 
     <!--Search Content-->
     <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchTerm" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+            class="form-control custom-search-input" placeholder="Search here">
     </div>
 
     <div class="custom-component-right-content">

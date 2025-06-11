@@ -270,9 +270,6 @@ export class OnboardingDetailsComponent {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
         const empStatus = this.employeestatus?.toLowerCase();
-        
-        console.log('empStatus:', empStatus);
-      
         const statusMapping: { [key: string]: string[] } = {
           prospective: ['active', 'prospective'],
           active: ['active'],
@@ -282,12 +279,7 @@ export class OnboardingDetailsComponent {
           'trainee active': ['trainee active'],
           'trainee inactive': ['trainee inactive']
         };
-      
         const allowedStatuses = (statusMapping[empStatus] || []).map(s => s.toLowerCase());
-        console.log('Allowed Statuses:', allowedStatuses);
-      
-        console.log('Raw data from API:', data);
-      
         const filteredData = data?.filter((status: any) =>
           allowedStatuses.includes(status?.statusname?.toLowerCase()) // change property if needed
         );
@@ -297,10 +289,8 @@ export class OnboardingDetailsComponent {
         const matchedStatus = filteredData.find((s: any) =>
           s.statusname.toLowerCase() === empStatus
         );
-  
         if (matchedStatus) {
           this.onboardingForm.patchValue({ status: matchedStatus }); // Use correct form name
-          console.log('Form patched with status:', matchedStatus);
         }
       },
       

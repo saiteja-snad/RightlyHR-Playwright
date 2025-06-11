@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="component-header">Blood Bank</div>
+            <div class="component-header">Blood Bank ({{selectedBloodGroup}})</div>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
                     class="module-icon">
@@ -19,22 +19,23 @@
         <div class="cards-grid-container">
             @for (item of bloodGroups; track $index) {
             <div class="employees-category-card" (click)="filterByBloodGroup(item.group)"
-                [class.active]="selectedBloodGroup === item.group">
-                <div class="accent-bar" [style.background-color]="item.textColor"></div>
-                <div class="w-100 text-center py-1 text-content">
-                    <p class="label-name mb-2"> {{ item.group }}</p>
-                    <p class="count-text m-0">{{ item.count }}</p>
-                </div>
+                [class.bloodGroupTab]="selectedBloodGroup === item.group">
+                <div class="blood-group" [ngStyle]="{'background-color': item.bgColor, 'color': item.textColor}">{{
+                    item.group }}</div>
+                <div class="count-text">{{ item.count }}</div>
             </div>
             }
         </div>
     </div>
 
-    <!-- <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchTerm" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
-    </div> -->
+    <!--Search Content-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+            class="form-control custom-search-input" placeholder="Search here">
+    </div>
 
     <div class="custom-component-right-content">
         <div class="cards-container">

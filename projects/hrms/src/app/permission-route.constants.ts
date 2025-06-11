@@ -430,12 +430,10 @@ export const EMPLOYEE_INFO_JOB_ROUTES = [
   { permission: 'Employee Info Compensation Details.view', route: '/personalinfo/job/compensation-details' },
   { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
   { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' },
-
   { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/job/team-members' },
-  { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/tranee-onboarding-requests' }
+  { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/tranee-onboarding-requests' },
+  { permission: 'Employee Info Documents Verification.view', route: '/personalinfo/job/onboarding-verification' }
 ];
-
-
 
 export const INVITE_NEW_USER_TABS = [
   { route: '/admin/active-new-user', permission: 'Dashboard Active Invite New User.view' },

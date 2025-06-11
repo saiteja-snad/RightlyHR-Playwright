@@ -16,14 +16,14 @@
 
     .welcome-text {
         font-weight: 600;
-        font-size: 36px;
+        font-size: var(--fontsize24);
         line-height: 100%;
         letter-spacing: 4%;
         text-align: center;
     }
 
     .administator-image {
-        width: 20rem;
+        width: 24rem;
         height: auto;
     }
 
@@ -34,8 +34,8 @@
         bottom: 2rem;
 
         .powered-by-image {
-            width: 12rem;
-            height: 3rem;
+            width: 10rem;
+            height: 2.25rem;
         }
     }
 }

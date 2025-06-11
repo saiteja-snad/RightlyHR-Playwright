@@ -55,23 +55,21 @@
                                 @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
                                 @if(offerLetter.status=='Approved'){
                                 <li (click)="releaseOfferletter(offerLetter)">
-                                    <a class="dropdown-item">{{'Release Offer' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
                                 @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' && offerLetter?.status !== 'Released') {
                                 <li (click)="updateOfferDetails(offerLetter)">
-                                    <a class="dropdown-item">
-                                        {{'Approve' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
                                 @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' && offerLetter.status!='Released')){
                                 <li (click)="SelectData(offerLetter);openModal(rejectpopup)">
-                                    <a class="dropdown-item">
-                                        {{'Reject' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                 </li>
                                 }
                                 }

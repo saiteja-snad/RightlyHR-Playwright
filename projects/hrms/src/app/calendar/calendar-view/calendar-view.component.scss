@@ -37,6 +37,11 @@
     font-size: var(--fontsize12) !important;
     line-height: 100%;
     letter-spacing: 0%;
+
+    img {
+      width: 1rem !important;
+      height: 1rem !important;
+    }
   }
 
   .custom-event-icon {
@@ -55,4 +60,9 @@
       color: var(--primary-color) !important;
     }
   }
+}
+
+.custom-event-icon {
+  width: 1rem;
+  height: 1rem;
 }

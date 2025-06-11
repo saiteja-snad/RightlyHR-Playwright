@@ -6,6 +6,6 @@ input:focus{
 }
 
 .file-name{
-    font-size: 14px;
-    font-weight: 500;
+    line-break: anywhere;
+    font-size: var(--fontsize12);
 }

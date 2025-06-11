@@ -1,4 +1,5 @@
-<div class="custom-sub-tabs-container">
+@if(!loading){
+  <div class="custom-sub-tabs-container">
   <ul class="nav flex-column">
     <li class="nav-item" *ngFor="let tab of navLinks">
       <div class="nav-link" (click)="navigateToAccessedRoute(tab.route)"
@@ -15,3 +16,7 @@
     </li>
   </ul>
 </div>
+}
+@else {
+<app-sidetabsloaders/>
+}

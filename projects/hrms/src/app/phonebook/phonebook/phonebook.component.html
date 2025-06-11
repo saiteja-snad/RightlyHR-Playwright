@@ -10,38 +10,42 @@
   </div>
 
   <div class="custom-component-right-content">
-    <div>
-      @if (loaders) {
-      <div  class="phone-book-content">
-        <div *ngFor="let skel of [1,2,3,4,5,6,7,8]" class="phone-book-card " >
-          <div class="profile-content">
-            <div>
-              <p-skeleton width="48px" height="48px" shape="circle" class="profile-icon"></p-skeleton>
-            </div>
-            <div>
-              <p-skeleton width="120px" height="18px" class="mb-2"></p-skeleton>
-           
-            </div>
+   <div>
+  @if (loaders) {
+    <!-- Loading Skeletons -->
+    <div class="phone-book-content">
+      <div *ngFor="let skel of [1,2,3,4,5,6,7,8,9,10,11,12]" class="phone-book-card">
+        <div class="profile-content">
+          <div>
+            <p-skeleton width="48px" height="48px" shape="circle" class="profile-icon"></p-skeleton>
           </div>
-          <div class="data-content">
-            <p-skeleton  width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
-            <p-skeleton width="15rem"  height="0.75rem" styleClass="mb-2"></p-skeleton>
-            <p-skeleton width="15rem"  height="0.75rem"  styleClass="mb-2"></p-skeleton>
-            <p-skeleton width="15rem"  height="0.75rem" styleClass="mb-2"></p-skeleton>
+          <div>
+            <p-skeleton width="120px" height="18px" class="mb-2"></p-skeleton>
           </div>
         </div>
+        <div class="data-content">
+          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+        </div>
       </div>
-      }
-      @else {
-      <div *ngIf="filteredPhoneDetails().length" class="phone-book-content">
+    </div>
+  }
+  @else {
+    @if (filteredPhoneDetails().length > 0) {
+      <!-- Data Available -->
+      <div class="phone-book-content">
         <div class="phone-book-card" *ngFor="let emp of filteredPhoneDetails()">
           <div class="profile-content">
             <div>
-              <img [src]="emp.profileUrl" alt="profile" class="profile-icon">
+              <img [src]="emp.profileUrl" alt="profile" class="profile-icon" />
             </div>
             <div>
-              <p class="name text-truncate m-0">{{ emp.fullName }}<span class="employe-number ms-1">
-                  ({{ emp.employeeId }})</span></p>
+              <p class="name text-truncate m-0">
+                {{ emp.fullName }}
+                <span class="employe-number ms-1">({{ emp.employeeId }})</span>
+              </p>
             </div>
           </div>
           <div class="data-content">
@@ -58,16 +62,26 @@
             <p class="label-text text-truncate mb-2">
               <i class="bi bi-telephone me-2"></i>
               <span class="label-text">Work:</span>
-              <span class="link-text ms-1"><u>{{emp.workPhoneCountryCode}}{{ emp.workPhone }}</u></span>
+              <span class="link-text ms-1">
+                <u>{{ emp.workPhoneCountryCode }}{{ emp.workPhone }}</u>
+              </span>
             </p>
             <p class="label-text text-truncate mb-2">
               <i class="bi bi-telephone me-2"></i>
               <span class="label-text">Personal:</span>
-              <span class="link-text ms-1"><u>{{emp.mobilePhoneCountryCode}}{{ emp.contactNumber }}</u></span>
+              <span class="link-text ms-1">
+                <u>{{ emp.mobilePhoneCountryCode }}{{ emp.contactNumber }}</u>
+              </span>
             </p>
           </div>
         </div>
       </div>
-      }
-    </div>
+    }
+    @else {
+      <!-- No Data Found -->
+      <app-no-data-found />
+    }
+  }
+</div>
+
   </div>

@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     webSocketUrl: 'ws://https://fusionplusqaapi.onpremise.snadhr.com',
-    ApiUrl: 'https://localhost:44374/api/',
+    ApiUrl: 'https://snadqaapi.onpremise.snadhr.com/api/',
    
     viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
     modules: [
@@ -46,5 +46,7 @@ export const environment = {
     deskAllocationModuleId:23,
     expensesModuleId:19,  
     remoteLoginModuleId:11,
-    globalPermissionsModuleID:21
+    globalPermissionsModuleID:21,
+  oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
+
 };

@@ -8,10 +8,8 @@
 
   <ng-container *ngIf="loading; else maincontent">
     <ng-template #loadingSpinner>
-      <div class="loader-placeholder-content text-center">
-        <div>
-          <app-data-loader-content />
-        </div>
+      <div>
+        <app-data-loader-content />
       </div>
     </ng-template>
     <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
@@ -33,7 +31,7 @@
             rbac.allowedToAccess('All Transfer Asset.view') || rbac.allowedToAccess('All Reallocate Asset.view') ||
              rbac.allowedToAccess('All Release Asset.view')  || rbac.allowedToAccess('All Mark as Available Asset.view') || 
             rbac.allowedToAccess('All Mark as Active Asset.view') || rbac.allowedToAccess('All View Asset Details.view') || rbac.allowedToAccess('All Update Asset Details.view')){
-            <th class="text-center">Action(s)</th>
+            <th class="text-center">Action</th>
             }
         </thead>
         <tbody>
@@ -293,7 +291,6 @@
             <div *ngIf="assetForm.get('serialnumber')?.hasError('pattern') && assetForm.get('serialnumber')?.touched">
               <div class="error-msg">Serial Number is invalid</div>
             </div>
-
           </div>
 
           <div class="col-md-6 mb-2">
@@ -360,7 +357,6 @@
           </div>
 
           <div class="row">
-
             <div class="col-md-6 mb-3">
               <div class="custom-toggle-btn">
                 <div class="form-check form-switch">
@@ -371,7 +367,6 @@
               </div>
             </div>
           </div>
-
 
           <!-- AMC Start Date -->
           <div class="col-md-6 mb-2">

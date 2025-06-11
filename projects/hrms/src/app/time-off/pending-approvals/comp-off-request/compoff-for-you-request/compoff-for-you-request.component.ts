@@ -28,13 +28,12 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
-import { WfhsearchfilterPipe } from '../../../../Pipes/wfhsearchfilter.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { SignalsService } from '../../../../services/signals.service';
 import { Table, TableModule } from 'primeng/table';
-import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../../environments/environment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-compoff-for-you-request',
@@ -47,10 +46,10 @@ import { FormValidationsService } from '../../../../services/form-validations.se
     DateformatPipe,
     ReactiveFormsModule,
     TranslateModule,
-    WfhsearchfilterPipe,
     DataLoaderContentComponent,
     TableModule,
-  ],
+    InfoIconComponent
+],
   templateUrl: './compoff-for-you-request.component.html',
   styleUrl: './compoff-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -341,9 +340,16 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.requestSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-            this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
+            if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -401,9 +407,16 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+              if (this.selectedLeavesItems.length > 1) {
               this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
             } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
+            }
+            } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
             }
           },
           error: (reason: any) => {
@@ -469,9 +482,16 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
+              if (this.selectedLeavesItems.length > 1) {
               this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
             } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Rejected Successfully');
+            }
+            } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
             }
           },
           error: (reason: any) => {

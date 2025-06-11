@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
@@ -11,7 +11,6 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ISeparation, ISeparationRequest } from './separation-for-you-request';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
@@ -21,6 +20,7 @@ import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalss
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-separation-for-you-request',
@@ -35,10 +35,12 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     NoDataFoundComponent,
     ReactiveFormsModule,
     PendingapprovalsseparationPipe,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    InfoIconComponent
+],
   templateUrl: './separation-for-you-request.component.html',
   styleUrl: './separation-for-you-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class SeparationForYouRequestComponent implements OnInit, OnDestroy {

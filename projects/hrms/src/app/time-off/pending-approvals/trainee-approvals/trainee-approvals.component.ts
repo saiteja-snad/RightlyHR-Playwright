@@ -20,6 +20,7 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { FormValidationsService } from '../../../services/form-validations.service';
 
 @Component({
   selector: 'app-trainee-approvals',
@@ -65,15 +66,8 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
 
-  constructor(
-    private conformationPopup: OpenModalService,
-    private http: HttpService,
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    private authService: AuthService,
-    public rbac: RbacService,
-    private signalService: SignalsService
-  ) {
+  constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
+    private authService: AuthService, public rbac: RbacService,public formsValidation: FormValidationsService,private signalService: SignalsService) {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
   }
@@ -85,8 +79,8 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
-      trcomments: ['', Validators.required, noWhitespaceValidator],
-      rejectedReason: ['', Validators.required, noWhitespaceValidator],
+      trcomments: ['', Validators.required],
+      rejectedReason: ['', Validators.required]
     });
     this.rejectForm.valueChanges.subscribe((val) => {
       this.selectedLeaveData.extenddate = val.extenddate;
@@ -343,10 +337,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.rejectSeparationForm = this.fb.group({
       // extenddate: [this.selectedLeaveData.extenddate, [Validators.required, this.extendDateValidator.bind(this)]],
-      trcomments: [
-        this.selectedLeaveData.trcomments,
-        [Validators.required, Validators.pattern(/^[a-zA-Z0-9 ]+$/)],
-      ],
+      trcomments: [this.selectedLeaveData.trcomments, [Validators.required]]
     });
   }
 

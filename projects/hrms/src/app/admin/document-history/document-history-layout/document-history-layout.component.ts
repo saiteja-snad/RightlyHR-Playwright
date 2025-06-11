@@ -6,10 +6,11 @@ import { DocumentHistoryInternOfferLetterComponent } from "../document-history-i
 import { DocumentHistoryAppointmentLetterComponent } from "../document-history-appointment-letter/document-history-appointment-letter.component";
 import { DocumentHistoryInternAppointmentComponent } from "../document-history-intern-appointment/document-history-intern-appointment.component";
 import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from "../../../shared/sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-document-history-layout',
-  imports: [CommonModule, NgbNavModule, DocumentHistoryOfferLetterComponent, DocumentHistoryInternOfferLetterComponent, DocumentHistoryAppointmentLetterComponent, DocumentHistoryInternAppointmentComponent],
+  imports: [CommonModule, NgbNavModule, DocumentHistoryOfferLetterComponent, DocumentHistoryInternOfferLetterComponent, DocumentHistoryAppointmentLetterComponent, DocumentHistoryInternAppointmentComponent, SidetabsloadersComponent],
   templateUrl: './document-history-layout.component.html',
   styleUrl: './document-history-layout.component.scss',
   encapsulation:ViewEncapsulation.None

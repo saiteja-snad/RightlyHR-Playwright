@@ -13,6 +13,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-regularization-processed',
@@ -26,7 +27,8 @@ import { TranslateModule } from '@ngx-translate/core';
     DateformatPipe,
     DataLoaderContentComponent,
     TranslateModule,
-  ],
+    InfoIconComponent
+],
   templateUrl: './regularization-processed.component.html',
   styleUrl: './regularization-processed.component.scss',
 })

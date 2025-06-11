@@ -282,7 +282,8 @@ export class LeavesComponent {
           console.log(response)
           if (response && response.length) {
             // No filter
-            this.getEmployeeInfo = response.map((employee: any) => ({
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
               ...employee,
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''

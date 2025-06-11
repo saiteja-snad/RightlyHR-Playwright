@@ -19,7 +19,7 @@
                          @if(canAccess('update','family') || canAccess('delete','family') ){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-                              <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+                              <th class="text-center">{{"Action" | translate}}</th>
                         }}
                     </tr>
                 </thead>
@@ -133,7 +133,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary " (click)="modal.dismiss()">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="familyDetailsForm.invalid">Add</button>
                 </div>
             </form>
         </div>
@@ -198,7 +198,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();familyDetailsupdateForm.reset()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();familyDetailsupdateForm.reset()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="familyDetailsupdateForm.invalid">Update</button>
                 </div>
             </form>

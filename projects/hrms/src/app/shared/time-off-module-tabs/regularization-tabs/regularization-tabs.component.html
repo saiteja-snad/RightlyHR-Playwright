@@ -1,3 +1,5 @@
+
+@if(!loading){
 <div class="custom-sub-tabs-container">
   <ul class="nav flex-column gap-2">
     @if(rbac.allowedToAccess('Waiting For Approval (Regularization).view')){
@@ -38,3 +40,7 @@
     }
   </ul>
 </div>
+}
+@else {
+<app-sidetabsloaders/>
+}

@@ -1,10 +1,9 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
+            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){({{empName}})}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
             </div>
         </div>
 
@@ -163,17 +162,14 @@
                     @if(statusCounts$.value.length<=0){ <tr>
                         <app-no-data-found />
                         </tr>
-                        }
-                        }
-                        @else {
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                        }
-                        }
-                        @else {
-                        <app-data-loader-content />
-                        }
+                    }
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                    }
                 </tbody>
             </table>
         </div>
@@ -199,22 +195,22 @@
                             (keydown)="false" placeholder="Select Date" />
                         <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
                             class="error-msg">
-                            Permission Date is required.
+                            Permission Date is required
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12 mb-3">
                         <label for="duration" class="form-label custom-label">Duration<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content w-100">
                             <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
                                 placeholder="Please select duration" class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('duration')?.touched && regularizationForm.get('duration')?.invalid"
-                            class="error-msg">Duration is required.
+                            class="error-msg">Duration is required
                         </div>
                     </div>
 
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12 mb-3">
                         <label for="leaveType" class="form-label custom-label">Regularization Category<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content w-100">
@@ -223,7 +219,7 @@
                                 class="form-select custom-select w-100" />
                         </div>
                         <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
-                            class="error-msg">Regularization Type is required.
+                            class="error-msg">Regularization Type is required
                         </div>
                     </div>
 
@@ -241,10 +237,10 @@
                         <div class="error-msg"
                             *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
-                                Reason is required.
+                                Reason is required
                             </div>
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['maxlength']">
-                                Reason cannot exceed 250 characters.
+                                Reason cannot exceed 250 characters
                             </div>
                         </div>
                     </div>
@@ -281,15 +277,15 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content custom-accordians">
             <p-accordion value="0">
                 @if(punchPairs.length>0){
                 <p-accordion-panel value="0">
                     <p-accordion-header>Biometric Logs</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>In</th>
@@ -303,25 +299,24 @@
                                             <td class="log-time">{{ log.out }}</td>
                                             <td class="duration-time">{{ log.duration }}</td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="popup-table-footer">
+                                Total Duration: <b>{{ logsDuration }}</b>
                             </div>
                         </div>
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-
+        
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
-                    <p-accordion-header>Permission(s)</p-accordion-header>
+                    <p-accordion-header>Permissions</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>Type</th>
@@ -343,14 +338,14 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-
+        
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
-                    <p-accordion-header>Regularization(s)</p-accordion-header>
+                    <p-accordion-header>Regularizations</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>Type</th>
@@ -361,7 +356,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of regularization_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>

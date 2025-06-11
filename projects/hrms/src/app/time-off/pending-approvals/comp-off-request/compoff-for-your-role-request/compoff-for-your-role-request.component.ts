@@ -28,13 +28,12 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
-import { WfhsearchfilterPipe } from '../../../../Pipes/wfhsearchfilter.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { SignalsService } from '../../../../services/signals.service';
-import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 import { Table, TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-compoff-for-your-role-request',
   imports: [
@@ -46,10 +45,10 @@ import { FormValidationsService } from '../../../../services/form-validations.se
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
-    WfhsearchfilterPipe,
     DataLoaderContentComponent,
     TableModule,
-  ],
+    InfoIconComponent
+],
   templateUrl: './compoff-for-your-role-request.component.html',
   styleUrl: './compoff-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -342,9 +341,16 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');;
+            if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
           this.selectedLeavesItems = [];
           this.multiSelect = false;
@@ -406,9 +412,16 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
+              if (this.selectedLeavesItems.length > 1) {
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
+              } else {
+                this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
+              }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.approveForm.reset();
@@ -474,9 +487,16 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
+               if (this.selectedLeavesItems.length > 1) {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Rejected Successfully');
+            } else {
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Rejected Successfully');
+            }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
             this.selectedLeavesItems = [];
             this.multiSelect = false;

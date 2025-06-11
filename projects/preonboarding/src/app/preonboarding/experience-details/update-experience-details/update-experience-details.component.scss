@@ -1,9 +1,9 @@
-.file-name{
-    font-size: 14px;
-    font-weight: 500;
-}
-
 .custom-main-popup-content {
     height: calc(100vh - 13.5rem);
     overflow-y: auto;
+}
+
+.file-name{
+    line-break: anywhere;
+    font-size: var(--fontsize12);
 }

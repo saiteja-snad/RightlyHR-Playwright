@@ -44,6 +44,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   pendingDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
   isdisabled = true;
+   initialPoliciesState: any;
   @ViewChild('cancelpopup') cancelpopup!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
@@ -71,14 +72,19 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     this.handleFormValueChanges();
 
     this.getAllLocations();
+
+     this.momentRows.valueChanges.subscribe(() => {
+    const currentState = JSON.stringify(this.momentRows.getRawValue());
+    this.hidePublishCloneButtons = currentState === this.initialPoliciesState ? false : true;
+  });
   }
 
   inititializeForm() {
     this.dstForm = this.fb.group({
       year: [ { value: '', disabled: true }, Validators.required],
-      location: ['' , Validators.required],
-      subLocation: [ '' , Validators.required],
-      shift: [ null , Validators.required],
+      location: [{ value: '', disabled: true } , Validators.required],
+      subLocation: [ { value: '', disabled: true } , Validators.required],
+      shift: [ { value: '', disabled: true } , Validators.required],
       momentRows: this.fb.array([]),
     });
 
@@ -155,7 +161,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.dstForm.get('shift')?.markAsTouched();
-          this.dstForm.get('shift')?.enable();
+        
           this.shiftDetails = res.flatMap(
             (header: any) => header.orgShiftsItems ?? []
           );
@@ -163,6 +169,8 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
             (s) => s.id === this.pendingDST?.shiftId
           );
           this.dstForm.patchValue({ shift: matchedShift ?? null });
+           this.initialPoliciesState = JSON.stringify(this.momentRows.getRawValue());
+          this.hidePublishCloneButtons = false;
         },
         error: (err) => {
           console.error('Error fetching shifts:', err);

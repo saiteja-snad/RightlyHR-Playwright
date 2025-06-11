@@ -10,10 +10,11 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-clone-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule, ToggleSwitchModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, ToggleSwitchModule, InfoIconComponent],
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })

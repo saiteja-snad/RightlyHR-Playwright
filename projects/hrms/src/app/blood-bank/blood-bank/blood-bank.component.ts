@@ -21,7 +21,19 @@ export class BloodBankComponent implements OnInit {
   subscription!: Subscription
   bloodBankData: any;
   searchTerm: any = '';
-  shimmer =false
+  shimmer = false;
+  filteredBloodBankData: any[] = [];
+  selectedBloodGroup: string = 'A+'; // Default tab
+  bloodGroups = [
+    { group: 'A+', count: 0, bgColor: 'rgba(184, 58, 52, 0.1)', textColor: '#B83A34' },
+    { group: 'A-', count: 0, bgColor: 'rgba(242, 100, 25, 0.1)', textColor: '#F26419' },
+    { group: 'B+', count: 0, bgColor: 'rgba(74, 153, 74, 0.1)', textColor: '#4A994A' },
+    { group: 'B-', count: 0, bgColor: 'rgba(112, 209, 112, 0.1)', textColor: '#70D170' },
+    { group: 'AB+', count: 0, bgColor: 'rgba(51, 107, 153, 0.1)', textColor: '#336B99' },
+    { group: 'AB-', count: 0, bgColor: 'rgba(93, 154, 217, 0.1)', textColor: '#5D9AD9' },
+    { group: 'O+', count: 0, bgColor: 'rgba(196, 128, 58, 0.1)', textColor: '#C4803A' },
+    { group: 'O-', count: 0, bgColor: 'rgba(255, 147, 11, 0.1)', textColor: '#FF930B' }
+  ];
 
   constructor(public router: Router,
     private http: HttpService, public formValidation: FormValidationService,) { }
@@ -31,56 +43,70 @@ export class BloodBankComponent implements OnInit {
   }
 
   getBloodbank() {
-
     this.shimmer = true;
     this.subscription = this.http.getData(`EmployeeData/ActiveEmployees`).subscribe({
       next: (data: any) => {
         this.bloodBankData = data;
+        this.updateBloodGroupCounts();
+        this.applyInitialFilter();
         this.shimmer = false;
       },
-      error: (reason) =>{console.error('Error fetching employee data:', reason)
+      error: (reason) => {
+        console.error('Error fetching employee data:', reason)
         this.shimmer = false;
-      } ,
+      },
       complete: () => {
-         this.shimmer = false;
+        this.shimmer = false;
       }
     });
-   
   }
-  
-filteredBloodDetails() {
-  this.shimmer = false
-  const filtered = this.bloodBankData
-    .filter((item: any) => item.bloodGroup) // show only items with a blood group
-    .filter((item: any) => {
-      if (!this.searchTerm) return true;
 
-      const term = this.searchTerm.toLowerCase().trim();
+  applyInitialFilter() {
+    this.filteredBloodBankData = this.bloodBankData.filter(
+      (emp: any) => emp.bloodGroup === this.selectedBloodGroup
+    );
+  }
 
-      // Clean and normalize name fields
-      const firstName = item.firstName?.toLowerCase().trim() || '';
-      const middleName = item.middleName?.toLowerCase().trim() || '';
-      const lastName = item.lastName?.toLowerCase().trim() || '';
+  filterByBloodGroup(group: string) {
+    this.selectedBloodGroup = group;
+    this.filteredBloodBankData = this.bloodBankData.filter(
+      (emp: any) => emp.bloodGroup === group
+    );
+  }
 
-      // Combine full name
-      const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
-
-      // Prepare other searchable fields
-      const email = item.workEmail?.toLowerCase().trim() || '';
-      const bloodGroup = item.bloodGroup?.toLowerCase().trim() || '';
-
-      return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
+  updateBloodGroupCounts() {
+    this.bloodGroups.forEach(bg => {
+      bg.count = this.bloodBankData.filter((emp: any) => emp.bloodGroup === bg.group).length;
     });
+  }
 
-  // Sort alphabetically by full name
-  return filtered.sort((a: any, b: any) => {
-    const nameA = `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase();
-    const nameB = `${b.firstName} ${b.middleName || ''} ${b.lastName}`.toLowerCase();
-    return nameA.localeCompare(nameB);
-  });
+  getGroupStyle(group: string) {
+    return this.bloodGroups.find(bg => bg.group === group);
+  }
+
+  filteredBloodDetails() {
+    this.shimmer = false
+    const filtered = this.bloodBankData
+      .filter((item: any) => item.bloodGroup) // show only items with a blood group
+      .filter((item: any) => {
+        if (!this.searchTerm) return true;
+        const term = this.searchTerm.toLowerCase().trim();
+        // Clean and normalize name fields
+        const firstName = item.firstName?.toLowerCase().trim() || '';
+        const middleName = item.middleName?.toLowerCase().trim() || '';
+        const lastName = item.lastName?.toLowerCase().trim() || '';
+        // Combine full name
+        const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+        // Prepare other searchable fields
+        const email = item.workEmail?.toLowerCase().trim() || '';
+        const bloodGroup = item.bloodGroup?.toLowerCase().trim() || '';
+        return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
+      });
+    // Sort alphabetically by full name
+    return filtered.sort((a: any, b: any) => {
+      const nameA = `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase();
+      const nameB = `${b.firstName} ${b.middleName || ''} ${b.lastName}`.toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }
 }
-
-}
-
-
-

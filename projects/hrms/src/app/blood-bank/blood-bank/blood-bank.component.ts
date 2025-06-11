@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
@@ -20,7 +20,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
   encapsulation: ViewEncapsulation.None,
 })
 
-export class BloodBankComponent implements OnInit {
+export class BloodBankComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   bloodBankData: any;
   searchTerm: any = '';
@@ -39,8 +39,8 @@ export class BloodBankComponent implements OnInit {
   ];
   moduleinfo: any;
 
-  constructor(public router: Router,
-    private http: HttpService, public formValidation: FormValidationService,) { }
+  constructor(public router: Router, private http: HttpService, public formValidation: FormValidationService,) { }
+
 
   ngOnInit(): void {
     this.getBloodbank();
@@ -105,29 +105,34 @@ export class BloodBankComponent implements OnInit {
     return this.bloodGroups.find(bg => bg.group === group);
   }
 
-  filteredBloodDetails() {
-    this.shimmer = false
-    const filtered = this.bloodBankData
-      .filter((item: any) => item.bloodGroup) // show only items with a blood group
-      .filter((item: any) => {
-        if (!this.searchTerm) return true;
-        const term = this.searchTerm.toLowerCase().trim();
-        // Clean and normalize name fields
-        const firstName = item.firstName?.toLowerCase().trim() || '';
-        const middleName = item.middleName?.toLowerCase().trim() || '';
-        const lastName = item.lastName?.toLowerCase().trim() || '';
-        // Combine full name
-        const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
-        // Prepare other searchable fields
-        const email = item.workEmail?.toLowerCase().trim() || '';
-        const bloodGroup = item.bloodGroup?.toLowerCase().trim() || '';
-        return fullName.includes(term) || email.includes(term) || bloodGroup.includes(term);
-      });
-    // Sort alphabetically by full name
-    return filtered.sort((a: any, b: any) => {
-      const nameA = `${a.firstName} ${a.middleName || ''} ${a.lastName}`.toLowerCase();
-      const nameB = `${b.firstName} ${b.middleName || ''} ${b.lastName}`.toLowerCase();
-      return nameA.localeCompare(nameB);
+  onSearchChange() {
+    this.applySearchFilter();
+  }
+
+  applySearchFilter() {
+    const search = this.searchTerm.toLowerCase().trim();
+    // Filter employees by selected blood group
+    const groupFiltered = this.bloodBankData.filter(
+      (item: any) => item.bloodGroup === this.selectedBloodGroup
+    );
+    // If no search term, just return group-filtered list
+    if (!search) {
+      this.filteredBloodBankData = groupFiltered;
+      return;
+    }
+    // Filter further by name
+    this.filteredBloodBankData = groupFiltered.filter((item: any) => {
+      const firstName = item.firstName?.toLowerCase() || '';
+      const middleName = item.middleName?.toLowerCase() || '';
+      const lastName = item.lastName?.toLowerCase() || '';
+      const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+      return fullName.includes(search);
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

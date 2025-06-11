@@ -22,6 +22,19 @@
     background-color: var(--btn-primary-color);
     border-color: var(--btn-primary-color);
     color: var(--btn-color-tp);
+    padding: 0.4rem 0.75rem;
+    font-size: var(--fontsize13);
+  }
+
+  .fc .fc-toolbar-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--primary-color);
+  }
+
+  .fc-theme-standard td,
+  .fc-theme-standard th {
+    border: 1px solid #CCDAEC;
   }
 
   .fc .fc-list-table td {
@@ -65,4 +78,8 @@
 .custom-event-icon {
   width: 1rem;
   height: 1rem;
+}
+
+.box {
+  border-radius: 50%;
 }

@@ -1,7 +1,17 @@
 <div class="custom-main-component-container">
   <div class="component-header-content py-2">
-    <div class="component-header">Phone Book</div>
+    <div class="heading-content">
+      <div class="component-header">Phone Book</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
+
   </div>
+  <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -10,30 +20,30 @@
   </div>
 
   <div class="custom-component-right-content">
-   <div>
-  @if (loaders) {
-    <!-- Loading Skeletons -->
-    <div class="phone-book-content">
-      <div *ngFor="let skel of [1,2,3,4,5,6,7,8,9,10,11,12]" class="phone-book-card">
-        <div class="profile-content">
-          <div>
-            <p-skeleton width="48px" height="48px" shape="circle" class="profile-icon"></p-skeleton>
+    <div>
+      @if (loaders) {
+      <!-- Loading Skeletons -->
+      <div class="phone-book-content">
+        <div *ngFor="let skel of [1,2,3,4,5,6,7,8,9,10,11,12]" class="phone-book-card">
+          <div class="profile-content">
+            <div>
+              <p-skeleton width="48px" height="48px" shape="circle" class="profile-icon"></p-skeleton>
+            </div>
+            <div>
+              <p-skeleton width="120px" height="18px" class="mb-2"></p-skeleton>
+            </div>
           </div>
-          <div>
-            <p-skeleton width="120px" height="18px" class="mb-2"></p-skeleton>
+          <div class="data-content">
+            <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
           </div>
-        </div>
-        <div class="data-content">
-          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
-          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
-          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
-          <p-skeleton width="15rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
         </div>
       </div>
-    </div>
-  }
-  @else {
-    @if (filteredPhoneDetails().length > 0) {
+      }
+      @else {
+      @if (filteredPhoneDetails().length > 0) {
       <!-- Data Available -->
       <div class="phone-book-content">
         <div class="phone-book-card" *ngFor="let emp of filteredPhoneDetails()">
@@ -76,12 +86,12 @@
           </div>
         </div>
       </div>
-    }
-    @else {
+      }
+      @else {
       <!-- No Data Found -->
       <app-no-data-found />
-    }
-  }
-</div>
+      }
+      }
+    </div>
 
   </div>

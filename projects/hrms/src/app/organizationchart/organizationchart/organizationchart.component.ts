@@ -11,7 +11,6 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { DomSanitizer } from '@angular/platform-browser';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import ExcelJS from 'exceljs';
 import FileSaver from 'file-saver';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
@@ -19,11 +18,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, ModuleInformationComponent, DateformatPipe,Skeleton],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, TranslateModule, ModuleInformationComponent, Skeleton],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,

@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Skeleton } from 'primeng/skeleton';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-phonebook',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NoDataFoundComponent, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './phonebook.component.html',
   styleUrl: './phonebook.component.scss'
 })
@@ -21,11 +24,14 @@ export class PhonebookComponent {
   phonebookData: any;
   searchphone: any = '';
   imageUrl: any;
-  loaders= false;
+  moduleinfo: any
+  loaders = false;
   constructor(public router: Router,
     private http: HttpService, private sanitizer: DomSanitizer, public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.getPhoneBook();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   getPhoneBook() {
@@ -60,14 +66,31 @@ export class PhonebookComponent {
           }
         });
       },
-      error: (reason) =>{
-         console.error('Error fetching employee data:', reason)
-          this.loaders = false;
+      error: (reason) => {
+        console.error('Error fetching employee data:', reason)
+        this.loaders = false;
       },
       complete: () => {
         this.loaders = false;
       }
     });
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/phonebook': MODULE_INFOS.PHONE_Book_DIRTECROTY_INFO
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
   // extractdata
   extractCountryCode(value: string): string {

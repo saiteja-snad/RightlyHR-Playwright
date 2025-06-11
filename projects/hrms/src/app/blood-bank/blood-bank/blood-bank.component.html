@@ -1,16 +1,43 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content py-2">
-        <div class="component-header">Blood Bank</div>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="component-header">Blood Bank</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
     </div>
 
-    <div class="input-group custom-search mb-3">
+    <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
+    <!-- Blood group filter buttons -->
+    <div class="custom-graph-grid w-100 mb-3">
+        <div class="cards-grid-container">
+            @for (item of bloodGroups; track $index) {
+            <div class="employees-category-card" (click)="filterByBloodGroup(item.group)"
+                [class.active]="selectedBloodGroup === item.group">
+                <div class="accent-bar" [style.background-color]="item.textColor"></div>
+                <div class="w-100 text-center py-1 text-content">
+                    <p class="label-name mb-2"> {{ item.group }}</p>
+                    <p class="count-text m-0">{{ item.count }}</p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchTerm" class="form-control custom-search-input"
             placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
-    </div>
+    </div> -->
 
     <div class="custom-component-right-content">
-        <div class="cards-container-shimmer">
+        <div class="cards-container">
             @if (shimmer) {
             <!-- Loading Shimmer Skeletons -->
             <div *ngFor="let skel of [1,2,3,4,5,6,7,8,9,10]" class="blood-bank-card-shimerr mb-3">
@@ -30,31 +57,12 @@
             </div>
             }
             @else {
-            @if (filteredBloodDetails().length > 0) {
-            <!-- Data Cards -->
-            <div class="blood-bank-card" *ngFor="let item of filteredBloodDetails()">
+            @if(filteredBloodBankData.length > 0){
+            <div class="blood-bank-card" *ngFor="let item of filteredBloodBankData">
                 <ng-container *ngIf="item.bloodGroup">
                     <div class="d-flex align-items-center gap-2">
-                        <div class="blood-group" [ngStyle]="{
-                'background-color': 
-                  item.bloodGroup === 'A+' ? 'rgba(184, 58, 52, 0.2)' :
-                  item.bloodGroup === 'A-' ? 'rgba(242, 100, 25, 0.2)' :
-                  item.bloodGroup === 'B+' ? 'rgba(74, 153, 74, 0.2)' :
-                  item.bloodGroup === 'B-' ? 'rgba(112, 209, 112, 0.2)' :
-                  item.bloodGroup === 'AB+' ? 'rgba(51, 107, 153, 0.2)' :
-                  item.bloodGroup === 'AB-' ? 'rgba(93, 154, 217, 0.2)' :
-                  item.bloodGroup === 'O+' ? 'rgba(196, 128, 58, 0.2)' :
-                  item.bloodGroup === 'O-' ? 'rgba(247, 185, 107, 0.2)' : '',
-                'color':
-                  item.bloodGroup === 'A+' ? '#b83a34' :
-                  item.bloodGroup === 'A-' ? '#f26419' :
-                  item.bloodGroup === 'B+' ? '#4a994a' :
-                  item.bloodGroup === 'B-' ? '#70d170' :
-                  item.bloodGroup === 'AB+' ? '#336b99' :
-                  item.bloodGroup === 'AB-' ? '#5d9ada' :
-                  item.bloodGroup === 'O+' ? '#c4803a' :
-                  item.bloodGroup === 'O-' ? '#db861e' : ''
-              }">
+                        <div class="blood-group" [ngStyle]="{'background-color': getGroupStyle(item.bloodGroup)?.bgColor,
+                                    'color': getGroupStyle(item.bloodGroup)?.textColor}">
                             <p class="name-text m-0">{{ item.bloodGroup }}</p>
                         </div>
                         <div>
@@ -69,12 +77,11 @@
                 </ng-container>
             </div>
             }
-            @else {
             <!-- No Data Found -->
+            @else {
             <app-no-data-found />
             }
             }
         </div>
-
     </div>
 </div>

@@ -1,3 +1,11 @@
 .custom-table-content {
   height: calc(100dvh - 12.5rem);
 }
+
+.popup-table-wrapper .popup-table-scroll-container {
+  max-height: 30vh;
+  overflow-y: hidden;
+  border: 2px solid #D1D8E3 !important;
+  border-bottom: 2px solid #D1D8E3 !important;
+  border-radius: 0.5rem;
+}

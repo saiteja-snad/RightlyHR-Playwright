@@ -1,5 +1,6 @@
 .custom-component-right-content {
-    height: calc(100vh - 14rem);
+    height: calc(100vh - 23rem);
+    min-height: 45vh;
     position: relative;
 
     .cards-container {
@@ -62,7 +63,7 @@
         width: 100%;
         align-items: center;
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 1rem;
 
         .active {
@@ -75,36 +76,33 @@
             padding: 0.75rem 1rem;
             background: #FFFFFF;
             border-radius: 0.625rem;
-            line-height: 17.32px;
-            letter-spacing: 0%;
             margin: 0rem;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             cursor: pointer;
 
-            .accent-bar {
-                width: 0.325rem;
-                height: 100%;
-                border-radius: 1rem;
-            }
-
-            .text-content {
+            .blood-group {
                 display: flex;
-                flex-direction: column;
                 justify-content: center;
                 align-items: center;
-            }
-
-            .label-name {
-                font-weight: 600;
-                font-size: var(--fontsize14);
-                color: #686868;
+                width: 3.375rem;
+                height: 3.375rem;
+                border-radius: 50%;
+                font-weight: 700;
+                font-size: var(--fontsize18);
             }
 
             .count-text {
                 font-weight: 600;
-                font-size: var(--fontsize16);
+                font-size: var(--fontsize20);
                 color: #222222;
             }
         }
+    }
+
+    .bloodGroupTab {
+        box-shadow: none !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, #CFDBEE 100%) !important;
     }
 }

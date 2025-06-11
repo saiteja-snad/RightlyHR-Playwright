@@ -20,10 +20,8 @@ export class DocumentHistoryLayoutComponent {
   // active = 1;
   constructor(public rbac: RbacService) { }
   active!: string;
-  loading=true
 
   ngOnInit() {
-    this.loading=true
     if (this.rbac.allowedToAccess('Documents History Offer Letter.view')) {
       this.active = 'offer';
     } else if (this.rbac.allowedToAccess('Documents History Appointment Letter.view')) {
@@ -34,9 +32,6 @@ export class DocumentHistoryLayoutComponent {
     // else if (this.rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
     //   this.active = 'trainee-appointment';
     // }
-     this.loading=false
   }
- 
-
 
 }

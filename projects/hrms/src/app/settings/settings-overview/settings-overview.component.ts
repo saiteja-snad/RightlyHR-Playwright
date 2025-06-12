@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { SettingsRolePermissionsModuleTabsComponent } from "../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
@@ -8,13 +8,14 @@ import { SettingsAssetsConfigurationsTabsComponent } from "../../shared/settings
 import { SettingDynamicFormsTabsComponent } from "../../shared/settings-tabs/setting-dynamic-forms-tabs/setting-dynamic-forms-tabs.component";
 import { RbacService } from '../../services/rbac.service';
 import { PmsSettingsTabsComponent } from "../../shared/pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
-
+import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-settings-overview',
   imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
-    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent],
+    SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent, AccordionModule],
   templateUrl: './settings-overview.component.html',
-  styleUrl: './settings-overview.component.scss'
+  styleUrl: './settings-overview.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
 
 export class SettingsOverviewComponent {

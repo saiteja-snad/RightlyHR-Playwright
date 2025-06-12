@@ -1,20 +1,18 @@
 <div class="custom-main-component-container">
 
   @if(!loading){
-  <div class="card custom-background-card p-4 mb-4">
+  <div class="card custom-background-card mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-  
       <div>
-        <span class="component-sub-header">Emergency Contacts</span>
+        <span class="component-sub-header">Emergency Contacts Details</span>
       </div>
       @if(!buttons && canAccess('update','emergency')){
       @if((employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-      employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+      employedata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
       <div >
-        <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+        <a (click)="enableForm()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
       </div>
       }}
-
       <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
         <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
@@ -51,7 +49,7 @@
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
+          <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number<span
               class="text-danger">*</span></label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -97,7 +95,7 @@
     </form>
   </div>
 
-  <div class="card custom-background-card p-4 mb-4">
+  <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
         <span class="component-sub-header">Secondary Contact</span>

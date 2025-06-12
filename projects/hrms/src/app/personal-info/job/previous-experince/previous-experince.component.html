@@ -31,7 +31,7 @@
                         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
                         !==
                         'trainee inactive' )){
-                      <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+                      <th class="text-center">{{"Action" | translate}}</th>
                         }
                     }
                 </tr>
@@ -485,8 +485,8 @@
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary px-4"
                         (click)="modal.dismiss();resetFrom()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4"
-                        [disabled]="employeeExperienceupdateForm.invalid && !displaypreviousexperincedocument && employeeExperienceupdateForm.get('attachmentupdate')?.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="employeeExperienceupdateForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

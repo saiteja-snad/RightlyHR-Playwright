@@ -63,7 +63,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Designation'|translate}}<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="JobroleDetails" optionValue="designationName" optionLabel="designationName"
+                        <p-select [options]="JobroleDetails" optionLabel="designationName"
                             [filter]="true" filterBy="designationName" (onChange)="selectgradId($event)"
                             placeholder="Please select designation" formControlName="designation" class="custom-select w-100">
                         </p-select>

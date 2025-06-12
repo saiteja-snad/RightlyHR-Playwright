@@ -10,10 +10,11 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-clone-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule, ToggleSwitchModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, ToggleSwitchModule, InfoIconComponent],
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })
@@ -23,9 +24,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   isFormEdited: boolean = false;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
-  updatePoliciesData : any;
+  updatePoliciesData: any;
   subLocationsDropdown: any = [];
-  empinfo : any;
+  empinfo: any;
   yearDetails = [
     { name: '2024', value: 2024 },
     { name: '2025', value: 2025 },
@@ -35,10 +36,10 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   ]
 
 
-  constructor(private fb: FormBuilder,public router:Router,private http: HttpService,
-     private confirmation: OpenModalService,private modalService: NgbModal,
-     public formValidations: FormValidationsService
-    ) { }
+  constructor(private fb: FormBuilder, public router: Router, private http: HttpService,
+    private confirmation: OpenModalService, private modalService: NgbModal,
+    public formValidations: FormValidationsService
+  ) { }
 
 
   ngOnInit(): void {
@@ -47,35 +48,35 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
 
     this.getjobLocationList();
     this.policyForm = this.fb.group({
-      year: [null,Validators.required],
-      location: [null,Validators.required],
-      subLocation: [{ value: '', disabled: true },Validators.required],
-      shift : [{ value: '', disabled: true },Validators.required],
+      year: [null, Validators.required],
+      location: [null, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
       policies: this.fb.array([])
     });
-    
+
 
     this.policyForm.patchValue({
-      year: this.yearDetails.find((x:any) => x.value === this.updatePoliciesData.applicableyear),
+      year: this.yearDetails.find((x: any) => x.value === this.updatePoliciesData.applicableyear),
     });
-    this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
+    this.updatePoliciesData.orgPolicyItems.forEach((row: any) => {
       this.policies.push(
         this.fb.group({
-          policyName : [row.policyName,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
-          policyFile : [row.policyAttachment],
-          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+          policyName: [row.policyName, [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+          policyFile: [row.policyAttachment],
+          policyDescription: [row.policyDescription, [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyNewFile: [''],
-          acknowledged : [row.requiresAcknowledgment],
-          notification : [row.sendEmailNotification],
+          acknowledged: [row.requiresAcknowledgment],
+          notification: [row.sendEmailNotification],
         },
-        {
+          {
             validator: this.acknowledgementNotificationValidator
-        }
-      )
+          }
+        )
       );
     });
 
-    
+
     this.policyForm.valueChanges.subscribe(() => {
       this.checkIfFormEdited();
     });
@@ -84,34 +85,34 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
 
   checkIfFormEdited() {
     const formValue = this.policyForm.value;
-    
-    const hasChanged = 
+
+    const hasChanged =
       formValue.year?.value !== this.updatePoliciesData.applicableyear ||
       formValue.location?.id !== this.updatePoliciesData.locationId ||
       formValue.subLocation?.id !== this.updatePoliciesData.subLocationId ||
       formValue.shift?.id !== this.updatePoliciesData.shiftID ||
       this.isPoliciesChanged(formValue.policies, this.updatePoliciesData.orgPolicyItems);
-  
+
     this.isFormEdited = hasChanged;
 
     console.log(formValue.shift?.id, this.updatePoliciesData.shiftID)
   }
-  
+
   isPoliciesChanged(formPolicies: any[], originalPolicies: any[]): boolean {
     if (formPolicies.length !== originalPolicies.length) {
       return true;
     }
-  
+
     for (let i = 0; i < formPolicies.length; i++) {
       const formPolicy = formPolicies[i];
       const originalPolicy = originalPolicies[i];
-  
+
       const formName = formPolicy.policyName?.trim();
       const originalName = originalPolicy.policyName?.trim();
-  
+
       const formDescription = formPolicy.policyDescription?.trim();
       const originalDescription = originalPolicy.policyDescription?.trim();
-  
+
       if (
         formName !== originalName ||
         formDescription !== originalDescription ||
@@ -120,7 +121,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         return true;
       }
     }
-  
+
     return false;
   }
 
@@ -128,30 +129,30 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     return this.policyForm.get('policies') as FormArray;
   }
 
-  
+
   addPolicyRow() {
     const policyGroup = this.fb.group({
       policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyFile: [''],
-      policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
+      policyDescription: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyNewFile: ['', Validators.required],
-      acknowledged : [false],
-      notification : [false],
+      acknowledged: [false],
+      notification: [false],
     },
       {
         validator: this.acknowledgementNotificationValidator
       }
-  );
+    );
     this.policies.push(policyGroup);
   }
-  
+
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {
       this.policies.removeAt(index);
     }
   }
 
-     acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
+  acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
     const acknowledged = group.get('acknowledged')?.value;
     const notification = group.get('notification')?.value;
 
@@ -162,24 +163,28 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  hidePublishCloneButtons : boolean = false
+  hidePublishCloneButtons: boolean = false
   onPolicyFileChange(event: any, index: number): void {
     const file = event.target.files[0];
     if (!file) return;
-  
+
+    const formValue = this.policyForm.value;
+    const year = formValue.year ?? new Date().getFullYear();
+    const shiftId = formValue.shift;
+
     const timestamp = new Date().getTime();
     const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
-    const filepath = `/FusionDocuments/organizationPolicy/${this.empinfo.employeeId}`;
-  
+    const filepath = `/Policies/${year}/${shiftId}`;
+
     const control = this.policies.at(index);
-  
+
     // Save original file object (for validation or display if needed)
     control.get('policyNewFile')?.setValue(file);
-  
+
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
       next: (response: any) => {
         control.get('policyNewFile')?.setValue(response.path);  // save uploaded file path instead
-      
+
       },
       error: (err) => {
         console.error('Upload failed:', err);
@@ -188,10 +193,11 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   }
 
   renameFile(file: File, newName: string): File {
-    return new File([file], newName, { type: file.type });
+    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');   
+    return new File([file], sanitizedFileName, { type: file.type });
   }
-  
-  onClickedAck(event: any, index : number){
+
+  onClickedAck(event: any, index: number) {
     const control = this.policies.at(index);
     if (event.target.checked) {
       control.get('acknowledged')?.setValue(true);
@@ -200,7 +206,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickedEmail(event: any, index : number){
+  onClickedEmail(event: any, index: number) {
     const control = this.policies.at(index);
     if (event.target.checked) {
       control.get('notification')?.setValue(true);
@@ -209,10 +215,10 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     }
 
   }
-  
+
 
   submit() {
-      
+
     const formValue = this.policyForm.value;
 
     const payload = {
@@ -228,12 +234,12 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       orgPolicyItems: formValue.policies.map((item: any) => ({
         policyName: item.policyName,
         policyDescription: item.policyDescription,
-        policyAttachment:  (item.policyNewFile && item.policyNewFile !== '') 
-        ? item.policyNewFile 
-        : item.policyFile,
-        requiresAcknowledgment : item.acknowledged,
+        policyAttachment: (item.policyNewFile && item.policyNewFile !== '')
+          ? item.policyNewFile
+          : item.policyFile,
+        requiresAcknowledgment: item.acknowledged,
         sendEmailNotification: item.notification,
-        sendPushNotification : false,
+        sendPushNotification: false,
         sendNotification: item.notification,
         status: "Pending for submission",
       }))
@@ -247,10 +253,10 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       error: (err) => {
         const errorMessage = err.error?.Message || 'Failed to add policy';
         this.confirmation.openErrorModal(errorMessage);
-        
+
       }
     });
-    
+
   }
 
   closeDelete(modal: any) {
@@ -261,8 +267,8 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     modal.dismiss();
     this.navigation();
   }
-  
-  cancel(){
+
+  cancel() {
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }
 
@@ -317,17 +323,17 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
             if (data.length === 0) {
               this.subLocationsDropdown = [];
             } else {
-              this.subLocationsDropdown = data.jobSubLocations; 
-             
+              this.subLocationsDropdown = data.jobSubLocations;
+
             }
 
             // this.policyForm.patchValue({
             //   subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updatePoliciesData.subLocationName),
             // });
 
-            const shiftdata  = {
-              locid : this.updatePoliciesData.locationId,
-              sublocid : this.updatePoliciesData.subLocationId
+            const shiftdata = {
+              locid: this.updatePoliciesData.locationId,
+              sublocid: this.updatePoliciesData.subLocationId
             }
             this.getShiftBYid(shiftdata);
           },
@@ -336,13 +342,13 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
           },
         });
     } else {
-      this.jobLocationDropDownData=[];
+      this.jobLocationDropDownData = [];
       this.subLocationsDropdown = [];
 
     }
   }
-  
-  shiftDropdown: any[] = []; 
+
+  shiftDropdown: any[] = [];
 
   onSubLocationChange(subLocationId: any) {
     if (subLocationId) {
@@ -352,7 +358,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       this.policyForm.get('shift')?.enable();
       // Reset the shift value to null (allow user to select again)
       this.policyForm.get('shift')?.setValue(null);
-        this.policyForm.get('shift')?.markAsTouched();
+      this.policyForm.get('shift')?.markAsTouched();
     } else {
       // Clear shift data and reset shift field if no sublocation is selected
       this.shiftDropdown = [];
@@ -364,7 +370,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId =  formValue.location?.id ?? this.updatePoliciesData.locationId;
+      const locationId = formValue.location?.id ?? this.updatePoliciesData.locationId;
       const subLocationId = formValue.subLocation?.id ?? this.updatePoliciesData.subLocationId;
 
       this.subscription = this.http
@@ -381,7 +387,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
                 ...data.map((element: any) => element.orgShiftsItems)
               ); // Flatten the shift data
             }
-            
+
             // this.policyForm.patchValue({
             //   shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftID),
             // });
@@ -402,12 +408,12 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     return fileName || 'No file attached';
   }
 
-  navigation(){
+  navigation() {
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }
 
-  ngOnDestroy(){
-    if(this.subscription) {
+  ngOnDestroy() {
+    if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }

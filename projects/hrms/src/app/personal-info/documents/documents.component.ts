@@ -110,6 +110,7 @@ export class DocumentsComponent {
   toggleFolder(folder: any): void {
     this.Files = []// or however you're using getVisibleFiles
     this.selectedFile = null
+      this.searchfolder = ''
     // Collapse all other folders
     this.folders.forEach((f) => {
       if (f !== folder) {
@@ -126,6 +127,7 @@ export class DocumentsComponent {
 
   }
   onSubFolderSelected(subFolder: any): void {
+     this.searchfolder = ''
     this.selectedFile = subFolder;
     console.log('Selected Subfolder:', subFolder);
     if (subFolder.isDirectory) {

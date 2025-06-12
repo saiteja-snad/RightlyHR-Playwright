@@ -5,15 +5,14 @@
 
     <div class="component-data-content">
         <div class="component-header mb-4">Review</div>
-
         <!-- show this when no details -->
         <div class="custom-main-sub-content">
             <div class="accordion mb-5">
                 <!--Personal Details-->
                 <div class="accordion-item mb-3">
                     <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                            aria-expanded="true" aria-controls="collapseOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                             Personal Details
                         </button>
                     </h2>
@@ -43,8 +42,7 @@
                                     </tr>
                                     <tr>
                                         <td>Mobile Number With Country</td>
-                                        <td>{{empDetails?.mobilePhoneCountryCode?? ''}} {{empDetails?.contactnumber ??''}}
-                                        </td>
+                                        <td>{{empDetails?.mobilePhoneCountryCode?? ''}} {{empDetails?.contactnumber ??''}}</td>
                                     </tr>
                                     <tr>
                                         <td>Date Of Birth</td>
@@ -52,7 +50,7 @@
                                     </tr>
                                     <tr>
                                         <td>Blood Group</td>
-                                        <td>{{empDetails?.bloodGroup ? empDetails?.middleName: 'N/A'}}</td>
+                                        <td>{{empDetails?.bloodGroup ?? 'N/A'}}</td>
                                     </tr>
                                     <tr *ngFor="let aplication of appliccationData">
                                         <td>Location</td>
@@ -109,7 +107,7 @@
                                                     <i class="bi bi-eye-fill me-2"></i>View</a>
                                                 <ng-template #eddownloadView>
                                                     <a class="view-btn" (click)="onSelectDownload(ed.attachment)">
-                                                           <i class="bi bi-download me-2"></i>Download</a>
+                                                        <i class="bi bi-download me-2"></i>Download</a>
                                                     <!-- <button class="view-btn" (click)="onSelectDownload(ed.attachment)">Download</button> -->
                                                 </ng-template>
                                             </td>
@@ -150,20 +148,17 @@
                                             <td>{{exp.jobTitle }}</td>
                                             <td>{{exp.fromDate | dateFormat}}</td>
                                             <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
-                                                <ng-template #todate>
-                                                    <div>-</div>
-                                                </ng-template>
+                                            <ng-template #todate>-</ng-template>
                                             </td>
                                             <td>{{exp.attachment ? "" : ''}}
                                                 <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
-                                                exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
-                                                   (click)="onViewClick(exp.attachment);openModal(myModall)">
-                                                    <i class="bi bi-eye-fill me-2"></i>View</a>
+                                                exp.attachment.toLowerCase().endsWith('png') ;else downloadView" (click)="onViewClick(exp.attachment);openModal(myModall)">
+                                                <i class="bi bi-eye-fill me-2"></i>View</a>
                                                 <ng-template #downloadView>
                                                     <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">-</div>
                                                     <ng-template #documentdownload>
                                                         <a class="view-btn" (click)="onSelectDownload(exp.attachment)">
-                                                           <i class="bi bi-download me-2"></i>Download</a>
+                                                            <i class="bi bi-download me-2"></i>Download</a>
                                                     </ng-template>
                                                 </ng-template>
                                             </td>
@@ -175,43 +170,41 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" [(ngModel)]="isCheckedoffer">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                    [(ngModel)]="isCheckedoffer">
                 <label class="form-check-label custom-label" for="flexCheckDefau">Offer Letter Accepted</label>
             </div>
         </div>
 
         <div class="footer-btn-content d-flex justify-content-between pt-4">
             @if(this.empDetails.substatus !== 'Offer Letter Accepted'){
-                <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
-                    Experience Details
-                </button>
+            <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
+                Experience Details
+            </button>
             }
             <div>
                 <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <button *ngIf="!isCheckedoffer" class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">
-                    Submit
-                </button>
+                <button *ngIf="!isCheckedoffer" class="custom-btn btn-primary px-5"
+                    (click)="openconformatioModal(submitornot)">Submit</button>
                 @if(this.empDetails.substatus !== 'Offer Letter Accepted'){
-                    <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
-                 (click)="openconformatioModal(submitornot)">
-                    Submit
+                <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'"
+                    class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">Submit
                 </button>
-                }    
+                }
             </div>
         </div>
         @if(this.empDetails.substatus === 'Offer Letter Accepted'){
-          <div class="d-flex justify-content-end">
-                <button  *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
-                 (click)="openconformatioModal(submitornot)">
-                    Submitted
-                </button>
-                    </div>
+        <div class="d-flex justify-content-end">
+            <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'"
+                class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">
+                Submitted
+            </button>
+        </div>
         }
-
     </div>
 </div>
 

@@ -34,7 +34,7 @@
             <thead>
                 <th>Asset Category</th>
                 <th *ngIf="rbac.allowedToAccess('Asset Catagory.update') || 
-                rbac.allowedToAccess('Asset Catagory.delete')">Action(S)</th>
+                rbac.allowedToAccess('Asset Catagory.delete')">Action</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="((assetCategorys | async) ?? []).length > 0; else noDataTemplate">

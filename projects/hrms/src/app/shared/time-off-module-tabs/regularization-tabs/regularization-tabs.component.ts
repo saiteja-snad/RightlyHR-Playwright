@@ -5,10 +5,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-regularization-tabs',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './regularization-tabs.component.html',
   styleUrl: './regularization-tabs.component.scss'
 })
@@ -21,6 +22,7 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
   selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   regularization = [] as any;
+  loading=false
   constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerCountSignal().compOff) {
@@ -56,6 +58,7 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
   }
 
   getregularizationRequest() {
+    this.loading=true
     let empId = this.empinfo.employeeId;
     console.log(empId);
     this.http
@@ -78,8 +81,10 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
           this.processregularizationRequestsCount = this.regularization.filter(
             (element: { status: string }) => element.status === 'Processed'
           ).length;
+          this.loading=false
         },
         error: (error) => {
+          this.loading=false
           console.error('Error fetching data:', error);
           this.regularization = []; // Set to empty array on error
         },

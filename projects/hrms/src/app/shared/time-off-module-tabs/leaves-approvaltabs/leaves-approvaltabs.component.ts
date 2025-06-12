@@ -8,10 +8,11 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-leaves-approvaltabs',
-  imports: [RouterModule, CommonModule, TabsModule],
+  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
   templateUrl: './leaves-approvaltabs.component.html',
   styleUrl: './leaves-approvaltabs.component.scss',
 })
@@ -28,6 +29,7 @@ export class LeavesApprovaltabsComponent {
   teamLeaveBalanceCount: number = 0;
   teamLeaveSummaryCount: number = 0;
   id: any;
+  loading=false
   statusTabs: any[]=[];
 
   constructor(public readonly router: Router, private http: HttpService, private authService: AuthService, 
@@ -68,9 +70,11 @@ export class LeavesApprovaltabsComponent {
   }
 
   getDataByLPID() {
+    this.loading=true
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        this.loading=false
         if (Array.isArray(response)) {
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
           const approved = response.filter(item => item.status === 'Approved');
@@ -89,6 +93,7 @@ export class LeavesApprovaltabsComponent {
       },
       error: (reason: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
+        this.loading=false
       }
     });
   }

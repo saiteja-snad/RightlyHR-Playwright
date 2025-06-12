@@ -14,7 +14,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   export const MY_INFO_JOB_ROUTES = [
     { permission: 'My Info Pre-Onboarding Details.view', route: '/myinfo/job/pre-onboarding-details' },
     { permission: 'My Info Onboarding Details.view', route: '/myinfo/job/onboarding-details' },
-    { permission: 'My Info Offboarding Details.view', route: '/myinfo/job/employmentType' },
+    // { permission: 'My Info Offboarding Details.view', route: '/myinfo/job/employmentType' },
     { permission: 'My Info Job Details.view', route: '/myinfo/job/job-details' },
     { permission: 'My Info Separation Request Details.view', route: '/myinfo/job/separation-details' },
     { permission: 'My Info No Due Clearance Details.view', route: '/myinfo/job/no-due-clearance-details' },
@@ -431,14 +431,11 @@ export const HOLIDAYS_SUB_TABS = [
     { permission: 'Employee Info Compensation Details.view', route: '/personalinfo/job/compensation-details' },
     { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
     { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' },
-        { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/tranee-onboarding-requests' }
+    { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/trainee-onboarding-requests' },
+    { permission: 'Employee Info Documents Verification.view', route: '/personalinfo/job/onboarding-verification' }
   ];
-
-
 
   export const INVITE_NEW_USER_TABS = [
     {  route: '/admin/active-new-user', permission:  'Dashboard Active Invite New User.view' },
     {  route: '/admin/prospective-new-user', permission:'Dashboard Trainee Active Invite New User.view' },
   ];
-
-  

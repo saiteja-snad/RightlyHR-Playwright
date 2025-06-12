@@ -1,21 +1,50 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content py-2">
-        <div class="component-header">Blood Bank</div>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="component-header">Blood Bank ({{selectedBloodGroup}})</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
     </div>
 
+    <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
+    <!-- Blood group filter buttons -->
+    <div class="custom-graph-grid w-100 mb-3">
+        <div class="cards-grid-container">
+            @for (item of bloodGroups; track $index) {
+            <div class="employees-category-card" (click)="filterByBloodGroup(item.group)"
+                [class.bloodGroupTab]="selectedBloodGroup === item.group">
+                <div class="blood-group" [ngStyle]="{'background-color': item.bgColor, 'color': item.textColor}">{{
+                    item.group }}</div>
+                <div class="count-text">{{ item.count }}</div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!--Search Content-->
     <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchTerm" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+            class="form-control custom-search-input" placeholder="Search here">
     </div>
 
     <div class="custom-component-right-content">
         <div class="cards-container">
             @if (shimmer) {
-            <div *ngFor="let skel of [1,2,3,4]" class="blood-bank-card mb-3">
+            <!-- Loading Shimmer Skeletons -->
+            <div *ngFor="let skel of [1,2,3,4,5,6,7,8,9,10]" class="blood-bank-card-shimerr mb-3">
                 <div class="d-flex align-items-center gap-2">
                     <div class="blood-group">
-                        <p-skeleton  class="name-text m-0"></p-skeleton>
+                        <p-skeleton class="name-text m-0"></p-skeleton>
                     </div>
                     <div class="flex-grow-1">
                         <div class="mb-1">
@@ -29,10 +58,12 @@
             </div>
             }
             @else {
-            <div class="blood-bank-card" *ngFor="let item of filteredBloodDetails()">
+            @if(filteredBloodBankData.length > 0){
+            <div class="blood-bank-card" *ngFor="let item of filteredBloodBankData">
                 <ng-container *ngIf="item.bloodGroup">
                     <div class="d-flex align-items-center gap-2">
-                        <div class="blood-group">
+                        <div class="blood-group" [ngStyle]="{'background-color': getGroupStyle(item.bloodGroup)?.bgColor,
+                                    'color': getGroupStyle(item.bloodGroup)?.textColor}">
                             <p class="name-text m-0">{{ item.bloodGroup }}</p>
                         </div>
                         <div>
@@ -46,6 +77,11 @@
                     </div>
                 </ng-container>
             </div>
+            }
+            <!-- No Data Found -->
+            @else {
+            <app-no-data-found />
+            }
             }
         </div>
     </div>

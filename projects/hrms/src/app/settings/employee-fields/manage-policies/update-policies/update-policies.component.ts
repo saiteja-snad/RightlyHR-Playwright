@@ -10,6 +10,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-update-policies',
@@ -19,7 +20,8 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
     ReactiveFormsModule,
     TranslateModule,
     NgbPopoverModule,
-    ToggleSwitchModule
+    ToggleSwitchModule,
+    InfoIconComponent
   ],
   templateUrl: './update-policies.component.html',
   styleUrl: './update-policies.component.scss',
@@ -48,7 +50,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     private confirmation: OpenModalService,
     private modalService: NgbModal,
     public formValidations: FormValidationsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -84,22 +86,22 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)],
           ],
           policyNewFile: [''],
-          acknowledged : [row.requiresAcknowledgment],
-          notification : [row.sendEmailNotification],
+          acknowledged: [row.requiresAcknowledgment],
+          notification: [row.sendEmailNotification],
         },
           {
             validator: this.acknowledgementNotificationValidator
           }
-      )
+        )
       );
     }
-  );
+    );
     // this.addPolicyRow();
 
     this.policies.valueChanges.subscribe(() => {
-    const currentState = JSON.stringify(this.policies.getRawValue());
-    this.hidePublishCloneButtons = currentState !== this.initialPoliciesState;
-});
+      const currentState = JSON.stringify(this.policies.getRawValue());
+      this.hidePublishCloneButtons = currentState !== this.initialPoliciesState;
+    });
   }
 
   get policies(): FormArray {
@@ -112,13 +114,13 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       policyFile: [''],
       policyDescription: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyNewFile: ['', Validators.required],
-      acknowledged : [false],
-      notification : [false],
+      acknowledged: [false],
+      notification: [false],
     },
-    {
+      {
         validator: this.acknowledgementNotificationValidator
-    }
-  );
+      }
+    );
     this.hidePublishCloneButtons = true;
     this.policies.push(policyGroup);
   }
@@ -129,7 +131,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     }
   }
 
-   acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
+  acknowledgementNotificationValidator(group: FormGroup): { [key: string]: boolean } | null {
     const acknowledged = group.get('acknowledged')?.value;
     const notification = group.get('notification')?.value;
 
@@ -140,7 +142,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  onClickedAck(event: any, index : number){
+  onClickedAck(event: any, index: number) {
     const control = this.policies.at(index);
     if (event.target.checked) {
       control.get('acknowledged')?.setValue(true);
@@ -149,7 +151,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickedEmail(event: any, index : number){
+  onClickedEmail(event: any, index: number) {
     const control = this.policies.at(index);
     if (event.target.checked) {
       control.get('notification')?.setValue(true);
@@ -158,24 +160,26 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     }
 
   }
-  
+
   onPolicyFileChange(event: any, index: number): void {
     const file = event.target.files[0];
     if (!file) return;
-  
+
+    const formValue = this.policyForm.value;
+    const year = formValue.year ?? new Date().getFullYear();
+    const shiftId = formValue.shift;
+
     const timestamp = new Date().getTime();
     const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
-    const filepath = `/FusionDocuments/organizationPolicy/${this.empinfo.employeeId}`;
-  
+    const filepath = `/Policies/${year}/${shiftId}`;
+
     const control = this.policies.at(index);
-  
-    // Save original file object (for validation or display if needed)
+
     control.get('policyNewFile')?.setValue(file);
-  
+
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
       next: (response: any) => {
-        control.get('policyNewFile')?.setValue(response.path);  // save uploaded file path instead
-      
+        control.get('policyNewFile')?.setValue(response.path);  
       },
       error: (err) => {
         console.error('Upload failed:', err);
@@ -184,13 +188,12 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   }
 
   renameFile(file: File, newName: string): File {
-    return new File([file], newName, { type: file.type });
+    const sanitizedFileName = newName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');   
+    return new File([file], sanitizedFileName, { type: file.type });
   }
-  
 
   hidePublishCloneButtons: boolean = false;
   submit() {
-    debugger
     console.log(this.updatePoliciesData)
     const formValue = this.policyForm.value;
     const payload = {
@@ -209,16 +212,16 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       shiftID: formValue.shift?.id ?? this.updatePoliciesData.shiftID,
       id: this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
-        Id : item.id,
+        Id: item.id,
         PolicyName: item.policyName,
         PolicyAttachment:
           item.policyNewFile && item.policyNewFile !== ''
             ? item.policyNewFile
             : item.policyFile,
         PolicyDescription: item.policyDescription,
-        requiresAcknowledgment : item.acknowledged,
+        requiresAcknowledgment: item.acknowledged,
         sendEmailNotification: item.notification,
-        sendPushNotification : false,
+        sendPushNotification: false,
         sendNotification: item.notification,
         Status: 'Pending for submission',
         // holidayColor: 'string',
@@ -259,7 +262,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   }
 
   clonePolicy1(): void {
-     this.router.navigate(['/settings/employee-fields/clonepolices']);
+    this.router.navigate(['/settings/employee-fields/clonepolices']);
   }
 
   publish() {
@@ -334,7 +337,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             };
             this.getShiftBYid(shiftdata);
           },
-          error: (err: any) => {},
+          error: (err: any) => { },
         });
     } else {
       this.subLocationsDropdown = [];

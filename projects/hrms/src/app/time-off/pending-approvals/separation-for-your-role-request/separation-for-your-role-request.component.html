@@ -22,8 +22,7 @@
                 <th>{{'Early Relieving Reason' | translate}}</th>
                 <th>{{'Request Type' | translate}}</th>
                 <th>{{'Approver History' | translate}}</th>
-                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role
-                (Separation Requests).delete')) {
+                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role (Separation Requests).delete')) {
                 <th>Action</th>
                 }
             </thead>
@@ -49,7 +48,7 @@
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spRequestDescription}}</p>
@@ -64,7 +63,7 @@
                             @if(item.entity?.spEarlyRelievingReason){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
@@ -80,7 +79,7 @@
                             <div>
                                 <a type="button"
                                     (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                    <app-info-icon />
                                 </a>
                             </div>
                             }
@@ -213,7 +212,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
-                        pattern="^[^\s].*" required></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -251,7 +250,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        pattern="^[^\s].*"></textarea>
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250
                     </div>
@@ -283,7 +282,7 @@
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" (keydown)="formsValidation.restrictInitialSpace($event)"
                         required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250
@@ -310,7 +309,7 @@
                         <div class="button-loader-content" *ngIf="isLoading">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Approving Separation Request..'}}</span>
+                            <span>{{'Loading...' | translate}}</span>
                         </div>
                         }
                     </button>
@@ -334,7 +333,7 @@
                         {{'Comments' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250"
-                        [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
+                        [(ngModel)]="selectedSpRequestData.rejectedReason" (keydown)="formsValidation.restrictInitialSpace($event)" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
@@ -352,7 +351,7 @@
                         <div class="button-loader-content" *ngIf="isLoading">
                             <span class="spinner-border button-spinner text-light" role="status"
                                 aria-hidden="true"></span>
-                            <span>{{'Rejecting Separation Request...'}}</span>
+                            <span>{{'Loading...' | translate}}</span>
                         </div>
                         }
                     </button>
@@ -479,7 +478,7 @@
                         translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        pattern="^[^\s].*" #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments"
+                        (keydown)="formsValidation.restrictInitialSpace($event)" #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments"
                         rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
@@ -518,7 +517,7 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
-                        pattern="^[^\s].*"></textarea>
+                       (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
                     <div class="error-msg"
@@ -548,7 +547,7 @@
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
-                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"
+                        #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"
                         required></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}/250</div>
@@ -572,7 +571,7 @@
                     @else {
                     <div class="button-loader-content" *ngIf="isLoading">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Processing Separation Request...'}}</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </div>
                     }
                 </button>
@@ -625,12 +624,10 @@
                             <td>
                                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                                     <a type="button" [ngbPopover]="reason">
-                                        <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
+                                        <app-info-icon />
                                     </a>
                                     <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{comment?.comments}} </p>
-                                        </div>
+                                        <p class="mb-0">{{comment?.comments}} </p>
                                     </ng-template>
                                 </div>
                                 <ng-template #popupcomments>{{'NA' | translate}}</ng-template>

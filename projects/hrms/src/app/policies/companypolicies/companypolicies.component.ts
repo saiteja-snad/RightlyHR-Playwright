@@ -218,7 +218,12 @@ export class CompanypoliciesComponent {
       next: (response: any) => {
         console.log(response);
         this.loading = false;
+
         this.confirmation.openSuccessModal('Policy Acknowledged successfully');
+
+        setTimeout(() => {
+            this.modalService.dismissAll();
+        }, 2000);
         selectedItem.acknowledged = true;
         this.getjobDetails();
       },

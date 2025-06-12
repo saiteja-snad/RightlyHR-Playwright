@@ -97,7 +97,7 @@ export class OnbehalfOfApprovalsComponent {
 
     onMyTeamChange(event: any): void {
     this.selectedOtherEmployee = null; // Clear the other dropdown
-    this.Onclick(event);
+    this.OnclickMyTeam(event);
   }
 
   onEmployeeChange(event: any): void {
@@ -158,6 +158,27 @@ export class OnbehalfOfApprovalsComponent {
           }
         },
       });
+  }
+
+   OnclickMyTeam($event: any) {
+    if ($event.value) {
+      this.employeedata = this.getEmployeeInfo.find((e: any) => e.employeeId == $event.value);
+      localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
+      this.http.triggerActionSignal();
+    }
+    else {
+      this.employeedata = {};
+      this.leaves = [];
+      this.compOff = [];
+      this.wfh = [];
+      this.permissions = [];
+      this.timeOffCount = 0;
+      this.compOffCount = 0;
+      this.wfhCount = 0;
+      this.permissionsCount = 0;
+      localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
+      this.http.triggerActionSignal();
+    }
   }
 
   Onclick($event: any) {

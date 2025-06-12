@@ -8,7 +8,7 @@
         </div>
 
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <label class="form-label custom-label m-0">Select</label>
+            <label class="form-label custom-label fliter-lables m-0">Select</label>
             <div class="custom-year-month-picker">
                 <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
                     (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
@@ -16,7 +16,7 @@
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
-            <label class="form-label custom-label m-0">Select Employee</label>
+            <label class="form-label custom-label fliter-lables m-0">Select Employee</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployee" placeholder="Select Employee"
@@ -58,24 +58,24 @@
             @if(!dataLoader){
             <table class="w-100">
                 <thead>
-                    <th>Date</th>
-                    <th>First In</th>
-                    <th>Last Out</th>
-                    <th>Duration</th>
-                    <th>Logs</th>
+                    <th class="max-width">Date</th>
+                    <th class="max-width">First In</th>
+                    <th class="max-width">Last Out</th>
+                    <th class="max-width">Duration</th>
+                    <th class="max-width">Logs</th>
                     <th class="text-end pe-5">Status</th>
                 </thead>
                 <tbody>           
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
-                        <td>{{(item.date|dateformat)??'-'}}</td>
-                        <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
-                        <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-                        <td>{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
+                        <td class="max-width">{{(item.date|dateformat)??'-'}}</td>
+                        <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
+                        <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
+                        <td class="max-width">{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
                             item.duration.totalDuration}}
                         </td>
-                        <td>
+                        <td class="max-width">
                             @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
                             <div>
                                 <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
@@ -281,7 +281,7 @@
             <p-accordion value="0">
                 @if(punchPairs.length>0){
                 <p-accordion-panel value="0">
-                    <p-accordion-header>Biometric Logs</p-accordion-header>
+                    <p-accordion-header>Biometric Logs ({{ logsDuration }})</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -301,9 +301,6 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                            <div class="popup-table-footer">
-                                Total Duration: <b>{{ logsDuration }}</b>
                             </div>
                         </div>
                     </p-accordion-content>
@@ -327,8 +324,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of permissions_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
-                                            </td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
                                     </tbody>

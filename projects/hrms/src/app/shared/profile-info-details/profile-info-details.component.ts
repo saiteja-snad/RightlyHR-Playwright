@@ -37,6 +37,7 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   profilePic: any;
   isloading: boolean = false;
+
   constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,
     public rbac: RbacService, private router: Router) { }
 
@@ -82,7 +83,6 @@ getEmployeeId() {
       },
       error: (reason)=>{ console.log(reason)
         this.isloading = false;
-        
       },
       complete: () => {
         this.isloading = false;
@@ -90,12 +90,10 @@ getEmployeeId() {
     });
   }
 
-
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
 
- 
   getJobDetails() {
     this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
@@ -122,7 +120,6 @@ getEmployeeId() {
       },
       error: (reason: any) => {
         this.isloading = false;
-      
       },
       complete: () => {
         this.isloading = false;

@@ -110,7 +110,6 @@
   }
 }
 
-
 .custom-year-month-picker {
   width: 10rem;
 
@@ -151,4 +150,23 @@
 
 .attendance-log-content {
   width: 100%;
+}
+
+.max-width {
+  text-wrap: nowrap !important;
+}
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .max-width {
+    width: 120px !important;
+  }
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+  max-height: 30vh;
+  overflow-y: auto;
+  border: 1px solid #D1D8E3;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border-bottom: 1px solid #D1D8E3 !important;
 }

@@ -54,7 +54,9 @@ export class SignalsService {
 
   //trainee details trigger signals
   traineeDetailsTriggerSignal = signal<boolean>(false);
-
+  // probation deatils
+  probationDetailsTriggerSignal = signal<boolean>(false);
+  
   constructor(
     private sharedModalService: OpenModalService,
   ) { }

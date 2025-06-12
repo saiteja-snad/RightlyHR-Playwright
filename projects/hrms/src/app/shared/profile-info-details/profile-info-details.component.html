@@ -43,7 +43,8 @@
                 <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
                 <span class="link-text">
                     <span *ngIf="empdata?.workPhone">
-                        <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u>
+                        <!-- <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u> -->
+                         <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') + empdata?.workPhone }}</u>
                     </span>
                     <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
                         <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>

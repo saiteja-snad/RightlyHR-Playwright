@@ -18,13 +18,13 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.75rem;
+            padding: 0.5rem 0.75rem;
             border-bottom: 1px solid #DCE3E9;
         }
 
         .profile-icon {
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 1.75rem;
+            height: 1.75rem;
             border-radius: 50%;
         }
 
@@ -52,15 +52,23 @@
         }
 
         .label-text {
+            text-transform: capitalize;
+        }
+
+        .text-label {
             font-weight: 400;
             font-size: var(--fontsize12);
-            text-transform: capitalize;
             vertical-align: middle;
             align-items: center;
         }
 
         .link-text {
             color: var(--primary-color);
+        }
+
+        .custom-icon {
+            width: 13px;
+            height: 13px;
         }
     }
 }

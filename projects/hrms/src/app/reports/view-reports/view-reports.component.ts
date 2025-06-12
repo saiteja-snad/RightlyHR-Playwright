@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { StandardReportTabsComponent } from "../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { AttandaceReportTabsComponent } from "../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { PolicyReportsTabsComponent } from "../../shared/reports-tabs/policy-reports-tabs/policy-reports-tabs.component";
 import { RbacService } from '../../services/rbac.service';
+import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-view-reports',
-  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent],
+  imports: [RouterModule, StandardReportTabsComponent, AttandaceReportTabsComponent, PolicyReportsTabsComponent, AccordionModule],
   templateUrl: './view-reports.component.html',
-  styleUrl: './view-reports.component.scss'
+  styleUrl: './view-reports.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class ViewReportsComponent {

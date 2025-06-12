@@ -158,9 +158,9 @@
                     </tr>
                     }
                     @if(statusCounts$.value.length<=0){ 
-                        <tr>
+                    <tr>
                         <app-no-data-found />
-                        </tr>
+                    </tr>
                     }
                     }
                     @else {
@@ -312,7 +312,7 @@
         
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
-                    <p-accordion-header>Permission(s)</p-accordion-header>
+                    <p-accordion-header>Permissions</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -327,7 +327,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of permissions_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
@@ -341,7 +341,7 @@
         
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
-                    <p-accordion-header>Regularization(s)</p-accordion-header>
+                    <p-accordion-header>Regularizations</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -356,7 +356,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of regularization_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
@@ -394,8 +394,7 @@
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">
-                            <span> Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
-                            </span>
+                            Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">

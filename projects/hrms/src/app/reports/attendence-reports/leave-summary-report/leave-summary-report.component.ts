@@ -246,7 +246,6 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   leavesummeryReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-    debugger
     const formValue = this.lvSummeryReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
     // Check if no filter is provided

@@ -248,6 +248,16 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
           this.conformationPopup.openErrorModal('Family members deleted failed')
         },
       });
+
+  }
+   openConfirmationModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  resetdata(){
+    this.familyDetailsForm.reset();
+    this.familyDetailsupdateForm.reset();
+    this.modalService.dismissAll()
   }
 
   ngOnDestroy(): void {

@@ -79,27 +79,25 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       this.getEmployeeId();
     }
   }
+
   initializeForm(): void {
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]],
-      workMail: ['', [Validators.required, Validators.email]], 
+      workMail: ['', [Validators.email]], 
       countyCode1: [null,],
        countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
       workNumber: [null,], // Required and 10-digit phone number
-
     });
-   
-
   }
 
   canAccessfield(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
+
   enableForm(): void {
     this.buttons = true;
     this.contactForm.enable();
-   
     if (this.router.url.startsWith('/myinfo')) {
       // Ensure only workMail is disabled (it's already disabled by .disable(), but you may want to emphasize this)
       this.contactForm.get('workMail')?.disable();
@@ -110,13 +108,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   disableForm(): void {
-
     this.buttons = false;
     this.contactForm.disable()
     this.contactForm.reset();
-    
     this.getEmployeeId();
-   
   }
 
   getEmployeeId(): void {
@@ -125,14 +120,13 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        console.log(data)
         this.employedata = data;
         this.patchForm(data);
         this.loading = false;
         this.dataLoader = false;
         this.selectedworkcoutrycode.set(data.workPhoneCountryFlag);
-    
-        this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);
-       
+        this.selectedpersonalnumbercode.set(data.contactNumberCountryFlag);      
       },
       error: (reason) =>{
         console.log(reason);
@@ -142,8 +136,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       } ,
       complete: () => {
         this.loading = false;
-        this.dataLoader = false;
-        
+        this.dataLoader = false; 
       }
     });
   }
@@ -156,17 +149,16 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       workNumber: data.workPhone || '',       // Bind work phone number
     });
   }
+
   updateAddressInfo(): void {
     const formValue = this.contactForm.value;
-
     const cleanPhoneNumber = (phone: any): string => {
       if (!phone) return '';
       return String(phone).replace(/\D+/g, '');
     };
 
     const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.employedata?.phoneNumber || '');
-    const worknumber = cleanPhoneNumber(formValue.workNumber || this.employedata?.workNumber || '');
-
+    const worknumber = cleanPhoneNumber(formValue.workNumber || this.employedata?.workNumber || null);
     const updatePayload = {
       ...this.employedata,
      
@@ -199,6 +191,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
           }
         },
         error: (reason: any) => {
+          this.getEmployeeId();
           console.log(reason);
           this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
         },
@@ -226,10 +219,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.selectedCountryCodegflag = country.code;
     console.log('Selected country code:', this.selectedCountryCodegflag);
     console.log('Selected country dial code:', this.selectedDialCode);
-    // this.contactForm.get('countyCode1')?.setValue(country.dialling_code);
-    // this.contactForm.get('countyCode1')?.markAsTouched();
-    // this.contactForm.get('workNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
-    // this.contactForm.get('workNumber')?.updateValueAndValidity();
+    this.contactForm.get('workNumber')?.setValidators([this.phoneNumberValidator(this.selectedCountryCodegflag)]);
     this.employedata.workPhoneCountryCode = country.dialling_code;
     this.employedata.workphonecountryflag = country.code;
   }

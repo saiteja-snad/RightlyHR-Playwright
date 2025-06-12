@@ -39,12 +39,8 @@
 
                     <!-- Sub Location -->
                     <div class="d-flex align-items-center gap-2">
-<<<<<<< HEAD
-                        <label for="subLocation" class="custom-label text-nowrap m-0">{{ "Sub Location" | translate }}</label>
-=======
                         <label for="subLocation" class="custom-label fliter-lables text-nowrap m-0">{{ "Sub Location" | translate
                             }}</label>
->>>>>>> b265e5919c1c27bbd7a65067b7145111ae765553
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
@@ -67,12 +63,7 @@
                             }
                         </button>
                         }
-<<<<<<< HEAD
-                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && 
-                        rbac.allowedToAccess('Job Location Wise Data - Export.view')){
-=======
                         @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
->>>>>>> b265e5919c1c27bbd7a65067b7145111ae765553
                         <button type="button" class="custom-btn btn-primary"
                             [disabled]="locationReportList.length === 0 || disableBtn"
                             (click)="onClickJobLocationExport() ">

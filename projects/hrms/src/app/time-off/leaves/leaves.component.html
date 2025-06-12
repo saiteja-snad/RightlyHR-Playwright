@@ -260,9 +260,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="error-msg" *ngIf="disableSubmitButton">
+                <!-- <div class="error-msg" *ngIf="disableSubmitButton">
                     Please select any of the option
-                </div>
+                </div> -->
+                <!-- <div class="error-msg"
+                    *ngIf="disableSubmitButton && leaveForm.get('enddate')?.value && leaveForm.get('enddate')?.touched">
+                    Please select any of the option
+                </div> -->
+
 
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -303,7 +308,7 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected || disableSubmitButton || !isstimeoffValid || isWeekOffSelectedEndate || 
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected  || !isstimeoffValid || isWeekOffSelectedEndate || 
                         isHolidaySelectedEndate || this.startDateErrorMessage || this.endDateErrorMessage || !issEndDategreater || !startdatevalid || 
                         isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > 
                         remainingLeaves) ) || isLoading">

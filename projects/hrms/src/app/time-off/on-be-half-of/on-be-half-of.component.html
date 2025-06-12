@@ -11,7 +11,7 @@
 
         <div class="d-flex align-items-center gap-3">
             @if (rbac.allowedToAccess('My Team On Behalf Of.view')) {
-            <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
+            <label class="form-label fliter-lables m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
                     class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"
@@ -22,7 +22,7 @@
 
             @if (rbac.allowedToAccess('On Behalf Of All Employees.view')) {
            <div class="d-flex align-items-center gap-3" >
-             <label class="form-label component-sub-header m-0">Select Employee</label>
+             <label class="form-label fliter-lables m-0">Select Employee</label>
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"  optionLabel="fullName" [filter]="true"
                     filterBy="fullName" [showClear]="true" placeholder="Please select employee"  (onChange)="onEmployeeChange($event)"
@@ -250,13 +250,13 @@
                         </div>
 
                         <!-- Validation Message -->
-                        <div class="error-msg"
+                        <!-- <div class="error-msg"
                             *ngIf="leaveForm.get('availingType')?.invalid && leaveForm.get('availingType')?.touched">
                             Please select Availing option
                         </div>
                         <div class="error-msg" *ngIf="disableSubmitButton">
                             Please select Availing option
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="col-md-12 mb-3">
@@ -298,7 +298,7 @@
                     <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || leaveForm.errors?.['dateOrderInvalid'] ||
                     !isstimeoffValid || !startdatevalid || isHolidaySelected ||  !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate || 
                     isoptionalnotallowedatWorkingdate || isHolidaySelectedEndate || isHolidaySelected || isNonOptionalHolidaySelected ||
-                    (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) || disableSubmitButton || isLoading">
+                    (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves)  || isLoading">
                         <span *ngIf="!isLoading">Apply</span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
                     </button>

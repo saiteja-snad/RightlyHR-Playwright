@@ -11,7 +11,7 @@
       <div class="d-flex gap-3">
         @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
         <div class="d-flex gap-2 align-items-center">
-          <div class="custom-label text-nowrap">Employee Status</div>
+          <div class="custom-label fliter-lables text-nowrap">Employee Status</div>
           <div class="custom-p-select-content">
             <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false" [showClear]="false"
               class="form-select custom-select" (onChange)="options($event.value)" formControlName="status"

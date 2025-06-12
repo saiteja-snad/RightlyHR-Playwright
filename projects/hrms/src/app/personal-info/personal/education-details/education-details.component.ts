@@ -451,7 +451,15 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       }
     });
   }
+   openConfirmationModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
+resetdata(){
+  this.educationupdateForm.reset();
+  this.modalService.dismissAll();
+  this.educationForm.reset()
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

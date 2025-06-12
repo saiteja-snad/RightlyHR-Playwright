@@ -158,7 +158,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       const identityNumberControl = this.identityupdateForm.get('identityupdateNumber');
       identityNumberControl?.clearValidators();
 
-     if (selected?.identityType1 === 'Passport') {
+      if (selected?.identityType1 === 'Passport') {
         // Passport: Alphanumeric + special characters
         identityNumberControl?.setValidators([
           Validators.required,
@@ -272,8 +272,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       file,
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
-
-
   }
   resetForms() {
     this.identityForm.get('identityAttachment')?.setValue('');
@@ -465,6 +463,9 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       }
     });
   }
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
 
   opendeletModal(content: any, identityDetails: any): void {
@@ -492,6 +493,11 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
           this.conformationPopup.openErrorModal('Identity details deleted failed');
         }
       });
+  }
+  resetData() {
+    this.identityupdateForm.reset();
+    this.identityForm.reset();
+    this.modalService.dismissAll()
   }
 
   ngOnDestroy(): void {

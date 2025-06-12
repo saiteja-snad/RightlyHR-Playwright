@@ -281,7 +281,7 @@
             <p-accordion value="0">
                 @if(punchPairs.length>0){
                 <p-accordion-panel value="0">
-                    <p-accordion-header>Biometric Logs ({{ logsDuration + ' Hrs'}})</p-accordion-header>
+                    <p-accordion-header>Biometric Logs</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -302,6 +302,9 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="popup-table-footer">
+                                Total Duration: <b>{{ logsDuration }}</b>
+                            </div>
                         </div>
                     </p-accordion-content>
                 </p-accordion-panel>
@@ -309,7 +312,7 @@
         
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
-                    <p-accordion-header>Permissions ({{permissionsDuration + ' Hrs'}})</p-accordion-header>
+                    <p-accordion-header>Permissions</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -337,7 +340,7 @@
         
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
-                    <p-accordion-header>Regularizations ({{regularizationAttendDuration + ' Hrs'}})</p-accordion-header>
+                    <p-accordion-header>Regularizations</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -352,8 +355,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of regularization_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
-                                            </td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
                                     </tbody>

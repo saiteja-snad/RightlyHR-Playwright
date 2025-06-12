@@ -33,7 +33,7 @@ export class ViewAssetsDetailsComponent {
   }
 
   navigateassets() {
-    this.router.navigate(['/assets-management/all-assets']);
+    this.router.navigate(['/assets-management/available-assets']);
   }
 
   fetchAssetDetails(assetId: any) {

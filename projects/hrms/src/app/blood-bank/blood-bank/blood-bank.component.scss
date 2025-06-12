@@ -1,16 +1,13 @@
 .custom-component-right-content {
-    height: calc(100vh - 11.25rem);
+    height: calc(100vh - 23rem);
+    min-height: 45vh;
+    position: relative;
 
     .cards-container {
         align-items: center;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
         gap: 1rem;
-    }
-
-    .shimmer {
-        width: 26rem;
-        height: 10rem;
     }
 
     .blood-bank-card {
@@ -20,9 +17,6 @@
         border-radius: 0.75rem;
         background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
         border: 1px solid #DCE3E9;
-
-
-
 
         .blood-group {
             background: #EA362C1A;
@@ -45,14 +39,6 @@
             color: var(--primary-color);
         }
     }
-}
-
-.cards-container-shimmer {
-    align-items: center;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-    gap: 1rem;
-
 
     .blood-bank-card-shimerr {
         width: 100%;
@@ -62,28 +48,61 @@
         background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
         border: 1px solid #DCE3E9;
 
-
-
-
         .blood-group {
-            background:  #DCE3E9;
-            font-weight: 700;
-            font-size: var(--fontsize14);
-            color: #EA362C;
-            padding: 1rem;
-            border-radius: 0.5rem;
+            background: #DCE3E9;
+        }
+    }
+}
+
+.custom-graph-grid {
+    display: flex;
+    gap: 1rem;
+    position: relative;
+
+    .cards-grid-container {
+        width: 100%;
+        align-items: center;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+
+        .active {
+            box-shadow: 0px 0px 9.62px 0px #0B3A8340 !important;
         }
 
-        .name {
-            font-weight: 600;
-            font-size: var(--fontsize13);
-            color: #181817;
-        }
+        .employees-category-card {
+            width: 100%;
+            height: 100%;
+            padding: 0.75rem 1rem;
+            background: #FFFFFF;
+            border-radius: 0.625rem;
+            margin: 0rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
 
-        .email {
-            font-weight: 400;
-            font-size: var(--fontsize10);
-            color: var(--primary-color);
+            .blood-group {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 3.375rem;
+                height: 3.375rem;
+                border-radius: 50%;
+                font-weight: 700;
+                font-size: var(--fontsize18);
+            }
+
+            .count-text {
+                font-weight: 600;
+                font-size: var(--fontsize20);
+                color: #222222;
+            }
         }
+    }
+
+    .bloodGroupTab {
+        box-shadow: none !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, #CFDBEE 100%) !important;
     }
 }

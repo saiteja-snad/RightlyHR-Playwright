@@ -115,6 +115,8 @@ export const EMPLOYEE_INFO_CLAIMS = [
 
   { permission: 'documents', claim: 'Employee Info Documents Tab' },
   { permission: 'upload', claim: 'Employee Info Documents Upload File' },
+  { permission: 'dowload', claim: 'Employee Info Documents Dowload File' },
+
 
   // Team Members
   { permission: 'team-members', claim: 'Employee Info Reporting Manager Tab' },
@@ -246,6 +248,8 @@ export const MY_INFO_CLAIMS = [
   },
   { permission: 'documents', claim: 'My Info Documents Tab' },
   { permission: 'upload', claim: 'My Info Documents Upload File' },
+   { permission: 'dowload', claim: 'My Info Documents Dowload File' },
+
 
 
   { permission: 'team-members', claim: 'My Info Team Members Tab' },

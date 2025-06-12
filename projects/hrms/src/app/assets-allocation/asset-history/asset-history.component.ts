@@ -40,8 +40,7 @@ export class AssetHistoryComponent {
   }
 
   navigateassets(){
-   // this.router.navigate(['/desk/management/all-desks']);
-    this.router.navigate(['/assets-management/all-assets']);
+    this.router.navigate(['/assets-management/available-assets']);
   }
 
   tranferasetdata(assetId: any) {

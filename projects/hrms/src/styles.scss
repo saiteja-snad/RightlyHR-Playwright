@@ -146,6 +146,7 @@ body {
         height: 2.5rem;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -675,6 +676,7 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
+
 // scroll bar stylings ends
 
 // button stylings
@@ -814,6 +816,7 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
+
 // Select Styling 
 
 // p select stylings
@@ -937,6 +940,7 @@ select:focus {
         background-color: #FFFFFF;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -1012,6 +1016,7 @@ select:focus {
         z-index: 1;
     }
 }
+
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1113,6 +1118,7 @@ select:focus {
         }
     }
 }
+
 // My Info Stylings Ends
 
 // letter main content
@@ -1215,6 +1221,7 @@ select:focus {
 
 // salary details table
 .salary-details-table {
+
     table,
     th,
     td {
@@ -1286,6 +1293,7 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // note text stylings
@@ -1300,6 +1308,7 @@ select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 //My Info Stylings
@@ -1496,6 +1505,7 @@ input[type="file"] {
         }
     }
 }
+
 //pagenation stylings
 
 // custom phone number input with country code stylings
@@ -1552,6 +1562,7 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
+
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE
@@ -1686,6 +1697,7 @@ input[type="file"] {
     padding: 1rem;
     overflow: auto;
 }
+
 // popup stylings ends
 
 // download text
@@ -1721,6 +1733,7 @@ input[type="file"] {
         text-align: right;
     }
 }
+
 //styles for popup table
 
 // styles for expenses
@@ -1738,7 +1751,8 @@ input[type="file"] {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1852,6 +1866,7 @@ input[type="file"] {
         padding: 1rem 0rem;
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -1929,6 +1944,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1947,6 +1963,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -2084,7 +2101,8 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: 500;
         }
 
-        th, td {
+        th,
+        td {
             padding: 1rem;
             text-align: center;
             line-height: 100%;
@@ -2478,6 +2496,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 // Attendance accordian
 .custom-accordians {
+
     // accordian styling
     .p-accordionpanel {
         border-style: none !important;
@@ -2570,4 +2589,14 @@ input[type=number]::-webkit-outer-spin-button {
         border-bottom-left-radius: 0.5rem;
         border-bottom-right-radius: 0.5rem;
     }
+}
+
+.fliter-lables {
+    font-family: var(--font-family);
+    font-weight: 600;
+    font-size: var(--fontsize14);
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: var(--primary-color);
 }

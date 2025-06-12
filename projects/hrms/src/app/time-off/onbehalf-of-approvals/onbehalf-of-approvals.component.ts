@@ -142,7 +142,7 @@ export class OnbehalfOfApprovalsComponent {
 
   getMyTeamData() {
     this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${this.empdata.employeeId}`)
+      .getData(`Employeedata/v2/getEmployeesByhierarchy/${this.empdata.employeeId}`)
       .subscribe({
         next: (response: any) => {
           if (response && response.length) {

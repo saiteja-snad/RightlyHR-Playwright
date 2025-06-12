@@ -10,15 +10,29 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            @if(rbac.allowedToAccess('Request On Behalf Button.view')) {
-            <label class="form-label component-sub-header m-0">Select Employee</label>
+            @if (rbac.allowedToAccess('My Team On Behalf Of.view')) {
+            <label class="form-label fliter-lables m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
-                <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                    filterBy="fullName" [showClear]="true" placeholder="Please select employee"
-                    (onChange)="Onclick($event)" class="form-select custom-select" resetFilterOnHide="true">
+                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
+                    class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"
+                    resetFilterOnHide="true" [showClear]="true" [(ngModel)]="selectedMyTeamEmployee"  (onChange)="onMyTeamChange($event)">
                 </p-select>
             </div>
+            }
+
+            @if (rbac.allowedToAccess('On Behalf Of All Employees.view')) {
+           <div class="d-flex align-items-center gap-3" >
+             <label class="form-label fliter-lables m-0">Select Employee</label>
+            <div class="custom-p-select-content">
+                <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"  optionLabel="fullName" [filter]="true"
+                    filterBy="fullName" [showClear]="true" placeholder="Please select employee"  (onChange)="onEmployeeChange($event)"
+                    class="form-select custom-select" resetFilterOnHide="true">
+                </p-select>
+            </div>
+           </div>
+            }
             <!-- @if(showbutton){ -->
+             @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)"
                 [disabled]="!selectedEmployeeId">Apply On Behalf Of</button>
             <!-- } -->

@@ -171,7 +171,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingsemployeepersonal
-                                        (change)="toggleSelectAll(settingsEmployeePersonalFields, selectAllsettingsemployeepersonal?.checked, isSettingsEmployeePersonalCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsEmployeePersonalFields, selectAllsettingsemployeepersonal?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsEmployeePersonalFields)"
                                         [indeterminate]="isSomeSelected(settingsEmployeePersonalFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -245,7 +245,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingpolices
-                                        (change)="toggleSelectAll(settingsManagePoliciesTabFields, selectAllsettingpolices?.checked, isSettingsManagePoliciesCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsManagePoliciesTabFields, selectAllsettingpolices?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsManagePoliciesTabFields)"
                                         [indeterminate]="isSomeSelected(settingsManagePoliciesTabFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -282,7 +282,7 @@
 
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingholidays
-                                        (change)="toggleSelectAll(settingsManageHolidaysTab, selectAllsettingholidays?.checked, isSettingsManageHolidaysCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsManageHolidaysTab, selectAllsettingholidays?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsManageHolidaysTab)"
                                         [indeterminate]="isSomeSelected(settingsManageHolidaysTab)"
                                         [disabled]="!roleToFilter?.id">
@@ -319,7 +319,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingweekends
-                                        (change)="toggleSelectAll(settingsManageWeekendsTab, selectAllsettingweekends?.checked, isSettingsManageWeekendsCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsManageWeekendsTab, selectAllsettingweekends?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsManageWeekendsTab)"
                                         [indeterminate]="isSomeSelected(settingsManageWeekendsTab)"
                                         [disabled]="!roleToFilter?.id">
@@ -355,7 +355,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingexpenses
-                                        (change)="toggleSelectAll(settingsManageExpenseTab, selectAllsettingexpenses?.checked, isSettingsManageExpensesCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsManageExpenseTab, selectAllsettingexpenses?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsManageExpenseTab)"
                                         [indeterminate]="isSomeSelected(settingsManageExpenseTab)"
                                         [disabled]="!roleToFilter?.id">
@@ -393,7 +393,7 @@
                                 <div class="d-flex gap-2 align-items-center">
 
                                     <input type="checkbox" #selectAllsettingdst
-                                        (change)="toggleSelectAll(settingsManageDSTTab, selectAllsettingdst?.checked, isSettingsManageDSTCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsManageDSTTab, selectAllsettingdst?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsManageDSTTab)"
                                         [indeterminate]="isSomeSelected(settingsManageDSTTab)"
                                         [disabled]="!roleToFilter?.id">
@@ -429,7 +429,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingleves
-                                        (change)="toggleSelectAll(timeoffSettingsFields, selectAllsettingleves?.checked, istimeoffSettingsCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(timeoffSettingsFields, selectAllsettingleves?.checked, isonlyviewfunction.bind(this))"
                                         [indeterminate]="isSomeSelected(timeoffSettingsFields)"
                                         [disabled]="!roleToFilter?.id">
                                     <div> Settings Time Off</div>
@@ -466,7 +466,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingtimeoffleave
-                                        (change)="toggleSelectAll(leaveCategoryTabsFields, selectAllsettingtimeoffleave?.checked, isleaveCategoryCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(leaveCategoryTabsFields, selectAllsettingtimeoffleave?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(leaveCategoryTabsFields)"
                                         [indeterminate]="isSomeSelected(leaveCategoryTabsFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -506,7 +506,7 @@
                                 <div class="d-flex gap-2 align-items-center">
 
                                     <input type="checkbox" #selectAllsettingattendece
-                                        (change)="toggleSelectAll(attendanceEligibilityFields, selectAllsettingattendece?.checked, isattendanceEligibilityCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(attendanceEligibilityFields, selectAllsettingattendece?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(attendanceEligibilityFields)"
                                         [indeterminate]="isSomeSelected(attendanceEligibilityFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -546,7 +546,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingassets
-                                        (change)="toggleSelectAll(settingsAssetConfigurationFields, selectAllsettingassets?.checked, isSettingsAssetConfigurationCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsAssetConfigurationFields, selectAllsettingassets?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsAssetConfigurationFields)"
                                         [indeterminate]="isSomeSelected(settingsAssetConfigurationFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -582,7 +582,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingdynamicfroms
-                                        (change)="toggleSelectAll(settingsDynamicFormsFields, selectAllsettingdynamicfroms?.checked, isDynamicFormsCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(settingsDynamicFormsFields, selectAllsettingdynamicfroms?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(settingsDynamicFormsFields)"
                                         [indeterminate]="isSomeSelected(settingsDynamicFormsFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -651,7 +651,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsettingexpensestype
-                                        (change)="toggleSelectAll(expensesTypeFields, selectAllsettingexpensestype?.checked, isExpensesTypeCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(expensesTypeFields, selectAllsettingexpensestype?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(expensesTypeFields)"
                                         [indeterminate]="isSomeSelected(expensesTypeFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -690,7 +690,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllsidebars
-                                        (change)="toggleSelectAll(sidebarTabsFields, selectAllsidebars?.checked, issideCheckboxDisabled.bind(this))"
+                                        (change)="toggleSelectAll(sidebarTabsFields, selectAllsidebars?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(sidebarTabsFields)"
                                         [indeterminate]="isSomeSelected(sidebarTabsFields)"
                                         [disabled]="!roleToFilter?.id">
@@ -766,7 +766,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllexpensestabs
-                                        (change)="toggleSelectAll(expensesModuleTabs, selectAllexpensestabs?.checked, isexpensesdActionDisabled.bind(this))"
+                                        (change)="toggleSelectAll(expensesModuleTabs, selectAllexpensestabs?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(expensesModuleTabs)"
                                         [indeterminate]="isSomeSelected(expensesModuleTabs)"
                                         [disabled]="!roleToFilter?.id">
@@ -804,7 +804,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllitsupportmodule
-                                        (change)="toggleSelectAll(itSupportModule, selectAllitsupportmodule?.checked, isItSupportActionDisabled.bind(this))"
+                                        (change)="toggleSelectAll(itSupportModule, selectAllitsupportmodule?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(itSupportModule)"
                                         [indeterminate]="isSomeSelected(itSupportModule)"
                                         [disabled]="!roleToFilter?.id">
@@ -842,7 +842,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllteamtickets
-                                        (change)="toggleSelectAll(TeamTicketsTabs, selectAllteamtickets?.checked, isItSupportteamActionDisabled.bind(this))"
+                                        (change)="toggleSelectAll(TeamTicketsTabs, selectAllteamtickets?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(TeamTicketsTabs)"
                                         [indeterminate]="isSomeSelected(TeamTicketsTabs)"
                                         [disabled]="!roleToFilter?.id">
@@ -881,7 +881,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllholidaystabs
-                                        (change)="toggleSelectAll(HolidaysModule, selectAllholidaystabs?.checked, isHolidaysActionDisabled.bind(this))"
+                                        (change)="toggleSelectAll(HolidaysModule, selectAllholidaystabs?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(HolidaysModule)"
                                         [indeterminate]="isSomeSelected(HolidaysModule)" [disabled]="!roleToFilter?.id">
                                     <div> Holidays Module</div>
@@ -1498,7 +1498,9 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Waiting For Approval (On Behalf Of)' 
                                             || per.fields === 'Approved (On Behalf Of)'  || per.fields === 'Request On Behalf Button'
-                                            || per.fields === 'Rejected (On Behalf Of)' || per.fields === 'Processed (On Behalf Of)' || per.fields === 'Cancelled (On Behalf Of)' ">
+                                            || per.fields === 'Rejected (On Behalf Of)' || per.fields === 'Processed (On Behalf Of)' 
+                                            || per.fields === 'Cancelled (On Behalf Of)' || per.fields === 'My Team On Behalf Of'
+                                            || per.fields === 'On Behalf Of All Employees' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2086,7 +2088,9 @@
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Time Off (On Behalf Of Approvals)'  || per.fields === 'WFH (On Behalf Of Approvals)' 
-                                            || per.fields === 'Comp Off (On Behalf Of Approvals)' || per.fields === 'Permission (On Behalf Of Approvals)' ">
+                                            || per.fields === 'Comp Off (On Behalf Of Approvals)' || per.fields === 'Permission (On Behalf Of Approvals)'
+                                            || per.fields === 'My Team On Behalf Of Approvals'
+                                            || per.fields === 'On Behalf Of Approvals All Employees' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2347,7 +2351,8 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Attendance All Employees List(Leaves)' || per.fields === 'Attendance Team Manager List(Leaves)' || per.fields === 'My Team Report(Leave)'
+                                *ngIf="per.fields === 'Attendance All Employees List(Leaves)' || per.fields === 'Attendance Team Manager List(Leaves)' || per.fields === 'My Team Report(Leave)' ||
+                                per.fields === 'Attendance All Employees List(Leave Summary)' || per.fields === 'Attendance Team Manager List(Leave Summary)' || per.fields === 'My Team Report(Leave Summary)'
                             || per.fields === 'Attendance All Employees List(Compoff)' || per.fields === 'Attendance Team Manager List(Compoff)' || per.fields === 'My Team Report(Compoff)'
                             || per.fields === 'Attendance All Employees List(WFH)' || per.fields === 'Attendance Team Manager List(WFH)' || per.fields === 'My Team Report(WFH)'
                             || per.fields === 'Attendance All Employees List(Permission)' || per.fields === 'Attendance Team Manager List(Permission)' || per.fields === 'My Team Report(Permission)'

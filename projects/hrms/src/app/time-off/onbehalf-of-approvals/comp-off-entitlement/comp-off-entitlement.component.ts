@@ -127,7 +127,7 @@ export class CompOffEntitlementComponent {
   }
 
   openModal(content: any) {
-     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   openApproveModal(content: any, request: AttendanceRequest) {
@@ -229,7 +229,7 @@ export class CompOffEntitlementComponent {
   previousSearchValue: string = '';
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
-      this.multiSelect= false;
+      this.multiSelect = false;
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
       this.hasSelectedAllOnce = false;
@@ -239,7 +239,7 @@ export class CompOffEntitlementComponent {
 
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-     let leaves = this.leavesselect ?? [];
+    let leaves = this.leavesselect ?? [];
 
     if (search) {
       leaves = leaves.filter((item: AttendanceRequest) =>
@@ -410,7 +410,7 @@ export class CompOffEntitlementComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.compoffModuleId,
-        onBehalfOfApproval : true,
+        onBehalfOfApproval: true,
         headerRequests: this.selectedLeavesItems.map((item) => ({
           headerID: item.approvalHeader.id,
           currentStage: item.approvalHeader.currentapprovalStage,
@@ -422,7 +422,7 @@ export class CompOffEntitlementComponent {
         requestProcessedBy: approvedBy,
         status: 'Processed',
         moduleId: environment.compoffModuleId,
-        onBehalfOfApproval : true,
+        onBehalfOfApproval: true,
         headerRequests: [
           {
             headerID: this.selectedLeaveData.approvalHeader.id,
@@ -444,6 +444,9 @@ export class CompOffEntitlementComponent {
             this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -472,7 +475,7 @@ export class CompOffEntitlementComponent {
           status: 'Approved',
           comments: comments,
           moduleId: environment.compoffModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -483,7 +486,7 @@ export class CompOffEntitlementComponent {
           requestProcessedBy: approvedBy,
           status: 'Approved',
           comments: comments,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           moduleId: environment.compoffModuleId,
           headerRequests: [
             {
@@ -502,6 +505,9 @@ export class CompOffEntitlementComponent {
               this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {
@@ -534,7 +540,7 @@ export class CompOffEntitlementComponent {
           status: 'Rejected',
           comments: comments,
           moduleId: environment.compoffModuleId,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           headerRequests: this.selectedLeavesItems.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -545,7 +551,7 @@ export class CompOffEntitlementComponent {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          onBehalfOfApproval : true,
+          onBehalfOfApproval: true,
           moduleId: environment.compoffModuleId,
           headerRequests: [
             {
@@ -564,6 +570,9 @@ export class CompOffEntitlementComponent {
               this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {

@@ -50,7 +50,7 @@
                             {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}
                         </td>
                         <td>{{ details.workEmail || 'N/A' }}</td>
-                        <td>{{ details.contactnumber || 'N/A' }}</td>
+                        <td>{{details.mobilePhoneCountryCode}} {{ details.contactnumber || 'N/A' }}</td>
 
                         @if(canAccess('update','team-managers')) {
                         <td class="text-center">

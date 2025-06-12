@@ -23,7 +23,8 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th class="text-center" *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.update') || rbac.allowedToAccess('Eligibility Global Permissions Tab.delete')">Action(S)</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.update') || 
+                        rbac.allowedToAccess('Eligibility Global Permissions Tab.delete')">Action</th>
                     </tr>
                 </thead>
                 <tbody>

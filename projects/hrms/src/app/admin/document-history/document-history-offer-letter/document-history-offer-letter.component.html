@@ -19,9 +19,9 @@
                     <th>{{'Designation'|translate}}</th>
                     <th>{{'Status'|translate}}</th>
                     <th>{{'Sub Status'|translate}}</th>
-                    @if(rbac.allowedToAccess('Offer Letter Download.view') || 
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') ||
                     rbac.allowedToAccess('Offer Letter Release Offer.view') ||
-                    rbac.allowedToAccess('Offer Letter Approve.view') || 
+                    rbac.allowedToAccess('Offer Letter Approve.view') ||
                     rbac.allowedToAccess('Offer Letter Reject.view')){
                     <th class="text-center">{{'Action'|translate}}</th>
                     }
@@ -38,8 +38,8 @@
                     <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
                     <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                     <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
-                    @if(rbac.allowedToAccess('Offer Letter Download.view') || 
-                    rbac.allowedToAccess('Offer Letter Release Offer.view') || rbac.allowedToAccess('Offer Letter Approve.view') 
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') ||
+                    rbac.allowedToAccess('Offer Letter Release Offer.view') || rbac.allowedToAccess('Offer Letter Approve.view')
                     || rbac.allowedToAccess('Offer Letter Reject.view')){
                     <td class="text-center">
                         <div class="dropdown">
@@ -47,50 +47,44 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                   @if(rbac.allowedToAccess('Offer Letter Download.view')) {
-                                     <li (click)="onSelectDownload(offerLetter)"
-                                    >
-                                    <a class="dropdown-item">{{'Download' | translate}}</a>
+                                @if(rbac.allowedToAccess('Offer Letter Download.view')) {
+                                <li (click)="onSelectDownload(offerLetter)">
+                                    <a class="dropdown-item"><i class="bi bi-download me-2"></i>{{'Download' | translate}}</a>
                                 </li>
-                            }
-                               @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
-                            @if(offerLetter.status=='Approved'){
-                                  <li (click)="releaseOfferletter(offerLetter)"
-                                    >
-                                    <a class="dropdown-item">{{'Release Offer' | translate}}</a>
+                                }
+                                @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
+                                @if(offerLetter.status=='Approved'){
+                                <li (click)="releaseOfferletter(offerLetter)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' | translate}}</a>
                                 </li>
-                            }
-                            }
-                            @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
-                            @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' &&
-                            offerLetter?.status !== 'Released') {
-                                  <li (click)="updateOfferDetails(offerLetter)" >
-                                    <a class="dropdown-item">
-                                        {{'Approve' | translate}}</a>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
+                                @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' && offerLetter?.status !== 'Released') {
+                                <li (click)="updateOfferDetails(offerLetter)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
-                            }
-                            }
-                            @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
-                            @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' &&
-                            offerLetter.status!='Released')){
-                                 <li (click)="SelectData(offerLetter);openModal(rejectpopup)" >
-                                    <a class="dropdown-item">
-                                        {{'Reject' | translate}}</a>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
+                                @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' && offerLetter.status!='Released')){
+                                <li (click)="SelectData(offerLetter);openModal(rejectpopup)">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                 </li>
-                            }
-                            }
+                                }
+                                }
                             </ul>
                         </div>
 
-                   </td>
+                    </td>
                     }
                 </tr>
                 }
                 }
                 @else {
-              <tr>
-            <app-no-data-found />
-          </tr>
+                <tr>
+                    <app-no-data-found />
+                </tr>
                 }
             </tbody>
         </table>
@@ -109,28 +103,33 @@
                 <p class="popup-heading mb-0">Reject Reason</p>
             </div>
             <div>
-                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="rejectDocument.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
                 <div class="mb-3">
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
-                    <textarea type="text" name="rejectReason" class="form-control" placeholder="Please provide reason for rejection" 
-                      rows="3" maxlength="250" formControlName="comments" ></textarea>
-                      <div class="mt-2 textarea-count-text">
+                    <textarea type="text" name="rejectReason" class="form-control"
+                        placeholder="Please provide reason for rejection" rows="3" maxlength="250"
+                        formControlName="comments"></textarea>
+                    <div class="mt-2 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>
                     </div>
-                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" class="error-msg">
+                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
+                        class="error-msg">
                         {{'Reject Reason is required'| translate}}
                     </div>
                     <div class="error-msg" *ngIf="rejectDocument.get('comments')?.hasError('leadingSpace')">
                         Please enter valid input
-                      </div>
+                    </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="rejectDocument.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>

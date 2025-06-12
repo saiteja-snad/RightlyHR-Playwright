@@ -13,6 +13,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-premissions-rejected',
@@ -25,8 +26,9 @@ import { TranslateModule } from '@ngx-translate/core';
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    TranslateModule
-  ],
+    TranslateModule,
+    InfoIconComponent
+],
   templateUrl: './premissions-rejected.component.html',
   styleUrl: './premissions-rejected.component.scss',
 })

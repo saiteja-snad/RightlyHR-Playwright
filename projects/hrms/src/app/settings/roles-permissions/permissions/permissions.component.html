@@ -1310,6 +1310,10 @@
                                                 || per.fields === 'Rejected (WFH)' || per.fields === 'Request WFH Button' || per.fields === 'My Team (WFH)'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
                                         [disabled]="true" (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
                                 </td>
@@ -2708,7 +2712,7 @@
                             <th colspan="5" class="custom-header">My Info Documents</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'My Info Documents Upload File'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'My Info Documents Upload File' || 'My Info Documents Dowload File'">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -2907,7 +2911,7 @@
                                 per.fields === 'Employee Info Probation Details' || per.fields === 'Employee Info Previous Experience Details' ||
                                 per.fields === 'Employee Info Certification Details' || per.fields === 'Employee Info Onboarding Request Details' ||
                                 per.fields === 'Employee Info Compensation Details' || per.fields === 'Employee Info Desk Details' ||
-                                per.fields === 'Employee Info Asset Details' || per.fields === 'Employee Info Separation Request' || per.fields === 'No Due Form'">
+                                per.fields === 'Employee Info Asset Details' || per.fields === 'Employee Info Separation Request' || per.fields === 'No Due Form' || per.fields === 'Employee Info Documents Verification' ">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
@@ -3380,7 +3384,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Employee Info Basic Information' ||  per.fields === 'Employee Info Address Details' || per.fields === 'Employee Info Contact Details'
                             ||  per.fields === 'Employee Info Emergency Contact Details' || per.fields === 'Employee Info Education Details'  || per.fields === 'Employee Info Identity Details'
-                            ||  per.fields === 'Employee Info Family Details' || per.fields === 'Employee Info Bank Details'  || per.fields === 'Employee Info Visa Details' || per.fields === 'Employee Info Documents Verification' ">
+                            ||  per.fields === 'Employee Info Family Details' || per.fields === 'Employee Info Bank Details'  || per.fields === 'Employee Info Visa Details'">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <!-- View -->
@@ -3428,7 +3432,7 @@
                             <th colspan="5" class="custom-header">Employee Info Documents</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Documents Upload File'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Documents Upload File' || 'Employee Info Documents Dowload File'">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

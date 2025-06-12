@@ -5,10 +5,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 
 @Component({
   selector: 'app-premissions-tabs',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './premissions-tabs.component.html',
   styleUrl: './premissions-tabs.component.scss'
 })
@@ -22,6 +23,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  loadiing=false
 
   constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
     effect(() => {
@@ -62,6 +64,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
+    this.loadiing=true
     let empId = this.empinfo.employeeId;
     this.http.getData(`RegularizationRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
@@ -79,8 +82,10 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
          this.cancelPermissionsRequestsCount = this.wfh.filter(
           (element: { status: string }) => element.status === 'Cancelled'
         ).length;
+        this.loadiing=false
       },
       error: (error) => {
+        this.loadiing=false
         console.error('Error fetching data:', error);
         this.wfh = []; // Set to empty array on error
       },

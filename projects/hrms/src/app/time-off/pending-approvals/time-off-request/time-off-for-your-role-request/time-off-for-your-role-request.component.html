@@ -56,8 +56,9 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" (ngModelChange)="onSearchChange()"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            (ngModelChange)="onSearchChange()" placeholder="Search here" aria-label="Username"
+            aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -119,10 +120,10 @@
                         <ng-template #noComments>-</ng-template>
                     </td>
                     @if(!multiSelect){
-                         @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
-                        rbac.allowedToAccess('For Role (Time Off).delete'))){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
+                    rbac.allowedToAccess('For Role (Time Off).delete'))){
                     <td class="text-center">
-                       
+
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -177,9 +178,9 @@
             </ng-template>
         </p-table>
         }@else {
-      
-            <app-data-loader-content />
-       
+
+        <app-data-loader-content />
+
         }
     </div>
 </div>
@@ -217,29 +218,59 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Leave Balance</p>
+                <p class="popup-heading mb-0">
+                    @if(leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves >
+                    0){
+                    Leave Balances ({{leaveEntitlementsList?.category?.name}})
+                    }@else{
+                    Leave Balances ({{leaveEntitlementsList?.category?.name}})
+                    }
+                </p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content">
-            <div class="mb-3">Entitiled : {{this.leaveEntitlementsList.allowedDays}}</div>
-            <div class="mb-3">Booked : {{this.leaveEntitlementsList.booked}}</div>
-            <div class="mb-3">Processed : {{this.leaveEntitlementsList.utilizedDays}}</div>
-            <div class="mb-3" *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);
-            else  untilizeddays">Available : {{ this.leaveEntitlementsList.probationLeaves -
-                this.leaveEntitlementsList.utilizedDays }}
-            </div>
-            <ng-template #untilizeddays>
-                <div>Available : {{ this.leaveEntitlementsList.allowedDays - this.leaveEntitlementsList.utilizedDays }}
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>Entitiled</th>
+                                <th>Booked</th>
+                                <th>Processed</th>
+                                <th>Available</th>
+                                <th
+                                    *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                    Probation Leaves
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{this.leaveEntitlementsList.allowedDays}}</td>
+                                <td class="log-time">{{this.leaveEntitlementsList.booked}}</td>
+                                <td class="log-time">{{this.leaveEntitlementsList.utilizedDays}}</td>
+                                <td class="log-time">
+                                    <div *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);
+                                     else  untilizeddays">{{ this.leaveEntitlementsList.probationLeaves -
+                                        this.leaveEntitlementsList.utilizedDays }}</div>
+                                    <ng-template #untilizeddays>
+                                        <div>{{ this.leaveEntitlementsList.allowedDays -
+                                            this.leaveEntitlementsList.utilizedDays }}</div>
+                                    </ng-template>
+                                </td>
+                                <td class="log-time"
+                                    *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                    {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
+                                    leaveEntitlementsList.probationLeaves : 'N/A' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </ng-template>
-            <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0"
-                class="mb-3">
-                Probation Leaves : {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
-                leaveEntitlementsList.probationLeaves : 'N/A' }}
             </div>
         </div>
     </div>
@@ -255,6 +286,7 @@
 
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="custom-main-popup-content">
+                <h6 class="text-center">Is it a planned leave?</h6>
                 <div class="d-flex gap-3 py-3 justify-content-center">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
@@ -274,9 +306,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Approve reason<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reason for approval<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approval reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
                         pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
                         required></textarea>
@@ -285,13 +317,14 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Approve reason is required
+                        Reason for approval is required
                     </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
@@ -323,19 +356,21 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
+                        (keydown)="formsValidation.restrictInitialSpace($event)" rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                         Reject reason is required
+                        Reject reason is required
                     </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
@@ -353,31 +388,33 @@
     </div>
 </ng-template>
 
+<!-- leaveSummary -->
 <ng-template #leaveSummary let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss('Cross click')">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
-
-        <div class="custom-main-popup-content">
-            <div class="row">
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Total Records' | translate}}</b></p>
-                    <p>{{ responseSummary.totalRecordCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Success Records'|translate}}</b> </p>
-                    <p>{{ responseSummary.successRecordsCount }}</p>
-                </div>
-                <div class="col-sm-4 text-center">
-                    <p><b>{{'Failed Records' | translate}}</b></p>
-                    <p>{{ responseSummary.failureRecordsCount }}</p>
+        <div class="custom-main-popup-content custom-accordians">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th>{{'Total Records' | translate}}</th>
+                                <th>{{'Success Records'|translate}}</th>
+                                <th>{{'Failed Records' | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="log-time">{{ responseSummary?.totalRecordCount }}</td>
+                                <td class="log-time">{{ responseSummary?.successRecordsCount }}</td>
+                                <td class="log-time">{{ responseSummary?.failureRecordsCount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

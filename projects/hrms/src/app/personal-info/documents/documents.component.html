@@ -81,7 +81,9 @@
                   <th>File name</th>
                   <th>Created Date</th>
                   <th>Size</th>
+                   @if(canAccess('view','dowload')) {
                   <th class="text-center">Action</th>
+                   }
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">
@@ -90,21 +92,18 @@
                            <td>{{ file.name | lastValue }}</td>
                            <td>{{ file.createdOn | dateformat }}</td>
                            <td>{{ file.contentLength | fileSize }}</td>
-
+                            @if(canAccess('view','dowload')) {
                            <td class="text-center">
                               <div>
-                                 <span class="download-text" (click)="onSelectDownload(file)">
-                                    <i class="bi bi-download clip-icon me-2"></i>Download
-                                 </span>
                               </div>
                            </td>
-
+                        }
                         </tr>
                      </ng-container>
                   </ng-container>
                   <ng-template #noDataTemplate>
                      <tr>
-                        <td colspan="4" class="text-center"><app-no-data-found></app-no-data-found></td>
+                        <app-no-data-found />
                      </tr>
                   </ng-template>
                </tbody>

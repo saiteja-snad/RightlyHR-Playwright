@@ -36,5 +36,7 @@ export const environment = {
   deskAllocationModuleId:23,
   expensesModuleId:19,
   remoteLoginModuleId:11,
-  globalPermissionsModuleID:21
+  globalPermissionsModuleID:21,
+  oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
+
 };

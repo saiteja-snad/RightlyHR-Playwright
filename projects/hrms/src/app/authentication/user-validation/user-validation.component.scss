@@ -34,8 +34,65 @@
         bottom: 2rem;
 
         .powered-by-image {
-            width: 12rem;
-            height: 3rem;
+            width: 10rem;
+            height: 2.25rem;
         }
+    }
+}
+
+
+.modal {
+    --bs-modal-bg: transparent !important;
+}
+
+.welcome-pop-content {
+    position: relative;
+    text-align: center;
+    background: radial-gradient(102.54% 130.09% at 100% 101.48%, #C9D4E6 0%, #FFFFFF 47.32%, #C9D4E6 100%);
+    border-radius: 1rem;
+    overflow: hidden;
+    
+
+    .backgound-image {
+        padding: 1.5rem;
+        background-image: url('/images/bg-grid-image.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100% 100%;
+    }
+
+    .gif-icon {
+        position: absolute;
+        top: 0%;
+        left: 30%;
+        width: 12rem;
+    }
+
+    .celebrations-image {
+        width: 12.5rem;
+        height: 9rem;
+    }
+
+    .welcome-text {
+        font-weight: 700;
+        font-size: 21.58px;
+        line-height: 100%;
+        letter-spacing: 0px;
+        text-align: center;
+        color: #1A2028;
+    }
+
+    .content-text {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 20px;
+        letter-spacing: 1px;
+        text-align: center;
+        color: #787878;
+    }
+
+    .custom-btn {
+        border-radius: 0.5rem;
+        padding: 0.625rem 5rem;
     }
 }

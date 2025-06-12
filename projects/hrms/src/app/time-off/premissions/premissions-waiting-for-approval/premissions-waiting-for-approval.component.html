@@ -21,7 +21,7 @@
             <td class="text-center">
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <i class="bi bi-info-circle-fill" ></i>
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{permissionRequest.notes}}</p>
@@ -52,9 +52,7 @@
         </ng-container>
 
         <ng-template #noDataTemplate>
-          <tr class="table-placeholder">
-            <app-no-data-found></app-no-data-found>
-          </tr>
+          <app-no-data-found />
         </ng-template>
       </tbody>
     </table>
@@ -76,7 +74,7 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason"
-          maxlength="250" placeholder="Please enter cancellation reason....." rows="3" (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))" ></textarea>
+          maxlength="250" placeholder="Please enter cancellation reason" rows="3" (input)="formsValidation.validateInput(cancelForm.get('cancelReason'))" ></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg" *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">
@@ -84,8 +82,7 @@
                         </div>
         <div class="error-msg"
           *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
-          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
-            required</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Cancellation reason is required</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
             allowed</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Leading spaces are not

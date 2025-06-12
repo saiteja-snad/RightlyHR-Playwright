@@ -82,7 +82,7 @@
                             @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
                             <div>
                                 <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
-                                            item.permissions,item.regularizations)">
+                                            item.permissions,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration)">
                                     <app-info-icon />
                                 </a>
                             </div>
@@ -282,7 +282,7 @@
             <p-accordion value="0">
                 @if(punchPairs.length>0){
                 <p-accordion-panel value="0">
-                    <p-accordion-header>Biometric Logs ({{ logsDuration }})</p-accordion-header>
+                    <p-accordion-header>Biometric Logs</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
@@ -302,6 +302,9 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="popup-table-footer">
+                                Total Duration: <b>{{ logsDuration }}</b>
                             </div>
                         </div>
                     </p-accordion-content>
@@ -353,8 +356,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of regularization_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
-                                            </td>
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
                                     </tbody>

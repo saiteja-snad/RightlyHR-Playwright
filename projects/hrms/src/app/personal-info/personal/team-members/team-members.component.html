@@ -44,10 +44,11 @@
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
                     <tr *ngFor="let details of filteredMembers">
                         <td>{{ details.fusionEmpId || 'N/A' }}</td>
-                        <td [ngClass]="{'clickable-row': details.isAccess}"
-                            [style.cursor]="details.isAccess ? 'pointer' : 'not-allowed'"
+                        <td >
+                            <a [ngClass]="{'select-item cursor': details.isAccess}"
+                            
                             (click)="details.isAccess && select(details)">
-                            {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}
+                            {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}</a>
                         </td>
                         <td>{{ details.workEmail || 'N/A' }}</td>
                         <td>{{details.mobilePhoneCountryCode}} {{ details.contactnumber || 'N/A' }}</td>

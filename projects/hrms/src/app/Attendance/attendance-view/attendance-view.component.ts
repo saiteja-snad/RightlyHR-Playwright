@@ -269,9 +269,13 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     date: Date,
     totalduration: any,
     permissions: any,
-    regularizations: any
+    regularizations: any,
+    permissionduration:any,
+    regularizationduration:any,
   ) {
     this.logsDuration = totalduration;
+    this.permissionsDuration=permissionduration;
+    this.regularizationAttendDuration=regularizationduration;
     this.selectedDate = date;
     this.permissions_list = permissions;
     this.regularization_list = regularizations;

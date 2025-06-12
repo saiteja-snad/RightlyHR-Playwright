@@ -159,9 +159,10 @@
                         <td>{{ status.value }}</td>
                     </tr>
                     }
-                    @if(statusCounts$.value.length<=0){ <tr>
+                    @if(statusCounts$.value.length<=0){ 
+                    <tr>
                         <app-no-data-found />
-                        </tr>
+                    </tr>
                     }
                     }
                     @else {
@@ -327,7 +328,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of permissions_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
@@ -394,8 +395,7 @@
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">
-                            <span> Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
-                            </span>
+                            Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">

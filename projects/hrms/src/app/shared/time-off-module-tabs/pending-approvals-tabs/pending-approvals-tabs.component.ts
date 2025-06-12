@@ -38,15 +38,26 @@ export class PendingApprovalsTabsComponent {
   nodue_Request_data = [] as any[];
   navLinks: NavLink[] = [
     {
-      label: 'Time-Off',
+      label: 'Leaves',
       route: '/time-off/pending-approvals/time-off-request',
       moduleId: environment.leavesModuleId, permission: { feature: 'Time Off Tab', action: 'view' },
       icon: '/time-off-icon/leaves-icon.png',
     },
+    { label: 'Regularizations', route: '/time-off/pending-approvals/regularization-request', moduleId: environment.attendanceRegularizationModuleId, icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Tab', action: 'view' } },
+    { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId, icon: '/time-off-icon/permissions-icon.png', permission: { feature: 'Permissions Tab', action: 'view' } },
     { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId, icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'WFH Tab', action: 'view' } },
     { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId, icon: '/time-off-icon/comp-off.png', permission: { feature: 'Comp Off Tab', action: 'view' } },
-    { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId, icon: '/time-off-icon/permissions-icon.png', permission: { feature: 'Permissions Tab', action: 'view' } },
-    { label: 'Regularizations', route: '/time-off/pending-approvals/regularization-request', moduleId: environment.attendanceRegularizationModuleId, icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Tab', action: 'view' } },
+    {
+      label: 'Probations',
+      route: '/time-off/pending-approvals/probation-request',
+      moduleId: environment.ProbationrequestmoduleId, permission: { feature: 'Probation Details Tab', action: 'view' },
+      icon: '/time-off-icon/Probation-icon.png',
+    },
+    {
+      label: 'Trainees', route: '/time-off/pending-approvals/trainee-approvals',
+      moduleId: environment.traineeoffboardingModuleId, permission: { feature: 'Trainee Details Tab', action: 'view' },
+      icon: '/time-off-icon/trainee-icon.png',
+    },
     {
       label: 'Separations',
       route: '/time-off/pending-approvals/separation-request',
@@ -60,21 +71,10 @@ export class PendingApprovalsTabsComponent {
       icon: '/time-off-icon/recall-icon.png',
     },
     {
-      label: 'Trainees', route: '/time-off/pending-approvals/trainee-approvals',
-      moduleId: environment.traineeoffboardingModuleId, permission: { feature: 'Trainee Details Tab', action: 'view' },
-      icon: '/time-off-icon/trainee-icon.png',
-    },
-    {
       label: 'No Due Clearances',
       route: '/time-off/pending-approvals/nodue-request',
       moduleId: environment.nodueModuleId, permission: { feature: 'No Due Clearence Requests Tab', action: 'view' },
       icon: '/time-off-icon/No-due-icon.png',
-    },
-    {
-      label: 'Claims and Expenses',
-      route: '/time-off/pending-approvals/claimsandexpenses-request',
-      moduleId: environment.expensesModuleId, permission: { feature: 'Claims and Expenses Tab', action: 'view' },
-      icon: '/main-menu-icons/expenses-icon.png',
     },
     {
       label: 'Desks',
@@ -83,11 +83,13 @@ export class PendingApprovalsTabsComponent {
       icon: '/main-menu-icons/desk-icon.png',
     },
     {
-      label: 'Probations',
-      route: '/time-off/pending-approvals/probation-request',
-      moduleId: environment.ProbationrequestmoduleId, permission: { feature: 'Probation Details Tab', action: 'view' },
-      icon: '/time-off-icon/Probation-icon.png',
+      label: 'Expenses',
+      route: '/time-off/pending-approvals/claimsandexpenses-request',
+      moduleId: environment.expensesModuleId, permission: { feature: 'Claims and Expenses Tab', action: 'view' },
+      icon: '/main-menu-icons/expenses-icon.png',
     },
+    
+    
   ];
 
   constructor(
@@ -138,6 +140,10 @@ export class PendingApprovalsTabsComponent {
       if (this.signalService.noDueSideNavCountTriggerSignal()) {
         this.getAllPendingApprovalsCount();
         this.signalService.noDueSideNavCountTriggerSignal.set(false);
+      }
+       if (this.signalService.probationDetailsTriggerSignal()) {
+        this.getAllPendingApprovalsCount();
+        this.signalService.probationDetailsTriggerSignal.set(false);
       }
     });
   }

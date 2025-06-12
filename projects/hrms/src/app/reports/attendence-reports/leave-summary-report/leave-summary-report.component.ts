@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {  Subscription } from 'rxjs';
+import {  from, Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -55,6 +55,9 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
+  getEmployeeInfo = [] as any;
+  filteredleaveRecords = false;
+  selectLeaveEmployeeIds: number[] = [];
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -90,6 +93,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getLeaveSummaryReport();
     this.getTeam();
+    this.getMyTeam();
 
   }
 
@@ -103,6 +107,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       employee: [null],
       manager: [null],
       year: [''],
+      team:[null],
       leaveCategory: [null]
     });
 
@@ -111,6 +116,49 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     })
   }
 
+  onClick(employeeIds: any) {
+    if (employeeIds.value) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = true;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      if (employeeIds.value.employeeId== this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
+        this.selectedEmployeeId.push(employeeIds.value.employeeId);
+      }
+    }
+  }
+
+
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    console.log(this.loggedInUser)
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            }));
+
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
+  }
 
 
   getEmployeeId() {
@@ -190,14 +238,15 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       form.get('employee')?.value ||
       form.get('manager')?.value ||
       form.get('year')?.value ||
-      form.get('leaveCategory')?.value
+      form.get('leaveCategory')?.value ||
+      form.get('team')?.value
     );
   }
 
   leavesummeryReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
+    debugger
     const formValue = this.lvSummeryReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
     // Check if no filter is provided
@@ -205,7 +254,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       !formValue.employee &&
       !formValue.manager &&
       !formValue.leaveCategory &&
-      !formValue.year;
+      !formValue.year &&
+      !formValue.team;
 
     if (noFilterProvided) {
       this.filterlvsumRecord = [];
@@ -217,10 +267,15 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
     const request: ILeavesummery = {};
 
+    if (this.selectLeaveEmployeeIds.length >= 0) {
+      const ids = this.selectLeaveEmployeeIds?.join(',');
+      request.EmployeeId = ids;  // The selected employee IDs are set here
+    }
+
     if (formValue.employee?.employeeId) {
       request.EmployeeId = formValue.employee.employeeId !== 'all';
     }
-
+    
     // Manager full name
     if (formValue.manager) {
       request.teamManagerID = formValue.manager.employeeId;
@@ -230,15 +285,14 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
-
     // Year
     if (formValue.year) {
       request.Year = formValue.year;
     }
-
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.EmployeeId = formValue.employee.employeeId;
     }
+
 
     // Call service with the constructed request
     this.reportsService.getLeaveSummaryReport(request).subscribe({

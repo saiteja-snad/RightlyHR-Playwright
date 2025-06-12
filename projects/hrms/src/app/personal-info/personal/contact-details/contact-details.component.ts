@@ -185,7 +185,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
           this.getEmployeeId();
         
           } else if (data.statusCode === 409) {
-          
+          this.getEmployeeId();
             this.conformationPopup.openErrorModal(data.message);
             this.patchForm(data); // Bind the data in case of conflict
           }

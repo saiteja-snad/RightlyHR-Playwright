@@ -68,7 +68,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
-      accountName: ['', [Validators.required,Validators.maxLength(50)]],
+      accountName: ['', [Validators.required, Validators.maxLength(50)]],
       accountNo: ['', [Validators.required, Validators.pattern('^[0-9]{9,18}$'),]],
       ifscCode: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'), this.invalidIfscCodeValidator(),]],
       isPrimary: [false],
@@ -80,7 +80,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
-      accountNameupdate: ['', [Validators.required,Validators.maxLength(50)]],
+      accountNameupdate: ['', [Validators.required, Validators.maxLength(50)]],
       accountNoupdate: ['', [Validators.required, Validators.pattern('^[0-9]{9,18}$'),]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
       isPrimaryupdate: [false],
@@ -97,7 +97,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       }
-  
+
     });
   }
 
@@ -144,7 +144,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
           this.banknames = [];
         }
       }
-  
+
     });
   }
 
@@ -243,7 +243,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.spinnerLoader = false
-       
+
       }
     });
   }
@@ -386,7 +386,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       },
       error: (reason: any) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal(reason.error.Message|| 'Bank details update failed');
+        this.conformationPopup.openErrorModal(reason.error.Message || 'Bank details update failed');
       }
     });
   }
@@ -411,6 +411,15 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');
       }
     });
+  }
+   openConfirmationModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  resetdata() {
+    this.modalService.dismissAll()
+    this.bankDetailsUpdateForm.reset();
+    this.bankDetailsForm.reset()
   }
 
   ngOnDestroy(): void {

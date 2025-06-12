@@ -44,7 +44,8 @@
                 <span class="link-text">
                     <span *ngIf="empdata?.workPhone">
                         <!-- <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u> -->
-                         <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') + empdata?.workPhone }}</u>
+                        <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') +
+                            empdata?.workPhone }}</u>
                     </span>
                     <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
                         <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>

@@ -487,12 +487,37 @@ export class OnBeHalfOfComponent {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  toggleHalfDayOptions(isHalfDay: boolean) {
+  // toggleHalfDayOptions(isHalfDay: boolean) {
+  //   this.enableButton = isHalfDay;
+  //   this.leaveForm.get('fulldayavailing')?.clearValidators();
+  //   this.leaveForm.patchValue({ fulldayavailing: null });
+  // }
+   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    this.leaveForm.get('fulldayavailing')?.clearValidators();
-    this.leaveForm.patchValue({ fulldayavailing: null });
-  }
 
+    if (isHalfDay) {
+      // Default to 'firsthalf' if not already set
+      const availingValue = this.leaveForm.get('availing')?.value;
+      if (!availingValue) {
+        this.leaveForm.patchValue({
+          availing: 'firsthalf'
+        });
+      }
+
+      // Clear full day selection
+      this.leaveForm.get('fulldayavailing')?.clearValidators();
+      this.leaveForm.patchValue({ fulldayavailing: null });
+
+    } else {
+      // If user unselects half day, clear availing and disable buttons
+      this.leaveForm.patchValue({
+        availing: null,
+        halfdayavailing: null
+      });
+      this.enableButton = false;
+    }
+  }
+  
   toggleFullDayOptions(isFullDay: boolean) {
     this.enableButton = isFullDay;
     this.leaveForm.get('halfdayavailing')?.clearValidators();
@@ -1499,6 +1524,18 @@ export class OnBeHalfOfComponent {
     this.isWeekOffSelectedEndate = false;
     this.isWeekOffSelected = false;
     this.isHolidaySelectedEndate = false;
+    const startDate = this.leaveForm.get('startdate')?.value;
+    const endDate = this.leaveForm.get('enddate')?.value;
+    if (startDate && endDate && startDate === endDate) {
+      this.leaveForm.patchValue({
+        fulldayavailing: '2',
+        halfdayavailing: null,
+        availing: null
+      });
+
+      this.enableHalfDayOptions = true; // Set false if you want to disable them instead
+      this.disableSubmitButton = false; // Enable submit as full day is selected
+    }
     this.onEndDateChange();
     this.updateEndDateValidity();
     this.updateStartDateValidity1();

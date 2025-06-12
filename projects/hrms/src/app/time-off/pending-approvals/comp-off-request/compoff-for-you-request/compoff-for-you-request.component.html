@@ -129,9 +129,7 @@
                 
             </p-table>
         }@else{
-       
             <app-data-loader-content />
-        
         }
     </div>
 </div>
@@ -183,7 +181,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
+            <p class="confirmation-text">{{'Do you really want to reject selected request?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">

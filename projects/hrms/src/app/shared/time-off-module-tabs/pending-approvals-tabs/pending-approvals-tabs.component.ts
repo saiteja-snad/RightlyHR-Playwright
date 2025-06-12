@@ -9,6 +9,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { SignalsService } from '../../../services/signals.service';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
+import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
 interface NavLink {
   label: string;
   route: string;
@@ -19,7 +20,7 @@ interface NavLink {
 }
 @Component({
   selector: 'app-pending-approvals-tabs',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SidetabsloadersComponent],
   templateUrl: './pending-approvals-tabs.component.html',
   styleUrl: './pending-approvals-tabs.component.scss',
 })
@@ -33,6 +34,7 @@ export class PendingApprovalsTabsComponent {
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   countEmp: any;
   countRole: any;
+  loading=false
   nodue_Request_data = [] as any[];
   navLinks: NavLink[] = [
     {
@@ -162,6 +164,7 @@ export class PendingApprovalsTabsComponent {
   }
 
   getAllPendingApprovalsCount() {
+    this.loading=true
     const employeeId = parseInt(this.LOGIN.employeeId);
     this.http.getAllPendingApprovalsCount(undefined, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
@@ -171,8 +174,11 @@ export class PendingApprovalsTabsComponent {
           ...link,
           count: countMap.get(link.moduleId) || 0
         }));
+        this.loading=false
       },
-      error: (err) => console.error('Error fetching approvals:', err),
+      error: (err) =>{console.error('Error fetching approvals:', err)
+        this.loading=false
+      } 
     });
   }
 

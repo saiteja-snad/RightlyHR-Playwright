@@ -68,7 +68,7 @@ export class PersonalJobTabsComponent implements OnInit {
   // }
 filterTabs(): void {
   const allTabs = [
-    { label: 'PreOnboarding Info', link: '/personalinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
+    { label: 'Pre Onboarding Info', link: '/personalinfo/job/pre-onboarding-details', icon: '/images/preonboarding.png', permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
     { label: 'Onboarding Info', link: '/personalinfo/job/onboarding-details', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Details', action: 'view' } },
     { label: 'Compensations', link: '/personalinfo/job/compensation-details', icon: '/images/compensation.png', permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
     { label: 'Probation Info', link: '/personalinfo/job/probation-details', icon: '/images/probation.png', permission: { feature: 'Employee Info Probation Details', action: 'view' } },
@@ -81,7 +81,7 @@ filterTabs(): void {
     { label: 'Separation Request', link: '/personalinfo/job/separation-details', icon: '/images/sepration-request.png', permission: { feature: 'Employee Info Separation Request Details', action: 'view' } },
     { label: 'No Due Clearance Info', link: '/personalinfo/job/no-due-clearance-details', icon: '/images/nodue.png', permission: { feature: 'Employee Info No Due Clearance Details', action: 'view' } },
     { label: 'Onboarding Documents', link: '/personalinfo/job/onboarding-verification', icon: '/my-info-icons/onboarding-icon.png', permission: { feature: 'Employee Info Documents Verification', action: 'view' } },
-    { label: 'Trainee Onboard Request', link: '/personalinfo/job/tranee-onboarding-requests', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' } },
+    { label: 'Trainee Onboard Request', link: '/personalinfo/job/trainee-onboarding-requests', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' } },
     { label: 'Offboarding Info', link: '/personalinfo/job/employmentType', icon: '/images/offboarding.png', permission: { feature: 'Employee Info Offboarding Details', action: 'view' } },
   ];
   

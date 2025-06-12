@@ -6,9 +6,6 @@
       aria-describedby="basic-addon1">
   </div>
 
-
-
-
     <div class="custom-table-content">
       @if(!loading){
       <table class="w-100">
@@ -22,7 +19,7 @@
           <th>Desk Status</th>
           <th>Approver</th>
           @if(rbac.allowedToAccess('Waiting For Approval View Desk Details.view')){
-          <th class="text-center">Action(s)</th>
+          <th class="text-center">Action</th>
           }
         </thead>
         <tbody>

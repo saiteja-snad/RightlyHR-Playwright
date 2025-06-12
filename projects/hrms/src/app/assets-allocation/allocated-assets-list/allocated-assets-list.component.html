@@ -6,8 +6,6 @@
       aria-describedby="basic-addon1">
   </div>
 
-
-
   <div class="custom-table-content">
     @if(!loading){
     <table class="w-100">
@@ -24,7 +22,7 @@
         Asset.view') ||
         rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset
         Details.view')){
-        <th class="text-center">Action(s)</th>
+        <th class="text-center">Action</th>
         }
       </thead>
       <tbody>
@@ -127,7 +125,6 @@
         (onPageChange)="onPageChange($event)"></p-paginator>
     </div>
   </div>
-
 </div>
 
 <ng-template #addassetes let-modal>

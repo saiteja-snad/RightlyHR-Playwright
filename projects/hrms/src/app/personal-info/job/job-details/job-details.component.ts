@@ -163,10 +163,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       team: [{ value: null, disabled: true }],
       teamManager: [{ value: null, disabled: true }],
       reportingManager: [{ value: '', disabled: true }],
-      description: [null, [Validators.required, Validators.maxLength(400), Validators.pattern(/^(?!\s).*$/)]],
+      description: [null, [Validators.required, Validators.maxLength(400)]],
       isEarlyRelieving: [false],
       earlyRelievingDate: [null, Validators.required],
-      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400), Validators.pattern(/^(?!\s).*$/)]]
+      reasonForEarlyRelieving: [null, [Validators.required, Validators.maxLength(400)]]
     });
     // Disable early relieving fields by default
     this.toggleEarlyRelievingFields(false);
@@ -256,10 +256,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', keyboard: false });
   }
   confirmationopenModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   getDepartment() {
@@ -683,14 +683,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       }
     });
     // Open the modal
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
   }
 
 
 
   //function to open the separation popup
   openModalforSeparationupdate(content: any, data: any): void {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',keyboard: false });
     console.log('separation', data)
     this.postSeparationRequest = data
     this.separationRequestForm.patchValue({
@@ -815,7 +815,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       jobRole: empexperimentdata.jobRole,
     };
     // Open the delete confirmation modal
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   updateJobDetails(): void {

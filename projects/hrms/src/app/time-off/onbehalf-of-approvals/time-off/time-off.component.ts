@@ -600,6 +600,9 @@ export class TimeOffComponent implements OnInit, OnDestroy {
             this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -672,6 +675,9 @@ export class TimeOffComponent implements OnInit, OnDestroy {
             this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -742,6 +748,9 @@ export class TimeOffComponent implements OnInit, OnDestroy {
             this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {

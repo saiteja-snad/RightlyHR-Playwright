@@ -20,6 +20,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-regularization-for-your-role-request',
   imports: [
@@ -34,7 +35,8 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     PermissionsearchPipe,
     DataLoaderContentComponent,
     TableModule,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    InfoIconComponent
   ],
   templateUrl: './regularization-for-your-role-request.component.html',
   styleUrl: './regularization-for-your-role-request.component.scss',
@@ -442,12 +444,15 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
               if (this.selectedProducts.length > 1) {
-               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
               } else {
                 this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Approved Successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {
@@ -517,12 +522,15 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             if (this.selectedProducts.length > 1) {
-               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Processed Successfully');
-              } else {
-                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Processed Successfully');
-              }
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Processed Successfully');
+            } else {
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Processed Successfully');
+            }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -589,12 +597,15 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
               if (this.selectedProducts.length > 1) {
-               this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
               } else {
                 this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Rejected Successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
+              setTimeout(() => {
+                this.modalService.dismissAll();
+              }, 5000);
             }
           },
           error: (reason: any) => {

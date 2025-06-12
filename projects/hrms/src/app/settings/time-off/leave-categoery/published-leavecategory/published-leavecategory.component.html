@@ -20,7 +20,7 @@
         <th>Display Color</th>
         <th>Expires After (Days)</th>
         <th>Status</th>
-        <th *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">Action(S)</th>
+        <th *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">Action</th>
       </thead>
       <tbody>
         <ng-container *ngIf="(submissiondata).length; else noResults">

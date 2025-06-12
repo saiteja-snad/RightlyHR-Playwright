@@ -34,7 +34,7 @@
 
     <ng-container *ngIf="dataload; else maincontent">
         <ng-template #loadingSpinner>
-            <div class="custom-compoent-data-loader">
+            <div>
                 <app-data-loader-content />
             </div>
         </ng-template>
@@ -93,8 +93,8 @@
                     </tr>
                     }
                     }@else {
-                    <tr class="table-placeholder">
-                        <app-no-data-found></app-no-data-found>
+                    <tr>
+                        <app-no-data-found />
                     </tr>
                     }
                 </tbody>
@@ -106,15 +106,21 @@
 <!--Leaves popup-->
 <ng-template #leavesModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-main-popup-content">
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ popupType }} - {{ selectedEmployee.employeeName }}
+                    ({{selectedEmployee.fusionEmpId}})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content custom-accordians">
             <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
                         <thead>
-                            <tr>
-                                <th colspan="6" class="custom-popup-header">{{ selectedEmployee.employeeName }}
-                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
-                            </tr>
                             <tr>
                                 <th>Category</th>
                                 <th>Start Date</th>
@@ -137,25 +143,27 @@
                     </table>
                 </div>
             </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
-            </div>
         </div>
     </div>
 </ng-template>
 
 <!-- WFH modal -->
 <ng-template #wfhModal let-modal>
-    <div class="custom-main-popup-container">
-        <div class="custom-main-popup-content" ngbAutofocus>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ popupType }} - {{ selectedEmployee.employeeName }}
+                    ({{selectedEmployee.fusionEmpId}})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content custom-accordians">
             <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
                         <thead>
-                            <tr>
-                                <th colspan="5" class="custom-popup-header">{{ selectedEmployee.employeeName }}
-                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
-                            </tr>
                             <tr>
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -176,10 +184,6 @@
                     </table>
                 </div>
             </div>
-
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
-            </div>
         </div>
     </div>
 </ng-template>
@@ -187,15 +191,20 @@
 <!-- Permission & Regularization Modal-->
 <ng-template #permissionModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-main-popup-content">
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{ popupType }} - {{ selectedEmployee.employeeName }}
+                    ({{selectedEmployee.fusionEmpId}})</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content custom-accordians">
             <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
                         <thead>
-                            <tr>
-                                <th colspan="4" class="custom-popup-header">{{ selectedEmployee.employeeName }}
-                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
-                            </tr>
                             <tr>
                                 <th>Requested Date</th>
                                 @if(popupType === 'Permission(s)') {
@@ -217,9 +226,6 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
             </div>
         </div>
     </div>

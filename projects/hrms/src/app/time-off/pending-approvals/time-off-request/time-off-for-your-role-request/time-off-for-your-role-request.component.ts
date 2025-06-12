@@ -23,6 +23,7 @@ import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-time-off-for-your-role-request',
   imports: [
@@ -83,6 +84,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
+    public formsValidation: FormValidationsService,
     public rbac: RbacService, private signalService: SignalsService
   ) { }
 
@@ -368,6 +370,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
             } 
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -441,6 +446,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {
@@ -515,6 +523,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
             }
           } else {
             this.openModal(this.leaveSummary);
+            setTimeout(() => {
+              this.modalService.dismissAll();
+            }, 5000);
           }
         },
         error: (reason: any) => {

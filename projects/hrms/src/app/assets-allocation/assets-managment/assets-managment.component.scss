@@ -1,4 +1,4 @@
-.custom-select{
+.custom-select {
     border: 1px solid #DEE8F3;
     padding: 0.5rem 0.75rem;
     border-radius: 0.5rem;
@@ -18,4 +18,9 @@
     height: calc(100vh - 25rem);
     border-bottom-left-radius: 0rem !important;
     border-bottom-right-radius: 0rem !important;
+}
+
+.card-active {
+    box-shadow: none !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #CFDBEE 100%) !important;
 }

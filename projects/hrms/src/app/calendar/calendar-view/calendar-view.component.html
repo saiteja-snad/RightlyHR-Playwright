@@ -12,51 +12,43 @@
   <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
   </ng-template>
-  
+
   <!--Content-->
   <div class="d-flex gap-3 w-100">
     <!--sub tabs Content-->
     <div class="custom-component-left-content">
-      <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  '#E1E8FE'}"></div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="showBirthdays" [(ngModel)]="showBirthdays"
-            (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showBirthdays">
-            <img src="calendar/birthday.png" alt="Birthday Image" class="custom-event-icon me-1">{{ 'Birthdays' |
-            translate}}
-          </label>
-        </div>
+      <div class="form-check d-flex align-items-center">
+        <input type="checkbox" class="form-check-input me-2" id="showBirthdays" [(ngModel)]="showBirthdays"
+          (change)="filterEventsByTitle()">
+        <div class="box mt-1 me-2" [ngStyle]="{'background-color':  '#E1E8FE','border-color':'#8f96af'}"></div>
+        <label class="form-check-label" for="showBirthdays">
+          <img src="calendar/birthday.png" alt="Birthday Image" class="custom-event-icon me-1">{{ 'Birthdays' |
+          translate}}
+        </label>
       </div>
-
-      <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  '#FEE7E1'}"></div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="showAnniversaries" [(ngModel)]="showAnniversaries"
-            (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png"
-              alt="Mile Stone Icon" class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
-        </div>
+    
+      <div class="form-check d-flex align-items-center">
+        <input type="checkbox" class="form-check-input me-2" id="showAnniversaries" [(ngModel)]="showAnniversaries"
+          (change)="filterEventsByTitle()">
+        <div class="box mt-1 me-2" [ngStyle]="{'background-color':  '#FEE7E1','border-color':'#d6a192'}"></div>
+        <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png" alt="Mile Stone Icon"
+            class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
       </div>
-
-      <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  '#FEE1F7'}"></div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="showJoinees" [(ngModel)]="showJoinees"
-            (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showJoinees"><img src="calendar/new-joinees.png" alt="New Joinee icon"
-              class="custom-event-icon me-1">{{ 'New Joinees' | translate }}</label>
-        </div>
+    
+      <div class="form-check d-flex align-items-center">
+        <input type="checkbox" class="form-check-input me-2" id="showJoinees" [(ngModel)]="showJoinees"
+          (change)="filterEventsByTitle()">
+        <div class="box mt-1 me-2" [ngStyle]="{'background-color':  '#FEE1F7','border-color':'#db83c3'}"></div>
+        <label class="form-check-label" for="showJoinees"><img src="calendar/new-joinees.png" alt="New Joinee icon"
+            class="custom-event-icon me-1">{{ 'New Joinees' | translate }}</label>
       </div>
-
-      <div class="d-flex align-items-center mb-2">
-        <div class="box WFH" [ngStyle]="{'background-color':  '#E1FEF4'}"></div>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="showHolidays" [(ngModel)]="showHolidays"
-            (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showHolidays"><img src="calendar/holidays.png" alt="Mile Stone Icon"
-              class="custom-event-icon me-1">{{ 'Holidays' | translate }}</label>
-        </div>
+    
+      <div class="form-check d-flex align-items-center">
+        <input type="checkbox" class="form-check-input me-2" id="showHolidays" [(ngModel)]="showHolidays"
+          (change)="filterEventsByTitle()">
+        <div class="box mt-1 me-2" [ngStyle]="{'background-color':  '#E1FEF4','border-color':'#6cb39b'}"></div>
+        <label class="form-check-label" for="showHolidays"><img src="calendar/holidays.png" alt="Mile Stone Icon"
+            class="custom-event-icon me-1">{{ 'Holidays' | translate }}</label>
       </div>
     </div>
 

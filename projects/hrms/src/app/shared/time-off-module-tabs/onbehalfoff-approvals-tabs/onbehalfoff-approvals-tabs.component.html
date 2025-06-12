@@ -1,4 +1,6 @@
-<div class="component-nav-tabs-container card px-2">
+
+@if(!loading){
+    <div class="component-nav-tabs-container card px-2">
     <p-tabs value="0" scrollable>
         <p-tablist>
             <ng-container *ngFor="let tab of navTabs;">
@@ -11,3 +13,7 @@
         </p-tablist>
     </p-tabs>
 </div>
+}
+@else {
+<app-sidetabsloaders/>
+}

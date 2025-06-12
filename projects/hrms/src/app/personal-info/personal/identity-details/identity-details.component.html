@@ -21,7 +21,7 @@
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase()
                         !== 'trainee prospective')){
-                           <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>}}
+                           <th class="text-center">{{"Action" | translate}}</th>}}
                     </tr>
                 </thead>
                 <tbody>
@@ -106,7 +106,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityNumber" 
+                        <input type="text" formControlName="identityNumber"   (input)="toUppercase('identityNumber')"
                           class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number" (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
@@ -149,7 +149,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="identityForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
@@ -193,7 +193,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityupdateNumber" 
+                        <input type="text" formControlName="identityupdateNumber" (input)="toUppercaseforupdate('identityupdateNumber')"
                           class="form-control custom-input" id="identityNumber"
                             placeholder="Please enter Identity Number"  (keypress)="formValidation.restrictInputAllowAlphaNumeric($event)">
                         <div class="error-msg"
@@ -238,7 +238,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid">Update</button>
                 </div>

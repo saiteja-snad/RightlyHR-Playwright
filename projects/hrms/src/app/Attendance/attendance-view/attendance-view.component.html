@@ -3,7 +3,7 @@
         <div class="heading-content">
             <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
             </div>
         </div>
 
@@ -158,20 +158,17 @@
                     </tr>
                     }
                     @if(statusCounts$.value.length<=0){ 
-                        <tr>
+                    <tr>
                         <app-no-data-found />
-                        </tr>
-                        }
-                        }
-                        @else {
-                        <tr>
-                            <app-no-data-found />
-                        </tr>
-                        }
-                        }
-                        @else {
-                        <app-data-loader-content />
-                        }
+                    </tr>
+                    }
+                    }
+                    @else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                    }
                 </tbody>
             </table>
         </div>
@@ -280,15 +277,15 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content custom-accordians">
             <p-accordion value="0">
                 @if(punchPairs.length>0){
                 <p-accordion-panel value="0">
                     <p-accordion-header>Biometric Logs</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>In</th>
@@ -302,25 +299,24 @@
                                             <td class="log-time">{{ log.out }}</td>
                                             <td class="duration-time">{{ log.duration }}</td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b>
-                                            </td>
-                                        </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="popup-table-footer">
+                                Total Duration: <b>{{ logsDuration }}</b>
                             </div>
                         </div>
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-
+        
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
-                    <p-accordion-header>Permission(s)</p-accordion-header>
+                    <p-accordion-header>Permission</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>Type</th>
@@ -331,7 +327,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of permissions_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
@@ -342,14 +338,14 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-
+        
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
-                    <p-accordion-header>Regularization(s)</p-accordion-header>
+                    <p-accordion-header>Regularization</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
-                            <div class="popup-table-content">
-                                <table>
+                            <div class="popup-table-scroll-container">
+                                <table class="popup-table">
                                     <thead>
                                         <tr>
                                             <th>Type</th>
@@ -360,7 +356,7 @@
                                     <tbody>
                                         <tr *ngFor="let log of regularization_list">
                                             <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                            <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}
+                                            <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}
                                             </td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                                         </tr>
@@ -398,8 +394,7 @@
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">
-                            <span> Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
-                            </span>
+                            Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
                         </p>
 
                         <p class="m-0 p-2 rounded popupcomments">

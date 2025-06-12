@@ -1,11 +1,20 @@
 <div class="custom-main-component-container">
   <div class="component-header-content py-2">
-    <div class="component-header"> Contacts Directory </div>
+    <div class="heading-content">
+      <div class="component-header"> Contacts Directory </div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
   </div>
-  
+  <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+
   <div class="contact-directory-content">
     <div>
-       @if (loading) {
+      @if (loading) {
       <!-- Skeleton for departments -->
       <div *ngFor="let skel of [1,2]" class="department-card mb-3">
         <div class="d-flex align-items-center gap-3 mb-3">
@@ -32,8 +41,8 @@
           </div>
         </div>
       </div>
-    }
-     @else {
+      }
+      @else {
       <div class="department-card mb-3" *ngFor="let dept of contactData">
         <div class="d-flex align-items-center gap-3 mb-3">
           <div class="img-content">
@@ -43,7 +52,7 @@
             <p class="department-name text-capitalize m-0">{{ dept.department }}</p>
           </div>
         </div>
-  
+
         <div class="grid-container">
           <div class="contact-card" *ngFor="let item of dept.employees">
             <div class="d-flex align-items-center gap-3">
@@ -59,14 +68,14 @@
                 </p>
                 <p class="label-text text-truncate m-0 mb-1">
                   <span class="bi bi-telephone me-2"></span>
-                  <span class="link-text ms-1"><u>{{item.contactNumber}}</u></span>
+                  <span class="link-text ms-1"><u>{{item.contactNumberCode}} {{item.contactNumber}}</u></span>
                 </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    }
+      }
     </div>
   </div>
 </div>

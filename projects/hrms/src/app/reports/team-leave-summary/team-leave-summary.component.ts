@@ -52,9 +52,9 @@ export class TeamLeaveSummaryComponent {
     { name: 'December', value: 12 },
   ];
   readonly DISPLAY_LABEL_MAP: Record<string, string> = {
-    'leaves': 'Leave(s)',
+    'leaves': 'Leaves',
     'wfh': 'WFH',
-    'permissions': 'Permission(s)',
+    'permissions': 'Permission Logs',
     'regularization': 'Regularization'
   };
 

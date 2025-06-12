@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div> <span class="component-sub-header">{{'Family Members '| translate}}</span></div>
+        <div><span class="component-sub-header">{{'Family Members '| translate}}</span></div>
         @if(canAccess('create','family')){
        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
@@ -19,7 +19,7 @@
                          @if(canAccess('update','family') || canAccess('delete','family') ){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-                              <th class="text-center">{{"Action" | translate}}</th>
+                            <th class="text-center">{{"Action" | translate}}</th>
                         }}
                     </tr>
                 </thead>
@@ -31,7 +31,6 @@
                             <td>{{ familyDetail.relationShipName }}</td>
                             <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
                             <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
-                            
                             @if(canAccess('update','family') || canAccess('delete','family') ){<td class="text-center">
                                 @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                                 && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
@@ -62,9 +61,7 @@
                 <!-- No Data Found Template -->
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </table>
@@ -123,16 +120,16 @@
 
                     <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-center">
-                            <div class="form-check form-switch" style="font-size: x-large;">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="isDependent" formControlName="isDependent">
                             </div>
-                            <label for="isDependent" class="form-label custom-label mt-2 ms-2">Dependent</label>
+                            <label for="isDependent" class="form-label custom-label mt-2">Dependent</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary " (click)="modal.dismiss()">Cancel</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary">Add</button>
                 </div>
             </form>
@@ -189,10 +186,10 @@
 
                     <div class="col-md-6 mb-3">
                         <div class="d-flex align-items-center">
-                            <div class="form-check form-switch" style="font-size: x-large;">
+                            <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="isDependentupdate" formControlName="isDependentupdate">
                             </div>
-                            <label for="isDependentupdate" class="form-label custom-label mt-2 ms-2">Dependent</label>
+                            <label for="isDependentupdate" class="form-label custom-label">Dependent</label>
                         </div>
                     </div>
                 </div>

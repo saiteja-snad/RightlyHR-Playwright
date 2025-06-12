@@ -205,6 +205,7 @@ export class ReportsService {
     
     if (request.EmployeeId) params = params.set('EmployeeId', request.EmployeeId);
     if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
+    // if (request.TeamManagerFusionEmpId) params = params.set('teamManagerID', request.TeamManagerFusionEmpId);
     if (request.LeaveName) params = params.set('LeaveType', request.LeaveName);
     return this.http.get('Reports/LeaveSummaryReports', { params });
   }

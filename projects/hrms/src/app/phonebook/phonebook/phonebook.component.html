@@ -59,27 +59,23 @@
             </div>
           </div>
           <div class="data-content">
-            <p class="label-text text-truncate mb-2">
-              <i class="bi bi-person-vcard me-2"></i>
-              <span class="label-text">Designation:</span>
-              <span class="link-text ms-1">{{ emp.jobRole }}</span>
+            <p class="text-label text-truncate mb-2">
+              <img src="/icons/profile-icon.png" alt="Icon" class="custom-icon me-2">
+              <span class="link-text">{{ emp.jobRole }}</span>
             </p>
-            <p class="label-text text-truncate mb-2">
-              <i class="bi bi-envelope me-2"></i>
-              <span class="label-text">Work Email:</span>
-              <span class="link-text ms-1">{{ emp.workEmail }}</span>
+            <p class="text-label text-truncate mb-2">
+              <img src="/icons/mail-icon.png" alt="Icon" class="custom-icon me-2">
+              <span class="link-text">{{ emp.workEmail }}</span>
             </p>
-            <p class="label-text text-truncate mb-2">
-              <i class="bi bi-telephone me-2"></i>
-              <span class="label-text">Work:</span>
-              <span class="link-text ms-1">
+            <p class="text-label text-truncate mb-2">
+              <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
+              <span class="link-text">
                 <u>{{ emp.workPhoneCountryCode }}{{ emp.workPhone }}</u>
               </span>
             </p>
-            <p class="label-text text-truncate mb-2">
-              <i class="bi bi-telephone me-2"></i>
-              <span class="label-text">Personal:</span>
-              <span class="link-text ms-1">
+            <p class="text-label text-truncate mb-2">
+              <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
+              <span class="link-text">
                 <u>{{ emp.mobilePhoneCountryCode }}{{ emp.contactNumber }}</u>
               </span>
             </p>

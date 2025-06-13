@@ -3,7 +3,8 @@
     <div class="input-group custom-search mb-2">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
+          placeholder="Search by employee name / location / sub location / designation / sub status"
+            aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
@@ -13,7 +14,7 @@
             <thead>
                 <tr>
                     <th>{{'Date'|translate}}</th>
-                    <th>{{'Name'|translate}}</th>
+                    <th>{{'Employee name'|translate}}</th>
                     <th>{{'Location'|translate}}</th>
                     <th>{{'Sub Location'|translate}}</th>
                     <th>{{'Designation'|translate}}</th>

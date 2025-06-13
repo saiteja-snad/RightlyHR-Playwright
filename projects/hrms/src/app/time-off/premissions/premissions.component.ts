@@ -370,7 +370,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
             // this.getCompOffRequest();
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
-              'Request submitted successfully'
+              'Premissions request submitted successfully'
             );
             this.http.tirggerCountSignal.update((status) => ({
               ...status,

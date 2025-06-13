@@ -69,7 +69,7 @@ export class VisatypeComponent {
     this.subscription = this.http.postdata('Visatype', request).subscribe({
       next: () => {
         this.getVisa();
-        this.conformationPopup.openSuccessModal('Visa Type added successfully');
+        this.conformationPopup.openSuccessModal('Visa type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -93,7 +93,7 @@ export class VisatypeComponent {
           this.getVisa();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Visa Type updated successfully');
+          this.conformationPopup.openSuccessModal('Visa type updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -131,7 +131,7 @@ export class VisatypeComponent {
       next: () => {
         this.getVisa();
         modal.close();
-        this.conformationPopup.openSuccessModal('Visa Type deleted successfully');
+        this.conformationPopup.openSuccessModal('Visa type deleted successfully');
       },
       error: (err: any) => {
         const errorMessage = err.error?.Message;

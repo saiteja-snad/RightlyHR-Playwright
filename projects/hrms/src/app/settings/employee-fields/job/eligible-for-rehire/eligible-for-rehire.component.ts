@@ -69,7 +69,7 @@ export class EligibleForRehireComponent {
     this.subscription = this.http.postdata('Eligibleforrehire', request).subscribe({
       next: () => {
         this.getEligibility();
-        this.conformationPopup.openSuccessModal('Eligible For Rehire added successfully');
+        this.conformationPopup.openSuccessModal(' Rehire added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -92,7 +92,7 @@ export class EligibleForRehireComponent {
           this.getEligibility();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Eligibile For Rehire updated successfully');
+          this.conformationPopup.openSuccessModal(' Rehire updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -130,7 +130,7 @@ export class EligibleForRehireComponent {
       next: () => {
         this.getEligibility();
         modal.close();
-        this.conformationPopup.openSuccessModal('Eligible For Rehire deleted successfully');
+        this.conformationPopup.openSuccessModal(' Rehire deleted successfully');
       },
       error: (err: any) => {
         const errorMessage = err.error?.Message;

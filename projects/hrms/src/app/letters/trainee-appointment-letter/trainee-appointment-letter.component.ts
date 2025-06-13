@@ -497,7 +497,7 @@ getOfferdetails(Value: any) {
     }
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        this.conformationPopup.openSuccessModal('Email has been sent successfully')
       },
       error: (err: any) => {
         console.log(err);

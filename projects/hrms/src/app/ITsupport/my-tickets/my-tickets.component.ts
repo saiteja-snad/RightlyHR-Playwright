@@ -327,7 +327,7 @@ export class MyTicketsComponent {
     this.itTicketDetails.isdeleted = false
     this.subscription = this.http.postdata(`Tickets`, this.itTicketDetails).subscribe({
       next: (data: any) => {
-        this.confirmation.openSuccessModal('Request submitted successfully!');
+        this.confirmation.openSuccessModal('Ticket has been added successfully');
         localStorage.setItem('ticketDetails', JSON.stringify(data));
         setTimeout(() => {
           this.itSupportForm.reset();

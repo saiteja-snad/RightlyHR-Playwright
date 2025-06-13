@@ -342,9 +342,9 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
                if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH requests approved successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Request Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' WFH request approved successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
@@ -418,9 +418,9 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
                if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Requests Rejected Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected WFH requests rejected successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected WFH Request Rejected Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'WFH request rejected successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
@@ -494,9 +494,9 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems.length <= 0
           ) {
              if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Requests Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected WFH requests processed successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Request Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'WFH request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);

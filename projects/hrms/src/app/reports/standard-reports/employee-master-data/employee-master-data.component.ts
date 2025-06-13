@@ -276,7 +276,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => {
-        this.modal.openSuccessModal('Employee Master Data downlaoded successfully');
+        this.modal.openSuccessModal('Employee master data exported successfully');
         this.spinnerLoader2 = false;
       },
       error: (err) => {

@@ -531,7 +531,7 @@ export class AvailableAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset Updated Successfully ');
+          this.conformationPopup.openSuccessModal('Asset information updated successfully ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
           this.assetForm.reset();
         },
@@ -1089,7 +1089,7 @@ export class AvailableAssetsListComponent {
           next: (res) => {
             console.log(res);
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset marked as Inactivated Successfully');
+            this.conformationPopup.openSuccessModal('Asset inactivated successfully');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
             this.getcount(null, this.selectedSubLocationId, this.Status);
             this.inactiveForm.reset()
@@ -1171,7 +1171,7 @@ export class AvailableAssetsListComponent {
           console.log("Update Response:", res);
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
+          this.conformationPopup.openSuccessModal('Asset set under maintenance successfully ');
           this.getcount(null, this.selectedSubLocationId, this.Status);
           this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
         },
@@ -1263,7 +1263,7 @@ export class AvailableAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
+          this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
 
         },
@@ -1301,7 +1301,7 @@ export class AvailableAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Active Successfully ');
+          this.conformationPopup.openSuccessModal('Asset has been marked as active ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
         },
         error: (err) => {

@@ -540,7 +540,7 @@ export class PromotionLetterComponent {
 
           this.subscription = this.http.postdata(`CustomEmail/Promotionletter`, emaildetails).subscribe({
             next: (data: any) => {
-              this.conformationPopup.openSuccessModal("Email Sent Successfully");
+              this.conformationPopup.openSuccessModal("Email has been sent successfully");
               setTimeout(()=>{
                 this.navigateDashboard();
               }, 2000)

@@ -349,7 +349,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     }
     this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => {
-       this.modal.openSuccessModal('Job Location Wise Data downloaded successfully');
+       this.modal.openSuccessModal('Job location wise data exported successfully');
       },
       error: (err) => {
         this.spinnerLoader = false;

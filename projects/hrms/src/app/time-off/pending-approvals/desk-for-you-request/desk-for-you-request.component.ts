@@ -86,7 +86,7 @@ searchValue: any;
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Request Processed Successfully")
+        this.conformationPopup.openSuccessModal("Desk allocation request Processed successfully")
         this.getexpensespendingforyou()
         this.signalService.deskForYouTriggerSignal.set(true);
           this.updatedeskitem()
@@ -145,7 +145,7 @@ searchValue: any;
       next: (res: any) => {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
-        this.conformationPopup.openSuccessModal("Request Rejected Successfully");
+        this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
         this.rejectForm.reset();
          this.signalService.deskForYouTriggerSignal.set(true);
       },

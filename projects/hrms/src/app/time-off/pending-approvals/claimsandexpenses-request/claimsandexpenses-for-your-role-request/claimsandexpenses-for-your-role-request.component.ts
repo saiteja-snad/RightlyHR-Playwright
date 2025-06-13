@@ -189,7 +189,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
+              'Expense request approved successfully'
             );
             this.approveForm.reset();
             this.http.setnewcountDetails();
@@ -235,7 +235,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
             this.modalService.dismissAll();
             this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
-              'Request Rejected Successfully'
+              'Expense request rejected successfully'
             );
             this.rejectForm.reset();
             this.http.setnewcountDetails();
@@ -279,7 +279,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
           this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.http.setnewcountDetails();
           this.sharedModalService.openSuccessModal(
-            'Request Processed Successfully'
+            'Expense request processed successfully'
           );
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,

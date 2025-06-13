@@ -202,7 +202,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           console.log('Data updated successfully:', data);
           if (data.statusCode === 200) {
-            this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+            this.conformationPopup.openSuccessModal('Emergency contact information updated successfully');
             this.emergencyContactForm.disable();
             this.buttons = false; 
             this.buttons2 = false;
@@ -218,7 +218,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openErrorModal('Emergency Contact Details update failed');
+          this.conformationPopup.openErrorModal('Emergency contact information update failed');
         },
       });
   }

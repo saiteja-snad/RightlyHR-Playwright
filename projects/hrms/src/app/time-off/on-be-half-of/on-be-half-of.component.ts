@@ -1279,7 +1279,7 @@ export class OnBeHalfOfComponent {
       .postdata(`CustomEmail/LeaveConfirmationToEmp`, emaildetails)
       .subscribe({
         next: (data: any) => {
-          // this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          // this.conformationPopup.openSuccessModal('Email has been sent successfully')
         },
       });
   }

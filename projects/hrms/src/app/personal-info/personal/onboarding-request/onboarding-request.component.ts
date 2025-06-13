@@ -98,7 +98,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
         if(data){
           this.reRequestForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Email Sent Successfully')
+          this.conformationPopup.openSuccessModal('Email has been sent successfully')
         }
         
       },

@@ -114,7 +114,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`CustomEmail/RequestDocuments`, pdata).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        this.conformationPopup.openSuccessModal('Email has been sent successfully')
         this.isLoading = false;
       },
       error: (err: any) => {
@@ -239,7 +239,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/RerequestDocuments`, pdata).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        this.conformationPopup.openSuccessModal('Email has been sent successfully')
       },
       error: (err: any) => {
         console.log(err);

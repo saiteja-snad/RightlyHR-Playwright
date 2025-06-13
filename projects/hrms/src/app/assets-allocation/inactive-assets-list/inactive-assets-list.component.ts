@@ -366,7 +366,7 @@ export class InactiveAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset Updated Successfully ');
+          this.conformationPopup.openSuccessModal('Asset information updated successfully ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
           this.assetForm.reset();
         },
@@ -646,7 +646,7 @@ allZeroesIfMaxLength(): ValidatorFn {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Active Successfully ');
+          this.conformationPopup.openSuccessModal('Asset has been marked as active ');
            this.getcount(null, null,this.Status);
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
         },

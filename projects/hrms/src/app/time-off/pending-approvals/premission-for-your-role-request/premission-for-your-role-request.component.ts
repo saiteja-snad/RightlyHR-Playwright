@@ -341,9 +341,9 @@ export class PremissionForYourRoleRequestComponent
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
               if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission requests approved successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' Permission request approved successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
@@ -418,9 +418,9 @@ export class PremissionForYourRoleRequestComponent
             this.selectedLeavesItems.length <= 0
           ) {
             if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission requests processed successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, ' Permission request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -485,9 +485,9 @@ export class PremissionForYourRoleRequestComponent
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
               if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission requests approved successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' Permission request approved successfully');
               }
             } else {
               this.openModal(this.leaveSummary);

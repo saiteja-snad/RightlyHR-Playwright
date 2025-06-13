@@ -220,7 +220,7 @@ export class RelievingLetterComponent {
       next: (data: any) => {
         if (data) {
           this.result.documentUrl = data.path;
-          this.conformationPopup.openSuccessModal('Relieving Letter Generated Successfully')
+          this.conformationPopup.openSuccessModal('Relieving letter generated successfully')
           this.relievingemail();
         }
       },
@@ -254,7 +254,7 @@ export class RelievingLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/relievingLetter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        this.conformationPopup.openSuccessModal('Email has been sent successfully')
         setTimeout(()=>{
           this.navigateDashboard();
         }, 2000)

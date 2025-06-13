@@ -173,7 +173,7 @@ export class TraineeApprovalsComponent {
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Request Accepted Successfully');
+        this.conformationPopup.openSuccessModal('Request has been approved successfully');
       },
       error: (reason: any) => {
         this.isLoading = false;

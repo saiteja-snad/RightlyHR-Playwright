@@ -638,7 +638,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.employeeId;
     this.loading = false;
-    this.conformationPopup.openSuccessModal('Trainee Offer Letter Generated Successfully');
+    this.conformationPopup.openSuccessModal('Trainee Offer letter generated successfully');
   }
 
 
@@ -1002,7 +1002,7 @@ export class TraineeOfferLetterComponent {
       next: (data: any) => {
         //this.Approvednotification();
         if (data) {
-          this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
+          this.conformationPopup.openSuccessModal('Approval request sent successfully');
         }
         this.Approvalloader = false;
         setTimeout(() => {

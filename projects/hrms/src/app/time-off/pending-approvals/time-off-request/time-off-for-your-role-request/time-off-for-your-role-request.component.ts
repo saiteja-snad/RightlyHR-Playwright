@@ -364,9 +364,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             if(this.selectedProducts.length > 1){
-              this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Selected Leave requests approved successfully');
             }else{
-              this.signalService.handleResponse(this.responseSummary, 'Selected Leave Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Leave request approved successfully');
             } 
           } else {
             this.openModal(this.leaveSummary);
@@ -440,9 +440,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
            if(this.selectedProducts.length > 1){
-            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Requests Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave requests rejected successfully');
             } else{
-            this.signalService.handleResponse(this.responseSummary, 'Selected Leave Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Leave request rejected successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -517,9 +517,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
            if(this.selectedProducts.length > 1){
-            this.signalService.handleResponse(this.responseSummary, 'Selected Requests Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Selected Leave requests processed successfully');
             }else{
-            this.signalService.handleResponse(this.responseSummary, 'Selected Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Leave request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);

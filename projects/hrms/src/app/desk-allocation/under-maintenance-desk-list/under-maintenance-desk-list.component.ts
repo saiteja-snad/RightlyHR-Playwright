@@ -209,7 +209,7 @@ export class UnderMaintenanceDeskListComponent {
       next: (res) => {
         console.log(res);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as available successfully')
+        this.conformationPopup.openSuccessModal('Desk has been successfully marked as available')
         // this.getAllDesks(this.page, this.pageSize);
         this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
         this.getcount(null, null, this.Status);

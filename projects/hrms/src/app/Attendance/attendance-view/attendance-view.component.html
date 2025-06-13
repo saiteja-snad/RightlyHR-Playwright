@@ -144,9 +144,9 @@
         @if(statusCounts$.value.length>0){ 
         <div class="attendance-summary-card">
             <div>
-               <p class="summary-header">Attendance Summary</p>
+               <p class="summary-header mb-2">Attendance Summary</p>
             </div>
-            <div class="chart-content">
+            <div class="chart-content mb-2">
                 <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions" class="doughnut-chart" />
             </div>
             <ul class="list-style-none ps-0">
@@ -154,29 +154,13 @@
                 @for (status of statusCounts$ |async ; track $index) {
                 <li>
                     <div class="d-flex justify-content-between summart-text">
-                        <div class="summary-name">{{ status.status }}</div>
+                        <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}</div>
                         <div>{{ status.value }}</div>
                     </div>
                 </li>
                 }
                 }
             </ul>
-            <!-- <table class="w-100">
-                <thead>
-                    <th colspan="2"></th>
-                </thead>
-                <tbody>
-                    @if(!dataLoader){
-                  
-                    }
-                    @else {
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                    }
-                    }
-                </tbody>
-            </table> -->
         </div>
         }
     </div>

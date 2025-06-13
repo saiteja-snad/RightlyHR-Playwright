@@ -395,7 +395,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.dataLoader = false;
-          console.log(err);
           this.attendanceData.next([]);
           this.statusCounts$.next([]);
           this.shiftDetails = {};
@@ -412,14 +411,14 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 
   // Chart Function
   initChart() {
-    // const backgroundColors = this.cardItems.map(
-    //   (item) => item.employeementTypeColor
-    // );
+    const summaryData = this.statusCounts$.value || [];
+    const data = summaryData.map((item: any) => item.value);
+    const backgroundColors = summaryData.map((item: any) => item.colour);
     this.attendanceSummaryData = {
       datasets: [
         {
-          data: [this.statusCounts$],
-          // backgroundColor: backgroundColors,
+          data: data,
+          backgroundColor: backgroundColors,
           borderWidth: 0,
         },
       ],

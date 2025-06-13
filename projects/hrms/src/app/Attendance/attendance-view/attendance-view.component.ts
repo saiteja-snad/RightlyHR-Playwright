@@ -324,7 +324,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             // this.getCompOffRequest();
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Request submitted successfully'
+              'Regularization request submitted successfully'
             );
             this.regularizationForm.reset();
           },

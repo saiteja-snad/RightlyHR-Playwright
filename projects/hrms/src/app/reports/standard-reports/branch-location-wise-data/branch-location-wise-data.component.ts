@@ -237,7 +237,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.modal.openSuccessModal('Branch Location Wise Data downloaded successfully');
+          this.modal.openSuccessModal('Branch-wise data exported successfully.y');
         },
         error: (err: any) => {
           this.spinnerLoader = false;

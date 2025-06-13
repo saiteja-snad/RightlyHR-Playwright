@@ -721,7 +721,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   openSuccessModal(isFormSubmitted: boolean, isDraft: boolean) {
     if (isDraft) {
-      this.successMessage = 'Form drafted successfully';
+      this.successMessage = 'Form saved as draft';
     } else {
       this.successMessage = 'Form submitted successfully';
     }

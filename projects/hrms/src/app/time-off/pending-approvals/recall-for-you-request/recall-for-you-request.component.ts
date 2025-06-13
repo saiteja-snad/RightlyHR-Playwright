@@ -255,7 +255,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
             recall: true,
           }));
           this.conformationPopup.openSuccessModal(
-            'Recall Request Approved Successfully'
+            'Recall request approved successfully'
           );
           this.getAllPendingApprovals();
           this.signalService.recallSeparationForYouTriggerSignal.set(true);
@@ -299,7 +299,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
             recall: true,
           }));
           this.conformationPopup.openSuccessModal(
-            'Recall Request Rejected Successfully'
+            'Recall request rejected successfully'
           );
           this.getAllPendingApprovals();
           this.signalService.recallSeparationForYouTriggerSignal.set(true);
@@ -361,7 +361,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
             recall: true,
           }));
           this.conformationPopup.openSuccessModal(
-            'Recall Request Processed Successfully'
+            'Recall request processed successfully'
           );
           this.isLoading = false;
           this.signalService.recallSeparationForYouTriggerSignal.set(true);

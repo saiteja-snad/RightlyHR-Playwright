@@ -932,7 +932,7 @@ export class AllocatedAssetsListComponent {
           next: (res: any) => {
             this.modalService.dismissAll()
             // Call the updateAssets function if the assignment is successful
-            this.conformationPopup.openSuccessModal('Asset Allocated Successfully')
+            this.conformationPopup.openSuccessModal('Asset allocated successfully')
             this.reassiginForm.reset();
           },
           error: (error) => {
@@ -1041,7 +1041,7 @@ export class AllocatedAssetsListComponent {
         .subscribe({
           next: (res) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Released Successfully ');
+            this.conformationPopup.openSuccessModal('Asset released successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
             this.getcount(null, this.selectedSubLocationId, this.Status);
           },
@@ -1086,7 +1086,7 @@ export class AllocatedAssetsListComponent {
           next: (res) => {
 
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Allocated Successfully ');
+            this.conformationPopup.openSuccessModal('Asset allocated successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
           },
           error: (error) => {
@@ -1129,7 +1129,7 @@ export class AllocatedAssetsListComponent {
             console.log("Asset update response:", res);
 
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Reallocated Successfully ');
+            this.conformationPopup.openSuccessModal('Asset reallocated successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
             this.getcount(null, this.selectedSubLocationId, this.Status);
           },
@@ -1347,7 +1347,7 @@ export class AllocatedAssetsListComponent {
           console.log("Update Response:", res);
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
+          this.conformationPopup.openSuccessModal('Asset marked as maintenance successfully ');
 
         },
         error: (error) => {

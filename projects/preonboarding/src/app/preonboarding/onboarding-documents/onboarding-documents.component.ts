@@ -495,7 +495,7 @@ documentUrl:any;
         this.loadingcircle = false;
         this.submitNotification();
         this.emailacknowledgementtoemp();
-        this.openPopup.openSuccess("Submitted Successfully, We’ll get back to you soon!!");
+        this.openPopup.openSuccess("Submitted successfully, We’ll get back to you soon!!");
         setTimeout(() => {
           this.modalService.dismissAll();
           this.http.logOut();

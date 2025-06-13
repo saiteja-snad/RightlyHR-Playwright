@@ -176,7 +176,7 @@ export class AssetVendorComponent {
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(' Vendor Inactivated Successfully ');
+            this.conformationPopup.openSuccessModal(' Vendor inactivated successfully ');
             this.getvendor()
           },
           error: (error) => {
@@ -206,7 +206,7 @@ export class AssetVendorComponent {
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Vendor Activated Successfully ');
+            this.conformationPopup.openSuccessModal('Vendor activated successfully ');
             this.getvendor()
           },
           error: (error) => {

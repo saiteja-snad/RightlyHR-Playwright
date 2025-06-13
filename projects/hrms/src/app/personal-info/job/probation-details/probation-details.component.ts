@@ -135,7 +135,7 @@ export class ProbationDetailsComponent implements OnInit {
       next: (response: any) => {
         this.getProbationRequest();
         this.modalService.dismissAll();
-        this.openModalService.openSuccessModal('Probation Request Raised Successfully');
+        this.openModalService.openSuccessModal('Probation request raised successfully');
       },
       error: (reason: any) => {
         console.log(reason);
@@ -164,7 +164,7 @@ export class ProbationDetailsComponent implements OnInit {
       next: (response: any) => {
         this.modalService.dismissAll();
         this.getProbationRequest();
-        this.openModalService.openSuccessModal('Probation Request Raised Successfully');
+        this.openModalService.openSuccessModal('Probation Request raised successfully');
       },
       error: (error: any) => {
         this.modalService.dismissAll();

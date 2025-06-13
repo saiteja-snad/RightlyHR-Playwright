@@ -203,7 +203,7 @@ export class TraineeApprovalsComponent {
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+        this.conformationPopup.openSuccessModal('Trainee request rejected successfully');
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,
@@ -229,7 +229,7 @@ export class TraineeApprovalsComponent {
     };
     this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Processed Successfully')
+        this.conformationPopup.openSuccessModal('Trainee request processed successfully')
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message)
@@ -281,7 +281,7 @@ export class TraineeApprovalsComponent {
     this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Request Extend Successfully');
+        this.conformationPopup.openSuccessModal('Trainee request extend successfully');
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,

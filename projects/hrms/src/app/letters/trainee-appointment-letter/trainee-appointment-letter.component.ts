@@ -444,7 +444,7 @@ getOfferdetails(Value: any) {
     };
     this.subscription = this.http.postdata('TraineeAppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Appointment Letter Generated Successfully')
+        this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         this.router.navigate(['/admin/dashboard']);
       },
       error: (reason: any) => {

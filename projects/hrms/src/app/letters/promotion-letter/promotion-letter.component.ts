@@ -509,7 +509,7 @@ export class PromotionLetterComponent {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.conformationPopup.openSuccessModal("Promotion Letter Generated Successfully")
+            this.conformationPopup.openSuccessModal("Promotion letter generated successfully")
           }
           let loggedInUser = this.authService.getToken();
 

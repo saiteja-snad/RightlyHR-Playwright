@@ -327,7 +327,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
         if (data) {
           this.getEmployeeId();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
+          this.conformationPopup.openSuccessModal('Offer revoked successfully');
           this.revokeEmail();
           this.updateRevokeStatustooffer();
           this.revokeEmailToEmployee();
@@ -443,7 +443,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata('JobApplicantsData/UPDATER', data).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
+        this.conformationPopup.openSuccessModal('Offer revoked successfully');
         setTimeout(() => {
           this.router.navigate(['/admin']);
         }, 3000)

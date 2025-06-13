@@ -867,7 +867,7 @@ export class AvailableAssetsListComponent {
           next: (res) => {
 
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Allocated Successfully ');
+            this.conformationPopup.openSuccessModal('Asset allocated successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
             this.getcount(null, null, this.Status);
 
@@ -909,7 +909,7 @@ export class AvailableAssetsListComponent {
         .subscribe({
           next: (res) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Transferred  Successfully ');
+            this.conformationPopup.openSuccessModal('Asset transferred  successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
             this.getcount(null, this.selectedSubLocationId, this.Status);
             this.locationfromdata.reset();
@@ -952,7 +952,7 @@ export class AvailableAssetsListComponent {
             console.log("Asset update response:", res);
 
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Reallocated Successfully ');
+            this.conformationPopup.openSuccessModal('Asset reallocated successfully ');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
 
           },

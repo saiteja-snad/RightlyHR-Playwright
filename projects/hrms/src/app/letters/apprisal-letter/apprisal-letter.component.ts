@@ -682,7 +682,7 @@ export class ApprisalLetterComponent {
         if (data) {
           this.result.documentUrl = data.path;
           // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
-          this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
           // this.router.navigate(['/admin/active']);
         }
         let emaildetails = {

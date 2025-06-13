@@ -194,7 +194,7 @@ export class WelcomeLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/generatewelcomeemail/${this.selectedEmployee.employeeId}`, payload).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Welcome Letter Generated Successfully')
+        this.conformationPopup.openSuccessModal('Welcome letter generated successfully')
       },
       error: (err: any) => {
         this.spinnerLoader = false;

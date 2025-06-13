@@ -406,7 +406,7 @@ export class LoadEntitlementsComponent {
         if (modalElement) {
           modalElement.classList.add('show');
           modalElement.style.display = 'block';
-          this.StatusMsg = 'Leaves Entitled Successfully';
+          this.StatusMsg = 'Leaves entitled successfully';
         }
         setTimeout(function () {
           location.reload();

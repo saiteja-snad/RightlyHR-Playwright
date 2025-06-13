@@ -275,7 +275,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     if (formValue.employee?.employeeId) {
       request.EmployeeId = formValue.employee.employeeId !== 'all';
     }
-    
+
     // Manager full name
     if (formValue.manager) {
       request.teamManagerID = formValue.manager.employeeId;
@@ -292,6 +292,35 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.EmployeeId = formValue.employee.employeeId;
     }
+
+    // Debug log to verify the request
+    console.log('Generated Request:', request);
+
+    // if (this.selectLeaveEmployeeIds.length >= 0) {
+    //   const ids = this.selectLeaveEmployeeIds?.join(',');
+    //   request.EmployeeId = ids;  // The selected employee IDs are set here
+    // }
+
+    // if (formValue.employee?.employeeId) {
+    //   request.EmployeeId = formValue.employee.employeeId !== 'all';
+    // }
+
+    // // Manager full name
+    // if (formValue.manager) {
+    //   request.teamManagerID = formValue.manager.employeeId;
+    // }
+
+    // // Leave category
+    // if (formValue.leaveCategory) {
+    //   request.LeaveName = formValue.leaveCategory.value;
+    // }
+    // // Year
+    // if (formValue.year) {
+    //   request.Year = formValue.year;
+    // }
+    // if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+    //   request.EmployeeId = formValue.employee.employeeId;
+    // }
 
 
     // Call service with the constructed request

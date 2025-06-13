@@ -233,7 +233,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data.statusCode === 200) {
             // Success case
-            this.conformationPopup.openSuccessModal('Basic Information Updated Successfully');
+            this.conformationPopup.openSuccessModal('Basic information updated successfully');
             this.getEmployeeId();
             this.http.setBasicDetails();
             this.basicInfoForm.disable();

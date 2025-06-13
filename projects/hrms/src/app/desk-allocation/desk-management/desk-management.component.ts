@@ -370,7 +370,7 @@ export class DeskManagementComponent {
         .subscribe({
           next: (data: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
+            this.conformationPopup.openSuccessModal('Desk registered successfully ');
             this.getAllDesks(this.page, this.pageSize, null, null, 'All');
             this.getcount(null, null);
             this.navigateToAsset();

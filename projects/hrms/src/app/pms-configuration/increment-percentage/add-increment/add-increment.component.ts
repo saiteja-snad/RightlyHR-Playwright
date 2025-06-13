@@ -163,7 +163,7 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
   deleteRow(index: number): void {
     // Remove the row at the specified index
     this.ratingscaledetailsarray.splice(index, 1);
-    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+    this.conformationPopup.openSuccessModal('Row deleted successfully');
   }
 
   // Handle form submission
@@ -193,7 +193,7 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
-            'Increment Percentage Configurations Added Successfully'
+            'Increment percentage configurations added successfully'
           );
         },
         error: (err: any) => {

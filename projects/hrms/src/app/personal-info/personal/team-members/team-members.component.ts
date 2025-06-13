@@ -558,7 +558,7 @@ export class TeamMembersComponent {
           console.log('Next callback');
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
-            'Reporting Manager Updated Successfully'
+            'Reporting manager updated successfully'
           );
           this.getAllTeammembersList();
           this.http.setBasicDetails();
@@ -571,7 +571,7 @@ export class TeamMembersComponent {
             this.http.setBasicDetails();
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Reporting Manager Updated Successfully'
+              'Reporting manager updated successfully'
             );
             this.getAllTeammembersList();
 
@@ -633,7 +633,7 @@ export class TeamMembersComponent {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
-            'Reporting Manager Updated Successfully'
+            'Reporting manager updated successfully'
           );
           this.getAllTeammembersList();
 
@@ -644,7 +644,7 @@ export class TeamMembersComponent {
             this.modalService.dismissAll();
             this.http.setBasicDetails();
             this.conformationPopup.openSuccessModal(
-              'Reporting Manager Updated Successfully'
+              'Reporting manager updated successfully'
             );
             this.spinnerLoader = false;
             this.teamForm.reset();

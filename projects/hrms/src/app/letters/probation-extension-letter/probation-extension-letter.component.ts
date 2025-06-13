@@ -275,7 +275,7 @@ export class ProbationExtensionLetterComponent {
         this.Documenturlresult = data.documentURL;
         this.disableFieldsForApproval = false;
         this.loading = false;
-        this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
+        this.openModalService.openSuccessModal('Probation extension letter generated successfully');
       },
       error: (reason: any) => {
         this.spinnerLoader= false;

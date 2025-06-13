@@ -789,7 +789,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         if (res) {
           this.separationRequestForm.reset();
           this.modalService.dismissAll(); // Close the modal
-          this.conformationPopup.openSuccessModal('Separation Request Raised Successfully');
+          this.conformationPopup.openSuccessModal('Separation request raised successfully');
           this.getSeparationRequest();
           this.webNotificationformanager();
         }

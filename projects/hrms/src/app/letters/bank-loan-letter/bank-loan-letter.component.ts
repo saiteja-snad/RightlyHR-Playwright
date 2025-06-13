@@ -233,7 +233,7 @@ export class BankLoanLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankLoanFile).subscribe({
       next: (data: any) => {
         if (data) {
-          this.modal.openSuccessModal('Bank Loan Letter Generated Successfully');
+          this.modal.openSuccessModal('Bank loan letter generated successfully');
         }
       },
       error: (err: any) => {

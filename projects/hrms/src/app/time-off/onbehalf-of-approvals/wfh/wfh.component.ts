@@ -342,7 +342,7 @@ bulkapprove(approverPopup: any) {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'WHF request approved successfully');
           } else {
             this.openModal(this.leaveSummary);
             setTimeout(() => {
@@ -413,7 +413,7 @@ bulkapprove(approverPopup: any) {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'WFH request rejected successfully');
           } else {
             this.openModal(this.leaveSummary);
             setTimeout(() => {
@@ -488,7 +488,7 @@ bulkapprove(approverPopup: any) {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'WFH request processed successfully');
           } else {
             this.openModal(this.leaveSummary);
             setTimeout(() => {

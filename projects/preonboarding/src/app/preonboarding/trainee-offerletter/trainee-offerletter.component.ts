@@ -292,7 +292,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
           this.getOfferLetterDetails();
           this.modalService.dismissAll();
           setTimeout(() => {
-            this.openPopup.openSuccess("Offer Letter Accepted Successfully");
+            this.openPopup.openSuccess("Offer letter accepted successfully");
           }, 3000);
           
           this.loadingcircle = false;
@@ -367,7 +367,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.loadingcircle = false;
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
-          this.openPopup.openSuccess("Offer Letter Rejected Successfully");
+          this.openPopup.openSuccess("Offer letter rejected successfully");
       },
       error: (err: any) => {
         console.log(err);
@@ -383,7 +383,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.openPopup.openSuccess("Accepted Successfully")
+    this.openPopup.openSuccess("Accepted successfully")
     this.router.navigate(['/login'])
   }
 

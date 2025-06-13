@@ -7,16 +7,19 @@ import { IProbationEmployees } from '../Interfaces/letters-model';
 export class ProbationpipePipe implements PipeTransform {
 
   transform(active: IProbationEmployees[], searchValue: any): IProbationEmployees[] {
-        if((!active) || !searchValue){
-          return active;
-       }
-       return active.filter(p =>
-        p.lastName?.toString().includes(searchValue) ||
-        p.firstName?.toLowerCase().includes(searchValue.toLowerCase()) ||
-        p.fusionEmpId?.toLowerCase().includes(searchValue.toLowerCase())
-        )
-    
-      }
-  
+    if ((!active) || !searchValue) {
+      return active;
+    }
+    return active.filter(p =>
+      p.lastName?.toString().includes(searchValue) ||
+      p.firstName?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      p.fusionEmpId?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      p.contactnumber?.toString().includes(searchValue.toLowerCase()) ||
+      p.workEmail?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      p.jobDetails?.jobRole?.toLowerCase().includes(searchValue.toLowerCase())
+    )
+
+  }
+
 
 }

@@ -14,7 +14,8 @@ export class PendingapprovalsseparationPipe implements PipeTransform {
       p.entity?.spRequesterName.toLowerCase().includes(searchValue.toLowerCase()) ||
       p.entity?.spRequestFusionEmployeeId.toLowerCase().includes(searchValue.toLowerCase()) ||
       p.entity?.spDepartment.toLowerCase().includes(searchValue.toLowerCase())||
-      p.entity?.spTeam.toLowerCase().includes(searchValue.toLowerCase())
+      p.entity?.spTeam.toLowerCase().includes(searchValue.toLowerCase()) || 
+         p.entity?.spDesignation.toLowerCase().includes(searchValue.toLowerCase())
       )
   
     }

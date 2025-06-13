@@ -53,13 +53,15 @@
                         </div>
                         <div class="separator"></div>
                         <div class="leave-category-text">
-                            @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
                             <p class="m-0">Processed</p>
-                            <p class="m-0">{{item.utilizedDays}}</p>
+                            @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
-                            @if (!item.category.isProbationAllowed) {
-                            <p class="m-0">Processed</p>
-                            <p class="m-0">{{item.utilizedDays}}</p>
+                            @else if (!item.category.isProbationAllowed) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
+                            }
+                            @else {
+                            <p class="m-0">0</p>
                             }
                         </div>
                     </div>

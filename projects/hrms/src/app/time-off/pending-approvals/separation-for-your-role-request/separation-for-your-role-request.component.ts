@@ -324,15 +324,15 @@ export class SeparationForYourRoleRequestComponent {
           }));
           if (this.requestType === 'Separation Request') {
             this.conformationPopup.openSuccessModal(
-              'Separation Request Approved Successfully'
+              'Separation request approved successfully'
             );
           } else if (this.requestType === 'Early Relieving Request') {
             this.conformationPopup.openSuccessModal(
-              'Early Relieving Request Approved Successfully'
+              'Early relieving request approved successfully'
             );
           } else {
             this.conformationPopup.openSuccessModal(
-              'Separation Request Approved Successfully'
+              'Separation request approved successfully'
             );
           }
           this.getseparationforrolerequests();
@@ -379,15 +379,15 @@ export class SeparationForYourRoleRequestComponent {
           }));
           if (this.requestType === 'Separation Request') {
             this.conformationPopup.openSuccessModal(
-              'Separation Request Rejected Successfully'
+              'Separation request rejected successfully'
             );
           } else if (this.requestType === 'Early Relieving Request') {
             this.conformationPopup.openSuccessModal(
-              'Early Relieving Request Rejected Successfully'
+              'Early relieving request rejected successfully'
             );
           } else {
             this.conformationPopup.openSuccessModal(
-              'Separation Request Rejected Successfully'
+              'Separation request rejected successfully'
             );
           }
           this.getseparationforrolerequests();
@@ -446,18 +446,18 @@ export class SeparationForYourRoleRequestComponent {
       requestBody.lastWorkingDate =
         this.selectedSpRequestData.spRequestLastWorkingDate;
       requestBody.isAcceptEarly = false;
-      this.successmessage = 'Separation Request Processed Successfully'
+      this.successmessage = 'Separation request processed successfully'
     }
     if (this.selectedSpRequestData.requestSelectedType == 'Early') {
       requestBody.earlyRelievingDate =
         this.selectedSpRequestData.spMangerEarlyreliveingDate;
       requestBody.isAcceptEarly = true;
-      this.successmessage = 'Early Relieving Request Processed Successfully'
+      this.successmessage = 'Early relieving Request processed successfully'
     }
     if (this.selectedSpRequestData.requestSelectedType == 'Extend') {
       requestBody.extendedDate = this.selectedSpRequestData.extenddate;
       requestBody.isAcceptEarly = false;
-      this.successmessage = 'Separation Request Extended Successfully'
+      this.successmessage = 'Separation request extended successfully'
     }
     this.subscription = this.http
       .putData(

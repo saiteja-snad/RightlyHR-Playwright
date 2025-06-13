@@ -408,7 +408,7 @@ export class OnboardingDetailsComponent {
       .subscribe({
         next: (data: any) => {
           if(data.statusCode === 200){
-            this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
+            this.conformationPopup.openSuccessModal('Onboarding Information updated successfully');
             this.getEmployeeId();
             this.buttons = !this.buttons;
             this.onboardingForm.disable();
@@ -421,7 +421,7 @@ export class OnboardingDetailsComponent {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openErrorModal('Onboarding Details Updated failed')
+          this.conformationPopup.openErrorModal('Onboarding Information Updated failed')
 
         },
       });

@@ -1085,7 +1085,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/offerManagerEmail`, emaildetails).subscribe({
       next: (data: any) => {
         this.Approvednotification();
-        this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
+        this.conformationPopup.openSuccessModal('Approval request sent successfully');
         this.ApprovalLoader = false;
       },
       error: (err: any) => {

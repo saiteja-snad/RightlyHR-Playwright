@@ -549,7 +549,7 @@ export class AllDeskListComponent {
       this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk marked as inactive successfully');
+          this.conformationPopup.openSuccessModal('Desk inactivated successfully);
           setTimeout(() => {
             location.reload();
           }, 2000);
@@ -656,7 +656,7 @@ export class AllDeskListComponent {
       this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk marked as under maintenance successfully')
+          this.conformationPopup.openSuccessModal('Desk set under maintenance successfully')
           this.getAllDesks(this.page, this.pageSize, null, null, null)
           this.undermaintancedata.reset();
         },

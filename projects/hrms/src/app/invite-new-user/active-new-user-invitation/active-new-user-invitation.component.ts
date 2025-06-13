@@ -78,7 +78,7 @@ export class ActiveNewUserInvitationComponent {
       };
       this.subscription = this.http.postdata('InviteUser', reqBody).subscribe({
         next: (response) => {
-          this.conformationPopup.openSuccessModal('Invite New User provided successfully')
+          this.conformationPopup.openSuccessModal('New user invited successfully')
           this.isSubmitDisabled = false;
           this.isCheckBoxChecked = false;
           this.isSelectedEmployee = false;

@@ -84,7 +84,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Request Processed Successfully")
+        this.conformationPopup.openSuccessModal('Desk allocation request processed successfully')
          this.getexpensespendingforyou()
         this.signalService.deskForRoleTriggerSignal.set(true);
         this.updatedeskitem()
@@ -146,7 +146,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
         this.signalService.deskForRoleTriggerSignal.set(true);
-        this.conformationPopup.openSuccessModal("Request Rejected Successfully");
+        this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
         this.rejectForm.reset();
       },
       error: (error: any) => {

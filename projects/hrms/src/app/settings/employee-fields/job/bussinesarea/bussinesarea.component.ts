@@ -71,7 +71,7 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
     this.subscription = this.http.postdata('Bussinesarea', request).subscribe({
       next: () => {
         this.getBusiness();
-        this.conformationPopup.openSuccessModal('Bussiness Area added successfully');
+        this.conformationPopup.openSuccessModal('Bussiness area added successfully');
          this.resetForm();
       },
       error: (error: any) => {
@@ -94,7 +94,7 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
           this.getBusiness();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Bussiness Area updated successfully');
+          this.conformationPopup.openSuccessModal('Bussiness area updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -132,7 +132,7 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
       next: () => {
         this.getBusiness();
         modal.close();
-        this.conformationPopup.openSuccessModal('Business Area deleted successfully');
+        this.conformationPopup.openSuccessModal('Business area deleted successfully');
       },
       error: (err: any) => {
         const errorMessage = err.error?.Message;

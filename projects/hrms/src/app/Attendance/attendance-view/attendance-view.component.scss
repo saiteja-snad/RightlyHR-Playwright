@@ -8,71 +8,25 @@
   }
 }
 
+.custom-table-content {
+  text-align: center !important;
+  height: calc(100dvh - 8rem);
+}
+
 .main-status-text {
   font-weight: 700;
   font-size: var(--fontsize14);
   line-height: 100%;
-  letter-spacing: 0%;
   vertical-align: middle;
-}
-
-.status-present {
-  color: #4CAF50;
-}
-
-.status-halfdaypresent {
-  color: rgb(243, 109, 234);
-}
-
-.status-holiday {
-  color: #AB47BC;
-}
-
-.status-halfday {
-  color: rgb(218, 86, 93);
-}
-
-.status-absent {
-  color: #F44336;
-}
-
-.status-leave {
-  color: #FF9800;
-}
-
-.status-wfh {
-  color: #BF8534;
-}
-
-.status-compoff {
-  color: #bf6734;
-}
-
-.status-remote {
-  color: #348abf;
-}
-
-.status-weekend {
-  color: #90A4AE;
-}
-
-.status-norecords {
-  color: #7C7C7C;
-}
-
-.custom-table-content {
-  text-align: center !important;
-  height: calc(100dvh - 8rem);
 }
 
 .substatus-card {
   border: 0.5px solid #305889;
   font-weight: 500;
   font-size: var(--fontsize10);
-  line-height: 100%;
-  letter-spacing: 0%;
   color: #305889;
   border-radius: 0.25rem;
+  line-height: 100%;
   padding: 0.25rem;
 }
 
@@ -83,30 +37,52 @@
   color: #9B5DE5;
 }
 
-.attendance-summary-table {
+.attendance-summary-card {
   position: relative;
   border: 1px solid #CCDAEC;
   background-color: #fff;
   border-radius: 0.5rem;
   width: 20rem;
   height: calc(100vh - 8rem);
+  padding: 1rem;
 
-  tr {
-    border-bottom: 1px solid #EFEFEF !important;
-  }
-
-  th {
+  .summary-header {
     font-weight: 600;
     font-size: var(--fontsize16);
-    vertical-align: middle;
     color: var(--primary-color);
-    padding: 1rem 0.75rem;
   }
 
-  td {
-    padding: 0.75rem 1rem !important;
+  .chart-content {
+    position: relative;
+    width: 100%;
+    height: max-content;
+    display: flex;
+    justify-content: center;
+
+    canvas {
+      width: 100px !important;
+      height: 100px !important;
+    }
+  }
+
+  .summart-text {
     font-weight: 400;
-    font-size: var(--fontsize14) !important;
+    font-size: 13px;
+    line-height: 100%;
+    color: var(--primary-color);
+  }
+
+  .summary-name {
+    font-weight: 600;
+  }
+
+  li {
+    padding: 0.75rem 0rem;
+    border-bottom: 1px solid #EFEFEF;
+  }
+
+  li:last-child {
+    border-bottom: none !important;
   }
 }
 

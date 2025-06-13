@@ -89,11 +89,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
             jobSubLocations: []
           };
           this.locationDetails.unshift(allLocationsOption);
-    
           this.locationReportsForm.patchValue({
             location: allLocationsOption
           });
-          
           const allSubLocationOption: ISubLocation = {
             id: -1,
             jobLocationId: -1,
@@ -101,13 +99,10 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
             isDeleted: false,
             jobLocationName: 'All Locations'
           };
-  
           this.subLocationDetails = [allSubLocationOption];
-  
           this.locationReportsForm.patchValue({
             subLocation: allSubLocationOption
           });
-        
         }
       },
       error: err => console.error('Error fetching locations:', err),
@@ -228,7 +223,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   getFilterReports(formData: any): void {
     this.dataload = true;
     this.spinnerLoader1 = true;
-  
+     console.log(formData.dateOfJoining?.startDate)
     const request: IStandardReportRequest = {
       dateRange: {
         startDate: formData.dateOfJoining?.startDate || null,

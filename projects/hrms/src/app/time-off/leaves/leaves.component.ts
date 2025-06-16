@@ -306,7 +306,8 @@ export class LeavesComponent {
     this.leaveForm = this.fb.group({
       leaveType: [null, Validators.required],
       startdate: [null, Validators.required],
-      enddate: [null, Validators.required],
+      // enddate: [null, Validators.required],
+      enddate: [{ value: '', disabled: false }, Validators.required],
       halfdayavailing: ['', Validators.required],
       availing: [{ value: '', disabled: true }],
       fulldayavailing: [{ value: '', disabled: true }],
@@ -314,6 +315,22 @@ export class LeavesComponent {
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
+
+    this.leaveForm.get('leaveType')?.valueChanges.subscribe((leaveType: string) => {
+      const startDateControl = this.leaveForm.get('startdate');
+      const endDateControl = this.leaveForm.get('enddate');
+
+      if (leaveType === 'Optional Holiday') {
+        // Clear and disable both dates
+        startDateControl?.reset();
+        endDateControl?.reset();
+        endDateControl?.disable();
+      } else {
+        // Enable both fields, user may re-enter dates
+        startDateControl?.enable(); // just in case it was disabled
+        endDateControl?.enable();
+      }
+    });
   }
 
   updateHalfDayOptions() {
@@ -543,6 +560,7 @@ export class LeavesComponent {
   }
 
   onstartdate(action: string) {
+     this.leaveForm.get('enddate')?.reset();
     this.disableSubmitButton = false;
     this.leaveForm.patchValue({ halfdayavailing: null });
     this.leaveForm.patchValue({ availing: null });

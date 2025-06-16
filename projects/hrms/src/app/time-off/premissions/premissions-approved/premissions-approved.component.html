@@ -7,7 +7,7 @@
                 <th>{{'Permission Date'| translate}}</th>
                 <th>Duration(In<span class="text-lowercase"> hrs)</span></th> 
                 <th class="text-center">{{'Reason'| translate}}</th>
-                <th class="text-center">{{'Approver Reason'| translate}}</th>
+                <!-- <th class="text-center">{{'Approver Reason'| translate}}</th> -->
                 <th>{{'Permission Type'| translate}}</th>
                 <th>{{'Status'| translate}}</th>
             </thead>
@@ -27,7 +27,7 @@
                                 </ng-template>
                             </div>
                         </td>
-                        @if(permissionRequest.status !== 'Processed'){
+                        <!-- @if(permissionRequest.status !== 'Processed'){
                         <td class="text-center">
                             <div>
                                 <a type="button" [ngbPopover]="reason">
@@ -40,7 +40,7 @@
                         </td>
                         }@else {
                         <td class="text-center">-</td>
-                        }
+                        } -->
                         <td>{{permissionRequest.type}}</td>
                         <td> <span *ngIf="permissionRequest.status === 'Processed';else templateNamestatus">Approved</span>
                             <ng-template #templateNamestatus>{{permissionRequest.status}}</ng-template>

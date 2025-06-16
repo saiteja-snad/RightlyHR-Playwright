@@ -404,7 +404,7 @@ export class AddGlobalPermissionsComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.isLoader = false;
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted sucessfully')
+          this.conformationPopup.openSuccessModal('Global request submitted sucessfully')
         },
         error: (err: any) => {
           if (this.modalRef) {

@@ -113,7 +113,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Permission Updated Successfully'
+            'Permission request submitted successfully'
           );
         },
         error: (err) => {
@@ -136,7 +136,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Permission Added Successfully'
+            'Permission added successfully'
           );
         },
         error: (err: any) => {
@@ -154,7 +154,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(
-          'Permission Deleted Successfully'
+          'Permission deleted successfully'
         );
       },
       error: (err) => {

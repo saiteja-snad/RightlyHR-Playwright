@@ -72,7 +72,7 @@ export class NoticeComponent {
     this.subscription = this.http.postdata('Noticeperiod', request).subscribe({
       next: () => {
         this.getNoticeperiod();
-        this.conformationPopup.openSuccessModal('Notice Period added successfully');
+        this.conformationPopup.openSuccessModal('Notice period added successfully');
         this.resetForm();
       },
       error: (err : any) => {
@@ -107,7 +107,7 @@ export class NoticeComponent {
           this.getNoticeperiod();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Notice Period updated successfully');
+          this.conformationPopup.openSuccessModal('Notice period updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -137,7 +137,7 @@ export class NoticeComponent {
       next: () => {
         this.getNoticeperiod();
         modal.close();
-        this.conformationPopup.openSuccessModal('Notice Period deleted successfully');
+        this.conformationPopup.openSuccessModal('Notice period deleted successfully');
       },
       error: (err:any) => {
         const errorMessage = err.error?.Message;

@@ -105,7 +105,7 @@ export class GradeComponent {
         this.getgradeid();
         modal.close();
         this.conformationPopup.openSuccessModal(
-          'Grade Details added successfully'
+          'Grade details added successfully'
         );
 
         this.resetForm();
@@ -147,7 +147,7 @@ export class GradeComponent {
             this.getgradeid();
             modal.close();
             this.conformationPopup.openSuccessModal(
-              'Grade Details updated successfully'
+              'Grade details updated successfully'
             );
             this.resetForm();
           },
@@ -181,7 +181,7 @@ export class GradeComponent {
         this.getgradeid();
         modal.close();
         this.conformationPopup.openSuccessModal(
-          'Grade Details deleted successfully '
+          'Grade details deleted successfully '
         );
       },
       error: (err : any) => {

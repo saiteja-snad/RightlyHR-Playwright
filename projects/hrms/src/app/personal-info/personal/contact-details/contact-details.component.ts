@@ -179,7 +179,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
           console.log('Data updated successfully:', data);
           if (data.statusCode === 200) {
             this.http.setBasicDetails();
-            this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+            this.conformationPopup.openSuccessModal('Contact Information updated successfully');
           this.contactForm.disable();
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();

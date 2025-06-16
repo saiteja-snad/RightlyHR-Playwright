@@ -218,7 +218,7 @@ pathValuesFuction() {
         this.uploadprobationextentionLetter();
       });
     }
-    this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
+    this.openModalService.openSuccessModal('Probation extension letter generated successfully');
   }
 
   //function to get the separation request details
@@ -286,7 +286,7 @@ pathValuesFuction() {
         this.Documenturlresult = data.documentURL;
         this.disableFieldsForApproval = false;
         this.loading = false;
-        this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
+        this.openModalService.openSuccessModal('Probation extension letter generated successfully');
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -315,7 +315,7 @@ pathValuesFuction() {
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
-        this.openModalService.openSuccessModal("Email Sent Successfully");
+        this.openModalService.openSuccessModal("Email has been sent successfully");
         setTimeout(() =>{
           this.naviagte();
         }, 2000)

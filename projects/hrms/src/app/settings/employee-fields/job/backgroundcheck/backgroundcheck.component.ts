@@ -77,7 +77,7 @@ export class BackgroundcheckComponent {
     this.subscription = this.http.postdata('Background', request).subscribe({
       next: () => {
         this.BackgroundChecktype();
-        this.conformationPopup.openSuccessModal('Background Check Status added successfully');
+        this.conformationPopup.openSuccessModal('Background check status added successfully');
         this.resetForm();
       },
       error: (error : any) => {
@@ -100,7 +100,7 @@ export class BackgroundcheckComponent {
       this.subscription = this.http.postdata('Background/UPDATER', request).subscribe({
         next: () => {
           modal.close();
-          this.conformationPopup.openSuccessModal('Background Check Status updated successfully');
+          this.conformationPopup.openSuccessModal('Background check status updated successfully');
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Update failed. Please try again.');
@@ -148,7 +148,7 @@ export class BackgroundcheckComponent {
       next: () => {
         this.BackgroundChecktype();
         modal.close();
-        this.conformationPopup.openSuccessModal('Background Check Status deleted successfully');
+        this.conformationPopup.openSuccessModal('Background check status deleted successfully');
       },
       error: () => {
         this.conformationPopup.openErrorModal('Failed to delete the location');

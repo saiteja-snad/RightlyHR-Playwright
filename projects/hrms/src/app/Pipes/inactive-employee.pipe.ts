@@ -6,23 +6,33 @@ import { Iactive } from '../admin/active-employees/active-model';
 })
 export class InactiveEmployeePipe implements PipeTransform {
 
-  transform(active: Iactive[], searchValue: any): Iactive[] {
-    if((!active) || !searchValue){
-      return active;
-   }
-   return active.filter(p =>
-    p.firstName?.toLowerCase().includes(searchValue.toLowerCase()) ||
-    p.lastName?.toLowerCase().includes(searchValue.toLowerCase()) ||
-    p.emailaddress?.toLowerCase().includes(searchValue.toLowerCase())||
-    `${p.firstName?.toLowerCase()} ${p.lastName?.toLowerCase()}`.includes(searchValue.toLowerCase()) ||
-    p.fusionEmpId?.toLowerCase().includes(searchValue.toLowerCase())||
-     p.contactnumber?.toString().includes(searchValue.toLowerCase())||
-     p.location?.toString().includes(searchValue.toLowerCase())||
-     p.subLocation?.toString().includes(searchValue.toLowerCase())||
-     p.jobRole?.toString().includes(searchValue.toLowerCase())||
-     p.substatus?.toString().includes(searchValue.toLowerCase())
-    )
-
+ transform(active: Iactive[], searchValue: any): Iactive[] {
+  if ((!active) || !searchValue) {
+    return active;
   }
+
+  const lowerSearch = searchValue.toLowerCase();
+
+  return active.filter(p =>
+    p.firstName?.toLowerCase().includes(lowerSearch) ||
+    p.lastName?.toLowerCase().includes(lowerSearch) ||
+    `${p.firstName?.toLowerCase()} ${p.lastName?.toLowerCase()}`.includes(lowerSearch) ||
+    p.emailaddress?.toLowerCase().includes(lowerSearch) ||
+    p.workEmail?.toLowerCase().includes(lowerSearch) ||
+    p.fusionEmpId?.toLowerCase().includes(lowerSearch) ||
+    p.contactnumber?.toString().includes(lowerSearch) ||
+    p.location?.toLowerCase().includes(lowerSearch) ||
+    p.subLocation?.toLowerCase().includes(lowerSearch) ||
+    p.jobRole?.toLowerCase().includes(lowerSearch) ||
+    p.substatus?.toLowerCase().includes(lowerSearch) ||
+    
+   
+    p.jobDetails?.[0]?.lopcation?.toLowerCase().includes(lowerSearch) ||
+    p.jobDetails?.[0]?.subLocation?.toLowerCase().includes(lowerSearch) ||
+    p.jobDetails?.[0]?.shiftName?.toLowerCase().includes(lowerSearch) ||
+    p.jobDetails?.[0]?.jobRole?.toLowerCase().includes(lowerSearch)
+  );
+}
+
 
 }

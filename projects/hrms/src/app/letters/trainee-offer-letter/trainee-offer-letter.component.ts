@@ -15,12 +15,10 @@ import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 @Component({
   selector: 'app-trainee-offer-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule,
-    NgxCountriesDropdownModule, LetterFooterComponent, NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,
+    NgxCountriesDropdownModule, NgbPopoverModule],
   templateUrl: './trainee-offer-letter.component.html',
   styleUrl: './trainee-offer-letter.component.scss',
 })
@@ -638,7 +636,7 @@ export class TraineeOfferLetterComponent {
     this.generatedfile = file;
     this.generatingEmployeeId = EmpValue.employeeId;
     this.loading = false;
-    this.conformationPopup.openSuccessModal('Trainee offer letter generated successfully');
+    this.conformationPopup.openSuccessModal('Trainee Offer letter generated successfully');
   }
 
 
@@ -1002,7 +1000,7 @@ export class TraineeOfferLetterComponent {
       next: (data: any) => {
         //this.Approvednotification();
         if (data) {
-          this.conformationPopup.openSuccessModal('Request for approval sent successfully');
+          this.conformationPopup.openSuccessModal('Approval request sent successfully');
         }
         this.Approvalloader = false;
         setTimeout(() => {

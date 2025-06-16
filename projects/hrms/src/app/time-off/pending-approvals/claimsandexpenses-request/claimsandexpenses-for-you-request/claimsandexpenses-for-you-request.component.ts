@@ -189,7 +189,7 @@ export class ClaimsandexpensesForYouRequestComponent
             this.http.setnewcountDetails();
             this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
+              'Expense request approved successfully'
             );
             this.approveForm.reset();
             this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -235,7 +235,7 @@ export class ClaimsandexpensesForYouRequestComponent
             this.http.setnewcountDetails();
             this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
             this.sharedModalService.openSuccessModal(
-              'Request Rejected Successfully'
+              'Expense request rejected successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -278,7 +278,7 @@ export class ClaimsandexpensesForYouRequestComponent
           this.http.setnewcountDetails();
           this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal(
-            'Request Processed Successfully'
+            'Expense request processed successfully'
           );
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,

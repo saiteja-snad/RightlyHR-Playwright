@@ -313,7 +313,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-          this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
+          this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
           this.getexpensesheaderbyemployeeid();
         },
         error: (error: any) => {
@@ -330,7 +330,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll()
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
+          this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
@@ -389,7 +389,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
+          this.conformationPopup.openSuccessModal('Expense request saved as draft');
           this.getexpensesheaderbyemployeeid();
           // Call the get function after posting
         },
@@ -408,7 +408,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.http.setnewcountDetails();
           this.modalService.dismissAll()
-          this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
+          this.conformationPopup.openSuccessModal('Expense request saved as draft');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();

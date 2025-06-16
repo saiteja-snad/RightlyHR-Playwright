@@ -255,11 +255,11 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.getbankempid()
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Bank details added successfully')
+        this.conformationPopup.openSuccessModal('Bank information added successfully')
       },
       error: (err: any) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal(err.error.Message || 'Bank details added failed')
+        this.conformationPopup.openErrorModal(err.error.Message || 'Bank information added failed')
       }
     });
   }
@@ -381,12 +381,12 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Bank details updated successfully');
+        this.conformationPopup.openSuccessModal('Bank information updated successfully');
         this.getbankempid(); // Refresh the bank details list
       },
       error: (reason: any) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal(reason.error.Message || 'Bank details update failed');
+        this.conformationPopup.openErrorModal(reason.error.Message || 'Bank information update failed');
       }
     });
   }
@@ -405,7 +405,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.getbankempid(); // Refresh the bank details list
         this.modalService.dismissAll(); // Close the modal
-        this.conformationPopup.openSuccessModal('Bank details deleted successfully')
+        this.conformationPopup.openSuccessModal('Bank information deleted successfully')
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal('Failed to delete bank details. Please try again.');

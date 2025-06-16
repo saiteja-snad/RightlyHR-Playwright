@@ -42,9 +42,8 @@
             && ((selectedEmployeeOfHr?.employeeId != empdata.employeeId && selectedEmployeeOfHr != null) ||
             (selectedEmployee?.employeeId != empdata.employeeId &&
             selectedEmployee != null))){
-            <button type="button" class="custom-btn btn-primary"
-                (click)="getAttendnaceData(empdata);this.selectedEmployee = null;this.selectedEmployeeOfHr = null">
-                <img src="icons/finger-print.png" alt="" class="finger-icon me-1">My Attendance
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata);this.selectedEmployee = null;this.selectedEmployeeOfHr = null">
+               <img src="icons/finger-print.png" alt="Icon" class="finger-icon me-1">My Attendance
             </button>
             }
         </div>
@@ -121,13 +120,13 @@
                                 }
                                 @if(rbac.allowedToAccess('Request Regularization.view')){
                                 @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
-                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs &&
-                                    item.isRegularizationApplicable && currentMonth==selectedMonth &&
-                                    item.employeeId==empdata.employeeId){ <a class="application-btn"
-                                    (click)="openModal(raiseregularization); onclickRegularization(item.date)">
-                                    <u>Regularization</u></a>
-                                    }
-                                    }
+                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable 
+                                && currentMonth==selectedMonth && item.employeeId==empdata.employeeId){ 
+                                <a class="application-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
+                                    <u>Regularization</u>
+                                </a>
+                                }
+                                }
                             </div>
                         </td>
                     </tr>
@@ -144,35 +143,26 @@
             }
         </div>
 
-        @if(statusCounts$.value.length>0){
-        <div class="attendance-summary-table">
-            <table class="w-100">
-                <thead>
-                    <th colspan="2">Attendance Summary</th>
-                </thead>
-                <tbody>
-                    @if(!dataLoader){
-                    @if(statusCounts$.value){
-                    @for (status of statusCounts$ |async ; track $index) {
-                    <tr *ngIf="status.value !== 0">
-                        <td class="text-capitalize">{{ status.status }}</td>
-                        <td>{{ status.value }}</td>
-                    </tr>
-                    }
-                    @if(statusCounts$.value.length<=0){ 
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                    }
-                    }
-                    @else {
-                    <tr>
-                        <app-no-data-found />
-                    </tr>
-                    }
-                    }
-                </tbody>
-            </table>
+        @if(statusCounts$.value.length>0){ 
+        <div class="attendance-summary-card">
+            <div>
+               <p class="summary-header mb-2">Attendance Summary</p>
+            </div>
+            <div class="chart-content mb-2">
+                <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions" class="doughnut-chart" />
+            </div>
+            <ul class="list-style-none ps-0">
+                @if(statusCounts$.value){
+                @for (status of statusCounts$ |async ; track $index) {
+                <li>
+                    <div class="d-flex justify-content-between summart-text">
+                        <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}</div>
+                        <div>{{ status.value }}</div>
+                    </div>
+                </li>
+                }
+                }
+            </ul>
         </div>
         }
     </div>

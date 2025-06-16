@@ -15,7 +15,12 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: Aura, // Set the default theme
+        options: {
+          prefix: 'p', // Optional: Prefix for CSS classes
+          darkModeSelector: false, // Optional: Dark mode selector
+          cssLayer: false, // Optional: Disable CSS layers
+        },
       },
     }),
     provideHttpClient(withInterceptors([tokenInterceptor])),

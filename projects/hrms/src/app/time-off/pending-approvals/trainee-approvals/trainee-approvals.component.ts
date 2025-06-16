@@ -185,30 +185,26 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
       ),
     };
 
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Request Accepted Successfully'
-          );
-        },
-        error: (reason: any) => {
-          this.isLoading = false;
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.isLoading = false;
-          f.reset();
-          this.getAllPendingApprovals();
-          this.selectedLeaveData.trcomments = '';
-          this.signalService.traineeDetailsTriggerSignal.set(true);
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Request has been approved successfully');
+      },
+      error: (reason: any) => {
+        this.isLoading = false;
+        this.conformationPopup.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        this.isLoading = false;
+        f.reset();
+        this.getAllPendingApprovals();
+        this.selectedLeaveData.trcomments = '';
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+      },
+    });
   }
 
   //function to send the rejected status and comments
@@ -221,29 +217,25 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
         this.requesthandler.approvalHeader.currentapprovalStage
       ),
     };
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Request Rejected Successfully'
-          );
-        },
-        error: (reason: any) => {
-          this.isLoading = false;
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.isLoading = false;
-          this.getAllPendingApprovals();
-          this.signalService.traineeDetailsTriggerSignal.set(true);
-          this.selectedLeaveData = {};
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Trainee request rejected successfully');
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+      },
+      error: (reason: any) => {
+        this.isLoading = false
+        this.conformationPopup.openErrorModal(reason.error.message)
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.getAllPendingApprovals();
+        this.selectedLeaveData = {};
+      },
+    });
   }
 
   //function to send the processed status
@@ -252,25 +244,21 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
       status: 'Processed',
       currentStage: parseInt(request.approvalHeader.currentapprovalStage),
     };
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/process/${request.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.conformationPopup.openSuccessModal(
-            'Request Processed Successfully'
-          );
-        },
-        error: (reason: any) => {
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-          this.signalService.traineeDetailsTriggerSignal.set(true);
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.conformationPopup.openSuccessModal('Trainee request processed successfully')
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal(reason.error.message)
+      },
+      complete: () => {
+        this.getAllPendingApprovals();
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+      },
+    });
   }
 
   //function to get the employeedata
@@ -311,27 +299,24 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
         this.requesthandler.approvalHeader.currentapprovalStage
       ),
     };
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Request Extend Successfully'
-          );
-        },
-        error: (reason: any) => {
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-          this.signalService.traineeDetailsTriggerSignal.set(true);
-          this.selectedLeaveData = {};
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.modalService.dismissAll()
+        this.conformationPopup.openSuccessModal('Trainee request extend successfully');
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal(reason.error.message)
+      },
+      complete: () => {
+        this.getAllPendingApprovals();
+        this.selectedLeaveData = {};
+
+      },
+    });
   }
 
   initializeForm(): void {

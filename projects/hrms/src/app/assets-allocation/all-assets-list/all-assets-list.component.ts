@@ -644,7 +644,7 @@ export class AllAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset Updated Successfully ');
+          this.conformationPopup.openSuccessModal('Asset information updated successfully ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
           this.assetForm.reset();
         },
@@ -1382,7 +1382,7 @@ export class AllAssetsListComponent {
           next: (res) => {
             console.log(res);
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset marked as Inactivated Successfully');
+            this.conformationPopup.openSuccessModal('Asset inactivated successfully');
             this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
             this.getcount(null, this.selectedSubLocationId, this.Status);
             this.inactiveForm.reset()
@@ -1560,7 +1560,7 @@ export class AllAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
+          this.conformationPopup.openSuccessModal('Asset has been successfully marked as available ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
           this.getcount(null, null, this.Status);
         },
@@ -1598,8 +1598,7 @@ export class AllAssetsListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset marked as Active Successfully ');
-          this.getcount(null, null, this.Status);
+          this.conformationPopup.openSuccessModal('Asset has been marked as active ');
           this.getassetsdata(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
         },
         error: (err) => {

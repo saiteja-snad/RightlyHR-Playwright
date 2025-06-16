@@ -405,7 +405,7 @@ export class AddressProofLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.addressFile).subscribe({
       next: (data: any) => {
         if (data) {
-          this.conformationPopup.openSuccessModal('Address Proof Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Address proof letter generated successfully');
           setTimeout(() => {
             this.navigateDashboard();
           }, 2000)

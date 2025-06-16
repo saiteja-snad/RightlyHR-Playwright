@@ -244,7 +244,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.getNodueClearance();
           this.conformationPopup.openSuccessModal(
-            'No Due Request Raised Successfully'
+            'No Due request raised successfully'
           );
         },
         error: (reason: any) => {

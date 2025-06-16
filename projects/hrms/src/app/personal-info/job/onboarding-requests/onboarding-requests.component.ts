@@ -113,7 +113,7 @@ export class OnboardingRequestsComponent {
     this.http.postdata('onboardRequest', requestBody).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal("Onboard Request submitted successfully")
+        this.conformationPopup.openSuccessModal("Onboarding request submitted successfully")
         this.getOnboardrequest();
       },
       error: (error: any) => {

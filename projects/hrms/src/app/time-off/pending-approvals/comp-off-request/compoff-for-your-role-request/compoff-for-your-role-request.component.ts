@@ -342,9 +342,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems.length <= 0
           ) {
             if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off requests processed successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, ' Comp Off Request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -413,9 +413,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
               if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off requests approved successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' Comp Off request approved successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
@@ -488,9 +488,9 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
               if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Rejected Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off requests rejected successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Rejected Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' Comp Off request rejected successfully');
               }
             } else {
               this.openModal(this.leaveSummary);

@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import {
-  ReactiveFormsModule,
-  FormsModule,
-  FormGroup,
-  FormBuilder,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,6 +28,8 @@ import { ModuleInformationComponent } from '../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { InfoIconComponent } from '../../icons/info-icon/info-icon.component';
 import { AccordionModule } from 'primeng/accordion';
+import { ChartModule } from 'primeng/chart';
+
 @Component({
   selector: 'app-attendance-view',
   imports: [
@@ -54,11 +50,13 @@ import { AccordionModule } from 'primeng/accordion';
     ModuleInformationComponent,
     InfoIconComponent,
     AccordionModule,
+    ChartModule
   ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class AttendanceViewComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   dataLoader = false;
@@ -117,6 +115,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   regularization_list = [] as any;
   currentDate: any;
   date!: Date;
+  attendanceSummaryData : any;
+  attendanceSummaryOptions : any;
 
   constructor(
     private authService: AuthService,
@@ -324,7 +324,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             // this.getCompOffRequest();
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Request submitted successfully'
+              'Regularization request submitted successfully'
             );
             this.regularizationForm.reset();
           },
@@ -390,11 +390,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
           this.attendanceData.next(updatedAttendanceData);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
+          this.initChart();
           // this.attendanceData.next(response.data);
         },
         error: (err: any) => {
           this.dataLoader = false;
-          console.log(err);
           this.attendanceData.next([]);
           this.statusCounts$.next([]);
           this.shiftDetails = {};
@@ -409,48 +409,24 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     return color;
   }
 
-  //function to bind color for the each status
-  // getStatusClass(status: string): string {
-  //   switch (status?.toLowerCase()) {
-  //     case 'present':
-  //       return 'status-present';
-  //     case 'half day present':
-  //       return 'status-halfdaypresent';
-  //     case 'absent':
-  //     case 'absent(permission)':
-  //       return 'status-absent';
-  //     case 'leave':
-  //       return 'status-leave';
-  //     case 'half day leave':
-  //       return 'status-leave';
-  //     case 'first half leave':
-  //       return 'status-leave';
-  //     case 'second half leave':
-  //       return 'status-leave';
-  //     case 'wfh':
-  //       return 'status-wfh';
-  //     case 'first half wfh':
-  //       return 'status-wfh';
-  //     case 'second half wfh':
-  //       return 'status-wfh';
-  //     case 'half day wfh':
-  //       return 'status-wfh';
-  //     case 'compoff':
-  //       return 'status-compoff';
-  //     case 'holiday':
-  //       return 'status-holiday';
-  //     case 'weekend':
-  //       return 'status-weekend';
-  //     case 'half day remote':
-  //       return 'status-remote';
-  //     case 'half day':
-  //       return 'status-halfday';
-  //     case 'norecords':
-  //       return 'status-norecords';
-  //     default:
-  //       return '';
-  //   }
-  // }
+  // Chart Function
+  initChart() {
+    const summaryData = this.statusCounts$.value || [];
+    const data = summaryData.map((item: any) => item.value);
+    const backgroundColors = summaryData.map((item: any) => item.colour);
+    this.attendanceSummaryData = {
+      datasets: [
+        {
+          data: data,
+          backgroundColor: backgroundColors,
+          borderWidth: 0,
+        },
+      ],
+    };
+    this.attendanceSummaryOptions = {
+      cutout: '70%',
+    };
+  }
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
@@ -499,11 +475,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             this.get_Employeelist_forTM = myTeam.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${
-                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+                fullName: `${ employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
+                ${ employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
               };
             });
           }

@@ -19,7 +19,7 @@ import { IEmployeeSignatures } from '../letters.modal';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
+  imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })
@@ -365,7 +365,6 @@ export class AppointmentLetterComponent {
     };
     this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
-         this.spinnerLoader= false;
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(()=>{
           this.navigateDashboard();
@@ -409,8 +408,8 @@ export class AppointmentLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
-         this.spinnerLoader= false;
-        this.conformationPopup.openSuccessModal('Email sent successfully');
+        this.spinnerLoader= false;
+        this.conformationPopup.openSuccessModal('Email has been sent successfully');
       },
       error: (err: any) => {
         this.spinnerLoader= false;

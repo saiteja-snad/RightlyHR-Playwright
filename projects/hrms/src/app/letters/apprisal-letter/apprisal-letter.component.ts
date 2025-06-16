@@ -718,7 +718,7 @@ bonusValidator = (salary: number): ValidatorFn => {
         if (data) {
           this.result.documentUrl = data.path;
           // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
-          this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
           // this.router.navigate(['/admin/active']);
         }
         let emaildetails = {
@@ -741,7 +741,7 @@ bonusValidator = (salary: number): ValidatorFn => {
         }
         this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
           next: (data: any) => {
-            this.conformationPopup.openSuccessModal('Email Sent Successfully');
+            this.conformationPopup.openSuccessModal('Email has been sent successfully');
             setTimeout(() => {
               this.navigateDashboard();
             }, 2000)

@@ -306,7 +306,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     };
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
     this.spinnerLoader2 = false;
-    this.modal.openSuccessModal('Family Members data downloaded successfully');
+    this.modal.openSuccessModal('Family members data exported successfully',);
   }
 
   getFileName(name: string | undefined) {

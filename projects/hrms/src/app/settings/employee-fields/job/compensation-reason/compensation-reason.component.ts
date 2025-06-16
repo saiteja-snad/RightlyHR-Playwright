@@ -70,7 +70,7 @@ export class CompensationReasonComponent {
     this.subscription = this.http.postdata('CompensationReason', request).subscribe({
       next: () => {
         this.getReason();
-        this.conformationPopup.openSuccessModal('Compensation Reason added successfully');
+        this.conformationPopup.openSuccessModal('Compensation reason added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -93,7 +93,7 @@ export class CompensationReasonComponent {
           this.getReason();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Compensation Reason updated successfully');
+          this.conformationPopup.openSuccessModal('Compensation reason updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -131,7 +131,7 @@ export class CompensationReasonComponent {
       next: () => {
         this.getReason();
         modal.close();
-        this.conformationPopup.openSuccessModal('Compensation Reason deleted successfully');
+        this.conformationPopup.openSuccessModal('Compensation reason deleted successfully');
       },
       error: (err: any) => {
         const errorMessage = err.error?.Message;

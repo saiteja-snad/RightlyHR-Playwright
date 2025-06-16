@@ -159,7 +159,7 @@ export class PreOnBoardingDocumentsComponent {
           this.getPreonboarding();
           modal.close();
           this.conformationPopup.openSuccessModal(
-            'Document added successfully'
+            'Pre onboarding document added successfully'
           );
           this.resetForm();
         },

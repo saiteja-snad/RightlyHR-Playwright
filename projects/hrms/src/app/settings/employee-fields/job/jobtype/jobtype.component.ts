@@ -74,7 +74,7 @@ export class JobtypeComponent {
     this.subscription = this.http.postdata('Jobtype', request).subscribe({
       next: () => {
         this.getJobtype();
-        this.conformationPopup.openSuccessModal('Job Type added successfully');
+        this.conformationPopup.openSuccessModal('Job type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -97,7 +97,7 @@ export class JobtypeComponent {
             this.getJobtype();
             modal.close();
             this.updateForm.reset();
-            this.conformationPopup.openSuccessModal('Job Type updated successfully');
+            this.conformationPopup.openSuccessModal('Job type updated successfully');
           },
           error: (err: any) => {
             const errorMessage = err.error?.Message;
@@ -135,7 +135,7 @@ export class JobtypeComponent {
         next: () => {
           this.getJobtype();
           modal.close();
-          this.conformationPopup.openSuccessModal('Job Type deleted successfully');
+          this.conformationPopup.openSuccessModal('Job type deleted successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;

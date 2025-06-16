@@ -1,27 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
-
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { IBackground, INotice, IProbation } from '../../../Interfaces/job-model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
+import { IBranchLocation, Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
-
 @Component({
   selector: 'app-onboarding-details',
   imports: [CommonModule,ReactiveFormsModule,Select,Skeleton],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
+
 export class OnboardingDetailsComponent {
   subscription!: Subscription;
   buttons = false;
@@ -47,7 +45,6 @@ export class OnboardingDetailsComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ]
-
   salaryHoldDetails = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -64,7 +61,6 @@ export class OnboardingDetailsComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ]
-
   WorkFromHome = [
     { name: 'Remote/Hybrid', value: true },
     { name: 'Work Location', value: true },
@@ -72,9 +68,7 @@ export class OnboardingDetailsComponent {
   remoteLogin = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
-
   ]
-
   worklocation = [
     { name: 'Remote/Hybrid', value: 'Remote/Hybrid', allowWFH: false },
     { name: 'Work From Home', value: 'Work From Home', allowWFH: true }
@@ -82,7 +76,9 @@ export class OnboardingDetailsComponent {
   filteredWorkLocations: any[] = [];
   selectedWorkLocation: any = null;
   statustoprint: any;
-  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal,public rbac:RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
+
+  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
+    public rbac:RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -408,7 +404,7 @@ export class OnboardingDetailsComponent {
       .subscribe({
         next: (data: any) => {
           if(data.statusCode === 200){
-            this.conformationPopup.openSuccessModal('Onboarding details updated successfully');
+            this.conformationPopup.openSuccessModal('Onboarding Information updated successfully');
             this.getEmployeeId();
             this.buttons = !this.buttons;
             this.onboardingForm.disable();
@@ -421,8 +417,7 @@ export class OnboardingDetailsComponent {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openErrorModal('Onboarding details update failed')
-
+          this.conformationPopup.openErrorModal('Onboarding Information Updated failed')
         },
       });
   }
@@ -438,11 +433,9 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.get('totalExperience')?.disable();
       this.onboardingForm.get('status')?.disable();
       if(this.statustoprint === 'offer letter accepted'){
-        console.log(this.empdata?.substatus)
-          this.onboardingForm.get('status')?.enable();
+        console.log(this.empdata?.substatus);
+        this.onboardingForm.get('status')?.enable();
       }
-
-
     } else {
       this.getEmployeeId()
       this.onboardingForm.disable();
@@ -451,17 +444,9 @@ export class OnboardingDetailsComponent {
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;
   }
-  
-  
 }
-
-

@@ -2,17 +2,21 @@
   width: 15rem;
   min-width: 15rem;
   padding: 1rem;
-  height: calc(100vh - 8.5rem);
+  height: calc(100vh - 8rem);
 }
 
 .calender-content {
   width: calc(100vw - 20rem);
-  height: calc(100vh - 8.5rem);
+  height: calc(100vh - 8rem);
   overflow: auto;
   padding: 1rem;
   min-width: 600px;
   border-radius: 0.5rem;
   background-color: #FFFFFF;
+
+  .fc-h-event .fc-event-main {
+    border: 1px solid #FFFFFF;
+  }
 
   .fc-direction-ltr {
     font-family: var(--font-family) !important;
@@ -74,13 +78,7 @@
     height: 1rem;
   }
 
-  .fc-scrollgrid-liquid {
-    a {
-      color: var(--primary-color) !important;
-    }
-  }
-
-  .fc-list-day {
+  .fc-scrollgrid-liquid, .fc-list-day{
     a {
       color: var(--primary-color) !important;
     }
@@ -88,9 +86,7 @@
 
   .fc-listWeek-view {
     .fc-list-table {
-
-      td,
-      th {
+      td, th {
         border: none !important;
       }
     }
@@ -99,6 +95,14 @@
   .fc-theme-standard .fc-list-day-cushion {
     background-color: #DCE5F5 !important;
   }
+
+  // .fc .fc-daygrid-day.fc-day-today {
+  //   background: var(--body-bg-color);
+  // }
+
+  // .fc .fc-highlight {
+  //   background: var(--body-bg-color);
+  // }
 }
 
 .custom-event-icon {

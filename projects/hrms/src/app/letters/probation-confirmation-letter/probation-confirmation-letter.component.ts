@@ -129,9 +129,10 @@ export class ProbationConfirmationLetterComponent {
   getProbationEmployees() {
     this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation Confirmed"}`).subscribe({
       next: (data: any) => {
+        console.log(data)
         this.probationemp = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
       },
       error: (reason: any) => {

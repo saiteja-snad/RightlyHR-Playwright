@@ -78,7 +78,7 @@ export class MaritalstatusComponent {
     this.subscription = this.http.postdata('Maritalstatus', request).subscribe({
       next: () => {
         this.getMaritialStatus();
-        this.conformationPopup.openSuccessModal('Marital Status added successfully');
+        this.conformationPopup.openSuccessModal('Marital status added successfully');
         this.resetForm();
       },
       error: (error: any) => {
@@ -102,7 +102,7 @@ export class MaritalstatusComponent {
           this.getMaritialStatus();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Marital Status updated successfully');
+          this.conformationPopup.openSuccessModal('Marital status updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -140,7 +140,7 @@ export class MaritalstatusComponent {
       next: () => {
         this.getMaritialStatus();
         modal.close();
-        this.conformationPopup.openSuccessModal('Marital Status deleted successfully');
+        this.conformationPopup.openSuccessModal('Marital status deleted successfully');
       },
       error: (err: any) => {
         const errorMessage = err.error?.Message;

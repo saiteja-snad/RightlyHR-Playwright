@@ -174,7 +174,7 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       this.deletedRows.push(deletedRow);
       this.ratingscaledetailsarray.splice(index, 1);
     }
-    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+    this.conformationPopup.openSuccessModal('Row deleted successfully');
     this.deleterow();
   }
 
@@ -256,7 +256,7 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       this.http.postdata(`IncrementalPercentage/update`, payload).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Incremental Percentage Updated Successfully');
+          this.conformationPopup.openSuccessModal('Incremental percentage updated successfully');
         },
         error: (err: any) => {
           this.isLoading = false;

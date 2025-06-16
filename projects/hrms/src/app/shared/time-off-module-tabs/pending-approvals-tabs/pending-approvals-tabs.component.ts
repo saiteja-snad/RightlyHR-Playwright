@@ -34,7 +34,7 @@ export class PendingApprovalsTabsComponent {
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   countEmp: any;
   countRole: any;
-  loading=false
+  loading = false
   nodue_Request_data = [] as any[];
   navLinks: NavLink[] = [
     {
@@ -88,8 +88,6 @@ export class PendingApprovalsTabsComponent {
       moduleId: environment.expensesModuleId, permission: { feature: 'Claims and Expenses Tab', action: 'view' },
       icon: '/main-menu-icons/expenses-icon.png',
     },
-    
-    
   ];
 
   constructor(
@@ -109,11 +107,11 @@ export class PendingApprovalsTabsComponent {
           nodue: status.nodue ? false : status.nodue,
         }));
       }
-      if(this.signalService.timeOffsidenavCountSignal()){
+      if (this.signalService.timeOffsidenavCountSignal()) {
         this.getAllPendingApprovalsCount();
         this.signalService.timeOffsidenavCountSignal.set(false);
       }
-      if(this.signalService.wfhSidNavCountTriggerSignal()){
+      if (this.signalService.wfhSidNavCountTriggerSignal()) {
         this.getAllPendingApprovalsCount();
         this.signalService.wfhSidNavCountTriggerSignal.set(false);
       }
@@ -141,7 +139,7 @@ export class PendingApprovalsTabsComponent {
         this.getAllPendingApprovalsCount();
         this.signalService.noDueSideNavCountTriggerSignal.set(false);
       }
-       if (this.signalService.probationDetailsTriggerSignal()) {
+      if (this.signalService.probationDetailsTriggerSignal()) {
         this.getAllPendingApprovalsCount();
         this.signalService.probationDetailsTriggerSignal.set(false);
       }
@@ -152,12 +150,8 @@ export class PendingApprovalsTabsComponent {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
     this.getAllPendingApprovalsNoDue();
-    this.navLinks = this.navLinks.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`));
+    this.navLinks = this.navLinks.filter((tab) => tab.permission && tab.permission.feature &&
+      tab.permission.action && this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`));
   }
 
   getAllPendingApprovalsNoDue() {
@@ -170,7 +164,7 @@ export class PendingApprovalsTabsComponent {
   }
 
   getAllPendingApprovalsCount() {
-    this.loading=true
+    this.loading = true;
     const employeeId = parseInt(this.LOGIN.employeeId);
     this.http.getAllPendingApprovalsCount(undefined, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
@@ -180,11 +174,12 @@ export class PendingApprovalsTabsComponent {
           ...link,
           count: countMap.get(link.moduleId) || 0
         }));
-        this.loading=false
+        this.loading = false;
       },
-      error: (err) =>{console.error('Error fetching approvals:', err)
-        this.loading=false
-      } 
+      error: (err) => {
+        console.error('Error fetching approvals:', err);
+        this.loading = false;
+      }
     });
   }
 

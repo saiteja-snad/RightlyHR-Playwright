@@ -444,9 +444,9 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
               if (this.selectedProducts.length > 1) {
-                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Approved Successfully');
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization requests approved successfully');
               } else {
-                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Approved Successfully');
+                this.signalService.handleResponse(this.responseSummary, ' Regularization request approved successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
@@ -522,9 +522,9 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             if (this.selectedProducts.length > 1) {
-              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Processed Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests processed successfully');
             } else {
-              this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Processed Successfully');
+              this.signalService.handleResponse(this.responseSummary, ' Regularization request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -597,9 +597,9 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
               if (this.selectedProducts.length > 1) {
-                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Requests Rejected Successfully');
+                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization requests rejected successfully');
               } else {
-                this.signalService.handleResponse(this.responseSummary, 'Selected Regularization Request Rejected Successfully');
+                this.signalService.handleResponse(this.responseSummary, ' Regularization request rejected successfully');
               }
             } else {
               this.openModal(this.leaveSummary);

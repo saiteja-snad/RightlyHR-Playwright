@@ -382,7 +382,7 @@ export class AllocatedDeskListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted Successfully')
+          this.conformationPopup.openSuccessModal('Desk has been successfully reallocated')
           ///this.updatedeskallowcation(this.assiginForm)
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null, null, this.Status)
@@ -395,7 +395,7 @@ export class AllocatedDeskListComponent {
         },
         error: (error) => {
           console.log('Error:', error);
-          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');
+          this.conformationPopup.openErrorModal('A desk is already assigned to this employee');
         }
       });
     } else {
@@ -456,7 +456,7 @@ export class AllocatedDeskListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted Successfully')
+          this.conformationPopup.openSuccessModal('Desk has been successfully released')
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null, null, this.Status);
 

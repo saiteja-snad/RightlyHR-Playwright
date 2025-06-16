@@ -556,7 +556,7 @@ export class SalaryRevisionLetterComponent {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.conformationPopup.openSuccessModal('Salary revision Letter Generated Successfully');
+            this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
           }
           let emaildetails = {
             personEmail: this.appraisalData.workEmail,
@@ -580,7 +580,7 @@ export class SalaryRevisionLetterComponent {
           }
           this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
               next: (data: any) => {
-                this.conformationPopup.openSuccessModal('Email Sent Successfully');
+                this.conformationPopup.openSuccessModal('Email has been sent successfully');
                 setTimeout(() => {
                   this.navigateDashboard();
                 }, 2000)

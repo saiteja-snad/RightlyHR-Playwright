@@ -441,7 +441,7 @@ export class CompOffEntitlementComponent {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Comp off request processed successfully');
           } else {
             this.openModal(this.leaveSummary);
             setTimeout(() => {
@@ -502,7 +502,7 @@ export class CompOffEntitlementComponent {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Comp off request approved successfully');
             } else {
               this.openModal(this.leaveSummary);
               setTimeout(() => {
@@ -567,7 +567,7 @@ export class CompOffEntitlementComponent {
             this.modalService.dismissAll();
             this.responseSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary, ' Comp off request rejected successfully');
             } else {
               this.openModal(this.leaveSummary);
               setTimeout(() => {

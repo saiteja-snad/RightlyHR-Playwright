@@ -290,7 +290,7 @@ export class CloneWeekendsComponent {
 
     this.http.postdata('OrgWeekendHeader/Post/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.modal.openSuccessModal('Weekends Created Successfully')
+        this.modal.openSuccessModal('Weekends created successfully')
         setTimeout(() => {
          this.closeWeekend();
         }, 2000)

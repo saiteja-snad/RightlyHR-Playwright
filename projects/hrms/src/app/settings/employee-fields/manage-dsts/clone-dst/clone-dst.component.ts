@@ -352,7 +352,7 @@ getAllShifts(subLocation: ISubLocation): void {
       .subscribe({
         next: (response: any) => {
           this.sharedModalService.openSuccessModal(
-            'DST added Successfully'
+            'DST added successfully'
           );
           this.navigate();
         },
@@ -441,7 +441,7 @@ getAllShifts(subLocation: ISubLocation): void {
       .subscribe({
         next: (respnose: any) => {
           this.sharedModalService.openSuccessModal(
-            'Manage DST Published Successfully'
+            'Manage DST published successfully'
           );
           this.navigate();
         },

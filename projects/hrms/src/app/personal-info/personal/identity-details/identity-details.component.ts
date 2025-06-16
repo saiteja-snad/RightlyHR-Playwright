@@ -336,11 +336,11 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll()
         this.identityForm.reset();
         this.getIdentityByEmpid()
-        this.conformationPopup.openSuccessModal('Identity details added successfully');
+        this.conformationPopup.openSuccessModal('Identity information added successfully');
       },
       error: (error) => {
         this.spinnerLoader = false
-        this.conformationPopup.openErrorModal(error.error.Message || 'Identity details added failed');
+        this.conformationPopup.openErrorModal(error.error.Message || 'Identity information added failed');
       }
     });
   }
@@ -454,12 +454,12 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         // Close the modal and refresh the data
         this.getIdentityByEmpid();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Identity details updated successfully');
+        this.conformationPopup.openSuccessModal('Identity information updated successfully');
       },
       error: (err: any) => {
         this.spinnerLoader = false
 
-        this.conformationPopup.openErrorModal('Failed to update identity details');
+        this.conformationPopup.openErrorModal('Failed to update identity information');
       }
     });
   }
@@ -486,11 +486,11 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
           console.log('Identity deleted successfully:', data);
           this.modalService.dismissAll()
           this.getIdentityByEmpid();
-          this.conformationPopup.openSuccessModal('Identity details deleted successfully');
+          this.conformationPopup.openSuccessModal('Identity information deleted successfully');
         },
         error: (err: any) => {
           console.error('Error deleting identity:', err);
-          this.conformationPopup.openErrorModal('Identity details deleted failed');
+          this.conformationPopup.openErrorModal('Identity information deleted failed');
         }
       });
   }

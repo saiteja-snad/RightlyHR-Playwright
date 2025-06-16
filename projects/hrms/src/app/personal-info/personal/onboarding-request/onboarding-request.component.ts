@@ -43,9 +43,9 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   // For modal view
   @ViewChild('viewmodel') viewmodel!: NgbModal;
-  
+
   constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
-    private conformationPopup: OpenModalService, private modalService: NgbModal,public rbac: RbacService) { this.intitalizeForm(); }
+    private conformationPopup: OpenModalService, private modalService: NgbModal, public rbac: RbacService) { this.intitalizeForm(); }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
@@ -69,15 +69,15 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, {centered: true, backdrop: 'static', keyboard: false});
+    this.modalService.open(content, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   intitalizeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),Validators.pattern(/^(?!\s).*$/)]],
+      comments: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
     });
     this.reRequestForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),Validators.pattern(/^(?!\s).*$/)]],
+      comments: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
     });
   }
 
@@ -96,12 +96,11 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`CustomEmail/RerequestDocuments`, pdata).subscribe({
       next: (data: any) => {
-        if(data){
+        if (data) {
           this.reRequestForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Email sent successfully')
+          this.conformationPopup.openSuccessModal('Email has been sent successfully')
         }
-        
       },
       error: (err: any) => {
         console.log(err);
@@ -111,7 +110,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   //function to get the details of the document
   getdocumentdeatilsbyempid() {
-  this.loading = true;
+    this.loading = true;
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`OnBoardingDocuments/${EmpId}`).subscribe({
       next: (data: any) => {
@@ -124,7 +123,6 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
           this.rerequestdisplayforrejected = disablerejectvalue;
         });
       },
-
       error: (reason: any) => {
         this.loading = false;
         console.log(reason);
@@ -182,13 +180,13 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   //function to reload the page
   reload() {
-    this.OnbViewURL=null;
-   this.modalService.dismissAll();
+    this.OnbViewURL = null;
+    this.modalService.dismissAll();
   }
 
   //function to approve the document
-  approveDocument(id: number,empId: number,documentType: string,documentUrl: string,rejectedBy: number,
-    reason: string,referenceNumber: number,referenceId: number) {
+  approveDocument(id: number, empId: number, documentType: string, documentUrl: string, rejectedBy: number,
+    reason: string, referenceNumber: number, referenceId: number) {
     let loggedInUser = this.authService.getToken();
     this.doumentsapprovedata = {
       id: id,
@@ -202,7 +200,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
       referenceNumber: referenceNumber,
     };
   }
-  
+
   approvedocuments() {
     this.subscription = this.http.postdata('OnBoardingDocuments/Update', this.doumentsapprovedata).subscribe({
       next: (data: any) => {
@@ -253,17 +251,13 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.rejectDocument.reset();
   }
 
- get shouldShowActionColumn(): boolean {
-  if (!this.documentData) return false;
-  const docs: DocumentData[] = this.documentData.value; // get the current value from BehaviorSubject
-  return docs.some((data: DocumentData) => 
-    data.status !== 'Verified' &&
-    data.status !== 'Rejected' &&
-    data.status === 'Submitted' &&
-    !!data.documentUrl
-  );
-}
-
+  get shouldShowActionColumn(): boolean {
+    if (!this.documentData) return false;
+    const docs: DocumentData[] = this.documentData.value; // get the current value from BehaviorSubject
+    return docs.some((data: DocumentData) =>
+      data.status !== 'Verified' && data.status !== 'Rejected' && data.status === 'Submitted' && !!data.documentUrl
+    );
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

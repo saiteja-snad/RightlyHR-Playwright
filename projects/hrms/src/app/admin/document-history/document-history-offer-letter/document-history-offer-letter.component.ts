@@ -187,7 +187,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal(
-            ' Offer Letter Released Successfully'
+            'Offer letter released successfully '
           );
           this.getOfferLetters();
         },
@@ -262,7 +262,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.Approvednotification(datas);
           this.conformationPopup.openSuccessModal(
-            'Offer Letter Approved Successfully '
+            'Offer letter approved successfully '
           );
         },
       });
@@ -401,7 +401,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
           if (data) {
             this.rejectDocument.reset();
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Offer Letter Rejected Successfully ');
+            this.conformationPopup.openSuccessModal('Offer letter rejected successfully ');
           }
         },
         error: (err: any) => {

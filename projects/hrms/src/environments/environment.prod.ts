@@ -27,7 +27,7 @@ export const environment = {
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,
   RecallrequestmoduleId: 14,
-  ProbationrequestmoduleId: 18,
+  ProbationrequestmoduleId: 20,
   ProbationNoticePeriodId: 0,
   ProbationbuttonbeforeId: 1,
   ProbationExtensionId: 2,

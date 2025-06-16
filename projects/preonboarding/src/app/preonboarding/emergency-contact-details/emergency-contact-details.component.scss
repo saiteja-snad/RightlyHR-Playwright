@@ -1,17 +1,29 @@
-.form-check-input{
+.form-check-input {
     box-shadow: none !important;
     outline: none !important;
 }
 
-input:focus{
+input:focus {
     box-shadow: none !important;
     outline: none !important;
     background-color: #F8FBFF !important;
     border: 1px solid #DEE8F3 !important;
 }
+
 input[type="text"] {
     text-transform: capitalize;
 }
+
 input::placeholder {
     text-transform: none !important;
+}
+
+.p-select-option.p-select-option-selected {
+    background: #e8f0fb !important;
+    color: #222222 !important;
+}
+
+.p-select-option.p-select-option-selected.p-focus {
+    background: #e8f0fb !important;
+    color: #222222 !important;
 }

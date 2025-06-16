@@ -54,8 +54,7 @@
         </div>
         }
         <!--My Team  -->
-        @if(rbac.allowedToAccess('My Team Report(Permission).view') &&!rbac.allowedToAccess('Attendance All Employees
-        List(Permission).view')
+        @if(rbac.allowedToAccess('My Team Report(Permission).view') &&!rbac.allowedToAccess('Attendance All Employees List(Permission).view')
         && !rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
@@ -81,8 +80,7 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Permission Report - Generate.view') && rbac.allowedToAccess('Permission Report -
-          Export.view')){
+          @if(rbac.allowedToAccess('Permission Report - Generate.view') && rbac.allowedToAccess('Permission Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPemrissionReport()"
             [disabled]="filteredPermissionData.length == 0 || disableBtn">
             @if(spinnerLoader2){

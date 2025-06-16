@@ -36,7 +36,8 @@ export class AddressProofLetterComponent {
   selectedEmployee: any;
   subscription!: Subscription;
   fusionEmpId: any;
-  employeeiddetails = [] as any;
+  // employeeiddetails = [] as any;
+  employeeiddetails: any[] = [];
   addressLetterData = {} as any;
   employeeJobDetails = {} as any;
   addressTemplate: any | string | ArrayBuffer | null = null; //bank loan letter template
@@ -166,7 +167,7 @@ export class AddressProofLetterComponent {
 
     let selectedAddress = this.addressLetterData.address || {};
     if (!selectedAddress || Object.keys(selectedAddress).length === 0) {
-      console.log('No address found for the selected type.');
+      console.log('No address found for the selected type');
     }
 
     this.employeeForm.patchValue({
@@ -202,7 +203,7 @@ export class AddressProofLetterComponent {
         this.employeeaddress = data as IAddress[];
         const address = data.employeeAddresses
         if (!address || address.length === 0) {
-          this.addressErrorMessage = 'No address found for the selected employee.';
+          this.addressErrorMessage = 'No address found for the selected employee';
         } else {
           this.addressErrorMessage = '';
         }
@@ -232,7 +233,7 @@ export class AddressProofLetterComponent {
       this.addressFlag = true;
     } else {
       this.addressFlag = false;
-      this.addressErrorMessage = 'No address found for the selected type.';
+      this.addressErrorMessage = 'No address found for the selected type';
     }
   }
 

@@ -117,7 +117,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   date!: Date;
   attendanceSummaryData : any;
   attendanceSummaryOptions : any;
-
+  maxMonth: Date = new Date();
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -131,7 +131,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Get current date
-    const now = moment().startOf('month'); // ← important!
+    const now = moment().startOf('month'); 
     this.date = now.toDate();
     this.currentDate = moment().date();
     // Get current month (1-based)
@@ -140,6 +140,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     // Get current year
     this.currentYear = moment().year();
     this.selectedYear = this.currentYear;
+    this.maxMonth = new Date();
     this.empdata = this.authService.getToken();
     this.getAttendnaceData(this.empdata);
     this.getAttendanceCriteria();

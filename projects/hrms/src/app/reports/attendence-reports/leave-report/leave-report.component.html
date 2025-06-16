@@ -13,12 +13,12 @@
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Leave Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
-  !LeaveReportForm.get('employee')?.value &&
-  !LeaveReportForm.get('dateRange')?.value &&
-  !LeaveReportForm.get('manager')?.value &&
-  !LeaveReportForm.get('leaveCategory')?.value &&
-  !LeaveReportForm.get('team')?.value
-" (click)="clearAllFilters()">
+          !LeaveReportForm.get('employee')?.value &&
+          !LeaveReportForm.get('dateRange')?.value &&
+          !LeaveReportForm.get('manager')?.value &&
+          !LeaveReportForm.get('leaveCategory')?.value &&
+          !LeaveReportForm.get('team')?.value
+        " (click)="clearAllFilters()">
           Clear All
         </button>
 
@@ -60,9 +60,8 @@
         }
 
         <!--My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees
-        List(Leaves).view')
-        && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
+        @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All EmployeesList(Leaves).view')
+         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
@@ -99,8 +98,7 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Leave Report - Generate.view') 
-          && rbac.allowedToAccess('Leave Report - Export.view')){
+          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filteredleaveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){

@@ -108,7 +108,7 @@ export class ProbationExtensionLetterComponent {
       next: (data: any) => {
         this.employeedetails = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
       },
       error: (reason: any) => {

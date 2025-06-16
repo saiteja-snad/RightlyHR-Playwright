@@ -10,7 +10,6 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { Select } from 'primeng/select';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -19,8 +18,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule,
-    Select, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule,NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe],
@@ -76,7 +74,7 @@ export class DraftsExpensesComponent {
   initiateForm() {
     this.newExpenseForm = this.fb.group({
       expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
-      approvalemail: [null, Validators.required],
+      // approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
     });
@@ -277,7 +275,7 @@ fileuploadhide :any;
       applied_date: new Date().toISOString(),
       expenses_Title: form.value.expensesTitle,
       expenseId: this.selectedexpensesid,
-      approverEmail: form.value.approvalemail.value,
+      // approverEmail: form.value.approvalemail.value,
       additional_details: form.value.additional_details,
       status: 'Waiting for Approval',
       employeeId: this.empinfo.employeeId,
@@ -353,7 +351,7 @@ fileuploadhide :any;
       applied_date: new Date().toISOString(),
       expenses_Title: form.value.expensesTitle,
       expenseId: this.selectedexpensesid,
-      approverEmail: form.value.approvalemail.value,
+      // approverEmail: form.value.approvalemail.value,
       additional_details: form.value.additional_details,
       status: 'Draft',
       employeeId: this.empinfo.employeeId,
@@ -496,7 +494,7 @@ fileuploadhide :any;
     this.matchingExpense = expensesArray.find(exp => exp.expenseId === expenseIdToFind);
     this.newExpenseForm.patchValue({
       expensesTitle: data.expenses_Title,
-      approvalemail: this.emails.find((email: any) => email.value === data.approverEmail),
+      // approvalemail: this.emails.find((email: any) => email.value === data.approverEmail),
       // expense: matchingExpense ? matchingExpense.expenseId : null,
       additional_details: data.additional_details
     });

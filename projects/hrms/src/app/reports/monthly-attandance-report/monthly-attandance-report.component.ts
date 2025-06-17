@@ -12,9 +12,10 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 @Component({
   selector: 'app-monthly-attandance-report',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule, ReportsHeaderComponent],
   templateUrl: './monthly-attandance-report.component.html',
   styleUrl: './monthly-attandance-report.component.scss'
 })

@@ -16,10 +16,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent,],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss'
 })

@@ -19,10 +19,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 @Component({
   selector: 'app-employee-master-data',
   imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe,
-    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent,],
+    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss',
   encapsulation: ViewEncapsulation.None

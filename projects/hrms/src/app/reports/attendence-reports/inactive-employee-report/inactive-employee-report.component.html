@@ -1,11 +1,7 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-
-    <div class="heading-content">
-      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-      <div class="component-header">Inactive Employee Report</div>
-    
-    </div>
+    <!-- Header -->
+    <app-reports-header/>
 
     <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
       <div class="d-flex align-items-center gap-3">

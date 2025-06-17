@@ -44,6 +44,8 @@ export class EmployeeManagementLayoutComponent {
   totalEmployeesCount: any;
   employeesStatusCount: EmployeeStatusCount = {} as EmployeeStatusCount;
   loading: boolean = false;
+  filteredCardItems : any;
+
   constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
   ngOnInit(): void {
@@ -197,13 +199,14 @@ export class EmployeeManagementLayoutComponent {
         permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
     ];
+    this.filteredCardItems = this.cardItems.slice(1);
     // this.filterTabsByRbac();
     this.initChart();
   }
 
   initChart() {
     this.loading = false;
-    const backgroundColors = this.cardItems.map(item => item.employeementTypeColor);
+    const backgroundColors = this.filteredCardItems.map((item: { employeementTypeColor: any; }) => item.employeementTypeColor);
     this.totalEmployeesCount = this.employeesStatusCount?.totalCount;
     this.EmployeeInfoData = {
       datasets: [

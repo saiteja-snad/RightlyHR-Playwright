@@ -161,7 +161,7 @@
                             (click)="toggleApprove()">
                         <label class="form-check-label ms-2" for="flexRadioEarly">{{'Process' | translate}}</label>
                     </div>
-                     @if(selectedData.probationextendedcount<probationExtensionTimes){
+                     @if((selectedData.probationextendedcount?selectedData.probationextendedcount:0)<probationExtensionTimes){
                     <div class="form-check form-check-inline ms-3">
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
                             (click)="toggleExtend()">

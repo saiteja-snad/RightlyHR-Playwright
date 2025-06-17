@@ -1,12 +1,7 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <!--header-->
-
-        <div class="heading-content">
-            <div class="commpoment-name " (click)="navigation()"> Reports<span class="ms-1"><i
-                        class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Family Members Data</div>
-        </div>
+        <app-reports-header/>
 
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">

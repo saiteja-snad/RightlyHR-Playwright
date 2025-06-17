@@ -18,15 +18,14 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 
 @Component({
   selector: 'app-wfh-report',
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, DropdownModule, SelectModule, TranslateModule,
-    NoDataFoundComponent,
-    DataLoaderContentComponent,
-  
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent
 ],
   templateUrl: './wfh-report.component.html',
   styleUrl: './wfh-report.component.scss',

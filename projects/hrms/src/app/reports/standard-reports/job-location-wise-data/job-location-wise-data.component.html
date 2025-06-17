@@ -1,12 +1,8 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <!--header-->
+        <app-reports-header/>
 
-        <div class="heading-content">
-            <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i
-                        class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Job Location Wise Data </div>
-        </div>
         <div>
             <form autocomplete="off" [formGroup]="locationReportsForm" (ngSubmit)="onSubmit(locationReportsForm)">
                 <div class="d-flex align-items-center gap-3">
@@ -82,7 +78,6 @@
             </form>
         </div>
     </div>
-
 
     <div class="custom-table-content">
         @if(!dataload){

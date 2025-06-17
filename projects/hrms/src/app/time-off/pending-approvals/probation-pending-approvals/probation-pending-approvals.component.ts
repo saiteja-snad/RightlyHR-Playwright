@@ -138,7 +138,7 @@ export class ProbationPendingApprovalsComponent {
   approverComments(value: any) {
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
-      const parsedMetaData = JSON.parse(ele.meta);
+      const parsedMetaData = JSON?.parse(ele?.meta);
       return {
         ...ele, // Copy other properties from ele
         metadata: parsedMetaData, // Assign parsed metaData to metadata property

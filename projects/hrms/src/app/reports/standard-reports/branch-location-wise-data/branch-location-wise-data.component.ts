@@ -1,16 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Branch, EmployeeDetails, IFamilyDetails, IStandardReportRequest } from '../../../Interfaces/reports.model';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
@@ -22,8 +17,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
-
-
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 @Component({
   selector: 'app-branch-location-wise-data',
   imports: [
@@ -35,10 +29,12 @@ import { Router } from '@angular/router';
     DateformatPipe,
     NgxDaterangepickerBootstrapDirective,
     DataLoaderContentComponent,
+    ReportsHeaderComponent
   ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
 })
+
 export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   empinfo = {} as IJob;
@@ -47,14 +43,12 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   standardReportData = [] as EmployeeDetails[];
   branchLocations = [] as Branch[];
-
   localeOptions: any = {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
     direction: 'ltr',
     clearLabel: 'Clear', // could be rtl
   };
-
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -66,7 +60,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
   spinnerLoader = false;
   spinnerLoader1 = false;
   dataload = false;
@@ -85,12 +78,9 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getBranchLocations();
-
     this.reportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
-
-   
   }
 
   initializeForm() {
@@ -100,14 +90,11 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
   getBranchLocations() {
     this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res) {
           this.branchLocations = res;
-          console.log(this.branchLocations)
           if (this.branchLocations.length > 0) {
             this.branchLocations.unshift({
               sno: -1,
@@ -115,7 +102,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
               branchLocation1: 'All Branch Locations',
               isDeleted: false,
             });
-
             this.reportForm.patchValue({
               location: 'All',
             });
@@ -129,7 +115,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   onSubmit(form: FormGroup) {
     this.dataload = true;
     this.spinnerLoader1 = true;
-
     if (form.valid) {
       const formData = form.value;
       const request: IStandardReportRequest = {
@@ -139,7 +124,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
         },
         selectedBranchLocation: formData.location,
       };
-      console.log(request)
       this.reportService.getStandardReports(request).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
@@ -167,7 +151,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       'branchLocation',
       'Branch_location_wise_data'
     );
-
     this.uploadReports(arrayBuffer, fileName);
     this.createReportLog('Branch Location Wise Data');
   }
@@ -177,12 +160,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     let filePath = `/FusionDocuments/Employee Documents/Reports/${this.empinfo.employeeId}`;
-    this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        reportFile
-      )
+    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, reportFile)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -211,16 +189,14 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     } else {
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
     }
-    this.http
-      .postdata(`CustomEmail/Reports`, reportdata)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => { },
-        error: (err) => {
-          this.spinnerLoader = false;
-        }
-      });
+    this.http.postdata(`CustomEmail/Reports`, reportdata).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => { },
+      error: (err) => {
+        this.spinnerLoader = false;
+      }
+    });
   }
+
   navigation() {
     this.router.navigate(['/reports']);
   }
@@ -231,22 +207,18 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       reportsType: 'Standard Reports',
       reportsName: reportName,
     };
-
-    this.http
-      .postdata('ReportsLog', req)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.modal.openSuccessModal('Branch-wise data exported successfully.y');
-        },
-        error: (err: any) => {
-          this.spinnerLoader = false;
-          this.modal.openErrorModal('Failed to download branch location wise data');
-        },
-        complete: () => {
-          this.spinnerLoader = false;
-        }
-      });
+    this.http.postdata('ReportsLog', req).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.modal.openSuccessModal('Branch-wise data exported successfully.y');
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        this.modal.openErrorModal('Failed to download branch location wise data');
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
   }
 
   exportTableToExcel(tableId: string, name?: string) {
@@ -268,11 +240,9 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   // Function to convert headers to uppercase
   private convertHeadersToUpperCase(ws: XLSX.WorkSheet) {
     const range = XLSX.utils.decode_range(ws['!ref']!);
-
     for (let C = range.s.c; C <= range.e.c; ++C) {
       let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
       let cell = ws[cellAddress];
-
       if (cell && cell.v) {
         cell.v = cell.v.toString().toUpperCase();
         cell.w = cell.v;
@@ -295,7 +265,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
-
     return Math.max(10, maxWidth);
   }
 

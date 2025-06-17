@@ -16,11 +16,12 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 
 @Component({
   selector: 'app-regularization-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
   templateUrl: './regularization-reports.component.html',
   styleUrl: './regularization-reports.component.scss'
 })

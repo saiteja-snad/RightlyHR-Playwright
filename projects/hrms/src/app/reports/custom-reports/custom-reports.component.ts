@@ -16,6 +16,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -33,8 +34,9 @@ interface FieldGroup {
     NgxDaterangepickerBootstrapDirective,
     AccordionModule,
     NoDataFoundComponent,
-    NgbPopoverModule
-  ],
+    NgbPopoverModule,
+    ReportsHeaderComponent
+],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',
   encapsulation: ViewEncapsulation.None

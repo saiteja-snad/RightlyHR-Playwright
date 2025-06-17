@@ -1,11 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
@@ -14,12 +8,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
-
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
-
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 @Component({
   selector: 'app-family-members-data',
@@ -31,10 +24,12 @@ import { Router } from '@angular/router';
     NoDataFoundComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-  ],
+    ReportsHeaderComponent
+],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',
 })
+
 export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   empStatusList: string[] = ['All Employees', 'Active', 'Inactive'];
@@ -61,7 +56,6 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     this.reportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
-
   }
 
   initializeForm() {
@@ -69,8 +63,6 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       status: ['All Employees', Validators.required],
     });
   }
-
-
 
   getFamilyDetails(status?: string) {
     this.dataload = true;

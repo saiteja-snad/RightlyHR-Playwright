@@ -23,26 +23,18 @@
       <tbody>
         @if(InActive.length > 0) {
         <tr *ngFor="let act of InActive | inactiveEmployee : searchValue">
-          <td> <span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}} </span>
-            <ng-template #fusionid>
-              -
-            </ng-template>
+          <td><span *ngIf="act.fusionEmpId;else fusionid">{{act.fusionEmpId}}</span>
+            <ng-template #fusionid>-</ng-template>
           </td>
-          <td><span *ngIf="act.firstName;else firstname"> <a class="select-item cursor" (click)="select(act)">
+          <td><span *ngIf="act.firstName;else firstname"><a class="select-item cursor" (click)="select(act)">
                 {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a></span>
-            <ng-template #firstname>
-              -
-            </ng-template>
+            <ng-template #firstname>-</ng-template>
           </td>
-          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}} </span>
-            <ng-template #workemail>
-              -
-            </ng-template>
+          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>-</ng-template>
           </td>
-          <td> <span *ngIf="act.contactnumber;else contactnum">+91{{act.contactnumber}}</span>
-            <ng-template #contactnum>
-              -
-            </ng-template>
+          <td class="text-nowrap"><span *ngIf="act.contactnumber;else contactnum">+91 {{act.contactnumber}}</span>
+            <ng-template #contactnum>-</ng-template>
           </td>
             <!-- Location -->
           <td>
@@ -58,7 +50,6 @@
             </span>
             <ng-template #noSubLocation>-</ng-template>
           </td>
-
           <!-- Shift Name -->
           <td>
             <span *ngIf="act.jobDetails?.[0]?.shiftName; else noShift">
@@ -66,7 +57,6 @@
             </span>
             <ng-template #noShift>-</ng-template>
           </td>
-
           <!-- Designation -->
           <td>
             <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">

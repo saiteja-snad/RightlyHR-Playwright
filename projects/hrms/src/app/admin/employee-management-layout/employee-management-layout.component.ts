@@ -133,6 +133,14 @@ export class EmployeeManagementLayoutComponent {
     this.loading = false;
     this.cardItems = [
       {
+        label: 'All Employees',
+        link: '/employee-management/all-employees',
+        count: this.employeesStatusCount?.totalCount,
+        icon: '/employee-data/active-employees-icon.png',
+        employeementTypeColor: '#D800F9',
+        permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
+      },
+      {
         label: 'Active Employees',
         link: '/employee-management/active-employees',
         count: this.Active,

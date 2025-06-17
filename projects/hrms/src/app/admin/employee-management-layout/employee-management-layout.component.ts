@@ -155,7 +155,7 @@ export class EmployeeManagementLayoutComponent {
         link: '/employee-management/probation-employees',
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',
-        employeementTypeColor: '#FF2E22',
+        employeementTypeColor: '#FF8000',
         permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
       },
       {
@@ -163,7 +163,7 @@ export class EmployeeManagementLayoutComponent {
         link: '/employee-management/prospective-employees',
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
-        employeementTypeColor: '#03A9F4',
+        employeementTypeColor: '#00ABF9',
         permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
@@ -171,7 +171,7 @@ export class EmployeeManagementLayoutComponent {
         link: '/employee-management/inactive-employees',
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
-        employeementTypeColor: '#E54288',
+        employeementTypeColor: '#FF2E22',
         permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
@@ -179,7 +179,7 @@ export class EmployeeManagementLayoutComponent {
         link: '/employee-management/active-interns',
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
-        employeementTypeColor: '#0B3A83',
+        employeementTypeColor: '#53D33A',
         permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
       {
@@ -187,7 +187,7 @@ export class EmployeeManagementLayoutComponent {
         link: '/employee-management/prospective-interns',
         count: this.Trainee,
         icon: '/employee-data/prospective-trainee-icon.png',
-        employeementTypeColor: '#53D33A',
+        employeementTypeColor: '#1064CA',
         permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
       {
@@ -195,7 +195,7 @@ export class EmployeeManagementLayoutComponent {
         link: '/employee-management/inactive-interns',
         count: this.traineeInactive,
         icon: '/employee-data/inactive-trainee-icon.png',
-        employeementTypeColor: '#1064CA',
+        employeementTypeColor: '#731CED',
         permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
     ];

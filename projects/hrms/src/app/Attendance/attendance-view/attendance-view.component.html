@@ -151,10 +151,10 @@
             <div>
                <p class="summary-header mb-2">Attendance Summary</p>
             </div>
-            <div class="chart-content mb-2">
+            <div class="chart-content">
                 <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions" class="doughnut-chart" />
             </div>
-            <ul class="list-style-none ps-0">
+            <ul class="list-style-none ps-0 pt-3">
                 @if(statusCounts$.value){
                 @for (status of statusCounts$ |async ; track $index) {
                 <li>

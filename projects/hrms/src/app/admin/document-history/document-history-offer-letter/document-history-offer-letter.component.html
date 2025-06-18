@@ -6,7 +6,12 @@
           placeholder="Search by employee name / location / sub location / designation / sub status"
             aria-label="Username" aria-describedby="basic-addon1">
     </div>
-
+    <div style="width: 250px;">
+        <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
+            (ngModelChange)="onMonthChange($event)" [showIcon]="true"
+            view="month" dateFormat="mm/yy" [readonlyInput]="true" [maxDate]="maxMonth">
+        </p-datepicker>
+    </div>
     <div class="custom-table-content">
         @if(!isloading){
         <!--search input-->

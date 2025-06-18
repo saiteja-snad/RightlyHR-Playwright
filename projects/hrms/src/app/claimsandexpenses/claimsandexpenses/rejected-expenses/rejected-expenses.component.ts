@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpService } from '../../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -20,7 +20,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
   styleUrl: './rejected-expenses.component.scss'
 })
 
-export class RejectedExpensesComponent {
+export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   empinfo: any
   subscription!: Subscription;
   ExpenseImageUrl: any;

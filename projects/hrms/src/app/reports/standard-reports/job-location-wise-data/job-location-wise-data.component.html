@@ -27,8 +27,7 @@
                                 filterBy="jobLocationName" [filter]="true" [showClear]="false"
                                 formControlName="location" placeholder="Please select location"
                                 class="form-select custom-select">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
-                                    }}</ng-template>
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                             </p-select>
                         </div>
@@ -42,8 +41,7 @@
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
                                 formControlName="subLocation" placeholder="Please select sub location">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                                    }}</ng-template>
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
                         </div>
@@ -83,40 +81,42 @@
         @if(!dataload){
         <table class="w-100" id="jobLocation">
             <thead>
-                <th>Employee ID</th>
-                <th>Salutation</th>
-                <th>First Name</th>
-                <th>Middle Name</th>
-                <th>Last Name</th>
-                <th>Status</th>
-                <th>Date Of Joining</th>
-                <th>Address Line 1(current)</th>
-                <th>Address Line 2(current)</th>
-                <th>City(current)</th>
-                <th>State(current)</th>
-                <th>Country(current)</th>
-                <th>ZipCode(current)</th>
-                <th>Address Line 1(permanent)</th>
-                <th>Address Line 2(permanent)</th>
-                <th>City(permanent)</th>
-                <th>State(permanent)</th>
-                <th>Country(permanent)</th>
-                <th>ZipCode(permanent)</th>
-                <th>Work Number</th>
-                <th>Mobile Number</th>
-                <th>Work Email</th>
-                <th>Job Effective Date</th>
-                <th>Job Role</th>
-                <th>Grade Name</th>
-                <th>Department</th>
-                <th>Team</th>
-                <th>Team Manager</th>
-                <th>Reporting To</th>
-                <th>Location</th>
-                <th>Sub Location</th>
-                <th>Shift</th>
-                <th>Shift Code</th>
-                <th>Job Type</th>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Salutation</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Last Name</th>
+                    <th>Status</th>
+                    <th>Date Of Joining</th>
+                    <th>Address Line 1(current)</th>
+                    <th>Address Line 2(current)</th>
+                    <th>City(current)</th>
+                    <th>State(current)</th>
+                    <th>Country(current)</th>
+                    <th>ZipCode(current)</th>
+                    <th>Address Line 1(permanent)</th>
+                    <th>Address Line 2(permanent)</th>
+                    <th>City(permanent)</th>
+                    <th>State(permanent)</th>
+                    <th>Country(permanent)</th>
+                    <th>ZipCode(permanent)</th>
+                    <th>Work Number</th>
+                    <th>Mobile Number</th>
+                    <th>Work Email</th>
+                    <th>Job Effective Date</th>
+                    <th>Job Role</th>
+                    <th>Grade Name</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Team Manager</th>
+                    <th>Reporting To</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Shift</th>
+                    <th>Shift Code</th>
+                    <th>Job Type</th>
+                </tr>
             </thead>
             <tbody>
                 @if(locationReportList.length > 0){
@@ -145,8 +145,7 @@
                         <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
                         <td>{{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
                         <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
-                        <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}
-                        </td>
+                        <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}</td>
                         <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
                         <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
                         <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
@@ -163,7 +162,7 @@
                 </ng-container>
                 }@else {
                 <tr>
-                    <app-no-data-found></app-no-data-found>
+                    <app-no-data-found />
                 </tr>
                 }
             </tbody>
@@ -173,5 +172,4 @@
         <app-data-loader-content />
         }
     </div>
-
 </div>

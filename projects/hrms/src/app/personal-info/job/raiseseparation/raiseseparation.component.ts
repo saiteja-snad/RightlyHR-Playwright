@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { AuthService } from '../../../services/auth.service';
-import { OpenModalService } from '../../../services/open-modal.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { HttpService } from '../../../services/http.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
@@ -13,6 +12,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-raiseseparation',
@@ -68,10 +68,12 @@ separationRequestForm!: FormGroup;
     // Disable early relieving fields by default
     this.toggleEarlyRelievingFields(false);
   }
+
   closeAll() {
     this.separationRequestForm.reset();
     this.modalService.dismissAll();
   }
+
   getJobDetails() {
     this.loading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);

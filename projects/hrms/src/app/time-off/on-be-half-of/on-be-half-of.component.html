@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center gap-3">
             @if (rbac.allowedToAccess('On Behalf Of All Employees.view')) {
            <div class="d-flex align-items-center gap-3" >
-             <label class="form-label fliter-lables m-0">Select Employee</label>
+             <label class="form-label filter-labels m-0">Select Employee</label>
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"  optionLabel="fullName" [filter]="true"
                     filterBy="fullName" [showClear]="true" placeholder="Please select employee"  (onChange)="onEmployeeChange($event)"
@@ -23,7 +23,7 @@
             }
 
             @else if (rbac.allowedToAccess('My Team On Behalf Of.view')) {
-            <label class="form-label fliter-lables m-0">{{'My Team'| translate}}</label>
+            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
                     class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"

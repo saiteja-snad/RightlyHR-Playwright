@@ -30,7 +30,7 @@
                     <th>Shift</th>
                     <th>Job type</th>
                     @if ( showSaperationDots ) {
-                    @if(canAccess('update','job') || canAccess('delete','job')|| canAccess('view','separation') ){
+                    @if(canAccess('update','job') || canAccess('delete','job')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                     && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
@@ -114,7 +114,7 @@
                         </td>
                           @if (first && showSaperationDots ) {
 
-                        @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation') ){
+                        @if(canAccess('update','job') || canAccess('delete','job')  ){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
@@ -134,13 +134,13 @@
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>}
-                                    @if(canAccess('view','separation')){
+                                    <!-- @if(canAccess('view','separation')){
 
                                     <li (click)="openModalforSeparationupdate(seprationModal, item)">
                                         <a class="dropdown-item"> <img src="icons/sepration.png" alt=""
                                                 class="speration-icon" /> Separation Request</a>
                                     </li>
-                                    }
+                                    } -->
                                 </ul>
                             </div>
                             

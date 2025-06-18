@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -33,7 +33,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
   templateUrl: './yearly-summary-report.component.html',
   styleUrl: './yearly-summary-report.component.scss'
 })
-export class YearlySummaryReportComponent {
+export class YearlySummaryReportComponent implements OnInit,OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;

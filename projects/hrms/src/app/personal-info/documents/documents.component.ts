@@ -1,4 +1,4 @@
-import { Component, SimpleChanges } from '@angular/core';
+import { Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { DocumentService } from '../../services/document/document.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -21,11 +21,11 @@ import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule,Skeleton, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, Skeleton, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
-export class DocumentsComponent {
+export class DocumentsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   spinnerLoader = false;
   selectedMainFolder = {} as IFolders
@@ -110,7 +110,7 @@ export class DocumentsComponent {
   toggleFolder(folder: any): void {
     this.Files = []// or however you're using getVisibleFiles
     this.selectedFile = null
-      this.searchfolder = ''
+    this.searchfolder = ''
     // Collapse all other folders
     this.folders.forEach((f) => {
       if (f !== folder) {
@@ -127,7 +127,7 @@ export class DocumentsComponent {
 
   }
   onSubFolderSelected(subFolder: any): void {
-     this.searchfolder = ''
+    this.searchfolder = ''
     this.selectedFile = subFolder;
     console.log('Selected Subfolder:', subFolder);
     if (subFolder.isDirectory) {
@@ -282,5 +282,9 @@ export class DocumentsComponent {
         error: (reason) => console.log(reason),
       });
   }
-
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import moment from 'moment';
@@ -20,7 +20,7 @@ import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header
   styleUrl: './monthly-attandance-report.component.scss'
 })
 
-export class MonthlyAttandanceReportComponent {
+export class MonthlyAttandanceReportComponent  {
   moduleinfo : string = '';
   monthlyReportForm!: FormGroup;
   years: { label: string; value: number }[] = [];
@@ -144,4 +144,5 @@ export class MonthlyAttandanceReportComponent {
   close() {
     this.redirectTo(this.router.url);
   }
+
 }

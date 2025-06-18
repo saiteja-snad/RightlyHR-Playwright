@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -26,7 +26,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ApprisalLetterComponent {
+export class ApprisalLetterComponent implements OnInit,OnDestroy {
   allempdata = [] as IJob[];
   subscription!: Subscription;
   appraisalTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template

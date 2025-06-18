@@ -1,4 +1,4 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -21,7 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './available-desk-list.component.scss'
 })
 
-export class AvailableDeskListComponent {
+export class AvailableDeskListComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   datesShouldNotBeEqual = false;
   empinfo = {} as any;

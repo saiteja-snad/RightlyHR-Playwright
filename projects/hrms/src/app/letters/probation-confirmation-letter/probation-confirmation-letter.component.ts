@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
@@ -22,7 +22,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './probation-confirmation-letter.component.scss'
 })
 
-export class ProbationConfirmationLetterComponent {
+export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   probationemp: IEmployee[] = [];
   probationLetterData = {} as any;

@@ -27,6 +27,7 @@
           </div>
         </div>
         }
+
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
           <button type="submit" class="custom-btn btn-secondary"
@@ -39,6 +40,7 @@
             }
           </button>
           }
+
           @if(rbac.allowedToAccess('Employee Master Data - Generate.view') && rbac.allowedToAccess('Employee Master Data - Export.view') ){
           <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn"
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">
@@ -160,7 +162,7 @@
       <tbody>
         @if(employeeMasterData.length === 0){
         <tr>
-          <app-no-data-found></app-no-data-found>
+          <app-no-data-found />
         </tr>
         }
         @else {

@@ -52,7 +52,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   selectedValuesOfOffer = {} as any;
   employeedata = {} as any;
   isloading: boolean = false;
- selectedDate: any = null;
+  selectedDate: Date = new Date();
 selectedMonth: number | null = null;
 selectedYear: number | null = null;
  maxMonth: Date = new Date();
@@ -72,6 +72,10 @@ allOfferLetters: any[] = []; // full data
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
+      const today = new Date();
+    this.selectedMonth = today.getMonth() + 1; 
+    this.selectedYear = today.getFullYear();
+ 
     this.loginuserdata = this.authService.getToken();
     this.initializeForm();
     this.getOfferLetters();

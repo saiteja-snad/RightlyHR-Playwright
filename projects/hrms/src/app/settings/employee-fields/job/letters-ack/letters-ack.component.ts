@@ -53,7 +53,7 @@ export class LettersACKComponent {
   ngOnInit(): void {
     this.getTable();
     this.updateForm = this.fb.group({
-      updateddepartmentId: ['', [Validators.required]],
+      updateisrequired: ['', [Validators.required]],
       UpdatedDocumentName: ['', [Validators.required]]
     });
     this.getid = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -82,7 +82,7 @@ export class LettersACKComponent {
     console.log(this.deptdetails);
 
     this.updateForm.patchValue({
-      updateddepartmentId: team.isAcknowledgementRequired ? 'yes' : 'no',
+      updateisrequired: team.isAcknowledgementRequired ? 'yes' : 'no',
       // Should match dept.departmentId
       UpdatedDocumentName: team.documentName,      // Text input 
     });
@@ -103,7 +103,7 @@ export class LettersACKComponent {
         id: this.updateDepartmentDetails.id,
         documentName: this.updateDepartmentDetails.documentName,
         documentType: this.updateDepartmentDetails.documentType || '',
-        isAcknowledgementRequired: formValue.updateddepartmentId === 'yes',
+        isAcknowledgementRequired: formValue.updateisrequired === 'yes',
         updatedBy: EmployeeId,
         updatedAt: new Date()
       };

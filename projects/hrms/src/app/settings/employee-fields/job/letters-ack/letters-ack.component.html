@@ -77,12 +77,12 @@
                         {{ 'Is Required' | translate }} <span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select formControlName="updateddepartmentId" [options]="isrequireddetails"
+                        <p-select formControlName="updateisrequired" [options]="isrequireddetails"
                             optionValue="value" optionLabel="label" id="departmentId" placeholder="Select option"
                             class="custom-select w-100" [filter]="false">
                         </p-select>
                     </div>
-                    <div *ngIf="updateForm.get('updateddepartmentId')?.touched && updateForm.get('updateddepartmentId')?.invalid"
+                    <div *ngIf="updateForm.get('updateisrequired')?.touched && updateForm.get('updateisrequired')?.invalid"
                         class="error-msg">
                         {{ 'Is Required Name is required' | translate }}
                     </div>

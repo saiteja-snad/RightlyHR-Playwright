@@ -1,0 +1,105 @@
+<div class="custom-main-component-container">
+    <div class="custom-main-component-container">
+        <div class="custom-table-content">
+            @if(!loader){
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Document Name</th>
+                        <th>Is required</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Letter Acknoledgement.update')">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let teams of teamdetailsdata">
+                            <td>{{teams.documentName}}</td>
+                            <td>{{ teams.isAcknowledgementRequired ? 'Yes' : 'No' }}</td>
+                            <td class="text-center" *ngIf="rbac.allowedToAccess('Letter Acknoledgement.update')">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openupdateDialog(teams)"
+                                            *ngIf="rbac.allowedToAccess('Letter Acknoledgement.update')">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
+        </div>
+    </div>
+</div>
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form autocomplete="off" [formGroup]="updateForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{ 'Update Letter Acknowledgment' | translate }}</p>
+                </div>
+                <div>
+                    <a (click)="modal.dismiss();updateForm.reset()">
+                        <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content">
+                <!-- Document Name field -->
+                <div class="mb-3">
+                    <label for="teamName1" class="form-label custom-label mb-2">
+                        {{'Document Name' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" formControlName="UpdatedDocumentName"
+                        placeholder="Please enter document name" readonly />
+                    <div *ngIf="updateForm.get('UpdatedDocumentName')?.touched && updateForm.get('UpdatedDocumentName')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('UpdatedDocumentName')?.errors?.['required']">
+                            {{ 'Document Name is required' | translate }}
+                        </div>
+                    </div>
+                </div>
+                <!-- is required dropdown -->
+                <div class="mb-3">
+                    <label for="departmentId" class="form-label custom-label mb-2">
+                        {{ 'Is Required' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="updateddepartmentId" [options]="isrequireddetails"
+                            optionValue="value" optionLabel="label" id="departmentId" placeholder="Select option"
+                            class="custom-select w-100" [filter]="false">
+                        </p-select>
+                    </div>
+                    <div *ngIf="updateForm.get('updateddepartmentId')?.touched && updateForm.get('updateddepartmentId')?.invalid"
+                        class="error-msg">
+                        {{ 'Is Required Name is required' | translate }}
+                    </div>
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();updateForm.reset()">
+                        {{ 'Cancel' | translate }}
+                    </button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateDocument(modal)"
+                        [disabled]="updateForm.invalid ">
+                        {{ 'Update' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>

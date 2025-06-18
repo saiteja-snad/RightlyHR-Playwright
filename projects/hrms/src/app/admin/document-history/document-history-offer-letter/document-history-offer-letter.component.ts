@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -23,6 +23,9 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import moment from 'moment';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
+import { DatePicker } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-document-history-offer-letter',
@@ -34,20 +37,28 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     DateformatPipe,
     OfferletterdashboardpipePipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,DatePicker,
 ],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
+   encapsulation: ViewEncapsulation.None,
 })
 export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
   rejectDocument!: FormGroup;
-  offerLetters = [] as IOfferLetterDetails[];
+  // offerLetters = [] as IOfferLetterDetails[];
   loginuserdata = {} as any;
   selectedValuesOfOffer = {} as any;
   employeedata = {} as any;
   isloading: boolean = false;
+ selectedDate: any = null;
+selectedMonth: number | null = null;
+selectedYear: number | null = null;
+ maxMonth: Date = new Date();
+allOfferLetters: any[] = []; // full data
+ offerLetters: any[] = []; // filtered data shown in table
+
   constructor(
     private router: Router,
     private modalService: NgbModal,
@@ -90,25 +101,39 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
 }
 
   //to get all offer Letters
-  getOfferLetters() {
-    this.isloading = true;
-    this.subscription = this.http
-      .getData('OfferLetter/getAllNames/approverNames')
-      .subscribe({
-        next: (data: any) => {
-          this.isloading = false;
-          console.log(data);
-          this.offerLetters = data;
-        },
-        error: (reason: any) => {
-          this.isloading = false;
-          console.log(reason);
-        },
-        complete: () => {
-          this.isloading = false;
-        },
-      });
+ getOfferLetters() {
+  this.isloading = true;
+  this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames')
+    .subscribe({
+      next: (data: any) => {
+        this.isloading = false;
+        this.allOfferLetters = data;
+        this.filterByMonth(); // Filter immediately if month is selected
+      },
+      error: (reason: any) => {
+        this.isloading = false;
+        console.error(reason);
+      }
+    });
+}
+filterByMonth() {
+  if (this.selectedMonth && this.selectedYear) {
+    this.offerLetters = this.allOfferLetters.filter(item => {
+      const date = moment(item.offerSentDate);
+      return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
+    });
+  } else {
+    this.offerLetters = this.allOfferLetters; // show all if no filter
   }
+}
+
+onMonthChange(value: any) {
+  const selected = moment(value);
+  this.selectedMonth = selected.month() + 1;
+  this.selectedYear = selected.year();
+  this.filterByMonth();
+}
+
   //function to download the document
   onSelectDownload(file: any) {
     this.subscription = this.http

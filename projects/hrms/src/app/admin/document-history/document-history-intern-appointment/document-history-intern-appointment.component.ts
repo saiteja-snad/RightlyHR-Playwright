@@ -10,6 +10,8 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import moment from 'moment';
+import { DatePicker } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-document-history-intern-appointment',
@@ -21,19 +23,24 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     FormsModule,
     AppointmentletterpipePipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent
-],
+    DataLoaderContentComponent,
+    DatePicker
+  ],
   templateUrl: './document-history-intern-appointment.component.html',
   styleUrl: './document-history-intern-appointment.component.scss',
 })
 export class DocumentHistoryInternAppointmentComponent
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   subscription!: Subscription;
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
   dataloader: boolean = false;
-  constructor(private http: HttpService,public rbac: RbacService) {}
+  selectedDate: any = null;
+  selectedMonth: number | null = null;
+  selectedYear: number | null = null;
+  maxMonth: Date = new Date();
+  offerLetters: any[] = []; 
+  constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.getAppointmentLetters();
@@ -47,6 +54,7 @@ export class DocumentHistoryInternAppointmentComponent
         next: (data: any) => {
           this.dataloader = false;
           this.AppointmentLetters = data;
+             this.filterByMonth();
         },
         error: (error: any) => {
           this.dataloader = false;
@@ -57,6 +65,24 @@ export class DocumentHistoryInternAppointmentComponent
         }
       });
   }
+
+  filterByMonth() {
+  if (this.selectedMonth && this.selectedYear) {
+    this.offerLetters = this.AppointmentLetters.filter(item => {
+      const date = moment(item.appointmentSentDate);
+      return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
+    });
+  } else {
+    this.offerLetters = this.AppointmentLetters; // show all if no filter
+  }
+}
+
+onMonthChange(value: any) {
+  const selected = moment(value);
+  this.selectedMonth = selected.month() + 1;
+  this.selectedYear = selected.year();
+  this.filterByMonth();
+}
 
   onSelectDownload(file: any) {
     this.subscription = this.http

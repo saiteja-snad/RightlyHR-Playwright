@@ -11,13 +11,14 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import * as XLSX from 'xlsx';
 import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
 import { environment } from '../../../../environments/environment';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-branch-location-wise-data',
   imports: [
@@ -27,7 +28,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
     FormsModule,
     NoDataFoundComponent,
     DateformatPipe,
-    NgxDaterangepickerBootstrapDirective,
+    DatePicker,
     DataLoaderContentComponent,
     ReportsHeaderComponent
   ],
@@ -117,10 +118,13 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     this.spinnerLoader1 = true;
     if (form.valid) {
       const formData = form.value;
+      const dateRangeArray = formData.dateOfJoining || [];
+      const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+      const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : startDate ? startDate : null;
       const request: IStandardReportRequest = {
         dateRange: {
-          startDate: formData.dateOfJoining?.startDate,
-          endDate: formData.dateOfJoining?.endDate,
+          startDate: startDate,
+          endDate: endDate
         },
         selectedBranchLocation: formData.location,
       };

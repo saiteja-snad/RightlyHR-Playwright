@@ -8,10 +8,10 @@
                 @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
                     <label class="filter-labels text-nowrap m-0">Date Of Joining</label>
-                    <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
-                        [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-                        formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
-                        class="form-control custom-input" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+                            [showIcon]="true" [readonlyInput]="true" />
+                    </div>
                 </div>
 
                 <div class="d-flex gap-2 align-items-center">

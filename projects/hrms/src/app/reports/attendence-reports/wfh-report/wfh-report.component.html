@@ -14,14 +14,11 @@
           Clear All
         </button>
 
-
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
-          <div>
-            <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-              placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'"
-              readonly />
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
+             [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 
@@ -38,6 +35,7 @@
           </div>
         </div>
         }
+
         <!-- Team Manager -->
         @if(rbac.allowedToAccess('Attendance Team Manager List(WFH).view')){
         <div class="d-flex align-items-center gap-2">
@@ -51,9 +49,9 @@
           </div>
         </div>
         }
+
         <!--My Team  -->
-        @if(rbac.allowedToAccess('My Team Report(WFH).view') &&!rbac.allowedToAccess('Attendance All Employees
-        List(WFH).view')
+        @if(rbac.allowedToAccess('My Team Report(WFH).view') &&!rbac.allowedToAccess('Attendance All Employees List(WFH).view')
         && !rbac.allowedToAccess('Attendance Team Manager List(WFH).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
@@ -67,6 +65,7 @@
         </div>
         }
         }
+
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('WFH Report - Generate.view')){
@@ -94,7 +93,6 @@
       </div>
     </form>
   </div>
-
 
   <div class="custom-table-content">
     @if(!isLoading){
@@ -141,5 +139,4 @@
     <app-data-loader-content />
     }
   </div>
-
 </div>

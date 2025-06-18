@@ -10,24 +10,16 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Carousel } from 'primeng/carousel';
 import { ChartModule } from 'primeng/chart';
-import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee, Permission } from '../../Interfaces/dashboard.modal';
+import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData,
+   IMarriageAnniversary, INewJoinee, Permission } from '../../Interfaces/dashboard.modal';
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
 import { AccordionModule } from 'primeng/accordion';
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    CommonModule,
-    RouterModule,
-    DocumentHistoryLayoutComponent,
-    TranslateModule,
-    NgbPopoverModule,
-    Carousel,
-    ChartModule,
-    DateformatPipe,
-    Skeleton,
-    AccordionModule
+  imports: [ CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel,
+     ChartModule, DateformatPipe, Skeleton, AccordionModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -106,8 +98,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.setIconBasedOnTime();
-    
-
     this.intervalId = setInterval(() => {
       this.currentTime = new Date();
     }, 1000);
@@ -156,7 +146,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   //function for to get the Employees count based on the status
   getEmployeeStatusCount() {
-   
     this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
       next: (data: any) => {
         this.employeesStatusCount = data.data as EmployeeStatusCount;
@@ -199,10 +188,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           console.warn('statusWiseCount is not an array:', statusList);
         }
         this.updateCardItems();
-       
       },
       error: (reason) => {
-      this.chartLoader = false;
+        this.chartLoader = false;
       },
     });
   }
@@ -315,22 +303,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getFullName(b: { firstName: string; middleName?: string; lastName: string }): string {
-    return [b.firstName, b.middleName, b.lastName]
-      .filter(Boolean) // removes undefined or empty strings
-      .join(' ');
+    return [b.firstName, b.middleName, b.lastName].filter(Boolean).join(' ');
   }
 
   openModalLarge(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', });
   }
 
-  dayLogsData(
-    Value: any,
-    date: Date,
-    totalduration: any,
-    permissions: any,
-    regularizations: any
-  ) {
+  dayLogsData( Value: any, date: Date, totalduration: any, permissions: any, regularizations: any ) {
     this.logsDuration = totalduration;
     this.selectedDate = date;
     this.permissions_list = permissions;
@@ -357,12 +337,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }, 0);
   }
 
-  getAttendenceLogsOfLoginedUser(
-    empId: number,
-    currentYear: number,
-    currentMonth: number,
-    currentDay: number
-  ) {
+  getAttendenceLogsOfLoginedUser( empId: number, currentYear: number, currentMonth: number, currentDay: number ) {
     this.attendanceLoader = true;
     this.subscription = this.http.getData(
       `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
@@ -384,7 +359,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   updateCardItems() {
-    
     this.cardItems = [
       {
         label: 'Active',
@@ -399,54 +373,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
         link: '/employee-management/probation-employees',
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',
-        employeementTypeColor: '#FF2E22',
+        employeementTypeColor: '#FF8000',
         permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
       },
-
       {
         label: 'Prospective',
         link: '/employee-management/prospective-employees',
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
-        employeementTypeColor: '#03A9F4',
+        employeementTypeColor: '#00ABF9',
         permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
-      {
-        label: 'Inactive',
-        link: '/employee-management/inactive-employees',
-        count: this.Inactive,
-        icon: '/employee-data/inactive-employee-icon.png',
-        employeementTypeColor: '#E54288',
-        permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
-      },
-
       {
         label: 'Active Trainees',
         link: '/employee-management/active-interns',
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
-        employeementTypeColor: '#0B3A83',
+        employeementTypeColor: '#53D33A',
         permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
-
       {
         label: 'Prospective Trainees',
         link: '/employee-management/prospective-interns',
         count: this.Trainee,
         icon: '/employee-data/prospective-trainee-icon.png',
-        employeementTypeColor: '#53D33A',
+        employeementTypeColor: '#1064CA',
         permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
-      {
-        label: 'Inactive Trainees',
-        link: '/employee-management/inactive-interns',
-        count: this.traineeInactive,
-        icon: '/employee-data/inactive-trainee-icon.png',
-        employeementTypeColor: '#1064CA',
-        permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
-      },
     ];
-    // this.filterTabsByRbac();
     this.initChart();
   }
 
@@ -454,11 +408,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const backgroundColors = this.cardItems.map(
       (item) => item.employeementTypeColor
     );
-    this.totalEmployeesCount = this.employeesStatusCount.totalCount
+    this.totalEmployeesCount = this.Active + this.ACTDATA + this.PROBDATA + this.traineeactive + this.Trainee;
     this.EmployeeInfoData = {
       datasets: [
         {
-          data: [this.Active, this.PROBDATA, this.ACTDATA, this.Inactive, this.traineeactive, this.Trainee, this.traineeInactive,],
+          data: [this.Active, this.PROBDATA, this.ACTDATA, this.traineeactive, this.Trainee],
           backgroundColor: backgroundColors,
           borderWidth: 0,
         },
@@ -467,7 +421,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.EmployeeInfoDataOptions = {
       cutout: '70%',
     };
-
     this.chartLoader = false;
   }
 

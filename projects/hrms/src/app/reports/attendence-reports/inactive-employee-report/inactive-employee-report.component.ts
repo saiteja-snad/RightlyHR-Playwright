@@ -17,6 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 
 @Component({
@@ -30,7 +31,8 @@ import {  Router } from '@angular/router';
     ReactiveFormsModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-  ],
+    ReportsHeaderComponent
+],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss',
 })

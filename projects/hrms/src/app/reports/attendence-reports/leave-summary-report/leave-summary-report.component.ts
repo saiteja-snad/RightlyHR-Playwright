@@ -18,6 +18,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 @Component({
   selector: 'app-leave-summary-report',
@@ -29,7 +30,7 @@ import {  Router } from '@angular/router';
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-
+    ReportsHeaderComponent
 ],
   templateUrl: './leave-summary-report.component.html',
   styleUrl: './leave-summary-report.component.scss'

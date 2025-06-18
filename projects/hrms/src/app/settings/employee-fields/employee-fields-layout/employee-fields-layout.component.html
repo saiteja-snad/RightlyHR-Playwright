@@ -10,33 +10,35 @@
         @if (shouldShowSection() && router.url !== '/settings/employee-fields/no-due-clearnce' ) {
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
+            <!--Persoanl tabs-->
             <div *ngIf="isActive('/settings/employee-fields/personal')">
                 <app-settings-personal-tabs />
             </div>
-
+            <!--Job tabs-->
             <div *ngIf="isActive('/settings/employee-fields/job')">
                 <app-settings-job-tabs />
             </div>
+            <!--Manage Shifts tabs-->
             <div *ngIf="isActive('/settings/employee-fields/manage-shifts')">
                 <app-settings-manage-shits-tabs />
             </div>
-
+            <!--Manage Holidays tabs-->
             <div *ngIf="isActive('/settings/employee-fields/manage-holidays')">
                 <app-settings-manage-holidays-tabs />
             </div>
-
+            <!--Manage Policies tabs-->
             <div *ngIf="isActive('/settings/employee-fields/manage-policies')">
                 <app-settings-manage-policies-tabs />
             </div>
-
+            <!--Manage Expenses tabs-->
             <div *ngIf="isActive('/settings/employee-fields/expenes')">
                 <app-settings-expenes-configurtions-tabs />
             </div>
-
+            <!--Manage Weekends tabs-->
             <div *ngIf="isActive('/settings/employee-fields/manage-weekends')">
                 <app-manage-weekends-tabs />
             </div>
-
+            <!--Manage DST tabs-->
             <div *ngIf="isActive('/settings/employee-fields/manage-dsts')">
                 <app-manage-dst-tabs />
             </div>

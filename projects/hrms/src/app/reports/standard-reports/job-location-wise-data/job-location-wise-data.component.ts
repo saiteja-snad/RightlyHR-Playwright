@@ -18,10 +18,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })

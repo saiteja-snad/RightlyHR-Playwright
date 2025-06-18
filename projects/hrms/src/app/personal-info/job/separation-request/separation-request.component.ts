@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.component';
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -609,7 +610,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+  openModalraise() {
+    this.modalService.open(RaiseseparationComponent, { centered: true, backdrop: 'static', keyboard: false, size: 'lg' })
+  }
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

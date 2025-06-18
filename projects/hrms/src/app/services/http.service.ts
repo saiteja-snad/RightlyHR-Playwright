@@ -107,7 +107,12 @@ export class HttpService {
       this.expensescount.next();
     }
   
-
+  //Function to set the communication service data for basic info 
+  separationDetailes = new Subject<void>();
+  separationDetailesadded$ = this.separationDetailes.asObservable();
+  setseparationDetails() {
+    this.separationDetailes.next();
+  }
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
   selectedYear$ = this.selectedYearSubject.asObservable();

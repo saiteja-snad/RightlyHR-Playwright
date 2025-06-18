@@ -35,14 +35,18 @@ export class DocumentHistoryInternAppointmentComponent
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
   dataloader: boolean = false;
-  selectedDate: any = null;
+  selectedDate: Date = new Date();
   selectedMonth: number | null = null;
   selectedYear: number | null = null;
   maxMonth: Date = new Date();
-  offerLetters: any[] = []; 
+  offerLetters: any[] = [];
   constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
+    const today = new Date();
+    this.selectedMonth = today.getMonth() + 1;
+    this.selectedYear = today.getFullYear();
+    this.getAppointmentLetters();
     this.getAppointmentLetters();
   }
 
@@ -54,7 +58,7 @@ export class DocumentHistoryInternAppointmentComponent
         next: (data: any) => {
           this.dataloader = false;
           this.AppointmentLetters = data;
-             this.filterByMonth();
+          this.filterByMonth();
         },
         error: (error: any) => {
           this.dataloader = false;
@@ -67,22 +71,22 @@ export class DocumentHistoryInternAppointmentComponent
   }
 
   filterByMonth() {
-  if (this.selectedMonth && this.selectedYear) {
-    this.offerLetters = this.AppointmentLetters.filter(item => {
-      const date = moment(item.appointmentSentDate);
-      return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
-    });
-  } else {
-    this.offerLetters = this.AppointmentLetters; // show all if no filter
+    if (this.selectedMonth && this.selectedYear) {
+      this.offerLetters = this.AppointmentLetters.filter(item => {
+        const date = moment(item.appointmentSentDate);
+        return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
+      });
+    } else {
+      this.offerLetters = this.AppointmentLetters; // show all if no filter
+    }
   }
-}
 
-onMonthChange(value: any) {
-  const selected = moment(value);
-  this.selectedMonth = selected.month() + 1;
-  this.selectedYear = selected.year();
-  this.filterByMonth();
-}
+  onMonthChange(value: any) {
+    const selected = moment(value);
+    this.selectedMonth = selected.month() + 1;
+    this.selectedYear = selected.year();
+    this.filterByMonth();
+  }
 
   onSelectDownload(file: any) {
     this.subscription = this.http

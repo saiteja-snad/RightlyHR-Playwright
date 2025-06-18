@@ -34,7 +34,7 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
   dataloader: boolean = false;
-  selectedDate: any = null;
+  selectedDate: Date = new Date();
   selectedMonth: number | null = null;
   selectedYear: number | null = null;
   maxMonth: Date = new Date();
@@ -42,6 +42,9 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
   constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
+    const today = new Date();
+    this.selectedMonth = today.getMonth() + 1; 
+    this.selectedYear = today.getFullYear();
     this.getAppointmentLetters();
   }
 

@@ -51,11 +51,11 @@ export class DocumentHistoryInternOfferLetterComponent {
   selectedValuesOfOffer = {} as any;
   employeedata = {} as any;
   loading: boolean = false
-  selectedDate: any = null;
+  selectedDate: Date = new Date();
   selectedMonth: number | null = null;
   selectedYear: number | null = null;
   maxMonth: Date = new Date();
-  offerLetters: any[] = []; 
+  offerLetters: any[] = [];
   constructor(
     private router: Router,
     private modalService: NgbModal,
@@ -67,6 +67,9 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.initializeForm();
   }
   ngOnInit(): void {
+    const today = new Date();
+    this.selectedMonth = today.getMonth() + 1;
+    this.selectedYear = today.getFullYear();
     this.loginuserdata = this.authService.getToken();
     this.initializeForm();
     this.getTraineeOfferLetters();
@@ -103,7 +106,7 @@ export class DocumentHistoryInternOfferLetterComponent {
           console.log(data);
           this.loading = false;
           this.traineeofferletters = data;
-           this.filterByMonth();
+          this.filterByMonth();
         },
         error: (reason: any) => {
           this.loading = false;

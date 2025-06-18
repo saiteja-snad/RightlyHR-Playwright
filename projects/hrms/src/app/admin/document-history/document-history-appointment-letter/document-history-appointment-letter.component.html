@@ -9,7 +9,7 @@
         </div>
         
         <div class="custom-year-month-picker">
-            <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
+            <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year" [selectOtherMonths]="true"
                 (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
                 [readonlyInput]="true" [maxDate]="maxMonth">
             </p-datepicker>

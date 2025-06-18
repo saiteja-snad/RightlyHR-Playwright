@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -12,7 +12,6 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
-import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import { Dayjs } from 'dayjs';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -20,28 +19,17 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
-
-
-
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-leave-report',
-  imports: [
-    NgxDaterangepickerBootstrapDirective,
-    CommonModule,
-    FormsModule,
-    DropdownModule,
-    SelectModule,
-    TranslateModule,
-    ReactiveFormsModule, NoDataFoundComponent,
-    DataLoaderContentComponent,
-    ReportsHeaderComponent
-],
+  imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, 
+    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss'
 })
-export class LeaveReportComponent implements OnInit, OnDestroy {
 
-  moduleinfo : string = '';
+export class LeaveReportComponent implements OnInit, OnDestroy {
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -59,13 +47,12 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   wfhReportForm!: FormGroup;
-  spinnerLoader1= false;
-  spinnerLoader2= false;
-  disableBtn= false;
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
   filteredleaveRecords = false;
   selectLeaveEmployeeIds: number[] = [];
   getEmployeeInfo = [] as any;
-
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -77,8 +64,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
-
+  localeOptions: any;
 
   constructor(
     public authService: AuthService,
@@ -88,7 +74,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public readonly router: Router
   ) { }
-  localeOptions: any;
 
   ngOnInit(): void {
     this.localeOptions = {
@@ -111,65 +96,56 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       manager: [null],
       dateRange: [null],
       leaveCategory: [null],
-      team:[null]
+      team: [null]
       // year: ['']
     });
-
-    this.LeaveReportForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.LeaveReportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     })
   }
 
-
-clearAllFilters(): void {
+  clearAllFilters(): void {
     this.LeaveReportForm.reset();
-    console.log('Form values after reset:', this.LeaveReportForm.value);
-    console.log('isLeaveGenerateDisabled:', this.isLeaveGenerateDisabled);
     this.filteredleaveRecord = [];
-}
-
+  }
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
-    this.subscription = this.http
-  
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            };
-          });
-          
-          this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        const employeedata = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
+          };
+        });
+        this.employeeiddetails = [
+          { fullName: 'All Employees', employeeId: 'all' },
+          ...employeedata
+        ];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
-  
+
   getTeam() {
     this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
       next: (data: any) => {
         this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
       },
       error: (reason: any) => console.log(reason),
     });
-  }  
-  
+  }
+
   getAttendanceReports() {
     this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
       next: (res: any) => {
@@ -177,10 +153,9 @@ clearAllFilters(): void {
       }
     });
   }
-  
+
   extractUniqueYearlyFilters(data: any[]): void {
     const uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
-  
     this.uniqueLeaveCategory = uniqueLeaveCategory.map(category => ({
       label: category,
       value: category
@@ -193,64 +168,53 @@ clearAllFilters(): void {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
   }
-  
+
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
 
   get isLeaveGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.LeaveReportForm.value;
-    
     // Check if any field has a value
-    return !(
-        employee ||
-        manager ||
-        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
-        leaveCategory ||
-        team
-    );
-}
+    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
+  }
 
   generateleaveReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-  
     const formValue = this.LeaveReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
-  
-    const noFilterProvided =
-      !formValue.employee &&
-      !formValue.leaveCategory &&
-      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
-      !formValue.month &&
-      !formValue.manager && !formValue.team;
-  
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    //filter condition
+    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
+
     if (noFilterProvided) {
       this.filteredleaveRecord = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
       return;
     }
-  
+
     const request: IAttendanceDetails = {};
 
-     if (this.selectLeaveEmployeeIds.length >= 0) {
-        const ids = this.selectLeaveEmployeeIds?.join(',');
-        request.employeeId = ids;  // The selected employee IDs are set here
+    if (this.selectLeaveEmployeeIds.length >= 0) {
+      const ids = this.selectLeaveEmployeeIds?.join(',');
+      request.employeeId = ids;  // The selected employee IDs are set here
     }
+
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
-  
+
     // Apply date range if provided
-    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
-      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
-      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
-      request.StartDate = startDate;
-      request.EndDate = endDate;
+    if (startDate && endDate) {
+      request.StartDate = this.formatDate(this.parseDate(startDate));
+      request.EndDate = this.formatDate(this.parseDate(endDate));
     }
-  
+
     // Apply manager name if provided
     if (formValue.manager) {
       request.teamManagerID = formValue.manager.employeeId;
@@ -260,7 +224,7 @@ clearAllFilters(): void {
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
-  
+
     this.reportsService.getAttendanceReports(request).subscribe({
       next: (response: any) => {
         this.filteredleaveRecord = response ?? [];
@@ -373,7 +337,6 @@ clearAllFilters(): void {
     // Adjust column width to fit data
     NEW_SEQUENCE.forEach((columnName, index) => {
       let columnWidth = this.getColumnWidth(modifiedData, columnName);
-
       if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
         columnWidth += 5; // Increase width by 5
       }
@@ -385,7 +348,6 @@ clearAllFilters(): void {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Leave Report');
     XLSX.writeFile(wb, 'Leave_Report.xlsx');
-
     this.spinnerLoader2 = false;
   }
 
@@ -395,20 +357,20 @@ clearAllFilters(): void {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
-
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
 
   onClick(employeeIds: any) {
     if (employeeIds.value) {
-      console.log(employeeIds);
       this.filteredleaveRecords = true;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
-      if (employeeIds.value.employeeId== this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => 
+          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => 
+          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
         this.selectedEmployeeId.push(employeeIds.value.employeeId);
@@ -418,36 +380,32 @@ clearAllFilters(): void {
 
   getMyTeam() {
     const EmployeeId = this.loggedInUser?.employeeId;
-    console.log(this.loggedInUser)
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          if (response) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            }));
-
-            this.getEmployeeInfo.unshift({
-              fullName: 'All Employees',
-              fusionEmpId: this.loggedInUser.fusionEmpId,
-              employeeId: this.loggedInUser.employeeId,
-            });
-          }
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          }));
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+    });
   }
 
   // isAnyFilterApplied(): boolean {
   //   const form = this.LeaveReportForm.value;
   //   return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
   // }
- navigation(){
+
+  navigation() {
     this.router.navigate(['/reports']);
   }
 
@@ -456,5 +414,4 @@ clearAllFilters(): void {
       this.subscription.unsubscribe();
     }
   }
-
 }

@@ -10,10 +10,8 @@
         <div class="d-flex align-items-center gap-2">
           <label class="custom-label fliter-lables text-nowrap m-0">Date of Joining</label>
           <div class="custom-date-range-picker">
-            <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
-              [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-              formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
-              class="form-control custom-input w-100" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+             [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 
@@ -27,6 +25,7 @@
           </div>
         </div>
         }
+
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
           <button type="submit" class="custom-btn btn-secondary"
@@ -39,6 +38,7 @@
             }
           </button>
           }
+          
           @if(rbac.allowedToAccess('Employee Master Data - Generate.view') && rbac.allowedToAccess('Employee Master Data - Export.view') ){
           <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn"
             (click)="onClickEmpMasterExport()" class="custom-btn btn-primary">

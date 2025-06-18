@@ -10,12 +10,9 @@
                     @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')){
                     <div class="d-flex align-items-center gap-2">
                         <label class="custom-label fliter-lables text-nowrap m-0">{{"Date of Joining" | translate}}</label>
-                        <div>
-                            <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
-                                [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-                                formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
-                                class="form-control custom-input w-100" [startKey]="'startDate'" [endKey]="'endDate'"
-                                readonly />
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+                                [showIcon]="true" [readonlyInput]="true" />
                         </div>
                     </div>
 
@@ -36,14 +33,12 @@
 
                     <!-- Sub Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label for="subLocation" class="custom-label fliter-lables text-nowrap m-0">{{ "Sub Location" | translate
-                            }}</label>
+                        <label for="subLocation" class="custom-label fliter-lables text-nowrap m-0">{{ "Sub Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
                                 formControlName="subLocation" placeholder="Please select sub location">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                                    }}</ng-template>
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                             </p-select>
                         </div>
@@ -61,6 +56,7 @@
                             }
                         </button>
                         }
+
                         @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
                         <button type="button" class="custom-btn btn-primary"
                             [disabled]="locationReportList.length === 0 || disableBtn"
@@ -145,8 +141,7 @@
                         <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
                         <td>{{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
                         <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
-                        <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}
-                        </td>
+                        <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}</td>
                         <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
                         <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
                         <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
@@ -163,7 +158,7 @@
                 </ng-container>
                 }@else {
                 <tr>
-                    <app-no-data-found></app-no-data-found>
+                    <app-no-data-found />
                 </tr>
                 }
             </tbody>
@@ -173,5 +168,4 @@
         <app-data-loader-content />
         }
     </div>
-
 </div>

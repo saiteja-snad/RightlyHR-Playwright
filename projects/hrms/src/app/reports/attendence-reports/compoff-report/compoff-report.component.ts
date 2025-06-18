@@ -12,7 +12,6 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
-import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootstrap";
 import { Dayjs } from 'dayjs';
 import { ICompoffDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -20,12 +19,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
-
-
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-compoff-report',
   imports: [
-    NgxDaterangepickerBootstrapDirective,
+    DatePicker,
     CommonModule,
     FormsModule,
     DropdownModule,
@@ -76,7 +74,6 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   };
   localeOptions: any;
 
-
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -87,7 +84,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-      this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -107,12 +104,10 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       dateRange: [null],
       team: [null]
     });
-
     this.compoffReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
-
 
   clearAllFilters(): void {
     this.compoffReportForm.reset();
@@ -121,21 +116,13 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
   get isCompOffGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.compoffReportForm.value;
-    
     // Check if any field has a value
-    return !(
-        employee ||
-        manager ||
-        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
-        leaveCategory ||
-        team
-    );
+    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
-
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
@@ -147,12 +134,10 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
                 }${employee.lastName}`,
             };
           });
-
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
             ...employeedata
           ];
-          
         },
         error: (reason: any) => {
           console.log(reason);
@@ -188,15 +173,13 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   generateCompoffReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
     const formValue = this.compoffReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
-
-    const noFilterProvided =
-      !formValue.employee &&
-      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
-      !formValue.month &&
-      !formValue.manager && !formValue.team;
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+     //filter condition
+    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
 
     if (noFilterProvided) {
       this.filteredCompoffRecord = [];
@@ -216,18 +199,17 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     //   request.employeeId = formValue.employee.employeeId;
     // }
 
-    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
-      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
-      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
-      request.StartDate = startDate;
-      request.EndDate = endDate;
+    // Apply date range if provided
+    if (startDate && endDate) {
+      request.StartDate = this.formatDate(this.parseDate(startDate));
+      request.EndDate = this.formatDate(this.parseDate(endDate));
     }
 
     if (formValue.manager) {
       request.teamManagerID = formValue.manager.employeeId;
     }
 
-   // Only include filters if not "All Employees"
+    // Only include filters if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }

@@ -1,12 +1,10 @@
 import { Dayjs } from 'dayjs';
 
-
-
 export interface IStandardReports {}
 
 export interface IStandardReportRequest {
   employeeStatus?: string;
-  dateRange?: { startDate: Dayjs; endDate: Dayjs };
+  dateRange?: { startDate: Dayjs | null ; endDate: Dayjs | null };
   selectedBranchLocation?: string;
   selectedJobLocation?: string;
   selectedJobSubLocation?: string;
@@ -75,7 +73,6 @@ export interface IYearlyReportRequest {
   teamManagerID?: any;
 }
 
-
 export interface IPermissionReportRequest {
   FusionEmpId?: string;
   EmployeeName?: string;
@@ -103,14 +100,12 @@ export interface IFamilyDetails{
   fusionEmpId: string;
 }
 
-
 export interface IFamilyMember {
   memberName: string;
   relation: string;
   memberDateOfBirth: string; // ISO string format (e.g., "2005-02-02T00:00:00")
   dependent: string; // Consider using boolean if applicable
 }
-
 
 export interface EmployeeDetails {
   employeeId: number;
@@ -187,15 +182,14 @@ export interface EmployeeDetails {
   gradeName: string;
 }
 
-
 export interface Branch {
   sno: number;
   branchCode: string;
   isDeleted: boolean;
   branchLocation1: string;
 }
-//attendance report
 
+//attendance report
 export interface IAttendanceDetails{
   // selectedLeaveEmployeeId?: any;
   // selectedDateRange?: { startDate: Dayjs; endDate: Dayjs };
@@ -221,6 +215,7 @@ export interface IAttendanceDetails{
   teamManagerID?:any;
   teamManagerEmpId?: any;
 }
+
 //leave summmery
 export interface ILeavesummery{
   // selectedEmployeeId?: any;
@@ -239,8 +234,8 @@ export interface ILeavesummery{
   employeeId?:string;
   EmployeeId?:any;
   teamManagerID? : any;
-
 }
+
 //comp-off
 export interface ICompoffDetails{
   // selectedEmployeeId?: any;

@@ -209,7 +209,7 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment.comments; else popupcomments">
-                  <app-info-icon  triggers="mouseenter:mouseleave" ngbPopover="{{ comment?.comments }}" container="body"/>
+                  <app-info-icon ngbPopover="{{ comment?.comments }}" container="body"/>
                 </div>
                 <ng-template #popupcomments>NA</ng-template>
               </td>

@@ -9,7 +9,7 @@ export interface Iallemployees {
     dob: any,
     empstatus: string
     isNotVisible: boolean;
-    jobDetails?: IJobdetails[];
+    jobDetails?: IJobdetails;
     fullName: any;
     durationOfTrainee: any;
     noticePeriod: any;
@@ -96,11 +96,11 @@ export interface IJobdetails {
     reportsto: any,
     department: string,
     bussinessArea: string,
-    lopcation: string,
-    jobRole: string,
+    lopcation?: string,
+    jobRole?: string,
     status: string,
     firstName: string,
     lastName: string,
-    subLocation: string,
+    subLocation?: string,
     shiftName?: string;
 }

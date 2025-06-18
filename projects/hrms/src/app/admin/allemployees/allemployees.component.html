@@ -46,31 +46,31 @@
           </td>
           <!-- Location -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.lopcation; else noLocation">
-              {{ act.jobDetails?.[0]?.lopcation }}
+            <span *ngIf="act.jobDetails?.lopcation; else noLocation">
+              {{ act.jobDetails?.lopcation }}
             </span>
             <ng-template #noLocation>-</ng-template>
           </td>
          <!-- Sub Location -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">
-              {{ act.jobDetails?.[0]?.subLocation }}
+            <span *ngIf="act.jobDetails?.subLocation; else noSubLocation">
+              {{ act.jobDetails?.subLocation }}
             </span>
             <ng-template #noSubLocation>-</ng-template>
           </td>
 
           <!-- Shift Name -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.shiftName; else noShift">
-              {{ act.jobDetails?.[0]?.shiftName }}
+            <span *ngIf="act.jobDetails?.shiftName; else noShift">
+              {{ act.jobDetails?.shiftName }}
             </span>
             <ng-template #noShift>-</ng-template>
           </td>
 
           <!-- Designation -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">
-              {{ act.jobDetails?.[0]?.jobRole }}
+            <span *ngIf="act.jobDetails?.jobRole; else noRole">
+              {{ act.jobDetails?.jobRole }}
             </span>
             <ng-template #noRole>-</ng-template>
           </td>

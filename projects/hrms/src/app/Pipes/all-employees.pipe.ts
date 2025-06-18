@@ -25,10 +25,10 @@ transform(allemployees: Iallemployees[], searchValue: any): Iallemployees[] {
     p.subLocation?.toLowerCase().includes(lowerSearch) ||
     p.jobRole?.toLowerCase().includes(lowerSearch) ||
     p.substatus?.toLowerCase().includes(lowerSearch) ||
-    p.jobDetails?.[0]?.lopcation?.toLowerCase().includes(lowerSearch) ||
-    p.jobDetails?.[0]?.subLocation?.toLowerCase().includes(lowerSearch) ||
-    p.jobDetails?.[0]?.shiftName?.toLowerCase().includes(lowerSearch) ||
-    p.jobDetails?.[0]?.jobRole?.toLowerCase().includes(lowerSearch)
+    p.jobDetails?.lopcation?.toLowerCase().includes(lowerSearch) ||
+    p.jobDetails?.subLocation?.toLowerCase().includes(lowerSearch) ||
+    p.jobDetails?.shiftName?.toLowerCase().includes(lowerSearch) ||
+    p.jobDetails?.jobRole?.toLowerCase().includes(lowerSearch)
   );
 }
 }

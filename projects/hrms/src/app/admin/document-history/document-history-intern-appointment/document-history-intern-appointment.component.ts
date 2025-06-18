@@ -47,7 +47,6 @@ export class DocumentHistoryInternAppointmentComponent
     this.selectedMonth = today.getMonth() + 1;
     this.selectedYear = today.getFullYear();
     this.getAppointmentLetters();
-    this.getAppointmentLetters();
   }
 
   getAppointmentLetters() {

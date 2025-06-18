@@ -4,26 +4,26 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import {  Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
-import dayjs from 'dayjs';
-import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
+import dayjs, { Dayjs } from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
-
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss'
 })
+
 export class PermissionReportsComponent implements OnInit, OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
@@ -54,7 +54,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   };
   localeOptions: any;
 
-
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -65,7 +64,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-      this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -86,7 +85,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       dateRange: [null],
       team:[null]
     });
-
     this.permissionReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
@@ -94,17 +92,9 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
   get isPermissionGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.permissionReportForm.value;
-    
     // Check if any field has a value
-    return !(
-        employee ||
-        manager ||
-        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
-        leaveCategory ||
-        team
-    );
+    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
-
 
   getAllEmployees() {
     const loggedInUser = this.authService.getToken();
@@ -119,7 +109,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
                 }${employee.lastName}`,
             };
           });
-
            this.employeeDetails = [
             { fullName: 'All Employees', employeeId: 'all' },
             ...employeedata
@@ -164,16 +153,13 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   generatePermissionReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-  
     const formValue = this.permissionReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
-  
-    const noFilterProvided =
-      !formValue.employee &&
-      !formValue.leaveCategory &&
-      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
-      !formValue.month &&
-      !formValue.manager && !formValue.team;
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    //filter condition
+    const noFilterProvided = !formValue.employee && !formValue.leaveCategory && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
   
     if (noFilterProvided) {
       this.filteredPermissionData = [];
@@ -188,6 +174,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       const ids = this.selectLeaveEmployeeIds?.join(',');
       request.employeeId = ids;  // The selected employee IDs are set here
     }
+
     // Apply leave category if selected
     if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee?.employeeId;
@@ -196,15 +183,14 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
+
     // Apply date range if provided
-    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
-      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
-      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
-      request.StartDate = startDate;
-      request.EndDate = endDate;
+    if (startDate && endDate) {
+      request.StartDate = this.formatDate(this.parseDate(startDate));
+      request.EndDate = this.formatDate(this.parseDate(endDate));
     }
     
-   //Apply my team
+    //Apply my team
     if(formValue.manager){
       request.teamManagerId = formValue.manager.employeeId;
     }
@@ -213,8 +199,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.empoyeeId;
     }
-  
-    console.log(request)
+
     this.reportsService.gterPermissionReports(request).subscribe({
       next: (response: any) => {
         this.filteredPermissionData = response ?? [];
@@ -243,7 +228,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       subLocation: 'SUB LOCATION',
       utilizedCount: 'UTILIZED COUNT',
       totalDuration: 'Total Duration'
-
     };
 
     const NEW_SEQUENCE: string[] = [
@@ -261,7 +245,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       const modifiedRecord: any = {};
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-
         if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
           if (originalColumnName === 'permissionDate' && record[originalColumnName]) {
             // Convert the date to a Date object
@@ -281,7 +264,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       });
       return modifiedRecord;
     });
-
 
     // Create a new empty worksheet
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
@@ -343,13 +325,11 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
-
     return Math.max(10, maxWidth);
   }
 
-    onClick(employeeIds: any) {
+  onClick(employeeIds: any) {
     if (employeeIds.value) {
-      console.log(employeeIds);
       this.filteredleaveRecords = false;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
@@ -364,43 +344,38 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
   }
 
- getMyTeam() {
-  const EmployeeId = this.loggedInUser?.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        console.log(response);
-        if (response) {
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-            };
-          });
-
-          this.getEmployeeInfo.unshift({
-            fullName: 'All Employees',
-            fusionEmpId: this.loggedInUser.fusionEmpId,
-            employeeId: this.loggedInUser.employeeId,
-          });
-        }
-      },
-    });
-}
- navigation(){
-    this.router.navigate(['/reports']);
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => {
+              return {
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
+              };
+            });
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
   }
 
+  navigation(){
+    this.router.navigate(['/reports']);
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

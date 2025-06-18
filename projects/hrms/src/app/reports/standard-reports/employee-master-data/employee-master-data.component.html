@@ -8,7 +8,7 @@
       <div class="d-flex gap-3">
         @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label fliter-lables text-nowrap m-0">Date of Joining</label>
+          <label class="custom-label filter-labels text-nowrap m-0">Date of Joining</label>
           <div class="custom-date-range-picker">
             <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
               [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
@@ -19,7 +19,7 @@
 
         <!-- Employee Status -->
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label fliter-lables text-nowrap m-0">Employee Status</label>
+          <label class="custom-label filter-labels text-nowrap m-0">Employee Status</label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
               optionValue="label" placeholder="Select employee status" class="custom-select w-100">

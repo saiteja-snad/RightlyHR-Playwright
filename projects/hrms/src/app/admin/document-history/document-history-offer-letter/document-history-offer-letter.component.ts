@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -41,6 +41,7 @@ import { DatePicker } from 'primeng/datepicker';
 ],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
+   encapsulation: ViewEncapsulation.None,
 })
 export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
@@ -54,9 +55,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
  selectedDate: any = null;
 selectedMonth: number | null = null;
 selectedYear: number | null = null;
+ maxMonth: Date = new Date();
 allOfferLetters: any[] = []; // full data
  offerLetters: any[] = []; // filtered data shown in table
- maxMonth: Date = new Date();
+
   constructor(
     private router: Router,
     private modalService: NgbModal,

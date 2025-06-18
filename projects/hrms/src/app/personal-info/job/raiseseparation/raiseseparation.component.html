@@ -1,1 +1,158 @@
-<p>raiseseparation works!</p>
+<div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+            <p class="popup-heading mb-0">Separation Request</p>
+        </div>
+    </div>
+    <div class="custom-main-popup-content">
+        <form autocomplete="off" [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="applieddate" class="form-label custom-label mb-2">Raised Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" id="applieddate"
+                        formControlName="appliedDate" />
+                    <div class="error-msg"
+                        *ngIf="separationRequestForm.get('appliedDate')?.invalid && separationRequestForm.get('appliedDate')?.touched">
+                        Raised Date is required
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="jobrole" class="form-label custom-label mb-2">Job Role<span
+                            class="text-danger"></span></label>
+                    <input class="form-control custom-input" id="jobrole" formControlName="jobRole" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="department" class="form-label custom-label mb-2">Department<span
+                            class="text-danger"></span></label>
+                    <input class="form-control custom-input" id="department" formControlName="departmentName" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="subDepartmentUpdate" class="form-label custom-label mb-2">Team<span
+                            class="text-danger"></span></label>
+                    <input class="form-control custom-input" id="team" formControlName="team" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span
+                            class="text-danger"></span></label>
+                    <input class="form-control custom-input" id="teamManager" formControlName="teamManager" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="reportingManager" class="form-label custom-label mb-2">Reporting Manager<span
+                            class="text-danger"></span></label>
+                    <input class="form-control custom-input" id="reportingManager" formControlName="reportingManager" />
+                </div>
+
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label for="description" class="form-label custom-label mb-2">Reason for Separation <span
+                                class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="description" formControlName="description"
+                            rows="3" maxlength="400" placeholder="Please provide separation reason..."
+                            (keydown)="formValidations.restrictInitialSpace($event)"></textarea>
+                        <div class="textarea-count-text">{{ separationRequestForm.get('description')?.value?.length
+                            || 0 }}/400</div>
+                        <div class="error-msg"
+                            *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
+                                Reason for Separation is required
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['maxlength']">
+                                Maximum 400 characters allowed
+                            </ng-container>
+                            <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['pattern']">
+                                Reason for Separation should not start with a space.
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <input class="form-check-input me-2" type="checkbox" id="check1" formControlName="isEarlyRelieving"
+                        (change)="onCheckEarlyRelieving()" />
+                    <label class="form-check-label custom-label mb-2">
+                        <span>Request For Early Relieving?</span>
+                    </label>
+                </div>
+
+                <div class="col-md-6" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
+                    <div class="mb-3">
+                        <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Early Relieving
+                            Date
+                            <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="earlyRelievingDate"
+                            [min]="separationRequestForm.get('appliedDate')?.value"
+                            [max]="postSeparationRequest.lastworkingday" onkeypress="return false"
+                            formControlName="earlyRelievingDate" />
+                        <div class="error-msg"
+                            *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
+                            Expected Early Relieving Date is required
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" *ngIf="separationRequestForm.get('isEarlyRelieving')?.value">
+                    <div class="mb-3">
+                        <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
+                            Relieving<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
+                            formControlName="reasonForEarlyRelieving" rows="3"
+                            placeholder="Please provide early relieving reason..." [maxlength]="400"
+                            (keydown)="formValidations.restrictInitialSpace($event)"></textarea>
+                        <div class="textarea-count-text">{{
+                            separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
+                        <div class="error-msg"
+                            *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
+                            <ng-container
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
+                                Reason for Early Relieving is required
+                            </ng-container>
+                            <ng-container
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['maxlength']">
+                                Maximum 400 characters allowed
+                            </ng-container>
+                            <ng-container
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['pattern']">
+                                Reason for Early Relieving should not start with a space.
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3">
+                <button type="button" class="custom-btn btn-secondary"
+                    (click)="confirmationopenModal(closeconformation)">{{'Cancel'|translate}}</button>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="separationRequestForm.invalid||isLoading">
+                    @if(!isLoading){
+                    {{'Submit'|translate}}
+                    }
+                    @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border spinner-border button-spinner text-light"
+                            role="status"></div>
+                        <div>{{'Submitting'|translate}}</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div><!--separation confirmation popup-->
+<ng-template #closeconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="closeAll()">Yes</button>
+        </div>
+    </div>
+</ng-template>

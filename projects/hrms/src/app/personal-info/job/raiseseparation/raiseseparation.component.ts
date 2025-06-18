@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { AuthService } from '../../../services/auth.service';
@@ -11,10 +11,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-raiseseparation',
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './raiseseparation.component.html',
   styleUrl: './raiseseparation.component.scss'
 })

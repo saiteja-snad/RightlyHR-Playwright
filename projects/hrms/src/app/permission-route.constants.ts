@@ -326,7 +326,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
     {route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: 'Pre Onboard Documents.view' },
     {route: '/settings/employee-fields/job/serving-period', permission: 'Serving Period.view' },
     {route: '/settings/employee-fields/job/probation-details', permission: 'Job Tab Probation Details.view' },
-    {route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' }
+    {route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' },
+    {route: '/settings/employee-fields/job/letters-acknowledgment', permission: 'Letter Acknoledgement.view' }
   ]
   
   export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_SHIFTS_TABS = [

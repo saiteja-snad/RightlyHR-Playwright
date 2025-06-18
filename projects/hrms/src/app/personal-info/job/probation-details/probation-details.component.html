@@ -12,10 +12,10 @@
                 <tr>
                     <th>Applied Date</th>
                     <th>Probation Period(In days)</th>
-                    <th>Probation start date</th>
-                    <th>Probation end date</th>
-                    <th>Probation extended date</th>
-                    <th>Approver History</th>
+                    <th class="text-center">Probation start date</th>
+                    <th class="text-center">Probation end date</th>
+                    <th class="text-center">Probation extended date</th>
+                    <th class="text-center">Approver History</th>
                     <th>status</th>
                     @if(canAccess('view','request') || canAccess('view','re-request')){
                     <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' |
@@ -29,10 +29,10 @@
                 <tr>
                     <td>{{probation.appliedDate ? (probation.appliedDate | dateformat) : '-' }}</td>
                     <td>{{probation.probationDays ? probation.probationDays : '-'}}</td>
-                    <td>{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
-                    <td>{{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}</td>
-                    <td>{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
-                    <td>
+                    <td class="text-center">{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
+                    <td class="text-center">{{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}</td>
+                    <td class="text-center">{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
+                    <td class="text-center">
                         @if(probation.approvers && probation.approvers.length > 0;){
                         <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
                             <app-info-icon />
@@ -87,10 +87,8 @@
                 </tr>
                 }
                 } @else {
-                <tr class="table-placeholder">
-                    <td colspan="8">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
+                <tr>
+                    <app-no-data-found />
                 </tr>
                 }
             </tbody>
@@ -118,10 +116,10 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th>Approver Role</th>
-                            <th>Overall Rating</th>
+                            <th class="text-center">Approver Role</th>
+                            <th class="text-center">Overall Rating</th>
                             <th>Status</th>
-                            <th>Extended Date</th>
+                            <th class="text-center">Extended Date</th>
                             <th>comments </th>
                             <th>Commented Date</th>
                             <th>Commented by</th>
@@ -130,18 +128,17 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let comment of appcomment">
-                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
+                            <td class="text-center">{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
                                 '-'}}</td>
-                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
+                            <td class="text-center">{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
                                 number:'1.2-2') : '-'}}</td>
                             <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
-                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) :
-                                'NA'}}
+                            <td class="text-center">{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}
                             </td>
                             <td>
                                 <div>
                                     <span class="ms-2" *ngIf="comment?.comments;else popupcomments">
-                                        <app-info-icon triggers="mouseenter:mouseleave" ngbPopover="{{comment?.comments}}"/>
+                                        <app-info-icon ngbPopover="{{comment?.comments}}"/>
                                     </span>
                                     <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>
@@ -161,7 +158,6 @@
         </div>
     </div>
 </ng-template>
-
 
 <!-- form view -->
 <ng-template #probationformpopup let-modal>

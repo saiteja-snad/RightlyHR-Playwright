@@ -91,6 +91,7 @@
             }
           </button>
           }
+
           @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
             [disabled]="filteredleaveRecord.length == 0 || disableBtn">
@@ -106,11 +107,6 @@
       </div>
     </form>
   </div>
-
-
-
-
-
 
   <div class="custom-table-content">
     @if (!isLoading) {
@@ -133,7 +129,7 @@
       <tbody>
         @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
         <tr>
-          <app-no-data-found></app-no-data-found>
+          <app-no-data-found />
         </tr>
         }
         @else {
@@ -162,5 +158,4 @@
     <app-data-loader-content />
     }
   </div>
-
 </div>

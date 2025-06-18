@@ -6,9 +6,10 @@ import { ProspectiveEmployeesComponent } from "./prospective-employees/prospecti
 import { ProbationEmployeesComponent } from "./probation-employees/probation-employees.component";
 import { ActiveInternsComponent } from "./active-interns/active-interns.component";
 import { InactiveInternsComponent } from "./inactive-interns/inactive-interns.component";
+import { AllemployeesComponent } from "./allemployees/allemployees.component";
 
 export default [
-    { path: '', redirectTo: '/employee-management/active-employees', pathMatch: 'full' },
+    { path: '', redirectTo: '/employee-management/all-employees', pathMatch: 'full' },
     { path: 'prospective-employees', component: ProspectiveEmployeesComponent,},
     { path: 'active-employees', component: ActiveEmployeesComponent,  },
     { path: 'inactive-employees', component: InactiveEmployeesComponent, },
@@ -16,4 +17,5 @@ export default [
     { path: 'active-interns', component: ActiveInternsComponent, },
     { path: 'inactive-interns', component: InactiveInternsComponent, },
     { path: 'probation-employees', component: ProbationEmployeesComponent,},
+    { path: 'all-employees', component: AllemployeesComponent,},
 ] as Route[];

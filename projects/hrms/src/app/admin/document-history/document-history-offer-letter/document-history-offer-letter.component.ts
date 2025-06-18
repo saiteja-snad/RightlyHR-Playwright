@@ -37,11 +37,11 @@ import { DatePicker } from 'primeng/datepicker';
     DateformatPipe,
     OfferletterdashboardpipePipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent,DatePicker,
-],
+    DataLoaderContentComponent, DatePicker,
+  ],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
-   encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
@@ -53,11 +53,11 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   employeedata = {} as any;
   isloading: boolean = false;
   selectedDate: Date = new Date();
-selectedMonth: number | null = null;
-selectedYear: number | null = null;
- maxMonth: Date = new Date();
-allOfferLetters: any[] = []; // full data
- offerLetters: any[] = []; // filtered data shown in table
+  selectedMonth: number | null = null;
+  selectedYear: number | null = null;
+  maxMonth: Date = new Date();
+  allOfferLetters: any[] = []; // full data
+  offerLetters: any[] = []; // filtered data shown in table
 
   constructor(
     private router: Router,
@@ -65,17 +65,17 @@ allOfferLetters: any[] = []; // full data
     private fb: FormBuilder,
     private http: HttpService,
     private authService: AuthService,
-    private conformationPopup: OpenModalService,public rbac: RbacService
+    private conformationPopup: OpenModalService, public rbac: RbacService
   ) {
     this.initializeForm();
   }
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
-      const today = new Date();
-    this.selectedMonth = today.getMonth() + 1; 
+    const today = new Date();
+    this.selectedMonth = today.getMonth() + 1;
     this.selectedYear = today.getFullYear();
- 
+
     this.loginuserdata = this.authService.getToken();
     this.initializeForm();
     this.getOfferLetters();
@@ -91,10 +91,10 @@ allOfferLetters: any[] = []; // full data
   //functio to inialize the form
   initializeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),this.blockLeadingSpace()]],
+      comments: ['', [Validators.required, Validators.maxLength(250), this.blockLeadingSpace()]],
     });
   }
-  blockLeadingSpace() : ValidatorFn {
+  blockLeadingSpace(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value as string;
       if (value && value.startsWith(' ')) {
@@ -102,41 +102,41 @@ allOfferLetters: any[] = []; // full data
       }
       return null;
     };
-}
+  }
 
   //to get all offer Letters
- getOfferLetters() {
-  this.isloading = true;
-  this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames')
-    .subscribe({
-      next: (data: any) => {
-        this.isloading = false;
-        this.allOfferLetters = data;
-        this.filterByMonth(); // Filter immediately if month is selected
-      },
-      error: (reason: any) => {
-        this.isloading = false;
-        console.error(reason);
-      }
-    });
-}
-filterByMonth() {
-  if (this.selectedMonth && this.selectedYear) {
-    this.offerLetters = this.allOfferLetters.filter(item => {
-      const date = moment(item.offerSentDate);
-      return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
-    });
-  } else {
-    this.offerLetters = this.allOfferLetters; // show all if no filter
+  getOfferLetters() {
+    this.isloading = true;
+    this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames')
+      .subscribe({
+        next: (data: any) => {
+          this.isloading = false;
+          this.allOfferLetters = data;
+          this.filterByMonth(); // Filter immediately if month is selected
+        },
+        error: (reason: any) => {
+          this.isloading = false;
+          console.error(reason);
+        }
+      });
   }
-}
+  filterByMonth() {
+    if (this.selectedMonth && this.selectedYear) {
+      this.offerLetters = this.allOfferLetters.filter(item => {
+        const date = moment(item.offerSentDate);
+        return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
+      });
+    } else {
+      this.offerLetters = this.allOfferLetters; // show all if no filter
+    }
+  }
 
-onMonthChange(value: any) {
-  const selected = moment(value);
-  this.selectedMonth = selected.month() + 1;
-  this.selectedYear = selected.year();
-  this.filterByMonth();
-}
+  onMonthChange(value: any) {
+    const selected = moment(value);
+    this.selectedMonth = selected.month() + 1;
+    this.selectedYear = selected.year();
+    this.filterByMonth();
+  }
 
   //function to download the document
   onSelectDownload(file: any) {
@@ -200,9 +200,8 @@ onMonthChange(value: any) {
     let emaildetails = {
       personEmail: Values.emailaddress,
       senderEmail: loggedInUser.workEmail,
-      senderName: `${loggedInUser.firstName ?? ''} ${
-        loggedInUser.middleName ?? ''
-      } ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''
+        } ${loggedInUser.lastName ?? ''}`,
       personName: Values.employeeName,
       personRole: Values.jobRole,
       employeeId: Values.empId,
@@ -274,14 +273,12 @@ onMonthChange(value: any) {
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName ?? ''} ${
-        loggedInUser.middleName ?? ''
-      }  ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''
+        }  ${loggedInUser.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName: `${loggedInUser.firstName ?? ''} ${
-        loggedInUser.middleName ?? ''
-      } ${loggedInUser.lastName ?? ''}`,
+      approvedByName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''
+        } ${loggedInUser.lastName ?? ''}`,
       firstName: datas.employeeName,
     };
     console.log(emailData);
@@ -307,9 +304,8 @@ onMonthChange(value: any) {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${
-        loggedInUser?.middleName ?? ''
-      } ${loggedInUser?.lastName} Approved 
+      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''
+        } ${loggedInUser?.lastName} Approved 
          ${personname.employeeName} Offer Letter`,
       empId: personname.offerSentBy,
     };
@@ -380,7 +376,7 @@ onMonthChange(value: any) {
           this.rejectEmail();
           this.Rejectnotification();
           this.getOfferLetters();
-          
+
         },
         error: (reason: any) => {
           console.log(reason);
@@ -413,9 +409,8 @@ onMonthChange(value: any) {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser?.firstName ?? ''} ${
-        loggedInUser?.middleName ?? ''
-      } ${loggedInUser?.lastName ?? ''}`,
+      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''
+        } ${loggedInUser?.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approvedByName: this.selectedValuesOfOffer.approvedByName,
@@ -449,9 +444,8 @@ onMonthChange(value: any) {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${
-        loggedInUser.middleName ?? ''
-      } ${loggedInUser?.lastName} Rejected 
+      notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''
+        } ${loggedInUser?.lastName} Rejected 
            ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };

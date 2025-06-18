@@ -174,7 +174,7 @@ separationRequestForm!: FormGroup;
           this.conformationPopup.openSuccessModal('Separation request raised successfully');
           this.getSeparationRequest();
           this.webNotificationformanager();
-          // this.http.setseparationDetails()
+          this.http.setseparationDetails()
         }
       },
       error: (err: any) => {

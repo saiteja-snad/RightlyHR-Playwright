@@ -1,0 +1,90 @@
+<div class="custom-main-component-container">
+  <!--Input search-->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+       placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation " aria-label="Username" aria-describedby="basic-addon1">
+  </div>
+
+  <div class="custom-table-content">
+    @if (!loader) {
+    <table class="w-100">
+      <thead>
+        <th>{{'Employee ID'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Work Email'|translate}}</th>
+        <th>{{'Phone Number'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Shift Name'|translate}}</th>
+        <th>{{'Designation'|translate}}</th>
+      </thead>
+      <tbody>
+        @if( Allemployees.length > 0){
+        <tr *ngFor="let act of Allemployees | allEmployees : searchValue">
+          <td>
+            <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span>
+            <ng-template #fusionid>
+              -
+            </ng-template>
+          </td>
+          <td> <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
+              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+            <ng-template #fistname>
+              -
+            </ng-template>
+          </td>
+          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>
+              -
+            </ng-template>
+          </td>
+          <td><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+            <ng-template #contactnumb>
+              -
+            </ng-template>
+          </td>
+          <!-- Location -->
+          <td>
+            <span *ngIf="act.jobDetails?.lopcation; else noLocation">
+              {{ act.jobDetails?.lopcation }}
+            </span>
+            <ng-template #noLocation>-</ng-template>
+          </td>
+         <!-- Sub Location -->
+          <td>
+            <span *ngIf="act.jobDetails?.subLocation; else noSubLocation">
+              {{ act.jobDetails?.subLocation }}
+            </span>
+            <ng-template #noSubLocation>-</ng-template>
+          </td>
+
+          <!-- Shift Name -->
+          <td>
+            <span *ngIf="act.jobDetails?.shiftName; else noShift">
+              {{ act.jobDetails?.shiftName }}
+            </span>
+            <ng-template #noShift>-</ng-template>
+          </td>
+
+          <!-- Designation -->
+          <td>
+            <span *ngIf="act.jobDetails?.jobRole; else noRole">
+              {{ act.jobDetails?.jobRole }}
+            </span>
+            <ng-template #noRole>-</ng-template>
+          </td>
+        </tr>
+        }
+        @if ((Allemployees | allEmployees : searchValue).length === 0) {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+      </tbody>
+    </table>
+    } @else {
+    <app-data-loader-content />
+    }
+  </div>
+</div>

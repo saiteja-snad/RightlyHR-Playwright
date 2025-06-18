@@ -1,9 +1,13 @@
 .custom-setting-right-content {
-    height: calc(100dvh - 10rem);
+    height: calc(100dvh - 9.5rem);
     padding: 0.625rem !important;
 }
 
-.folders-container{
+.custom-table-content {
+    height: calc(100vh - 16.75rem) !important;
+}
+
+.folders-container {
     width: 22rem;
     height: calc(100dvh - 10rem);
     overflow: auto;

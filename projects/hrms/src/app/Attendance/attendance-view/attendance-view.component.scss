@@ -44,6 +44,7 @@
   border-radius: 0.5rem;
   width: 20rem;
   height: calc(100vh - 8rem);
+  overflow: auto;
   padding: 1rem;
 
   .summary-header {
@@ -54,8 +55,6 @@
 
   .chart-content {
     position: relative;
-    width: 100%;
-    height: max-content;
     display: flex;
     justify-content: center;
 

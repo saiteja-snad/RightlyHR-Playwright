@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { Select } from 'primeng/select';
-import { LeavesApprovaltabsComponent } from '../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { FormControl, FormsModule } from '@angular/forms';
@@ -15,10 +14,12 @@ import { AuthService } from '../../services/auth.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { ReportsHeaderComponent } from '../../shared/reports-tabs/reports-header/reports-header.component';
 
 @Component({
   selector: 'app-org-leave-balance',
-  imports: [CommonModule, Select, AccordionModule, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, 
+    DateformatPipe, ModuleInformationComponent, NgbPopoverModule, ReportsHeaderComponent],
   templateUrl: './org-leave-balance.component.html',
   styleUrl: './org-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None

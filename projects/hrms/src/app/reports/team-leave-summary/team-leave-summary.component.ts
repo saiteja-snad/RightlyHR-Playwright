@@ -10,9 +10,10 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 @Component({
   selector: 'app-team-leave-summary',
-  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule],
+  imports: [CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, NgbPopoverModule, ReportsHeaderComponent],
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })

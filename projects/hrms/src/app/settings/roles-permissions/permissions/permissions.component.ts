@@ -451,6 +451,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Background check Status',
     'Notice Period',
     'Frequency',
+    'Letter Acknoledgement',
     'Paytype',
     'Overtime Eligibility',
     'Business Area',

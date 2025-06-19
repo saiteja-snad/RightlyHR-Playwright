@@ -287,10 +287,10 @@
         </div>
 
         <div class="mb-3">
-              <label for="sublocation" class="form-label custom-label mb-2">Address
-                <span class="error-msg">*</span></label>
-              <input type="text" class="form-control custom-input" formControlName="address"
-                 [readonly]="true" autocomplete="off" placeholder="Address">
+          <label for="sublocation" class="form-label custom-label mb-2">Address
+            <span class="error-msg">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="address" [readonly]="true"
+            autocomplete="off" placeholder="Address">
         </div>
 
         <div class="mb-3">
@@ -329,7 +329,7 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Offer Expiry Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-            (click)="pathValuesFuction()"  onkeydown="return false;" placeholder="Please enter offer expiry date" />
+            (click)="pathValuesFuction()" onkeydown="return false;" placeholder="Please enter offer expiry date" />
           <div class="error-msg">
             <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
               Offer Expiry Date is required
@@ -402,7 +402,7 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content" id="pdfContent1" [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                 <app-lettersheader />
@@ -517,12 +517,14 @@
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent2"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-               
+
                 <ul class="bullet">
-                  <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual property
+                  <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                    property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
@@ -591,11 +593,12 @@
                     target="_blank" rel="noopener noreferrer"> hr&#64;snaddevelopers.com</a></p>
               </div>
             </div>
-       
+
           </div>
 
           <!--page-3-->
-          <div class="letter-page-content my-4" id="pdfContent3"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent3"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
@@ -640,7 +643,8 @@
           </div>
 
           <!--page-4-->
-          <div class="letter-page-content my-4" id="pdfContent4"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent4"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
@@ -723,11 +727,12 @@
                 </div>
               </div>
             </div>
-           
+
           </div>
 
           <!--page-5-->
-          <div class="letter-page-content my-4" id="pdfContent5"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent5"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
@@ -915,12 +920,13 @@
                 <!-- table end -->
                 <p class="letter-sub-header mb-1 mt-2">Note: {{prospectiveEmpData.note}}</p>
                 <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
-                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note: SNAD Developers India Pvt Ltd reserves
+                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note:
+                  SNAD Developers India Pvt Ltd reserves
                   the
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                   any time.
                 </p>
-                
+
               </div>
             </div>
             <!-- <div class="letter-footer">
@@ -928,11 +934,11 @@
             </div> -->
           </div>
 
-            <div class="letter-page-content my-4" id="pdfContent6"  >
+          <div class="letter-page-content my-4" id="pdfContent6">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-       
-               
+
+
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-0">
                   <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory

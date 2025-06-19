@@ -1,5 +1,4 @@
 <div class="custom-main-component-container">
-
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <span class="component-sub-header">Team Members</span>
@@ -23,9 +22,9 @@
         <input type="search" class="form-control custom-search-input" placeholder="Search by employee name / work email / phone number" aria-label="Username"
             #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" aria-describedby="basic-addon1">
     </div>
+
     <div class="custom-table-content">
         @if(!loading){
-
         <table class="w-100">
             <thead>
                 <tr>
@@ -38,21 +37,16 @@
                     <th class="text-center">Action</th>}
                 </tr>
             </thead>
-            <tbody
-                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
-
+            <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
                     <tr *ngFor="let details of filteredMembers">
                         <td>{{ details.fusionEmpId || 'N/A' }}</td>
-                        <td >
-                            <a [ngClass]="{'select-item cursor': details.isAccess}"
-                            
-                            (click)="details.isAccess && select(details)">
+                        <td>
+                            <a [ngClass]="{'select-item cursor': details.isAccess}" (click)="details.isAccess && select(details)">
                             {{ details.firstName || 'N/A' }} {{ details.middleName }} {{ details.lastName }}</a>
                         </td>
                         <td>{{ details.workEmail || 'N/A' }}</td>
-                        <td>{{ details.contactnumber || 'N/A' }}</td>
-
+                        <td class="text-nowrap">{{ details.contactnumber || 'N/A' }}</td>
                         @if(canAccess('update','team-managers')) {
                         <td class="text-center">
                             <div class="dropdown">
@@ -79,19 +73,16 @@
             </tbody>
             <ng-template #noData>
                 <tr>
-                    <td colspan="6" class="text-center"> <app-no-data-found></app-no-data-found></td>
+                    <app-no-data-found />
                 </tr>
             </ng-template>
         </table>
         }
         @else {
-
         <app-data-loader-content />
-
         }
     </div>
 </div>
-
 
 <ng-template #changetmmodals let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -105,7 +96,6 @@
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="requestForm" (ngSubmit)="updateTM()">
                 <div class="row">
-
                     <!-- Team Employees (MultiSelect) -->
                     <div class="col-6 mb-3">
                         <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employee(s)<span
@@ -121,6 +111,7 @@
                             Please select at least one employee
                         </div>
                     </div>
+
                     <div class="col-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
                                 class="text-danger">*</span></label>
@@ -141,7 +132,6 @@
                                 placeholder="Please select department" (onChange)="onDepartmentChange($event.value)"
                                 class="form-select custom-select" formControlName="department"></p-select>
                         </div>
-
                         <div *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid"
                             class="error-msg">
                             Department is required
@@ -194,7 +184,6 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </ng-template>
@@ -222,6 +211,7 @@
                             Please select at least one employee
                         </div>
                     </div>
+
                     <div class="col-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
                                 class="text-danger">*</span></label>
@@ -296,12 +286,9 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </ng-template>
-
-
 
 <ng-template #changermmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>

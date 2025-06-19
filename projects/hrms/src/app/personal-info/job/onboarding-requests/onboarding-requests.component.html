@@ -15,9 +15,9 @@
             <thead>
                 <tr>
                     <th>Request Date</th>
-                    <th>Training START Date</th>
-                    <th>Training End Date</th>
-                    <th>Training Extended Date</th>
+                    <th class="text-center">Training START Date</th>
+                    <th class="text-center">Training End Date</th>
+                    <th class="text-center">Training Extended Date</th>
                     <th>Status</th>
                     <th>Training Feedback</th>
                     <th></th>
@@ -27,9 +27,9 @@
                 <ng-container *ngIf="((dynamicData | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let item of dynamicData |async">
                         <td>{{ item.requestedDate | dateformat }}</td>
-                        <td>{{ item.trainingStartDate | dateformat }}</td>
-                        <td>{{ item.trainingEndDate | dateformat }}</td>
-                        <td>{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}</td>
+                        <td class="text-center text-nowrap">{{ item.trainingStartDate | dateformat }}</td>
+                        <td class="text-center text-nowrap">{{ item.trainingEndDate | dateformat }}</td>
+                        <td class="text-center text-nowrap">{{ item.extendedDate ? (item.extendedDate | dateformat) : '-' }}</td>
                         <td>{{ item.status }}</td>
                         <td class="text-center">
                             <span *ngIf="item.feedbackComments;else feedbackComment">
@@ -53,23 +53,20 @@
                                         </li>
                                     </ul>
                                 </div>
-                            }
-                          
+                            } 
                         </td>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </tbody>
         </table>
     }
     @else {
-         <app-data-loader-content />
+        <app-data-loader-content />
     }
     </div>
 </div>

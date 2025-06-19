@@ -34,18 +34,14 @@
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
           @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
-          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-          !==
-          'trainee inactive' )){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
           <th class="text-center">{{"Action" | translate}}</th>
           }
         }
         </tr>
       </thead>
       <tbody>
-        
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
@@ -95,11 +91,8 @@
           </td>
           <td>{{item.status?item.status:'NA'}}</td>
           @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
-          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-          !==
-          'trainee inactive' )){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
           <td  class="text-center">
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
@@ -139,13 +132,12 @@
           </td>
         </tr>
         }
-      
       </tbody>
     </table>
-      }
-        @else {
-        <app-data-loader-content />
-        }
+    }
+    @else {
+    <app-data-loader-content />
+    }
   </div>
 </div>
 
@@ -157,8 +149,8 @@
         <p class="popup-heading mb-0">View Reason</p>
       </div>
       <div>
-                <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
+        <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
     <div class="custom-main-popup-content">
       <p><b>Reason:</b> {{ decription_Storing_Variable }}</p>

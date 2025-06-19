@@ -19,7 +19,7 @@
                     <th>Account Holder's Name</th>
                     <th>Account Number</th>
                     <th>IFSC Code</th>
-                    <th>Proof</th>
+                    <th class="text-center">Proof</th>
                     <th class="text-center">Primary Bank</th>
                     @if(canAccess('update','bank') || canAccess('delete','bank')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
@@ -34,10 +34,10 @@
                         <td>{{bankiteams.accountName}}</td>
                         <td>{{bankiteams.accountNo}}</td>
                         <td>{{bankiteams.ifscCode}}</td>
-                        <td>
+                        <td class="text-center">
                             <span *ngIf="bankiteams.docUrl;else noData" (click)="onSelectBankProofDownload(bankiteams)">
-                                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template
-                                #noData>-</ng-template>
+                                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
+                            <ng-template #noData>-</ng-template>
                         </td>
                         <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         @if( canAccess('update','bank') || canAccess('delete','bank')){

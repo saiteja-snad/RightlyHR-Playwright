@@ -2,12 +2,11 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Employment History</span></div>
         @if(canAccess('create','experience')){
-        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
-        'trainee inactive' )){
-        <div class="custom-add-btn" (click)="openModal(addexperincemodal)"><i class="bi bi-plus plus-icon me-1"></i>Add
-            New</div>
+        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+        <div class="custom-add-btn" (click)="openModal(addexperincemodal)">
+            <i class="bi bi-plus plus-icon me-1"></i>Add New
+        </div>
         }
         }
     </div>
@@ -19,11 +18,11 @@
                 <tr>
                     <th>Company Name</th>
                     <th>Employment Type</th>
-                    <th>From Date</th>
-                    <th>To Date</th>
+                    <th class="text-center">From Date</th>
+                    <th class="text-center">To Date</th>
                     <th>Job Role</th>
                     <th>Currently Working</th>
-                    <th>Document</th>
+                    <th class="text-center">Document</th>
                     @if(canAccess('update','experience') ||
                     canAccess('delete','experience')){
                          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
@@ -40,15 +39,15 @@
                 <ng-container *ngIf="((getempexpdata | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let empexperimentdata of getempexpdata | async">
                         <td>{{ empexperimentdata.companyName }}</td>
-                        <td>{{empexperimentdata.employmentType}}</td>
-                        <td>{{empexperimentdata.fromDate | dateformat}}</td>
-                        <td>
+                        <td>{{ empexperimentdata.employmentType }}</td>
+                        <td class="text-center text-nowrap">{{ empexperimentdata.fromDate | dateformat }}</td>
+                        <td class="text-center text-nowrap">
                             <span *ngIf="empexperimentdata.toDate != null; else NoExpiration"></span>
                             <ng-template #NoExpiration>-</ng-template>{{ empexperimentdata.toDate | dateformat }}
                         </td>
                         <td>{{empexperimentdata.jobTitle}}</td>
                         <td>{{empexperimentdata.isPresent ? 'Yes' :'No'}}</td>
-                        <td>
+                        <td class="text-center">
                             <span *ngIf="empexperimentdata.attachment;else noData" class="download-text"
                                 (click)="onSelectBankProofDownload(empexperimentdata)">
                                 <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
@@ -70,9 +69,7 @@
                                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase()
-                                    !==
-                                    'trainee inactive' )){
+                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="openModalupdate(updateexperincemodal, empexperimentdata)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
@@ -83,9 +80,7 @@
                                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase()
-                                    !==
-                                    'trainee inactive' )){
+                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     @if(canAccess('delete','experience')){
                                     <li (click)="opendeletModal(deleteconformation,empexperimentdata)">
                                         <a class="dropdown-item">

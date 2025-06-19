@@ -15,13 +15,13 @@
                 <tr>
                     <th>Name</th>
                     <th>Relationship</th>
-                    <th>Date of Birth</th>
-                    <th>Dependent</th>
+                    <th class="text-center">Date of Birth</th>
+                    <th class="text-center">Dependent</th>
                     @if(canAccess('update','family') || canAccess('delete','family') ){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
-                    'trainee inactive')){
+                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && 
+                    employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }}
                 </tr>
@@ -32,8 +32,8 @@
                     <tr *ngFor="let familyDetail of familyDetailsdisplay | async">
                         <td>{{ familyDetail.memberName }}</td>
                         <td>{{ familyDetail.relationShipName }}</td>
-                        <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
-                        <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
+                        <td class="text-center text-nowrap">{{ familyDetail.dateOfBirth | dateformat }}</td>
+                        <td class="text-center text-nowrap">{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
                         @if(canAccess('update','family') || canAccess('delete','family') ){<td class="text-center">
                             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                             employedata?.empstatus?.toLowerCase() !== 'trainee prospective'

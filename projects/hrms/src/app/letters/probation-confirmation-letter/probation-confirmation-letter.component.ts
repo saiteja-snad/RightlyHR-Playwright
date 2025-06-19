@@ -111,7 +111,7 @@ export class ProbationConfirmationLetterComponent {
   }
 
   naviagte() {
-    this.router.navigate(['/admin/probation-employees']);
+    this.router.navigate(['/employee-management/probation-employees']);
   }
 
   initializeForm() {
@@ -215,14 +215,14 @@ export class ProbationConfirmationLetterComponent {
         this.uploadProbationLetter();
       });
     }
-    this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
+    // this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
   }
 
   uploadProbationLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationLetterData.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
-        this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
+        //this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
         if (data) {
           this.postProbationDetails(data.path);
         }
@@ -286,8 +286,8 @@ export class ProbationConfirmationLetterComponent {
         this.disableFieldsForApproval = true;
         this.loading = false;
         this.enableBtn = true;
-        this.openModalService.openSuccessModal("Probation extension letter generated successfully");
-        this.probationConfirmationemail();
+        this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
+      
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
@@ -335,8 +335,10 @@ pathValuesFuction() {
     }
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
-        this.openModalService.openSuccessModal("Probation confirmation letter sent successfully");
+        this.getProbationEmployees()
+        this.openModalService.openSuccessModal("Email has been sent successfully");
         setTimeout(() => {
+
           this.naviagte();
         }, 2000)
       },

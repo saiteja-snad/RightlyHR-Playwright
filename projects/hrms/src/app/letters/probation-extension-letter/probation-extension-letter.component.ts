@@ -218,7 +218,7 @@ pathValuesFuction() {
         this.uploadprobationextentionLetter();
       });
     }
-    this.openModalService.openSuccessModal('Probation extension letter generated successfully');
+    //this.openModalService.openSuccessModal('Probation extension letter generated successfully');
   }
 
   //function to get the separation request details

@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './under-maintenance-desk-list.component.html',
   styleUrl: './under-maintenance-desk-list.component.scss'
 })
-export class UnderMaintenanceDeskListComponent {
+export class UnderMaintenanceDeskListComponent implements OnInit ,OnDestroy {
   subscription!: Subscription;
   empinfo = {} as any
   desklist = new BehaviorSubject<any[]>([])

@@ -329,19 +329,15 @@
                                             <div class="form-check form-switch  ms-3">
                                                 <input class="form-check-input rounded-2" type="checkbox"
                                                     id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                    formControlName="isRequired"
-                                                    [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
-                                                    triggers="mouseenter:mouseleave" placement="start">
-                                                <label class="form-check-label"
-                                                    for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                                    formControlName="isRequired" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
+                                                <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
                                                     Required
                                                 </label>
                                             </div>
 
                                             <!-- Remove Question -->
                                             <div>
-                                                <i class="bi bi-trash text-danger cursor"
-                                                    (click)="removeQuestion(sectionIndex, questionIndex)"></i>
+                                                <i class="bi bi-trash text-danger cursor" (click)="removeQuestion(sectionIndex, questionIndex)"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -539,21 +535,16 @@
                                     <div class="d-flex gap-3 justify-content-end pt-2">
                                         <!-- Question Required -->
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input rounded-2" type="checkbox"
-                                                id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                formControlName="isRequired"
-                                                [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
-                                                triggers="mouseenter:mouseleave" placement="start">
-                                            <label class="form-check-label"
-                                                for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                            <input class="form-check-input rounded-2" type="checkbox" id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
+                                                formControlName="isRequired" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
+                                            <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
                                                 Required
                                             </label>
                                         </div>
 
                                         <!-- Remove Question -->
                                         <div>
-                                            <i class="bi bi-trash text-danger" style="cursor: pointer;"
-                                                (click)="removeQuestion(sectionIndex, questionIndex)"></i>
+                                            <i class="bi bi-trash text-danger cursor" (click)="removeQuestion(sectionIndex, questionIndex)"></i>
                                         </div>
                                     </div>
                                 </div>

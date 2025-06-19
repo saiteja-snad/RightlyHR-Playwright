@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation} from '@angular/core';
+import { Component, OnDestroy, OnInit,ViewEncapsulation} from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -23,7 +23,7 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../l
   encapsulation: ViewEncapsulation.None
 })
 
-export class RelievingLetterComponent {
+export class RelievingLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   relievingTemplate: any | string | ArrayBuffer | null = null; 
   result = {} as any;

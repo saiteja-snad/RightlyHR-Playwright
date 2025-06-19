@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -19,7 +19,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })
-export class ProcessedExpensesComponent {
+export class ProcessedExpensesComponent implements OnInit,OnDestroy {
   empinfo: any
   subscription!: Subscription;
   ExpenseImageUrl: any;

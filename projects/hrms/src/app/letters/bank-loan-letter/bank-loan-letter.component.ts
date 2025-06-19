@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
@@ -27,8 +27,9 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './bank-loan-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class BankLoanLetterComponent {
-  moduleinfo: string = '';
+
+export class BankLoanLetterComponent  implements OnInit,OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   bankLoanTemplate: any | string | ArrayBuffer | null = null;
   bankLoanFile!: File;

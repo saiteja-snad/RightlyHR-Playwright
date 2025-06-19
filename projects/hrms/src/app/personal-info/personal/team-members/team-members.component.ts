@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Ipersonal, Iteammembers } from '../../../Interfaces/members-model';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -36,7 +36,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
 })
-export class TeamMembersComponent {
+export class TeamMembersComponent implements OnInit,OnDestroy {
   emp: any;
   empinfo = {} as Ipersonal;
   subscription!: Subscription;

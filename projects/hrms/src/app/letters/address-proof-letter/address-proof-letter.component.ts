@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -23,7 +23,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './address-proof-letter.component.scss'
 })
 
-export class AddressProofLetterComponent {
+export class AddressProofLetterComponent implements OnInit,OnDestroy {
   addressdata: { name: string, value: string }[] = [
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },

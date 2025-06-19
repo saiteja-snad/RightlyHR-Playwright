@@ -13,14 +13,14 @@
                 <tr>
                     <th>{{'Document Type'|translate}}</th>
                     <th>{{'Document Number'|translate}}</th>
-                    <th>{{'Submitted Date'|translate}}</th>
-                    <th>{{'Document'|translate}}</th>
-                    <th>{{'Status'|translate}}</th>
+                    <th class="text-center">{{'Submitted Date'|translate}}</th>
+                    <th class="text-center">{{'Document'|translate}}</th>
+                    <th class="text-center">{{'Status'|translate}}</th>
                     @if( (rbac.allowedToAccess('Employee Info Documents Verification.update')
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')) && shouldShowActionColumn
                     ){
-                    <th>{{'Action'|translate}}</th>
-                }
+                    <th class="text-center">{{'Action'|translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -30,26 +30,27 @@
                 <tr>
                     <td>{{ data.documentType ? data.documentType : '-' }}</td>
                     <td>{{ data.referenceNumber ? data.referenceNumber : '-' }}</td>
-                    <td>{{ data.submittedDate ? (data.submittedDate | dateformat) : '-' }}</td>
-                    <td>
+                    <td class="text-center text-nowrap">{{ data.submittedDate ? (data.submittedDate | dateformat) : '-' }}</td>
+                    <td class="text-center">
                         @if(data.documentUrl == null || data.documentUrl == ''){
-                        <div class="text-center">-</div>
+                        <div>-</div>
                         }
                         @else {
                         @if(data.documentUrl.endsWith('jpg') || data.documentUrl.endsWith('jpeg') ||
                         data.documentUrl.endsWith('png')){
                         <a type="button" class="view-btn" (click)="onViewClick(data.documentUrl);onClickEditDocument(data)">
-                            <i class="bi bi-eye-fill me-2"></i>View
+                            <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="doc-view-icon">
                         </a>
                         }
                         @else {
                         <a type="button" class="view-btn" (click)="onSelectDownload(data.documentUrl)">
-                            <i class="bi bi-download me-2"></i>Download</a>
+                            <img src="/icons/Download.png" alt="Icon" class="download-icon">
+                        </a>
                         }
                         }
                     </td>
-                    <td>
-                        <span *ngIf="data.status!='Waiting for submission' ||data.status==null||data.status==''; else status">{{data.status}}</span>
+                    <td class="text-center">
+                        <span *ngIf="data.status!='Waiting for submission' || data.status == null || data.status==''; else status">{{data.status}}</span>
                         <ng-template #status>
                             <div>-</div>
                         </ng-template>
@@ -59,18 +60,30 @@
                     ){
                      @if(rbac.allowedToAccess('Employee Info Documents Verification	.update') 
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
-                    <td>
+                    <td class="text-center">
                         <span *ngIf="!data.documentUrl; else approverejectbuttons"></span>
                         <ng-template #approverejectbuttons>
-                            @if(rbac.allowedToAccess('Employee Info Documents Verification.update')){
-                            <button class="custom-btn btn-primary-approve me-2" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
-                            && data.status=='Submitted'"
-                                (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,
-                                data.referenceNumber,data.referenceId); openModal(approveModal)">Approve
-                            </button>}
-                             @if(rbac.allowedToAccess('Employee Info Documents Verification.delete')){
-                            <button class="custom-btn btn-primary-reject" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
-                            && data.status=='Submitted' " (click)="submitRejectReason(data);openModal(rejectModal)">Reject</button>}
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Employee Info Documents Verification.update')) {
+                                    <li *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'">
+                                        <a class="dropdown-item" type="button" (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,
+                                        data.reason,data.referenceNumber,data.referenceId); openModal(approveModal)">
+                                            <i class="bi bi-check-circle me-2"></i>Approve</a>
+                                    </li>
+                                    }
+                                    @if(rbac.allowedToAccess('Employee Info Documents Verification.delete')) {
+                                    <li *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'">
+                                        <a class="dropdown-item" type="button" (click)="submitRejectReason(data);openModal(rejectModal)">
+                                            <i class="bi bi-x-circle me-2"></i>Reject
+                                        </a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
                         </ng-template>
                     </td>}}
                 </tr>
@@ -86,7 +99,7 @@
         </table>
     }
     @else {
-         <app-data-loader-content />
+        <app-data-loader-content />
     }
     </div>
 </div>
@@ -142,10 +155,8 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-                        {{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">
-                        {{'Submit'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>
@@ -161,8 +172,7 @@
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary"
-                (click)="approvedocuments()">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="approvedocuments()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -177,8 +187,8 @@
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="reRequestForm" (ngSubmit)="reRequestEmail(reRequestForm)" class="w-100">
                 <div class="mb-3">
-                    <label for="comments" class="form-label custom-label mb-2"> {{'Comments'|translate}} <span
-                            class="error-msg">*</span></label>
+                    <label for="comments" class="form-label custom-label mb-2">{{'Comments'|translate}}
+                        <span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" formControlName="comments" maxlength="250"
                         placeholder="Leave a comment here"></textarea>
                     <div class="my-1 textarea-count-text">

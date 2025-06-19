@@ -24,8 +24,9 @@
     color: #555555;
 }
 
-@media (max-width: 1280px) and (max-height: 800px) {
+@media (max-width: 1300px) and (max-height: 800px) {
     .no-data-placeholder-container {
+        padding-top: 2rem;
         width: 100% !important;
     }
 

@@ -111,7 +111,7 @@ export class ProbationConfirmationLetterComponent {
   }
 
   naviagte() {
-    this.router.navigate(['/admin/probation-employees']);
+    this.router.navigate(['/employee-management/probation-employees']);
   }
 
   initializeForm() {
@@ -287,7 +287,7 @@ export class ProbationConfirmationLetterComponent {
         this.loading = false;
         this.enableBtn = true;
         this.openModalService.openSuccessModal("Probation extension letter generated successfully");
-        this.probationConfirmationemail();
+     
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
@@ -325,6 +325,7 @@ export class ProbationConfirmationLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
+        this.getProbationEmployees()
         this.openModalService.openSuccessModal("Probation confirmation letter sent successfully");
         setTimeout(() => {
           this.naviagte();

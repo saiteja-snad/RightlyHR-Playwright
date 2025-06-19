@@ -57,7 +57,7 @@ export class ProbationExtensionLetterComponent {
   }
 
   naviagte(){
-    this.router.navigate(['/admin/probation-employees']);
+    this.router.navigate(['/employee-management/probation-employees']);
   }
 
   initializeForm() {

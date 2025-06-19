@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IExpense, IExpenses, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
@@ -25,7 +25,7 @@ import { RbacService } from '../../../services/rbac.service';
   encapsulation: ViewEncapsulation.None
 })
 
-export class DraftsExpensesComponent {
+export class DraftsExpensesComponent implements OnInit,OnDestroy {
   empinfo: any;
   Myexpense: any;
   removeindex: any;

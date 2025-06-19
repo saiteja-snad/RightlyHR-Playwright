@@ -13,15 +13,14 @@
         </div>
       </ng-container>
     </ng-container>
-
-    <!-- @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)  ){
-      <div class="custom-add-btn" (click)="openModal(raiseNodue)">
-      <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
-      </div>
-    } -->
     }
+    @if(canAccess('view','separation')){
+    @if( showSaperationDots){
+    <div class="custom-add-btn" (click)="openModalraise()">
+      <i class="bi bi-plus plus-icon me-1"></i>Raise Separation Request
+    </div>
+    }}
   </div>
-
   <div class="custom-table-content">
     @if (!isDataLoaded) {
     <table class="w-100">
@@ -35,18 +34,14 @@
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
           @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
-          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-          !==
-          'trainee inactive' )){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
           <th class="text-center">{{"Action" | translate}}</th>
           }
         }
         </tr>
       </thead>
       <tbody>
-        
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
@@ -96,11 +91,8 @@
           </td>
           <td>{{item.status?item.status:'NA'}}</td>
           @if(canAccess('view','recall')|| canAccess('view','earlyrelieving')){
-          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-          !==
-          'trainee inactive' )){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
           <td  class="text-center">
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
@@ -140,13 +132,12 @@
           </td>
         </tr>
         }
-      
       </tbody>
     </table>
-      }
-        @else {
-        <app-data-loader-content />
-        }
+    }
+    @else {
+    <app-data-loader-content />
+    }
   </div>
 </div>
 
@@ -158,7 +149,7 @@
         <p class="popup-heading mb-0">View Reason</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content">
@@ -217,7 +208,7 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment.comments; else popupcomments">
-                  <app-info-icon  triggers="mouseenter:mouseleave" ngbPopover="{{ comment?.comments }}" container="body"/>
+                  <app-info-icon ngbPopover="{{ comment?.comments }}" container="body"/>
                 </div>
                 <ng-template #popupcomments>NA</ng-template>
               </td>

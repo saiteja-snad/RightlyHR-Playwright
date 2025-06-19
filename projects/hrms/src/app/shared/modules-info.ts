@@ -1,9 +1,3 @@
-import { PMS_CONFIGURATION_TABS } from "../permission-route.constants";
-
-const currentDate = new Date();
-const month = currentDate.toLocaleString('default', { month: 'long' }); // e.g. June
-const year = currentDate.getFullYear(); 
-
 export const MODULE_INFOS = {
     //Settings Employee Fields Module Info
     SETTINGS_EMPLOYEE_FIELDS_MODULE_INFO: "Define and manage core employee data sections such as personal details, job info, documents, and policies. Central hub for configuring fields that shape the employee profile structure.",
@@ -150,6 +144,7 @@ export const MODULE_INFOS = {
     ACTIVE_TRAINEES_MODULE_INFO: "The Active Trainees page displays essential details of current trainees, including ID, name, contact information, location, training status, and designation. Clicking on a trainee’s profile navigates to a detailed view of their profile for further information.",
     INACTIVE_TRAINEES_MODULE_INFO: "The Inactive Trainees page displays a list of trainees who are no longer active, including ID, name, personal email, phone number, location, shift, and designation. It allows users to review past trainee records for reference and administrative purposes.",
     CURRENT_OPENINGS_MODULE_INFO: "The Current Openings section allows HR to post jobs and manage job listings categorized as Active or Inactive. It also tracks applicant statuses through stages like Applied, Interview Process, Rejected, On Hold, Request for Onboarding, Onboarded, and Archive, with search functionality for applicants.",
+    ALL_EMPLOYEES_MODULE_INFO: "The All Employees tab displays a unified list of all employees across statuses—Prospective, Active, Trainee, Inactive, and Probation. It helps HR view and manage every employee record in one place, regardless of their current stage.",
 
     //Attendance Module Info 
     getAttendanceModuleInfo: (month: string, year: number) =>`The Attendance section displays a day-wise record for the selected month (${month}, ${year}), showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.`,
@@ -180,7 +175,7 @@ export const MODULE_INFOS = {
     JOB_MODULE_ASSETS_DETAILS_MODULE_INFO: "The Assigned Assets section displays the list of assets assigned to the employee, including asset ID, category, sub-category, model, serial number, allocated date, and released date. It ensures effective tracking and management of issued assets.",
     JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO: "The Offboarding Info section captures key information regarding an employee's exit, including the reason for leaving, eligibility for rehire, relieving type, and last working day. This ensures a structured and compliant offboarding process.",
     JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO: "The Trainee Onboard Verification section displays trainee onboarding details, including the request date, training start and end dates, extended dates if applicable, and current status. It also allows tracking of training feedback for evaluation and onboarding decisions.",
-     JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
+    JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO: "The Onboarding Verification section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
 
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO: "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",
@@ -190,6 +185,4 @@ export const MODULE_INFOS = {
     Bloodbank_MODULE_INFO:"Easily access a list of employees' blood group details for emergencies. Quickly search, filter, and contact donors when needed—right within the system.",
     Contact_DIRTECROTY_INFO:"Quickly access department-wise contact details of employees. Stay connected with the right people across teams using verified email IDs and phone numbers.",
     PHONE_Book_DIRTECROTY_INFO:'Find contact details of all employees in one place. Instantly search by name to reach out via work or personal numbers when it matters most.'
-
-
 }

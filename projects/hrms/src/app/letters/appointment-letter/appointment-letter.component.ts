@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
@@ -24,7 +24,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './appointment-letter.component.scss'
 })
 
-export class AppointmentLetterComponent {
+export class AppointmentLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription; 
   appointmentLetterTemplate: any | string | ArrayBuffer | null = null;
   JoinDateValid: boolean = true;

@@ -34,8 +34,7 @@
                     <td class="text-center">
                         <div>
                             <div *ngIf="item.requiredEmails; else popupcomments">
-                                <app-info-icon triggers="mouseenter:mouseleave" ngbPopover="{{ item.requiredEmails }}"
-                                    container="body" />
+                                <app-info-icon ngbPopover="{{ item.requiredEmails }}" container="body" />
                             </div>
                         </div>
                         <ng-template #popupcomments>NA</ng-template>

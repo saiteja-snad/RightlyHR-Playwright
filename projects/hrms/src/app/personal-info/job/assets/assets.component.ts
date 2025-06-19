@@ -13,45 +13,45 @@ import { Router } from '@angular/router';
   templateUrl: './assets.component.html',
   styleUrl: './assets.component.scss'
 })
-export class AssetsComponent implements OnInit,OnDestroy {
+export class AssetsComponent implements OnInit, OnDestroy {
   empinfo: any;
-  subscription!:Subscription
-  loading=false
+  subscription!: Subscription
+  loading = false
   assestesdata = new BehaviorSubject<any[]>([]);
-  constructor( private http: HttpService,
+  constructor(private http: HttpService,
     private router: Router,
-   ) { }
-  ngOnInit() {
-   this.getEmpInfoFromRoute();
+  ) { }
   
-   
+  ngOnInit() {
+    this.getEmpInfoFromRoute();
+
   }
- 
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
     console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
-       this.getassets();
+      this.getassets();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-       this.getassets();
+      this.getassets();
     }
   }
   getassets() {
-    this.loading=true
+    this.loading = true
     let EmpId = parseInt(this.empinfo.employeeId);
     console.log(EmpId);
     this.subscription = this.http
       .getData(`AssetTransaction?employeeId=${EmpId}`)
       .subscribe({
         next: (data: any) => {
-          this.loading=false
+          this.loading = false
           this.assestesdata.next(data);
         },
         error: (err: any) => {
-          this.loading=false
+          this.loading = false
           console.log(err);
         },
       });

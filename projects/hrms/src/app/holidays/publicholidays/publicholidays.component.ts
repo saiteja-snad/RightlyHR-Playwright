@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../services/http.service';
@@ -16,7 +16,7 @@ import { Skeleton } from 'primeng/skeleton';
   styleUrl: './publicholidays.component.scss'
 })
 
-export class PublicholidaysComponent {
+export class PublicholidaysComponent implements OnInit ,OnDestroy {
   holidaysform!: FormGroup;
   orgHolidayItemsArrayTrue: any = [];
   orgHolidayItemsArrayFalse: any = [];

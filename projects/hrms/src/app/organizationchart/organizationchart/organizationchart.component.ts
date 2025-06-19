@@ -112,49 +112,6 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     this.getOrghierarchy(this.selectedEmployeeId)
   }
 
-  // Helper function to flatten the hierarchical data
-  // downloadToExcel(): void {
-  //   if (!this.data || this.data.length === 0) {
-  //       console.error('No data available to export!');
-  //       return;
-  //   }
-
-  //   const flattenedData: any[] = [];
-  //   const seenNames = new Set<string>(); // Track unique names
-  //   this.flattenHierarchy(this.data, flattenedData, seenNames);
-
-  //   const worksheet = XLSX.utils.json_to_sheet(flattenedData);
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Organization Chart');
-  //   XLSX.writeFile(workbook, 'organization-chart.xlsx');
-  // }
-
-  // private flattenHierarchy(
-  //   nodes: TreeNode[],
-  //   flattenedData: any[],
-  //   seenNames: Set<string>,
-  //   parentName: string = ''
-  // ): void {
-  //   nodes.forEach((node) => {
-  //       const { name, doj, title, compensationamount, department,imageUrl } = node.data;
-  //       if (!seenNames.has(name)) {
-  //           flattenedData.push({
-  //               Name: name,
-  //               DOJ: doj,
-  //               Title: title,
-  //               Compensation: compensationamount,
-  //               Department: department,
-  //               Manager: parentName,
-  //               image:imageUrl
-  //           });
-  //           seenNames.add(name);
-  //       }
-  //       if (node.children) {
-  //           this.flattenHierarchy(node.children, flattenedData, seenNames, name);
-  //       }
-  //   });
-  // }
-
   async downloadToExcel(): Promise<void> {
     if (!this.data || this.data.length === 0) {
       console.error('No data available to export!');

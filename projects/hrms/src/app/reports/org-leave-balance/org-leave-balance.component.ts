@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
@@ -25,7 +25,7 @@ import { ReportsHeaderComponent } from '../../shared/reports-tabs/reports-header
   encapsulation: ViewEncapsulation.None
 })
 
-export class OrgLeaveBalanceComponent {
+export class OrgLeaveBalanceComponent  implements OnInit,OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
   employeedata = {} as any;

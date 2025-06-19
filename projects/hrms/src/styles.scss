@@ -1152,6 +1152,7 @@ select:focus {
         overflow: auto;
         padding: 1.125rem;
         text-align: justify;
+   
 
         .letter-sub-data-content {
             display: flex;
@@ -1173,7 +1174,7 @@ select:focus {
 
             .letter-page-sub-content {
                 padding: 1.5rem 5rem;
-                font-size: var(--fontsize14) !important;
+                font-size: var(--fontsize15) !important;
                 color: #000000;
             }
 
@@ -1203,9 +1204,7 @@ select:focus {
         background-color: var(--input-bg-color) !important;
     }
 
-    p {
-        margin-bottom: 0.5rem !important;
-    }
+  
 
     .border-box {
         border: 1px solid #000;
@@ -1280,12 +1279,13 @@ select:focus {
 
 .letter-header {
     font-weight: 600;
-    font-size: var(--fontsize20);
+    font-size: var(--fontsize18);
 }
 
 .letter-sub-header {
-    font-size: var(--fontsize14) !important;
-    font-weight: 600;
+    font-size: var(--fontsize16) !important;
+    font-weight: 700;
+    color: #000;
 }
 
 .boldnone {
@@ -1293,7 +1293,7 @@ select:focus {
 }
 
 .letter-signature {
-    font-size: var(--fontsize32) !important;
+    font-size: xx-large !important;
     font-family: "autographsignatureFont" !important;
 }
 // letter stylings

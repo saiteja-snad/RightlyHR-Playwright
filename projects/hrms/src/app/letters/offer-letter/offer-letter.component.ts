@@ -263,8 +263,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
-              ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
           };
         });
       },

@@ -14,12 +14,13 @@
       </ng-container>
     </ng-container>
     }
-  </div>
-@if( showSaperationDots){
+    @if(canAccess('view','separation')){
+    @if( showSaperationDots){
     <div class="custom-add-btn" (click)="openModalraise()">
       <i class="bi bi-plus plus-icon me-1"></i>Raise Separation Request
     </div>
-    }
+    }}
+  </div>
   <div class="custom-table-content">
     @if (!isDataLoaded) {
     <table class="w-100">
@@ -155,6 +156,9 @@
       <div class="pt-2">
         <p class="popup-heading mb-0">View Reason</p>
       </div>
+      <div>
+                <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
     </div>
     <div class="custom-main-popup-content">
       <p><b>Reason:</b> {{ decription_Storing_Variable }}</p>

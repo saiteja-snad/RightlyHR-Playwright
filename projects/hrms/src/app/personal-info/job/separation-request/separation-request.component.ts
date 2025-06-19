@@ -368,6 +368,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       .getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
+          console.log(data)
           if (data) {
             this.isDataLoaded = false;
             this.separationDetails = data;
@@ -500,6 +501,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   //function to recall the request
   postRecallRequest() {
+    debugger
     this.isLoading = true;
     let currentDate = new Date();
     let payLoad = {
@@ -613,6 +615,11 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   openModalraise() {
     this.modalService.open(RaiseseparationComponent, { centered: true, backdrop: 'static', keyboard: false, size: 'lg' })
   }
+
+   closeModel() {
+    this.modalService.dismissAll();
+  }
+  
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

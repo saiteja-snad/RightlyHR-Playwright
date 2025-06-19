@@ -412,7 +412,7 @@
               </ng-template> -->
               <div class="letter-div">
                 <div class="text-center mb-5">
-                  <p class="letter-header">OFFER LETTER</p>
+                  <p class="letter-header text-center">OFFER LETTER</p>
                 </div>
                 <div class="row">
                   <div class="col-md-8">
@@ -426,9 +426,9 @@
                           {{prospectiveEmpData.lastName}},</li>
                       </ng-template>
                       <!--Address-->
-                      <li *ngIf="!addresFlag;else address" class="mt-3">Employee Location:</li>
+                      <li *ngIf="!addresFlag;else address">Employee Location:</li>
                       <ng-template #address>
-                        <li class="mt-3">{{prospectiveEmpData.addressLine1}},</li>
+                        <li>{{prospectiveEmpData.addressLine1}},</li>
                         @if (prospectiveEmpData.addressLine2) {
                         <li>{{prospectiveEmpData.addressLine2}},</li>
                         }
@@ -467,8 +467,7 @@
               <p>
                 Your respective <b>Cost to Company</b> as applicable has been detailed in Annexure 2 of
                 this letter. On your joining, you are expected to enter into an agreement, which specifies the details
-                of
-                the scope, terms, and conditions of your employment.
+                of the scope, terms, and conditions of your employment.
               </p>
 
               <ol>
@@ -490,10 +489,9 @@
                   warranted by the Company’s / Client’s work requirement. The employee may also be required to attend
                   duties on Public Holidays as per the exigencies of work.
                 </li>
+
                  <li class="mb-3"><b>Annual Leave:</b> You will be entitled to Paid Leave and
                   Public Holidays yearly as per your eligibility and the Company policies.</li>
-
-               
               </ol>
             </div>
             <!-- <div class="letter-footer">
@@ -502,91 +500,86 @@
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2"
-            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <ol start="4">
-                  
-
-                <li class="mb-3">
-                  <b>Notice Period:</b> Your services can be terminated by you by giving a notice of 90
-                  days in writing or salary in lieu thereof, subject to the Company’s discretion. The Company may
-                  terminate your
-                  employment by giving you salary for 30 days in lieu of the notice. Any employee who breaches the
-                  Company’s terms and conditions under this offer would be terminated immediately without notice.
-                </li>
-                <li>
-                  <b>Other Terms & Conditions of this Offer</b>
-                
-                </li>
+                  <li class="mb-3">
+                    <b>Notice Period:</b> Your services can be terminated by you by giving a notice of 90
+                    days in writing or salary in lieu thereof, subject to the Company’s discretion. The Company may
+                    terminate your
+                    employment by giving you salary for 30 days in lieu of the notice. Any employee who breaches the
+                    Company’s terms and conditions under this offer would be terminated immediately without notice.
+                  </li>
+                  <li>
+                    <b>Other Terms & Conditions of this Offer</b>
+          
+                  </li>
                 </ol>
-                <ul class="bullet">
-                   <li>During your service with the Company, you are expected to dedicate
-                      your whole time and attention to the Company's affairs and abstain from directly or indirectly
-                      engaging in any other business.</li>
-                  <li >Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                
+                <ul class="bullet ps-5">
+                  <li>During your service with the Company, you are expected to dedicate
+                    your whole time and attention to the Company's affairs and abstain from directly or indirectly
+                    engaging in any other business.</li>
+                  <li>Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
                     property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
-
-                  <li >You may be required to travel on Company work, and you will be reimbursed expenses as
+          
+                  <li>You may be required to travel on Company work, and you will be reimbursed expenses as
                     per Company policy. </li>
-
-                  <li >Your Remuneration and the terms and conditions of this offer letter
+          
+                  <li>Your Remuneration and the terms and conditions of this offer letter
                     shall remain confidential and are not to be disclosed to any third party. </li>
-
-                  <li >Upon acceptance of the offer letter, your official Employment ID will
+          
+                  <li>Upon acceptance of the offer letter, your official Employment ID will
                     be created with us and you will entitled to the corporate benefits structure based on the category
                     of
                     work. Your employment with the company as a FTE will stand confirmed subjected to the terms and
                     conditions
                     as per rules, regulations, and policies of The Company.</li>
-
-                  <li >On termination of employment, you will immediately give up to the
+          
+                  <li>On termination of employment, you will immediately give up to the
                     Company all correspondence, specifications, formulae, books, documents, hardware, market data, cost
                     data, literature,
                     drawings, effects or records, backup copies of programs source / data, etc. belonging to the
                     Company and any other Company property or relating to its business and shall not make or retain
                     any copies of the items. </li>
-
-                  <li >If you are absent from work without prior notification & approval as
+          
+                  <li>If you are absent from work without prior notification & approval as
                     per Company policies, you will be liable for disciplinary action depending on the severity of the
                     effects caused by the
                     individual’s absence. </li>
-
-                  <li >If you are absent for a continuous period of 7 days without leave or
+          
+                  <li>If you are absent for a continuous period of 7 days without leave or
                     obtaining your manager’s approval, you will be deemed to have voluntarily terminated your service
                     without notice. </li>
-
-                  <li >All the terms and conditions of service may be modified or changed at
+          
+                  <li>All the terms and conditions of service may be modified or changed at
                     the Company’s discretion. You will abide by all the rules and regulations of the Company which are
                     in force
                     from time to time. </li>
                 </ul>
-
+          
                 <p>To confirm please send your <b>acceptance</b> of the offer via reply
                   to the same <b>email</b> on or before <b> {{prospectiveEmpData.offerExpiryDate | dateformat}}.</b>
                   We request you to please carry a signed copy of the offer letter & other required documents
                   (<b>Annexure 1</b>) on the day of your joining.
                 </p>
-
+          
                 <p>We wish you a long, rewarding and fulfilling career experience and look
                   forward to having you on board with us. Please visit our website <a href="" target="_blank"
                     rel="noopener noreferrer"> www.snaddevelopers.com</a>
-                  for more information about our Company. </p>
-
+                  for more information about our Company.</p>
+          
                 <p>All other detailed terms and conditions of your employment will be specified
                   in the appointment letter, invention assignment and confidentiality agreement and the Company policies
                   which will be provided to you separately. This Offer Letter along with the appointment letter,
                   invention assignment and confidentiality agreement and the Company policies collectively form a part
-                  of your employment conditions. </p>
-
-                
+                  of your employment conditions.</p>
               </div>
             </div>
-
           </div>
 
           <!--page-3-->
@@ -665,28 +658,28 @@
                   <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.
                 </div>
                 <div class="mb-1">
-                  <div class="mb-3">
+                  <div class="mb-1">
                     <div class="box"></div> Certificates' supporting your educational qualifications along with marks
                     sheet
                   </div>
                   <ul class="list-style-none">
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Xth certificate & marks sheet
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> XII th certificate & marks sheet
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Graduation Degree certificate & Semester/year-wise mark sheets
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Master's Degree certificate & Semester/year-wise mark sheets (If
                       Applicable)
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Diploma/PG Diploma certificate & Transcripts (If Applicable)
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Any other Certificate with supporting documents
                     </li>
                   </ul>
@@ -941,10 +934,8 @@
           <div class="letter-page-content my-4" id="pdfContent6">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-
-
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
-                <ol class="list-style-none mb-0">
+                <ol class="list-style-none mb-2 pt-2">
                   <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
                     deductions.</li>
                   <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>

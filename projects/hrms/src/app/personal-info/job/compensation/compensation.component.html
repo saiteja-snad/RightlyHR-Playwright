@@ -1,15 +1,12 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-
         <div><span class="component-sub-header">Compensations</span></div>
+
         @if(canAccess('create' ,'compensation')){
-        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-        !==
-        'trainee inactive' )){
-        <div class="custom-add-btn" (click)="openModal(addcomfDetailes)"><i class="bi bi-plus plus-icon me-1"></i>Add
-            New</div>}
+        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+        <div class="custom-add-btn" (click)="openModal(addcomfDetailes)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+        }
         }
     </div>
 
@@ -18,7 +15,7 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Effective Date</th>
+                    <th class="text-center">Effective Date</th>
                     <th>Overtime Eligibility</th>
                     <th>Reason</th>
                     <th>Frequency</th>
@@ -26,10 +23,8 @@
                     <th>Amount (Yearly CTC)</th>
                     @if(canAccess('update','compensation') ||
                     canAccess('delete','compensation')){
-                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-                    !== 'trainee inactive' )){
+                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                         <th class="text-center">{{"Action" | translate}}</th>
                     }
                     }
@@ -38,19 +33,16 @@
             <tbody>
                 <ng-container *ngIf="((compensationdetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let item of compensationdetails | async">
-                        <td>{{item.compeffectivedate | dateformat}}</td>
+                        <td class="text-center text-nowrap">{{item.compeffectivedate | dateformat}}</td>
                         <td>{{item.overtimeeligibility}}</td>
                         <td>{{item.reason}}</td>
                         <td>{{item.frequency}}</td>
-                        <td>{{item.paytype}}</td>
+                        <td class="text-center">{{item.paytype}}</td>
                         <td>{{item.compensationamount}}</td>
                         @if(canAccess('update','compensation') ||
                         canAccess('delete','compensation')){
-                        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
-                        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
-                        !==
-                        'trainee inactive' )){
+                        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -61,9 +53,7 @@
                                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase()
-                                    !==
-                                    'trainee inactive' )){
+                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="openModalupdate(updatecomfDetailes, item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
@@ -75,9 +65,7 @@
                                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
-                                    empinfo?.empstatus?.toLowerCase()
-                                    !==
-                                    'trainee inactive' )){
+                                    empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
@@ -91,12 +79,11 @@
                         }
                         }
                     </tr>
-
                 </ng-container>
 
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </tbody>
@@ -107,7 +94,6 @@
         }
     </div>
 </div>
-
 
 <ng-template #addcomfDetailes let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -120,7 +106,6 @@
             <form autocomplete="off" [formGroup]="compForm" (ngSubmit)="postcompensation(compForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-
                         <label class="form-label custom-label mb-2">Effective Date<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" [min]="joiningDate"
@@ -132,7 +117,6 @@
                         <div class="error-msg" *ngIf="compForm.get('compeffectivedate')?.hasError('dateInvalid') ">
                             Effective Date cannot be less than Joining date
                         </div>
-
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -159,9 +143,7 @@
                         </div>
                     </div>
 
-
                     <div class="col-md-6 mb-3">
-
                         <label class="form-label custom-label mb-2">Overtime Eligibility <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
@@ -173,7 +155,6 @@
                             *ngIf="compForm.get('overtimeeligibility')?.invalid && compForm.get('overtimeeligibility')?.touched ">
                             Overtime Eligibility is required
                         </div>
-
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -201,19 +182,17 @@
                                 amount (positive and non-zero).</div>
                         </div>
                     </div>
-
                 </div>
+
                 <div class="d-flex justify-content-end gap-3 mt-2">
                     <button type="reset" class="custom-btn btn-secondary"
                         (click)="modal.dismiss();compForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="compForm.invalid">Submit</button>
                 </div>
             </form>
-
         </div>
     </div>
 </ng-template>
-
 
 <ng-template #updatecomfDetailes let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -226,7 +205,6 @@
             <form autocomplete="off" [formGroup]="compupdateForm" (ngSubmit)="updatecompensation(compupdateForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-
                         <label class="form-label custom-label mb-2">Effective Date<span
                                 class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="compeffectivedate"
@@ -267,9 +245,7 @@
                         </div>
                     </div>
 
-
                     <div class="col-md-6 mb-3">
-
                         <label class="form-label custom-label mb-2">Overtime Eligibility <span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
@@ -319,11 +295,9 @@
                         [disabled]="compupdateForm.invalid">Update</button>
                 </div>
             </form>
-
         </div>
     </div>
 </ng-template>
-
 
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>

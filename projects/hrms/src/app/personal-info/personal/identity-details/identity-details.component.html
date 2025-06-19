@@ -16,7 +16,7 @@
                 <tr>
                     <th>Identity Type</th>
                     <th>Identity Number</th>
-                    <th>Attachment</th>
+                    <th class="text-center">Attachment</th>
                     @if(canAccess('update','identity') || canAccess('delete','identity')){
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                     employedata?.empstatus?.toLowerCase()
@@ -29,7 +29,7 @@
                     <tr *ngFor="let identityDetails of getIdentitydetails | async">
                         <td>{{ identityDetails.identityType }}</td>
                         <td>{{ identityDetails.identityNumber }}</td>
-                        <td>
+                        <td class="text-center">
                             <span *ngIf="identityDetails.attachment;else noData" class="download-text"
                                 (click)="onSelectIdentityAttachmentDownload(identityDetails)">
                                 <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template

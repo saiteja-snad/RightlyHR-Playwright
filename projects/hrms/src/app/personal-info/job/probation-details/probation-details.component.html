@@ -121,17 +121,15 @@
                             <th>Status</th>
                             <th class="text-center">Extended Date</th>
                             <th>comments </th>
-                            <th>Commented Date</th>
+                            <th class="text-center">Commented Date</th>
                             <th>Commented by</th>
-                            <th>Attachment</th>
+                            <th class="text-center">Attachment</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let comment of appcomment">
-                            <td class="text-center">{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
-                                '-'}}</td>
-                            <td class="text-center">{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
-                                number:'1.2-2') : '-'}}</td>
+                            <td class="text-center">{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) : '-'}}</td>
+                            <td class="text-center">{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating | number:'1.2-2') : '-'}}</td>
                             <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
                             <td class="text-center">{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}
                             </td>
@@ -143,13 +141,12 @@
                                     <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>
                             </td>
-                            <td>{{comment.addedDate ? (comment.addedDate | dateformat) : 'NA'}}</td>
+                            <td class="text-center text-nowrap">{{comment.addedDate ? (comment.addedDate | dateformat) : 'NA'}}</td>
                             <td>{{comment.employeeName}} - {{comment.fusionEmployeeId}}</td>
-                            <td>
-                                <a type="button" class="view-btn" (click)="openview(probationformpopup);
-                                setformView(this.empdata.employeeId,comment?.metadata?.responseId)">
-                                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
-                                </a>
+                            <td class="text-center">
+                                <div (click)="openview(probationformpopup); setformView(this.empdata.employeeId,comment?.metadata?.responseId)">
+                                    <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="doc-view-icon cursor">
+                                </div>
                             </td>
                         </tr>
                     </tbody>

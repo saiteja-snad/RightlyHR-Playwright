@@ -63,7 +63,7 @@ export class LettersTabComponent {
       permission: { feature: 'Dashboard Generate Documents Appointment Letter', action: 'view' }
     },
     {
-      label: 'Apprisal Letter',
+      label: 'Appraisal Letter',
       link: '/letters/apprisal-letter',
       icon: '/letters-icon/appraisal-letter-icon.png',
       subject: MODULE_INFOS.APPRAISAL_LETTER_MODULE_INFO,

@@ -7,7 +7,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../modules-info';
-
 @Component({
   selector: 'app-all-employees-header',
   imports: [CommonModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule],
@@ -37,6 +36,7 @@ export class AllEmployeesHeaderComponent implements OnInit {
     const url = this.router.url;
     this.ComponentnameDisplay();
     this.routeToInfoMap = {
+      '/employee-management/all-employees': MODULE_INFOS.ALL_EMPLOYEES_MODULE_INFO,
       '/employee-management/active-employees': MODULE_INFOS.ACTIVE_EMPLOYEES_MODULE_INFO,
       '/employee-management/inactive-employees': MODULE_INFOS.INACTIVE_EMPLOYEES_MODULE_INFO,
       '/employee-management/prospective-employees': MODULE_INFOS.PROSPECTIVE_EMPLOYEES_MODULE_INFO,
@@ -50,7 +50,10 @@ export class AllEmployeesHeaderComponent implements OnInit {
   }
 
   ComponentnameDisplay() {
-    if (this.router.url === '/employee-management/active-employees') {
+    if (this.router.url === '/employee-management/all-employees') {
+      this.componentname = 'All Employees';
+    }
+    else if (this.router.url === '/employee-management/active-employees') {
       this.componentname = 'Active Employees';
     }
     else if (this.router.url === '/employee-management/inactive-employees') {

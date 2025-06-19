@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component} from '@angular/core';
+import { Component, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -22,7 +22,7 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../l
   styleUrl: './relieving-letter.component.scss'
 })
 
-export class RelievingLetterComponent {
+export class RelievingLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   relievingTemplate: any | string | ArrayBuffer | null = null; 
   result = {} as any;

@@ -1151,6 +1151,7 @@ select:focus {
         height: calc(100dvh - 8rem);
         overflow: auto;
         padding: 1.125rem;
+        text-align: justify;
 
         .letter-sub-data-content {
             display: flex;

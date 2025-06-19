@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
@@ -24,7 +24,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ProbationExtensionLetterComponent {
+export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
   employeedetails :IEmployee[]=[];

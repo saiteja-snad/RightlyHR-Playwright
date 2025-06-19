@@ -308,8 +308,6 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.checkIfAddressesAreSame();
   }
   
-
-
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

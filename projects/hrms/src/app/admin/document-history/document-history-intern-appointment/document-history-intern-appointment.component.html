@@ -29,7 +29,7 @@
             </thead>
             <tbody>
                 @if(offerLetters.length > 0){
-                @for (appointmentLetter of offerLetters| appointmentletterpipe : searchValue; ; track
+                @for (appointmentLetter of offerLetters | appointmentletterpipe : searchValue; ; track
                 appointmentLetter.id){
                 <tr>
                     <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>

@@ -10,6 +10,8 @@ import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import moment from 'moment';
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-document-history-appointment-letter',
   imports: [
@@ -20,8 +22,9 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     FormsModule,
     AppointmentletterpipePipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent
-],
+    DataLoaderContentComponent,
+    DatePicker
+  ],
   templateUrl: './document-history-appointment-letter.component.html',
   styleUrl: './document-history-appointment-letter.component.scss',
 })
@@ -31,9 +34,17 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
   dataloader: boolean = false;
+  selectedDate: Date = new Date();
+  selectedMonth: number | null = null;
+  selectedYear: number | null = null;
+  maxMonth: Date = new Date();
+  offerLetters: any[] = [];
   constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
+    const today = new Date();
+    this.selectedMonth = today.getMonth() + 1; 
+    this.selectedYear = today.getFullYear();
     this.getAppointmentLetters();
   }
 
@@ -43,6 +54,7 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
       next: (data: any) => {
         this.dataloader = false;
         this.AppointmentLetters = data;
+        this.filterByMonth();
       },
       error: (error: any) => {
         this.dataloader = false;
@@ -52,6 +64,24 @@ export class DocumentHistoryAppointmentLetterComponent implements OnInit, OnDest
         this.dataloader = false;
       }
     });
+  }
+
+  filterByMonth() {
+    if (this.selectedMonth && this.selectedYear) {
+      this.offerLetters = this.AppointmentLetters.filter(item => {
+        const date = moment(item.appointmentSentDate);
+        return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
+      });
+    } else {
+      this.offerLetters = this.AppointmentLetters; // show all if no filter
+    }
+  }
+
+  onMonthChange(value: any) {
+    const selected = moment(value);
+    this.selectedMonth = selected.month() + 1;
+    this.selectedYear = selected.year();
+    this.filterByMonth();
   }
 
   onSelectDownload(file: any) {

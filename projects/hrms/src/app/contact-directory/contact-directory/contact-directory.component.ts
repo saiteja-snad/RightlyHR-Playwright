@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
@@ -17,7 +17,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
   templateUrl: './contact-directory.component.html',
   styleUrl: './contact-directory.component.scss'
 })
-export class ContactDirectoryComponent {
+export class ContactDirectoryComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   contactData: any;
   moduleinfo: any
@@ -77,6 +77,10 @@ export class ContactDirectoryComponent {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 
 }

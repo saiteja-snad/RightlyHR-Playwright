@@ -78,7 +78,7 @@ export class LettersInfoComponent {
       this.componentname = 'Address proof letter';
     }
     else if (this.router.url === '/letters/apprisal-letter') {
-      this.componentname = 'Apprisal Letter';
+      this.componentname = 'Appraisal Letter';
     }
     else if (this.router.url === '/letters/promotion-letter') {
       this.componentname = 'Promotion Letter';

@@ -4,27 +4,26 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import {  Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
-import dayjs from 'dayjs';
-import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
+import dayjs, { Dayjs } from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
-
-
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-regularization-reports',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, Select, DatePicker, DataLoaderContentComponent, NoDataFoundComponent, ReportsHeaderComponent],
   templateUrl: './regularization-reports.component.html',
   styleUrl: './regularization-reports.component.scss'
 })
+
 export class RegularizationReportsComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
@@ -53,8 +52,8 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
   localeOptions: any;
+
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -65,7 +64,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-      this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -86,7 +85,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       dateRange: [null],
       team: [null]
     });
-
     this.regularizationReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
@@ -94,18 +92,10 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
 
   get isPermissionGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.regularizationReportForm.value;
-    
     // Check if any field has a value
-    return !(
-        employee ||
-        manager ||
-        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
-        leaveCategory ||
-        team
-    );
+    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
 
-  
   getAllEmployees() {
     const loggedInUser = this.authService.getToken();
     this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
@@ -119,12 +109,10 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
                 }${employee.lastName}`,
             };
           });
-
           this.employeeDetails = [
             { fullName: 'All Employees', employeeId: 'all' },
             ...employeedata
           ];
-
         },
         error: (reason: any) => {
           console.log(reason);
@@ -138,7 +126,8 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
         this.teamManagerDetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
       },
@@ -165,16 +154,13 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
   generateRegularizationReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
     const formValue = this.regularizationReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
-
-    const noFilterProvided =
-      !formValue.employee &&
-      !formValue.leaveCategory &&
-      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
-      !formValue.month &&
-      !formValue.manager && !formValue.team;
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    //filter condition
+    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
 
     if (noFilterProvided) {
       this.filteredRegularizationData = [];
@@ -189,20 +175,20 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       const ids = this.selectLeaveEmployeeIds?.join(',');
       request.employeeId = ids;  // The selected employee IDs are set here
     }
+
     if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee?.employeeId;
     }
+
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
 
     // Apply date range if provided
-    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
-      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
-      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
-      request.StartDate = startDate;
-      request.EndDate = endDate;
+    if (startDate && endDate) {
+      request.StartDate = this.formatDate(this.parseDate(startDate));
+      request.EndDate = this.formatDate(this.parseDate(endDate));
     }
 
     // Apply manager name if provided
@@ -243,7 +229,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       subLocation: 'SUB LOCATION',
       utilizedCount: 'UTILIZED COUNT',
       totalDuration: 'Total Duration'
-
     };
 
     const NEW_SEQUENCE: string[] = [
@@ -256,7 +241,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       'UTILIZED COUNT',
       'Total Duration'
     ];
-
 
     const modifiedData = this.filteredRegularizationData.map(record => {
       const modifiedRecord: any = {};
@@ -282,7 +266,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       });
       return modifiedRecord;
     });
-
 
     // Create a new empty worksheet
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
@@ -312,6 +295,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
       ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
     });
+
     // Apply styles to data rows
     for (let rowIndex = 2; rowIndex < modifiedData.length + 2; rowIndex++) {
       NEW_SEQUENCE.forEach((columnName, index) => {
@@ -345,20 +329,20 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
-
     return Math.max(10, maxWidth);
   }
 
   onClick(employeeIds: any) {
     if (employeeIds.value) {
-      console.log(employeeIds);
       this.filteredleaveRecords = false;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
       // If "All Employees" is selected, set employeeId as an empty array or a special flag
       if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => 
+          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => 
+          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
         this.selectedEmployeeId.push(employeeIds.value.employeeId);
@@ -372,7 +356,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           if (response) {
             const myTeam = response.filter((e: any) => e.isAccess);
             this.getEmployeeInfo = myTeam.map((employee: any) => {
@@ -383,7 +366,6 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
                   }${employee.lastName}`,
               };
             });
-
             this.getEmployeeInfo.unshift({
               fullName: 'All Employees',
               fusionEmpId: this.loggedInUser.fusionEmpId,
@@ -393,6 +375,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   navigation() {
     this.router.navigate(['/reports']);
   }
@@ -401,5 +384,4 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

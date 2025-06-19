@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -22,7 +22,7 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
   templateUrl: './rejected-tickets.component.html',
   styleUrl: './rejected-tickets.component.scss'
 })
-export class RejectedTicketsComponent {
+export class RejectedTicketsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
     searchValue!:string;
     empinfo = {} as Ipersonal;

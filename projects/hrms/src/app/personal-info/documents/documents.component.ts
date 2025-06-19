@@ -1,4 +1,4 @@
-import { Component, SimpleChanges } from '@angular/core';
+import { Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { DocumentService } from '../../services/document/document.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { LastValuePipe } from '../../Pipes/last-value/last-value.pipe';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
-import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';
 import { FileSizePipe } from "../../Pipes/file-size.pipe";
@@ -16,16 +16,17 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
-
 import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule,Skeleton, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, Skeleton, TranslateModule,
+     CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
-export class DocumentsComponent {
+
+export class DocumentsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   spinnerLoader = false;
   selectedMainFolder = {} as IFolders
@@ -42,34 +43,31 @@ export class DocumentsComponent {
   file: any;
   showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService,
+     private fb: FormBuilder, private http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
     this.getMainFolders()
     this.initializejobForm();
-
   }
+
   initializejobForm(): void {
     this.uploadfrom = this.fb.group({
       filename: ['', Validators.required],
-
     });
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.empdata = JSON.parse(localStorage.getItem("personaldata") || '{}');
-
     } else if (fullPath.startsWith('/myinfo')) {
       this.empdata = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-
     }
   }
 
@@ -105,29 +103,26 @@ export class DocumentsComponent {
     });
   }
 
-
-
   toggleFolder(folder: any): void {
     this.Files = []// or however you're using getVisibleFiles
     this.selectedFile = null
-      this.searchfolder = ''
+    this.searchfolder = ''
     // Collapse all other folders
     this.folders.forEach((f) => {
       if (f !== folder) {
         f.expanded = false; // Collapse other folders
       }
     });
-
     folder.expanded = !folder.expanded;
     this.selectedMainFolder = folder;
     if (!folder.subfolders || folder.subfolders.length === 0) {
       this.Files = []// or however you're using getVisibleFiles
       this.selectedFile = null
     }
-
   }
+
   onSubFolderSelected(subFolder: any): void {
-     this.searchfolder = ''
+    this.searchfolder = ''
     this.selectedFile = subFolder;
     if (subFolder.isDirectory) {
       this.getAllFiles();
@@ -135,12 +130,13 @@ export class DocumentsComponent {
       this.Files = [] as IFolders[];
     }
   }
+
   getVisibleFiles() {
     return this.Files.filter(file => file && !file.isNotVisible);
   }
-  getAllFiles() {
-    this.loading = true
 
+  getAllFiles() {
+    this.loading = true;
     // Check if it's organization policy folder by checking the full path
     const isOrgPolicyFolder = this.selectedFile?.name.includes('FusionDocuments/organizationPolicy');
     // Fix the template literal syntax
@@ -180,7 +176,6 @@ export class DocumentsComponent {
     }
   }
 
-
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
@@ -197,12 +192,9 @@ export class DocumentsComponent {
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
         this.uploadfrom.get('filename')?.reset();
         this.uploadfrom.get('filename')?.markAsUntouched();
-
         return;
       }
     }
-
-
   }
 
   filterFolder() {
@@ -213,11 +205,9 @@ export class DocumentsComponent {
       )
     );
     // console.log(this.Files);
-
     this.Files.forEach((element) => {
       const found = filteredData.findIndex((item) => item.name == element.name);
       // console.log(found);
-
       if (found >= 0) {
         element.isNotVisible = false;
       } else {
@@ -226,12 +216,10 @@ export class DocumentsComponent {
     });
   }
 
-
   fileUploaded() {
     if (this.selectedFile?.name) {
       this.spinnerLoader = true;
       let filePath = `${this.selectedFile?.name}/${this.empdata.employeeId}`;
-
       this.subscription = this.http
         .uploadFileWithQuery(
           'FileSystem/uploadfiletodirectory',
@@ -240,7 +228,6 @@ export class DocumentsComponent {
         )
         .subscribe({
           next: (data: any) => {
-
             this.spinnerLoader = false;
             this.getAllFiles();
             this.uploadfrom.reset();
@@ -248,15 +235,12 @@ export class DocumentsComponent {
               'File uploaded successfully',
             );
             this.modalService.dismissAll();
-
           },
           error: (reason: any) => {
             this.spinnerLoader = false;
             this.conformationPopup.openErrorModal(reason.error.message,)
           },
-
         });
-
     }
   }
 
@@ -270,8 +254,6 @@ export class DocumentsComponent {
             ?.split(':')[1]
             .split('=')[1];
           let blob: Blob = res.body as Blob;
-          console.log(fileName);
-
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
           let filename = file.name.split('/')[file.name.split('/').length - 1];
@@ -282,4 +264,9 @@ export class DocumentsComponent {
       });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

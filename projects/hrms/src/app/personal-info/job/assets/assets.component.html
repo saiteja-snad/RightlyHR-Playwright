@@ -8,15 +8,14 @@
         <table class="w-100">
             <thead>
                 <tr>
-
                     <th>Asset ID</th>
                     <th>Asset Category</th>
                     <th>Asset Sub Category</th>
                     <th>Asset Model</th>
                     <th>Serial Number</th>
                     <!-- <th>Assigined by</th> -->
-                    <th>Allocated Date</th>
-                    <th>Released Date</th>
+                    <th class="text-center">Allocated Date</th>
+                    <th class="text-center">Released Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,21 +25,16 @@
                         <td>{{ data.assetMaster[0]?.assetCategory }}</td> <!-- Adjusted to access first assetMaster -->
                         <td>{{ data.assetMaster[0]?.assetSubCategory }}</td>
                         <td>{{data.assetMaster[0]?.assetModel }}</td>
-
                         <td>{{ data.assetMaster[0]?.serialNumber }}</td>
                         <!-- <td>{{ data.assetMaster[0]?.createdBy }}</td> -->
-                        
-                        <td>{{ data.allocatedDate |dateformat }}</td>
-                        <td>{{ data.returnDate ? (data.returnDate | dateformat) : 'N/A'}}</td>
-
+                        <td class="text-center text-nowrap">{{ data.allocatedDate |dateformat }}</td>
+                        <td class="text-center text-nowrap">{{ data.returnDate ? (data.returnDate | dateformat) : 'N/A'}}</td>
                     </tr>
                 </ng-container>
 
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </tbody>

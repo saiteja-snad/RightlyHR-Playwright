@@ -317,7 +317,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
-      message = 'Processing Selected CompOff Requests...';
+      message = 'Processing Selected Comp Off Requests...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -331,7 +331,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
-      message = 'Processing Selected CompOff Requests...';
+      message = 'Processing Selected Comp Off Requests...';
     }
     this.sharedModalService.openLoaderModal(message);
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
@@ -341,9 +341,9 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           this.requestSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
             if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Requests Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off requests processed successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off Request Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, ' Comp Off request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -408,9 +408,9 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
               if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off requests approved successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, ' Comp Off request Approved successfully');
             }
             } else {
               this.openModal(this.leaveSummary);
@@ -483,9 +483,9 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
               if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Requests Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Comp Off requests rejected successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected CompOff Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, ' Comp Off request rejected successfully');
             }
             } else {
               this.openModal(this.leaveSummary);

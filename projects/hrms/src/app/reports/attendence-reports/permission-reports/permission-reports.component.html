@@ -1,12 +1,7 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <!-- Header -->
-
-    <div class="heading-content">
-      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i
-            class="bi bi-chevron-double-right"></i></span></div>
-      <div class="component-header">Permission Report</div>
-    </div>
+    <app-reports-header/>
 
     <form autocomplete="off" [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
       <div class="d-flex align-items-center gap-3">
@@ -20,10 +15,9 @@
         </button>
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
-          <div>
-            <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" placeholder="Please select date"
-              formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
+             [showIcon]="true" [readonlyInput]="true" />
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -21,7 +21,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   encapsulation: ViewEncapsulation.None
 })
 
-export class WelcomeLetterComponent {
+export class WelcomeLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   bankloanLetterData = {} as any;
   bankLoanTemplate: any | string | ArrayBuffer | null = null;
@@ -194,7 +194,7 @@ export class WelcomeLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/generatewelcomeemail/${this.selectedEmployee.employeeId}`, payload).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Welcome Letter Generated Successfully')
+        this.conformationPopup.openSuccessModal('Welcome letter generated successfully')
       },
       error: (err: any) => {
         this.spinnerLoader = false;

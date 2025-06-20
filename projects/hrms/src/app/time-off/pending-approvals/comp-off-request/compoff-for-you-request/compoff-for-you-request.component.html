@@ -30,7 +30,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" autocomplete="off" (ngModelChange)="onSearchChange()">
+             placeholder="Search by employee name / availed" aria-label="Username" autocomplete="off" (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -129,9 +129,7 @@
                 
             </p-table>
         }@else{
-       
             <app-data-loader-content />
-        
         }
     </div>
 </div>
@@ -183,7 +181,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Do you really want to reject selected requests?' | translate}}</p>
+            <p class="confirmation-text">{{'Do you really want to reject selected request?' | translate}}</p>
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">

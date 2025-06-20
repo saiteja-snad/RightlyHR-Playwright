@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './allocated-desk-list.component.html',
   styleUrl: './allocated-desk-list.component.scss'
 })
-export class AllocatedDeskListComponent {
+export class AllocatedDeskListComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   datesShouldNotBeEqual = false
   empinfo = {} as any
@@ -382,7 +382,7 @@ export class AllocatedDeskListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted Successfully')
+          this.conformationPopup.openSuccessModal('Desk has been successfully reallocated')
           ///this.updatedeskallowcation(this.assiginForm)
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null, null, this.Status)
@@ -395,7 +395,7 @@ export class AllocatedDeskListComponent {
         },
         error: (error) => {
           console.log('Error:', error);
-          this.conformationPopup.openErrorModal('Employee has a Desk Allocated!');
+          this.conformationPopup.openErrorModal('A desk is already assigned to this employee');
         }
       });
     } else {
@@ -456,7 +456,7 @@ export class AllocatedDeskListComponent {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request submitted Successfully')
+          this.conformationPopup.openSuccessModal('Desk has been successfully released')
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null, null, this.Status);
 

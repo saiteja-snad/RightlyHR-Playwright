@@ -3,7 +3,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+            placeholder="Search by employee name  " aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
@@ -12,8 +12,8 @@
             <thead>
                     <th>{{'Employee ID' | translate}} </th>
                     <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Probation Start Date' | translate}}</th>
-                    <th>{{'Probation End Date' | translate}}</th>
+                    <th class="text-center">{{'Probation Start Date' | translate}}</th>
+                    <th class="text-center">{{'Probation End Date' | translate}}</th>
                     <th class="text-center">{{'Approved History' | translate}}</th>
                     @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                     <th class="text-center">{{'Action' | translate}}</th>
@@ -24,8 +24,8 @@
                     <tr *ngFor="let item of filteredDetails">
                         <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
                         <td>{{item.entity?.employeeName ?? '-'}}</td>
-                        <td>{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
-                        <td>{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
+                        <td class="text-center">{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
+                        <td class="text-center">{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
                         <td class="text-center">
                             <div *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
                                 <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
@@ -40,30 +40,27 @@
                         <td class="text-center">
                             <div>
                                 @if(rbac.allowedToAccess('Probation Details.update') ) {
-                                <button class="custom-btn btn-primary"
-                                    (click)="handleRequests(item,ProbationProcess); getComments(item.entity?.prApproverComments)"
-                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">{{'Process'
-                                    | translate}}</button>
+                                <button class="custom-btn btn-primary" (click)="handleRequests(item,ProbationProcess); 
+                                getComments(item.entity?.prApproverComments)" *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">
+                                {{'Process' | translate}}</button>
                                 }
                                 @if(rbac.allowedToAccess('Probation Details.update') ) {
-                                <button class="custom-btn btn-primary"
-                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                    [routerLink]="['/time-off/pending-approvals/assessmentform']"
-                                    (click)="setData(item)">{{'Assessment form' | translate}}</button>
+                                <button class="custom-btn btn-primary" *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
+                                [routerLink]="['/time-off/pending-approvals/assessmentform']" (click)="setData(item)">{{'Assessment form' | translate}}</button>
                                 }
                             </div>
                         </td>
                         }
                     </tr>
                     <tr *ngIf="filteredDetails.length === 0">
-                        <app-no-data-found></app-no-data-found>
+                        <app-no-data-found />
                     </tr>
                 </ng-container>
             </tbody>
         </table>
     }
     @else{
-         <app-data-loader-content />
+        <app-data-loader-content />
     }
     </div>
 </div>
@@ -85,10 +82,10 @@
                 <table class="w-100">
                     <thead>
                         <tr>
-                            <th>Approver Role</th>
-                            <th>Overall Rating</th>
+                            <th class="text-center">Approver Role</th>
+                            <th class="text-center">Overall Rating</th>
                             <th>Status</th>
-                            <th>Extended Date</th>
+                            <th class="text-center">Extended Date</th>
                             <th>Comments </th>
                             <th>Commented Date</th>
                             <th>Commented by</th>
@@ -98,15 +95,14 @@
                     <tbody>
                         @for (comment of myApproverComments; track $index) {
                         <tr>
-                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) : '-'}}</td>
-                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating | number:'1.2-2') : '-'}}</td>
+                            <td class="text-center">{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) : '-'}}</td>
+                            <td class="text-center">{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating | number:'1.2-2') : '-'}}</td>
                             <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
-                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}
-                            </td>
+                            <td class="text-center">{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}</td>
                             <td>
                                 <div>
                                     <span class="ms-2" *ngIf="comment?.comments;else popupcomments">
-                                        <app-info-icon triggers="mouseenter:mouseleave" ngbPopover="{{comment?.comments}}" />
+                                        <app-info-icon ngbPopover="{{comment?.comments}}" />
                                     </span>
                                     <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>
@@ -161,7 +157,7 @@
                             (click)="toggleApprove()">
                         <label class="form-check-label ms-2" for="flexRadioEarly">{{'Process' | translate}}</label>
                     </div>
-                     @if(selectedData.probationextendedcount<probationExtensionTimes){
+                     @if((selectedData.probationextendedcount?selectedData.probationextendedcount:0)<probationExtensionTimes){
                     <div class="form-check form-check-inline ms-3">
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
                             (click)="toggleExtend()">

@@ -6,7 +6,7 @@
             <div class="edit-icon-content">
                 <label for="formFile-personalinfo" class="form-label">
                     <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>
-                <input class="form-control d-none" type="file" id="formFile-personalinfo" accept=".jpg"
+                <input class="form-control d-none" type="file"  accept="image/*" id="formFile-personalinfo" 
                     (change)="chooseNewProfile($event)">
             </div>
         </div>
@@ -43,7 +43,9 @@
                 <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
                 <span class="link-text">
                     <span *ngIf="empdata?.workPhone">
-                        <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u>
+                        <!-- <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u> -->
+                        <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') +
+                            empdata?.workPhone }}</u>
                     </span>
                     <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
                         <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>

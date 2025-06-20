@@ -43,18 +43,16 @@
                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                      class="bi bi-search"></i></span>
                <input type="search" [(ngModel)]="searchfolder" (input)="filterFolder()"
-                  class="form-control custom-search-input" placeholder="File name" aria-label="Username"
+                  class="form-control custom-search-input" placeholder=" Search by file name" aria-label="Username"
                   aria-describedby="basic-addon1">
             </div>
 
             <div *ngIf="selectedFile">
-               @if((empdata?.empstatus?.toLowerCase() !== 'prospective' &&
-               empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
-               && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !==
-               'trainee inactive' )){
+               @if((empdata?.empstatus?.toLowerCase() !== 'prospective' && empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
+               && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                @if(canAccess('view','upload')) {
-               <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
-                     class="bi bi-upload me-2"></i>Upload File</button>
+               <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)">
+                  <i class="bi bi-upload me-2"></i>Upload File</button>
                }
                }
             </div>
@@ -79,8 +77,8 @@
             <table class="w-100">
                <thead>
                   <th>File name</th>
-                  <th>Created Date</th>
-                  <th>Size</th>
+                  <th class="text-center">Created Date</th>
+                  <th class="text-center">Size</th>
                    @if(canAccess('view','dowload')) {
                   <th class="text-center">Action</th>
                    }
@@ -90,14 +88,13 @@
                      <ng-container *ngFor="let file of getVisibleFiles()">
                         <tr>
                            <td>{{ file.name | lastValue }}</td>
-                           <td>{{ file.createdOn | dateformat }}</td>
-                           <td>{{ file.contentLength | fileSize }}</td>
-                            @if(canAccess('view','dowload')) {
+                           <td class="text-center">{{ file.createdOn | dateformat }}</td>
+                           <td class="text-center text-nowrap">{{ file.contentLength | fileSize }}</td>
+                           @if(canAccess('view','dowload')) {
                            <td class="text-center">
-                              <div>
-                              </div>
+                              <div></div>
                            </td>
-                        }
+                           }
                         </tr>
                      </ng-container>
                   </ng-container>

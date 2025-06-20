@@ -36,6 +36,7 @@ export const permissionsData = [
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Status', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Background check Status', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Acknoledgement', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Notice Period', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Frequency', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Paytype', View: false, Update: false, Create: false, Delete: false },
@@ -277,7 +278,13 @@ export const permissionsData = [
 
   //On Behalf Of Sub Tabs Section
   { fields: 'Waiting For Approval (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancelled (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team On Behalf Of', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of All Employees', View: false, Update: false, Create: false, Delete: false },
 
 
   //Attendance 
@@ -365,6 +372,8 @@ export const permissionsData = [
   { fields: 'Comp Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team On Behalf Of Approvals', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of Approvals All Employees', View: false, Update: false, Create: false, Delete: false },
 
 
 
@@ -409,6 +418,11 @@ export const permissionsData = [
   { fields: 'Attendance All Employees List(Leaves)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Leaves)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(Leave)', View: false, Update: false, Create: false, Delete: false },
+
+
+  { fields: 'Attendance All Employees List(Leave Summary)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Team Manager List(Leave Summary)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team Report(Leave Summary)', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'Attendance All Employees List(Compoff)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Compoff)', View: false, Update: false, Create: false, Delete: false },

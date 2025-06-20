@@ -67,7 +67,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   initiateForm() {
     this.newExpenseForm = this.fb.group({
       expensesTitle: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
-      approvalemail: [null, Validators.required],
+      // approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
     });
@@ -327,7 +327,7 @@ fileupload(event: any, index: number): void {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
-        approverEmail: form.value.approvalemail.value,
+        // approverEmail: form.value.approvalemail.value,
         additional_details: form.value.additional_details,
         status: 'Waiting for Approval',
         employeeId: this.empinfo.employeeId,
@@ -364,7 +364,7 @@ fileupload(event: any, index: number): void {
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
+              this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
               this.getexpensesheaderbyid(this.empinfo.employeeId);
             }
           },
@@ -380,7 +380,7 @@ fileupload(event: any, index: number): void {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expense request submitted successfully!');
+              this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
               this.newExpenseForm.reset();
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
@@ -409,7 +409,7 @@ fileupload(event: any, index: number): void {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
         expenseId: this.selectedexpensesid,
-        approverEmail: form.value.approvalemail.value,
+        // approverEmail: form.value.approvalemail.value,
         additional_details: form.value.additional_details,
         status: 'Draft',
         employeeId: this.empinfo.employeeId,
@@ -451,7 +451,7 @@ fileupload(event: any, index: number): void {
               this.http.setnewcountDetails();
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal(' Expenses request  saved as draft successfully!');
+              this.conformationPopup.openSuccessModal(' Expense request saved as draft ');
               // this.filterAllExpenses()
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
@@ -471,7 +471,7 @@ fileupload(event: any, index: number): void {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses request saved as draft successfully!');
+              this.conformationPopup.openSuccessModal('Expense request saved as draft');
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

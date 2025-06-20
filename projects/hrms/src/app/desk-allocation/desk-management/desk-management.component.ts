@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -21,7 +21,7 @@ import { Skeleton } from 'primeng/skeleton';
   encapsulation: ViewEncapsulation.None
 })
 
-export class DeskManagementComponent {
+export class DeskManagementComponent implements OnInit,OnDestroy {
   moduleinfo: string = '';
   @ViewChild('createDeskModal') private readonly createDeskModal!: NgbModal;
   deskForm!: FormGroup;
@@ -370,7 +370,7 @@ export class DeskManagementComponent {
         .subscribe({
           next: (data: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
+            this.conformationPopup.openSuccessModal('Desk registered successfully ');
             this.getAllDesks(this.page, this.pageSize, null, null, 'All');
             this.getcount(null, null);
            

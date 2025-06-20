@@ -287,10 +287,10 @@
         </div>
 
         <div class="mb-3">
-              <label for="sublocation" class="form-label custom-label mb-2">Address
-                <span class="error-msg">*</span></label>
-              <input type="text" class="form-control custom-input" formControlName="address"
-                 [readonly]="true" autocomplete="off" placeholder="Address">
+          <label for="sublocation" class="form-label custom-label mb-2">Address
+            <span class="error-msg">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="address" [readonly]="true"
+            autocomplete="off" placeholder="Address">
         </div>
 
         <div class="mb-3">
@@ -329,7 +329,7 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Offer Expiry Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-            (click)="pathValuesFuction()"  onkeydown="return false;" placeholder="Please enter offer expiry date" />
+            (click)="pathValuesFuction()" onkeydown="return false;" placeholder="Please enter offer expiry date" />
           <div class="error-msg">
             <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
               Offer Expiry Date is required
@@ -402,7 +402,7 @@
       <div class="letter-sub-data-content">
         <div>
           <!--page-1-->
-          <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content" id="pdfContent1" [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                 <app-lettersheader />
@@ -490,9 +490,24 @@
                   warranted by the Company’s / Client’s work requirement. The employee may also be required to attend
                   duties on Public Holidays as per the exigencies of work.
                 </li>
-
-                <li class="mb-3"><b>Annual Leave:</b> You will be entitled to Paid Leave and
+                 <li class="mb-3"><b>Annual Leave:</b> You will be entitled to Paid Leave and
                   Public Holidays yearly as per your eligibility and the Company policies.</li>
+
+               
+              </ol>
+            </div>
+            <!-- <div class="letter-footer">
+              <app-letter-footer />
+            </div> -->
+          </div>
+
+          <!--page-2-->
+          <div class="letter-page-content my-4" id="pdfContent2"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+            <div class="letter-page-sub-content">
+              <div class="pt-2">
+                <ol start="4">
+                  
 
                 <li class="mb-3">
                   <b>Notice Period:</b> Your services can be terminated by you by giving a notice of 90
@@ -503,60 +518,49 @@
                 </li>
                 <li>
                   <b>Other Terms & Conditions of this Offer</b>
-                  <ul class="list-style-disc mb-3">
-                    <li>During your service with the Company, you are expected to dedicate
+                
+                </li>
+                </ol>
+                <ul class="bullet">
+                   <li>During your service with the Company, you are expected to dedicate
                       your whole time and attention to the Company's affairs and abstain from directly or indirectly
                       engaging in any other business.</li>
-                  </ul>
-                </li>
-              </ol>
-            </div>
-            <!-- <div class="letter-footer">
-              <app-letter-footer />
-            </div> -->
-          </div>
-
-          <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
-            <div class="letter-page-sub-content">
-              <div class="pt-2">
-               
-                <ul class="bullet">
-                  <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual property
+                  <li >Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                    property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
 
-                  <li class="mb-3">You may be required to travel on Company work, and you will be reimbursed expenses as
+                  <li >You may be required to travel on Company work, and you will be reimbursed expenses as
                     per Company policy. </li>
 
-                  <li class="mb-3">Your Remuneration and the terms and conditions of this offer letter
+                  <li >Your Remuneration and the terms and conditions of this offer letter
                     shall remain confidential and are not to be disclosed to any third party. </li>
 
-                  <li class="mb-3">Upon acceptance of the offer letter, your official Employment ID will
+                  <li >Upon acceptance of the offer letter, your official Employment ID will
                     be created with us and you will entitled to the corporate benefits structure based on the category
                     of
                     work. Your employment with the company as a FTE will stand confirmed subjected to the terms and
                     conditions
                     as per rules, regulations, and policies of The Company.</li>
 
-                  <li class="mb-3">On termination of employment, you will immediately give up to the
+                  <li >On termination of employment, you will immediately give up to the
                     Company all correspondence, specifications, formulae, books, documents, hardware, market data, cost
                     data, literature,
                     drawings, effects or records, backup copies of programs source / data, etc. belonging to the
                     Company and any other Company property or relating to its business and shall not make or retain
                     any copies of the items. </li>
 
-                  <li class="mb-3">If you are absent from work without prior notification & approval as
+                  <li >If you are absent from work without prior notification & approval as
                     per Company policies, you will be liable for disciplinary action depending on the severity of the
                     effects caused by the
                     individual’s absence. </li>
 
-                  <li class="mb-3">If you are absent for a continuous period of 7 days without leave or
+                  <li >If you are absent for a continuous period of 7 days without leave or
                     obtaining your manager’s approval, you will be deemed to have voluntarily terminated your service
                     without notice. </li>
 
-                  <li class="mb-3">All the terms and conditions of service may be modified or changed at
+                  <li >All the terms and conditions of service may be modified or changed at
                     the Company’s discretion. You will abide by all the rules and regulations of the Company which are
                     in force
                     from time to time. </li>
@@ -579,23 +583,15 @@
                   invention assignment and confidentiality agreement and the Company policies collectively form a part
                   of your employment conditions. </p>
 
-                <p>This Offer Letter is conditional upon you executing the appointment letter
-                  and/or any other agreement as may be requested by the Company at the time of joining. The Company may
-                  revoke this offer of employment anytime before execution of the appointment letter. Similarly, after
-                  accepting this offer, if you do not intend to join the Company, you shall have a right to inform your
-                  intentions any-time before your joining date. </p>
-
-                <p>For any further information or clarification required, please feel free to
-                  reach us on our email at <a
-                    href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
-                    target="_blank" rel="noopener noreferrer"> hr&#64;snaddevelopers.com</a></p>
+                
               </div>
             </div>
-       
+
           </div>
 
           <!--page-3-->
-          <div class="letter-page-content my-4" id="pdfContent3"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent3"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
@@ -605,12 +601,23 @@
                   <div class="hard-copy-letter"></div>
                 </ng-template> -->
                 <div>
+
+                  <p>This Offer Letter is conditional upon you executing the appointment letter
+                  and/or any other agreement as may be requested by the Company at the time of joining. The Company may
+                  revoke this offer of employment anytime before execution of the appointment letter. Similarly, after
+                  accepting this offer, if you do not intend to join the Company, you shall have a right to inform your
+                  intentions any-time before your joining date. </p>
+
+                <p>For any further information or clarification required, please feel free to
+                  reach us on our email at <a
+                    href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
+                    target="_blank" rel="noopener noreferrer"> hr&#64;snaddevelopers.com</a></p>
                   <p>Yours Sincerely,</p>
                   <p class="mb-5 letter-sub-header">For SNAD Developers India Pvt Ltd </p>
                   <div class="stamp"></div>
                   <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
-                  <p class="m-0"> Authorized Signatory, </p>
+                  <p class="m-0  "> Authorized Signatory, </p>
                   <p class="m-0">{{prospectiveEmpData.authorityName}} </p>
                   <p class="m-0">{{authorityDesignation}} </p>
                   <p class="mb-5">I accept this offer of employment. </p>
@@ -640,7 +647,8 @@
           </div>
 
           <!--page-4-->
-          <div class="letter-page-content my-4" id="pdfContent4"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent4"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
@@ -723,11 +731,12 @@
                 </div>
               </div>
             </div>
-           
+
           </div>
 
           <!--page-5-->
-          <div class="letter-page-content my-4" id="pdfContent5"  [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent5"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
@@ -915,12 +924,13 @@
                 <!-- table end -->
                 <p class="letter-sub-header mb-1 mt-2">Note: {{prospectiveEmpData.note}}</p>
                 <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
-                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note: SNAD Developers India Pvt Ltd reserves
+                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note:
+                  SNAD Developers India Pvt Ltd reserves
                   the
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                   any time.
                 </p>
-                
+
               </div>
             </div>
             <!-- <div class="letter-footer">
@@ -928,11 +938,11 @@
             </div> -->
           </div>
 
-            <div class="letter-page-content my-4" id="pdfContent6"  >
+          <div class="letter-page-content my-4" id="pdfContent6">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-       
-               
+
+
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-0">
                   <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory

@@ -7,12 +7,11 @@
         <table class="w-100">
             <thead>
                 <tr>
-                 
                     <th>Desk ID</th>
                     <th>Desk Type</th>
                     <th>Desk Status</th>
-                    <th>Allocated Date</th>
-                    <th>Released Date</th>
+                    <th class="text-center">Allocated Date</th>
+                    <th class="text-center">Released Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,17 +20,14 @@
                         <td>{{ data.deskName }}</td>
                         <td>{{ data.deskType }}</td>
                         <td>{{ data.status }}</td>
-                        <td>{{ data.allocatedDate |dateformat }}</td>
-                        <td>{{ data.releavedDate ? (data.releavedDate | dateformat) : 'N/A' }}</td>
-
+                        <td class="text-center text-nowrap">{{ data.allocatedDate |dateformat }}</td>
+                        <td class="text-center text-nowrap">{{ data.releavedDate ? (data.releavedDate | dateformat) : 'N/A' }}</td>
                     </tr>
                 </ng-container>
 
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </tbody>

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
@@ -9,8 +9,6 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './bank-loan.model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,8 +20,6 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     Select,
     ReactiveFormsModule,
     DateformatPipe,
-    LettersheaderComponent,
-    LetterFooterComponent,
     TranslateModule,
     NgbPopoverModule,
   ],
@@ -31,8 +27,9 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './bank-loan-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class BankLoanLetterComponent {
-  moduleinfo: string = '';
+
+export class BankLoanLetterComponent  implements OnInit,OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   bankLoanTemplate: any | string | ArrayBuffer | null = null;
   bankLoanFile!: File;
@@ -263,36 +260,24 @@ export class BankLoanLetterComponent {
 
   uploadBankLoanLetter() {
     let filePath = `/FusionDocuments/Employee Documents/BankLoan Letters/${this.selectedEmployee.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.bankLoanFile
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.modal.openSuccessModal(
-              'Bank Loan Letter Generated Successfully'
-            );
-          }
-        },
-        error: (err: any) => {
-          this.spinnerLoader = false;
-          this.modal.openErrorModal(
-            err.error.message
-              ? err.error.message
-              : 'Failed to upload Bank Loan Letter'
-          );
-        },
-        complete: () => {
-          setTimeout(() => {
-            this.router.navigate(['/admin/active-employees']);
-          }, 2000);
-          this.spinnerLoader = false;
-          this.employeeForm.reset();
-        },
-      });
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankLoanFile).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.modal.openSuccessModal('Bank loan letter generated successfully');
+        }
+      },
+      error: (err: any) => {
+        this.spinnerLoader= false;
+        this.modal.openErrorModal(err.error.message? err.error.message: 'Failed to upload Bank Loan Letter');
+      },
+      complete: () => {
+        setTimeout(() => {
+          this.router.navigate(['/admin/active-employees']);
+        }, 2000)
+        this.spinnerLoader= false;
+        this.employeeForm.reset();
+      }
+    });
   }
 
   ngOnDestroy(): void {

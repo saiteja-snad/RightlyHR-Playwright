@@ -1,15 +1,16 @@
-.custom-component-right-content{
+.custom-component-right-content {
     padding: 1rem;
+    height: calc(100vh - 8rem) !important;
 }
 
-.custom-letter-tabs {
-    .tabs-list-content {
+.component-tabs-accordian {
+    .accordian-tabs-list-content {
         list-style: none !important;
         padding-left: 0rem !important;
         letter-spacing: 0%;
     }
 
-    .list-item {
+    .accordian-list-item {
         width: 100%;
         background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
         border: 1px solid #DCE3E9;
@@ -18,25 +19,42 @@
         cursor: pointer;
         margin-bottom: 1rem;
 
-        .label-name {
+        .list-label-name {
             font-weight: 600;
             font-size: var(--fontsize16);
             line-height: 18px;
         }
 
-        .icon {
+        .list-icon {
             width: 2.5rem;
             height: 2.5rem;
         }
 
-        .subject-text {
+        .list-description {
             font-weight: 400;
             font-size: var(--fontsize12);
             color: #404040 !important;
         }
     }
-}
 
-.custom-component-right-content{
-    height: calc(100vh - 8rem) !important;
+    //acordian styling
+    .p-accordionpanel {
+        border: 1px solid transparent !important;
+
+        .p-iconwrapper {
+            transform: rotate(180deg) !important;
+        }
+
+        .p-accordioncontent-content {
+            padding: 0.75rem 0rem 0rem !important;
+            background: transparent !important;
+        }
+    }
+
+    .p-accordionheader {
+        color: #222222;
+        padding: 0rem !important;
+        background: transparent !important;
+        border: 1px solid transparent !important;
+    }
 }

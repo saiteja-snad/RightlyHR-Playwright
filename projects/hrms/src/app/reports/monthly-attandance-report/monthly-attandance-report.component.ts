@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import moment from 'moment';
@@ -12,14 +12,15 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { ReportsHeaderComponent } from "../../shared/reports-tabs/reports-header/reports-header.component";
 @Component({
   selector: 'app-monthly-attandance-report',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule, ReportsHeaderComponent],
   templateUrl: './monthly-attandance-report.component.html',
   styleUrl: './monthly-attandance-report.component.scss'
 })
 
-export class MonthlyAttandanceReportComponent {
+export class MonthlyAttandanceReportComponent  {
   moduleinfo : string = '';
   monthlyReportForm!: FormGroup;
   years: { label: string; value: number }[] = [];
@@ -143,4 +144,5 @@ export class MonthlyAttandanceReportComponent {
   close() {
     this.redirectTo(this.router.url);
   }
+
 }

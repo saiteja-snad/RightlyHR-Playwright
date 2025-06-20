@@ -1,9 +1,19 @@
 @if(rbac.allowedToAccess('Documents History Offer Letter.view')){
 <div class="custom-main-component-container">
-    <div class="input-group custom-search mb-2">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
+    <div class="d-flex gap-3 justify-content-between align-items-center mb-2">
+        <div class="input-group custom-search">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i></span>
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search by employee name / location / sub location / designation / sub status"
+                aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div class="custom-year-month-picker">
+            <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
+                (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
+                [readonlyInput]="true" [maxDate]="maxMonth">
+            </p-datepicker>
+        </div>
     </div>
 
     <div class="custom-table-content">
@@ -13,7 +23,7 @@
             <thead>
                 <tr>
                     <th>{{'Date'|translate}}</th>
-                    <th>{{'Name'|translate}}</th>
+                    <th>{{'Employee name'|translate}}</th>
                     <th>{{'Location'|translate}}</th>
                     <th>{{'Sub Location'|translate}}</th>
                     <th>{{'Designation'|translate}}</th>
@@ -38,9 +48,8 @@
                     <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
                     <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                     <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
-                    @if(rbac.allowedToAccess('Offer Letter Download.view') ||
-                    rbac.allowedToAccess('Offer Letter Release Offer.view') || rbac.allowedToAccess('Offer Letter Approve.view')
-                    || rbac.allowedToAccess('Offer Letter Reject.view')){
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') 
+                    || rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
@@ -60,14 +69,16 @@
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
-                                @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' && offerLetter?.status !== 'Released') {
+                                @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' &&
+                                offerLetter?.status !== 'Released') {
                                 <li (click)="updateOfferDetails(offerLetter)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                 </li>
                                 }
                                 }
                                 @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
-                                @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' && offerLetter.status!='Released')){
+                                @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' &&
+                                offerLetter.status!='Released')){
                                 <li (click)="SelectData(offerLetter);openModal(rejectpopup)">
                                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                 </li>

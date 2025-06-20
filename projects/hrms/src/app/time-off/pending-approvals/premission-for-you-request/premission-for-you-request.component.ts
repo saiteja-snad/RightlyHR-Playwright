@@ -332,9 +332,9 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
               this.selectedLeavesItems.length <= 0
             ) {
               if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission requests approved successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Approved Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' Permission request approved successfully');
               }
             } else {
               this.openModal(this.leaveSummary);
@@ -409,9 +409,9 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
             this.selectedLeavesItems.length <= 0
           ) {
             if (this.selectedLeavesItems.length > 1) {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Selected Permission requests Processed successfully');
             } else {
-              this.signalService.handleResponse(this.requestSummary, 'Selected Permission Request Processed Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Permission request processed successfully');
             }
           } else {
             this.openModal(this.leaveSummary);
@@ -480,9 +480,9 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
             this.requestSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
               if (this.selectedLeavesItems.length > 1) {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Rejected Successfully');
+                this.signalService.handleResponse(this.requestSummary, 'Selected Permission requests rejected successfully');
               } else {
-                this.signalService.handleResponse(this.requestSummary, 'Selected Permission Requests Rejected Successfully');
+                this.signalService.handleResponse(this.requestSummary, ' Permission requests rejected successfully');
               }
             } else {
               this.openModal(this.leaveSummary);

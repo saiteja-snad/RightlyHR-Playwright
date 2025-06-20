@@ -353,7 +353,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     this.http.postdata('NoDueCleranceConfiguration', postData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('No Due Clearance Added Successfully');
+        this.modal.openSuccessModal('No Due Clearance added successfully');
       },
       error: (err) => {
         this.modal.openErrorModal(err.error.message);
@@ -404,7 +404,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     this.http.putData(`NoDueCleranceConfiguration/UpdateNoDueConfig/${this.currentItem.id}`, postData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('No Due Clearance Updated Successfully');
+        this.modal.openSuccessModal('No Due Clearance updated successfully');
       },
       error: (err) => {
         console.log(err);
@@ -511,7 +511,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     this.subscription = this.http.deleteData(`NoDueCleranceConfiguration/DeleteNoDueConfig/${this.selectedDeleteRole.id}`).subscribe({
       next: (response) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('No Due Clearance Deleted Successfully');
+        this.conformationPopup.openSuccessModal('No Due Clearance deleted successfully');
 
       },
       error: (error: any) => {

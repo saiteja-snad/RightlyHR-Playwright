@@ -1,12 +1,12 @@
 <div class="heading-content">
-    <div class="commpoment-name" (click)="navigateEmployeeManagement()">Employee Management</div>
+    <div class="commpoment-name navigator" (click)="navigateEmployeeManagement()"><u>Employee Management</u></div>
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>
     @if (router.url === '/letters/lettes-tabs') {
     <div class="component-header">Generate Documents</div>
     }@else {
-    <div class="commpoment-name" (click)="navigateletterTabs()">Generate Documents</div>
+    <div class="commpoment-name navigator" (click)="navigateletterTabs()"><u>Generate Documents</u></div>
     <div class="commpoment-name">
         <i class="bi bi-chevron-double-right"></i>
     </div>

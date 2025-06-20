@@ -44,7 +44,9 @@ export default [
             { path: 'signature-authority', loadComponent: () => import('./job/signature-authority/signature-authority.component').then((m) => m.SignatureAuthorityComponent)},
             // { path: 'appointment-details', loadComponent: () => import('./job/appointment-details/appointment-details.component').then((m) => m.AppointmentDetailsComponent)},
             { path: 'probation-frequency', loadComponent: () => import('./job/probation-frequency/probation-frequency.component').then((m) => m.ProbationFrequencyComponent)},
-            { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)}
+            { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)},
+            {path: 'letters-acknowledgment',loadComponent: () => import('./job/letters-ack/letters-ack.component').then((m) => m.LettersACKComponent),canActivate: [PermissionsGuard],data: { permission: 'Letter Acknoledgement.view' }}
+
         ]
     },
     { path: 'documents', loadComponent: () => import('./documents-creation/documents-creation.component').then((m) => m.DocumentsCreationComponent), canActivate: [PermissionsGuard],data: { permission: 'Document Tab.view' } },

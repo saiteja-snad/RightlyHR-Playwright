@@ -82,6 +82,7 @@ export class ProbationDetailsComponent implements OnInit {
     let EmployeeId = parseInt(this.empinfo.employeeId)
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
       next: (data: any) => {
+        console.log(data)
         this.getProbationRequestDetails = data;
         this.loading = false;
       },
@@ -136,7 +137,7 @@ export class ProbationDetailsComponent implements OnInit {
       next: (response: any) => {
         this.getProbationRequest();
         this.modalService.dismissAll();
-        this.openModalService.openSuccessModal('Probation Request Raised Successfully');
+        this.openModalService.openSuccessModal('Probation request raised successfully');
       },
       error: (reason: any) => {
         console.log(reason);
@@ -165,7 +166,7 @@ export class ProbationDetailsComponent implements OnInit {
       next: (response: any) => {
         this.modalService.dismissAll();
         this.getProbationRequest();
-        this.openModalService.openSuccessModal('Probation Request Raised Successfully');
+        this.openModalService.openSuccessModal('Probation Request raised successfully');
       },
       error: (error: any) => {
         this.modalService.dismissAll();
@@ -188,8 +189,8 @@ export class ProbationDetailsComponent implements OnInit {
 
   probationCommentsFunction(Value: any, content: any) {
     this.modalService.open(content, { size: 'xl', centered: true, backdrop: 'static' });
-    this.appcomment = Value.map((ele: any) => {
-      const parsedMetaData = JSON.parse(ele.metaData);
+    this.appcomment = Value?.map((ele: any) => {
+      const parsedMetaData = JSON.parse(ele?.metaData);
       return {
         ...ele,
         metadata: parsedMetaData

@@ -2,12 +2,10 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-input custom-search-input" placeholder="Search here"
+        <input type="search" class="form-control custom-search-input" placeholder="Search by desk ID / desk type "
             aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
             aria-describedby="basic-addon1">
     </div>
-
-
 
     <div class="custom-table-content">
         @if(!loading){
@@ -109,7 +107,6 @@
                 (onPageChange)="onPageChange($event)"></p-paginator>
         </div>
     </div>
-
 </div>
 
 <ng-template #assigindesk let-modal>
@@ -118,7 +115,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Allocate Desk</p>
             </div>
-
         </div>
 
         <div class="custom-main-popup-content">

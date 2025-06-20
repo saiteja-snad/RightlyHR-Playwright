@@ -1,4 +1,4 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -20,7 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './under-maintenance-desk-list.component.html',
   styleUrl: './under-maintenance-desk-list.component.scss'
 })
-export class UnderMaintenanceDeskListComponent {
+export class UnderMaintenanceDeskListComponent implements OnInit ,OnDestroy {
   subscription!: Subscription;
   empinfo = {} as any
   desklist = new BehaviorSubject<any[]>([])
@@ -209,7 +209,7 @@ export class UnderMaintenanceDeskListComponent {
       next: (res) => {
         console.log(res);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as available successfully')
+        this.conformationPopup.openSuccessModal('Desk has been successfully marked as available')
         // this.getAllDesks(this.page, this.pageSize);
         this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
         this.getcount(null, null, this.Status);

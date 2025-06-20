@@ -1,10 +1,10 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content pt-2">
+    <div class="component-header-content">
         <div class="heading-content">
             <div class="commpoment-name cursor" (click)="openModal(navigateToTable, {size:'md',centered: true})">
-                {{'Update Form'}}<i class="bi bi-chevron-double-right ms-1"></i>
+                Dynamic Form<i class="bi bi-chevron-double-right ms-1"></i>
             </div>
-            <div class="component-header">{{'Create Form'}}</div>
+            <div class="component-header">Update Form</div>
         </div>
     </div>
 
@@ -313,19 +313,15 @@
                                         <!-- Question Required -->
                                         <div class="d-flex justify-content-end gap-3 pt-3">
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input rounded-2" type="checkbox"
-                                                    id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                    formControlName="required"
-                                                    [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
-                                                    triggers="mouseenter:mouseleave" placement="start">
+                                                <input class="form-check-input rounded-2" type="checkbox" id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
+                                                    formControlName="required" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
                                                 <label class="form-check-label"
                                                     for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
                                                     Required
                                                 </label>
                                             </div>
                                             <div>
-                                                <i class="bi bi-trash text-danger cursor"
-                                                    (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
+                                                <i class="bi bi-trash text-danger cursor" (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -521,20 +517,15 @@
                                     <!-- Question required -->
                                     <div class="d-flex justify-content-end gap-2">
                                         <div class="form-check form-switch  ms-3">
-                                            <input class="form-check-input" type="checkbox"
-                                                id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                formControlName="required"
-                                                [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
-                                                triggers="mouseenter:mouseleave" placement="start">
-                                            <label class="form-check-label"
-                                                for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                            <input class="form-check-input" type="checkbox" id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
+                                                formControlName="required" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" placement="start">
+                                            <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
                                                 Required
                                             </label>
                                         </div>
                                         <!-- Remove Question Button -->
                                         <div>
-                                            <i class="bi bi-trash text-danger cursor"
-                                                (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
+                                            <i class="bi bi-trash text-danger cursor" (click)="removeUpdateQuestion(sectionIndex, questionIndex)"></i>
                                         </div>
                                     </div>
                                 </div>

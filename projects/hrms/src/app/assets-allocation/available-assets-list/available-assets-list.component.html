@@ -1,145 +1,129 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="Search here"
-      aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
-      aria-describedby="basic-addon1">
+    <input type="search" class="form-control custom-search-input" placeholder="Search by asset category / asset sub category / serial number"
+     aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
   </div>
 
-
-    <div class="custom-table-content">
-      @if(!loading){
-      <table class="w-100">
-        <thead>
-          <th>Asset Category</th>
-          <th>Asset Sub Category</th>
-          <th>Serial Number</th>
-          <th>Asset Status</th>
-          <th>Allocated To</th>
-          <th>Asset ID</th>
-          <th>Location </th>
-          <th>Sub Location </th>
-          @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
-          rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
-          rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){
-          <th class="text-center">Action</th>
-          }
-        </thead>
-        <tbody>
-          <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
-            <tr *ngFor="let asset of assetslist | async">
-              <td>{{ asset.assetCategory }}</td>
-              <td>{{ asset.assetSubCategory }}</td>
-              <td>{{ asset.serialNumber }}</td>
-              <td>{{ asset.status }}</td>
-              <td>
-                <ng-container *ngIf="asset.assignedTo; else unassigned">
-                  {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
-                  asset.assignedTo.lastName }}
-                </ng-container>
-                <ng-template #unassigned>
-                  N/A
-                </ng-template>
-              </td>
-              <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
-              <td>{{ asset.locationName }}</td>
-              <td>{{ asset?.sublocationName || 'N/A' }}</td>
-              @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
-              rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
-              rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){
-              <td class="text-center">
-                <div class="dropdown">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <ng-container *ngIf="asset.status === 'Available'">
-                      @if(rbac.allowedToAccess('Available Allocate Asset.view')) {
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(allocateAnasset); storeassetid = asset.id; selectedAsset = asset;viewasetsdata(asset)">
-                          Allocate Asset
-                        </a>
-                      </li>
-                      }
-                      @if( rbac.allowedToAccess('Available Inactive Asset.view')) {
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(deleteasstes); storeassetid = asset.id; selectedAsset = asset ">
-                          Inactive
-                        </a>
-                      </li>
-                      }
-                      @if(rbac.allowedToAccess('Available Mark as Maintenance Asset.view')) {
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(underMaintenance); storeassetid = asset.id; selectedAsset = asset">
-                          Mark as Maintenance
-                        </a>
-                      </li>
-                      }
-                      @if(rbac.allowedToAccess('Available Transfer Asset.view')) {
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(tranferaerasset); storeassetid = asset.id; selectedAsset = asset;viewdatatrasfer(asset) ">
-                          Transfer Asset
-                        </a>
-                      </li>
-                      }
-                    </ng-container>
-                    @if(rbac.allowedToAccess('Available View Asset Details.view')) {
-                    <li>
-                      <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
-                        View Asset Details
-                      </a>
-                    </li>
-                    }
-                    @if(rbac.allowedToAccess('Available Update Asset Details.view')) {
+  <div class="custom-table-content">
+    @if(!loading){
+    <table class="w-100">
+      <thead>
+        <th>Asset Category</th>
+        <th>Asset Sub Category</th>
+        <th>Serial Number</th>
+        <th>Asset Status</th>
+        <th>Location </th>
+        <th>Sub Location </th>
+        @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
+        rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
+        rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){
+        <th class="text-center">Action</th>
+        }
+      </thead>
+      <tbody>
+        <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let asset of assetslist | async">
+            <td>{{ asset.assetCategory }}</td>
+            <td>{{ asset.assetSubCategory }}</td>
+            <td>{{ asset.serialNumber }}</td>
+            <td>{{ asset.status }}</td>
+            <td>{{ asset.locationName }}</td>
+            <td>{{ asset?.sublocationName || 'N/A' }}</td>
+            @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') ||
+            rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
+            rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <ng-container *ngIf="asset.status === 'Available'">
+                    @if(rbac.allowedToAccess('Available Allocate Asset.view')) {
                     <li>
                       <a class="dropdown-item"
-                        (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
-                        Update
+                        (click)="openModal(allocateAnasset); storeassetid = asset.id; selectedAsset = asset;viewasetsdata(asset)">
+                        Allocate Asset
                       </a>
                     </li>
                     }
-                  </ul>
-                </div>
-              </td>
-              }
-            </tr>
-          </ng-container>
-          <ng-template #noDataTemplate>
-            <tr>
-              <app-no-data-found />
-            </tr>
-          </ng-template>
-        </tbody>
-      </table>
-      }
-      @else {
-      <app-data-loader-content />
-      }
-    </div>
+                    @if( rbac.allowedToAccess('Available Inactive Asset.view')) {
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openModal(deleteasstes); storeassetid = asset.id; selectedAsset = asset ">
+                        Inactive
+                      </a>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Available Mark as Maintenance Asset.view')) {
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openModal(underMaintenance); storeassetid = asset.id; selectedAsset = asset">
+                        Mark as Maintenance
+                      </a>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Available Transfer Asset.view')) {
+                    <li>
+                      <a class="dropdown-item"
+                        (click)="openModal(tranferaerasset); storeassetid = asset.id; selectedAsset = asset;viewdatatrasfer(asset) ">
+                        Transfer Asset
+                      </a>
+                    </li>
+                    }
+                  </ng-container>
+                  @if(rbac.allowedToAccess('Available View Asset Details.view')) {
+                  <li>
+                    <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
+                      View Asset Details
+                    </a>
+                  </li>
+                  }
+                  @if(rbac.allowedToAccess('Available Update Asset Details.view')) {
+                  <li>
+                    <a class="dropdown-item"
+                      (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
+                      Update
+                    </a>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
+            }
+          </tr>
+        </ng-container>
+        <ng-template #noDataTemplate>
+          <tr>
+            <app-no-data-found />
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }
+    @else {
+    <app-data-loader-content />
+    }
+  </div>
 
-   
-    <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
-      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-        <div class="d-flex align-items-center gap-3 p-2">
-          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-            (ngModelChange)="onPageSizeChange($event)">
-            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-            </option>
-          </select>
-          <span class="pagination-label text-nowrap">
-            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
-            collectionSize }}
-          </span>
-        </div>
-        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-          (onPageChange)="onPageChange($event)"></p-paginator>
+  <div class="pagination-content" *ngIf="((assetslist | async) ?? []).length > 0">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+          </option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+          collectionSize }}
+        </span>
       </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
     </div>
-
+  </div>
 </div>
 
 <ng-template #addassetes let-modal>

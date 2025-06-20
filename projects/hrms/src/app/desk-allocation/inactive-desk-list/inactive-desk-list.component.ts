@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './inactive-desk-list.component.html',
   styleUrl: './inactive-desk-list.component.scss'
 })
-export class InactiveDeskListComponent {
+export class InactiveDeskListComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   empinfo = {} as any
   desklist = new BehaviorSubject<any[]>([])
@@ -207,7 +207,7 @@ export class InactiveDeskListComponent {
       next: (res) => {
         console.log(res);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as active successfully')
+        this.conformationPopup.openSuccessModal('Desk has been successfully marked as available')
         // this.getAllDesks(this.page, this.pageSize);
         this.getAllDesks(this.page, this.pageSize, null, null, this.Status)
         this.getcount(null, null, this.Status);

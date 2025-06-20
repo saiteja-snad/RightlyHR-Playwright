@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+        <input type="search" class="form-control custom-search-input" placeholder="Search by expense title / total amount" aria-label="Username"
             [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
 
@@ -93,11 +93,11 @@
                         </div>
                     </div>
 
-                    <div class="w-25">
+                    <!-- <div class="w-25">
                         <label class="form-label custom-label mb-2">{{'Approver Emai' | translate}}l<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="emails" optionLabel="label" placeholder="Please select approver email"
+                            <p-select [options]="emails" optionLabel="label" optionValue="value" placeholder="Please select approver email"
                                 formControlName="approvalemail" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -105,7 +105,7 @@
                             <div *ngIf="newExpenseForm.controls['approvalemail'].errors?.['required']">
                                 Approver email is required</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Add New Expense Button -->
                     <div class="pt-4 mt-1">

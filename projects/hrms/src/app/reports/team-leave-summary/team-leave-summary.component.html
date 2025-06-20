@@ -1,20 +1,16 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div class="heading-content">
-            <div class="commpoment-name" (click)="navigation()">Reports<span class="ms-1">
-                <i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Team Leave Summary</div>
-        </div>
+        <app-reports-header/>
 
         <div class="d-flex align-items-center flex-wrap gap-3">
-            <label class="form-label custom-label m-0" for="">Month</label>
+            <label class="form-label custom-label filter-labels m-0" for="">Month</label>
             <div class="custom-p-select-content">
                 <p-select [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
                     (onChange)="onSelectMonth($event)" optionLabel="name" class="custom-select">
                 </p-select>
             </div>
 
-            <label class="form-label custom-label m-0">Year</label>
+            <label class="form-label custom-label filter-labels m-0">Year</label>
             <div class="custom-p-select-content">
                 <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
                     placeholder="Select year" class="form-select custom-select" (onChange)="onSelectYear($event)">
@@ -28,7 +24,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i>
         </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+        <input type="search" class="form-control custom-search-input" placeholder="Search by employee name" [(ngModel)]="searchText"
             (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
     </div>
 
@@ -194,8 +190,7 @@
                 <p class="popup-heading mb-0">{{ popupType }} Logs - {{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}})</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content custom-accordians">

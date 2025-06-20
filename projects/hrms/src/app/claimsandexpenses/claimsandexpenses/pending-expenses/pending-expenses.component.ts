@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { IExpense, IExpenseHeaders } from '../../../Interfaces/claimsandexpenses.model';
@@ -19,7 +19,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
   styleUrl: './pending-expenses.component.scss'
 })
 
-export class PendingExpensesComponent {
+export class PendingExpensesComponent implements OnInit,OnDestroy {
   empinfo: any
   subscription!: Subscription;
   ExpenseImageUrl: any;

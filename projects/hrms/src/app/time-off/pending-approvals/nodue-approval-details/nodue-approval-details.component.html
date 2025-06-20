@@ -4,7 +4,7 @@
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
             <i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+            placeholder="Search by employee name / department / status / employee emails " aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
@@ -34,8 +34,7 @@
                     <td class="text-center">
                         <div>
                             <div *ngIf="item.requiredEmails; else popupcomments">
-                                <app-info-icon triggers="mouseenter:mouseleave" ngbPopover="{{ item.requiredEmails }}"
-                                    container="body" />
+                                <app-info-icon ngbPopover="{{ item.requiredEmails }}" container="body" />
                             </div>
                         </div>
                         <ng-template #popupcomments>NA</ng-template>

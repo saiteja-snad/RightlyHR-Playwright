@@ -1,4 +1,4 @@
-import { Component, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -21,7 +21,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './available-desk-list.component.scss'
 })
 
-export class AvailableDeskListComponent {
+export class AvailableDeskListComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   datesShouldNotBeEqual = false;
   empinfo = {} as any;
@@ -328,7 +328,7 @@ export class AvailableDeskListComponent {
       this.http.postdata('DeskAllocationItem', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk Allocation Request Approved Successfully');
+          this.conformationPopup.openSuccessModal('Desk has been successfully allocated');
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null,null,this.Status);
           this.assiginForm.reset();
@@ -430,7 +430,7 @@ export class AvailableDeskListComponent {
       this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk marked as inactive successfully')
+          this.conformationPopup.openSuccessModal('Desk inactivated successfully')
           setTimeout(() => {
             location.reload();
           }, 2000);
@@ -536,7 +536,7 @@ export class AvailableDeskListComponent {
       this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk marked as under maintenance successfully')
+          this.conformationPopup.openSuccessModal('Desk set under maintenance successfully')
           this.getAllDesks(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null,null,this.Status);
           this.undermaintancedata.reset();

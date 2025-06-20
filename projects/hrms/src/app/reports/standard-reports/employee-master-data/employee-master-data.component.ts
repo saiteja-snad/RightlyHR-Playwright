@@ -19,10 +19,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-employee-master-data',
-  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe,
-    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent,],
+  imports: [FormsModule, DateformatPipe, SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent, DatePicker],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -127,10 +128,13 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       return;
     }
     this.dataload = true;
+    const dateRangeArray = formData.dateOfJoining || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : startDate ? startDate : null;
     const request: IStandardReportRequest = {
       dateRange: {
-        startDate: formData.dateOfJoining?.startDate || null,
-        endDate: formData.dateOfJoining?.endDate || null
+        startDate: startDate,
+        endDate: endDate
       },
       employeeStatus: formData.empStatus === 'All Employees' ? '' : formData.empStatus
     };
@@ -279,7 +283,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => {
-        this.modal.openSuccessModal('Employee Master Data downlaoded successfully');
+        this.modal.openSuccessModal('Employee master data exported successfully');
         this.spinnerLoader2 = false;
       },
       error: (err) => {

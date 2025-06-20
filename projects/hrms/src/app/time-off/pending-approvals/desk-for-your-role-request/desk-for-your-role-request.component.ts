@@ -32,10 +32,10 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   loading: boolean = false;
   subscription!: Subscription;
   rejectForm!: FormGroup;
-  searchValue:any
-  constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,public rbac: RbacService,
-     private fb: FormBuilder, public formValidation: FormValidationService,
-     private signalService: SignalsService,) { }
+  searchValue: any
+  constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService, public rbac: RbacService,
+    private fb: FormBuilder, public formValidation: FormValidationService,
+    private signalService: SignalsService,) { }
 
 
   ngOnInit(): void {
@@ -63,10 +63,11 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       },
     });
   }
+  
   openconformationPopup(content: any) {
-     this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   };
- 
+
   expapprovalsdata: any;
   openModal(content: any, data: any) {
     this.expapprovalsdata = data;
@@ -84,11 +85,10 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Desk Allocation Request Processed Successfully")
-         this.getexpensespendingforyou()
+        this.conformationPopup.openSuccessModal('Desk allocation request processed successfully');
+        this.getexpensespendingforyou();
         this.signalService.deskForRoleTriggerSignal.set(true);
-        this.updatedeskitem()
-       
+        this.updatedeskitem();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred')
@@ -117,7 +117,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   openmodal(content: any) {
-    this.modalService.open(content, { size: 'xl' , backdrop: 'static', centered: true });
+    this.modalService.open(content, { size: 'xl', backdrop: 'static', centered: true });
   }
 
   viewdeskitem(deskid: any) {
@@ -146,7 +146,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
         this.signalService.deskForRoleTriggerSignal.set(true);
-        this.conformationPopup.openSuccessModal("Desk Rejected Successfully");
+        this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
         this.rejectForm.reset();
       },
       error: (error: any) => {
@@ -155,10 +155,12 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       }
     });
   }
-  cleardata(){
+
+  cleardata() {
     this.rejectForm.reset();
     this.modalService.dismissAll();
   }
+
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();

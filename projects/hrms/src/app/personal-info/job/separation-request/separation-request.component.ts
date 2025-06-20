@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { RaiseseparationComponent } from '../raiseseparation/raiseseparation.component';
 @Component({
   selector: 'app-separation-request',
   imports: [
@@ -244,7 +245,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.getNodueClearance();
           this.conformationPopup.openSuccessModal(
-            'No Due Request Raised Successfully'
+            'No Due request raised successfully'
           );
         },
         error: (reason: any) => {
@@ -367,6 +368,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       .getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
+          console.log(data)
           if (data) {
             this.isDataLoaded = false;
             this.separationDetails = data;
@@ -499,6 +501,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   //function to recall the request
   postRecallRequest() {
+    debugger
     this.isLoading = true;
     let currentDate = new Date();
     let payLoad = {
@@ -609,7 +612,14 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
+  openModalraise() {
+    this.modalService.open(RaiseseparationComponent, { centered: true, backdrop: 'static', keyboard: false, size: 'lg' })
+  }
 
+   closeModel() {
+    this.modalService.dismissAll();
+  }
+  
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

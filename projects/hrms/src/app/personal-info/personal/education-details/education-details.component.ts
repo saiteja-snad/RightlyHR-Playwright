@@ -207,7 +207,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false
         this.educationForm.reset();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Education details added successfully');
+        this.conformationPopup.openSuccessModal('Academic details added successfully');
         this.getEducationEmpid();
       },
       error: (err: any) => {
@@ -404,7 +404,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Education details updated successfully')
+        this.conformationPopup.openSuccessModal('Academic details updated successfully')
 
       },
       error: (reason: any) => {
@@ -443,15 +443,23 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.modalService.dismissAll()
         this.getEducationEmpid();
-        this.conformationPopup.openSuccessModal('Education details deleted successfully');
+        this.conformationPopup.openSuccessModal('Academic details deleted successfully');
       },
       error: (err: any) => {
         console.error('Error deleting education record:', err);
-        this.conformationPopup.openErrorModal('Education details deleted failed');
+        this.conformationPopup.openErrorModal('Academic details deleted failed');
       }
     });
   }
+   openConfirmationModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
+resetdata(){
+  this.educationupdateForm.reset();
+  this.modalService.dismissAll();
+  this.educationForm.reset()
+}
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

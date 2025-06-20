@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
@@ -24,7 +24,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ProbationExtensionLetterComponent {
+export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
   employeedetails :IEmployee[]=[];
@@ -57,7 +57,7 @@ export class ProbationExtensionLetterComponent {
   }
 
   naviagte(){
-    this.router.navigate(['/admin/probation-employees']);
+    this.router.navigate(['/employee-management/probation-employees']);
   }
 
   initializeForm() {
@@ -108,7 +108,7 @@ export class ProbationExtensionLetterComponent {
       next: (data: any) => {
         this.employeedetails = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
       },
       error: (reason: any) => {
@@ -218,7 +218,7 @@ pathValuesFuction() {
         this.uploadprobationextentionLetter();
       });
     }
-    this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
+    //this.openModalService.openSuccessModal('Probation extension letter generated successfully');
   }
 
   //function to get the separation request details
@@ -286,7 +286,7 @@ pathValuesFuction() {
         this.Documenturlresult = data.documentURL;
         this.disableFieldsForApproval = false;
         this.loading = false;
-        this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
+        this.openModalService.openSuccessModal('Probation extension letter generated successfully');
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -315,7 +315,7 @@ pathValuesFuction() {
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
-        this.openModalService.openSuccessModal("Email Sent Successfully");
+        this.openModalService.openSuccessModal("Email has been sent successfully");
         setTimeout(() =>{
           this.naviagte();
         }, 2000)

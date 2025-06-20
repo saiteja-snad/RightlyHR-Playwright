@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { filter, Subscription } from 'rxjs';
@@ -18,12 +18,12 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { OpenModalService } from '../../services/open-modal.service';
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select,NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
 
-export class CompanypoliciesComponent {
+export class CompanypoliciesComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   policiesform!: FormGroup;
   ackForm!: FormGroup
@@ -47,8 +47,8 @@ export class CompanypoliciesComponent {
   isViewingAttachment = false;
   shouldOpenModal = false;
   viewPolicyname!: string;
-  ackCheckboxChecked : any;
-  selectedItem : any;
+  ackCheckboxChecked: any;
+  selectedItem: any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location,
     private sanitizer: DomSanitizer, public readonly router: Router, private confirmation: OpenModalService) { }
@@ -97,7 +97,7 @@ export class CompanypoliciesComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true , backdrop : 'static', keyboard : false});
+    this.modalService.open(this.viewattamchment, { size: 'xl', centered: true, backdrop: 'static', keyboard: false });
   }
 
   private handleImage(url: string) {
@@ -133,7 +133,7 @@ export class CompanypoliciesComponent {
     this.openModal(this.viewattamchment);
   }
 
-  onViewAttachement(url: any, name: any, selectedItem : any) {
+  onViewAttachement(url: any, name: any, selectedItem: any) {
     this.viewPolicyname = name;
     this.selectedItem = selectedItem;
     this.ackCheckboxChecked = false;
@@ -205,7 +205,7 @@ export class CompanypoliciesComponent {
     });
   }
 
-  postacknowledgement(selectedItem : any) {
+  postacknowledgement(selectedItem: any) {
     let data = {
       orgPolicyItemId: selectedItem.id,
       employeeId: this.empinfo.employeeId,
@@ -222,7 +222,7 @@ export class CompanypoliciesComponent {
         this.confirmation.openSuccessModal('Policy Acknowledged successfully');
 
         setTimeout(() => {
-            this.modalService.dismissAll();
+          this.modalService.dismissAll();
         }, 2000);
         selectedItem.acknowledged = true;
         this.getjobDetails();
@@ -230,5 +230,10 @@ export class CompanypoliciesComponent {
       error: (reason: any) => console.log(reason)
     });
   }
-
+  
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

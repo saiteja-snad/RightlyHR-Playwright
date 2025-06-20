@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -26,7 +26,7 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
   encapsulation: ViewEncapsulation.None
 })
 
-export class MyTicketsComponent {
+export class MyTicketsComponent implements OnInit,OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
@@ -327,7 +327,7 @@ export class MyTicketsComponent {
     this.itTicketDetails.isdeleted = false
     this.subscription = this.http.postdata(`Tickets`, this.itTicketDetails).subscribe({
       next: (data: any) => {
-        this.confirmation.openSuccessModal('Request submitted successfully!');
+        this.confirmation.openSuccessModal('Ticket has been added successfully');
         localStorage.setItem('ticketDetails', JSON.stringify(data));
         setTimeout(() => {
           this.itSupportForm.reset();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
@@ -16,7 +16,7 @@ import { Skeleton } from 'primeng/skeleton';
   styleUrl: './optionalholidays.component.scss'
 })
 
-export class OptionalholidaysComponent {
+export class OptionalholidaysComponent implements OnInit, OnDestroy {
   orgHolidayItemsArrayTrue: any = [];
   orgHolidayItemsArrayFalse: any = [];
   orgHolidayItemsArray: any[] = [];

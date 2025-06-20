@@ -1,84 +1,77 @@
 <div class="custom-main-component-container ">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div> <span class="component-sub-header">No Due Clearance</span></div>
-     @if(canAccess('view','submissionnodue')){
-      @if(lineOrder && nodue_Clearance_Details.value.length > 0 && allApproved && empdata?.substatus?.toLowerCase()==='raised no due' && empdata.empstatus?.toLowerCase() != 'inactive'){
-        <div class="custom-add-btn">
-          <a class="dropdown-item" 
-              [routerLink]="['/admin/nodue-form-details']" routerLinkActive="active" (click)="onsubmission(empdata.employeeId)">
-            <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i> 
-                <span type="button" class="plus-text">Submission Of No Due Clearance</span></span>
-            </a>
-        </div>
-      }
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div> <span class="component-sub-header">No Due Clearance</span></div>
+    @if(canAccess('view','submissionnodue')){
+    @if(lineOrder && nodue_Clearance_Details.value.length > 0 && allApproved &&
+    empdata?.substatus?.toLowerCase()==='raised no due' && empdata.empstatus?.toLowerCase() != 'inactive'){
+    <div class="custom-add-btn">
+      <a class="dropdown-item" [routerLink]="['/admin/nodue-form-details']" routerLinkActive="active"
+        (click)="onsubmission(empdata.employeeId)">
+        <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i>
+          <span type="button" class="plus-text">Submission Of No Due Clearance</span></span>
+      </a>
+    </div>
+    }
     }
   </div>
+  
   <!--Input search-->
   <div class="custom-table-content">
     @if(!loading){
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>{{'Department'|translate}}</th>
-            <th>{{'Requested Date'|translate}}</th>
-            <th>{{'Approver Name'|translate}}</th>
-            <th>{{'Approval Status'|translate}}</th>
-            <th>{{'Sub Status'|translate}}</th>
-            <th>{{'Last Working Day'|translate}}</th>
-            <th ></th>
-          </tr>
-        </thead>
-        <tbody>
-          @if(((nodue_Clearance_Details | async) ?? []).length > 0) {
-          @for (item of (nodue_Clearance_Details|async); track item.id) {
-          <tr>
-            <td>{{ item.departmentName?item.departmentName:'NA' }}
-            </td>
-            <td>
-                {{ item.requestedDate?(item.requestedDate | dateformat):'NA' }}
-            </td>
-            <td>{{item.processedByName? item.processedByName:'-'}}</td>
-            <td>{{item.status?item.status:'NA'}}</td>
-            <td>{{item.subStatus?item.subStatus:'NA'}}</td>
-            <td>
-              {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
-            </td>
-             @if(canAccess('view','rerequest')){
-            <td>
-              <div class="dropdown">
-                @if(item.status === 'Rejected' && item.subStatus !== 'ReRequested'){
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                }
-    
-                <!-- @if(canAccess('view', 'rerequest')){ -->
-                    <ul class="dropdown-menu custom-dropdown-menu">
-                  <li >
-                    <a class="dropdown-item" (click)="rerequestFornoDue(item)">
-                      <i class="bi bi-repeat me-2 fs-5"></i>Re-request for no due
-                    </a>
-                  </li>
-                </ul>
-                <!-- } -->
-              
-              </div>
-            </td>
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{'Department'|translate}}</th>
+          <th class="text-center">{{'Requested Date'|translate}}</th>
+          <th>{{'Approver Name'|translate}}</th>
+          <th>{{'Approval Status'|translate}}</th>
+          <th>{{'Sub Status'|translate}}</th>
+          <th>{{'Last Working Day'|translate}}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @if(((nodue_Clearance_Details | async) ?? []).length > 0) {
+        @for (item of (nodue_Clearance_Details|async); track item.id) {
+        <tr>
+          <td>{{ item.departmentName?item.departmentName:'NA' }}</td>
+          <td class="text-center text-nowrap">{{ item.requestedDate?(item.requestedDate | dateformat):'NA' }}</td>
+          <td>{{item.processedByName? item.processedByName:'-'}}</td>
+          <td>{{item.status?item.status:'NA'}}</td>
+          <td>{{item.subStatus?item.subStatus:'NA'}}</td>
+          <td>{{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}</td>
+          @if(canAccess('view','rerequest')){
+          <td>
+            <div class="dropdown">
+              @if(item.status === 'Rejected' && item.subStatus !== 'ReRequested'){
+              <span type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </span>
+              }
+              <!-- @if(canAccess('view', 'rerequest')){ -->
+              <ul class="dropdown-menu custom-dropdown-menu">
+                <li>
+                  <a class="dropdown-item" (click)="rerequestFornoDue(item)">
+                    <i class="bi bi-repeat me-2 fs-5"></i>Re-request for no due
+                  </a>
+                </li>
+              </ul>
+              <!-- } -->
+            </div>
+          </td>
           }
-            <!-- </ng-container> -->
-          </tr>}}
-          @else{
-          <tr>
-            
-              <app-no-data-found />
-            
-          </tr>
-          }
-        </tbody>
-      </table>
+          <!-- </ng-container> -->
+        </tr>}}
+        @else{
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+      </tbody>
+    </table>
     }
     @else {
-      <app-data-loader-content />
+    <app-data-loader-content />
     }
   </div>
-
+</div>

@@ -306,7 +306,8 @@ export class LeavesComponent {
     this.leaveForm = this.fb.group({
       leaveType: [null, Validators.required],
       startdate: [null, Validators.required],
-      enddate: [null, Validators.required],
+      // enddate: [null, Validators.required],
+      enddate: [{ value: '', disabled: false }, Validators.required],
       halfdayavailing: ['', Validators.required],
       availing: [{ value: '', disabled: true }],
       fulldayavailing: [{ value: '', disabled: true }],
@@ -314,6 +315,22 @@ export class LeavesComponent {
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
+
+    this.leaveForm.get('leaveType')?.valueChanges.subscribe((leaveType: string) => {
+      const startDateControl = this.leaveForm.get('startdate');
+      const endDateControl = this.leaveForm.get('enddate');
+
+      if (leaveType === 'Optional Holiday') {
+        // Clear and disable both dates
+        startDateControl?.reset();
+        endDateControl?.reset();
+        endDateControl?.disable();
+      } else {
+        // Enable both fields, user may re-enter dates
+        startDateControl?.enable(); // just in case it was disabled
+        endDateControl?.enable();
+      }
+    });
   }
 
   updateHalfDayOptions() {
@@ -543,6 +560,7 @@ export class LeavesComponent {
   }
 
   onstartdate(action: string) {
+     this.leaveForm.get('enddate')?.reset();
     this.disableSubmitButton = false;
     this.leaveForm.patchValue({ halfdayavailing: null });
     this.leaveForm.patchValue({ availing: null });
@@ -833,6 +851,19 @@ export class LeavesComponent {
     this.isWeekOffSelectedEndate = false;
     // this.isWeekOffSelected = false;
     this.isHolidaySelectedEndate = false;
+    const startDate = this.leaveForm.get('startdate')?.value;
+    const endDate = this.leaveForm.get('enddate')?.value;
+
+    if (startDate && endDate && startDate === endDate) {
+      this.leaveForm.patchValue({
+        fulldayavailing: '2',
+        halfdayavailing: null,
+        availing: null
+      });
+
+      this.enableHalfDayOptions = true; // Set false if you want to disable them instead
+      this.disableSubmitButton = false; // Enable submit as full day is selected
+    }
     this.onEndDateChange();
     this.updateEndDateValidity();
     this.updateStartDateValidity1();
@@ -1179,10 +1210,35 @@ export class LeavesComponent {
     return false;
   }
 
+  // toggleHalfDayOptions(isHalfDay: boolean) {
+  //   this.enableButton = isHalfDay;
+  //   this.leaveForm.get('fulldayavailing')?.clearValidators();
+  //   this.leaveForm.patchValue({ fulldayavailing: null });
+  // }
   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    this.leaveForm.get('fulldayavailing')?.clearValidators();
-    this.leaveForm.patchValue({ fulldayavailing: null });
+
+    if (isHalfDay) {
+      // Default to 'firsthalf' if not already set
+      const availingValue = this.leaveForm.get('availing')?.value;
+      if (!availingValue) {
+        this.leaveForm.patchValue({
+          availing: 'firsthalf'
+        });
+      }
+
+      // Clear full day selection
+      this.leaveForm.get('fulldayavailing')?.clearValidators();
+      this.leaveForm.patchValue({ fulldayavailing: null });
+
+    } else {
+      // If user unselects half day, clear availing and disable buttons
+      this.leaveForm.patchValue({
+        availing: null,
+        halfdayavailing: null
+      });
+      this.enableButton = false;
+    }
   }
 
   toggleFullDayOptions(isFullDay: boolean) {
@@ -1272,7 +1328,7 @@ export class LeavesComponent {
       this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
         next: (data: any) => {
           if (data) {
-            this.conformationPopup.openSuccessModal('Leave Requested successfully');
+            this.conformationPopup.openSuccessModal('Leave requested successfully');
             setTimeout(() => {
               this.modalService.dismissAll();
               this.leaveForm.reset();

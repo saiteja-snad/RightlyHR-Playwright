@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './view-desk-details.component.scss'
 })
 
-export class ViewDeskDetailsComponent {
+export class ViewDeskDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   deskResponse: any
   navTabs = [

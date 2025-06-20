@@ -1,19 +1,14 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <!--header-->
-
-        <div class="heading-content">
-            <div class="commpoment-name " (click)="navigation()"> Reports<span class="ms-1"><i
-                        class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Family Members Data</div>
-        </div>
+        <app-reports-header/>
 
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex gap-3">
                 @if(rbac.allowedToAccess('Family Members Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-label text-nowrap m-0">Employee Status</div>
+                    <div class="custom-label filter-labels text-nowrap m-0">Employee Status</div>
                     <div class="custom-p-select-content">
                         <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false"
                             [showClear]="false" class="form-select custom-select" formControlName="status"
@@ -24,6 +19,7 @@
                     </div>
                 </div>
                 }
+
                 <div class="d-flex gap-2">
                     @if(rbac.allowedToAccess('Family Members Data - Generate.view')){
                     <button type="submit" class="custom-btn btn-secondary"
@@ -52,21 +48,22 @@
         </form>
     </div>
 
-
     <div class="custom-table-content">
         @if(!dataload){
         <table class="w-100">
             <thead>
-                <th>{{ "Employee ID" }}</th>
-                <th>{{ "First Name" }}</th>
-                <th>{{ "Middle Name" }}</th>
-                <th>{{ "Last Name" }}</th>
-                <th>{{ "Work Email" }}</th>
-                <th>{{ "Employee Status" }}</th>
-                <th>{{ "Name" }}</th>
-                <th>{{ "Relation" }}</th>
-                <th>{{ "Date of Birth" }}</th>
-                <th>{{ "Dependent" }}</th>
+                <tr>
+                    <th>{{ "Employee ID" }}</th>
+                    <th>{{ "First Name" }}</th>
+                    <th>{{ "Middle Name" }}</th>
+                    <th>{{ "Last Name" }}</th>
+                    <th>{{ "Work Email" }}</th>
+                    <th>{{ "Employee Status" }}</th>
+                    <th>{{ "Name" }}</th>
+                    <th>{{ "Relation" }}</th>
+                    <th>{{ "Date of Birth" }}</th>
+                    <th>{{ "Dependent" }}</th>
+                </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="familydata.length > 0; else noData">
@@ -84,21 +81,18 @@
                                 {{ member.memberName || "-" }}
                             </div>
                         </td>
-
                         <!-- Family Member Relation(s) -->
                         <td>
                             <div class="mb-3" *ngFor="let member of row.familyMembers">
                                 {{ member.relation || "-" }}
                             </div>
                         </td>
-
                         <!-- Family Member DOB(s) -->
                         <td>
                             <div class="mb-3" *ngFor="let member of row.familyMembers">
                                 {{ member.memberDateOfBirth | dateformat }}
                             </div>
                         </td>
-
                         <!-- Family Member Dependent(s) -->
                         <td>
                             <div class="mb-3" *ngFor="let member of row.familyMembers">
@@ -110,7 +104,7 @@
                 </ng-container>
                 <ng-template #noData>
                     <tr>
-                        <app-no-data-found></app-no-data-found>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </tbody>
@@ -120,5 +114,4 @@
         <app-data-loader-content />
         }
     </div>
-
 </div>

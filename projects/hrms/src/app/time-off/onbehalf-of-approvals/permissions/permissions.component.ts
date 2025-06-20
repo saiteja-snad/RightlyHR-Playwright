@@ -382,7 +382,7 @@ export class PermissionsComponent {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Premission request approved successfully');
             } else {
               this.openModal(this.leaveSummary);
               setTimeout(() => {
@@ -454,7 +454,7 @@ export class PermissionsComponent {
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
+            this.signalService.handleResponse(this.requestSummary, 'Permission request processed successfully');
           } else {
             this.openModal(this.leaveSummary);
             setTimeout(() => {
@@ -522,7 +522,7 @@ export class PermissionsComponent {
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
+              this.signalService.handleResponse(this.requestSummary, 'Permission request rejected successfully');
             } else {
               this.openModal(this.leaveSummary);
               setTimeout(() => {

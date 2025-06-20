@@ -907,7 +907,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       this.successMessage = 'Form submitted successfully';
     }
     else if (value === 'draft') {
-      this.successMessage = 'Form drafted successfully';
+      this.successMessage = 'Form saved as draft';
     }
     this.sharedModalService.openSuccessModal(this.successMessage);
   }

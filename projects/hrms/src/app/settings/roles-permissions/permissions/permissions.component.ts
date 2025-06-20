@@ -451,6 +451,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Background check Status',
     'Notice Period',
     'Frequency',
+    'Letter Acknoledgement',
     'Paytype',
     'Overtime Eligibility',
     'Business Area',
@@ -698,7 +699,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Approved (On Behalf Of)',
     'Request On Behalf Button',
     'Rejected (On Behalf Of)',
-    'Processed (On Behalf Of)'
+    'Processed (On Behalf Of)',
+    'Cancelled (On Behalf Of)',
+    'My Team On Behalf Of',
+    'On Behalf Of All Employees'
   ];
   attendanceModuleSubTabs = [
     'Request Regularization',
@@ -764,7 +768,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Time Off (On Behalf Of Approvals)',
     'WFH (On Behalf Of Approvals)',
     'Comp Off (On Behalf Of Approvals)',
-    'Permission (On Behalf Of Approvals)'
+    'Permission (On Behalf Of Approvals)',
+    'My Team On Behalf Of Approvals',
+    'On Behalf Of Approvals All Employees'
   ];
   reportsTabsFields = [
     'Standard Reports',
@@ -827,6 +833,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(Leaves)',
     'Attendance Team Manager List(Leaves)',
     'My Team Report(Leave)',
+    'Attendance All Employees List(Leave Summary)',
+    'Attendance Team Manager List(Leave Summary)',
+    'My Team Report(Leave Summary)',
     'Attendance All Employees List(Compoff)',
     'Attendance Team Manager List(Compoff)',
     'My Team Report(Compoff)',

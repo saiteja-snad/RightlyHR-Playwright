@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
@@ -22,7 +22,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './probation-confirmation-letter.component.scss'
 })
 
-export class ProbationConfirmationLetterComponent {
+export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   probationemp: IEmployee[] = [];
   probationLetterData = {} as any;
@@ -111,7 +111,7 @@ export class ProbationConfirmationLetterComponent {
   }
 
   naviagte() {
-    this.router.navigate(['/admin/probation-employees']);
+    this.router.navigate(['/employee-management/probation-employees']);
   }
 
   initializeForm() {
@@ -129,9 +129,10 @@ export class ProbationConfirmationLetterComponent {
   getProbationEmployees() {
     this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation Confirmed"}`).subscribe({
       next: (data: any) => {
+        console.log(data)
         this.probationemp = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
       },
       error: (reason: any) => {
@@ -214,14 +215,14 @@ export class ProbationConfirmationLetterComponent {
         this.uploadProbationLetter();
       });
     }
-    this.openModalService.openSuccessModal("Probation Confirmation Letter Generated Successfully");
+    // this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
   }
 
   uploadProbationLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationLetterData.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
-        this.openModalService.openSuccessModal("Probation Confirmation Letter Generated Successfully");
+        //this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
         if (data) {
           this.postProbationDetails(data.path);
         }
@@ -285,8 +286,8 @@ export class ProbationConfirmationLetterComponent {
         this.disableFieldsForApproval = true;
         this.loading = false;
         this.enableBtn = true;
-        this.openModalService.openSuccessModal("Probation Extension Letter Generated Successfully");
-        this.probationConfirmationemail();
+        this.openModalService.openSuccessModal("Probation confirmation letter generated successfully");
+      
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
@@ -334,8 +335,10 @@ pathValuesFuction() {
     }
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
-        this.openModalService.openSuccessModal("Probation Confirmation Letter Sent Successfully");
+        this.getProbationEmployees()
+        this.openModalService.openSuccessModal("Email has been sent successfully");
         setTimeout(() => {
+
           this.naviagte();
         }, 2000)
       },

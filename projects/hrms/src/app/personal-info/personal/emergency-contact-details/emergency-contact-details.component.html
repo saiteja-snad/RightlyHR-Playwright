@@ -4,7 +4,7 @@
   <div class="card custom-background-card mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <span class="component-sub-header">Emergency Contacts Details</span>
+        <span class="component-sub-header">Emergency Contacts</span>
       </div>
       @if(!buttons && canAccess('update','emergency')){
       @if((employedata?.empstatus?.toLowerCase() !== 'inactive' &&
@@ -210,5 +210,4 @@
     </form>
   </div>
 }
-
 </div>

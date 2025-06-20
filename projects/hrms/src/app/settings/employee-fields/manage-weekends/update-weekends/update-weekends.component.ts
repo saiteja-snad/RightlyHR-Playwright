@@ -301,7 +301,7 @@ export class UpdateWeekendsComponent {
     }
     this.http.postdata('OrgWeekendHeader/Update/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.modal.openSuccessModal('Weekends Updated Successfully')
+        this.modal.openSuccessModal('Weekends updated successfully')
         setTimeout(() => {
           this.closeWeekend();
         }, 2000)
@@ -320,7 +320,7 @@ export class UpdateWeekendsComponent {
     this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).
       pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
-          this.modal.openSuccessModal('Weekends Published Successfully')
+          this.modal.openSuccessModal('Weekends published successfully')
           setTimeout(() => {
             this.closeWeekend();
           }, 2000)

@@ -14,7 +14,7 @@
 
         <div class="d-flex align-items-center gap-3">
             @if (rbac.allowedToAccess('My Team (Time Off).view')) {
-            <label class="form-label component-sub-header m-0">{{'My Team'| translate}}</label>
+            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" showClear="true" optionValue="employeeId"
                     name="myteamemployees" placeholder="Select employee name" [filter]="true" resetFilterOnHide="true"
@@ -53,16 +53,15 @@
                         </div>
                         <div class="separator"></div>
                         <div class="leave-category-text">
-                            @if (item.category.isProbationAllowed &&item.probationLeaves > 0) {
                             <p class="m-0">Processed</p>
-                            <p class="m-0">{{item.utilizedDays}}</p>
+                            @if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
                             }
-                            @if (!item.category.isProbationAllowed) {
-                            <p class="m-0">Processed</p>
-                            <p class="m-0">{{item.utilizedDays}}</p>
-                            }@else {
-                                <p class="m-0">Processed</p>
-                                <p class="m-0">{{item.utilizedDays}}</p>
+                            @else if (!item.category.isProbationAllowed) {
+                            <p class="m-0">{{item.utilizedDays ? item.utilizedDays : '0'}}</p>
+                            }
+                            @else {
+                            <p class="m-0">0</p>
                             }
                         </div>
                     </div>
@@ -183,8 +182,11 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'End Date'| translate}}<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" formControlName="enddate"
-                            [min]="minEndDate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')">
+                        <!-- <input type="date" class="form-control custom-input" formControlName="enddate"
+                            [min]="leaveFormData.startdate" [max]="maxEndDate" (ngModelChange)="onEndDate('add')"> -->
+                            <input type="date" class="form-control custom-input" formControlName="enddate" [min]="leaveFormData.startdate"
+                                [max]="maxEndDate" (ngModelChange)="onEndDate('add')" />
+
                         <div class="error-msg"
                             *ngIf="(leaveForm.get('enddate')?.invalid && leaveForm.get('enddate')?.touched)">
                             End Date is required
@@ -260,9 +262,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="error-msg" *ngIf="disableSubmitButton">
+                <!-- <div class="error-msg" *ngIf="disableSubmitButton">
                     Please select any of the option
-                </div>
+                </div> -->
+                <!-- <div class="error-msg"
+                    *ngIf="disableSubmitButton && leaveForm.get('enddate')?.value && leaveForm.get('enddate')?.touched">
+                    Please select any of the option
+                </div> -->
 
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -305,7 +311,7 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected || disableSubmitButton || !isstimeoffValid || isWeekOffSelectedEndate || 
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected  || !isstimeoffValid || isWeekOffSelectedEndate || 
                         isHolidaySelectedEndate || this.startDateErrorMessage || this.endDateErrorMessage || !issEndDategreater || !startdatevalid || 
                         isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > 
                         remainingLeaves) ) || isLoading">

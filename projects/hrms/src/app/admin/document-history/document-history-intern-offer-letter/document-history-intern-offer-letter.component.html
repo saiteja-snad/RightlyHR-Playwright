@@ -1,17 +1,28 @@
 @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')){
 <div class="custom-main-component-container">
-    <div class="input-group custom-search mb-2">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
+    <div class="d-flex gap-3 justify-content-between align-items-center mb-2">
+        <div class="input-group custom-search">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search by employee name / location / sub location / designation / status / sub status"
+                aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+    
+        <div class="custom-year-month-picker">
+            <p-datepicker [(ngModel)]="selectedDate" placeholder="Select Month & Year"
+                (ngModelChange)="onMonthChange($event)" [showIcon]="true" view="month" dateFormat="mm/yy"
+                [readonlyInput]="true" [maxDate]="maxMonth">
+            </p-datepicker>
+        </div>
     </div>
+
     <div class="custom-table-content">
         @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
                     <th class="text-nowrap">{{'Date'|translate}}</th>
-                    <th>{{'Name'|translate}}</th>
+                    <th>{{'Employee name'|translate}}</th>
                     <th>{{'Location'|translate}}</th>
                     <th>{{'Sub Location'|translate}}</th>
                     <th>{{'Designation'|translate}}</th>
@@ -27,8 +38,8 @@
                 </tr>
             </thead>
             <tbody>
-                @if(traineeofferletters.length > 0){
-                @for (traineeofferLetter of traineeofferletters | offerletterdashboardpipe : searchValue;
+                @if(offerLetters.length > 0){
+                @for (traineeofferLetter of offerLetters | offerletterdashboardpipe : searchValue;
                 track traineeofferLetter.id){
                 <tr>
                     <td class="text-nowrap">{{traineeofferLetter.offerSentDate | dateformat }}</td>
@@ -51,27 +62,32 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Download.view')) {
                                 <li (click)="onSelectDownload(traineeofferLetter)">
-                                    <a class="dropdown-item"><i class="bi bi-download me-2"></i>{{'Download' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-download me-2"></i>{{'Download' |
+                                        translate}}</a>
                                 </li>
                                 }
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
                                 @if(traineeofferLetter.status=='Approved'){
                                 <li (click)="releaseTraineeOfferLetter(traineeofferLetter)">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Release Offer' |
+                                        translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Approve.view')) {
-                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected'
+                                @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !==
+                                'Rejected'
                                 && traineeofferLetter?.status !== 'Released') {
                                 <li (click)="updateTraineeOfferDetails(traineeofferLetter)">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                        translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                                 @if((traineeofferLetter.status!='Approved'&&
                                 traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
                                 <li (click)="SelectData(traineeofferLetter);openModal(rejectpopup)">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
                                 </li>
                                 }}
                             </ul>

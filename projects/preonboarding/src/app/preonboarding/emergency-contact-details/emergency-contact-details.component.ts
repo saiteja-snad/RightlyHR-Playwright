@@ -1,4 +1,4 @@
-import { Component, effect, signal} from '@angular/core';
+import { Component, effect, signal, ViewEncapsulation} from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
@@ -13,12 +13,12 @@ import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
-
 @Component({
   selector: 'app-emergency-contact-details',
   imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
   templateUrl: './emergency-contact-details.component.html',
-  styleUrl: './emergency-contact-details.component.scss'
+  styleUrl: './emergency-contact-details.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class EmergencyContactDetailsComponent {

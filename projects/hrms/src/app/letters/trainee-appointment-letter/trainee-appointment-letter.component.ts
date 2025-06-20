@@ -444,7 +444,7 @@ getOfferdetails(Value: any) {
     };
     this.subscription = this.http.postdata('TraineeAppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Appointment Letter Generated Successfully')
+        this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         this.router.navigate(['/admin/dashboard']);
       },
       error: (reason: any) => {
@@ -497,7 +497,7 @@ getOfferdetails(Value: any) {
     }
     this.subscription = this.http.postdata(`CustomEmail/appointmentletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        this.conformationPopup.openSuccessModal('Email has been sent successfully')
       },
       error: (err: any) => {
         console.log(err);

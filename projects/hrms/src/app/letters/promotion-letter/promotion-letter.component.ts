@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
@@ -22,7 +22,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './promotion-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class PromotionLetterComponent {
+export class PromotionLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   appraisalData = {} as any;
   PromotionTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
@@ -509,7 +509,7 @@ export class PromotionLetterComponent {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.conformationPopup.openSuccessModal("Promotion Letter Generated Successfully")
+            this.conformationPopup.openSuccessModal("Promotion letter generated successfully")
           }
           let loggedInUser = this.authService.getToken();
 
@@ -540,7 +540,7 @@ export class PromotionLetterComponent {
 
           this.subscription = this.http.postdata(`CustomEmail/Promotionletter`, emaildetails).subscribe({
             next: (data: any) => {
-              this.conformationPopup.openSuccessModal("Email Sent Successfully");
+              this.conformationPopup.openSuccessModal("Email has been sent successfully");
               setTimeout(()=>{
                 this.navigateDashboard();
               }, 2000)

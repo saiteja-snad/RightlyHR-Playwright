@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation ,OnDestroy, OnInit, } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -26,7 +26,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   encapsulation: ViewEncapsulation.None
 })
 
-export class ApprisalLetterComponent {
+export class ApprisalLetterComponent implements OnInit,OnDestroy {
   allempdata = [] as IJob[];
   subscription!: Subscription;
   appraisalTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
@@ -718,7 +718,7 @@ bonusValidator = (salary: number): ValidatorFn => {
         if (data) {
           this.result.documentUrl = data.path;
           // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
-          this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
           // this.router.navigate(['/admin/active']);
         }
         let emaildetails = {
@@ -741,7 +741,7 @@ bonusValidator = (salary: number): ValidatorFn => {
         }
         this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
           next: (data: any) => {
-            this.conformationPopup.openSuccessModal('Email Sent Successfully');
+            this.conformationPopup.openSuccessModal('Email has been sent successfully');
             setTimeout(() => {
               this.navigateDashboard();
             }, 2000)

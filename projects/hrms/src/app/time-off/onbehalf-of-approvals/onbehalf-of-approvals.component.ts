@@ -5,7 +5,7 @@ import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../services/rbac.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { WfhComponent } from './wfh/wfh.component';
@@ -31,7 +31,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     TimeOffComponent,
     Select,
     ModuleInformationComponent,
-    NgbPopoverModule
+    NgbPopoverModule,
+    FormsModule
 ],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
@@ -53,6 +54,12 @@ export class OnbehalfOfApprovalsComponent {
   activeTab: string = 'timeOff';
   permissionsCount = 0;
   employeeiddetails = [] as any;
+  getEmployeeInfo = [] as any;
+  disaplyapplybutton = true;
+  selectedEmployeeId: string | null = null;
+  selectedMyTeamEmployee: any = null;
+  selectedOtherEmployee: any = null;
+  empdata = {} as any;
 
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, public readonly router: Router) {
     // Signal reaction for employee switch
@@ -72,10 +79,12 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   ngOnInit(): void {
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     localStorage.removeItem("onbehalfofaproverData");
     this.getEmployeeId();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getMyTeamData();
   }
 
   initiateUpdateModuleInfo(){
@@ -84,6 +93,16 @@ export class OnbehalfOfApprovalsComponent {
     .subscribe(() => {
       this.updateModuleInfo();
     });
+  }
+
+    onMyTeamChange(event: any): void {
+    this.selectedOtherEmployee = null; // Clear the other dropdown
+    this.OnclickMyTeam(event);
+  }
+
+  onEmployeeChange(event: any): void {
+    this.selectedMyTeamEmployee = null; // Clear the My Team dropdown
+    this.Onclick(event);
   }
 
   updateModuleInfo() {
@@ -119,6 +138,47 @@ export class OnbehalfOfApprovalsComponent {
         console.log(reason);
       },
     });
+  }
+
+  getMyTeamData() {
+    this.subscription = this.http
+      .getData(`Employeedata/v2/getEmployeesByhierarchy/${this.empdata.employeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            // No filter
+            this.getEmployeeInfo = response.map((employee: any) => ({
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            }));
+          }
+        },
+      });
+  }
+
+   OnclickMyTeam($event: any) {
+    if ($event.value) {
+      this.employeedata = this.getEmployeeInfo.find((e: any) => e.employeeId == $event.value);
+      localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
+      this.http.triggerActionSignal();
+    }
+    else {
+      this.employeedata = {};
+      this.leaves = [];
+      this.compOff = [];
+      this.wfh = [];
+      this.permissions = [];
+      this.timeOffCount = 0;
+      this.compOffCount = 0;
+      this.wfhCount = 0;
+      this.permissionsCount = 0;
+      localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
+      this.http.triggerActionSignal();
+    }
   }
 
   Onclick($event: any) {

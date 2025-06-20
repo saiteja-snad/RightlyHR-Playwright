@@ -15,14 +15,11 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-offer-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
-    LettersheaderComponent, DateformatPipe, LetterFooterComponent, NgbPopoverModule],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
@@ -266,8 +263,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
-              ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
           };
         });
       },
@@ -1088,7 +1084,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/offerManagerEmail`, emaildetails).subscribe({
       next: (data: any) => {
         this.Approvednotification();
-        this.conformationPopup.openSuccessModal('Request for approval sent successfully');
+        this.conformationPopup.openSuccessModal('Approval request sent successfully');
         this.ApprovalLoader = false;
       },
       error: (err: any) => {

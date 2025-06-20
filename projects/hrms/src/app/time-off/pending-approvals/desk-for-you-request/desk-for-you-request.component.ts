@@ -19,10 +19,12 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 
 @Component({
   selector: 'app-desk-for-you-request',
-  imports: [CommonModule, NoDataFoundComponent, FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule, SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule,
+    SearchfilterPipe, SearchfordeskPipe, DataLoaderContentComponent],
   templateUrl: './desk-for-you-request.component.html',
   styleUrl: './desk-for-you-request.component.scss'
 })
+
 export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   employdata: any
   deskiteam: any
@@ -34,10 +36,10 @@ export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   selectedexpenesid: any
   subscription!: Subscription
   rejectForm!: FormGroup;
-searchValue: any;
+  searchValue: any;
 
-  constructor(private http: HttpService, private readonly modalService: NgbModal,  private signalService: SignalsService,
-    public conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService, public formValidation: FormValidationService) { }
+  constructor(private http: HttpService, private readonly modalService: NgbModal, private signalService: SignalsService,
+    public conformationPopup: OpenModalService, private fb: FormBuilder, public rbac: RbacService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.employdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -56,7 +58,7 @@ searchValue: any;
     this.http.getData(`PendingApproval/employee/${this.employdata.employeeId}?moduleId=23&approvedType=EMP`).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.deskheaderpending = (data.data as Entity[]).filter(item => 
+        this.deskheaderpending = (data.data as Entity[]).filter(item =>
           item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         // this.filterPendingExpenses()
       }, error: (err) => {
@@ -65,15 +67,16 @@ searchValue: any;
       },
     });
   }
-  expapprovalsdata : any;
+
+  expapprovalsdata: any;
   openModal(content: any, data: any) {
     this.expapprovalsdata = data;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-   openconformationPopup(content: any) {
-     this.modalService.open(content, { centered: true, backdrop: 'static' });
+
+  openconformationPopup(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   };
- 
 
   process(expid: any, exp: any): void {
     this.assiginemploye = exp.deskAllocatedTo
@@ -82,14 +85,14 @@ searchValue: any;
       id: this.deskid,
       status: 'Processed',
       approvedBy: this.employdata.employeeId.toString(),
-      currentStage : parseInt(exp.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(exp.approvalHeader.currentapprovalStage),
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal("Desk Allocation Request  Processed Successfully")
+        this.conformationPopup.openSuccessModal("Desk allocation request Processed successfully")
         this.getexpensespendingforyou()
         this.signalService.deskForYouTriggerSignal.set(true);
-          this.updatedeskitem()
+        this.updatedeskitem()
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred')
@@ -118,7 +121,7 @@ searchValue: any;
   }
 
   openmodal(content: any) {
-    this.modalService.open(content, { size: 'xl', backdrop: 'static' ,centered: true});
+    this.modalService.open(content, { size: 'xl', backdrop: 'static', centered: true });
   }
 
   viewdeskitem(deskid: any) {
@@ -139,15 +142,15 @@ searchValue: any;
       status: 'Rejected',
       comments: this.rejectForm.get('comments')?.value,
       approvedBy: this.employdata.employeeId.toString(),
-      currentStage : parseInt(this.expapprovalsdata.approvalHeader.currentapprovalStage),
+      currentStage: parseInt(this.expapprovalsdata.approvalHeader.currentapprovalStage),
     };
     this.http.putData(`PendingApproval/${this.selectedexpenesid}`, userStatus).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
-        this.conformationPopup.openSuccessModal("Desk Rejected Successfully");
+        this.conformationPopup.openSuccessModal("Desk allocation request rejected successfully");
         this.rejectForm.reset();
-         this.signalService.deskForYouTriggerSignal.set(true);
+        this.signalService.deskForYouTriggerSignal.set(true);
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred');

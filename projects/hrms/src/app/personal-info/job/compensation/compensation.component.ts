@@ -322,7 +322,4 @@ export class CompensationComponent implements OnInit,OnDestroy {
     }
   }
 
-
-
-
 }

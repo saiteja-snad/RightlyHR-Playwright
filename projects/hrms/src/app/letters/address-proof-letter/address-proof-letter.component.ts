@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -23,7 +23,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './address-proof-letter.component.scss'
 })
 
-export class AddressProofLetterComponent {
+export class AddressProofLetterComponent implements OnInit,OnDestroy {
   addressdata: { name: string, value: string }[] = [
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
@@ -36,7 +36,8 @@ export class AddressProofLetterComponent {
   selectedEmployee: any;
   subscription!: Subscription;
   fusionEmpId: any;
-  employeeiddetails = [] as any;
+  // employeeiddetails = [] as any;
+  employeeiddetails: any[] = [];
   addressLetterData = {} as any;
   employeeJobDetails = {} as any;
   addressTemplate: any | string | ArrayBuffer | null = null; //bank loan letter template
@@ -166,7 +167,7 @@ export class AddressProofLetterComponent {
 
     let selectedAddress = this.addressLetterData.address || {};
     if (!selectedAddress || Object.keys(selectedAddress).length === 0) {
-      console.log('No address found for the selected type.');
+      console.log('No address found for the selected type');
     }
 
     this.employeeForm.patchValue({
@@ -202,7 +203,7 @@ export class AddressProofLetterComponent {
         this.employeeaddress = data as IAddress[];
         const address = data.employeeAddresses
         if (!address || address.length === 0) {
-          this.addressErrorMessage = 'No address found for the selected employee.';
+          this.addressErrorMessage = 'No address found for the selected employee';
         } else {
           this.addressErrorMessage = '';
         }
@@ -232,7 +233,7 @@ export class AddressProofLetterComponent {
       this.addressFlag = true;
     } else {
       this.addressFlag = false;
-      this.addressErrorMessage = 'No address found for the selected type.';
+      this.addressErrorMessage = 'No address found for the selected type';
     }
   }
 
@@ -405,7 +406,7 @@ export class AddressProofLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.addressFile).subscribe({
       next: (data: any) => {
         if (data) {
-          this.conformationPopup.openSuccessModal('Address Proof Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Address proof letter generated successfully');
           setTimeout(() => {
             this.navigateDashboard();
           }, 2000)

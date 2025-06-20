@@ -102,12 +102,12 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
           this.familyDetailsForm.reset();
           this.modalService.dismissAll();
           this.getfamilyDetailsByEmployeid();
-          this.conformationPopup.openSuccessModal('Family members added successfully');
+          this.conformationPopup.openSuccessModal('Family member details added successfully');
 
         },
         error: (err: any) => {
           console.error('Error saving family details:', err);
-          this.conformationPopup.openErrorModal('Family members added failed');
+          this.conformationPopup.openErrorModal('Family members details added failed');
 
         },
       });
@@ -215,7 +215,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           this.getfamilyDetailsByEmployeid();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Family members updated successfully')
+          this.conformationPopup.openSuccessModal('Family member details updated successfully')
 
         },
         error: (err: any) => {
@@ -241,13 +241,23 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           this.modalService.dismissAll()
           this.getfamilyDetailsByEmployeid()
-          this.conformationPopup.openSuccessModal('Family members deleted successfully')
+          this.conformationPopup.openSuccessModal('Family member details deleted successfully')
         },
         error: (err: any) => {
           console.log(err);
           this.conformationPopup.openErrorModal('Family members deleted failed')
         },
       });
+
+  }
+   openConfirmationModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  resetdata(){
+    this.familyDetailsForm.reset();
+    this.familyDetailsupdateForm.reset();
+    this.modalService.dismissAll()
   }
 
   ngOnDestroy(): void {

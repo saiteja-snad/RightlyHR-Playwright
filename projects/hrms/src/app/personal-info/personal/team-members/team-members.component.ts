@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Ipersonal, Iteammembers } from '../../../Interfaces/members-model';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -36,7 +36,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
 })
-export class TeamMembersComponent {
+export class TeamMembersComponent implements OnInit,OnDestroy {
   emp: any;
   empinfo = {} as Ipersonal;
   subscription!: Subscription;
@@ -560,7 +560,7 @@ export class TeamMembersComponent {
           console.log('Next callback');
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
-            'Reporting Manager Updated Successfully'
+            'Reporting manager updated successfully'
           );
           this.getAllTeammembersList();
           this.http.setBasicDetails();
@@ -573,7 +573,7 @@ export class TeamMembersComponent {
             this.http.setBasicDetails();
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Reporting Manager Updated Successfully'
+              'Reporting manager updated successfully'
             );
             this.getAllTeammembersList();
 
@@ -635,7 +635,7 @@ export class TeamMembersComponent {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
-            'Reporting Manager Updated Successfully'
+            'Reporting manager updated successfully'
           );
           this.getAllTeammembersList();
 
@@ -646,7 +646,7 @@ export class TeamMembersComponent {
             this.modalService.dismissAll();
             this.http.setBasicDetails();
             this.conformationPopup.openSuccessModal(
-              'Reporting Manager Updated Successfully'
+              'Reporting manager updated successfully'
             );
             this.spinnerLoader = false;
             this.teamForm.reset();

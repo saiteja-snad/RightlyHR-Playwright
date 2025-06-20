@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
@@ -15,6 +15,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import {  Router } from '@angular/router';
+import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 
 @Component({
   selector: 'app-yearly-summary-report',
@@ -27,12 +28,12 @@ import {  Router } from '@angular/router';
     ReactiveFormsModule,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-  
+    ReportsHeaderComponent
 ],
   templateUrl: './yearly-summary-report.component.html',
   styleUrl: './yearly-summary-report.component.scss'
 })
-export class YearlySummaryReportComponent {
+export class YearlySummaryReportComponent implements OnInit,OnDestroy {
   moduleinfo : string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;

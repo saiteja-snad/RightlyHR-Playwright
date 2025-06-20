@@ -1,26 +1,29 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-         <div class="heading-content">
-      <div class="commpoment-name" (click)="navigation()"> Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-      <div class="component-header">Policy Acknowledgement Report</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div>
-    </div>
+        <div class="heading-content">
+            <div class="commpoment-name navigator" (click)="navigation()">All Reports<span class="ms-1">
+                <i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Policy Acknowledgement Report</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+        </div>
+
         <form autocomplete="off" [formGroup]="policyAcknowledgementReport" (ngSubmit)="generatePolicyAckReport()">
             <div class="d-flex align-items-center gap-3 flex-wrap">
-                <button *ngIf="showClearAllButton()" type="button" class="clear-all-btn mt-4" (click)="clearAllFilters()">
+                <button *ngIf="showClearAllButton()" type="button" class="clear-all-btn mt-4"
+                    (click)="clearAllFilters()">
                     Clear All
                 </button>
 
                 <!--Year Dropdown-->
                 <div class="year-width">
-                    <label for="year" class="form-label custom-label mb-2">
+                    <label for="year" class="form-label custom-label filter-labels mb-2">
                         {{ "Year" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="yearDetails" optionLabel="year"
-                            class="form-select custom-select" formControlName="year" placeholder="Please select year">
+                        <p-select [options]="yearDetails" optionLabel="year" class="form-select custom-select"
+                            formControlName="year" placeholder="Please select year">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
                         </p-select>
@@ -29,7 +32,7 @@
 
                 <!--Location Dropdown-->
                 <div>
-                    <label for="location" class="form-label custom-label mb-2">
+                    <label for="location" class="form-label custom-label filter-labels mb-2">
                         {{ "Location" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
@@ -41,8 +44,8 @@
                 </div>
 
                 <!--Sub-Location Dropdown-->
-                <div >
-                    <label for="subLocation" class="form-label custom-label mb-2">
+                <div>
+                    <label for="subLocation" class="form-label custom-label filter-labels mb-2">
                         {{ "Sub Location" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
@@ -54,32 +57,34 @@
                 </div>
 
                 <!--Shift Dropdown-->
-                <div >
-                    <label for="shift" class="form-label custom-label mb-2">
+                <div>
+                    <label for="shift" class="form-label custom-label filter-labels mb-2">
                         {{ "Shift" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id"
-                            formControlName="shift" placeholder="Please select shift" class="form-select custom-select" (onChange)="getpolicys()">
+                            formControlName="shift" placeholder="Please select shift" class="form-select custom-select"
+                            (onChange)="getpolicys()">
                         </p-select>
                     </div>
                 </div>
 
                 <!--Policy Dropdown-->
-                <div >
-                    <label for="shift" class="form-label custom-label mb-2">
+                <div>
+                    <label for="shift" class="form-label custom-label filter-labels mb-2">
                         {{ "Policy Name" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="policyItemsData" optionLabel="policyName" optionValue="id"
-                            formControlName="policy" placeholder="Please select policy name" class="form-select custom-select">
+                            formControlName="policy" placeholder="Please select policy name"
+                            class="form-select custom-select">
                         </p-select>
                     </div>
                 </div>
 
                 <!--Status Dropdown-->
                 <div class="location-width">
-                     <label for="shift" class="form-label custom-label mb-2">
+                    <label for="shift" class="form-label custom-label filter-labels mb-2">
                         {{ "Acknowledged Status" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
@@ -101,7 +106,6 @@
                         }
                     </button>
 
-
                     <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPolicyAck()"
                         [disabled]="!isReportGenerated || spinnerLoader2">
                         @if(spinnerLoader2){
@@ -111,17 +115,15 @@
                         <span>Export</span>
                         }
                     </button>
-
                 </div>
-
             </div>
         </form>
     </div>
 
-     <!--Module Information-->
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
+    <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
     @if(isLoading){
     <div class="custom-compoent-data-loader">
@@ -158,16 +160,13 @@
                     <td>{{record?.subLocation ?? '-'}}</td>
                     <td>{{record?.shift ?? '-'}}</td>
                     <td>{{record?.source ?? '-'}}</td>
-                    <td>
-                        {{ record?.acknowledged === true ? 'Yes' : record?.acknowledged === false ? 'No' : '-' }}
-                    </td>
+                    <td>{{ record?.acknowledged === true ? 'Yes' : record?.acknowledged === false ? 'No' : '-' }}</td>
                     <td>{{record?.acknowledgedDate ? (record.acknowledgedDate | dateformat) : '-' }}</td>
                     <td>{{record?.policyName ?? '-'}}</td>
-
                 </tr>
                 }@else {
                 <tr>
-                    <app-no-data-found></app-no-data-found>
+                    <app-no-data-found />
                 </tr>
                 }
             </tbody>

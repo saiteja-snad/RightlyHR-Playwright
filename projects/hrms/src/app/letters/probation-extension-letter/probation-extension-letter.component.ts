@@ -259,7 +259,7 @@ pathValuesFuction() {
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
-    debugger
+
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,

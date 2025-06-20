@@ -228,13 +228,13 @@
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalGrossSalary;else totalgross"> </span>
                                                 <ng-template
-                                                    #totalgross>{{appraisalData.totalGrossSalary}}</ng-template>
+                                                    #totalgross> <b>{{appraisalData.totalGrossSalary}}</b></ng-template>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
                                                 </span>
                                                 <ng-template
-                                                    #totalgrossper>{{appraisalData.totalGrossPerAnnum}}</ng-template>
+                                                    #totalgrossper><b>{{appraisalData.totalGrossPerAnnum}}</b></ng-template>
                                             </td>
                                         </tr>
                                         <tr>

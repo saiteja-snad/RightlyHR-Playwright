@@ -108,7 +108,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.employeedetails = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId ?? ''} - ${employee.firstName } ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
       },
       error: (reason: any) => {
@@ -259,7 +259,7 @@ pathValuesFuction() {
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
-    debugger
+
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,

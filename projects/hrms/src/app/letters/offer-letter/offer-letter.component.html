@@ -412,13 +412,13 @@
               </ng-template> -->
               <div class="letter-div">
                 <div class="text-center mb-5">
-                  <p class="letter-header">OFFER LETTER</p>
+                  <p class="letter-header text-center">OFFER LETTER</p>
                 </div>
                 <div class="row">
                   <div class="col-md-8">
-                    <ul class="list-style-none letter-sub-header ps-0">
+                    <ul class="list-style-none fw-bolder ps-0">
                       <!--Name-->
-                      <li
+                      <li class="mb-1"
                         *ngIf="!prospectiveEmpData.firstName && !prospectiveEmpData.middleName && !prospectiveEmpData.lastName;else fullname">
                         Name:</li>
                       <ng-template #fullname>
@@ -426,9 +426,9 @@
                           {{prospectiveEmpData.lastName}},</li>
                       </ng-template>
                       <!--Address-->
-                      <li *ngIf="!addresFlag;else address" class="mt-3">Employee Location:</li>
+                      <li class="mb-1" *ngIf="!addresFlag;else address">Employee Location:</li>
                       <ng-template #address>
-                        <li class="mt-3">{{prospectiveEmpData.addressLine1}},</li>
+                        <li>{{prospectiveEmpData.addressLine1}},</li>
                         @if (prospectiveEmpData.addressLine2) {
                         <li>{{prospectiveEmpData.addressLine2}},</li>
                         }
@@ -437,8 +437,8 @@
                       </ng-template>
                     </ul>
                   </div>
-                  <div class="col-md-4 letter-sub-header">
-                    <p class="text-end p-0">Date: {{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
+                  <div class="col-md-4 fw-bolder">
+                    <p class="text-end p-0"> {{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
                   </div>
                 </div>
               </div>
@@ -448,38 +448,37 @@
                   {{prospectiveEmpData.lastName}},</p>
               </div>
 
-              <p>Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
+              <p class="mb-4">Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
 
-              <p>Further to your application for employment with us, and the subsequent selection process, we are
+              <p class="mb-4">Further to your application for employment with us, and the subsequent selection process, we are
                 delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
                 <b>CTC</b> will be <b>INR {{(+prospectiveEmpData.amount || 0) + (+prospectiveEmpData.variablePayAmount
                   || 0)}}</b> per annum.
               </p>
 
-              <p>SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of SNAD Developers India Pvt Ltd, a
+              <p class="mb-4">SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of SNAD Developers India Pvt Ltd, a
                 US based organization for providing Software Development and Services to various IT Organizations across
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p>Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining would
+              <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining would
                   be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
 
-              <p>
+              <p class="mb-4">
                 Your respective <b>Cost to Company</b> as applicable has been detailed in Annexure 2 of
                 this letter. On your joining, you are expected to enter into an agreement, which specifies the details
-                of
-                the scope, terms, and conditions of your employment.
+                of the scope, terms, and conditions of your employment.
               </p>
 
               <ol>
-                <li class="mb-3">
+                <li class="mb-4">
                   <b>Offer Letter Valid Period:</b> The currently issued offer letter will be valid up to
                   <b>{{prospectiveEmpData.offerExpiryDate | dateformat}}.</b> The accepted offer letter along
                   with the list of documents should be provided at least 30 days before the Joining Date for performing
                   the necessary Background verification and initial setup.
                 </li>
 
-                <li class="mb-3"> <b>Working Hours:</b> Your normal hours of work are from 10:00
+                <li class="mb-4"> <b>Working Hours:</b> Your normal hours of work are from 10:00
                   AM hrs. to 07:00 PM hrs. Monday to Friday. Staff of support departments may be required to work on
                   Weekends. The normal working hours are forty-five hours/week, Monday to Friday. Depending on project
                   contingencies, working hours for specific employees or groups of employees may be modified / altered
@@ -490,10 +489,9 @@
                   warranted by the Company’s / Client’s work requirement. The employee may also be required to attend
                   duties on Public Holidays as per the exigencies of work.
                 </li>
-                 <li class="mb-3"><b>Annual Leave:</b> You will be entitled to Paid Leave and
-                  Public Holidays yearly as per your eligibility and the Company policies.</li>
 
-               
+                 <li class="mb-4"><b>Annual Leave:</b> You will be entitled to Paid Leave and
+                  Public Holidays yearly as per your eligibility and the Company policies.</li>
               </ol>
             </div>
             <!-- <div class="letter-footer">
@@ -502,91 +500,86 @@
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2"
-            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <ol start="4">
-                  
-
-                <li class="mb-3">
-                  <b>Notice Period:</b> Your services can be terminated by you by giving a notice of 90
-                  days in writing or salary in lieu thereof, subject to the Company’s discretion. The Company may
-                  terminate your
-                  employment by giving you salary for 30 days in lieu of the notice. Any employee who breaches the
-                  Company’s terms and conditions under this offer would be terminated immediately without notice.
-                </li>
-                <li>
-                  <b>Other Terms & Conditions of this Offer</b>
-                
-                </li>
+                  <li class="mb-3">
+                    <b>Notice Period:</b> Your services can be terminated by you by giving a notice of 90
+                    days in writing or salary in lieu thereof, subject to the Company’s discretion. The Company may
+                    terminate your
+                    employment by giving you salary for 30 days in lieu of the notice. Any employee who breaches the
+                    Company’s terms and conditions under this offer would be terminated immediately without notice.
+                  </li>
+                  <li>
+                    <b>Other Terms & Conditions of this Offer</b>
+          
+                  </li>
                 </ol>
-                <ul class="bullet">
-                   <li>During your service with the Company, you are expected to dedicate
-                      your whole time and attention to the Company's affairs and abstain from directly or indirectly
-                      engaging in any other business.</li>
-                  <li >Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                
+                <ul class="bullet ps-5">
+                  <li>During your service with the Company, you are expected to dedicate
+                    your whole time and attention to the Company's affairs and abstain from directly or indirectly
+                    engaging in any other business.</li>
+                  <li>Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
                     property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
-
-                  <li >You may be required to travel on Company work, and you will be reimbursed expenses as
+          
+                  <li>You may be required to travel on Company work, and you will be reimbursed expenses as
                     per Company policy. </li>
-
-                  <li >Your Remuneration and the terms and conditions of this offer letter
+          
+                  <li>Your Remuneration and the terms and conditions of this offer letter
                     shall remain confidential and are not to be disclosed to any third party. </li>
-
-                  <li >Upon acceptance of the offer letter, your official Employment ID will
+          
+                  <li>Upon acceptance of the offer letter, your official Employment ID will
                     be created with us and you will entitled to the corporate benefits structure based on the category
                     of
                     work. Your employment with the company as a FTE will stand confirmed subjected to the terms and
                     conditions
                     as per rules, regulations, and policies of The Company.</li>
-
-                  <li >On termination of employment, you will immediately give up to the
+          
+                  <li>On termination of employment, you will immediately give up to the
                     Company all correspondence, specifications, formulae, books, documents, hardware, market data, cost
                     data, literature,
                     drawings, effects or records, backup copies of programs source / data, etc. belonging to the
                     Company and any other Company property or relating to its business and shall not make or retain
                     any copies of the items. </li>
-
-                  <li >If you are absent from work without prior notification & approval as
+          
+                  <li>If you are absent from work without prior notification & approval as
                     per Company policies, you will be liable for disciplinary action depending on the severity of the
                     effects caused by the
                     individual’s absence. </li>
-
-                  <li >If you are absent for a continuous period of 7 days without leave or
+          
+                  <li>If you are absent for a continuous period of 7 days without leave or
                     obtaining your manager’s approval, you will be deemed to have voluntarily terminated your service
                     without notice. </li>
-
-                  <li >All the terms and conditions of service may be modified or changed at
+          
+                  <li>All the terms and conditions of service may be modified or changed at
                     the Company’s discretion. You will abide by all the rules and regulations of the Company which are
                     in force
                     from time to time. </li>
                 </ul>
-
+          
                 <p>To confirm please send your <b>acceptance</b> of the offer via reply
                   to the same <b>email</b> on or before <b> {{prospectiveEmpData.offerExpiryDate | dateformat}}.</b>
                   We request you to please carry a signed copy of the offer letter & other required documents
                   (<b>Annexure 1</b>) on the day of your joining.
                 </p>
-
+          
                 <p>We wish you a long, rewarding and fulfilling career experience and look
                   forward to having you on board with us. Please visit our website <a href="" target="_blank"
-                    rel="noopener noreferrer"> www.snaddevelopers.com</a>
-                  for more information about our Company. </p>
-
+                    rel="noopener noreferrer"><u> www.snaddevelopers.com</u></a>
+                  for more information about our Company.</p>
+          
                 <p>All other detailed terms and conditions of your employment will be specified
                   in the appointment letter, invention assignment and confidentiality agreement and the Company policies
                   which will be provided to you separately. This Offer Letter along with the appointment letter,
                   invention assignment and confidentiality agreement and the Company policies collectively form a part
-                  of your employment conditions. </p>
-
-                
+                  of your employment conditions.</p>
               </div>
             </div>
-
           </div>
 
           <!--page-3-->
@@ -611,15 +604,15 @@
                 <p>For any further information or clarification required, please feel free to
                   reach us on our email at <a
                     href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
-                    target="_blank" rel="noopener noreferrer"> hr&#64;snaddevelopers.com</a></p>
+                    target="_blank" rel="noopener noreferrer"><u> hr&#64;snaddevelopers.com</u></a></p>
                   <p>Yours Sincerely,</p>
-                  <p class="mb-5 letter-sub-header">For SNAD Developers India Pvt Ltd </p>
+                  <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
                   <div class="stamp"></div>
-                  <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
+                  <p class="mb-3 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
-                  <p class="m-0  "> Authorized Signatory, </p>
-                  <p class="m-0">{{prospectiveEmpData.authorityName}} </p>
-                  <p class="m-0">{{authorityDesignation}} </p>
+                  <p class="mb-3 signature "> Authorized Signatory, </p>
+                  <p class="mb-3 signature">{{prospectiveEmpData.authorityName}} </p>
+                  <p class="mb-3 signature">{{authorityDesignation}} </p>
                   <p class="mb-5">I accept this offer of employment. </p>
                   <div class="d-flex justify-content-between">
                     <div>
@@ -629,7 +622,7 @@
                       <p class="me-5 pe-5">Date (DD/MM/YYYY)</p>
                     </div>
                   </div>
-                  <p class="mt-5 letter-sub-header">ACCEPTANCE</p>
+                  <p class="mt-5 signature">ACCEPTANCE</p>
                   <p>I accept this offer letter and will complete all the necessary documents as required.
                   </p>
                   <p class="mt-4">Signature: _________________________</p>
@@ -658,35 +651,35 @@
                   <div class="hard-copy-letter"></div>
                 </ng-template> -->
                 <p class="letter-header text-center mb-4">ANNEXURE - 1</p>
-                <p class="letter-sub-header">Documents / Information required to be submitted on the day of joining:</p>
+                <p class="letter-sub-header mb-3">Documents / Information required to be submitted on the day of joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
                 <div class="mb-1">
                   <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.
                 </div>
                 <div class="mb-1">
-                  <div class="mb-3">
+                  <div class="mb-2">
                     <div class="box"></div> Certificates' supporting your educational qualifications along with marks
                     sheet
                   </div>
-                  <ul class="list-style-none">
-                    <li class="mb-3">
+                  <ul class="list-style-none mb-2">
+                    <li class="mb-1">
                       <div class="box"></div> Xth certificate & marks sheet
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> XII th certificate & marks sheet
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Graduation Degree certificate & Semester/year-wise mark sheets
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Master's Degree certificate & Semester/year-wise mark sheets (If
                       Applicable)
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Diploma/PG Diploma certificate & Transcripts (If Applicable)
                     </li>
-                    <li class="mb-3">
+                    <li class="mb-1">
                       <div class="box"></div> Any other Certificate with supporting documents
                     </li>
                   </ul>
@@ -748,12 +741,12 @@
                 <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
                 <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
                 <div class="row">
-                  <div class="p-2 border-box col-md-2">NAME</div>
-                  <div class="p-2 border-box col-md-4">{{prospectiveEmpData.firstName}}
+                  <div class="p-2 border-box col-md-2 name" >NAME</div>
+                  <div class="p-2 border-box col-md-4"><b>{{prospectiveEmpData.firstName}}
                     {{prospectiveEmpData.middleName}}
-                    {{prospectiveEmpData.lastName}}</div>
-                  <div class="p-2 border-box col-md-2">Designation</div>
-                  <div class="p-2 border-box col-md-4">{{prospectiveEmpData?.jobRole}}</div>
+                    {{prospectiveEmpData.lastName}}</b></div>
+                  <div class="p-2 border-box col-md-2 name">Designation</div>
+                  <div class="p-2 border-box col-md-4"><b>{{prospectiveEmpData?.jobRole}}</b></div>
                 </div>
                 <p class="text-center letter-sub-header my-3">Compensation Details <span class="boldnone">(All figures
                     in
@@ -803,11 +796,11 @@
                         <td><b>Total Gross Salary</b></td>
                         <td><span *ngIf="!prospectiveEmpData.totalGrossSalary;else totalgross">
                           </span>
-                          <ng-template #totalgross>{{ prospectiveEmpData.totalGrossSalary }}</ng-template>
+                          <ng-template #totalgross><b>{{ prospectiveEmpData.totalGrossSalary }}</b></ng-template>
                         </td>
                         <td><span *ngIf="!prospectiveEmpData.totalGrossPerAnnum;else totalgrossper">
                           </span>
-                          <ng-template #totalgrossper>{{ prospectiveEmpData.totalGrossPerAnnum }}</ng-template>
+                          <ng-template #totalgrossper><b>{{ prospectiveEmpData.totalGrossPerAnnum }}</b></ng-template>
                         </td>
                       </tr>
                       <tr>
@@ -845,22 +838,22 @@
                         <td><b>Total Deductions (PF+ESI+PT)</b></td>
                         <td><span *ngIf="!prospectiveEmpData.totalDeduction; else totdec">
                           </span>
-                          <ng-template #totdec>{{ prospectiveEmpData.totalDeduction }}</ng-template>
+                          <ng-template #totdec><b>{{ prospectiveEmpData.totalDeduction }}</b> </ng-template>
                         </td>
                         <td><span *ngIf="!prospectiveEmpData.totalDeductionsPerAnnum;else totdecper">
                           </span>
-                          <ng-template #totdecper>{{ prospectiveEmpData.totalDeductionsPerAnnum }}</ng-template>
+                          <ng-template #totdecper> <b>{{ prospectiveEmpData.totalDeductionsPerAnnum }}</b></ng-template>
                         </td>
                       </tr>
                       <tr>
                         <td><b>Net Salary</b></td>
                         <td><span *ngIf="!prospectiveEmpData.netSalary; else net">
                           </span>
-                          <ng-template #net>{{ prospectiveEmpData.netSalary }}</ng-template>
+                          <ng-template #net><b>{{ prospectiveEmpData.netSalary }}</b></ng-template>
                         </td>
                         <td><span *ngIf="!prospectiveEmpData.netSalaryPerAnnum;else netper">
                           </span>
-                          <ng-template #netper>{{ prospectiveEmpData.netSalaryPerAnnum }}</ng-template>
+                          <ng-template #netper> <b>{{ prospectiveEmpData.netSalaryPerAnnum }}</b></ng-template>
                         </td>
                       </tr>
                     </tbody>
@@ -902,7 +895,7 @@
                         <td><b>Variable Amount</b></td>
                         <td colspan="2">
                           <span *ngIf="!prospectiveEmpData.variablePayAmount; else vamount"> </span>
-                          <ng-template #vamount>{{prospectiveEmpData.variablePayAmount }}</ng-template>
+                          <ng-template #vamount><b>{{prospectiveEmpData.variablePayAmount }}</b></ng-template>
                         </td>
                       </tr>
                       <tr>
@@ -910,12 +903,12 @@
                         <td class="text-center p-0 pt-1  bold"><span
                             *ngIf="!prospectiveEmpData.grossSalary; else gross">
                           </span>
-                          <ng-template #gross>{{ prospectiveEmpData.grossSalary }}</ng-template>
+                          <ng-template #gross><b>{{ prospectiveEmpData.grossSalary }}</b></ng-template>
                         </td>
                         <td>
                           <span *ngIf="!prospectiveEmpData.amount; else grossper"></span>
-                          <ng-template #grossper>{{(+prospectiveEmpData.amount || 0) +
-                            (+prospectiveEmpData.variablePayAmount || 0)}}</ng-template>
+                          <ng-template #grossper><b> {{(+prospectiveEmpData.amount || 0) +
+                            (+prospectiveEmpData.variablePayAmount || 0)}}</b></ng-template>
                         </td>
                       </tr>
                     </tbody>
@@ -941,10 +934,8 @@
           <div class="letter-page-content my-4" id="pdfContent6">
             <div class="letter-page-sub-content">
               <div class="pt-2">
-
-
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
-                <ol class="list-style-none mb-0">
+                <ol class="list-style-none mb-2 pt-2">
                   <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
                     deductions.</li>
                   <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
@@ -965,9 +956,9 @@
                   <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
                     number of dependents; the respective amount will be deducted from your monthly salary. </li>
                 </ol>
-                <p class="letter-sub-header"><span>Note</span>: The above compensation package is strictly confidential
-                  between you and the Company and should not be discussed with anyone nor divulged to anyone in any
-                  manner
+                
+                <p class="note mt-2"> <span>Note</span>: The above compensation package is strictly confidential between you
+                  and the Company and should not be discussed with anyone nor divulged to anyone in any manner
                   whatsoever.</p>
               </div>
             </div>

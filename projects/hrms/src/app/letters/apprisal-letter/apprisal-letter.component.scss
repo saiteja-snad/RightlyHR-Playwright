@@ -1,3 +1,9 @@
+* {
+  font-family: Verdana, Tahoma, sans-serif;
+}
+
+
+
 input:focus{
     outline: none !important;
     box-shadow: none !important;
@@ -8,4 +14,13 @@ input:focus{
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.salary-details-table {
+    .mytable,
+    .secondtable {
+        th {
+            background: #f4f8ff;
+        }
+    }
 }

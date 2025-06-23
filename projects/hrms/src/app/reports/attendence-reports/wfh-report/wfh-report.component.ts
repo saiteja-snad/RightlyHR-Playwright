@@ -1,10 +1,9 @@
-import { Component, OnDestroy, OnInit,  } from '@angular/core';
-import {  Subscription } from 'rxjs';
-import dayjs from 'dayjs';
+import { Component, OnDestroy, OnInit, } from '@angular/core';
+import { Subscription } from 'rxjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
-import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { ReportsService } from '../../../services/reports/reports.service';
@@ -19,19 +18,19 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
-
-
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-wfh-report',
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, DropdownModule, SelectModule, TranslateModule,
+    CommonModule, FormsModule, ReactiveFormsModule, DatePicker, DropdownModule, SelectModule, TranslateModule,
     NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent
-],
+  ],
   templateUrl: './wfh-report.component.html',
   styleUrl: './wfh-report.component.scss',
 })
+
 export class WfhReportComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -51,13 +50,12 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   selectedWfhManager: string | null = null;
   selectedMonth: number | null = null;
   wfhReportForm!: FormGroup;
-  spinnerLoader1= false;
-  spinnerLoader2= false;
-  disableBtn= false;
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
   getEmployeeInfo = [] as any;
   selectLeaveEmployeeIds: number[] = [];
   filteredleaveRecords = true;
-
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -69,8 +67,8 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-
   localeOptions: any;
+
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
@@ -78,10 +76,10 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public rbac: RbacService,
     public readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-      this.localeOptions = {
+    this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
       direction: 'ltr',
@@ -99,112 +97,93 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       employee: [null, Validators.required],
       manager: [null],
       dateRange: [null],
-      team:[null]
+      team: [null]
     });
-
-    this.wfhReportForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.wfhReportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     })
   }
 
   get isWFHGenerateDisabled(): boolean {
     const { employee, manager, dateRange, leaveCategory, team } = this.wfhReportForm.value;
-    
     // Check if any field has a value
-    return !(
-        employee ||
-        manager ||
-        (dateRange && (dateRange.startDate || dateRange.endDate)) ||
-        leaveCategory ||
-        team
-    );
+    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
-
-
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
-    this.subscription = this.http
-
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            };
-          });
-          
-          this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        const employeedata = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
+          };
+        });
+        this.employeeiddetails = [
+          { fullName: 'All Employees', employeeId: 'all' },
+          ...employeedata
+        ];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   getTeam() {
-    this.subscription = this.http
-      .getData('PendingApprovalsAuthority/getAll')
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.teamdetails = data.map((employee: any) => {
-              return {
-                ...employee,
-                fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-              };
-            });
-          }
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.teamdetails = data.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
+                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            };
+          });
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   generateWfhReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-
     const formValue = this.wfhReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
-  
-    const noFilterProvided =
-      !formValue.employee &&
-      (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
-      !formValue.month &&
-      !formValue.manager && !formValue.team;
-  
+    const dateRangeArray = formValue.dateRange || [];
+    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
+    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
+    //filter condition
+    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
+
     if (noFilterProvided) {
       this.spinnerLoader1 = false;
       this.isLoading = false;
       this.filteredWfhRecord = [];
       return;
     }
-  
+
     const request: IWfhReportRequest = {};
 
     if (this.selectLeaveEmployeeIds.length >= 0) {
       const ids = this.selectLeaveEmployeeIds?.join(',');
       request.employeeId = ids;  // The selected employee IDs are set here
     }
-    
+
     if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
 
-    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
-      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
-      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
-      request.StartDate = startDate;
-      request.EndDate = endDate;
+    // Apply date range if provided
+    if (startDate && endDate) {
+      request.StartDate = this.formatDate(this.parseDate(startDate));
+      request.EndDate = this.formatDate(this.parseDate(endDate));
     }
 
     if (formValue.month) {
@@ -254,10 +233,10 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
-  
+
   exportToExcelWfh(): void {
     // Define header mappings
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -356,11 +335,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     NEW_SEQUENCE.forEach((columnName, index) => {
       let columnWidth = this.getColumnWidth(modifiedData, columnName);
 
-      if (
-        columnName === 'EMPLOYEE ID' ||
-        columnName === 'DEPARTMENT' ||
-        columnName === 'WORKED DATE'
-      ) {
+      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'WORKED DATE') {
         columnWidth += 5; // Increase width by 5
       }
       ws['!cols'] = ws['!cols'] || [];
@@ -371,7 +346,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'WFH Report');
     XLSX.writeFile(wb, 'WFH_Report.xlsx');
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -380,21 +355,21 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
-
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
 
   onClick(employeeIds: any) {
     if (employeeIds.value) {
-      console.log(employeeIds);
       this.filteredleaveRecords = false;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
       // If "All Employees" is selected, set employeeId as an empty array or a special flag
       if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => 
+          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => 
+          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
         this.selectedEmployeeId.push(employeeIds.value.employeeId);
@@ -404,35 +379,30 @@ export class WfhReportComponent implements OnInit, OnDestroy {
 
   getMyTeam() {
     const EmployeeId = this.loggedInUser?.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          if (response) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => {
-              return {
-                ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
-              };
-            });
-
-            this.getEmployeeInfo.unshift({
-              fullName: 'All Employees',
-              fusionEmpId: this.loggedInUser.fusionEmpId,
-              employeeId: this.loggedInUser.employeeId,
-            });
-          }
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
+              ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
+            };
+          });
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+    });
   }
-   navigation(){
+
+  navigation() {
     this.router.navigate(['/reports']);
   }
-
 
   ngOnDestroy(): void {
     if (this.subscription) {

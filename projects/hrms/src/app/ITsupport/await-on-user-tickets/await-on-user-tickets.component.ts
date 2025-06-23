@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -22,7 +22,7 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
   templateUrl: './await-on-user-tickets.component.html',
   styleUrl: './await-on-user-tickets.component.scss'
 })
-export class AwaitOnUserTicketsComponent {
+export class AwaitOnUserTicketsComponent implements OnInit,OnDestroy {
 
   subscription!: Subscription;
   searchValue !:string; 

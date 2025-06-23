@@ -606,3 +606,36 @@ input[type="number"].no-arrows {
         color: var(--module-info-text-color);
     }
 }
+
+.custom-year-month-picker {
+  width: 10rem;
+
+  .p-inputtext {
+    border: 1px solid #DEE8F3 !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: 400 !important;
+    font-size: var(--fontsize14) !important;
+    vertical-align: middle !important;
+    color: #222222 !important;
+    background-color: #F8FBFF !important;
+    cursor: pointer !important;
+    border-top-right-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
+  }
+
+  .p-datepicker-month-selected {
+    color: var(--p-datepicker-date-selected-color);
+    background: var(--primary-color) !important;
+  }
+
+  .p-button-text {
+    background: transparent;
+    border-color: transparent;
+    color: var(--primary-color) !important;
+  }
+
+  .p-datepicker-month {
+    font-size: var(--fontsize14) !important;
+  }
+}

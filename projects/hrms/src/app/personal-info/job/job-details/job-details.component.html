@@ -2,17 +2,14 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Job Info' |translate }}</span></div>
 
-        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
-        'trainee inactive' )){
+        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
         <div class="custom-add-btn" (click)="openModal(addEducationmodal)" *ngIf="canAccess('create','job')">
             <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
         </div>
-
         }
-
     </div>
+
     <div class="custom-table-content">
         @if(!loading){
         <table class="w-100">
@@ -30,11 +27,9 @@
                     <th>Shift</th>
                     <th>Job type</th>
                     @if ( showSaperationDots ) {
-                    @if(canAccess('update','job') || canAccess('delete','job')|| canAccess('view','separation') ){
-                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                    employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
-                    !=='trainee inactive' )){
+                    @if(canAccess('update','job') || canAccess('delete','job')){
+                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+                    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
                     <th  class="text-center">{{"Action" | translate}}</th>
                     }
                     }
@@ -45,8 +40,7 @@
                 <ng-container *ngIf="((jobdetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let item of jobdetails | async; let first = first">
                         <td>
-                            <span *ngIf="item.effectiveDate;else effectivedate">{{item.effectiveDate |
-                                dateformat}}</span>
+                            <span *ngIf="item.effectiveDate;else effectivedate">{{item.effectiveDate | dateformat}}</span>
                             <ng-template #effectivedate>
                                 <div>-</div>
                             </ng-template>
@@ -59,7 +53,6 @@
                         </td>
                         <td>
                             <span> {{item.gradeName || '-'}}</span>
-
                         </td>
                         <td>
                             <span *ngIf="item.departmentName;else department"> {{item.departmentName}}</span>
@@ -112,12 +105,11 @@
                             </ng-template>
                         </td>
                         @if (first && showSaperationDots ) {
-                        @if(canAccess('update','job') || canAccess('delete','job') || canAccess('view','separation') ){
-                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
-                        !=='trainee inactive' )){
-                        <td class="text-center">                        
+                        @if(canAccess('update','job') || canAccess('delete','job')  ){
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive'
+                        )){
+                        <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -130,17 +122,14 @@
                                     <!-- @if(canAccess('delete','job')){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
-                                    </li>} -->
-                                    @if(canAccess('view','separation')){
-
+                                    </li>}
+                                    <!-- @if(canAccess('view','separation')){
                                     <li (click)="openModalforSeparationupdate(seprationModal, item)">
-                                        <a class="dropdown-item"> <img src="icons/sepration.png" alt=""
-                                                class="speration-icon" /> Separation Request</a>
+                                        <a class="dropdown-item"> <img src="icons/sepration.png" alt="" class="speration-icon" /> Separation Request</a>
                                     </li>
-                                    }
+                                    } -->
                                 </ul>
                             </div>
-                            
                         </td>
                         }
                         }
@@ -149,17 +138,15 @@
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="9" class="text-center"><app-no-data-found></app-no-data-found></td>
+                        <app-no-data-found />
                     </tr>
                 </ng-template>
             </tbody>
         </table>
         }
-
         @else {
         <app-data-loader-content />
         }
-
     </div>
 </div>
 

@@ -9,19 +9,16 @@
                     <!-- Date of Joining -->
                     @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')){
                     <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label fliter-lables text-nowrap m-0">{{"Date of Joining" | translate}}</label>
-                        <div>
-                            <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
-                                [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-                                formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
-                                class="form-control custom-input w-100" [startKey]="'startDate'" [endKey]="'endDate'"
-                                readonly />
+                        <label class="custom-label filter-labels text-nowrap m-0">{{"Date of Joining" | translate}}</label>
+                        <div class="custom-date-range-picker">
+                            <p-datepicker formControlName="dateOfJoining" [placeholder]="'Please Select Date'" selectionMode="range"
+                                [showIcon]="true" [readonlyInput]="true" />
                         </div>
                     </div>
 
                     <!-- Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label fliter-lables text-nowrap m-0">{{ "Location" | translate }}</label>
+                        <label class="custom-label filter-labels text-nowrap m-0">{{ "Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName"
                                 filterBy="jobLocationName" [filter]="true" [showClear]="false"
@@ -35,8 +32,7 @@
 
                     <!-- Sub Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label for="subLocation" class="custom-label fliter-lables text-nowrap m-0">{{ "Sub Location" | translate
-                            }}</label>
+                        <label for="subLocation" class="custom-label filter-labels text-nowrap m-0">{{ "Sub Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
@@ -59,6 +55,7 @@
                             }
                         </button>
                         }
+
                         @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
                         <button type="button" class="custom-btn btn-primary"
                             [disabled]="locationReportList.length === 0 || disableBtn"
@@ -81,40 +78,42 @@
         @if(!dataload){
         <table class="w-100" id="jobLocation">
             <thead>
-                <th>Employee ID</th>
-                <th>Salutation</th>
-                <th>First Name</th>
-                <th>Middle Name</th>
-                <th>Last Name</th>
-                <th>Status</th>
-                <th>Date Of Joining</th>
-                <th>Address Line 1(current)</th>
-                <th>Address Line 2(current)</th>
-                <th>City(current)</th>
-                <th>State(current)</th>
-                <th>Country(current)</th>
-                <th>ZipCode(current)</th>
-                <th>Address Line 1(permanent)</th>
-                <th>Address Line 2(permanent)</th>
-                <th>City(permanent)</th>
-                <th>State(permanent)</th>
-                <th>Country(permanent)</th>
-                <th>ZipCode(permanent)</th>
-                <th>Work Number</th>
-                <th>Mobile Number</th>
-                <th>Work Email</th>
-                <th>Job Effective Date</th>
-                <th>Job Role</th>
-                <th>Grade Name</th>
-                <th>Department</th>
-                <th>Team</th>
-                <th>Team Manager</th>
-                <th>Reporting To</th>
-                <th>Location</th>
-                <th>Sub Location</th>
-                <th>Shift</th>
-                <th>Shift Code</th>
-                <th>Job Type</th>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Salutation</th>
+                    <th>First Name</th>
+                    <th>Middle Name</th>
+                    <th>Last Name</th>
+                    <th>Status</th>
+                    <th>Date Of Joining</th>
+                    <th>Address Line 1(current)</th>
+                    <th>Address Line 2(current)</th>
+                    <th>City(current)</th>
+                    <th>State(current)</th>
+                    <th>Country(current)</th>
+                    <th>ZipCode(current)</th>
+                    <th>Address Line 1(permanent)</th>
+                    <th>Address Line 2(permanent)</th>
+                    <th>City(permanent)</th>
+                    <th>State(permanent)</th>
+                    <th>Country(permanent)</th>
+                    <th>ZipCode(permanent)</th>
+                    <th>Work Number</th>
+                    <th>Mobile Number</th>
+                    <th>Work Email</th>
+                    <th>Job Effective Date</th>
+                    <th>Job Role</th>
+                    <th>Grade Name</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Team Manager</th>
+                    <th>Reporting To</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Shift</th>
+                    <th>Shift Code</th>
+                    <th>Job Type</th>
+                </tr>
             </thead>
             <tbody>
                 @if(locationReportList.length > 0){

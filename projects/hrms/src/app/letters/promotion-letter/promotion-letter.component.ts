@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
@@ -22,7 +22,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './promotion-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class PromotionLetterComponent {
+export class PromotionLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   appraisalData = {} as any;
   PromotionTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template

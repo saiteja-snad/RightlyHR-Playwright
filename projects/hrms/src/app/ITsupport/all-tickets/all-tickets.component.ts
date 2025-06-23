@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -23,7 +23,7 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
   templateUrl: './all-tickets.component.html',
   styleUrl: './all-tickets.component.scss'
 })
-export class AllTicketsComponent {
+export class AllTicketsComponent implements OnInit,OnDestroy{
 
   subscription!: Subscription;
   searchValue!:string;
@@ -207,5 +207,9 @@ export class AllTicketsComponent {
       }
     });
   }
-
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }

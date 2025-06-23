@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -23,7 +23,7 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
   styleUrl: './trainee-offer-letter.component.scss',
 })
 
-export class TraineeOfferLetterComponent {
+export class TraineeOfferLetterComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   traineeEmpData = {} as any;
   result = {} as any;

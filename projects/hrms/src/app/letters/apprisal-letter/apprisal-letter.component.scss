@@ -1,8 +1,21 @@
 * {
   font-family: Verdana, Tahoma, sans-serif;
 }
-
-
+.employee-field{
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 210px; 
+}
+.employee-signature{
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 185px; 
+}
+.employee-date{
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 300px; 
+}
 
 input:focus{
     outline: none !important;

@@ -450,18 +450,21 @@
 
               <p class="mb-4">Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
 
-              <p class="mb-4">Further to your application for employment with us, and the subsequent selection process, we are
+              <p class="mb-4">Further to your application for employment with us, and the subsequent selection process,
+                we are
                 delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
                 <b>CTC</b> will be <b>INR {{(+prospectiveEmpData.amount || 0) + (+prospectiveEmpData.variablePayAmount
                   || 0)}}</b> per annum.
               </p>
 
-              <p class="mb-4">SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of SNAD Developers India Pvt Ltd, a
+              <p class="mb-4">SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of SNAD Developers India Pvt
+                Ltd, a
                 US based organization for providing Software Development and Services to various IT Organizations across
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining would
+              <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining
+                  would
                   be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
 
               <p class="mb-4">
@@ -490,7 +493,7 @@
                   duties on Public Holidays as per the exigencies of work.
                 </li>
 
-                 <li class="mb-4"><b>Annual Leave:</b> You will be entitled to Paid Leave and
+                <li class="mb-4"><b>Annual Leave:</b> You will be entitled to Paid Leave and
                   Public Holidays yearly as per your eligibility and the Company policies.</li>
               </ol>
             </div>
@@ -500,7 +503,8 @@
           </div>
 
           <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
+          <div class="letter-page-content my-4" id="pdfContent2"
+            [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
               <div class="pt-2">
                 <ol start="4">
@@ -513,66 +517,70 @@
                   </li>
                   <li>
                     <b>Other Terms & Conditions of this Offer</b>
-          
+
+                  
+                  <ul class="bullet ps-5">
+                    <li>During your service with the Company, you are expected to dedicate
+                      your whole time and attention to the Company's affairs and abstain from directly or indirectly
+                      engaging in any other business.</li>
+                    <li>Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                      property
+                      is confidential and you will sign a non-disclosure agreement. If you are bound by a
+                      confidentiality
+                      agreement with a previous employer, you must notify the Company and indemnify the Company against
+                      any breach thereof. </li>
+
+                    <li>You may be required to travel on Company work, and you will be reimbursed expenses as
+                      per Company policy. </li>
+
+                    <li>Your Remuneration and the terms and conditions of this offer letter
+                      shall remain confidential and are not to be disclosed to any third party. </li>
+
+                    <li>Upon acceptance of the offer letter, your official Employment ID will
+                      be created with us and you will entitled to the corporate benefits structure based on the category
+                      of
+                      work. Your employment with the company as a FTE will stand confirmed subjected to the terms and
+                      conditions
+                      as per rules, regulations, and policies of The Company.</li>
+
+                    <li>On termination of employment, you will immediately give up to the
+                      Company all correspondence, specifications, formulae, books, documents, hardware, market data,
+                      cost
+                      data, literature,
+                      drawings, effects or records, backup copies of programs source / data, etc. belonging to the
+                      Company and any other Company property or relating to its business and shall not make or retain
+                      any copies of the items. </li>
+
+                    <li>If you are absent from work without prior notification & approval as
+                      per Company policies, you will be liable for disciplinary action depending on the severity of the
+                      effects caused by the
+                      individual’s absence. </li>
+
+                    <li>If you are absent for a continuous period of 7 days without leave or
+                      obtaining your manager’s approval, you will be deemed to have voluntarily terminated your service
+                      without notice. </li>
+
+                    <li>All the terms and conditions of service may be modified or changed at
+                      the Company’s discretion. You will abide by all the rules and regulations of the Company which are
+                      in force
+                      from time to time. </li>
+                  </ul>
                   </li>
                 </ol>
-                
-                <ul class="bullet ps-5">
-                  <li>During your service with the Company, you are expected to dedicate
-                    your whole time and attention to the Company's affairs and abstain from directly or indirectly
-                    engaging in any other business.</li>
-                  <li>Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
-                    property
-                    is confidential and you will sign a non-disclosure agreement. If you are bound by a confidentiality
-                    agreement with a previous employer, you must notify the Company and indemnify the Company against
-                    any breach thereof. </li>
-          
-                  <li>You may be required to travel on Company work, and you will be reimbursed expenses as
-                    per Company policy. </li>
-          
-                  <li>Your Remuneration and the terms and conditions of this offer letter
-                    shall remain confidential and are not to be disclosed to any third party. </li>
-          
-                  <li>Upon acceptance of the offer letter, your official Employment ID will
-                    be created with us and you will entitled to the corporate benefits structure based on the category
-                    of
-                    work. Your employment with the company as a FTE will stand confirmed subjected to the terms and
-                    conditions
-                    as per rules, regulations, and policies of The Company.</li>
-          
-                  <li>On termination of employment, you will immediately give up to the
-                    Company all correspondence, specifications, formulae, books, documents, hardware, market data, cost
-                    data, literature,
-                    drawings, effects or records, backup copies of programs source / data, etc. belonging to the
-                    Company and any other Company property or relating to its business and shall not make or retain
-                    any copies of the items. </li>
-          
-                  <li>If you are absent from work without prior notification & approval as
-                    per Company policies, you will be liable for disciplinary action depending on the severity of the
-                    effects caused by the
-                    individual’s absence. </li>
-          
-                  <li>If you are absent for a continuous period of 7 days without leave or
-                    obtaining your manager’s approval, you will be deemed to have voluntarily terminated your service
-                    without notice. </li>
-          
-                  <li>All the terms and conditions of service may be modified or changed at
-                    the Company’s discretion. You will abide by all the rules and regulations of the Company which are
-                    in force
-                    from time to time. </li>
-                </ul>
-          
+
+
+
                 <p>To confirm please send your <b>acceptance</b> of the offer via reply
                   to the same <b>email</b> on or before <b> {{prospectiveEmpData.offerExpiryDate | dateformat}}.</b>
                   We request you to please carry a signed copy of the offer letter & other required documents
                   (<b>Annexure 1</b>) on the day of your joining.
                 </p>
-          
+
                 <p>We wish you a long, rewarding and fulfilling career experience and look
                   forward to having you on board with us. Please visit our website <a href="" target="_blank"
                     rel="noopener noreferrer"><u> www.snaddevelopers.com</u></a>
                   for more information about our Company.</p>
-          
+
                 <p>All other detailed terms and conditions of your employment will be specified
                   in the appointment letter, invention assignment and confidentiality agreement and the Company policies
                   which will be provided to you separately. This Offer Letter along with the appointment letter,
@@ -596,15 +604,17 @@
                 <div>
 
                   <p>This Offer Letter is conditional upon you executing the appointment letter
-                  and/or any other agreement as may be requested by the Company at the time of joining. The Company may
-                  revoke this offer of employment anytime before execution of the appointment letter. Similarly, after
-                  accepting this offer, if you do not intend to join the Company, you shall have a right to inform your
-                  intentions any-time before your joining date. </p>
+                    and/or any other agreement as may be requested by the Company at the time of joining. The Company
+                    may
+                    revoke this offer of employment anytime before execution of the appointment letter. Similarly, after
+                    accepting this offer, if you do not intend to join the Company, you shall have a right to inform
+                    your
+                    intentions any-time before your joining date. </p>
 
-                <p>For any further information or clarification required, please feel free to
-                  reach us on our email at <a
-                    href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
-                    target="_blank" rel="noopener noreferrer"><u> hr&#64;snaddevelopers.com</u></a></p>
+                  <p>For any further information or clarification required, please feel free to
+                    reach us on our email at <a
+                      href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
+                      target="_blank" rel="noopener noreferrer"><u> hr&#64;snaddevelopers.com</u></a></p>
                   <p>Yours Sincerely,</p>
                   <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
                   <div class="stamp"></div>
@@ -651,7 +661,8 @@
                   <div class="hard-copy-letter"></div>
                 </ng-template> -->
                 <p class="letter-header text-center mb-4">ANNEXURE - 1</p>
-                <p class="letter-sub-header mb-3">Documents / Information required to be submitted on the day of joining:</p>
+                <p class="letter-sub-header mb-3">Documents / Information required to be submitted on the day of
+                  joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
                 <div class="mb-1">
@@ -741,10 +752,10 @@
                 <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
                 <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
                 <div class="row">
-                  <div class="p-2 border-box col-md-2 name" >NAME</div>
+                  <div class="p-2 border-box col-md-2 name">NAME</div>
                   <div class="p-2 border-box col-md-4"><b>{{prospectiveEmpData.firstName}}
-                    {{prospectiveEmpData.middleName}}
-                    {{prospectiveEmpData.lastName}}</b></div>
+                      {{prospectiveEmpData.middleName}}
+                      {{prospectiveEmpData.lastName}}</b></div>
                   <div class="p-2 border-box col-md-2 name">Designation</div>
                   <div class="p-2 border-box col-md-4"><b>{{prospectiveEmpData?.jobRole}}</b></div>
                 </div>
@@ -908,7 +919,7 @@
                         <td>
                           <span *ngIf="!prospectiveEmpData.amount; else grossper"></span>
                           <ng-template #grossper><b> {{(+prospectiveEmpData.amount || 0) +
-                            (+prospectiveEmpData.variablePayAmount || 0)}}</b></ng-template>
+                              (+prospectiveEmpData.variablePayAmount || 0)}}</b></ng-template>
                         </td>
                       </tr>
                     </tbody>
@@ -956,8 +967,9 @@
                   <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
                     number of dependents; the respective amount will be deducted from your monthly salary. </li>
                 </ol>
-                
-                <p class="note mt-2"> <span>Note</span>: The above compensation package is strictly confidential between you
+
+                <p class="note mt-2"> <span>Note</span>: The above compensation package is strictly confidential between
+                  you
                   and the Company and should not be discussed with anyone nor divulged to anyone in any manner
                   whatsoever.</p>
               </div>

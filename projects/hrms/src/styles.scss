@@ -1179,8 +1179,9 @@ select:focus {
 
             .letter-page-sub-content {
                 padding: 1.5rem 5rem;
-                font-size:15px;
+                font-size:16px;
                 color: #000000;
+                line-height:18px;
                
             }
 
@@ -1263,7 +1264,7 @@ select:focus {
 
 .soft-copy-letter {
     background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top: 10rem !important;
+    padding-top: 12.5rem !important;
     // margin-bottom: 2rem;
 }
 

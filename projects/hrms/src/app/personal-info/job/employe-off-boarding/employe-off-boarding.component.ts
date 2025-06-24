@@ -169,20 +169,20 @@ export class EmployeOffBoardingComponent {
         }
       const formdata=this.offBoardingForm.value
 
-      this.empinfo.termreasonoffboard=formdata.exit.reason;
-      this.empinfo.empstatus=formdata.status.statusname;
-      this.empinfo.lastworkingday=formdata.lastdate;
-      this.empinfo.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
-      this.empinfo.separationType = this.offBoardingEmp.separationType;
+      this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
+      this.offBoardingEmp.empstatus=formdata.status.statusname;
+      this.offBoardingEmp.lastworkingday=formdata.lastdate;
+      this.offBoardingEmp.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
+      this.offBoardingEmp.separationType = this.offBoardingEmp.separationType;
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empinfo).subscribe({
         next: (res: any) => {
           console.log(res);
           this.successstatus = 'Employee Inactived successfully';
           this.conformationPopup.openSuccessModal(this.successstatus)
-          if (this.empinfo.empstatus === 'Inactive') {
+          if (this.offBoardingEmp.empstatus === 'Inactive') {
             this.router.navigate(['/employee-management/inactive-employees']);
           }
-          else if (this.empinfo.empstatus === 'Trainee Inactive') {
+          else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
             this.router.navigate(['/employee-management/inactive-interns']);
           }
           //this.InactiveEmail(this.empinfo.employeeId);

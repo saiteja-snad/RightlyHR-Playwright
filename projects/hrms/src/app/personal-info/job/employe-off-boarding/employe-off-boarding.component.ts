@@ -174,7 +174,7 @@ export class EmployeOffBoardingComponent {
       this.offBoardingEmp.empstatus = formData.status?.statusname ?? '';
       this.offBoardingEmp.lastworkingday = formData.lastdate;
       this.offBoardingEmp.eligibleforrehire = formData.eligiblefor?.eligibleforrehire1 ?? '';
-      this.offBoardingEmp.separationType = this.offBoardingEmp.separationType || this.jobdetails.separationType;
+     // this.offBoardingEmp.separationType = this.offBoardingEmp.separationType || this.jobdetails.separationType;
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.offBoardingEmp).subscribe({
         next: (res: any) => {
           console.log(res);

@@ -178,15 +178,26 @@ export class EmployeOffBoardingComponent {
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.offBoardingEmp).subscribe({
         next: (res: any) => {
           console.log(res);
-          this.successstatus = 'Employee Inactived successfully';
-          this.conformationPopup.openSuccessModal(this.successstatus)
-          if (this.offBoardingEmp.empstatus === 'Inactive') {
-            this.router.navigate(['/employee-management/inactive-employees']);
+
+          if (res.statusCode === 200) {
+          
+            this.conformationPopup.openSuccessModal('Employee Inactived successfully')
+            if (this.offBoardingEmp.empstatus === 'Inactive') {
+              this.router.navigate(['/employee-management/inactive-employees']);
+              //this.InactiveEmail(this.empinfo.employeeId);
+            }
+            else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
+              this.router.navigate(['/employee-management/inactive-interns']);
+            }
+
+          } else if (res.statusCode === 409) {
+
+            this.conformationPopup.openErrorModal(res.message);
+
           }
-          else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
-            this.router.navigate(['/employee-management/inactive-interns']);
-          }
-          //this.InactiveEmail(this.empinfo.employeeId);
+
+
+          
         },
         error: (err: any) => {
           console.log(err);

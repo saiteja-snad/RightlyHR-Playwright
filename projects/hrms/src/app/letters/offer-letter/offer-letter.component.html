@@ -422,17 +422,17 @@
                         *ngIf="!prospectiveEmpData.firstName && !prospectiveEmpData.middleName && !prospectiveEmpData.lastName;else fullname">
                         Name:</li>
                       <ng-template #fullname>
-                        <li>{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
+                        <li class="mb-1">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
                           {{prospectiveEmpData.lastName}},</li>
                       </ng-template>
                       <!--Address-->
                       <li class="mb-1" *ngIf="!addresFlag;else address">Employee Location:</li>
                       <ng-template #address>
-                        <li class="mb-0 letter-sub-header">{{prospectiveEmpData.addressLine1}},</li>
+                        <li class="mb-1 letter-sub-header">{{prospectiveEmpData.addressLine1}},</li>
                         @if (prospectiveEmpData.addressLine2) {
-                        <li class="mb-0 letter-sub-header">{{prospectiveEmpData.addressLine2}},</li>
+                        <li class="mb-1 letter-sub-header">{{prospectiveEmpData.addressLine2}},</li>
                         }
-                        <li class="mb-0 letter-sub-header">{{prospectiveEmpData.city}}, {{prospectiveEmpData.state}},</li>
+                        <li class="mb-1 letter-sub-header">{{prospectiveEmpData.city}}, {{prospectiveEmpData.state}},</li>
                         <li class="mb-0 letter-sub-header">{{prospectiveEmpData.country}} - {{prospectiveEmpData.pinCode}}.</li>
                       </ng-template>
                     </ul>

@@ -17,6 +17,13 @@ input:focus {
 }
 .soft-copy-letter {
     background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top: 12.5rem !important;
+    padding-top: 12rem !important;
 
+}
+.authorized-signatory {
+    font-size: 15px;
+    font-weight: 700;
+}
+.roman-numbers-fornt li::marker {
+  font-weight: bold;
 }

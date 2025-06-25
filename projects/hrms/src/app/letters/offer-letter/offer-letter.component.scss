@@ -1,7 +1,5 @@
 * {
-    letter-spacing: normal;
-    font-stretch: normal;
-    font-style: normal;
+
     font-family: Verdana, Tahoma, sans-serif;
 }
 
@@ -70,17 +68,19 @@ input:focus {
     }
 }
 
+
 .note {
-    font-style: italic;
+
     font-size: 14px;
     font-weight: 600;
     text-align: justify !important;
 }
 
 .signature {
-    font-size: 19px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 700;
 }
-.name{
+
+.name {
     font-size: 18px;
 }

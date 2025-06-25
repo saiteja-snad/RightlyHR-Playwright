@@ -184,7 +184,7 @@
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
 
-              <div class="text-center letter-header mb-3">Appointment letter</div>
+              <div class="text-center letter-header mb-3">{{'Appointment Letter' | translate}}</div>
               <div class="d-flex justify-content-end mb-3">Date: {{ employeeForm.get('appointmentdate')?.value |
                 dateformat }}</div>
               <div>
@@ -211,7 +211,7 @@
                   career. Your employment with the Company shall be subject to the following terms and conditions:
                 </p>
               </div>
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">1. Compensation:</p>
                 <p><b>a)</b> Your total annual cost to the Company (CTC) will be as detailed in your Offer Letter. Your
                   CTC shall
@@ -226,7 +226,7 @@
                   be required by applicable laws. </p>
               </div>
 
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">2. Working Hours and Leave: </p>
                 <!-- 1 -->
                 <p>
@@ -239,15 +239,14 @@
                   also be required to work in shifts, which will be informed to you in advance.
                 </p>
                 <!-- 2 -->
-                <p><b>b)</b> You are expected to work from
-                  home as and when required by the Company. Please note that you
-                  should have proper infrastructure for working from home, e.g. suitable internet connection, quiet
-                  workspace, etc. The Company shall pay each employee with the basic setup of the work from home
-                  infrastructure. You understand that the Company shall not provide any additional reimbursement for
-                  any expenses incurred by you to set up work from home infrastructure, e.g. electricity bills,
-                  internet charges, etc. </p>
+                <p><b>b)</b> You may also be expected to
+                  travel to other locations and at times outside of your official working hours. You may at any time
+                  be called upon to perform other than your normal duties which in the opinion of the Company are within
+                  your competency to discharge and you will forthwith undertake these duties with due care and
+                  diligence. In this case, you are required to abide by the timings of your work location/business
+                  unit. </p>
 
-               
+
 
 
 
@@ -261,14 +260,16 @@
           <div class="letter-page-content my-4" id="pdfContent2"
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-              <p><b>c)</b> You may also be expected to
-                travel to other locations and at times outside of your official working hours. You may at any time
-                be called upon to perform other than your normal duties which in the opinion of the Company are within
-                your competency to discharge and you will forthwith undertake these duties with due care and
-                diligence. In this case, you are required to abide by the timings of your work location/business
-                unit.
+              <p><b>c)</b> You are expected to work from
+                home as and when required by the Company. Please note that you
+                should have proper infrastructure for working from home, e.g. suitable internet connection, quiet
+                workspace, etc. The Company shall pay each employee with the basic setup of the work from home
+                infrastructure. You understand that the Company shall not provide any additional reimbursement for
+                any expenses incurred by you to set up work from home infrastructure, e.g. electricity bills,
+                internet charges, etc.
+
               </p>
-              <p><b>d)</b>. You will be entitled to a certain amount of paid leave which is governed by the Leave
+              <p><b>d)</b> You will be entitled to a certain amount of paid leave which is governed by the Leave
                 Policy of the Company,
                 as applicable from time to time. </p>
               <p class="letter-sub-header m-0">3. Right to Transfer/Depute:</p>
@@ -293,7 +294,7 @@
                 confirmed and communicated to you in writing by the Company.
               </p>
 
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">5. Background Verification:</p>
 
                 <p>All documents submitted by you to the Company with reference to the above are
@@ -311,7 +312,7 @@
                 </p>
               </div>
 
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">6. Medical Examination:</p>
                 <p>You agree to submit yourself for medical examination as requested by the
                   Company for the purpose of examining your physical/psychological suitability for the selected post.
@@ -339,14 +340,14 @@
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
 
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">8. Increments and Promotion:</p>
                 <p>Your growth in the Company and increments in the salary will depend solely
                   on your performance and contribution to the Company. The appraisal cycle for the company is April to
                   March. You will be eligible for appraisal on pro rata basis. Anyone who joins the Company on or after
                   November 1st, he/she will not be eligible for the appraisal cycle for that year. </p>
               </div>
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">9. Information and security:</p>
                 <p>The role assigned during your employment with the Company includes the
                   Information Security responsibilities as required by organization and customer. This includes
@@ -414,7 +415,7 @@
             <div class="letter-page-sub-content">
 
 
-              <div>
+              <div class="mb-2">
                 <p class="letter-sub-header m-0">14. Non-Solicitation and Non-Competition:</p>
                 <p>
                   You agree that in consideration of your engagement with the Company, and other good and valuable
@@ -491,7 +492,7 @@
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
               <p class="letter-sub-header m-0">16. Changes in Personal Details:</p>
-              <p>Any change in your residential address, telephone numbers, marital status, and academic
+              <p class="mb-0">Any change in your residential address, telephone numbers, marital status, and academic
                 qualifications
                 should be notified in writing to the Company with three (3) days of such change.
               </p>
@@ -537,13 +538,13 @@
                 <p class="letter-sub-header m-0">c) Termination for Cause:</p>
                 <p>Notwithstanding anything contained above, the Company can terminate your service
                   without any notice period or without any salary in lieu thereof, if you: </p>
-                <ol style="list-style: upper-roman;">
+                <ol style="list-style: upper-roman;" class="roman-numbers-fornt">
                   <li>Breach any confidentiality or IP related obligations:</li>
                   <li>Commit any serious or persistent breach of any of the terms and conditions of this Appointment
                     Letter or
                     any of the provisions of the employee handbook or other documents incorporated by reference in this
                     document; </li>
-                  
+
 
 
                 </ol>
@@ -558,19 +559,19 @@
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
 
-              <ol style="list-style: upper-roman;" start="3">
+              <ol style="list-style: upper-roman;" start="3" class="roman-numbers-fornt">
                 <li>Do or cause to be done any act, deed, matter or thing adverse to the Company’s interests; </li>
-                  <li> Are guilty of any misconduct or neglect in the discharge of your duties or exercise of your
-                    powers hereunder or otherwise
-                    vested in you from time to time; </li>
-                  <li> Fail to or neglect in observing and complying fully with all resolutions,
-                    regulations,instructions and directions from time
-                    to time made or given to you by the Company </li>
-                  <li>If any information furnished by you or representation made by you is found to be incorrect or if
-                    any material information
-                    is detected by the Company to have been suppressed by you or any action on your part is found to be
-                    in contravention to the terms and conditions herein:</li>
-                  <li>Become of unsound mind; </li>
+                <li> Are guilty of any misconduct or neglect in the discharge of your duties or exercise of your
+                  powers hereunder or otherwise
+                  vested in you from time to time; </li>
+                <li> Fail to or neglect in observing and complying fully with all resolutions,
+                  regulations,instructions and directions from time
+                  to time made or given to you by the Company </li>
+                <li>If any information furnished by you or representation made by you is found to be incorrect or if
+                  any material information
+                  is detected by the Company to have been suppressed by you or any action on your part is found to be
+                  in contravention to the terms and conditions herein:</li>
+                <li>Become of unsound mind; </li>
                 <li>Are accused or convicted of any criminal offense: </li>
                 <li>Are reported to be on an unauthorized absence for more than ten (10) days.</li>
                 <li>In case the last day of your employment falls on a non-working day, your
@@ -626,7 +627,7 @@
                 adhere to the specific workplace policies of those clients and to familiarize yourself with those
                 policies.
               </p>
-             
+
 
             </div>
 
@@ -636,7 +637,7 @@
           <div class="letter-page-content my-4" id="pdfContent7"
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-               <div>
+              <div>
                 <p class="letter-sub-header m-0">22. Indemnification:</p>
                 <p>
                   You shall, at all times, indemnify and keep indemnified the Company against all sums whether by way
@@ -647,17 +648,8 @@
                   occasioned by your breach, failure, default or neglect.
                 </p>
               </div>
-              <div>
-                <p class="letter-sub-header m-0">23. Invention Assignment and Confidentiality Agreement:</p>
-                <p>
-                  You shall also be required to execute the Invention Assignment and Confidentiality Agreement (NDA)
-                  with the Company in Annexure A. The terms and conditions of this NDA shall survive perpetually even
-                  after
-                  the termination of your employment.
-                </p>
-              </div>
-              <div>
-                <p class="letter-sub-header m-0">24. Governing Laws and Arbitration:</p>
+                 <div>
+                <p class="letter-sub-header m-0">23. Governing Laws and Arbitration:</p>
                 <p>
                   This Appointment Letter shall be governed under the laws of India and subject to the exclusive
                   jurisdiction of courts in Hyderabad, India. Any dispute between you and the Company shall be settled
@@ -667,6 +659,16 @@
                   the Arbitration and Conciliation Act, 1996".
                 </p>
               </div>
+              <div>
+                <p class="letter-sub-header m-0">24. Invention Assignment and Confidentiality Agreement:</p>
+                <p>
+                  You shall also be required to execute the Invention Assignment and Confidentiality Agreement (NDA)
+                  with the Company in Annexure A. The terms and conditions of this NDA shall survive perpetually even
+                  after
+                  the termination of your employment.
+                </p>
+              </div>
+           
 
               <div>
                 <p class="letter-sub-header m-0">25. Other terms and conditions:</p>
@@ -764,14 +766,15 @@
               <p>All of us are excited about working with you and look forward to a mutually rewarding relationship.
               </p>
               <p>Yours Sincerely,</p>
-              <p class="letter-sub-header">For SNAD Developers India Pvt Ltd</p>
-              <p class="letter-signature " style="font-family: Segoe script; font-size: large;">
+              <p class="authorized-signatory mb-5">For SNAD Developers India Pvt Ltd</p>
+              <div class="mb-3"></div>
+              <p class="letter-signature ">
                 {{authorityFullName}}
               </p>
-              <p class="letter-sub-header">Authorized Signatory</p>
-              <p class="letter-sub-header">{{authorityFullName}}</p>
-              <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
-              <p class="letter-sub-header text-end">Date of Joining: {{ employeeForm.get('dateOfJoining')?.value |
+              <p class="mb-0 authorized-signatory">Authorized Signatory</p>
+              <p class=" mb-0 authorized-signatory">{{authorityFullName}}</p>
+              <p class="mb-0 authorized-signatory">{{selectedAuthority?.designation}}</p>
+              <p class="authorized-signatory text-end">Date of Joining: {{ employeeForm.get('dateOfJoining')?.value |
                 dateformat }}</p>
               <div class="pt-2">
                 <div class="mb-3 d-flex justify-content-center">
@@ -984,14 +987,7 @@
                 in any manner the name or logos of the Company without the prior written permission of the Company.
               </p>
 
-              <p>
-                <b>i)</b>
-                During the tenure of the Engagement, the Receiving Party shall not bring any media storage devices
-                such as external hard drives, USB drives, external hard discs, or any other devices that can store
-                data,
-                to
-                the Company office premises without prior written permission of the Company.
-              </p>
+          
 
 
             </div>
@@ -1002,7 +998,14 @@
           <div class="letter-page-content my-4" id="pdfContent11"
             [ngClass]="{'soft-copy-letter': employeeForm.get('documentType')?.value.value === true}">
             <div class="letter-page-sub-content">
-
+                  <p>
+                <b>i)</b>
+                During the tenure of the Engagement, the Receiving Party shall not bring any media storage devices
+                such as external hard drives, USB drives, external hard discs, or any other devices that can store
+                data,
+                to
+                the Company office premises without prior written permission of the Company.
+              </p>
               <p>
                 <b>j)</b>
                 The Receiving Party shall not, during his/her Engagement with the Company or otherwise, use or
@@ -1221,21 +1224,21 @@
 
               <div class="mb-3"></div>
 
-              <p class="letter-signature " style="font-family: Segoe script; font-size: large;">{{authorityFullName}}
+              <p class="letter-signature ">{{authorityFullName}}
               </p>
-              <p class="letter-sub-header">Authorized Signatory</p>
-              <p class="letter-sub-header">{{authorityFullName}}</p>
-              <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
+              <p class="authorized-signatory mb-0">Authorized Signatory</p>
+              <p class="authorized-signatory mb-0">{{authorityFullName}}</p>
+              <p class="authorized-signatory mb-0">{{selectedAuthority?.designation}}</p>
 
-              <p class="letter-sub-header text-end my-2">
+              <p class="authorized-signatory text-end my-2">
                 Date of Joining: {{ employeeForm.get('dateOfJoining')?.value | dateformat }}
               </p>
 
-              <p class="letter-sub-header">Employee Name :</p>
+              <p class="authorized-signatory">Employee Name :</p>
 
-              <p class="letter-sub-header">Sign :</p>
+              <p class="authorized-signatory">Signature :</p>
 
-              <p class="letter-sub-header">Date :</p>
+              <p class="authorized-signatory">Date :</p>
             </div>
 
           </div>

@@ -154,7 +154,8 @@
 
               <!-- start of letter -->
               <div class="mb-2 mt-2">
-                <div class="text-center letter-header"><b>{{'Appraisal Letter' | translate }}</b></div>
+              
+                <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
               </div>
               <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
@@ -397,10 +398,10 @@
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
 
-              <p class="letter-sub-header pt-3"><b>For SNAD Developers India Pvt Ltd</b></p>
-                   <p class="letter-signature " style="font-family: Segoe script; font-size: large;">{{appraisalData.authorityName}}</p><br>
+              <p class="letter-sub-header pt-4"><b>For SNAD Developers India Pvt Ltd</b></p>
+                   <div class="letter-signature " >{{appraisalData.authorityName}}</div><br>
               <div class="pb-3">
-                <span *ngIf="!appraisalData.authorityName"><b>Authorized Signatory,</b></span><br>
+                <span ><b>Authorized Signatory,</b></span><br>
                 <span><b><span *ngIf="!appraisalData.authorityName">Name</span>{{appraisalData.authorityName}}</b></span><br>
                 <span><b><span *ngIf="!authorityDesignation">Designation</span>{{authorityDesignation}}</b></span>
               </div>

@@ -500,7 +500,7 @@ body {
     cursor: pointer;
 }
 
-.doc-view-icon{
+.doc-view-icon {
     width: 1.5rem;
     cursor: pointer;
 }
@@ -953,6 +953,7 @@ select:focus {
         background-color: #FFFFFF;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -971,7 +972,8 @@ select:focus {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1027,6 +1029,7 @@ select:focus {
         z-index: 1;
     }
 }
+
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1157,7 +1160,7 @@ select:focus {
         overflow: auto;
         padding: 1.125rem;
         text-align: justify;
-   
+
 
         .letter-sub-data-content {
             display: flex;
@@ -1179,10 +1182,10 @@ select:focus {
 
             .letter-page-sub-content {
                 padding: 1.5rem 5rem;
-                font-size:16px;
+                font-size: 16px;
                 color: #000000;
-                line-height:18px;
-               
+                line-height: 20px;
+
             }
 
             .letter-footer {
@@ -1211,7 +1214,7 @@ select:focus {
         background-color: var(--input-bg-color) !important;
     }
 
-  
+
 
     .border-box {
         border: 1px solid #000;
@@ -1233,13 +1236,17 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-    table, th, td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -1249,12 +1256,15 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4), tr:nth-child(9) {
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
-    tr:nth-child(8) {
-        background: #fff2cc;
+    .secondtable {
+        tr:nth-child(4) {
+            background: #FFFFFF;
+        }
     }
 }
 
@@ -1303,6 +1313,7 @@ select:focus {
     font-size: xx-large !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // note text stylings
@@ -1317,6 +1328,7 @@ select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 //My Info Stylings
@@ -1494,21 +1506,26 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first, .p-paginator-prev,
-        .p-paginator-next, .p-paginator-last {
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
             border-radius: 50%;
             margin: 0rem;
             background-color: #f8f8f8;
             color: #333;
         }
 
-        .p-paginator-first.p-disabled, .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled, .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 }
+
 //pagenation stylings
 
 // custom phone number input with country code stylings
@@ -1565,6 +1582,7 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
+
 // custom phone number input with country code stylings
 
 // ERROR MESSAGE
@@ -1598,7 +1616,7 @@ input[type="file"] {
     .popup-header-border {
         border-bottom: 1.5px solid transparent;
         border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
-         #94B1DE 50.67%, var(--white-color) 108.91%);
+                #94B1DE 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }
@@ -1699,6 +1717,7 @@ input[type="file"] {
     padding: 1rem;
     overflow: auto;
 }
+
 // popup stylings ends
 
 // download text
@@ -1734,6 +1753,7 @@ input[type="file"] {
         text-align: right;
     }
 }
+
 //styles for popup table
 
 // styles for expenses
@@ -1751,7 +1771,8 @@ input[type="file"] {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1861,6 +1882,7 @@ input[type="file"] {
         padding: 1rem 0rem;
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -1957,6 +1979,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -2094,7 +2117,8 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: 500;
         }
 
-        th, td {
+        th,
+        td {
             padding: 1rem;
             text-align: center;
             line-height: 100%;
@@ -2283,7 +2307,8 @@ input[type=number]::-webkit-outer-spin-button {
                 color: #ACACAD;
             }
 
-            &.active, &.active-nav-link {
+            &.active,
+            &.active-nav-link {
                 border: 2px solid #00b2ff;
                 background: #eaf8ff;
                 box-shadow: 0 4px 16px 0 rgba(0, 178, 255, 0.08);
@@ -2647,12 +2672,12 @@ input[type=number]::-webkit-outer-spin-button {
         color: var(--primary-color);
     }
 
-    .p-datepicker-today > .p-datepicker-day-selected-range {
+    .p-datepicker-today>.p-datepicker-day-selected-range {
         background: rgba(11, 58, 131, 0.1);
         color: var(--primary-color);
     }
 
-    .p-datepicker-today > .p-datepicker-day-selected {
+    .p-datepicker-today>.p-datepicker-day-selected {
         background: var(--primary-color);
     }
 }

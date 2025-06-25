@@ -79,6 +79,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.assignHeading();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getofferdetails();
+    this.getTraineeofferdetails();
   }
 
   getEmployeeId(): void {
@@ -315,36 +317,73 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
-  submitrevoke() {
-    (this.empdata.empstatus = 'Revoked'),
-      (this.empdata.substatus = 'Offer Revoked'),
-      (this.empdata.revokeComments = this.empdata.revokeComments);
-    if (this.empdata.marriedDate == 'Invalid date') {
-      this.empdata.marriedDate = null;
-    }
-    this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.getEmployeeId();
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Offer revoked successfully');
-          this.revokeEmail();
-          this.updateRevokeStatustooffer();
-          this.revokeEmailToEmployee();
-          this.updateOnboardingStatus();
-          if (this.jobPostData.id) {
-            this.updateJobapplicantdata();
-          }
-          setTimeout(() => {
-            this.router.navigate(['/admin/dashboard']);
-          }, 3000);
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
+  // submitrevoke() {
+  //   (this.empdata.empstatus = 'Revoked'),
+  //     (this.empdata.substatus = 'Offer Revoked'),
+  //     (this.empdata.revokeComments = this.empdata.revokeComments);
+  //   if (this.empdata.marriedDate == 'Invalid date') {
+  //     this.empdata.marriedDate = null;
+  //   }
+  //   this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
+  //     next: (data: any) => {
+  //       if (data) {
+  //         this.getEmployeeId();
+  //         this.modalService.dismissAll();
+  //         this.conformationPopup.openSuccessModal('Offer revoked successfully');
+  //         this.revokeEmail();
+  //         this.updateRevokeStatustooffer();
+  //         this.revokeEmailToEmployee();
+  //         this.updateOnboardingStatus();
+  //         if (this.jobPostData.id) {
+  //           this.updateJobapplicantdata();
+  //         }
+  //         setTimeout(() => {
+  //           this.router.navigate(['/employee-management/all-employees']);
+  //         }, 3000);
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       console.log(err);
+  //     },
+  //   });
+  // }
+  
+submitrevoke() {
+  this.empdata.empstatus = 'Revoked';
+  this.empdata.substatus = 'Offer Revoked';
+  this.empdata.revokeComments = this.revokeForm.get('revokeComments')?.value;
+
+  if (this.empdata.marriedDate === 'Invalid date') {
+    this.empdata.marriedDate = null;
   }
+
+  this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
+    next: (data: any) => {
+      if (data) {
+        this.getEmployeeId(); 
+        this.modalService.dismissAll(); 
+        this.conformationPopup.openSuccessModal('Offer revoked successfully');
+
+        this.revokeEmail();
+        this.updateRevokeStatustooffer();
+        this.revokeEmailToEmployee();
+        this.updateOnboardingStatus();
+
+        if (this.jobPostData?.id) {
+          this.updateJobapplicantdata();
+        }
+        
+        setTimeout(() => {
+          this.router.navigate(['/employee-management/all-employees']);
+        }, 2000);
+      }
+    },
+    error: (err: any) => {
+      console.error('Error revoking offer:', err);
+    }
+  });
+}
+
 
   revokeEmail() {
     let loggedInUser = this.authService.getToken();
@@ -420,6 +459,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`OfferLetter/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getOfferDetails = data;
+        console.log(data)
       },
       error: (err: any) => {
         console.log(err);

@@ -28,12 +28,12 @@ export class EmployeOffBoardingComponent {
   popupMsg!: string;
   islastworking: boolean = false;
   lastworkingdisplay: any;
-  successstatus:any;
+  successstatus: any;
   rehireDetails = [] as IRehiredata[];
   currentDate = new Date().toISOString().slice(0, 10);
   Statusdetails = [] as IStatus[]
   joiningDate: any;
-  dateOfJoining :any
+  dateOfJoining: any
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private router: Router) { }
 
@@ -47,12 +47,12 @@ export class EmployeOffBoardingComponent {
     this.getRehire();
     this.getStatus();
     this.getEmployeeId()
-    
+
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     console.log(this.empinfo);
     this.dateOfJoining = this.formatDateToLocal(this.empinfo.dateOfJoining)
     console.log(this.dateOfJoining);
-    
+
 
 
 
@@ -74,7 +74,7 @@ export class EmployeOffBoardingComponent {
       lastdate: ['', Validators.required]
     });
   }
-  
+
   offBoardingEmp!: any
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
@@ -83,10 +83,10 @@ export class EmployeOffBoardingComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.offBoardingEmp= data;
+          this.offBoardingEmp = data;
           this.joiningDate = this.formatDateToLocal(data.dateOfJoining);
-          const lastWorking= this.formatDateToLocal(data.lastworkingday);
-          if(data.substatus.toLowerCase() === 'cleared no due'){
+          const lastWorking = this.formatDateToLocal(data.lastworkingday);
+          if (data.substatus.toLowerCase() === 'cleared no due') {
             this.offBoardingForm.patchValue({ lastdate: lastWorking });
             const lastDateControl = this.offBoardingForm.get('lastdate');
             if (lastDateControl) {
@@ -99,7 +99,7 @@ export class EmployeOffBoardingComponent {
       });
   }
   formatDateToLocal(dateString: string): string {
-   
+
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
@@ -107,7 +107,7 @@ export class EmployeOffBoardingComponent {
     return `${year}-${month}-${day}`;
   }
   openModal(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   cleardata() {
     this.offBoardingForm.reset();
@@ -165,35 +165,47 @@ export class EmployeOffBoardingComponent {
     if (this.offBoardingForm.valid) {
       const lastDateControl = this.offBoardingForm.get('lastdate');
       if (lastDateControl) {
-          lastDateControl.enable();
-        }
-      const formdata=this.offBoardingForm.value
+        lastDateControl.enable();
+      }
 
-      this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
-      this.offBoardingEmp.empstatus=formdata.status.statusname;
-      this.offBoardingEmp.lastworkingday=formdata.lastdate;
-      this.offBoardingEmp.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
-      this.offBoardingEmp.separationType = this.offBoardingEmp.separationType;
-      this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empinfo).subscribe({
+      const formData = this.offBoardingForm.value
+      console.log(formData);
+      this.offBoardingEmp.termreasonoffboard = formData.exit?.reason ?? '';
+      this.offBoardingEmp.empstatus = formData.status?.statusname ?? '';
+      this.offBoardingEmp.lastworkingday = formData.lastdate;
+      this.offBoardingEmp.eligibleforrehire = formData.eligiblefor?.eligibleforrehire1 ?? '';
+     // this.offBoardingEmp.separationType = this.offBoardingEmp.separationType || this.jobdetails.separationType;
+      this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.offBoardingEmp).subscribe({
         next: (res: any) => {
           console.log(res);
-          this.successstatus = 'Employee Inactived successfully';
-          this.conformationPopup.openSuccessModal(this.successstatus)
-          if (this.offBoardingEmp.empstatus === 'Inactive') {
-            this.router.navigate(['/employee-management/inactive-employees']);
+
+          if (res.statusCode === 200) {
+          
+            this.conformationPopup.openSuccessModal('Employee Inactived successfully')
+            if (this.offBoardingEmp.empstatus === 'Inactive') {
+              this.router.navigate(['/employee-management/inactive-employees']);
+              //this.InactiveEmail(this.empinfo.employeeId);
+            }
+            else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
+              this.router.navigate(['/employee-management/inactive-interns']);
+            }
+
+          } else if (res.statusCode === 409) {
+
+            this.conformationPopup.openErrorModal(res.message);
+
           }
-          else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
-            this.router.navigate(['/employee-management/inactive-interns']);
-          }
-          //this.InactiveEmail(this.empinfo.employeeId);
+
+
+          
         },
         error: (err: any) => {
           console.log(err);
-          if(err.status==500){
-            this.conformationPopup.openErrorModal( err.error.message);
+          if (err.status == 500) {
+            this.conformationPopup.openErrorModal(err.error.message);
           }
-          else if(err.status==400){
-          this.conformationPopup.openErrorModal('Http failure response')
+          else if (err.status == 400) {
+            this.conformationPopup.openErrorModal('Http failure response')
           }
 
         }
@@ -201,11 +213,11 @@ export class EmployeOffBoardingComponent {
     }
   }
 
-  InactiveEmail(employeeId:any) {
+  InactiveEmail(employeeId: any) {
     let EmployeeId = parseInt(this.empinfo.employeeId)
     console.log(employeeId)
     this.subscription = this.http
-      .postdata(`CustomEmail/InactivEmployee/${this.empinfo.employeeId}`,this.empinfo)
+      .postdata(`CustomEmail/InactivEmployee/${this.empinfo.employeeId}`, this.empinfo)
       .subscribe({
         next: (data: any) => {
           console.log(data);

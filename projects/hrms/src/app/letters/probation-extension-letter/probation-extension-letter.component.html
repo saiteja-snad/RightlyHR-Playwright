@@ -178,18 +178,19 @@
                                 <p class="pt-4">Sincerely,</p>
                                 <p class="letter-sub-header">For SNAD Developers India Pvt Ltd</p>
 
-                                <!-- Show "Authority Signature" only when no authority is selected -->
-                                <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-4">
+                             
+                                <div class="letter-signature  pt-4">{{probationExtensionLetterData.authorityName}}</div>
+                                   <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div  class="letter-sub-header pt-4">
                                     Authority Signature</div>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationExtensionLetterData.authorityName">
                                     <p class="letter-sub-header m-0">Authority Name</p>
                                     <p class="letter-sub-header m-0">Designation</p>
                                 </div>
-                                <div class="letter-signature  pt-4">{{probationExtensionLetterData.authorityName}}</div>
                                 <div>
-                                    <p class="letter-sub-header">{{probationExtensionLetterData.authorityName}}</p>
-                                    <p class="letter-sub-header">{{probationExtensionLetterData.authorityDesignation}}
+                                    <p class="letter-sub-header m-0">{{probationExtensionLetterData.authorityName}}</p>
+                                    <p class="letter-sub-header m-0">{{probationExtensionLetterData.authorityDesignation}}
                                     </p>
                                 </div>
                             </div>

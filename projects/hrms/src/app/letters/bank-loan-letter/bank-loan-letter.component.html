@@ -72,16 +72,14 @@
                 <div class="d-flex flex-wrap gap-3 pt-3">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="employeeForm.invalid || spinnerLoader">
-                        <ng-container *ngIf="spinnerLoader; else addText">
-                            <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status"
-                                    aria-hidden="true"></span>
-                                <span>{{'Loading...'}}</span>
-                            </div>
-                        </ng-container>
-                        <ng-template #addText>
-                            <span>{{'Generate Document' | translate}}</span>
-                        </ng-template>
+
+                        @if (spinnerLoader) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Generate Document'| translate}}</span>
+                        }
+                      
                     </button>
                 </div>
             </form>
@@ -90,7 +88,8 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
+                    <div class="letter-page-content" id="pdfContent"
+                        [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
                         <div class="letter-page-sub-content">
 
 
@@ -136,12 +135,12 @@
                             </div>
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="authorityFullName">
-                                <p class="letter-sub-header mb-1" >Authority Signature</p>
+                                <p class="letter-sub-header mb-1">Authority Signature</p>
                                 <p class="letter-sub-header mb-1">{{authorityFullName }}</p>
                                 <p class="letter-sub-header mb-1">{{selectedAuthority.designation}}</p>
                             </div>
                         </div>
-                      
+
                     </div>
                 </div>
             </div>

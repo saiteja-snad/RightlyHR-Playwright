@@ -895,7 +895,7 @@ bonusValidator = (salary: number): ValidatorFn => {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/active-employees'])
+    this.router.navigate(['/employee-management/all-employees'])
   }
 
   initializeForm() {

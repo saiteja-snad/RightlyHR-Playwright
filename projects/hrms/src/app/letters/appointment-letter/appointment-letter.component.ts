@@ -441,7 +441,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/employee-management/all-employees'])
   }
 
   ngOnDestroy(): void {

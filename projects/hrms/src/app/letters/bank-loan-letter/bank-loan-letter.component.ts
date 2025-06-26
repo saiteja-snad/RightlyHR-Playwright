@@ -263,6 +263,7 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankLoanFile).subscribe({
       next: (data: any) => {
         if (data) {
+          this.spinnerLoader = false;
           this.modal.openSuccessModal('Bank loan letter generated successfully');
         }
       },
@@ -272,7 +273,7 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
       },
       complete: () => {
         setTimeout(() => {
-          this.router.navigate(['/admin/active-employees']);
+          this.router.navigate(['/employee-management/all-employees']);
         }, 2000)
         this.spinnerLoader= false;
         this.employeeForm.reset();

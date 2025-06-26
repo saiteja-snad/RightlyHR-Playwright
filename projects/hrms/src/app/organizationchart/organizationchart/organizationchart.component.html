@@ -12,7 +12,7 @@
     <div class="d-flex align-items-center gap-3">
       @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
       <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label custom-label m-0"><b>Select Employee</b></label>
+        <label for="education" class="form-label  filter-labels  custom-label m-0"><b>Select Employee</b></label>
         <div class="custom-p-select-content ">
           <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
             optionLabel="label" optionValue="value" showClear="true" [(ngModel)]="selectedEmployeeId"
@@ -24,7 +24,7 @@
 
       @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
       <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label custom-label m-0"><b>Select Employee</b></label>
+        <label for="education" class="form-label custom-label filter-labels custom-label m-0"><b>Select Employee</b></label>
         <div class="custom-p-select-content">
           <p-select [options]="mangeractiveEmplist" showClear="true" [filter]="true" filterBy="fullName"
             resetFilterOnHide="true" optionLabel="fullName" optionValue="employeeid" [(ngModel)]="selectedEmployeeId"
@@ -36,7 +36,7 @@
 
       @if(this.rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
       <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label custom-label m-0"><b>Select Compensation</b></label>
+        <label for="education" class="form-label  filter-labels custom-label  m-0"><b>Select Compensation</b></label>
         <div class="custom-p-select-content">
           <p-select [options]="compensationOptions" optionLabel="label" optionValue="value"
             [(ngModel)]="compensationyesorno" placeholder="Please select compensation"

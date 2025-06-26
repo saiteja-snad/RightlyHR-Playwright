@@ -159,19 +159,19 @@
                             <p>If you have any further questions, you can call us at 8886651309.</p>
                         </div>
                         <div class="mb-5">
-                            <p class="mb-0">Sincerely,</p>
+                            <p class="mb-2">Sincerely,</p>
                             <p><b>For SNAD Developers India Pvt Ltd</b></p>
                         </div>
                         <div>
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!addressLetterData.authorityName?.trim()">
-                                Authority Signature
+                             <p class="letter-sub-header mb-1">  Authority Signature</p>
                             </div>
 
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="!addressLetterData.authorityName?.trim()">
-                                <p>Authority Name</p>
-                                <p>Designation</p>
+                                <p class="letter-sub-header mb-1">Authority Name</p>
+                                <p class="letter-sub-header mb-1">Designation</p>
                             </div>
 
                             <!-- Signature in custom font (Only show when valid name exists) -->
@@ -181,8 +181,9 @@
 
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="addressLetterData.authorityName?.trim()">
-                                <p>{{ addressLetterData.authorityName }}</p>
-                                <p>{{ authorityDesignation }}</p>
+                                <p class="letter-sub-header mb-1">  Authority Signature</p>
+                                <p class="letter-sub-header mb-1">{{ addressLetterData.authorityName }}</p>
+                                <p class="letter-sub-header mb-1">{{ authorityDesignation }}</p>
                             </div>
                         </div>
                     </div>

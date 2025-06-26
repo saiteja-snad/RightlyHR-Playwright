@@ -122,13 +122,13 @@
                             </p>
                             <p class="mb-5">If you have any further questions, you can call us at 8886651309.</p>
                             <p class=" mb-2">Sincerely,</p>
-                            <p class="letter-sub-header mb-3">For SNAD Developers India Pvt Ltd</p>
+                            <p class="letter-sub-header mb-4">For SNAD Developers India Pvt Ltd</p>
                             <!-- Show "Authority Signature" only when no authority is selected -->
-                            <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
+                            <div *ngIf="!authorityFullName" class="letter-sub-header mb-1">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="!authorityFullName">
-                                <p class="letter-sub-header">Authority Name</p>
-                                <p class="letter-sub-header">Designation</p>
+                                <p class="letter-sub-header mb-1">Authority Name</p>
+                                <p class="letter-sub-header mb-1">Designation</p>
                             </div>
                             <!-- Signature in custom font (Only show when valid name exists) -->
                             <div *ngIf="authorityFullName" class="letter-signature mb-4">
@@ -136,8 +136,9 @@
                             </div>
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="authorityFullName">
-                                <p>{{authorityFullName }}</p>
-                                <p>{{selectedAuthority.designation}}</p>
+                                <p class="letter-sub-header mb-1" >Authority Signature</p>
+                                <p class="letter-sub-header mb-1">{{authorityFullName }}</p>
+                                <p class="letter-sub-header mb-1">{{selectedAuthority.designation}}</p>
                             </div>
                         </div>
                       

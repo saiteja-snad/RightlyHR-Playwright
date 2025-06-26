@@ -187,15 +187,15 @@
                               
                              
                                 <div class="letter-signature pt-4">{{probationLetterData.authorityName}}</div>
-                                  <div class="letter-sub-header pt-4">Authority
+                                  <div class="letter-sub-header mb-1 pt-4">Authority
                                     Signature</div>
                                        <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationLetterData.authorityName">
-                                    <p class="letter-sub-header m-0">Authority Name</p>
-                                    <p class="letter-sub-header m-0">Designation</p>
+                                    <p class="letter-sub-header mb-1">Authority Name</p>
+                                    <p class="letter-sub-header mb-1">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="mb-0"><b>{{probationLetterData.authorityName}}</b></p>
+                                    <p class="mb-1"><b>{{probationLetterData.authorityName}}</b></p>
                                     <p><b>{{probationLetterData.authorityDesignation}}</b></p>
                                 </div>
                             </div>

@@ -756,8 +756,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   onVariablePayChange(isVariablePay: any) {
     this.prospectiveEmpData.isVariablePay = isVariablePay.value;
     if (isVariablePay.value === false) {
-      this.prospectiveEmpData.variablePayAmount = '';
-      this.employeeForm.get('variablePayAmount')?.setValue(null);
+      this.prospectiveEmpData.variablePayAmount = '0';
+      this.employeeForm.get('variablePayAmount')?.setValue(0);
       this.employeeForm.get('variablePayAmount')?.disable();
     }
     else if (isVariablePay.value === true) {

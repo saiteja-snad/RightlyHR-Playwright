@@ -771,9 +771,9 @@
               <p class="letter-signature ">
                 {{authorityFullName}}
               </p>
-              <p class="mb-0 authorized-signatory">Authorized Signatory</p>
-              <p class=" mb-0 authorized-signatory">{{authorityFullName}}</p>
-              <p class="mb-0 authorized-signatory">{{selectedAuthority?.designation}}</p>
+              <p class="mb-1 authorized-signatory">Authorized Signatory</p>
+              <p class=" mb-1 authorized-signatory">{{authorityFullName}}</p>
+              <p class="mb-1 authorized-signatory">{{selectedAuthority?.designation}}</p>
               <p class="authorized-signatory text-end">Date of Joining: {{ employeeForm.get('dateOfJoining')?.value |
                 dateformat }}</p>
               <div class="pt-2">
@@ -1226,9 +1226,9 @@
 
               <p class="letter-signature ">{{authorityFullName}}
               </p>
-              <p class="authorized-signatory mb-0">Authorized Signatory</p>
-              <p class="authorized-signatory mb-0">{{authorityFullName}}</p>
-              <p class="authorized-signatory mb-0">{{selectedAuthority?.designation}}</p>
+              <p class="authorized-signatory mb-1">Authorized Signatory</p>
+              <p class="authorized-signatory mb-1">{{authorityFullName}}</p>
+              <p class="authorized-signatory ">{{selectedAuthority?.designation}}</p>
 
               <p class="authorized-signatory text-end my-2">
                 Date of Joining: {{ employeeForm.get('dateOfJoining')?.value | dateformat }}

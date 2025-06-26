@@ -1247,18 +1247,21 @@ select:focus {
 
     th,
     td {
-        padding: 0.25rem 0.625rem;
+        padding: 0.5rem 0.625rem;
         text-align: center;
-        font-size: var(--fontsize14) !important;
+       color: #000;
+        font-size: var(--fontsize16) !important;
     }
 
     th {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
+    tr:nth-child(4){
+         background: rgba(255, 255, 204, 255);
+    }
     tr:nth-child(9) {
-        background: rgba(255, 255, 204, 255);
+        background: #fff2cc;
     }
 
     .secondtable {
@@ -1288,8 +1291,8 @@ select:focus {
 
 .box {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 24px;
+    height: 20px;
     border: 1px solid black;
     margin-right: 8px;
 }
@@ -1314,8 +1317,12 @@ select:focus {
     font-family: "autographsignatureFont" !important;
 }
 
-// letter stylings
 
+// letter stylings
+.authorized-signatory {
+    font-size: 18px;
+    font-weight: 800;
+}
 // note text stylings
 .note-text {
     font-size: var(--fontsize12) !important;

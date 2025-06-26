@@ -620,8 +620,8 @@
                   <div class="stamp"></div>
                   <p class="mb-3 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
-                  <p class="mb-0 signature "> Authorized Signatory, </p>
-                  <p class="mb-0 signature">{{prospectiveEmpData.authorityName}} </p>
+                  <p class="mb-1 signature "> Authorized Signatory, </p>
+                  <p class="mb-1 signature">{{prospectiveEmpData.authorityName}} </p>
                   <p class="mb-5 signature">{{authorityDesignation}} </p>
                   <p class="mb-5">I accept this offer of employment. </p>
                   <div class="d-flex justify-content-between">
@@ -660,7 +660,7 @@
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
                 </ng-template> -->
-                <p class="letter-header text-center mb-4">ANNEXURE - 1</p>
+                <h5 class="text-center  mb-2"> <strong>ANNEXURE - 1</strong> </h5>
                 <p class="letter-sub-header mb-3">Documents / Information required to be submitted on the day of
                   joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
@@ -699,7 +699,7 @@
                   <p><span class="box"></span> PAN Card (Mandatory)</p>
                 </div>
                 <div class="d-flex">
-                  <p><span class="box"></span> AADHAR Card (Mandatory)</p>
+                  <p><span class="box"></span> AADHAAR Card (Mandatory)</p>
                 </div>
                 <div class="d-flex">
                   <p><span class="box"></span> Passport size photographs 3 colored photos.</p>
@@ -749,11 +749,11 @@
                 <ng-template #doc>
                   <div class="hard-copy-letter"></div>
                 </ng-template> -->
-                <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
+                <h5 class="text-center mb-3"><strong>ANNEXURE - 2</strong> </h5>
                 <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
                 <div class="row">
                   <div class="p-2 border-box col-md-2 name">NAME</div>
-                  <div class="p-2 border-box col-md-4"><b>{{prospectiveEmpData.firstName}}
+                  <div class="p-2 border-box col-md-4 text-wrap"><b>{{prospectiveEmpData.firstName}}
                       {{prospectiveEmpData.middleName}}
                       {{prospectiveEmpData.lastName}}</b></div>
                   <div class="p-2 border-box col-md-2 name">Designation</div>
@@ -928,7 +928,7 @@
                 <!-- table end -->
                 <p class=" mb-1 mt-2"><b>Note:</b> {{prospectiveEmpData.note}}</p>
                 <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
-                  Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note:
+                  Award Program will be made available to you upon joining SNAD. Please note:
                   SNAD Developers India Pvt Ltd reserves
                   the
                   right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at

@@ -73,7 +73,7 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/employee-management/all-employees'])
   }
 
   DateValidation() {

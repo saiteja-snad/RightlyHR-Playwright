@@ -399,7 +399,7 @@
                                         {{'Name'|translate}}:</li>
                                     <ng-template #fullname>
                                         <li>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
-                                                {{traineeEmpData.lastName}},</li>
+                                            {{traineeEmpData.lastName}},</li>
                                     </ng-template>
                                     <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
@@ -419,7 +419,7 @@
                                 {{traineeEmpData.lastName}},</div>
                             <div>
                                 <p class="mb-4">The details of your internship offer are as follows:</p>
-                                <ol class="liststylenumber" >
+                                <ol class="liststylenumber">
                                     <li class="mb-5">
                                         <b>{{'Start Date and Duration' | translate}}: </b>Your internship
                                         will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> and
@@ -430,12 +430,9 @@
                                     </li>
                                     <li class="mb-5"><b>{{'Working Hours and Location'|translate}}:
                                         </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to
-                                        Friday), at our office located at SNAD Developers India Pvt Ltd, Floor#16, Vijay
-                                        Krishna Towers,
-                                        Madhava Reddy Colony, Gachibowli, HYD - 500032. Occasionally, you may be
-                                        required to work additional hours or remotely, depending on the nature of the
-                                        projects
-                                        and business requirements.
+                                        Friday), at our office located at SNAD Developers India Pvt Ltd,. Occasionally,
+                                        you may be required to work additional hours or remotely, depending on the
+                                        nature of the projects and business requirements.
                                     </li>
                                     <li class="mb-5"><b>{{'Reporting Manager'|translate}}: </b>You will be
                                         reporting to <u>{{ traineeEmpData.reportingmanagerName }}</u>
@@ -467,7 +464,7 @@
                                         Constructive feedback will be provided to help you grow and make the most out of
                                         this opportunity.
                                     </li>
-                                    <li >
+                                    <li>
                                         <b>{{'Termination'|translate}}: </b>The company may terminate this internship by
                                         providing 15 days written notice or the company is having a right to terminate
                                         this internship immediately,
@@ -491,18 +488,19 @@
                                     <p>Please confirm your acceptance of this offer by signing and returning a scanned
                                         copy of this letter within 1 day to
                                         <a href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
-                                            target="_blank" rel="noopener noreferrer"> <u>hr&#64;snaddevelopers.com</u></a>
+                                            target="_blank" rel="noopener noreferrer">
+                                            <u>hr&#64;snaddevelopers.com</u></a>
                                     </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
                                     <p class="mb-2">Sincerely,</p>
-                                    <p class="mb-2"><b>For SNAD Developers India Pvt Ltd</b></p>
+                                    <p class="mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
                                 </div>
                                 <div class="pt-3">
-                                    <p class="letter-signature mb-4">{{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header mb-0" >
+                                    <p class="letter-signature mb-2">{{traineeEmpData.authorityName}}</p>
+                                    <p class="letter-sub-header mb-1">
                                         Authorized Signatory, </p>
-                                    <p class="letter-sub-header mb-0" *ngIf="traineeEmpData.authorityName?.trim()">
+                                    <p class="letter-sub-header mb-1" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
                                     <p class="letter-sub-header mb-0">{{authorityDesignation}} </p>
                                     <br>
@@ -513,8 +511,8 @@
                                         this Internship Offer, and I accept the offer as outlined above.</p>
                                 </div>
                                 <div class="py-3">
-                                    <p>Signature: _________________________</p>
-                                    <p>Date: ______________________________</p>
+                                    <p class="font-content">Signature: _________________________</p>
+                                    <p class="font-content">Date: ______________________________</p>
                                 </div>
                             </div>
                         </div>

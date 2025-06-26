@@ -1,6 +1,7 @@
 * {
-  
+
     font-family: Verdana, Tahoma, sans-serif;
+   
 }
 
 
@@ -15,4 +16,7 @@ input:focus {
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+.font-content{
+    font-size: 18px;
 }

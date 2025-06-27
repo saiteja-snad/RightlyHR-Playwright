@@ -269,8 +269,11 @@
                             [maxlength]="250" formControlName="reason" placeholder="Please enter comments"></textarea>
                         <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
                         <div class="error-msg" *ngIf="(leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched)">
-                            Comments are required
+                            Reason is required
                         </div>
+                        <div class="error-msg"
+                            *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.errors?.['minlength']">
+                            Reason must be atleast 10 characters</div>
                     </div>
                 </div>
                 <div *ngIf="dateDifference &&  isDayTypeselected">

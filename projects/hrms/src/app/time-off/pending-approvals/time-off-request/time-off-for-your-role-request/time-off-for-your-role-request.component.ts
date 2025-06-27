@@ -91,6 +91,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
+    // this.conformationPopup.openLoaderModal('GH');
   }
 
   getAllPendingApprovals() {

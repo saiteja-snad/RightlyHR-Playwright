@@ -165,22 +165,20 @@ export class EmployeOffBoardingComponent {
     if (this.offBoardingForm.valid) {
       const lastDateControl = this.offBoardingForm.get('lastdate');
       if (lastDateControl) {
-        lastDateControl.enable();
-      }
+          lastDateControl.enable();
+        }
+      const formdata=this.offBoardingForm.value
 
-      const formData = this.offBoardingForm.value
-      console.log(formData);
-      this.offBoardingEmp.termreasonoffboard = formData.exit?.reason ?? '';
-      this.offBoardingEmp.empstatus = formData.status?.statusname ?? '';
-      this.offBoardingEmp.lastworkingday = formData.lastdate;
-      this.offBoardingEmp.eligibleforrehire = formData.eligiblefor?.eligibleforrehire1 ?? '';
-     // this.offBoardingEmp.separationType = this.offBoardingEmp.separationType || this.jobdetails.separationType;
+      this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
+      this.offBoardingEmp.empstatus=formdata.status.statusname;
+      this.offBoardingEmp.lastworkingday=formdata.lastdate;
+      this.offBoardingEmp.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
+      this.offBoardingEmp.separationType = this.offBoardingEmp.separationType;
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.offBoardingEmp).subscribe({
         next: (res: any) => {
           console.log(res);
-
-          if (res.statusCode === 200) {
-          
+       if (res.statusCode === 200) {
+         
             this.conformationPopup.openSuccessModal('Employee Inactived successfully')
             if (this.offBoardingEmp.empstatus === 'Inactive') {
               this.router.navigate(['/employee-management/inactive-employees']);
@@ -189,29 +187,28 @@ export class EmployeOffBoardingComponent {
             else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
               this.router.navigate(['/employee-management/inactive-interns']);
             }
-
+ 
           } else if (res.statusCode === 409) {
-
+ 
             this.conformationPopup.openErrorModal(res.message);
-
+ 
           }
-
-
-          
+          //this.InactiveEmail(this.empinfo.employeeId);
         },
         error: (err: any) => {
           console.log(err);
-          if (err.status == 500) {
-            this.conformationPopup.openErrorModal(err.error.message);
+          if(err.status==500){
+            this.conformationPopup.openErrorModal( err.error.message);
           }
-          else if (err.status == 400) {
-            this.conformationPopup.openErrorModal('Http failure response')
+          else if(err.status==400){
+          this.conformationPopup.openErrorModal('Http failure response')
           }
 
         }
       })
     }
   }
+
 
   InactiveEmail(employeeId: any) {
     let EmployeeId = parseInt(this.empinfo.employeeId)

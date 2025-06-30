@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   //  ApiUrl: 'http://20.235.102.201/api/',
-  ApiUrl: 'https://fusionplusapi.rightlyhr.com/api/',
+  ApiUrl: 'https://snadapi.rightlyhr.com/api/',
   viewUrl: 'https://sasda001.blob.core.windows.net/fusionplusqa/',
   clientId: 'f3f3ce8d-f7ab-4e7a-887c-4b2b1f295a16',
   authority:

@@ -46,7 +46,8 @@
             </button>
 
             <!-- <div *ngIf=""> -->
-            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
+            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted'  || emppersonalinfo.substatus=='Offer Letter Generated' || emppersonalinfo.empstatus=='Offer Letter Released'){
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
             || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
                 (click)="openModal(revokeoffer)">

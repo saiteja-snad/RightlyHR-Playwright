@@ -121,12 +121,12 @@
                             <p class="letter-sub-header">Dear {{gender}} {{appraisalData.firstName}}
                                 {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
-                            <p>Management has truly recognized your potential for growth with
+                            <p class="mb-4">Management has truly recognized your potential for growth with
                                 the
                                 company and thus has given you a good increment with great expectations. We would
                                 like
                                 you to take it as a challenge and prove your mettle. </p>
-                            <p>Keeping in view the above, Management has also decided to give
+                            <p class="mb-4">Keeping in view the above, Management has also decided to give
                                 you
                                 a revision of Rs. {{incrementSalary}}/- w.e.f.
                                 <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
@@ -136,7 +136,7 @@
                                 {{appraisalData.salary}} /-
                             </p>
 
-                            <p>We are confident that you will put in your best efforts in
+                            <p class="mb-4">We are confident that you will put in your best efforts in
                                 discharging your duties and responsibilities even more efficiently and in the best
                                 of
                                 interest of the organization
@@ -144,15 +144,15 @@
                                 repeatedly.
                             </p>
 
-                            <p>All other terms & conditions of your Appointment Letter will
+                            <p class="mb-4">All other terms & conditions of your Appointment Letter will
                                 remain
                                 unchanged. </p>
                             <p>Yours sincerely, </p><br>
                             <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
-                            <p class="letter-signature pt-3">{{appraisalData.authorityName}}</p>
-                            <p class="letter-sub-header" *ngIf="!appraisalData.authorityName">Authorized Signatory,</p>
-                            <p class="letter-sub-header">{{appraisalData.authorityName}}</p>
-                            <p class="letter-sub-header">{{authorityDesignation}}</p>
+                            <p class="letter-signature  pt-3">{{appraisalData.authorityName}}</p>
+                            <p class="letter-sub-header mb-1" >Authorized Signatory,</p>
+                            <p class="letter-sub-header mb-1">{{appraisalData.authorityName}}</p>
+                            <p class="letter-sub-header mb-0">{{authorityDesignation}}</p>
                         </div>
                         <!-- <div class="letter-footer">
                             <app-letter-footer />
@@ -176,7 +176,7 @@
                             <p><span class="text-decoration-underline">Salary Structure:</span> </p>
                             <!-- second paragraph -->
                             <div class="salary-details-table mb-3">
-                                <table class="w-100">
+                                <table class="mytable w-100">
                                     <thead>
                                         <tr>
                                             <th class="text-center">Components in Salary</th>
@@ -228,13 +228,13 @@
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalGrossSalary;else totalgross"> </span>
                                                 <ng-template
-                                                    #totalgross>{{appraisalData.totalGrossSalary}}</ng-template>
+                                                    #totalgross> <b>{{appraisalData.totalGrossSalary}}</b></ng-template>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
                                                 </span>
                                                 <ng-template
-                                                    #totalgrossper>{{appraisalData.totalGrossPerAnnum}}</ng-template>
+                                                    #totalgrossper><b>{{appraisalData.totalGrossPerAnnum}}</b></ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -292,13 +292,13 @@
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
-                                                <ng-template #totdec>{{appraisalData.totalDeduction}}</ng-template>
+                                                <ng-template #totdec><b>{{appraisalData.totalDeduction}}</b></ng-template>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
                                                 </span>
                                                 <ng-template
-                                                    #totdecper>{{appraisalData.totalDeductionsPerAnnum}}</ng-template>
+                                                    #totdecper><b>{{appraisalData.totalDeductionsPerAnnum}}</b></ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -306,11 +306,11 @@
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.netSalary;else net">
                                                 </span>
-                                                <ng-template #net>{{appraisalData.netSalary}}</ng-template>
+                                                <ng-template #net><b>{{appraisalData.netSalary}}</b></ng-template>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.netSalaryPerAnnum;else netper"> </span>
-                                                <ng-template #netper>{{appraisalData.netSalaryPerAnnum}}</ng-template>
+                                                <ng-template #netper><b>{{appraisalData.netSalaryPerAnnum}}</b></ng-template>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -319,7 +319,7 @@
 
                             <!-- second table -->
                             <div class="salary-details-table mb-3">
-                                <table class="w-100">
+                                <table class="secondtable w-100">
                                     <thead>
                                         <tr>
                                             <th colspan="3" class="text-center">CTC Calculation</th>
@@ -357,12 +357,12 @@
                                             <td class="text-center p-0 pt-1 pb-1 bold"><span
                                                     *ngIf="!appraisalData.grossSalary;else gross">
                                                 </span>
-                                                <ng-template #gross>{{appraisalData.grossSalary}}</ng-template>
+                                                <ng-template #gross><b>{{appraisalData.grossSalary}}</b></ng-template>
                                             </td>
                                             <td class="text-center p-0 pt-1 pb-1 bold"><span
                                                     *ngIf="!appraisalData.salary;else grossper">
                                                 </span>
-                                                <ng-template #grossper>{{appraisalData.salary}}</ng-template>
+                                                <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -377,14 +377,15 @@
                                 </li>
                             </ul>
                             <!-- end of second table -->
-                            <p class="letter-sub-header">for SNAD Developers India Pvt Ltd</p>
-                            <div class="img-space "></div>
+                            <p class="letter-sub-header ">For SNAD Developers India Pvt Ltd</p>
+                            <div class="img-space  mb-5"></div>
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <div class="mt-4 letter-signature">{{appraisalData.authorityName}}</div>
+                                    <div class="mb-3 letter-signature">{{appraisalData.authorityName}}</div>
                                     <div>
-                                        <p class="letter-sub-header">{{appraisalData.authorityName}}</p>
-                                        <p class="letter-sub-header">{{authorityDesignation}}</p>
+                                         <p class="letter-sub-header mb-1" >Authorized Signatory,</p>
+                                        <p class="letter-sub-header mb-1">{{appraisalData.authorityName}}</p>
+                                        <p class="letter-sub-header mb-1">{{authorityDesignation}}</p>
                                     </div>
                                 </div>
                                 <div>

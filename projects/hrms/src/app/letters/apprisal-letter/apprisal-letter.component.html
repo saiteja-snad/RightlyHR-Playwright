@@ -154,7 +154,8 @@
 
               <!-- start of letter -->
               <div class="mb-2 mt-2">
-                <div class="text-center letter-header"><b>{{'Appraisal Letter' | translate }}</b></div>
+              
+                <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
               </div>
               <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
@@ -200,7 +201,7 @@
 
               <!--Components Table-->
               <div class="salary-details-table mb-3 mt-4">
-                <table class="w-100">
+                <table class="mytable w-100">
                   <thead>
                     <tr>
                       <th class="text-center">Components in Salary</th>
@@ -241,22 +242,22 @@
                       <td class="bold text-center"><b>Total Gross Salary</b></td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.totalGrossSalary;else totalgross">
                         </span>
-                        <ng-template #totalgross>{{appraisalData.totalGrossSalary}}</ng-template>
+                        <ng-template #totalgross><b>{{appraisalData.totalGrossSalary}}</b></ng-template>
                       </td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
                         </span>
-                        <ng-template #totalgrossper>{{appraisalData.totalGrossPerAnnum}}</ng-template>
+                        <ng-template #totalgrossper><b>{{appraisalData.totalGrossPerAnnum}}</b></ng-template>
                       </td>
                     </tr>
                     <tr>
                       <td class="text-center">PF Contribution by Employee</td>
                       <td class="text-center"><span *ngIf="!appraisalData.pfContribution;else pf">
                         </span>
-                        <ng-template #pf>{{appraisalData.pfContribution}}</ng-template>
+                        <ng-template #pf><b>{{appraisalData.pfContribution}}</b></ng-template>
                       </td>
                       <td class="text-center"><span *ngIf="!appraisalData.pfPreAnuum;else pfper">
                         </span>
-                        <ng-template #pfper>{{appraisalData.pfPreAnuum}}</ng-template>
+                        <ng-template #pfper><b>{{appraisalData.pfPreAnuum}}</b></ng-template>
                       </td>
                     </tr>
                     <tr>
@@ -292,20 +293,20 @@
                       <td class=" text-center"><b>Total Deductions (PF+ESI+PT)</b>
                       </td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
-                        <ng-template #totdec>{{appraisalData.totalDeduction}}</ng-template>
+                        <ng-template #totdec><b>{{appraisalData.totalDeduction}}</b></ng-template>
                       </td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
                         </span>
-                        <ng-template #totdecper>{{appraisalData.totalDeductionsPerAnnum}}</ng-template>
+                        <ng-template #totdecper><b>{{appraisalData.totalDeductionsPerAnnum}}</b></ng-template>
                       </td>
                     </tr>
                     <tr>
                       <td class="text-center"><b>Net Salary</b></td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.netSalary;else net"> </span>
-                        <ng-template #net>{{appraisalData.netSalary}}</ng-template>
+                        <ng-template #net> <b>{{appraisalData.netSalary}}</b></ng-template>
                       </td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.netSalaryPerAnnum;else netper"></span>
-                        <ng-template #netper>{{appraisalData.netSalaryPerAnnum}}</ng-template>
+                        <ng-template #netper><b>{{appraisalData.netSalaryPerAnnum}}</b></ng-template>
                       </td>
                     </tr>
                   </tbody>
@@ -314,7 +315,7 @@
 
               <!--CTC table-->
               <div class="salary-details-table mb-3">
-                <table class="w-100">
+                <table class="secondtable w-100">
                   <thead>
                     <tr>
                       <th class="text-center" colspan="3">CTC Calculation</th>
@@ -347,23 +348,23 @@
                       <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Medical Insurance)</b></td>
                       <td class="text-center bold">
                         <span *ngIf="!appraisalData.grossSalary;else gross"></span>
-                        <ng-template #gross>{{appraisalData.grossSalary}}</ng-template>
+                        <ng-template #gross><b>{{appraisalData.grossSalary}}</b></ng-template>
                       </td>
                       <td class="text-center bold">
                         <span *ngIf="!appraisalData.salary;else grossper"></span>
-                        <ng-template #grossper>{{appraisalData.salary}}</ng-template>
+                        <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
                       </td>
                     </tr>
                     <tr>
                       <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
-                      <td colspan="2" class="text-center ">{{appraisalData.bonus}} <span *ngIf="appraisalData.bonus">Per
+                      <td colspan="2" class="text-center "><b>{{appraisalData.bonus}} </b><span *ngIf="appraisalData.bonus">Per
                           Annum</span></td>
                     </tr>
                     <tr>
                       <td class="text-center"><b>Variable Amount</b></td>
                       <td colspan="2" class="text-center">
                         <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
-                        <ng-template #vamount>{{appraisalData.variablePayAmount }}</ng-template>
+                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount  }}</b></ng-template>
                       </td>
                     </tr>
                   </tbody>
@@ -397,12 +398,12 @@
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
 
-              <p class="letter-sub-header pt-3"><b>for SNAD Developers India Pvt Ltd</b></p>
-                   <p class="letter-signature " style="font-family: Segoe script; font-size: large;">{{appraisalData.authorityName}}</p><br>
+              <p class="letter-sub-header mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
+                   <div class="letter-signature  " >{{appraisalData.authorityName}}</div><br>
               <div class="pb-3">
-                <span *ngIf="!appraisalData.authorityName"><b>Authorized Signatory,</b></span><br>
-                <span><b><span *ngIf="!appraisalData.authorityName">Name</span>{{appraisalData.authorityName}}</b></span><br>
-                <span><b><span *ngIf="!authorityDesignation">Designation</span>{{authorityDesignation}}</b></span>
+                <p  class="mb-1"><b>Authorized Signatory,</b></p>
+                <p class="mb-1"><b><p class="mb-1" *ngIf="!appraisalData.authorityName">Name</p>{{appraisalData.authorityName}}</b></p>
+                <p class="mb-1"><b><p class="mb-1" *ngIf="!authorityDesignation">Designation</p>{{authorityDesignation}}</b></p>
               </div>
 
               <div class="pt-4 pb-4">

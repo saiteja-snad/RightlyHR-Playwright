@@ -1,3 +1,25 @@
+* {
+  
+    font-family: Verdana, Tahoma, sans-serif;
+}
+
+
+.employee-field{
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 210px; 
+}
+.employee-signature{
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 185px; 
+}
+.employee-date{
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 300px; 
+}
+
 input:focus{
     outline: none !important;
     box-shadow: none !important;
@@ -8,4 +30,41 @@ input:focus{
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.salary-details-table {
+    .mytable,
+    .secondtable {
+        th {
+            background: #f4f8ff;
+        }
+    }
+}
+.secondtable tr:nth-child(3) td:nth-child(3),
+.secondtable tr:nth-child(3) td:nth-child(2) {
+  background: #fce4d6;
+}
+
+.secondtable tr:nth-child(4) td:nth-child(4),
+.secondtable tr:nth-child(4) td:nth-child(2) {
+  background: #fce4d6;
+}
+
+.mytable tr:nth-child(4),
+.mytable tr:nth-child(10) {
+  background: #fff2cc;
+}
+
+.mytable tr:nth-child(9) {
+  background: #fff2cc;
+}
+.soft-copy-letter {
+    background-image: url('/images/snad-letter-bg.jpg') !important;
+    padding-top: 10rem !important;
+
+}
+
+.authorized-signatory {
+    font-size: 15px;
+    font-weight: 700;
 }

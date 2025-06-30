@@ -200,41 +200,41 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
   }
   downloadChart(format: 'pdf' | 'jpg'): void {
     const chartElement = document.querySelector('.organization-chart-container');
- 
+
     if (!chartElement) {
       console.error('Chart element not found!');
       return;
     }
- 
+
     // Store original style before modifying
     const originalStyle = chartElement.getAttribute('style');
     const originalWidth = chartElement.scrollWidth;
     const originalHeight = chartElement.scrollHeight;
- 
+
     // Temporarily set dimensions for capture
     chartElement.setAttribute(
       'style',
       `width: ${originalWidth}px; height: ${originalHeight}px; overflow: visible; position: absolute; top: 0; left: 0;`
     );
- 
+
     // Create a promise to handle image loading
     const capturePromise = new Promise<void>((resolve) => {
       // Wait for images to load
       const images = chartElement.querySelectorAll('img');
       let loadedCount = 0;
- 
+
       if (images.length === 0) {
         resolve();
         return;
       }
- 
+
       const onLoad = () => {
         loadedCount++;
         if (loadedCount === images.length) {
           resolve();
         }
       };
- 
+
       images.forEach(img => {
         if (img.complete) {
           onLoad();
@@ -244,7 +244,7 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
         }
       });
     });
- 
+
     capturePromise.then(() => {
       return html2canvas(chartElement as HTMLElement, {
         width: originalWidth,
@@ -259,25 +259,25 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     })
       .then((canvas) => {
         const imageData = canvas.toDataURL('image/jpeg', 0.85); // Using JPEG for better compression
- 
+
         if (format === 'pdf') {
           const pdf = new jsPDF('l', 'mm', 'a4');
           const pageWidth = pdf.internal.pageSize.getWidth();
           const pageHeight = pdf.internal.pageSize.getHeight();
- 
+
           // Calculate dimensions to fit PDF page
           const ratio = Math.min(
             (pageWidth - 20) / canvas.width,  // 10mm margins
             (pageHeight - 20) / canvas.height
           );
- 
+
           const imgWidth = canvas.width * ratio;
           const imgHeight = canvas.height * ratio;
- 
+
           // Center on page
           const xOffset = (pageWidth - imgWidth) / 2;
           const yOffset = (pageHeight - imgHeight) / 2;
- 
+
           pdf.addImage(imageData, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
           pdf.save('organization-chart.pdf');
         } else {
@@ -301,8 +301,8 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
         }
       });
   }
- 
- 
+
+
 
   // downloadChart(format: 'pdf' | 'jpg'): void {
   //   const chartElement = document.querySelector('.organization-chart-container');
@@ -397,16 +397,19 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
           this.dataload = false
           this.data = response || [];
           this.isDataPresent = false;
-          this.data.forEach((employee: any) => {
-            this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
-              employee.data.imageUrl = imageUrl;
-            });
-            employee.children?.forEach((child: any) => {
-              this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
-                child.data.imageUrl = imageUrl;
-              });
-            });
+          this.data.forEach((rootNode: any) => {
+            this.processEmployeeNode(rootNode);
           });
+          // this.data.forEach((employee: any) => {
+          //   this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
+          //     employee.data.imageUrl = imageUrl;
+          //   });
+          //   employee.children?.forEach((child: any) => {
+          //     this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
+          //       child.data.imageUrl = imageUrl;
+          //     });
+          //   });
+          // });
         } else {
           this.data = []
           this.isDataPresent = true;
@@ -419,7 +422,32 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
       }
     });
   }
+  processEmployeeNode(node: any): void {
+    // Handle different node structures
+    const employeeData = node.data ? node.data : node;
 
+    // Fetch image for current node
+    if (employeeData.image) {
+      this.onSelectprofilePicDownload(employeeData.image).subscribe((imageUrl: string) => {
+        employeeData.imageUrl = imageUrl;
+      });
+    }
+
+    // Process children - handle both node.children and nested node.data.children
+    const children = node.children || (node.data && node.data.children);
+
+    if (children && children.length > 0) {
+      children.forEach((child: any) => {
+        // For children, we need to process the child.data object
+        if (child.data) {
+          this.processEmployeeNode(child);
+        } else {
+          // Handle case where child might not have data wrapper
+          this.processEmployeeNode({ data: child });
+        }
+      });
+    }
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

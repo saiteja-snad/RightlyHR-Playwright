@@ -1537,16 +1537,16 @@ export class OnBeHalfOfComponent {
     this.isHolidaySelectedEndate = false;
     const startDate = this.leaveForm.get('startdate')?.value;
     const endDate = this.leaveForm.get('enddate')?.value;
-    if (startDate && endDate && startDate === endDate) {
-      this.leaveForm.patchValue({
-        fulldayavailing: '2',
-        halfdayavailing: null,
-        availing: null
-      });
+    // if (startDate && endDate && startDate === endDate) {
+    //   this.leaveForm.patchValue({
+    //     fulldayavailing: '2',
+    //     halfdayavailing: null,
+    //     availing: null
+    //   });
 
-      this.enableHalfDayOptions = true; // Set false if you want to disable them instead
-      this.disableSubmitButton = false; // Enable submit as full day is selected
-    }
+    //   this.enableHalfDayOptions = true; // Set false if you want to disable them instead
+    //   this.disableSubmitButton = false; // Enable submit as full day is selected
+    // }
     this.onEndDateChange();
     this.updateEndDateValidity();
     this.updateStartDateValidity1();

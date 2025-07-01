@@ -86,7 +86,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
       employeeId: [ {value:null,disable:true}, Validators.required],
-      fusionEmpId:[ null, Validators.required],
+      fusionEmpId:[null],
       salutation: [   null, Validators.required],
       firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],

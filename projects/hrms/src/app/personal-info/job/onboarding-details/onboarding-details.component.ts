@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
@@ -17,7 +17,8 @@ import { Skeleton } from 'primeng/skeleton';
   selector: 'app-onboarding-details',
   imports: [CommonModule,ReactiveFormsModule,Select,Skeleton],
   templateUrl: './onboarding-details.component.html',
-  styleUrl: './onboarding-details.component.scss'
+  styleUrl: './onboarding-details.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class OnboardingDetailsComponent {

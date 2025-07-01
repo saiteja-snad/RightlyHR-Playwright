@@ -184,7 +184,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="remoteLogin" optionLabel="name" optionValue="value"
                             formControlName="remoteLogin" placeholder="Select Remote Login"
-                            class="form-select custom-select">
+                            class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
@@ -198,7 +198,7 @@
                     <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="value"
-                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select">
+                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
@@ -213,7 +213,7 @@
                     <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="Manager" formControlName="wfhmanger" optionLabel="name" optionValue="value"
-                            placeholder="Select Work From Home Maner" class="form-select custom-select">
+                            placeholder="Select Work From Home Maner" class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"

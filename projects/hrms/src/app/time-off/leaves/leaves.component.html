@@ -158,10 +158,10 @@
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
                             Start Date is required
                         </div>
-                        <!-- <div class="error-msg"
+                        <div class="error-msg"
                             *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
                             Please select optional holiday
-                        </div> -->
+                        </div>
                         <div class="error-msg" *ngIf="(isHolidaySelected || isNonOptionalHolidaySelected)">
                             Selected date is a holiday
                         </div>

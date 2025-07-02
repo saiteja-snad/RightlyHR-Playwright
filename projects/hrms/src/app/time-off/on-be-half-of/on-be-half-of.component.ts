@@ -1312,6 +1312,35 @@ export class OnBeHalfOfComponent {
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action);
     this.issEndDategreater = true;
+    if (this.selectedleave?.category?.isOptionalHoliday === true) {
+      const startDate = this.leaveForm.get('startdate')?.value;
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+      const optionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => h.isOptional);
+      const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
+        moment(holiday.holidayDate).isSame(startDate, 'day')
+      );
+      if (startDate && endDateControl && isStartOptional) {
+        endDateControl.setValue(startDate);
+        endDateControl.disable();
+        halfDayControl?.disable();
+        this.disableSubmitButton = false;
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.chooseDayType('full');
+      }
+    }
+    if (this.selectedleave?.category?.isOptionalHoliday === false) {
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+      const startDate = this.leaveForm.get('startdate')?.value;
+      if (startDate && endDateControl) {
+        endDateControl.setValue(null);
+        endDateControl.enable();
+        halfDayControl?.enable();
+        this.disableSubmitButton = true;
+        this.leaveForm.patchValue({ fulldayavailing: null });
+      }
+    }
   }
 
   updateStartDateValidity1(): void {
@@ -1537,16 +1566,16 @@ export class OnBeHalfOfComponent {
     this.isHolidaySelectedEndate = false;
     const startDate = this.leaveForm.get('startdate')?.value;
     const endDate = this.leaveForm.get('enddate')?.value;
-    if (startDate && endDate && startDate === endDate) {
-      this.leaveForm.patchValue({
-        fulldayavailing: '2',
-        halfdayavailing: null,
-        availing: null
-      });
+    // if (startDate && endDate && startDate === endDate) {
+    //   this.leaveForm.patchValue({
+    //     fulldayavailing: '2',
+    //     halfdayavailing: null,
+    //     availing: null
+    //   });
 
-      this.enableHalfDayOptions = true; // Set false if you want to disable them instead
-      this.disableSubmitButton = false; // Enable submit as full day is selected
-    }
+    //   this.enableHalfDayOptions = true; // Set false if you want to disable them instead
+    //   this.disableSubmitButton = false; // Enable submit as full day is selected
+    // }
     this.onEndDateChange();
     this.updateEndDateValidity();
     this.updateStartDateValidity1();

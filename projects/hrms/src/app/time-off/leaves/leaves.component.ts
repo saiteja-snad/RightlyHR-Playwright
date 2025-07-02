@@ -586,18 +586,25 @@ export class LeavesComponent {
       const startDate = this.leaveForm.get('startdate')?.value;
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
-      if (startDate && endDateControl) {
+      const optionalHolidays = this.orgholidays?.orgHolidaysItems.filter((h: { isOptional: any; }) => h.isOptional);
+      const isStartOptional = optionalHolidays?.some((holiday: { holidayDate: moment.MomentInput; }) =>
+      moment(holiday.holidayDate).isSame(startDate, 'day')
+    );
+      if (startDate && endDateControl && isStartOptional) {
         endDateControl.setValue(startDate);
         endDateControl.disable();
         halfDayControl?.disable();
         this.disableSubmitButton = false;
         this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.chooseDayType('full');
       }
     }
-    else {
+    if (this.selectedleave?.category?.isOptionalHoliday === false) {
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
-      if (endDateControl) {
+      const startDate = this.leaveForm.get('startdate')?.value;
+      if (startDate && endDateControl) {
+        endDateControl.setValue(null);
         endDateControl.enable();
         halfDayControl?.enable();
         this.disableSubmitButton = true;

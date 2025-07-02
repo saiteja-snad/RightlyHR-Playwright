@@ -301,7 +301,7 @@
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">
                         {{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || leaveForm.errors?.['dateOrderInvalid'] ||
-                    !isstimeoffValid || !startdatevalid || isHolidaySelected ||  !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate || 
+                    !isstimeoffValid || !startdatevalid || isHolidaySelected || disableSubmitButton || !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate || 
                     isoptionalnotallowedatWorkingdate || isHolidaySelectedEndate || isHolidaySelected || isNonOptionalHolidaySelected ||
                     (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves)  || isLoading">
                         <span *ngIf="!isLoading">Apply</span>

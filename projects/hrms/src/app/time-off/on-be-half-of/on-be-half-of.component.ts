@@ -527,7 +527,7 @@ export class OnBeHalfOfComponent {
   // }
    toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-
+    this.chooseDayType('half')
     if (isHalfDay) {
       // Default to 'firsthalf' if not already set
       const availingValue = this.leaveForm.get('availing')?.value;

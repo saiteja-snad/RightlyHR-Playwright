@@ -497,7 +497,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
         this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
       } else {
-        this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+        this.selectedSpRequestData.isAcceptEarlyRequest = 'No';
       }
       this.selectedSpRequestData.requestSelectedType = 'Early';
       this.regular = false;
@@ -531,7 +531,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
         this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
       } else {
-        this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+        this.selectedSpRequestData.isAcceptEarlyRequest = 'No';
       }
       // this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.selectedSpRequestData.requestSelectedType = 'Early';
@@ -613,7 +613,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
       this.selectedSpRequestData.spearlyReliveingDate) {
       this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
-      this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+      this.selectedSpRequestData.isAcceptEarlyRequest = 'No';
       this.selectedRadio = 'early';
       this.selectedSpRequestData.requestSelectedType = 'Early';
     }

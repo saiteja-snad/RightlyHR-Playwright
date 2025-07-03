@@ -840,6 +840,10 @@ select:focus {
         border-radius: 0.5rem !important;
         padding: 0px !important;
     }
+ 
+    .p-select-option {
+        white-space: normal !important;
+    }
 
     .p-select-option.p-select-option-selected.p-focus {
         background: #e8f0fb !important;

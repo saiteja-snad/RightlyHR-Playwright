@@ -170,6 +170,9 @@
                         <div class="error-msg" *ngIf="!isstimeoffValid && leaveForm.get('startdate')?.value">
                             The start date must be after the date of joining.
                         </div>
+                        <!-- <div class="error-msg">
+                            {{startDateErrorMessage}}
+                        </div> -->
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -203,6 +206,9 @@
                         <div class="error-msg" *ngIf="isHolidaySelectedEndate">
                             Selected date is a holiday
                         </div>
+                        <!-- <div class="error-msg">
+                            {{endDateErrorMessage}}
+                        </div> -->
                     </div>
 
                     <div class="col-md-12 mb-3">
@@ -301,7 +307,7 @@
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">
                         {{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="leaveForm.invalid || leaveForm.errors?.['dateOrderInvalid'] ||
-                    !isstimeoffValid || !startdatevalid || isHolidaySelected ||  !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate || 
+                    !isstimeoffValid || !startdatevalid || isHolidaySelected || disableSubmitButton || !isDayTypeselected ||  isWeekOffSelected || isWeekOffSelectedEndate || 
                     isoptionalnotallowedatWorkingdate || isHolidaySelectedEndate || isHolidaySelected || isNonOptionalHolidaySelected ||
                     (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves)  || isLoading">
                         <span *ngIf="!isLoading">Apply</span>

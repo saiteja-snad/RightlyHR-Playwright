@@ -14,6 +14,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
@@ -52,7 +53,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   subHeader: string = '';
   loginEmployee = {} as any;
 
-  constructor(private http: HttpService, private authService: AuthService, private router: Router,
+  constructor(private http: HttpService, private authService: AuthService, private router: Router,public rbac: RbacService,
      private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
       public fieldpremission: AccessForEmployeeinfoService) { }
 

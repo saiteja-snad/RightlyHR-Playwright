@@ -2991,7 +2991,7 @@
                             <th colspan="5" class="custom-header">Employee Info Onbaord Request Details</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Request for Onboard Button'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Request for Onboard Button' || per.fields ==='Inactive Button'">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

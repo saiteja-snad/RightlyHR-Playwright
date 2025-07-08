@@ -22,9 +22,11 @@
         </ng-template>
 
         <div class="d-flex gap-2">
+            @if(rbac.allowedToAccess('Inactive Button.view')){
             <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType') && 
             empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
             (click)="navigation()">Inactive</button>
+            }
 
             @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created'
             || empdata?.substatus=='Requested Documents') ){

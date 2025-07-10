@@ -294,7 +294,7 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
       const endDateControl = this.leaveForm.get('enddate');
       const halfDayControl = this.leaveForm.get('halfdayavailing');
       if(endDateControl){
-          // endDateControl.enable();
+          endDateControl.disable();
           this.leaveForm.patchValue({ fulldayavailing: null });
       }
       halfDayControl?.enable();
@@ -369,7 +369,7 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
           const startDate = this.leaveForm.get('startdate')?.value;
           if (startDate && endDateControl) {
             endDateControl.setValue(null);
-            // endDateControl.enable();
+             endDateControl.disable();
             halfDayControl?.enable();
             this.disableSubmitButton = true;
             this.leaveForm.patchValue({ fulldayavailing: null });

@@ -1,7 +1,7 @@
 import { Component, effect, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
@@ -23,9 +23,11 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { Skeleton } from 'primeng/skeleton';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,Skeleton,RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select, Skeleton, 
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -92,6 +94,11 @@ export class LeavesComponent {
   leaveCategoryData: any;
   leaveCategoryOptions: any;
   loadingGraph: boolean = false;
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+
   constructor(
     private http: HttpService,
     private conformationPopup: OpenModalService,
@@ -101,7 +108,7 @@ export class LeavesComponent {
     public rbac: RbacService,
     public router: Router,
     public formsValidation: FormValidationsService,
-    private signalService: SignalsService) {
+    private signalService: SignalsService, private TimeoffYearFilterService:TimeoffYearFilterService) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
@@ -125,7 +132,6 @@ export class LeavesComponent {
     this.getOrgHolidaysByEmpId();
     this.getallpolicy();
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
-
     this.getweekendbyempid()
     this.checkPreviousOptionalLeaves();
     this.getTeamManagersDetails();
@@ -134,9 +140,30 @@ export class LeavesComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.leaveForm.get('startdate')?.valueChanges.subscribe((startDate: string) => {
-    this.minEndDate = startDate; // Set min for enddate input
-    this.leaveForm.get('enddate')?.updateValueAndValidity(); // Optional: trigger validation
-  });
+      this.minEndDate = startDate; // Set min for enddate input
+      this.leaveForm.get('enddate')?.updateValueAndValidity(); // Optional: trigger validation
+    });
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
+    this.getCategoryDetails();
   }
 
   draftsCount = 0;
@@ -351,7 +378,7 @@ export class LeavesComponent {
 
   getCategoryDetails() {
     this.loadingGraph = true;
-    this.subscription = this.http.getData(`LeaveEntitlements/employee/${this.empdata.employeeId}`).subscribe({
+    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${this.empdata.employeeId}?year=${this.selectedYear}`).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.loadingGraph = false;
@@ -373,7 +400,7 @@ export class LeavesComponent {
 
   getCategoryempDetails(employeedId: any) {
     const empdata = employeedId;
-    this.subscription = this.http.getData(`LeaveEntitlements/employee/${empdata}`).subscribe({
+    this.subscription = this.http.getData(`LeaveEntitlements/v2/employee/${empdata}?year=${this.selectedYear}`).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];

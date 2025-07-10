@@ -13,9 +13,11 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves-processed',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,
+    NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-processed.component.html',
   styleUrl: './leaves-processed.component.scss'
 })
@@ -29,8 +31,7 @@ export class LeavesProcessedComponent {
   selectempid = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
-    loading: boolean = false;
-
+  loading: boolean = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -44,27 +45,29 @@ export class LeavesProcessedComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
+  selectedYear: any;
 
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,) { }
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     // this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     // this.getDataByLPID();
-
-       this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
-    if (id) {
-      // Use the new employee ID here
-      this.selectempid = id;
-      console.log('Updated employee ID:', id);
-      // Example: this.loadEmployeeDetails(id);
-       this.getDataByEMPLPID();
-    }else{
-  this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
-    }
-  });
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataByEMPLPID();
+          } else {
+            this.loggedinuser = this.authService.getToken();
+            this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+            this.getDataByLPID();
+          }
+        });
+      }
+    })
   }
 
   getDataByLPID() {
@@ -73,27 +76,26 @@ export class LeavesProcessedComponent {
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         this.loading = false;
-        console.log("Response from getDataByLPID:", response);
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Processed');
         } else {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) => {console.log(reason)
+      error: (reason: any) => {
+        console.log(reason)
         this.loading = false;
       },
-      complete: () => { this.loading = false; } 
+      complete: () => { this.loading = false; }
     });
   }
 
-    getDataByEMPLPID() {
+  getDataByEMPLPID() {
     let empid = this.selectempid;
-        this.loading = true;
+    this.loading = true;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         this.loading = false;
-        console.log("Response from getDataByLPID:", response);
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Processed');
         } else {

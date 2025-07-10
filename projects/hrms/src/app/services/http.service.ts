@@ -657,4 +657,24 @@ export class HttpService {
   setinactiveSubjectAssetCount(count: number) {
     this.inactiveaceassetCountSubject.next(count);
   }
+
+  getFilteredleavesDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/${employeeId}?year=${params}`);
+  }
+
+  getFilterCompoffDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`);
+  }
+
+  getFilterWFHDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
+  }
+
+  getFilterRegularizationDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
+  }
+
+  getFilterPermissionDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`);
+  }
 }

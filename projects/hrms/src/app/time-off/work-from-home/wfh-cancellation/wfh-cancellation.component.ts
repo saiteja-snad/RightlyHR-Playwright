@@ -14,7 +14,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { ICompOff } from '../../comp-off/compoff.modal';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-wfh-cancellation',
   imports: [CommonModule,
@@ -29,8 +29,9 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
   templateUrl: './wfh-cancellation.component.html',
   styleUrl: './wfh-cancellation.component.scss'
 })
-export class WfhCancellationComponent implements OnInit,OnDestroy {
-totalRecords = 100;
+
+export class WfhCancellationComponent implements OnInit, OnDestroy {
+  totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   rejectedWFHs: ICompOff[] = [];
@@ -46,37 +47,34 @@ totalRecords = 100;
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedYear: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    public rbac: RbacService,
-  ) {
-    
-  }
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdWFH$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getWFHEMPRequests();
-      }
-      else{
-          this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
-    this.getWFHRequests();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getWFHEMPRequests();
+          }
+          else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            console.log(this.empinfo);
+            this.getWFHRequests();
+          }
+        });
       }
     });
-  
   }
 
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -84,56 +82,48 @@ totalRecords = 100;
 
   getWFHRequests() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
-    this.dataload = true; 
-    this.http
-      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.compOff = response;
-          this.rejectedWFHs = this.compOff.filter(
-            (element: { status: string }) =>
-              element.status === 'Cancelled'
-          );
-          this.rejectedWFHsCount = this.rejectedWFHs.length;
-        },
-        error: (error) => {
-          this.dataload = false;
-          console.error('Error fetching data:', error);
-          this.rejectedWFHs = []; // Set to empty array on error
-        },complete: () =>{
-          this.dataload = false;
-        },
-      });
+    this.dataload = true;
+    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.rejectedWFHs = this.compOff.filter(
+          (element: { status: string }) =>
+            element.status === 'Cancelled'
+        );
+        this.rejectedWFHsCount = this.rejectedWFHs.length;
+      },
+      error: (error) => {
+        this.dataload = false;
+        console.error('Error fetching data:', error);
+        this.rejectedWFHs = []; // Set to empty array on error
+      }, complete: () => {
+        this.dataload = false;
+      },
+    });
   }
+
   // this method use when choose my team in dropdown
   getWFHEMPRequests() {
     let empId = this.selectempid;
-    console.log(empId);
-    this.dataload = true; 
-    this.http
-      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.compOff = response;
-          this.rejectedWFHs = this.compOff.filter(
-            (element: { status: string }) =>
-              element.status === 'Cancelled'
-          );
-          this.rejectedWFHsCount = this.rejectedWFHs.length;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.rejectedWFHs = []; // Set to empty array on error
-        },complete: () =>{
-          this.dataload = false;
-        },
-      });
+    this.dataload = true;
+    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.rejectedWFHs = this.compOff.filter(
+          (element: { status: string }) =>
+            element.status === 'Cancelled'
+        );
+        this.rejectedWFHsCount = this.rejectedWFHs.length;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.rejectedWFHs = []; // Set to empty array on error
+      }, complete: () => {
+        this.dataload = false;
+      },
+    });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -27,7 +28,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     PremissionsTabsComponent, TranslateModule,
     ModuleInformationComponent,
-    NgbPopoverModule
+    NgbPopoverModule,
 ],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
@@ -52,7 +53,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   firstDayOfCurrentMonthString = this.formatDate(this.firstDayOfCurrentMonth);
   lastDayOfCurrentMonthString = this.formatDate(this.lastDayOfCurrentMonth);
   permissionHours: number[] = [0.5, 1, 1.5, 2];
-    ApprovedCount = 0;
+  ApprovedCount = 0;
   rejectedCount = 0;
   ProcessedCount = 0;
   pendingCount = 0;
@@ -74,6 +75,9 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   pastDatesAllowed!:number;
   futureDatesAllowed!:number;
   getEmployeeInfo: any;
+  yearSelectionForm!: FormGroup;
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -83,6 +87,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public formsValidation:FormValidationsService,
     public readonly router: Router,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +101,26 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
   }
 
   initiateUpdateModuleInfo(){

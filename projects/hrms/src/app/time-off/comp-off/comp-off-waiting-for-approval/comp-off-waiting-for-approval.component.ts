@@ -14,7 +14,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-comp-off-waiting-for-approval',
   imports: [
@@ -28,10 +28,11 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './comp-off-waiting-for-approval.component.html',
   styleUrl: './comp-off-waiting-for-approval.component.scss',
 })
+
 export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -49,7 +50,9 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-  constructor(private http: HttpService, public rbac: RbacService) {
+  selectedYear: any;
+  
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.compOffTriggerSignal()) {
         this.getCompOffRequest();
@@ -59,13 +62,18 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
-      if (id) {
-        this.selectemp = id;
-        this.getCompOffRequest();
-      } else {
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-        this.getCompOffRequest();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getCompOffRequest();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getCompOffRequest();
+          }
+        });
       }
     });
   }
@@ -79,56 +87,27 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  // getCompOffRequest() {
-  //   let empId = this.empinfo.employeeId;
-  //   this.dataload = true;
-  //   this.http
-  //     .getData(`Timeoff/getCompoffRequests/${empId}`)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (response: any) => {
-  //         this.compOff = response;
-  //         this.waitingForApprovalCompOff = this.compOff.filter(
-  //           (element: { status: string }) =>
-  //             element.status === 'Waiting for Approval'
-  //         );
-  //         this.waitingForApprovalCompOffCount =
-  //           this.waitingForApprovalCompOff.length;
-  //       },
-  //       error: (error) => {
-  //         this.dataload = false;
-  //         this.waitingForApprovalCompOff = [];
-  //         console.error('Error fetching data:', error);
-  //       },
-  //       complete: () => {
-  //         this.dataload = false;
-  //       },
-  //     });
-  // }
   getCompOffRequest() {
     let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http.getData(`Timeoff/getCompoffRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.compOff = response;
-          this.waitingForApprovalCompOff = this.compOff.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          );
-          this.waitingForApprovalCompOffCount =
-            this.waitingForApprovalCompOff.length;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.waitingForApprovalCompOff = [];
-        },
-        complete: () => {
-          this.dataload = false;
-        },
-      });
+    this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.waitingForApprovalCompOff = this.compOff.filter(
+          (element: { status: string }) => element.status === 'Waiting for Approval'
+        );
+        this.waitingForApprovalCompOffCount = this.waitingForApprovalCompOff.length;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.waitingForApprovalCompOff = [];
+      },
+      complete: () => {
+        this.dataload = false;
+      },
+    });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

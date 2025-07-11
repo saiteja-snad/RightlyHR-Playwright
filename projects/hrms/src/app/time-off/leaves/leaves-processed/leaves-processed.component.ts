@@ -73,7 +73,7 @@ export class LeavesProcessedComponent {
   getDataByLPID() {
     this.loading = true;
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -93,7 +93,7 @@ export class LeavesProcessedComponent {
   getDataByEMPLPID() {
     let empid = this.selectempid;
     this.loading = true;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {

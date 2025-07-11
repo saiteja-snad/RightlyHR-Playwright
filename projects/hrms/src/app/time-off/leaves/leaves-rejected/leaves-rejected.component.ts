@@ -17,7 +17,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 @Component({
   selector: 'app-leaves-rejected',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
-     DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+    DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-rejected.component.html',
   styleUrl: './leaves-rejected.component.scss'
 })
@@ -92,7 +92,7 @@ export class LeavesRejectedComponent {
   getDataByEMPLPID() {
     this.loading = true;
     let empid = this.selectempid;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {

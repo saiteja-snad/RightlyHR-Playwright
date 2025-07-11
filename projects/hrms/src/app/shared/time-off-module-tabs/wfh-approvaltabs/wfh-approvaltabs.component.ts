@@ -7,7 +7,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-wfh-approvaltabs',
   imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
@@ -26,13 +26,14 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   filteredTabs: any[] = [];
   cancelWFHRequestsCount = 0;
   empinfo = {} as IJob;
-  loading=false
+  loading = false
   destroy$: Subject<boolean> = new Subject<boolean>();
+  selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService) {
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
-        this.getCompOffRequest();
+        this.getWFHRequest();
         this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
         this.http.wfhTriggerSignal.set(false);
       }
@@ -40,27 +41,28 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    
-    this.http.selectedEmployeeIdWFH$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getCompOffEMPRequest();
-      }
-      else {
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-        this.getCompOffRequest();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getCompOffEMPRequest();
+          }
+          else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getWFHRequest();
+          }
+        });
       }
     });
   }
 
-
-  getCompOffRequest() {
-    this.loading=true
+  getWFHRequest() {
+    this.loading = true
     let empId = this.empinfo.employeeId;
-    this.http.getData(`Timeoff/getWorkFromHomeRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
         if (Array.isArray(response)) {
@@ -75,15 +77,14 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
           this.rejectedWFHRequestsCount = rejected.length;
           this.processedWFHRequestsCount = processed.length;
           this.cancelWFHRequestsCount = cancelled.length
-
           this.updateNavTabs();
-          this.loading=false
+          this.loading = false
         } else {
           console.error('Invalid response format');
         }
       },
       error: (reason: any) => {
-        this.loading=true
+        this.loading = true
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
       }
     });
@@ -91,7 +92,7 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
 
   getCompOffEMPRequest() {
     let empId = this.selectempid;
-    this.http.getData(`Timeoff/getWorkFromHomeRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
         if (Array.isArray(response)) {
@@ -106,7 +107,6 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
           this.rejectedWFHRequestsCount = rejected.length;
           this.processedWFHRequestsCount = processed.length;
           this.cancelWFHRequestsCount = cancelled.length
-
           this.updateNavTabs();
         } else {
           console.error('Invalid response format');
@@ -123,8 +123,6 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
       if (!tab.permission) return true;
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
-      console.log(permissionString)
-      console.log(this.rbac.allowedToAccess(permissionString))
       return this.rbac.allowedToAccess(permissionString);
     });
   }
@@ -136,20 +134,14 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
         link: 'waiting-for-approval',
         icon: '/time-off-icon/waiting-for-approval-icon.png',
         count: this.waitingForApprovalWFHCount,
-        permission: {
-          feature: 'Waiting For Approval (WFH)',
-          action: 'view',
-        },
+        permission: { feature: 'Waiting For Approval (WFH)', action: 'view' },
       },
       {
         label: 'Approved',
         link: 'approved',
         icon: '/time-off-icon/approved-icon.png',
         count: this.approvedWFHRequestsCount,
-        permission: { 
-          feature: 'Approved (WFH)', 
-          action: 'view' 
-        },
+        permission: { feature: 'Approved (WFH)', action: 'view' },
       },
       {
         label: 'Processed',

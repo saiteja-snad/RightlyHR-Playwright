@@ -11,18 +11,19 @@ import { CommonModule } from '@angular/common';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule,ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class RegularizationComponent {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   ApprovedCount = 0;
   rejectedCount = 0;
@@ -31,31 +32,52 @@ export class RegularizationComponent {
   regularize = [];
   emp: any;
   getEmployeeInfo: any;
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
 
-  constructor(private http: HttpService, public rbac: RbacService, public formsValidation: FormValidationsService, public readonly router: Router) { }
+  constructor(private http: HttpService, public rbac: RbacService, public formsValidation: FormValidationsService,
+    public readonly router: Router, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.emp = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/regularization': MODULE_INFOS.ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -67,14 +89,13 @@ export class RegularizationComponent {
       next: (response: any) => {
         if (response && response.length) {
           // No filter
-            const myTeam = response.filter((e: any) => e.isAccess);
-           this.getEmployeeInfo = myTeam.map((employee: any) => ({
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
             ...employee,
             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           }));
-          console.log('getEmployeeInfo', this.getEmployeeInfo);
         }
       },
     });
@@ -90,11 +111,12 @@ export class RegularizationComponent {
     if (employeedId) {
       this.getPermission(employeedId);
     } else {
-       this.http.setEmployeeIdRegularization(null);
+      this.http.setEmployeeIdRegularization(null);
       this.getPermission(this.emp.employeeId);
     }
   }
- getPermission(employeedId?: any) {
+
+  getPermission(employeedId?: any) {
     // let empId = this.empinfo.employeeId
     // console.log(empId);
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({

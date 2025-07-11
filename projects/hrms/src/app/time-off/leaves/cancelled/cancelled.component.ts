@@ -45,6 +45,7 @@ export class CancelledComponent implements OnInit, OnDestroy {
     this.first = event.first;
     this.rows = event.rows;
   }
+  selectedYear: any;
 
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,
     private TimeoffYearFilterService: TimeoffYearFilterService) { }
@@ -73,7 +74,7 @@ export class CancelledComponent implements OnInit, OnDestroy {
   getDataByLPID() {
     this.loading = true;
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -92,7 +93,7 @@ export class CancelledComponent implements OnInit, OnDestroy {
   getDataByEMPLPID() {
     this.loading = true;
     let empid = this.selectempid;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {

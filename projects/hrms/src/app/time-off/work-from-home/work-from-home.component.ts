@@ -4,7 +4,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
@@ -18,22 +18,19 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-work-from-home',
-  imports: [
-    CommonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    WfhApprovaltabsComponent, TranslateModule, DropdownModule, Select,
-    ModuleInformationComponent, NgbPopoverModule
-],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent, 
+    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
-   subscription!: Subscription;
+  moduleinfo: string = '';
+  subscription!: Subscription;
   empinfo = {} as IJob;
   halfDayValue = {} as any;
   fullDayValue = {} as any;
@@ -61,15 +58,21 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   pendingCount = 0;
   employeeid: any;
   wfhBalance: any;
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formsValidation:FormValidationsService,
-    public readonly router: Router
-  ) {}
+    public formsValidation: FormValidationsService,
+    public readonly router: Router,
+    private TimeoffYearFilterService: TimeoffYearFilterService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -87,23 +90,39 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+   onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/wfh': MODULE_INFOS.ATTENDANCE_WFH_REPORTS_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -120,12 +139,10 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
   getPastDate(): string {
     const days = Number(this.pastDatesAllowed ?? 0);
-
     if (isNaN(days)) {
       console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-
     const currentDate = new Date();
     const pastDate = new Date(currentDate);
     pastDate.setDate(currentDate.getDate() - days); // subtract days for past
@@ -151,34 +168,31 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       this.getWFHBalance(this.empinfo.employeeId);
     }
   }
+
   getWorkfromhomeRequest(employeedId: any) {
     let empId = employeedId;
-    console.log(empId);
-    this.subscription = this.http
-      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.Workfromhome = response;
-          this.Workfromhome.forEach((element: { status: string }) => {
-            if (element.status === 'Waiting for Approval') {
-              this.pendingCount++;
-            }
-            if (element.status === 'Approved') {
-              this.ApprovedCount++;
-            }
-
-            if (element.status === 'Rejected') {
-              this.rejectedCount++;
-            }
-            if (element.status === 'Processed') {
-              this.ProcessedCount++;
-            }
-          });
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Timeoff/getWorkFromHomeRequests/${empId}`).subscribe({
+      next: (response: any) => {
+        this.Workfromhome = response;
+        this.Workfromhome.forEach((element: { status: string }) => {
+          if (element.status === 'Waiting for Approval') {
+            this.pendingCount++;
+          }
+          if (element.status === 'Approved') {
+            this.ApprovedCount++;
+          }
+          if (element.status === 'Rejected') {
+            this.rejectedCount++;
+          }
+          if (element.status === 'Processed') {
+            this.ProcessedCount++;
+          }
+        });
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
+  
   getWFHBalance(employeedId: any) {
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
@@ -205,14 +219,12 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
           console.log('getEmployeesByhierarchy', response);
           if (response && response.length) {
             // No filter
-              const myTeam = response.filter((e: any) => e.isAccess);
-           this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
               ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             }));
             console.log('getEmployeeInfo', this.getEmployeeInfo);
           }
@@ -426,31 +438,28 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         requestedDate: new Date(),
       };
       this.spinnerLoader = true;
-      this.http
-        .postdata('AttendanceRequests', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request submitted successfully'
-            );
-            this.getWFHBal();
-            this.http.tirggerCountSignal.update((status) => ({
-              ...status,
-              wfh: true,
-            }));
-            this.http.wfhTriggerSignal.set(true);
-          },
-          error: (err: any) => {
-            this.spinnerLoader = false;
-            this.sharedModalService.openErrorModal(err.error.message);
-          },
-          complete: () => {
-            this.addWFHForm.reset();
-            this.spinnerLoader = false;
-          },
-        });
+      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal(
+            'Request submitted successfully'
+          );
+          this.getWFHBal();
+          this.http.tirggerCountSignal.update((status) => ({
+            ...status,
+            wfh: true,
+          }));
+          this.http.wfhTriggerSignal.set(true);
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.sharedModalService.openErrorModal(err.error.message);
+        },
+        complete: () => {
+          this.addWFHForm.reset();
+          this.spinnerLoader = false;
+        },
+      });
     }
   }
 

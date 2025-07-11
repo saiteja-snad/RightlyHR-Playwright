@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
@@ -14,6 +14,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-wfh-approved',
   imports: [
@@ -27,10 +28,11 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './wfh-approved.component.html',
   styleUrl: './wfh-approved.component.scss',
 })
+
 export class WfhApprovedComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -41,40 +43,38 @@ export class WfhApprovedComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  dataload = false; 
+  dataload = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedYear: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    public rbac: RbacService,
-  ) {}
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-
-         this.http.selectedEmployeeIdWFH$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getWFHRequests();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getWFHRequests();
+          }
+        });
       }
     });
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
     this.getWFHRequests();
   }
 
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -82,27 +82,23 @@ export class WfhApprovedComponent implements OnInit, OnDestroy {
 
   getWFHRequests() {
     let empId = this.empinfo.employeeId || this.selectempid;
-    this.dataload = true; 
-    this.http
-      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.compOff = response;
-          this.approvedWFHs = this.compOff.filter(
-            (element: { status: string }) => element.status === 'Approved'
-          );
-          this.approvedWFHsCount = this.approvedWFHs.length;
-        },
-        error: (error) => {
-          this.dataload = false;
-          console.error('Error fetching data:', error);
-          this.approvedWFHs = []; // Set to empty array on error
-        },complete: () =>{
-          this.dataload = false;
-        },
-      });
+    this.dataload = true;
+    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.approvedWFHs = this.compOff.filter(
+          (element: { status: string }) => element.status === 'Approved'
+        );
+        this.approvedWFHsCount = this.approvedWFHs.length;
+      },
+      error: (error) => {
+        this.dataload = false;
+        console.error('Error fetching data:', error);
+        this.approvedWFHs = []; // Set to empty array on error
+      }, complete: () => {
+        this.dataload = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {

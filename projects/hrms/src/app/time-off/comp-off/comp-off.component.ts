@@ -309,10 +309,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getCompOffRequest(employeeId?: any) {
     let empId = employeeId;
-    console.log(empId);
-    this.subscription = this.http.getData(`Timeoff/getCompoffRequests/${empId}`).subscribe({
+    this.subscription = this.http.getFilterCompoffDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.compOff = response
         this.pendingCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
         this.ApprovedCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
@@ -322,7 +320,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason)
     })
   }
-
 
   applyCompOff(addForm: FormGroup) {
     if (addForm.valid) {

@@ -121,7 +121,7 @@ export class RegularizationComponent {
     // console.log(empId);
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({
     let empId = employeedId
-    this.subscription = this.http.getData(`RegularizationRequests/attendance/${empId}`).subscribe({
+    this.subscription =  this.http.getFilterRegularizationDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
         this.regularize = response
         //  console.log(this.regularize[0].startTime)

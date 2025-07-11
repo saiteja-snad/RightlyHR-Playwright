@@ -212,7 +212,7 @@ export class LeavesComponent {
 
   getDataByLPID(employeeId: any) {
     let empid = employeeId;
-    this.subscription = this.http.getData(`Timeoff/LPID/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.lpdata = response;
         // Reset counts
@@ -286,16 +286,13 @@ export class LeavesComponent {
   leavedatas: any;
   getLeavesData(employeeId: any) {
     let empdata = employeeId;
-    console.log(empdata);
-    this.subscription = this.http
-      .getData(`Timeoff/${empdata}`)
-      .subscribe({
-        next: (response: any) => {
-          this.leavedatatimeoff = response;
-          this.getDataByLPID(employeeId);
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Timeoff/${empdata}`).subscribe({
+      next: (response: any) => {
+        this.leavedatatimeoff = response;
+        this.getDataByLPID(employeeId);
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
 
   // function to get the data of employees by hierarchy

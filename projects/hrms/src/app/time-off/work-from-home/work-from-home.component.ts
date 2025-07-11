@@ -171,7 +171,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
   getWorkfromhomeRequest(employeedId: any) {
     let empId = employeedId;
-    this.subscription = this.http.getData(`Timeoff/getWorkFromHomeRequests/${empId}`).subscribe({
+    this.subscription = this.http.getFilterWFHDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
         this.Workfromhome = response;
         this.Workfromhome.forEach((element: { status: string }) => {

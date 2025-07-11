@@ -141,7 +141,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
 
   getTeamManagersDetails() {
     const EmployeeId = this.empinfo.employeeId;
-    this.subscription =  this.http.getFilterPermissionDataByID(EmployeeId, this.selectedYear).subscribe({
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
       next: (response: any) => {
         if (response && response.length) {
           // No filter

@@ -125,29 +125,23 @@ export class CompOffComponent implements OnInit, OnDestroy {
   }
   // function to get the data of employees by hierarchy
   
-   getTeamManagersDetails() {
-   const EmployeeId = this.empinfo.employeeId;
-   this.subscription = this.http
-     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-     .subscribe({
-       next: (response: any) => {
-         console.log('getEmployeesByhierarchy', response);
-         if (response && response.length) {
-           // No filter
-            const myTeam = response.filter((e: any) => e.isAccess);
-           this.getEmployeeInfo = myTeam.map((employee: any) => ({
-             ...employee,
-             fullName: `${
-               employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-             }${employee.firstName} ${
-               employee.middleName ? employee.middleName + ' ' : ''
-             }${employee.lastName}`,
-           }));
-           console.log('getEmployeeInfo', this.getEmployeeInfo);
-         }
-       },
-     });
- }
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          // No filter
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          }));
+        }
+      },
+    });
+  }
  
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -193,7 +187,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
         element.holidayDate = `${year}-${month}-${day}`;
       });
     }
-    
     const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate);
     this.isHolidaySelected = isDatePresent;
   }
@@ -271,12 +264,10 @@ export class CompOffComponent implements OnInit, OnDestroy {
  
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
-  
     if (isNaN(days)) {
       console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-  
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     futureDate.setDate(currentDate.getDate() + days);

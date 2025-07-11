@@ -82,7 +82,6 @@ export class CompOffRejectComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    console.log('Fetching rejected comp off requests...');
     let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
     this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({

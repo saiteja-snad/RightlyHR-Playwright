@@ -81,7 +81,7 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
   }
 
   getWFHRequests() {
-    let empId = this.empinfo.employeeId || this.selectempid;
+    let empId = this.selectempid ?? this.empinfo.employeeId;
     this.dataload = true;
     this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {

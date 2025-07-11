@@ -82,7 +82,6 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    // let empId = this.empinfo.employeeId || this.selectemp;
     let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
     this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({

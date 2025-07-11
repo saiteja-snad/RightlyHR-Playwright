@@ -63,12 +63,13 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
             // Use the new employee ID here
             this.selectempid = id;
             this.getWFHRequests();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getWFHRequests();
           }
         });
       }
     });
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getWFHRequests();
   }
 
   onRowsChange() {

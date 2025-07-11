@@ -63,7 +63,6 @@ export class WfhCancellationComponent implements OnInit, OnDestroy {
           }
           else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-            console.log(this.empinfo);
             this.getWFHRequests();
           }
         });
@@ -87,8 +86,7 @@ export class WfhCancellationComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         this.compOff = response;
         this.rejectedWFHs = this.compOff.filter(
-          (element: { status: string }) =>
-            element.status === 'Cancelled'
+          (element: { status: string }) => element.status === 'Cancelled'
         );
         this.rejectedWFHsCount = this.rejectedWFHs.length;
       },
@@ -110,8 +108,7 @@ export class WfhCancellationComponent implements OnInit, OnDestroy {
       next: (response: any) => {
         this.compOff = response;
         this.rejectedWFHs = this.compOff.filter(
-          (element: { status: string }) =>
-            element.status === 'Cancelled'
+          (element: { status: string }) => element.status === 'Cancelled'
         );
         this.rejectedWFHsCount = this.rejectedWFHs.length;
       },

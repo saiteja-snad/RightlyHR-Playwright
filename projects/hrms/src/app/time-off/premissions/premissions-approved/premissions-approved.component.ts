@@ -64,9 +64,7 @@ export class PremissionsApprovedComponent implements OnInit, OnDestroy {
             // Example: this.loadEmployeeDetails(id);
             this.getDataempPermissions();
           } else {
-            this.empinfo = JSON.parse(
-              localStorage.getItem('rightlyHrUser') ?? '{}'
-            );
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getDataPermissions();
           }
         });

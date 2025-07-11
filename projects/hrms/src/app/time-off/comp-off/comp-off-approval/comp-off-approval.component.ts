@@ -63,13 +63,12 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
             this.selectemp = id;
             this.getCompOffRequest();
           } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getCompOffRequest();
           }
         });
       }
     });
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getCompOffRequest();
   }
 
   onRowsChange() {

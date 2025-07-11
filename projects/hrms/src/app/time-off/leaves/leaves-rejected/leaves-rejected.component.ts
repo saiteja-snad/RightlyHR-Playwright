@@ -52,6 +52,7 @@ export class LeavesRejectedComponent {
   ngOnInit(): void {
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
+        this.selectedYear = year;
         this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
           if (id) {
             // Use the new employee ID here

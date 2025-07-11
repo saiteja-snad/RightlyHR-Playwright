@@ -63,9 +63,7 @@ export class PermissionsCancellationComponent implements OnInit, OnDestroy {
             this.selectempid = id;
             this.getDataempPermissions();
           } else {
-            this.empinfo = JSON.parse(
-              localStorage.getItem('rightlyHrUser') ?? '{}'
-            );
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getDataPermissions();
           }
         });

@@ -59,13 +59,9 @@ export class RegularizationProcessedComponent implements OnInit, OnDestroy {
           if (id) {
             // Use the new employee ID here
             this.selectempid = id;
-            console.log('Updated employee ID:', id);
-            // Example: this.loadEmployeeDetails(id);
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(
-              localStorage.getItem('rightlyHrUser') ?? '{}'
-            );
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getDataPermissions();
           }
         });

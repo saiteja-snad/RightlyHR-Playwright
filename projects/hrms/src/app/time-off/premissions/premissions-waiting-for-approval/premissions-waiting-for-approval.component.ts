@@ -89,9 +89,7 @@ export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy
             this.selectempid = id;
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(
-              localStorage.getItem('rightlyHrUser') ?? '{}'
-            );
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getDataPermissions();
           }
         });

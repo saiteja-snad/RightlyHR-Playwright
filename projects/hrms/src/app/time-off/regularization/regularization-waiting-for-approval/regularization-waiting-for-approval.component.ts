@@ -73,9 +73,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit, OnDest
             this.selectempid = id;
             this.getDataEMPPermissions();
           } else {
-            this.empinfo = JSON.parse(
-              localStorage.getItem('rightlyHrUser') ?? '{}'
-            );
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getDataPermissions();
           }
         });

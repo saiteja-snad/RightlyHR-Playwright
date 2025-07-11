@@ -64,11 +64,13 @@ export class WfhApprovedComponent implements OnInit, OnDestroy {
             this.selectempid = id;
             this.getWFHRequests();
           }
+          else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getWFHRequests();
+          }
         });
       }
     });
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getWFHRequests();
   }
 
   onRowsChange() {

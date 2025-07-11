@@ -55,6 +55,7 @@ export class LeavesProcessedComponent {
     // this.getDataByLPID();
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
       if (year !== null) {
+        this.selectedYear = year;
         this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
           if (id) {
             // Use the new employee ID here

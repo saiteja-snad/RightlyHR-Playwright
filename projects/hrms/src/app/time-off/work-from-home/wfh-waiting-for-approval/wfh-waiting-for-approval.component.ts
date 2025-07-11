@@ -87,14 +87,9 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
           if (id) {
             // Use the new employee ID here
             this.selectempid = id;
-            console.log('Updated employee WFH ID:', id);
-            // Example: this.loadEmployeeDetails(id);
             this.getWFHEMPRequests();
           } else {
-            this.empinfo = JSON.parse(
-              localStorage.getItem('rightlyHrUser') ?? '{}'
-            );
-            console.log(this.empinfo);
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getWFHRequests();
           }
         });

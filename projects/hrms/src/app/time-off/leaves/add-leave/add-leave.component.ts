@@ -16,15 +16,14 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
-import { LeavesApprovaltabsComponent } from '../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
-
 @Component({
   selector: 'app-add-leave',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './add-leave.component.html',
   styleUrl: './add-leave.component.scss'
 })
+
 export class AddLeaveComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
@@ -82,21 +81,14 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
   disableSubmitButton: boolean = false;
   @ViewChild('leaveForm') work!: NgForm;
   dataType: any;
-  constructor(
-    private http: HttpService,
-    private conformationPopup: OpenModalService,
-    private modalService: NgbModal,
-    private authService: AuthService,
-    private fb: FormBuilder,
-    public rbac: RbacService,
-    public router: Router,
-    private signalService: SignalsService
-  ) {
+
+  constructor(private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal,
+    private authService: AuthService, private fb: FormBuilder, public rbac: RbacService, public router: Router,
+    private signalService: SignalsService) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
         this.getCategoryDetails();
-
         // Conditionally reset the signals based on their current state
         if (this.signalService.timecountTriggerSignal()) {
           this.signalService.timecountTriggerSignal.set(false);
@@ -104,14 +96,13 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   @Input() updateData: any;
   minDate: any;
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    console.log(this.updateData);
     this.minDate = moment(this.updateData.date).format('YYYY-MM-DD');
-    console.log(this.minDate)
     this.getCategoryDetails();
     this.initializeForm();
     this.getEmployeeid();
@@ -120,8 +111,8 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
     this.getOrgHolidaysByEmpId();
     this.getallpolicy();
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
-    this.getEmployementTypeByempId(this.empdata.employeeId)
-    this.getweekendbyempid()
+    this.getEmployementTypeByempId(this.empdata.employeeId);
+    this.getweekendbyempid();
     this.checkPreviousOptionalLeaves();
     this.startDate = this.updateData.date;
     this.endDate = this.updateData.date;
@@ -162,10 +153,8 @@ export class AddLeaveComponent implements OnInit, OnDestroy {
   }
 
   updateHalfDayOptions() {
-
     const start = this.leaveForm?.get('startdate')?.value;
     const end = this.leaveForm?.get('enddate')?.value;
-    console.log(start)
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
       this.leaveForm.get('halfdayavailing')?.enable();

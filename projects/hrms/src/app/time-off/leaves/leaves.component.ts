@@ -186,6 +186,7 @@ export class LeavesComponent {
       this.getDataByLPID(employeedId);
       this.getLeavesData(employeedId);
       this.getCategoryempDetails(employeedId);
+      this.getCategoryDetails();
     } else {
       this.http.setEmployeeIdTimeoff(null);
       this.disaplyapplybutton = true;

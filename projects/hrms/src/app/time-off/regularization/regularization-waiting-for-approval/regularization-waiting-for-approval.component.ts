@@ -14,7 +14,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-regularization-waiting-for-approval',
   imports: [
@@ -28,13 +28,12 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './regularization-waiting-for-approval.component.html',
   styleUrl: './regularization-waiting-for-approval.component.scss',
 })
-export class RegularizationWaitingForApprovalComponent
-  implements OnInit, OnDestroy
-{
+
+export class RegularizationWaitingForApprovalComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -50,7 +49,9 @@ export class RegularizationWaitingForApprovalComponent
     { label: 25, value: 25 },
   ];
   dataLoad = false;
-  constructor(private http: HttpService, public rbac: RbacService) {
+  selectedYear: any;
+
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.tirggerCountSignal().permission) {
         this.getDataPermissions();
@@ -63,24 +64,27 @@ export class RegularizationWaitingForApprovalComponent
   }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getDataEMPPermissions();
-      } else {
-        this.empinfo = JSON.parse(
-          localStorage.getItem('rightlyHrUser') ?? '{}'
-        );
-        this.getDataPermissions();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataEMPPermissions();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getDataPermissions();
+          }
+        });
       }
     });
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -89,45 +93,37 @@ export class RegularizationWaitingForApprovalComponent
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
     this.dataLoad = true;
-    this.http
-      .getData(`RegularizationRequests/attendance/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.waitingForApprovalPerimisions = response.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          );
-          this.dataLoad = false;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.dataLoad = false;
-          this.waitingForApprovalPerimisions = []; // Set to empty array on error
-        },
-      });
+    this.http.getFilterRegularizationDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.waitingForApprovalPerimisions = response.filter(
+          (element: { status: string }) => element.status === 'Waiting for Approval'
+        );
+        this.dataLoad = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.dataLoad = false;
+        this.waitingForApprovalPerimisions = []; // Set to empty array on error
+      },
+    });
   }
 
   getDataEMPPermissions() {
     let empId = this.selectempid;
     this.dataLoad = true;
-    this.http
-      .getData(`RegularizationRequests/attendance/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.waitingForApprovalPerimisions = response.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          );
-          this.dataLoad = false;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.dataLoad = false;
-          this.waitingForApprovalPerimisions = []; // Set to empty array on error
-        },
-      });
+    this.http.getFilterRegularizationDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.waitingForApprovalPerimisions = response.filter(
+          (element: { status: string }) => element.status === 'Waiting for Approval'
+        );
+        this.dataLoad = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.dataLoad = false;
+        this.waitingForApprovalPerimisions = []; // Set to empty array on error
+      },
+    });
   }
 
   ngOnDestroy(): void {

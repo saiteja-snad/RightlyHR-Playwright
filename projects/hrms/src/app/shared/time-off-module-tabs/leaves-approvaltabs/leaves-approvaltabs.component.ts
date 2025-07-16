@@ -9,13 +9,14 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves-approvaltabs',
   imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
   templateUrl: './leaves-approvaltabs.component.html',
   styleUrl: './leaves-approvaltabs.component.scss',
 })
+
 export class LeavesApprovaltabsComponent {
   loggedinuser = {} as any;
   empdata = {} as any;
@@ -25,21 +26,22 @@ export class LeavesApprovaltabsComponent {
   waitingForApprovalCount: number = 0;
   approvedCount: number = 0;
   rejectedCount: number = 0;
-  cancelCount:number=0;
+  cancelCount: number = 0;
   teamLeaveBalanceCount: number = 0;
   teamLeaveSummaryCount: number = 0;
   id: any;
-  loading=false
-  statusTabs: any[]=[];
+  loading = false
+  statusTabs: any[] = [];
+  selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService, 
-    private signalService:SignalsService, private rbac: RbacService) { 
-     effect(() => {
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,
+    private signalService: SignalsService, private rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+    effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
-         this.getDataByLPID();
-         this.getAllTeamLeaveBalance();
-         this.getAllTeamLeaveSummary();
+        this.getDataByLPID();
+        this.getAllTeamLeaveBalance();
+        this.getAllTeamLeaveSummary();
         // Conditionally reset the signals based on their current state
         if (this.signalService.timecountTriggerSignal()) {
           this.signalService.timecountTriggerSignal.set(false);
@@ -49,19 +51,24 @@ export class LeavesApprovaltabsComponent {
   }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
-    if (id) {
-      // Use the new employee ID here
-      this.id = id;
-      // Example: this.loadEmployeeDetails(id);
-       this.getDataByLPempID();
-    }else{
-        this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
-    }
-  });
-  // this.getDataByLPID();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.id = id;
+            // Example: this.loadEmployeeDetails(id);
+            this.getDataByLPempID();
+          } else {
+            this.loggedinuser = this.authService.getToken();
+            this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+            this.getDataByLPID();
+          }
+        });
+      }
+    });
+    // this.getDataByLPID();
     // this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     // this.getDataByLPID();
@@ -70,11 +77,11 @@ export class LeavesApprovaltabsComponent {
   }
 
   getDataByLPID() {
-    this.loading=true
+    this.loading = true
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
-        this.loading=false
+        this.loading = false
         if (Array.isArray(response)) {
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
           const approved = response.filter(item => item.status === 'Approved');
@@ -85,7 +92,7 @@ export class LeavesApprovaltabsComponent {
           this.approvedCount = approved.length;
           this.rejectedCount = rejected.length;
           this.processedCount = processed.length;
-          this.cancelCount=cancelled.length
+          this.cancelCount = cancelled.length
           this.updateStatusTabs();
         } else {
           console.error('Invalid response format');
@@ -93,17 +100,14 @@ export class LeavesApprovaltabsComponent {
       },
       error: (reason: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
-        this.loading=false
+        this.loading = false;
       }
     });
   }
 
-
-
-
-   getDataByLPempID() {
+  getDataByLPempID() {
     let empid = this.id;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
@@ -115,7 +119,7 @@ export class LeavesApprovaltabsComponent {
           this.approvedCount = approved.length;
           this.rejectedCount = rejected.length;
           this.processedCount = processed.length;
-          this.cancelCount=cancelled.length
+          this.cancelCount = cancelled.length
           this.updateStatusTabs();
         } else {
           console.error('Invalid response format');
@@ -126,6 +130,7 @@ export class LeavesApprovaltabsComponent {
       }
     });
   }
+
   getAllTeamLeaveBalance() {
     const employeeId = this.empdata.employeeId;
     let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
@@ -168,36 +173,35 @@ export class LeavesApprovaltabsComponent {
           feature: 'Waiting For Approval (Time Off)',
           action: 'view',
         },
-        icon:'/time-off-icon/waiting-for-approval-icon.png',
+        icon: '/time-off-icon/waiting-for-approval-icon.png',
       },
       {
         label: 'Approved',
         link: '/time-off/leaves/approved',
         count: this.approvedCount,
         permission: { feature: 'Approved (Time Off)', action: 'view' },
-        icon:'/time-off-icon/approved-icon.png',
+        icon: '/time-off-icon/approved-icon.png',
       },
       {
         label: 'Processed',
         link: '/time-off/leaves/processed',
         count: this.processedCount,
         permission: { feature: 'Processed (Time Off)', action: 'view' },
-        icon:'/time-off-icon/processed-icon.png',
+        icon: '/time-off-icon/processed-icon.png',
       },
       {
         label: 'Rejected',
         link: '/time-off/leaves/rejected',
         count: this.rejectedCount,
         permission: { feature: 'Rejected (Time Off)', action: 'view' },
-        icon:'/time-off-icon/rejected-icon.png',
+        icon: '/time-off-icon/rejected-icon.png',
       },
       {
         label: 'Cancelled',
-        link: '/time-off/leaves/cancelled',count:this.cancelCount,
+        link: '/time-off/leaves/cancelled', count: this.cancelCount,
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
         icon: '/time-off-icon/cancelled-icon.png'
       },
-     
     ];
     this.statusTabs = this.statusTabs.filter(
       (tab) =>

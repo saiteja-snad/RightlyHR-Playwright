@@ -13,9 +13,11 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves-rejected',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
+    DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-rejected.component.html',
   styleUrl: './leaves-rejected.component.scss'
 })
@@ -43,36 +45,33 @@ export class LeavesRejectedComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
+  selectedYear: any;
 
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,) { }
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    // this.loggedinuser = this.authService.getToken();
-    // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    // this.getDataByLPID();
-    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-          this.getDataByEMPLPID();
-        // Example: this.loadEmployeeDetails(id);
-      } else {
-        this.loggedinuser = this.authService.getToken();
-        this.empdata = JSON.parse(
-          localStorage.getItem('rightlyHrUser') || '{}'
-        );
-      
-        this.getDataByLPID();
-
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataByEMPLPID();
+          } else {
+            this.loggedinuser = this.authService.getToken();
+            this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+            this.getDataByLPID();
+          }
+        });
       }
-    });
+    })
   }
 
   getDataByLPID() {
     this.loading = true;
-    let empid =  this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    let empid = this.empdata.employeeId;
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -81,7 +80,8 @@ export class LeavesRejectedComponent {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) =>{ console.log(reason)
+      error: (reason: any) => {
+        console.log(reason);
         this.loading = false;
       },
       complete: () => {
@@ -90,10 +90,10 @@ export class LeavesRejectedComponent {
     });
   }
 
-    getDataByEMPLPID() {
+  getDataByEMPLPID() {
     this.loading = true;
-    let empid =   this.selectempid;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    let empid = this.selectempid;
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -102,14 +102,13 @@ export class LeavesRejectedComponent {
           console.error("Invalid response format");
         }
       },
-      error: (reason: any) =>{ console.log(reason)
+      error: (reason: any) => {
+        console.log(reason);
         this.loading = false;
       },
       complete: () => {
         this.loading = false;
       }
-
-
     });
   }
 }

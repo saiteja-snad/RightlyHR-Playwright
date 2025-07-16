@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit } from '@angular/core';
-import {  FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {  NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-premissions-waiting-for-approval',
   imports: [
@@ -34,13 +34,12 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DateformatPipe,
     DataLoaderContentComponent,
     InfoIconComponent
-],
+  ],
   templateUrl: './premissions-waiting-for-approval.component.html',
   styleUrl: './premissions-waiting-for-approval.component.scss',
 })
-export class PremissionsWaitingForApprovalComponent
-  implements OnInit, OnDestroy
-{
+
+export class PremissionsWaitingForApprovalComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -60,6 +59,8 @@ export class PremissionsWaitingForApprovalComponent
   cancelForm!: FormGroup;
   isLoading = false;
   permissionForLoggedInUser: boolean = true;
+  selectedYear: any;
+
   constructor(
     private http: HttpService,
     private signalService: SignalsService,
@@ -67,7 +68,8 @@ export class PremissionsWaitingForApprovalComponent
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
     private fb: FormBuilder,
-    public formsValidation:FormValidationsService
+    public formsValidation: FormValidationsService,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
     effect(() => {
       if (this.http.permissionTriggerSignal()) {
@@ -78,22 +80,24 @@ export class PremissionsWaitingForApprovalComponent
   }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdPermission$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getDataEMPPermissions();
-      } else {
-        this.empinfo = JSON.parse(
-          localStorage.getItem('rightlyHrUser') ?? '{}'
-        );
-        this.getDataPermissions();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataEMPPermissions();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getDataPermissions();
+          }
+        });
       }
     });
     this.formInializer();
   }
+
   formInializer() {
     this.cancelForm = this.fb.group({
       cancelReason: [
@@ -106,6 +110,7 @@ export class PremissionsWaitingForApprovalComponent
       ],
     });
   }
+
   isBeforeToday(date: string | Date): boolean {
     return moment().isSameOrBefore(moment(date), 'day');
   }
@@ -114,14 +119,15 @@ export class PremissionsWaitingForApprovalComponent
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  
   cleardata() {
     this.modalService.dismissAll();
     this.cancelForm.reset();
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -130,33 +136,30 @@ export class PremissionsWaitingForApprovalComponent
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
     this.dataload = true;
-     this.permissionForLoggedInUser = true
-    this.http
-      .getData(`RegularizationRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.permissions = response as RegularizationRequest[];
-          this.waitingForApprovalPerimisions = this.permissions.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          );
-          this.dataload = false;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.permissions = [];
-          this.dataload = false; // Set to empty array on error
-        },
-      });
+    this.permissionForLoggedInUser = true;
+    this.http.getFilterPermissionDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.waitingForApprovalPerimisions = this.permissions.filter(
+          (element: { status: string }) => element.status === 'Waiting for Approval'
+        );
+        this.dataload = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = [];
+        this.dataload = false; // Set to empty array on error
+      },
+    });
   }
+
   selectedFields = {} as any;
   onClick(data: any, content: any) {
     this.selectedFields = data;
-    console.log(this.selectedFields);
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.cancelForm.reset();
   }
+
   //function to cancle the leave
   cancelpermissionsSubmit() {
     this.isLoading = true;
@@ -173,60 +176,50 @@ export class PremissionsWaitingForApprovalComponent
         },
       ],
     };
-    this.http
-      .putData(`v2/PendingApproval/multiapprovals`, requestBody)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          console.log(res);
-          if (res) {
-            this.cancelForm.reset();
-            this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(
-              'Permission cancelled successfully'
-            );
-            this.http.permissionTriggerSignal.set(true);
-            this.getDataPermissions();
-          }
-          this.signalService.timecountTriggerSignal.set(true);
-        },
-        error: (err: any) => {
-          console.log(err);
-          this.isLoading = false;
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        if (res) {
           this.cancelForm.reset();
           this.modalService.dismissAll();
-          this.getDataPermissions();
+          this.conformationPopup.openSuccessModal('Permission cancelled successfully');
           this.http.permissionTriggerSignal.set(true);
-          this.conformationPopup.openErrorModal(err.error.message);
-        },
-        complete: () => {
-          this.isLoading = false;
           this.getDataPermissions();
-        },
-      });
+        }
+        this.signalService.timecountTriggerSignal.set(true);
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.cancelForm.reset();
+        this.modalService.dismissAll();
+        this.getDataPermissions();
+        this.http.permissionTriggerSignal.set(true);
+        this.conformationPopup.openErrorModal(err.error.message);
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.getDataPermissions();
+      },
+    });
   }
+
   getDataEMPPermissions() {
     let empId = this.selectempid;
     this.dataload = true;
-     this.permissionForLoggedInUser = false;
-    this.http
-      .getData(`RegularizationRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.permissions = response as RegularizationRequest[];
-          this.waitingForApprovalPerimisions = this.permissions.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          );
-          this.dataload = false;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.permissions = [];
-          this.dataload = false; // Set to empty array on error
-        },
-      });
+    this.permissionForLoggedInUser = false;
+    this.http.getFilterPermissionDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.waitingForApprovalPerimisions = this.permissions.filter(
+          (element: { status: string }) => element.status === 'Waiting for Approval'
+        );
+        this.dataload = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = [];
+        this.dataload = false; // Set to empty array on error
+      },
+    });
   }
 
   ngOnDestroy(): void {

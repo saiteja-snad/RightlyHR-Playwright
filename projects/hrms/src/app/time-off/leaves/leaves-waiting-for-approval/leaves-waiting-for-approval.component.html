@@ -44,7 +44,6 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </a>
               <ul class="dropdown-menu custom-dropdown-menu">
-
                 <li (click)="onClick(item,cancelModal)">
                   <a class="dropdown-item">Cancel Leave</a>
                 </li>
@@ -54,13 +53,12 @@
             @else {
               -
             }
-
           </td>
         </tr>
         }
         @else {
-        <tr class="table-placeholder">
-          <app-no-data-found></app-no-data-found>
+        <tr>
+          <app-no-data-found />
         </tr>
         }
         }

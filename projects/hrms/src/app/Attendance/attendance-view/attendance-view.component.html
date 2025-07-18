@@ -86,7 +86,7 @@
                             @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
                             <div>
                                 <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
-                                            item.permissions,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration)">
+                                            item.permissions,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
                                     <app-info-icon />
                                 </a>
                             </div>
@@ -298,8 +298,25 @@
                                     </tbody>
                                 </table>
                             </div>
+                            
                             <div class="popup-table-footer">
-                                Total Duration: <b>{{ logsDuration }}</b>
+                                <!-- Total Duration: <b>{{ logsDuration }}</b> -->
+                                <div>
+                                    <div>Duration: <span *ngIf="logsDuration;else popupcomments">
+                                            <!-- <div class="text-truncate" style="width:150px;">{{comment.comments}}</div> -->
+                                            <a [ngbPopover]="popContent">
+                                                <i class="bi bi-info-circle-fill ms-2"></i>
+                                            </a>
+                                            <ng-template #popContent>
+                                                <div class="custom-text">Working Hours: <b>{{logsDuration}}</b></div>
+                                                <!-- <div class="custom-text">Break Hours: <b>{{breakDuration}}</b></div> -->
+                                                <!-- <div class="custom-text">Total Duration: <b>{{ getTotalDuration(logsDuration, breakDuration) }}</b></div> -->
+                                            </ng-template>
+                                        </span>
+                                        <ng-template #popupcomments>-</ng-template>
+                                    </div>
+                                    <!-- <div>Total Duration: <b>{{ logsDuration }}</b></div> -->
+                                </div>
                             </div>
                         </div>
                     </p-accordion-content>

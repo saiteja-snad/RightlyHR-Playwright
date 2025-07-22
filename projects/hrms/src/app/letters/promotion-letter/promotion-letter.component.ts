@@ -435,7 +435,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
           this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };

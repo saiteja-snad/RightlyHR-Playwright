@@ -153,11 +153,14 @@
               
 
               <!-- start of letter -->
-              <div class="mb-2 mt-2">
-              
-                <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
+              <!-- start of letter -->
+              <div class="mt-2">
+                <div class="text-center ">
+                  <p class="letter-header text-center">APPRAISAL LETTER</p>
+                </div>
+                <!-- <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div> -->
               </div>
-              <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
+              <div class="text-end  mt-1"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
               </div>
 
@@ -200,7 +203,7 @@
               <p>Your new compensation structure is as follows:</p>
 
               <!--Components Table-->
-              <div class="salary-details-table mb-3 mt-4">
+                 <div class="salary-details-table mb-3 mt-2">
                 <table class="mytable w-100">
                   <thead>
                     <tr>
@@ -314,7 +317,7 @@
               </div>
 
               <!--CTC table-->
-              <div class="salary-details-table mb-3">
+             <div class="salary-details-table mb-3">
                 <table class="secondtable w-100">
                   <thead>
                     <tr>
@@ -357,14 +360,15 @@
                     </tr>
                     <tr>
                       <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
-                      <td colspan="2" class="text-center "><b>{{appraisalData.bonus}} </b><span *ngIf="appraisalData.bonus">Per
+                      <td colspan="2" class="text-center "><b>{{appraisalData.bonus}} </b><span
+                          *ngIf="appraisalData.bonus">Per
                           Annum</span></td>
                     </tr>
                     <tr>
                       <td class="text-center"><b>Variable Amount</b></td>
                       <td colspan="2" class="text-center">
                         <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
-                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount  }}</b></ng-template>
+                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount }}</b></ng-template>
                       </td>
                     </tr>
                   </tbody>
@@ -383,9 +387,9 @@
               <p class="letter-sub-header mt-4 pt-4"><b>Note:</b></p>
               
               <ul>
-                <li>Medical insurance amount will be calculated based on the number
+                <li class="mb-2">Medical insurance amount will be calculated based on the number
                   of dependents; the respective amount will be deducted from your monthly salary.</li>
-                <li>Apart from your CTC, You will receive a Variable bonus of
+                <li class="mb-2">Apart from your CTC, You will receive a Variable bonus of
                   {{appraisalData.bonus}}
                   annually, based on your performance.</li>
               </ul>
@@ -398,13 +402,23 @@
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
 
-              <p class="letter-sub-header mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
-                   <div class="letter-signature  " >{{appraisalData.authorityName}}</div><br>
-              <div class="pb-3">
-                <p  class="mb-1"><b>Authorized Signatory,</b></p>
-                <p class="mb-1"><b><p class="mb-1" *ngIf="!appraisalData.authorityName">Name</p>{{appraisalData.authorityName}}</b></p>
-                <p class="mb-1"><b><p class="mb-1" *ngIf="!authorityDesignation">Designation</p>{{authorityDesignation}}</b></p>
-              </div>
+             <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
+
+              <div class="mb-3"></div>
+              <p class="letter-signature">{{appraisalData.authorityName}}</p>
+
+              <p class="mb-1 authorized-signatory">Authorized Signatory,</p>
+
+              <p class="mb-1 authorized-signatory">
+                <ng-container *ngIf="!appraisalData.authorityName">Name</ng-container>
+                <ng-container *ngIf="appraisalData.authorityName">{{ appraisalData.authorityName }}</ng-container>
+              </p>
+
+              <p class="authorized-signatory">
+                <ng-container *ngIf="!authorityDesignation">Designation</ng-container>
+                <ng-container *ngIf="authorityDesignation">{{ authorityDesignation }}</ng-container>
+              </p>
+
 
               <div class="pt-4 pb-4">
                 <p><b>Employee Name:<span class="employee-field ms-2">{{appraisalData.firstName}}

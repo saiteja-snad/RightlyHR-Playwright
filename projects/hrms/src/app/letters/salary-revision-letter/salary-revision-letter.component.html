@@ -102,9 +102,10 @@
             <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content my-4" id="pdfContent1"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+                    <div class="letter-page-content my-4" id="pdfContent1"
+                        [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
                         <div class="letter-page-sub-content">
-                           
+
                             <div class="letter-header text-center">Salary Revision Letter</div>
                             <div class="text-end my-3"><span class="letter-sub-header">Date: </span>
                                 {{appraisalData.dateofAppraisal| dateformat}}
@@ -147,21 +148,23 @@
                             <p class="mb-4">All other terms & conditions of your Appointment Letter will
                                 remain
                                 unchanged. </p>
-                            <p>Yours sincerely, </p><br>
+                            <p class="mb-3">Yours sincerely, </p>
                             <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
-                            <p class="letter-signature  pt-3">{{appraisalData.authorityName}}</p>
-                            <p class="letter-sub-header mb-1" >Authorized Signatory,</p>
-                            <p class="letter-sub-header mb-1">{{appraisalData.authorityName}}</p>
-                            <p class="letter-sub-header mb-0">{{authorityDesignation}}</p>
+                            <div class="mb-3"></div>
+                            <p class="letter-signature">{{appraisalData.authorityName}}</p>
+                            <p class="authorized-signatory mb-1">Authorized Signatory,</p>
+                            <p class="authorized-signatory mb-1">{{appraisalData.authorityName}}</p>
+                            <p class="authorized-signatory mb-0">{{authorityDesignation}}</p>
                         </div>
                         <!-- <div class="letter-footer">
                             <app-letter-footer />
                         </div> -->
                     </div>
 
-                    <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+                    <div class="letter-page-content my-4" id="pdfContent2"
+                        [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
                         <div class="letter-page-sub-content">
-                           
+
                             <div class="letter-header text-center mb-3">CONFIDENTIAL</div>
                             <div class="letter-header text-center">Annexure – A</div>
 
@@ -227,8 +230,8 @@
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalGrossSalary;else totalgross"> </span>
-                                                <ng-template
-                                                    #totalgross> <b>{{appraisalData.totalGrossSalary}}</b></ng-template>
+                                                <ng-template #totalgross>
+                                                    <b>{{appraisalData.totalGrossSalary}}</b></ng-template>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
@@ -288,11 +291,13 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="text-center"><b>Total Deductions (PF+ESI+PT+Medical Insurance)</b>
+                                            <td class="text-center"><b>Total Deductions (PF+ESI+PT+Medical
+                                                    Insurance)</b>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
-                                                <ng-template #totdec><b>{{appraisalData.totalDeduction}}</b></ng-template>
+                                                <ng-template
+                                                    #totdec><b>{{appraisalData.totalDeduction}}</b></ng-template>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
@@ -310,7 +315,8 @@
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.netSalaryPerAnnum;else netper"> </span>
-                                                <ng-template #netper><b>{{appraisalData.netSalaryPerAnnum}}</b></ng-template>
+                                                <ng-template
+                                                    #netper><b>{{appraisalData.netSalaryPerAnnum}}</b></ng-template>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -377,17 +383,19 @@
                                 </li>
                             </ul>
                             <!-- end of second table -->
-                            <p class="letter-sub-header ">For SNAD Developers India Pvt Ltd</p>
-                            <div class="img-space  mb-5"></div>
+                            <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
+
+                            <div class="mb-3"></div>
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <div class="mb-3 letter-signature">{{appraisalData.authorityName}}</div>
-                                    <div>
-                                         <p class="letter-sub-header mb-1" >Authorized Signatory,</p>
-                                        <p class="letter-sub-header mb-1">{{appraisalData.authorityName}}</p>
-                                        <p class="letter-sub-header mb-1">{{authorityDesignation}}</p>
-                                    </div>
+                                    <p class="mb-3 letter-signature">{{appraisalData.authorityName}}</p>
+                                    <p class="authorized-signatory mb-1">Authorized Signatory,</p>
+                                    <p class="authorized-signatory mb-1">{{appraisalData.authorityName}}</p>
+                                    <p class="authorized-signatory mb-1">{{authorityDesignation}}</p>
+
+
                                 </div>
+
                                 <div>
                                     <p class="letter-sub-header">Employee Name: {{appraisalData.firstName}}
                                         {{appraisalData.middleName}} {{appraisalData.lastName}}

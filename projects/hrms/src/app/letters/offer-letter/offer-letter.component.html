@@ -617,8 +617,8 @@
                       target="_blank" rel="noopener noreferrer"><u> hr&#64;snaddevelopers.com</u></a></p>
                   <p>Yours Sincerely,</p>
                   <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
-                  <div class="stamp"></div>
-                  <p class="mb-3 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
+                  <div class="mb-3"></div>
+                  <p class="letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
                   <p class="mb-1 signature "> Authorized Signatory, </p>
                   <p class="mb-1 signature">{{prospectiveEmpData.authorityName}} </p>
@@ -653,7 +653,7 @@
           <div class="letter-page-content my-4" id="pdfContent4"
             [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
-              <div class="pt-2">
+               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
@@ -665,15 +665,15 @@
                   joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
-                <div class="mb-1">
-                  <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.
+                <div class="mb-2">
+                    <p><span class="box"></span> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.</p>
                 </div>
-                <div class="mb-1">
-                  <div class="mb-2">
-                    <div class="box"></div> Certificates' supporting your educational qualifications along with marks
-                    sheet
+                <div class="mb-2">
+                  <div class="mb-3">
+                    <p><span class="box"></span> Certificates' supporting your educational qualifications along with marks
+                    sheet</p>
                   </div>
-                  <ul class="list-style-none mb-2">
+                  <ul class="list-style-none mb-3">
                     <li class="mb-1">
                       <div class="box"></div> Xth certificate & marks sheet
                     </li>
@@ -719,8 +719,9 @@
                 <div class="d-flex">
                   <p><span class="box"></span> Relieving letter from your current employer (If Applicable).</p>
                 </div>
-                <div class="d-flex ">
-                  <p class=""><span class="box"></span> Valid Passport – Please submit a copy of the valid
+                <div class="d-flex align-items-start">
+                  <span class="box-serpately"></span>
+                  <p > Valid Passport – Please submit a copy of the valid
                     Passport (inclusive of all blank pages). In case you have applied for it, please submit the proof of
                     Passport Office submission ticket. Upon receipt of Passport from Passport Office, please submit the
                     documents to HCM Team. if
@@ -728,7 +729,7 @@
                 </div>
                 <div class="d-flex">
                   <span class="box"></span>
-                  <p>Three last drawn salary pay slips of your previous employer (If Applicable).</p>
+                  <p class="mb-3"> Three last drawn salary pay slips of your previous employer (If Applicable).</p>
                 </div>
                 <div class="d-flex ">
                   <p><span class="box"></span> Form 16 of last year if paying tax previously (If Applicable).</p>
@@ -946,29 +947,26 @@
               <div class="pt-2">
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-2 pt-2">
-                  <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
+                  <li class="mb-2"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
                     deductions.</li>
-                  <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
-                  <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave
+                  <li class="mb-2"><span>b)</span> Employees are responsible for their Tax Planning.</li>
+                  <li class="mb-2"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave
                     Travel Allowance.</li>
-                  <li class="mb-1"><span>d)</span> All eligible employees as per the respective policies of the Company
+                  <li class="mb-2"><span>d)</span> All eligible employees as per the respective policies of the Company
                     will be covered under
                     the Group Medical Coverage Policy and Group Covid policy. </li>
-                  <li class="mb-1"><span>e)</span> All the above benefits are as per the Company’s policies, which are
+                  <li class="mb-2"><span>e)</span> All the above benefits are as per the Company’s policies, which are
                     subjective to change from time
                     to time. Further salary, allowances, any alteration in salary structure and other payments/benefits
                     will be governed by The Company’s rules as well as statutory provisions in force from time to time
                     and subject to deduction of appropriate taxes as applicable under government norms. </li>
-                  <li class="mb-1"><span>f)</span> While the other terms and conditions of your appointment
+                  <li class="mb-2"><span>f)</span> While the other terms and conditions of your appointment
                     remain unchanged, please do take note that as per the current Company’s Separation Policy, if you
                     resign from the services of the company,
                     you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period. </li>
-                  <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
+                  <li class="mb-2"><span>g)</span> Medical insurance amount will be calculated based on the
                     number of dependents; the respective amount will be deducted from your monthly salary. </li>
                 </ol>
-
-                
-                
                 <p class=" mt-2"><b>Note</b>:  <i class="note">The above compensation package is strictly confidential between
                   you
                   and the Company and should not be discussed with anyone nor divulged to anyone in any manner

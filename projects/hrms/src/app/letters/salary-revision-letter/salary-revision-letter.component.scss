@@ -1,8 +1,7 @@
 * {
-  
-    font-family: Verdana, Tahoma, sans-serif;
-}
 
+    font-family: 'VERDANA', sans-serif !important;
+}
 
 
 
@@ -36,4 +35,9 @@ input:focus{
 .mytable tr:nth-child(10),
 .mytable tr:nth-child(9) {
   background: #fff2cc;
+}
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }

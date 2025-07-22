@@ -176,21 +176,21 @@
                                     this extended probationary period.</p>
 
                                 <p class="pt-4">Sincerely,</p>
-                                <p class="letter-sub-header">For SNAD Developers India Pvt Ltd</p>
-
-                             
-                                <div class="letter-signature  pt-4">{{probationExtensionLetterData.authorityName}}</div>
-                                   <!-- Show "Authority Signature" only when no authority is selected -->
-                                <div  class="letter-sub-header pt-4 mb-1">
-                                    Authority Signature</div>
+                                <p class="letter-sub-header  mb-5">For SNAD Developers India Pvt Ltd</p>
+                                    <div class="mb-3"></div>
+                                 <p class="letter-signature">{{probationExtensionLetterData.authorityName}}</p>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <p class="authorized-signatory mb-1">
+                                    Authority Signature</p>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationExtensionLetterData.authorityName">
-                                    <p class="letter-sub-header mb-1">Authority Name</p>
-                                    <p class="letter-sub-header mb-1">Designation</p>
+                                    <p class="authorized-signatory mb-1">Authority Name</p>
+                                    <p class="authorized-signatory mb-1">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="letter-sub-header mb-1">{{probationExtensionLetterData.authorityName}}</p>
-                                    <p class="letter-sub-header mb-1">{{probationExtensionLetterData.authorityDesignation}}
+                                    <p class="authorized-signatory mb-1">{{probationExtensionLetterData.authorityName}}</p>
+                                    <p class="authorized-signatory mb-1">
+                                        {{probationExtensionLetterData.authorityDesignation}}
                                     </p>
                                 </div>
                             </div>

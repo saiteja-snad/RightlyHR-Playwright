@@ -25,6 +25,10 @@
     src: url("/fonts/Lexend-VariableFont_wght.ttf");
 }
 
+@font-face {
+    font-family: "VERDANA";
+    src: url("/fonts/VerdanaNow.ttf");
+}
 /* You can add global styles to this file, and also import other style files */
 :root {
     --login-logo-color: #d8ecff;
@@ -2691,4 +2695,8 @@ input[type=number]::-webkit-outer-spin-button {
     .p-datepicker-today>.p-datepicker-day-selected {
         background: var(--primary-color);
     }
+}
+.authorized-signatory {
+    font-size: 16px;
+    font-weight: 700;
 }

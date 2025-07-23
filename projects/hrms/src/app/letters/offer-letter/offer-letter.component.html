@@ -438,7 +438,7 @@
                     </ul>
                   </div>
                   <div class="col-md-4 letter-sub-header">
-                    <p class="text-end p-0"> {{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
+                    <p class="text-end p-0"> {{employeeForm.get('offerIssuedDate')?.value | dateformat}}</p>
                   </div>
                 </div>
               </div>
@@ -464,7 +464,7 @@
 
               <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining
                   would
-                  be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
+                  be {{employeeForm.get('dateOfJoining')?.value | dateformat}}.</b></p>
 
               <p class="mb-4">
                 Your respective <b>Cost to Company</b> as applicable has been detailed in Annexure 2 of
@@ -475,7 +475,7 @@
               <ol>
                 <li class="mb-4">
                   <b>Offer Letter Valid Period:</b> The currently issued offer letter will be valid up to
-                  <b>{{prospectiveEmpData.offerExpiryDate | dateformat}}.</b> The accepted offer letter along
+                  <b>{{employeeForm.get('offerExpiryDate')?.value | dateformat}}.</b> The accepted offer letter along
                   with the list of documents should be provided at least 30 days before the Joining Date for performing
                   the necessary Background verification and initial setup.
                 </li>
@@ -571,7 +571,7 @@
 
 
                 <p>To confirm please send your <b>acceptance</b> of the offer via reply
-                  to the same <b>email</b> on or before <b> {{prospectiveEmpData.offerExpiryDate | dateformat}}.</b>
+                  to the same <b>email</b> on or before <b> {{employeeForm.get('offerExpiryDate')?.value | dateformat}}.</b>
                   We request you to please carry a signed copy of the offer letter & other required documents
                   (<b>Annexure 1</b>) on the day of your joining.
                 </p>

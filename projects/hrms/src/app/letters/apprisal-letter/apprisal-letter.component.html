@@ -282,7 +282,7 @@
                         <ng-template #pftaxper>{{appraisalData.professionalPerAnnum}}</ng-template>
                       </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                       <td class="text-center">Medical insurance</td>
                       <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ"> </span>
                         <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
@@ -291,7 +291,7 @@
                         </span>
                         <ng-template #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
                       </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                       <td class=" text-center"><b>Total Deductions (PF+ESI+PT)</b>
                       </td>
@@ -348,7 +348,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Medical Insurance)</b></td>
+                      <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI)</b></td>
                       <td class="text-center bold">
                         <span *ngIf="!appraisalData.grossSalary;else gross"></span>
                         <ng-template #gross><b>{{appraisalData.grossSalary}}</b></ng-template>

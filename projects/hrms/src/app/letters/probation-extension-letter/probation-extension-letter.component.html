@@ -102,7 +102,8 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">
+                    <div class="letter-page-content" id="pdfContent"
+                        [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">
                         <div class="letter-page-sub-content">
                             <!-- <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
@@ -110,11 +111,14 @@
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
                             </ng-template> -->
-
+                            <div class="text-center mt-3 mb-5">
+                                <p class="letter-header text-center">Extension of Probation Period</p>
+                            </div>
                             <div *ngIf="probationExtensionLetterData" class="d-flex justify-content-between mb-3">
                                 <div>
                                     <ul class="list-style-none ps-0">
-                                        <li *ngIf="probationExtensionLetterData.firstName || probationExtensionLetterData.lastName; else noName">
+                                        <li
+                                            *ngIf="probationExtensionLetterData.firstName || probationExtensionLetterData.lastName; else noName">
                                             {{ probationExtensionLetterData.firstName || '' }}
                                             {{ probationExtensionLetterData.middleName || '' }}
                                             {{ probationExtensionLetterData.lastName || '' }}
@@ -177,8 +181,8 @@
 
                                 <p class="pt-4">Sincerely,</p>
                                 <p class="letter-sub-header  mb-5">For SNAD Developers India Pvt Ltd</p>
-                                    <div class="mb-3"></div>
-                                 <p class="letter-signature">{{probationExtensionLetterData.authorityName}}</p>
+                                
+                                <p class="letter-signature">{{probationExtensionLetterData.authorityName}}</p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <p class="authorized-signatory mb-1">
                                     Authority Signature</p>
@@ -188,7 +192,8 @@
                                     <p class="authorized-signatory mb-1">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="authorized-signatory mb-1">{{probationExtensionLetterData.authorityName}}</p>
+                                    <p class="authorized-signatory mb-1">{{probationExtensionLetterData.authorityName}}
+                                    </p>
                                     <p class="authorized-signatory mb-1">
                                         {{probationExtensionLetterData.authorityDesignation}}
                                     </p>

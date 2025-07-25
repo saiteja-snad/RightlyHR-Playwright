@@ -135,6 +135,9 @@
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
                             </ng-template> -->
+                            <div class="text-center mb-5">
+                                <p class="letter-header text-center">Probation confirmation</p>
+                            </div>
                             <div class="letter-div" *ngIf="probationLetterData">
                                 <div class="d-flex justify-content-between mb-3">
                                     <ul class="list-style-none ps-0">
@@ -183,13 +186,12 @@
                                 </p>
 
                                 <p class="mb-2 pt-4">Sincerely,</p>
-                                <p class="letter-sub-header"><b>For SNAD Developers India Pvt Ltd</b></p>
+                                <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
-
+                                <div class="mb-3"></div>
 
                                 <p class="letter-signature">{{probationLetterData.authorityName}}</p>
-                                <p class="authorized-signatory">Authority
-                                    Signature</p>
+                                <p class="authorized-signatory mb-1">AuthoritySignature</p>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationLetterData.authorityName">
                                     <p class="authorized-signatory mb-1">Authority Name</p>

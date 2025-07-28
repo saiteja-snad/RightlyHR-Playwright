@@ -136,22 +136,22 @@
                                 <div class="hard-copy-letter"></div>
                             </ng-template> -->
                             <div class="text-center mb-5">
-                                <p class="letter-header text-center">Probation confirmation</p>
+                                <p class="letter-header text-center">PROBATION CONFIRMATION</p>
                             </div>
                             <div class="letter-div" *ngIf="probationLetterData">
                                 <div class="d-flex justify-content-between mb-3">
                                     <ul class="list-style-none ps-0">
-                                        <li>To</li>
-                                        <li
+                                        <li class="mb-2">To</li>
+                                        <li class="mb-1"
                                             *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
                                             Name:</li>
                                         <ng-template #fullname>
-                                            <li>{{probationLetterData.firstName}} {{probationLetterData.middleName}}
+                                            <li class="mb-1">{{probationLetterData.firstName}} {{probationLetterData.middleName}}
                                                 {{probationLetterData.lastName}},</li>
                                         </ng-template>
-                                        <li>{{probationLetterData.fusionEmpId}}</li>
-                                        <li>{{probationLetterData.jobRole}}</li>
-                                        <li>{{probationLetterData.department}}</li>
+                                        <li class="mb-1">{{probationLetterData.fusionEmpId}}</li>
+                                        <li class="mb-1">{{probationLetterData.jobRole}}</li>
+                                        <li class="mb-1" >{{probationLetterData.department}}</li>
                                         <li>{{probationLetterData.workLocation}}</li>
                                     </ul>
                                     <div>
@@ -185,7 +185,7 @@
                                     successful and rewarding journey together.
                                 </p>
 
-                                <p class="mb-2 pt-4">Sincerely,</p>
+                                <p class="pt-4"> Your Sincerely,</p>
                                 <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <div class="mb-3"></div>

@@ -394,20 +394,20 @@
                             <div class="letter-header text-center mb-4">{{'Trainee Offer Letter'|translate}}</div>
                             <div class="d-flex justify-content-between mb-3">
                                 <ul class="list-style-none ps-0">
-                                    <li
+                                    <li class="mb-1"
                                         *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
                                         {{'Name'|translate}}:</li>
                                     <ng-template #fullname>
-                                        <li>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
+                                        <li class="mb-1">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
                                             {{traineeEmpData.lastName}},</li>
                                     </ng-template>
-                                    <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
+                                    <li class="mb-1" *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
-                                        <li>{{traineeEmpData.addressLine1}},</li>
+                                        <li class="mb-1">{{traineeEmpData.addressLine1}},</li>
                                         @if(traineeEmpData.addressLine2){
-                                        <li>{{traineeEmpData.addressLine2}},</li>
+                                        <li class="mb-1">{{traineeEmpData.addressLine2}},</li>
                                         }
-                                        <li>{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
+                                        <li class="mb-1">{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
                                         <li>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</li>
                                     </ng-template>
                                 </ul>
@@ -493,7 +493,7 @@
                                     </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
-                                    <p class="mb-3">Sincerely,</p>
+                                    <p>Your Sincerely,</p>
 
                                 </div>
                                 <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
@@ -504,7 +504,7 @@
                                         Authorized Signatory, </p>
                                     <p class="authorized-signatory mb-1" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
-                                    <p class="authorized-signatory mb-3">{{authorityDesignation}} </p>
+                                    <p class="authorized-signatory mb-4">{{authorityDesignation}} </p>
                                     <br>
                                     <hr>
                                     <p class="mb-3">I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}

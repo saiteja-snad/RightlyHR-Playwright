@@ -165,12 +165,12 @@
               </div>
 
               <!-- start of paragraphs -->
-              <p class="letter-sub-header">
-                <span *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
-                <span class="me-1">{{gender}}</span>{{appraisalData.firstName}}
+              <p class="letter-sub-header ">
+                <span class='mb-1'  *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
+                <span class="mb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
                 {{appraisalData.middleName}} {{appraisalData.lastName}},
                 <br>
-                <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
+                <span    *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
                 <span>{{appraisalData.jobRole}}</span>
               </p>
 
@@ -401,7 +401,7 @@
               <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate |
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
-
+                <p>Your Sincerely,</p>
              <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
 
               <div class="mb-3"></div>

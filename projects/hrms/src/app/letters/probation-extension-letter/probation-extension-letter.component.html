@@ -112,21 +112,21 @@
                                 <div class="hard-copy-letter"></div>
                             </ng-template> -->
                             <div class="text-center mt-3 mb-5">
-                                <p class="letter-header text-center">Extension of Probation Period</p>
+                                <p class="letter-header text-center"> EXTENSION OF PROBATION PERIOD </p>
                             </div>
                             <div *ngIf="probationExtensionLetterData" class="d-flex justify-content-between mb-3">
                                 <div>
                                     <ul class="list-style-none ps-0">
-                                        <li
+                                        <li class="mb-1"
                                             *ngIf="probationExtensionLetterData.firstName || probationExtensionLetterData.lastName; else noName">
                                             {{ probationExtensionLetterData.firstName || '' }}
                                             {{ probationExtensionLetterData.middleName || '' }}
                                             {{ probationExtensionLetterData.lastName || '' }}
                                         </li>
                                         <ng-template #noName></ng-template>
-                                        <li>{{ probationExtensionLetterData.fusionEmpId || '' }}</li>
-                                        <li>{{ probationExtensionLetterData.jobRole || '' }}</li>
-                                        <li>{{ probationExtensionLetterData.department || '' }}</li>
+                                        <li class="mb-1">{{ probationExtensionLetterData.fusionEmpId || '' }}</li>
+                                        <li class="mb-1">{{ probationExtensionLetterData.jobRole || '' }}</li>
+                                        <li class="mb-1">{{ probationExtensionLetterData.department || '' }}</li>
                                         <li>{{ probationExtensionLetterData.workLocation || '' }}</li>
                                     </ul>
                                 </div>
@@ -179,7 +179,7 @@
                                     during
                                     this extended probationary period.</p>
 
-                                <p class="pt-4">Sincerely,</p>
+                                <p class="pt-4">Your Sincerely,</p>
                                 <p class="letter-sub-header  mb-5">For SNAD Developers India Pvt Ltd</p>
                                 
                                 <p class="letter-signature">{{probationExtensionLetterData.authorityName}}</p>

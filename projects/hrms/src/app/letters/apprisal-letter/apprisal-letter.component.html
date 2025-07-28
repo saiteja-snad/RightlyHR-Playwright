@@ -166,11 +166,11 @@
 
               <!-- start of paragraphs -->
               <p class="letter-sub-header ">
-                <span class='mb-1'  *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
-                <span class="mb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
+                <span class='pb-1'  *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
+                <span class="pb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
                 {{appraisalData.middleName}} {{appraisalData.lastName}},
-                <br>
-                <span    *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
+              <br>
+                <span    *ngIf="!appraisalData.jobRole" > {{'Designation'| translate }}</span>
                 <span>{{appraisalData.jobRole}}</span>
               </p>
 

@@ -277,7 +277,7 @@
                                                     #pftaxper>{{appraisalData.professionalPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <!-- <tr>
                                             <td class="text-center">Medical insurance</td>
                                             <td class="text-center"><span
                                                     *ngIf="!appraisalData.educationAllowances;else educ"> </span>
@@ -289,10 +289,9 @@
                                                 <ng-template
                                                     #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                         <tr>
-                                            <td class="text-center"><b>Total Deductions (PF+ESI+PT+Medical
-                                                    Insurance)</b>
+                                            <td class="text-center"><b>Total Deductions (PF+ESI+PT)</b>
                                             </td>
                                             <td class="text-center bold"><span
                                                     *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
@@ -359,7 +358,7 @@
                                         </tr>
                                         <tr>
                                             <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer
-                                                    PF+ESI+Medical Insurance)</b></td>
+                                                    PF+ESI)</b></td>
                                             <td class="text-center p-0 pt-1 pb-1 bold"><span
                                                     *ngIf="!appraisalData.grossSalary;else gross">
                                                 </span>

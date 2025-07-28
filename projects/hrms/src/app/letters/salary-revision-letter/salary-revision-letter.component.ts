@@ -416,8 +416,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             );
   
             //educationper annum using for medical insurence
-            Employee.educationallowancesPerAnnum = 12 * 558;
-  
+           // Employee.educationallowancesPerAnnum = 12 * 558;
+
             //conveyance per annum
             // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
   
@@ -434,7 +434,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             //salary deductions per annum
             Employee.totalDeductionsPerAnnum = Math.round(
               Employee.pfPreAnuum + Employee.esiPerAnnumemployee + 
-              Employee.educationallowancesPerAnnum + 
+              //Employee.educationallowancesPerAnnum + 
               Employee.professionalPerAnnum
             );
   

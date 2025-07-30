@@ -350,7 +350,7 @@ bonusValidator = (salary: number): ValidatorFn => {
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-            let res = data.reverse()[0];
+            let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
           this.employeeCompensationData = res;
           this.appraisalData.employeeId = res.employeeId;
           // this.appraisalData.bonus = res.bonusAmountData;
@@ -644,14 +644,14 @@ bonusValidator = (salary: number): ValidatorFn => {
     this.appraisalData.status = 'Active';
     const jobdata = {
       employeeId: data.employeeId,
-      effectiveDate: new Date(this.employeeCompensationDetails.compeffectivedate),
+      effectiveDate: this.employeeCompensationDetails.compeffectivedate,
       locationid: data.locationid,
       sublocationid: data.sublocationid,
-      jobRole: this.appraisalData.designation,
+      jobRole: this.employeeForm.get('JobRole')?.value?.value,
       status: 'Active',
       subdeptId: data.subdeptId,
       createddate: data.createddate,
-      gradeId: data.gradeId,
+      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
       reportsto: data.reportsto,
       shiftId: data.shiftId,
       jobTypeId: data.jobTypeId,
@@ -659,6 +659,8 @@ bonusValidator = (salary: number): ValidatorFn => {
       bussinessArea: data.bussinessArea,
       updateddate: data.updateddate,
     };
+    console.log(jobdata);
+    
     this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
       next: (data: any) => {
       },
@@ -878,7 +880,7 @@ bonusValidator = (salary: number): ValidatorFn => {
       this.selectedValueJobRoledrop = option;
       this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
         (ele: { designationName: string }) =>
-          ele.designationName === this.selectedValueJobRoledrop
+          ele.designationName === event.designationName
       );
       this.getGradeNameById();
     } else if (dropdownCategory === 'reportingtoUpdate') {

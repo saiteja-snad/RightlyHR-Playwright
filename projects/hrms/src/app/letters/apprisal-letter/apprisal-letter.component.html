@@ -24,7 +24,7 @@
             <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true"
               filterBy="designationName" placeholder="Please select promotion designation"
               formControlName="JobRole" (optionsFound)="updateOptionsFound(true)" (isListitem)="isItemIntheList($event)"
-              (selectedOption)="onOptionSelected($event, 'JobRole')" class="custom-select w-100">
+              (onChange)="onOptionSelected($event.value, 'JobRole')" class="custom-select w-100">
             </p-select>
           </div>
         </div>

@@ -17,18 +17,31 @@
           </div>
           <div *ngIf="!disablebuttonforemployeeid" class="error-msg">{{'No results found'| translate }}</div>
         </div>
-    
+       <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Promotion' | translate }}<span class="error-msg"></span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select [options]="promotionPayOptions" optionLabel="name" optionValue="value" formControlName="isPromotion"
+              placeholder="Please select Promotion" (onChange)="onPromotionChange()" [autoDisplayFirst]="false"
+              class="custom-select w-100" id="Promotion" resetFilterOnHide="true"></p-select>
+          </div>
+          <div *ngIf="employeeForm.get('isPromotion')?.invalid && employeeForm.get('isPromotion')?.touched">
+            <div class="error-msg">{{ 'Promotion is required' | translate }}</div>
+          </div>
+        </div>
+        @if(employeeForm.get('isPromotion')?.value === true) {
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Promotion Designation'| translate }}</label>
           <div class="custom-p-select-content">
             <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true"
-              filterBy="designationName" placeholder="Please select promotion designation"
-              formControlName="JobRole" (optionsFound)="updateOptionsFound(true)" (isListitem)="isItemIntheList($event)"
+              filterBy="designationName" placeholder="Please select promotion designation" formControlName="JobRole"
+              (optionsFound)="updateOptionsFound(true)" (isListitem)="isItemIntheList($event)"
               (onChange)="onOptionSelected($event.value, 'JobRole')" class="custom-select w-100">
             </p-select>
           </div>
         </div>
-    
+        }
         <!-- Issued Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Issued Date'| translate }}<span class="text-danger">*</span></label>

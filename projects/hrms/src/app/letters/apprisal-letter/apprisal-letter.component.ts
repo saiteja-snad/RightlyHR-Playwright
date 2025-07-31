@@ -93,6 +93,10 @@ export class ApprisalLetterComponent implements OnInit,OnDestroy {
     { name: 'Yes', value: true },
     { name: 'No', value: false }
   ];
+   promotionPayOptions: { name: string, value: boolean }[]  = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false }
+  ];
   jobErrorMessage!: string;
   spinnerLoader= false;
 
@@ -168,7 +172,18 @@ export class ApprisalLetterComponent implements OnInit,OnDestroy {
        this.appraisalData.variablePayAmount = '0';
     }
   }
-
+ onPromotionChange() {
+    const isPromotion = this.employeeForm.get('isPromotion')?.value;
+    if (isPromotion === true) {
+      this.employeeForm.get('JobRole')?.enable();
+      this.employeeForm.get('JobRole')?.reset();
+      this.appraisalData.JobRole = this.employeeForm.get('JobRole')?.value;
+    } else {
+      this.employeeForm.get('JobRole')?.disable();
+      this.employeeForm.get('JobRole')?.setValue(null);
+       this.appraisalData.JobRole = null;
+    }
+  }
   gender: any;
   gender2: any;
   // Onclick(fusionemployeeId: any) {
@@ -913,6 +928,7 @@ bonusValidator = (salary: number): ValidatorFn => {
       Documenttype: [null, Validators.required],
       // bonus: [''],
       authorityid: [null, Validators.required],
+      isPromotion: [false, Validators.required],
       isVariablePay: [{value:'',disabled:true}, Validators.required],
       variablePayAmount: [{value:'',disabled:true}, Validators.required],
       jobValid: [false, Validators.requiredTrue]

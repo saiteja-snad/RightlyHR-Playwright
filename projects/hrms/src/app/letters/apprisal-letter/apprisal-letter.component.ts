@@ -758,13 +758,17 @@ bonusValidator = (salary: number): ValidatorFn => {
           compeffectivedate: this.employeeCompensationData.compeffectivedate,
           employeeId: this.appraisalData.employeeId,
           compensationamount: this.appraisalData.salary,
+          effectiveDate : this.employeeCompensationData.compeffectivedate,
+          jobRole : this.employeeForm.get('JobRole')?.value?.value,
+
         };
         if (loggedInUser.middleName) {
           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
         } else {
           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
         }
-        this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+        const ispromotion =this.employeeForm.get('isPromotion')?.value
+        this.subscription = this.http.postdata(`CustomEmail/AppraisalPromotionLetter?isPromotion=${ispromotion}`, emaildetails,).subscribe({
           next: (data: any) => {
             this.conformationPopup.openSuccessModal('Email has been sent successfully');
             setTimeout(() => {

@@ -1,25 +1,41 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">Remote Login</p>
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'Remote Login'|translate}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
         </div>
-        <div>
+
+        <div class="d-flex align-items-center gap-3">
+             <div>
             @if(rbac.allowedToAccess('Request Remote Login Button.view')) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addremote)" 
            ><i class="bi bi-plus me-2"></i>Request Remote Login</button>
         }
         </div>
+        </div>
     </div>
 
-    <div class="employee-fields-main-container d-flex gap-3 w-100">
-        <!-- <div class="custom-component-left-content">
-            <app-remote-tabs/>
-        </div> -->
-        <div class="custom-setting-right-content p-3">
-            <router-outlet/>
+
+    <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
+    <div class="d-flex gap-3 w-100">
+        <div class="component-left-tabs-container">
+            <app-remotelogin-approval-tabs />
+        </div>
+
+        <div class="component-right-content">
+            <router-outlet></router-outlet>
         </div>
     </div>
 </div>
+
 
 <!--Add Work Form Home-->
 <ng-template #addremote let-modal>

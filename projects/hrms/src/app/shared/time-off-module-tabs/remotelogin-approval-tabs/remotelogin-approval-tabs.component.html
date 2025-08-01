@@ -1,0 +1,47 @@
+
+
+@if(!loading){
+<div class="custom-sub-tabs-container">
+  <ul class="nav flex-column gap-2">
+    @if(rbac.allowedToAccess('Waiting For Approval (Comp Off).view')){
+    <li class="nav-item">
+      <div class="nav-link" [routerLink]="['/time-off/remote/waiting-for-approval']"
+        routerLinkActive="active-nav-link" aria-current="page">
+        <img src="/time-off-icon/waiting-for-approval-icon.png" alt="Icon" class="icon mb-2">
+        <div>Waiting For Approval ({{waitingForApprovalCompOffCount}})</div>
+      </div>
+      <div class="tabs-border-bottom"></div>
+    </li>
+    }
+    @if(rbac.allowedToAccess('Approved (Comp Off).view')){
+    <li class="nav-item">
+      <div class="nav-link" [routerLink]="['/time-off/remote/approved']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/approved-icon.png" alt="Icon" class="icon mb-2">
+        <div>Approved ({{approvalCompOffRequestsCount}})</div>
+      </div>
+      <div class="tabs-border-bottom"></div>
+    </li>
+    }
+    @if(rbac.allowedToAccess('Processed (Comp Off).view')){
+    <li class="nav-item">
+      <div class="nav-link" [routerLink]="['/time-off/remote/processed']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/processed-icon.png" alt="Icon" class="icon mb-2">
+        <div>Processed ({{processedCompOffRequestsCount}})</div>
+      </div>
+      <div class="tabs-border-bottom"></div>
+    </li>
+    }
+    @if(rbac.allowedToAccess('Rejected (Comp Off).view')){
+    <li class="nav-item">
+      <div class="nav-link" [routerLink]="['/time-off/remote/rejected']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/rejected-icon.png" alt="Icon" class="icon mb-2">
+        <div>Rejected ({{rejectedCompOffRequestsCount}})</div>
+      </div>
+    </li>
+    }
+  </ul>
+</div>
+}
+@else {
+<app-sidetabsloaders/>
+}

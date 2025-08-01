@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Signal } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../Interfaces/letters-model';
@@ -13,9 +13,20 @@ import { RbacService } from '../../services/rbac.service';
 import { environment } from '../../../environments/environment';
 import { SignalsService } from '../../services/signals.service';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { RemoteloginApprovalTabsComponent } from "../../shared/time-off-module-tabs/remotelogin-approval-tabs/remotelogin-approval-tabs.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-remote-login',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    ModuleInformationComponent,
+    RemoteloginApprovalTabsComponent,
+    TranslateModule,
+    NgbPopoverModule
+  ],
   templateUrl: './remote-login.component.html',
   styleUrl: './remote-login.component.scss',
 })
@@ -38,6 +49,7 @@ export class RemoteLoginComponent {
   availablebalance!: number;
   totalbalance: any;
   todayDate: string = new Date().toISOString().split('T')[0];
+  moduleinfo: string = '';
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -45,7 +57,7 @@ export class RemoteLoginComponent {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalsService: SignalsService,
-    public formsValidation:FormValidationsService
+    public formsValidation: FormValidationsService
   ) {}
 
   ngOnInit(): void {

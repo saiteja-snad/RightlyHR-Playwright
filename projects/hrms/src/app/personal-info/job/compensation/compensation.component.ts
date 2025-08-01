@@ -32,6 +32,10 @@ export class CompensationComponent implements OnInit,OnDestroy {
   frequencyDetails = [] as IFrequency[];
   compensationdetails = new BehaviorSubject<any>([])
   compensationReason = [] as ICompensation[]
+   variablePayOptions: { name: string, value: boolean }[]  = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false }
+  ];
   loading=false
   empinfo: any
   selectedid: any;
@@ -81,11 +85,37 @@ export class CompensationComponent implements OnInit,OnDestroy {
       paytype: [null, Validators.required],
       overtimeeligibility: [null, Validators.required],
       frequency: [null, Validators.required],
-      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]]
+      isVariablePay: [false, Validators.required],
+      variablePayAmount: [{value:0,disabled:true}, [Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]],
+      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]],
+      nextcompeffectivedate: [null, Validators.required]
     });
   }
-
-
+  numbers(event: KeyboardEvent): boolean {
+    const charCode = event.key.charCodeAt(0);
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+  }
+onVariablePayChange() {
+    const isVariable = this.compForm.get('isVariablePay')?.value;
+    const isVariableUpdate = this.compupdateForm.get('isVariablePay')?.value;
+    if (isVariable === true) {
+      this.compForm.get('variablePayAmount')?.enable();
+      this.compForm.get('variablePayAmount')?.reset();
+    } else {
+      this.compForm.get('variablePayAmount')?.disable();
+      this.compForm.get('variablePayAmount')?.setValue(0);
+    }
+    if(isVariableUpdate === true) {
+      this.compupdateForm.get('variablePayAmount')?.enable();
+      this.compupdateForm.get('variablePayAmount')?.reset();
+    }else{
+       this.compupdateForm.get('variablePayAmount')?.disable();
+      this.compupdateForm.get('variablePayAmount')?.setValue(0);
+    }
+  }
   intizationupdateFrom() {
     this.compupdateForm = this.fb.group({
       compeffectivedate: [null, [Validators.required]],
@@ -93,7 +123,10 @@ export class CompensationComponent implements OnInit,OnDestroy {
       paytype: [null, Validators.required],
       overtimeeligibility: [null, Validators.required],
       frequency: [null, Validators.required],
-      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]]
+      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]],
+      isVariablePay: [false, Validators.required],
+      variablePayAmount: [{value:0,disabled:true}, [Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]],
+      nextcompeffectivedate: [null, Validators.required]
     });
   }
   
@@ -187,8 +220,10 @@ export class CompensationComponent implements OnInit,OnDestroy {
       frequency: formdata.value?.frequency?.frequency1,
       paytype: formdata.value?.paytype?.paytype1,
       compensationamount: this.compForm.get('compensationamount')?.value,
-      status: "Active"
-
+      status: "Active",
+      isVariablePay: formdata.value?.isVariablePay,
+      variablePayAmount: formdata.value?.variablePayAmount || null,
+      nextCompReviewDate: formdata.value?.nextcompeffectivedate ? new Date(formdata.value.nextcompeffectivedate).toISOString().split('T')[0] : null
     }
     console.log(playload)
     this.subscription = this.http.postdata("Compensationdata", playload).subscribe({
@@ -228,9 +263,19 @@ export class CompensationComponent implements OnInit,OnDestroy {
       paytype: data.paytype || '',
       overtimeeligibility: data.overtimeeligibility || '',
       frequency: data.frequency || '',
-      compensationamount: data.compensationamount?.toString() || ''
+      compensationamount: data.compensationamount?.toString() || '',
+      isVariablePay: data.isVariablePay,
+      variablePayAmount: data.variablePayAmount || null,
+      nextcompeffectivedate: data.nextCompReviewDate ? this.formatDateToLocal(data.nextCompReviewDate) : null
     })
-
+    const isVariableUpdate = this.compupdateForm.get('isVariablePay')?.value;
+   if(isVariableUpdate === true) {
+      this.compupdateForm.get('variablePayAmount')?.enable();
+      // this.compupdateForm.get('variablePayAmount')?.reset();
+    }else{
+       this.compupdateForm.get('variablePayAmount')?.disable();
+      this.compupdateForm.get('variablePayAmount')?.setValue(0);
+    }
     // Open the modal
     this.modalService.open(content, {
       centered: true,
@@ -253,8 +298,10 @@ export class CompensationComponent implements OnInit,OnDestroy {
       frequency: formdata.value?.frequency,
       paytype: formdata.value?.paytype,
       compensationamount: this.compupdateForm.get('compensationamount')?.value,
-      status: "Active"
-
+      status: "Active",
+      isVariablePay: formdata.value?.isVariablePay,
+      variablePayAmount: formdata.value?.variablePayAmount || null,
+      nextCompReviewDate: formdata.value?.nextcompeffectivedate ? this.formatDateToLocal(formdata.value.nextcompeffectivedate) : null
     }
     console.log(playload)
     this.subscription = this.http.postdata("Compensationdata/UPDATER", playload).subscribe({

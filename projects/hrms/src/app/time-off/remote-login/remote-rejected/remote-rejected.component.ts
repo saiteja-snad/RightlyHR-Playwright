@@ -11,20 +11,27 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
+import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 
 @Component({
   selector: 'app-remote-rejected',
-  imports: [ CommonModule,
+  imports: [
+    CommonModule,
     NgbPopoverModule,
     FormsModule,
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-    NoDataFoundComponent],
+    TranslateModule,
+    NoDataFoundComponent,
+    InfoIconComponent,
+  ],
   templateUrl: './remote-rejected.component.html',
-  styleUrl: './remote-rejected.component.scss'
+  styleUrl: './remote-rejected.component.scss',
 })
-export class RemoteRejectedComponent implements OnInit,OnDestroy {
+export class RemoteRejectedComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -45,19 +52,18 @@ export class RemoteRejectedComponent implements OnInit,OnDestroy {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
-    public rbac: RbacService,
+    public rbac: RbacService
   ) {
-         // Signal reaction for employee switch
-         effect(() =>{
-          if (this.http.tirggerCountSignal().remote) {
-            this.getRemoteRequests();
-            this.http.tirggerCountSignal.update((status) => ({
-              ...status,
-              remote: false,
-            }));
-          }
-    
-      })
+    // Signal reaction for employee switch
+    effect(() => {
+      if (this.http.tirggerCountSignal().remote) {
+        this.getRemoteRequests();
+        this.http.tirggerCountSignal.update((status) => ({
+          ...status,
+          remote: false,
+        }));
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -76,9 +82,11 @@ export class RemoteRejectedComponent implements OnInit,OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
+    const remoteLoginModuleId = environment.remoteLoginModuleId;
     this.http
-      .getData(`AttendanceRequests/getbyempid/${empId}?requestedCategory=11`)
+      .getData(
+        `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {

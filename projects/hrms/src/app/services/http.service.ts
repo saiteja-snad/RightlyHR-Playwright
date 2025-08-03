@@ -16,14 +16,14 @@ export class HttpService {
     employeeId: number;
     permission: boolean;
     remote: boolean;
-    global: boolean
+    global: boolean;
   }>({
     compOff: false,
     wfh: false,
     employeeId: 0,
     permission: false,
     remote: false,
-    global: false
+    global: false,
   });
   tirggerPendingApprovalCountSignal = signal<{
     compOff: boolean;
@@ -31,9 +31,9 @@ export class HttpService {
     permission: boolean;
     separation: boolean;
     recall: boolean;
-    expenses:boolean;
-    nodue:boolean,
-    timeoff:boolean,
+    expenses: boolean;
+    nodue: boolean;
+    timeoff: boolean;
   }>({
     compOff: false,
     wfh: false,
@@ -41,16 +41,13 @@ export class HttpService {
     separation: false,
     recall: false,
     expenses: false,
-    nodue:false,
-    timeoff:false
-   
+    nodue: false,
+    timeoff: false,
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
-
-
 
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
@@ -59,8 +56,6 @@ export class HttpService {
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
-
-
 
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
@@ -72,20 +67,20 @@ export class HttpService {
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
-  // Function to set the communication service data for basic info 
+  // Function to set the communication service data for basic info
   basicDetailes = new Subject<void>();
   basicDetailesadded$ = this.basicDetailes.asObservable();
   setBasicDetails() {
     this.basicDetailes.next();
   }
 
-    // Function to set the communication service data for basic info 
-    profliepicDetailes = new Subject<void>();
-    profliepicadd$ = this.profliepicDetailes.asObservable();
-    setprofileDetails() {
-      this.profliepicDetailes.next();
-    }
-  
+  // Function to set the communication service data for basic info
+  profliepicDetailes = new Subject<void>();
+  profliepicadd$ = this.profliepicDetailes.asObservable();
+  setprofileDetails() {
+    this.profliepicDetailes.next();
+  }
+
   //funtion to call add desk
   deskadded = new Subject<void>();
   deskDetailesadded$ = this.deskadded.asObservable();
@@ -93,21 +88,21 @@ export class HttpService {
     this.deskadded.next();
   }
 
-    // Function to set the communication service data for basic info 
-    assetsadded = new Subject<void>();
-    assetDetailesadded$ = this.assetsadded.asObservable();
-    setnewassetsDetails() {
-      this.assetsadded.next();
-    }
-  
-        // Function to set the communication service data for basic info 
-    expensescount = new Subject<void>();
-    expensesprocesscount$ = this.expensescount.asObservable();
-    setnewcountDetails() {
-      this.expensescount.next();
-    }
-  
-  //Function to set the communication service data for basic info 
+  // Function to set the communication service data for basic info
+  assetsadded = new Subject<void>();
+  assetDetailesadded$ = this.assetsadded.asObservable();
+  setnewassetsDetails() {
+    this.assetsadded.next();
+  }
+
+  // Function to set the communication service data for basic info
+  expensescount = new Subject<void>();
+  expensesprocesscount$ = this.expensescount.asObservable();
+  setnewcountDetails() {
+    this.expensescount.next();
+  }
+
+  //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
   separationDetailesadded$ = this.separationDetailes.asObservable();
   setseparationDetails() {
@@ -133,16 +128,14 @@ export class HttpService {
     this.activeTabSubject.next(isActive);
   }
 
-
-  // OnBehalf Of 
+  // OnBehalf Of
   onBehalfOfTriggerSignal = signal<boolean>(false);
-
 
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
-// function for employeid TIMEOFF
- private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
+  // function for employeid TIMEOFF
+  private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
   selectedEmployeeIdTimeoff$ = this.selectedEmployeeIdTimeoff.asObservable();
   // Method to update the employeeId
@@ -151,8 +144,8 @@ export class HttpService {
     console.log('Selected Employee Timeoff ID:', id);
   }
 
-// function for employeid COMPOFF
- private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
+  // function for employeid COMPOFF
+  private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
   selectedEmployeeIdCompOff$ = this.selectedEmployeeIdCompOff.asObservable();
   // Method to update the employeeId
@@ -161,7 +154,7 @@ export class HttpService {
     console.log('Selected Employee Compoff ID:', id);
   }
 
-// function for employeid wfh
+  // function for employeid wfh
   private selectedEmployeeIdWFH = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
   selectedEmployeeIdWFH$ = this.selectedEmployeeIdWFH.asObservable();
@@ -171,21 +164,33 @@ export class HttpService {
     console.log('Selected Employee WFH ID:', id);
   }
 
-// function for employeid permission
+  // function for employeid remote login
+  private selectedEmployeeIdRemoteLogin = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdRemoteLogin$ =
+    this.selectedEmployeeIdRemoteLogin.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdRemoteLogin(id: any): void {
+    this.selectedEmployeeIdWFH.next(id);
+    console.log('Selected Employee remote login ID:', id);
+  }
+
+  // function for employeid permission
   private selectedEmployeeIdPermission = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
-  selectedEmployeeIdPermission$ = this.selectedEmployeeIdPermission.asObservable();
+  selectedEmployeeIdPermission$ =
+    this.selectedEmployeeIdPermission.asObservable();
   // Method to update the employeeId
   setEmployeeIdPermission(id: any): void {
     this.selectedEmployeeIdPermission.next(id);
     console.log('Selected Employee Permission ID:', id);
   }
 
-
-// function for employeid regularization
+  // function for employeid regularization
   private selectedEmployeeIdRegularization = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
-  selectedEmployeeIdRegularization$ = this.selectedEmployeeIdRegularization.asObservable();
+  selectedEmployeeIdRegularization$ =
+    this.selectedEmployeeIdRegularization.asObservable();
   // Method to update the employeeId
   setEmployeeIdRegularization(id: any): void {
     this.selectedEmployeeIdRegularization.next(id);
@@ -193,13 +198,12 @@ export class HttpService {
   }
 
   // function for employeid itsupport team ticket
- private refreshSubject = new Subject<void>();
+  private refreshSubject = new Subject<void>();
   refreshRequested$ = this.refreshSubject.asObservable();
   // Method to update the employeeId
-   requestRefresh() {
+  requestRefresh() {
     console.log('Selected Employee team ticket ID:', 'refresh');
     this.refreshSubject.next();
-    
   }
   //function to update the desk Updatelocation
   deskUpdateLocationId(id: string | null) {
@@ -255,15 +259,15 @@ export class HttpService {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
 
-  getAllSignatureEmployeesData(url:string){
+  getAllSignatureEmployeesData(url: string) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
 
-  employeeSignatureAuthority(url:string, data: any){
-    return this.http.post(`${this.ApiUrl}${url}`,data);
+  employeeSignatureAuthority(url: string, data: any) {
+    return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
-  deleteSignatureEmployee(url:string){
+  deleteSignatureEmployee(url: string) {
     return this.http.post(`${this.ApiUrl}${url}`, {});
   }
 
@@ -324,7 +328,7 @@ export class HttpService {
   DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
     return this.http.post(endpoint, params, {
       observe: 'response',
-      responseType: 'blob'
+      responseType: 'blob',
     });
   }
   getDataWithQuery(url: string, directoryPath: string) {
@@ -599,7 +603,6 @@ export class HttpService {
     );
   }
 
-
   deskTotalCountSubject = new BehaviorSubject<number>(0);
   deskAvailableCountSubject = new BehaviorSubject<number>(0);
 
@@ -644,7 +647,6 @@ export class HttpService {
     this.avilableassetCountSubject.next(count);
   }
 
-
   setallocatedAssetCount(count: number) {
     this.allocatedassetCountSubject.next(count);
   }
@@ -652,7 +654,6 @@ export class HttpService {
   setundermatinaceAssetCount(count: number) {
     this.undermatinaceassetCountSubject.next(count);
   }
-
 
   setinactiveSubjectAssetCount(count: number) {
     this.inactiveaceassetCountSubject.next(count);
@@ -663,18 +664,36 @@ export class HttpService {
   }
 
   getFilterCompoffDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`
+    );
+  }
+
+  getFilterRemoteLoginDataByID(
+    employeeId: number,
+    remoteLoginModuleId: number,
+    params?: any
+  ) {
+    return this.http.get(
+      `${this.ApiUrl}AttendanceRequests/getbyempid/${employeeId}?requestedCategory=${remoteLoginModuleId}&year=${params}`
+    );
   }
 
   getFilterWFHDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`
+    );
   }
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`
+    );
   }
 
   getFilterPermissionDataByID(employeeId: number, params?: any) {
-    return this.http.get(`${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`);
+    return this.http.get(
+      `${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`
+    );
   }
 }

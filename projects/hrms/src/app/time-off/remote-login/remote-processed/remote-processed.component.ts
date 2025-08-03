@@ -11,6 +11,9 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
+import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 
 @Component({
   selector: 'app-remote-processed',
@@ -19,6 +22,8 @@ import { ICompOff } from '../../comp-off/compoff.modal';
     FormsModule,
     PaginatorModule,
     DropdownModule,
+    TranslateModule,
+    InfoIconComponent,
     DateformatPipe, NoDataFoundComponent],
   templateUrl: './remote-processed.component.html',
   styleUrl: './remote-processed.component.scss'
@@ -75,9 +80,11 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
+    const remoteLoginModuleId = environment.remoteLoginModuleId;
     this.http
-      .getData(`AttendanceRequests/getbyempid/${empId}?requestedCategory=11`)
+      .getData(
+        `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {

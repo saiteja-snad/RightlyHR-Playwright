@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Signal } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
@@ -16,6 +16,12 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { RemoteloginApprovalTabsComponent } from "../../shared/time-off-module-tabs/remotelogin-approval-tabs/remotelogin-approval-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { Select } from 'primeng/select';
+import { DropdownModule } from 'primeng/dropdown';
+// import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-remote-login',
   imports: [
@@ -25,7 +31,10 @@ import { TranslateModule } from '@ngx-translate/core';
     ModuleInformationComponent,
     RemoteloginApprovalTabsComponent,
     TranslateModule,
-    NgbPopoverModule
+    NgbPopoverModule,
+    DropdownModule,
+    Select,
+    // TranslateModule,
   ],
   templateUrl: './remote-login.component.html',
   styleUrl: './remote-login.component.scss',
@@ -50,6 +59,10 @@ export class RemoteLoginComponent {
   totalbalance: any;
   todayDate: string = new Date().toISOString().split('T')[0];
   moduleinfo: string = '';
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -57,7 +70,9 @@ export class RemoteLoginComponent {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalsService: SignalsService,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    public readonly router: Router,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {}
 
   ngOnInit(): void {
@@ -65,10 +80,156 @@ export class RemoteLoginComponent {
     this.intializewfhForm();
 
     this.handleAvailingChange();
+
+    this.getTeamManagersDetails();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear),
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/wfh': MODULE_INFOS.ATTENDANCE_WFH_REPORTS_MODULE_INFO,
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
+      url.includes(route)
+    );
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear; // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
   }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  // function to get the data of employees by hierarchy
+  getEmployeeInfo = [] as any;
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log('getEmployeesByhierarchy', response);
+          if (response && response.length) {
+            // No filter
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            }));
+            console.log('getEmployeeInfo', this.getEmployeeInfo);
+          }
+        },
+      });
+  }
+
+  // getRemoteRequests() {
+  //   let empId = this.empinfo.employeeId;
+  //   const remoteLoginModuleId = environment.remoteLoginModuleId;
+  //   // this.dataLoad = true;
+  //   this.http
+  //     .getData(
+  //       `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+  //     )
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response: any) => {
+  //         this.remoteLogin = response;
+  //         this.dataLoad = false;
+  //         this.approvedRemotes = this.remoteLogin?.filter(
+  //           (element: { status: string }) =>
+  //             element.status === 'Waiting for Approval'
+  //         );
+  //       },
+  //       error: (error) => {
+  //         this.dataLoad = false;
+  //         console.error('Error fetching data:', error);
+  //         this.approvedRemotes = []; // Set to empty array on error
+  //       },
+  //     });
+  // }
+
+  pendingCount = 0;
+  remoteLogin: any[] = [];
+  ApprovedCount = 0;
+  rejectedCount = 0;
+  ProcessedCount = 0;
+  disaplyapplybutton = true;
+  onCheckemployee(employeedId: any) {
+    this.http.setEmployeeIdRemoteLogin(employeedId);
+    this.ProcessedCount = 0;
+    this.rejectedCount = 0;
+    this.ApprovedCount = 0;
+    this.pendingCount = 0;
+    this.remoteLogin = [];
+    if (employeedId) {
+      this.disaplyapplybutton = false;
+      this.getRemoteLoginRequests(employeedId);
+    } else {
+      this.http.setEmployeeIdRemoteLogin(null);
+      this.disaplyapplybutton = true;
+      this.getRemoteLoginRequests(this.empinfo.employeeId);
+    }
+  }
+
+  getRemoteLoginRequests(employeeId?: any) {
+    let empId = employeeId;
+    const remoteLoginModuleId = environment.remoteLoginModuleId;
+    this.http
+      .getData(
+        `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.remoteLogin = response;
+          this.pendingCount = this.remoteLogin.filter(
+            (element: { status: string }) =>
+              element.status === 'Waiting for Approval'
+          ).length;
+          this.ApprovedCount = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Approved'
+          ).length;
+          this.rejectedCount = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Rejected'
+          ).length;
+          this.ProcessedCount = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Processed'
+          ).length;
+        },
+        error: (reason: any) => console.log(reason),
+      });
   }
 
   intializewfhForm() {
@@ -189,7 +350,7 @@ export class RemoteLoginComponent {
         requestedComments: this.remotedata.requestedComments,
         durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
         duration: isFullDay ? 1 : 0.5,
-        status: 'Processed',
+        status: 'Waiting for Approval',
         reason: formData.reason,
         requestedCategory: environment.remoteLoginModuleId,
         requestedBy: this.empinfo.employeeId,

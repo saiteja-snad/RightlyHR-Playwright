@@ -250,7 +250,12 @@ export const permissionsData = [
   { fields: 'My Team (WFH)', View: false, Update: false, Create: false, Delete: false },
 
   //Remote Login
-  { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },   
+  { fields: 'Waiting For Approval (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (Remote Login)', View: false, Update: false, Create: false, Delete: false },
 
 
   //Comp Off Sub Tabs Section    
@@ -301,6 +306,7 @@ export const permissionsData = [
   //Pending Approvals Sub Tabs Section
   { fields: 'Time Off Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Tab', View: false, Update: false, Create: false, Delete: false },
@@ -319,6 +325,10 @@ export const permissionsData = [
   //Pending Approval WFH Off Tabs Section
   { fields: 'For You (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (WFH)', View: false, Update: false, Create: false, Delete: false },
+
+  //Pending Approval Remote Login Off Tabs Section
+  { fields: 'For You (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'For Role (Remote Login)', View: false, Update: false, Create: false, Delete: false },
 
 
   //Pending Approval Comp Off Tabs Section

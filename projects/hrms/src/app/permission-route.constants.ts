@@ -246,6 +246,17 @@ export const PENDING_APPROVALS_WFH_SUB_TABS = [
   { route: '/time-off/pending-approvals/wfh/for-your-role', permission: 'For Role (WFH).view' },
 ]
 
+export const PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS = [
+  {
+    route: '/time-off/pending-approvals/remote/for-you',
+    permission: 'For You (Remote Login).view',
+  },
+  {
+    route: '/time-off/pending-approvals/remote/for-your-role',
+    permission: 'For Role (Remote Login).view',
+  },
+];
+
 export const PENDING_APPROVALS_COMP_OFF_SUB_TABS = [
   { route: '/time-off/pending-approvals/comp-off/for-you', permission: 'For You (Comp Off).view' },
   { route: '/time-off/pending-approvals/comp-off/for-your-role', permission: 'For Role (Comp Off).view' },

@@ -4,11 +4,11 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Comments</th>
-          <th>Applied Date</th>
-          <!-- <th>Status</th> -->
+          <th>{{'Worked Date' | translate}}</th>
+          <th>{{'Availed' | translate}}</th>
+          <th>{{'Reason' | translate}}</th>
+          <th>{{'Applied Date '|translate}}</th>
+          <th>{{'Status'|translate}}</th>
         </tr>
       </thead>
 
@@ -34,7 +34,7 @@
               <ng-template #res>-</ng-template>
             </td>
             <td>{{ remoteRequest.requestedDate | dateformat }}</td>
-            <!-- <td>{{ RemoteRequest.status }}</td> -->
+            <td>{{ remoteRequest.status }}</td>
           </tr>
         </ng-container>
 

@@ -3,26 +3,49 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <!-- <th>Reason</th> -->
-          <th>Applied Date</th>
-          <th>Status</th>
+          <th>{{'Worked Date' | translate}}</th>
+          <th>{{'Availed' | translate}}</th>
+          <th>{{'Reason' | translate}}</th>
+          <th>{{'Rejected Reason' | translate}}</th>
+          <th>{{'Applied Date '|translate}}</th>
+          <th>{{'Status'|translate}}</th>
         </tr>
       </thead>
 
       <tbody>
         <ng-container *ngIf="approvedRemotes!.length > 0; else noDataTemplate">
-          <tr *ngFor="let RemoteRequest of approvedRemotes; let i = index">
-            <td>{{ RemoteRequest.startTime ? (RemoteRequest.startTime | dateformat) : ' -' }}</td>
-            <td [ngSwitch]="RemoteRequest.durationType">
+          <tr *ngFor="let remoteRequest of approvedRemotes; let i = index">
+            <td>{{ remoteRequest.startTime ? (remoteRequest.startTime | dateformat) : ' -' }}</td>
+            <td [ngSwitch]="remoteRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>
               <span *ngSwitchCase="3">Second Half</span>
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>{{ RemoteRequest.requestedDate | dateformat }}</td>
-            <td>{{ RemoteRequest.status }}</td>
+              <td>
+              <div class="mt-2" *ngIf="remoteRequest.reason;else res">
+                <a type="button" [ngbPopover]="reason">
+                  <app-info-icon />
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{remoteRequest.reason}}</p>
+                </ng-template>
+              </div>
+              <ng-template #res>-</ng-template>
+            </td>
+                <td>
+              <div class="mt-2" *ngIf="remoteRequest.reason;else res">
+                <a type="button" [ngbPopover]="reason">
+                  <app-info-icon />
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{remoteRequest.reason}}</p>
+                </ng-template>
+              </div>
+              <ng-template #res>-</ng-template>
+            </td>
+            <td>{{ remoteRequest.requestedDate | dateformat }}</td>
+            <td>{{ remoteRequest.status }}</td>
           </tr>
         </ng-container>
 

@@ -14,6 +14,8 @@ import { ICompOff } from '../../comp-off/compoff.modal';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -23,6 +25,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
+    TranslateModule,
     NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
@@ -74,18 +77,21 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
+    const remoteLoginModuleId= environment.remoteLoginModuleId;
     this.dataLoad = true;
     this.http
-      .getData(`AttendanceRequests/getbyempid/${empId}?requestedCategory=11`)
+      .getData(
+        `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.remoteLogin = response;
           this.dataLoad = false;
           this.approvedRemotes = this.remoteLogin?.filter(
-            (element: { status: string }) => element.status === 'Processed'
+            (element: { status: string }) =>
+              element.status === 'Waiting for Approval'
           );
-          
         },
         error: (error) => {
           this.dataLoad = false;

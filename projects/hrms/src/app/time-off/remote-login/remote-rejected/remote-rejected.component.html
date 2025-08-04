@@ -5,8 +5,8 @@
         <tr>
           <th>{{'Worked Date' | translate}}</th>
           <th>{{'Availed' | translate}}</th>
-          <th>{{'Reason' | translate}}</th>
-          <th>{{'Rejected Reason' | translate}}</th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th class="text-center"> {{'Rejected Reason' | translate}}</th>
           <th>{{'Applied Date '|translate}}</th>
           <th>{{'Status'|translate}}</th>
         </tr>
@@ -22,18 +22,18 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-              <td>
-              <div class="mt-2" *ngIf="remoteRequest.reason;else res">
+              <td class="text-center">
+              <div class="mt-2" *ngIf="remoteRequest.requestedComments;else res">
                 <a type="button" [ngbPopover]="reason">
                   <app-info-icon />
                 </a>
                 <ng-template #reason>
-                  <p class="mb-0">{{remoteRequest.reason}}</p>
+                  <p class="mb-0">{{remoteRequest.requestedComments}}</p>
                 </ng-template>
               </div>
               <ng-template #res>-</ng-template>
             </td>
-                <td>
+                <td class="text-center">
               <div class="mt-2" *ngIf="remoteRequest.reason;else res">
                 <a type="button" [ngbPopover]="reason">
                   <app-info-icon />

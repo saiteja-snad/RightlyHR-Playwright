@@ -22,6 +22,10 @@ export class SignalsService {
 
   // RemoteLoginRequest Signal
   remoteLoginRequestTriggerSignal = signal<boolean>(false);
+  remoteLoginForYouTriggerSignal = signal<boolean>(false);
+  retoteLoginForRoleTriggerSignal = signal<boolean>(false);
+  remoteLoginSidNavCountTriggerSignal = signal<boolean>(false);
+
 
   //Separation request
   separationForYouTriggerSignal = signal<boolean>(false);

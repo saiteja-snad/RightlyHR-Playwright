@@ -82,6 +82,7 @@ export class RemoteLoginComponent {
     this.handleAvailingChange();
 
     this.getTeamManagersDetails();
+    this.initiateUpdateModuleInfo()
     // year selection values
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
@@ -107,8 +108,10 @@ export class RemoteLoginComponent {
 
   updateModuleInfo() {
     const url = this.router.url;
+    console.log(url);
+    
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/wfh': MODULE_INFOS.ATTENDANCE_WFH_REPORTS_MODULE_INFO,
+      '/time-off/remote': MODULE_INFOS.TIME_OFF_REMOTE_LOGIN_MODULE_INFO,
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)
@@ -187,13 +190,13 @@ export class RemoteLoginComponent {
   ProcessedCount = 0;
   disaplyapplybutton = true;
   onCheckemployee(employeedId: any) {
-    this.http.setEmployeeIdRemoteLogin(employeedId);
     this.ProcessedCount = 0;
     this.rejectedCount = 0;
     this.ApprovedCount = 0;
     this.pendingCount = 0;
     this.remoteLogin = [];
     if (employeedId) {
+      this.http.setEmployeeIdRemoteLogin(employeedId);
       this.disaplyapplybutton = false;
       this.getRemoteLoginRequests(employeedId);
     } else {
@@ -205,10 +208,9 @@ export class RemoteLoginComponent {
 
   getRemoteLoginRequests(employeeId?: any) {
     let empId = employeeId;
-    const remoteLoginModuleId = environment.remoteLoginModuleId;
     this.http
-      .getData(
-        `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+      .getFilterRemoteLoginDataByID(
+       empId,this.selectedYear
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -237,7 +239,7 @@ export class RemoteLoginComponent {
       workedDate: ['', [Validators.required]],
       availing: ['', Validators.required],
       halfType: [''],
-      reason: ['', Validators.required],
+      reason: ['', [Validators.required,Validators.minLength(10)]],
     });
   }
 
@@ -347,11 +349,10 @@ export class RemoteLoginComponent {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
-        requestedComments: this.remotedata.requestedComments,
+        requestedComments: formData.reason,
         durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
         duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
-        reason: formData.reason,
         requestedCategory: environment.remoteLoginModuleId,
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
@@ -368,6 +369,7 @@ export class RemoteLoginComponent {
             );
             this.addremoteForm.reset();
             this.signalsService.remoteLoginRequestTriggerSignal.set(true);
+            this.signalsService.remoteLoginSidNavCountTriggerSignal.set(true);
           },
           error: (err: any) => {
             this.spinnerLoader = false;

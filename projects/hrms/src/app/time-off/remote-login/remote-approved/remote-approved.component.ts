@@ -14,7 +14,7 @@ import { ICompOff } from '../../comp-off/compoff.modal';
 import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-remote-approved',
   imports: [  CommonModule,
@@ -45,12 +45,16 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedYear: any;
+  selectempid: any;
+
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
          // Signal reaction for employee switch
          effect(() =>{
@@ -66,9 +70,21 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
-    this.getRemoteRequests();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdRemoteLogin$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getRemoteLoginEMPRequests();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getRemoteRequests();
+          }
+        });
+      }
+    });
   }
 
   onRowsChange() {
@@ -81,10 +97,32 @@ export class RemoteApprovedComponent implements OnInit,OnDestroy{
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
-    const remoteLoginModuleId = environment.remoteLoginModuleId;
     this.http
-      .getData(
-        `AttendanceRequests/getbyempid/${empId}?requestedCategory=${remoteLoginModuleId}`
+      .getFilterRemoteLoginDataByID(
+        empId,this.selectedYear
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.remoteLogin = response;
+          this.approvedRemotes = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Approved'
+          );
+          this.approvedRemotesCount = this.approvedRemotes.length;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.approvedRemotes = []; // Set to empty array on error
+        },
+      });
+  }
+
+  getRemoteLoginEMPRequests() {
+    let empId = this.selectempid;
+    this.http
+      .getFilterRemoteLoginDataByID(
+        empId,this.selectedYear
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe({

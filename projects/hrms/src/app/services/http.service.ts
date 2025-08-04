@@ -171,7 +171,7 @@ export class HttpService {
     this.selectedEmployeeIdRemoteLogin.asObservable();
   // Method to update the employeeId
   setEmployeeIdRemoteLogin(id: any): void {
-    this.selectedEmployeeIdWFH.next(id);
+    this.selectedEmployeeIdRemoteLogin.next(id);
     console.log('Selected Employee remote login ID:', id);
   }
 
@@ -671,12 +671,12 @@ export class HttpService {
 
   getFilterRemoteLoginDataByID(
     employeeId: number,
-    remoteLoginModuleId: number,
     params?: any
   ) {
     return this.http.get(
-      `${this.ApiUrl}AttendanceRequests/getbyempid/${employeeId}?requestedCategory=${remoteLoginModuleId}&year=${params}`
+      `${this.ApiUrl}Timeoff/getRemoteLoginRequests/${employeeId}?year=${params}`
     );
+    
   }
 
   getFilterWFHDataByID(employeeId: number, params?: any) {

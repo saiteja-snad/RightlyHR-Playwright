@@ -19,8 +19,6 @@
     </div>
 
     <div class="d-flex align-items-center gap-3">
-
-
        @if (rbac.allowedToAccess('My Team (Remote Login).view')) {
             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
@@ -42,13 +40,8 @@
                     </div>
                 </form>
             </div>
-
-
-
-
-
       <div>
-        @if(rbac.allowedToAccess('Request Remote Login Button.view')) {
+        @if(rbac.allowedToAccess('Request Remote Login Button.view') && disaplyapplybutton) {
         <button
           type="button"
           class="custom-btn btn-primary"
@@ -216,6 +209,9 @@
             <div class="form-label custom-label text-end my-1">
               {{ addremoteForm.get("reason")?.value?.length || 0 }}/250
             </div>
+            <div class="error-msg" *ngIf="addremoteForm.get('reason')?.errors?.['minlength']">
+                            Reason must be at least 10 characters
+                    </div>
             <div
               class="error-msg"
               *ngIf="

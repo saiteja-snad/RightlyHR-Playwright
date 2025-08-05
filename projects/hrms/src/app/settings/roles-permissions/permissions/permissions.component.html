@@ -1335,7 +1335,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectremoteloginsubtabs
-                                        (change)="toggleSelectAll(RemoteLoginModuleSubTabs, selectwfhsubtabs?.checked, isonlyviewfunction.bind(this))"
+                                        (change)="toggleSelectAll(RemoteLoginModuleSubTabs, selectremoteloginsubtabs?.checked, isonlyviewfunction.bind(this))"
                                         [checked]="isAllSelected(RemoteLoginModuleSubTabs)"
                                         [indeterminate]="isSomeSelected(RemoteLoginModuleSubTabs)"
                                         [disabled]="!roleToFilter?.id">

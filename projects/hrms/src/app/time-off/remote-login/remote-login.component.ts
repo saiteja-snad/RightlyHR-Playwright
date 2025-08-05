@@ -470,8 +470,6 @@ export class RemoteLoginComponent {
   }
 
    weekendAndHolidaysCheck(selectedDate:string){
-    console.log('selectedDate', selectedDate);
-    
       this.dateCheckWithHoliday(selectedDate);
       this.checkWeekends(selectedDate);
     }
@@ -486,9 +484,7 @@ export class RemoteLoginComponent {
           element.holidayDate = `${year}-${month}-${day}`;
         });
       }
-      console.log(this.holidaysData?.orgHolidaysItems?.find((holiday: any) => holiday.holidayDate === selectedDate));
-      
-      const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate);
+      const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate && holiday.isOptional == false);
       this.isHolidaySelected = isDatePresent;
     }
   

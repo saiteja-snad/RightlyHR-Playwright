@@ -120,10 +120,10 @@ export const TIME_OFF_SUB_TABS = [
 ]
 
 export const REMOTE_LOGIN_SUB_TABS = [
-  { route: '/time-off/remote/waiting-for-approval', permission: 'Remote Login Module.view' },
-  { route: '/time-off/remote/approved', permission: 'Remote Login.view' },
-  { route: '/time-off/remote/processed', permission: 'Remote Login.view' },
-  { route: '/time-off/remote/rejected', permission: 'Remote Login.view', },
+  { route: '/time-off/remote/waiting-for-approval', permission: 'Waiting For Approval (Remote Login).view' },
+  { route: '/time-off/remote/approved', permission: 'Approved (Remote Login).view' },
+  { route: '/time-off/remote/processed', permission: 'Processed (Remote Login).view' },
+  { route: '/time-off/remote/rejected', permission: 'Rejected (Remote Login).view', },
 ]
 
 export const COMP_OFF_SUB_TABS = [

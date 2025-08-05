@@ -16,6 +16,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { IEmployeeIdentity } from '../../../letters/appointment-letter/appointment-letter-model';
 
 @Component({
   selector: 'app-appointment-letter-acknowledgement',
@@ -34,7 +35,7 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
   currentDate: any;
 
   subscription!: Subscription;
-
+ panDetails: IEmployeeIdentity[] = [];
   constructor(
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
@@ -72,9 +73,19 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
     console.log(this.appointmentletter);
     this.getJobdetails(this.appointmentletter);
     this.getEmployeeAddress(this.appointmentletter.employeeId);
+    this.getIdentityByEmpid(this.appointmentletter.employeeId);
     this.getAuthorityDetails();
   }
-
+  getIdentityByEmpid(employeeId: number) {
+    this.subscription = this.http.getData(`IdentityTable/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.panDetails = data.filter((item: { identityType: string; }) => item.identityType === 'PAN');
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    })
+  }
   formatDatewithDate(date: Date): string | void {
     if (date) {
       return moment(date).format('YYYY-MM-DD');

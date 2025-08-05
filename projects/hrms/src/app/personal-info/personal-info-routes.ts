@@ -40,6 +40,10 @@ export default [
         ]
     },
     {
-        path: 'documents', component: DocumentsComponent, data: { permission: 'Employee Info Documents Tab.view' }
+        path: 'documents',children: [
+            { path: '', redirectTo: 'general-documents', pathMatch: 'full' },
+            { path: 'general-documents', loadComponent: () => import('./documents/documents.component').then((m) => m.DocumentsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
+            { path: 'letter-acknowledge-documents', loadComponent: () => import('./letters-acknowledgement/document-acknowledgement-tabs/document-acknowledgement-tabs.component').then((m) => m.DocumentAcknowledgementTabsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
+        ]
     },
 ] as Route[];

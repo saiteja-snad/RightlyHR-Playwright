@@ -65,6 +65,11 @@
                                                         (click)="openpopup(openpopupAppraisalAcknowledgement,item)"><span><u>Acknowledge</u></span>
                                                     </a>
                                                 </div>
+                                                 <div *ngIf="item?.letterType?.toLowerCase() === 'salary revision letter'">
+                                                    <a class="link-btn text-primary"
+                                                        (click)="openpopup(promtionAcknowledgement,item)"><span><u>Acknowledge</u></span>
+                                                    </a>
+                                                </div>
                                             </ng-container>
                                             <ng-template #acknowledgementNotApplicable>
                                                 <span *ngIf="item?.status?.toLowerCase() === 'rejected'">No</span>
@@ -344,6 +349,18 @@
         </div>
         <div class="popup-content">
             <app-probation-extension-letter-acknowledgement [letterdata]="selectedData" />
+        </div>
+    </div>
+</ng-template>
+<!-- Probation Extension Acknowledgment Modal -->
+<ng-template #openpopupSaleryRevisionAcknowledgement let-modal>
+    <div class="popup-container" ngbAutofocus>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">{{folder}}</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="popup-content">
+            <app-salery-revision-letter-acknowedgement [letterdata]="selectedData" />
         </div>
     </div>
 </ng-template>

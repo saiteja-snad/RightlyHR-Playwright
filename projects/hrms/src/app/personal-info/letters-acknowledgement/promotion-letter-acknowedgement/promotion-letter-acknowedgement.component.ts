@@ -26,7 +26,8 @@ export class PromotionLetterAcknowedgementComponent {
   promotiondata = {} as any;
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
-  Status: any
+  Status: any;
+  employeeForm!: FormGroup;
   Employeeinfo = {} as any;
   subscription!: Subscription;
   employeedata = {} as any;
@@ -34,7 +35,8 @@ export class PromotionLetterAcknowedgementComponent {
   employeeCompensationDetails = [] as any;
   empdata = {} as any;
   isacknowledged = true;
-
+incrementSalary: any;
+previusSalary:any
   spinnerLoader = false;
   isRejecting = false;
   rejectForm!: FormGroup;
@@ -43,7 +45,9 @@ export class PromotionLetterAcknowedgementComponent {
   grossSalary = {} as any;
   promotionDate: any;
   PromotionFile!: File;
-
+    gender: any;
+  gender2: any;
+    jobErrorMessage!: string;
   @Input() letterdata: any;
 
   constructor(
@@ -58,7 +62,7 @@ export class PromotionLetterAcknowedgementComponent {
 
   ngOnInit(): void {
     this.getEmployeeId();
-    this.getdatepromotion();
+    // this.getdatepromotion();
     this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.pattern(/^(?!\s).*/)]]
     });
@@ -76,12 +80,20 @@ export class PromotionLetterAcknowedgementComponent {
     this.promotiondata.dateOfJoining = this.formatDatewithDate(
       this.promotiondata.dateOfJoining
     );
-
+ 
     console.log('Promotion Data:', this.promotiondata);
     // this.getEmployeeId()
+    this.getdatepromotion();
     this.getJobDetails(this.promotiondata);
-    this.getCompensationById(this.promotiondata);
+    // this.getCompensationById(this.promotiondata);
+    this.getIssuedEmployeebyId(this.promotiondata);
     this.getAuthorityDetails();
+     if (this.promotiondata.gender == 'Male') {
+      return (this.gender = 'Mr.');
+    } else {
+      return (this.gender = 'Ms.');
+    }
+  
     //  this.onclickDesignation();
   }
   openmodel(content: any) {
@@ -109,14 +121,14 @@ export class PromotionLetterAcknowedgementComponent {
   }
 
   //function for issed by
-  getIssuedEmployeebyId() {
-    this.employeedata = this.Employeeinfo.firstName + " " + this.Employeeinfo.lastName
+  getIssuedEmployeebyId(Employee: any) {
+    this.employeedata = Employee.firstName + " " + Employee.lastName
     console.log(this.employeedata);
   }
 
   //get offer letter Authority list 
   getAuthorityDetails() {
-    let offertype = 'Promotion Letter'
+    let offertype = 'Salary Revision Letter'
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -131,6 +143,7 @@ export class PromotionLetterAcknowedgementComponent {
     this.modalService.open(content, { centered: true });
   }
   //get jobdetails
+  getjobrole:any;
   getJobDetails(Employee: any) {
     //let EmployeeId = parseInt(this.promotiondata.employeeId)
     //console.log(EmployeeId);
@@ -139,214 +152,246 @@ export class PromotionLetterAcknowedgementComponent {
       next: (data: any) => {
         console.log('Job Details:', data);
         ///let jobdetails = data.reverse();
-        Employee.jobRole = data[0].jobRole
+        Employee.jobRole = data.reverse()[0].jobRole;
+        this.getjobrole = Employee.jobRole;
         console.log('Job Role:', Employee.jobRole);
       }
     })
   }
+     docType :any;
   //get date promotion
   getdatepromotion() {
-
+   
+   const letterType = 'Salary Revision Letter';
     //let EmployeeId = parseInt(this.promotiondata.employeeId)
     //console.log(EmployeeId);
 
-    this.subscription = this.http.getData(`AppraisalLetter/getgeneratedappraisalpromotionletter?employeeId=9059&letterType=Promotion%20Letter`).subscribe({
+    this.subscription = this.http.getData(`AppraisalLetter/getgeneratedappraisalpromotionletter?employeeId=${this.Employeeinfo.employeeId}&letterType=${encodeURIComponent(letterType)}`).subscribe({
       next: (data: any) => {
         console.log('date Details:', data);
         ///let jobdetails = data.reverse();
         this.promotionDate = data.issuedDate;
+        this.docType = data.docType;
+
         console.log('Issued Date:', this.promotionDate);
       }
     })
 
   }
   //get compensation details by empid
-  getCompensationById(Employee: any) {
-    let EmployeeId = this.promotiondata.employeeId;
-    console.log('Employee ID90:', EmployeeId);
-    this.subscription = this.http.getData(`Compensationdata/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        let res = data[0];
-        this.employeeCompensationDetails = res;
-        Employee.salary = res.compensationamount
-        Employee.compeffectivedate = res.compeffectivedate
-        Employee.grossby = 12
-        Employee.grossSalary = Math.round(res.compensationamount / Employee.grossby)
-        this.grossSalary = Employee.grossSalary
-        if (this.promotiondata.pf == true || this.promotiondata.pf == false) {
-          switch (this.promotiondata.pf) {
-            case true:
-              if (this.promotiondata.esic == false) {
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
 
-                if (Employee.pfContribution >= 1800) {
-                  Employee.pfContribution = 1800;
-                }
+ getCompensationByIdsalery(Employee: any) {
+    this.subscription = this.http
+      .getData(`Compensationdata/${Employee.employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          if(!data || data.length == 0){
+            this.jobErrorMessage = 'No Compensation details found for this employee.';
+            this.employeeForm.get('jobValid')?.setValue(false);
+          }else{
+            let res = data.reverse()[0];
+            if (data.length > 1) {
+              this.previusSalary = data[1];
+              this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
+            } else {
+              this.previusSalary = { compensationamount: 0 };
+              this.incrementSalary = 0;
+            }
+            this.employeeCompensationDetails = res;
+            this.promotiondata.salary = res.compensationamount;
+            this.promotiondata.compeffectivedate = res.compeffectivedate;
+            //CTC calculation stated
+            Employee.grossby = 12;
+            Employee.grossSalary = Math.round(
+              res.compensationamount / Employee.grossby
+            );
+            this.grossSalary = Employee.grossSalary;
+            if (this.promotiondata.pf == true || this.promotiondata.pf == false) {
+              switch (this.promotiondata.pf) {
+                case true:
+                  if (this.promotiondata.esic == false) {
+                    Employee.pfContribution = Math.round(Employee.grossSalary * (6.719 / 100));
+                    if (Employee.pfContribution >= 1800) {
+                      Employee.pfContribution = 1800;
+                    }
+                  } else if (Employee.grossSalary >= 23195) {
+                    Employee.pfContribution = Math.round(Employee.grossSalary * (6.717 / 100));
+                    if (Employee.pfContribution >= 1800) {
+                      Employee.pfContribution = 1800;
+                    }
+                  }
+                  else if (Employee.grossSalary <= 23195) {
+                    Employee.pfContribution = Math.round(
+                      Employee.grossSalary * (6.519 / 100)
+                    );
+                    if (Employee.pfContribution >= 1800) {
+                      Employee.pfContribution = 1800;
+                    }
+                  } else {
+                    Employee.pfContribution = Math.round(
+                      Employee.grossSalary * (6.719 / 100)
+                    );
+                  }
+                  break;
+                case false:
+                  Employee.pfContribution = 0;
+                  break;
+                default:
               }
-              else if (Employee.grossSalary >= 23195) {
-
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.717 / 100)));
-
-                if (Employee.pfContribution >= 1800) {
-                  Employee.pfContribution = 1800;
-                }
-              }
-              else {
-                Employee.pfContribution = Math.round((Employee.grossSalary * (6.719 / 100)));
-              }
-              break;
-            case false:
-              Employee.pfContribution = 0;
-              break;
-            default:
-          }
-        }
-        else {
-          0
-        }
-
-        //claculation for ESIC employer
-        if (this.promotiondata.esic == false || this.promotiondata.esic == true) {
-          switch (this.promotiondata.esic) {
-            case true:
-              let condition1 = (Employee.grossSalary >= 23195)
+            } else {
+              0;
+            }
+          
+            if (this.promotiondata.esic == true) {
+              let condition1 = Employee.grossSalary >= 23195;
               if (!condition1) {
-                Employee.esicContribution = Math.round(Employee.grossSalary * (2.94 / 100));
+                Employee.esicContribution = Math.round(
+                  Employee.grossSalary * (2.94 / 100)
+                );
+              } else {
+                Employee.esicContribution = 0;
+                this.promotiondata.esic == false;
               }
-              else {
-                Employee.esicContribution = 0
-              }
-              break;
-            case false:
-              let condition2 = (Employee.grossSalary >= 23195)
-              if (!condition2) {
-                // Employee.esicContribution = Math.round(Employee.grossSalary * (2.94 / 100));
-                // console.log(Employee.esicContribution);
-                Employee.esicContribution = 0
-                this.promotiondata.esic == false
-              }
-              else {
-                Employee.esicContribution = 0
-                this.promotiondata.esic == false
-              }
-              break;
-            default:
-          }
-        }
-        else {
-          Employee.esicContribution = 0
-        }
-        //calcution for the totalgrosssalary
-        Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution)
-        //claculation for ESIC for employee
-        if (this.promotiondata.esic == false || this.promotiondata.esic == true) {
-          switch (this.promotiondata.esic) {
-            case true:
+            } else {
+              Employee.esicContribution = 0;
+              this.promotiondata.esic == false;
+            }
+            
+            //=============================================================================================================
+            //calcution for the totalgrosssalary
+            Employee.totalGrossSalary = Math.round(Employee.grossSalary - Employee.pfContribution - Employee.esicContribution);
+            
+            if (this.promotiondata == true) {
               if (Employee.totalGrossSalary <= 21000) {
-                Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
-              }
-              else {
-                Employee.employeeEsi = 0
-                this.promotiondata.esic == false
-              }
-              break;
-            case false:
-              if (Employee.totalGrossSalary >= 23195) {
+                Employee.employeeEsi = Math.round(
+                  Employee.totalGrossSalary * (0.75 / 100)
+                );
+              } else {
                 Employee.employeeEsi = 0;
-                this.promotiondata.esic == false
+                this.promotiondata.esic == false;
               }
-              else if (Employee.totalGrossSalary <= 21000) {
-                // Employee.employeeEsi = Math.round(Employee.totalGrossSalary * (0.75 / 100));
-                // console.log(Employee.employeeEsi);
-                Employee.employeeEsi = 0
-                this.promotiondata.esic == false
-              }
-              else {
-                Employee.employeeEsi = Math.round(Employee.totalGrossSalary * 2.94) / 100;
-              }
-              break;
-            default:
+            } else {
+              Employee.employeeEsi = 0;
+              this.promotiondata.esic == false;
+            }
+  
+            if (Employee.grossSalary < 15000) {
+              Employee.professionalTax = 0;
+            } else if (
+              Employee.grossSalary > 15000 &&
+              Employee.grossSalary < 21000
+            ) {
+              Employee.professionalTax = 150;
+            } else if (Employee.grossSalary >= 21000) {
+              Employee.professionalTax = 200;
+            } else {
+              Employee.professionalTax = 0;
+            }
+  
+            // calculation for the basicsalary
+            Employee.basicSalary = Math.round(
+              Employee.totalGrossSalary * (60 / 100)
+            );
+  
+            //calculation for the hraSalary
+            Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
+  
+            //calculation for the educationAllowances taking as medical insurenc per month
+            // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
+            Employee.educationAllowances = Math.round(558);
+  
+            //calculation for the conveyance
+            // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
+  
+            //total deductions per month
+            Employee.totalDeduction = Math.round(
+              Employee.pfContribution +
+                Employee.employeeEsi +
+                Employee.professionalTax +
+                Employee.educationAllowances
+            );
+  
+            //total net salary  per month
+            Employee.netSalary = Math.round(
+              Employee.totalGrossSalary - Employee.totalDeduction
+            );
+  
+            //calculation for the otherallowances
+            Employee.otherAllowances = Math.round(
+              Employee.totalGrossSalary * (16 / 100)
+            );
+  
+            //pfcontribution per annum
+            Employee.pfPreAnuum = Math.round(
+              Employee.pfContribution * Employee.grossby
+            );
+  
+            //totalGrossPerAnnum calculation
+            Employee.totalGrossPerAnnum = Math.round(
+              Employee.totalGrossSalary * Employee.grossby
+            );
+  
+            //basicsalaryperannum
+            Employee.basicPerannum = Math.round(
+              Employee.basicSalary * Employee.grossby
+            );
+  
+            //HRA per annum
+            Employee.hraPerAnnum = Math.round(
+              Employee.hraSalary * Employee.grossby
+            );
+  
+            //esiper anuum
+            Employee.esiPerAnnum = Math.round(
+              Employee.esicContribution * Employee.grossby
+            );
+
+            //esiper anuum for employee
+            Employee.esiPerAnnumemployee = Math.round(
+              Employee.employeeEsi * Employee.grossby
+            );
+  
+            //educationper annum using for medical insurence
+            Employee.educationallowancesPerAnnum = 12 * 558;
+  
+            //conveyance per annum
+            // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
+  
+            //otherAllowancesper annum
+            Employee.otherAllowancesPerAnnum = Math.round(
+              Employee.otherAllowances * Employee.grossby
+            );
+  
+            //professional per annum
+            Employee.professionalPerAnnum = Math.round(
+              Employee.professionalTax * Employee.grossby
+            );
+  
+            //salary deductions per annum
+            Employee.totalDeductionsPerAnnum = Math.round(
+              Employee.pfPreAnuum + Employee.esiPerAnnumemployee + 
+              Employee.educationallowancesPerAnnum + 
+              Employee.professionalPerAnnum
+            );
+  
+            //net salary per annum
+            Employee.netSalaryPerAnnum = Math.round(
+              Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
+            );
+
+            //Ctc per annum
+            Employee.ctcperannum = Math.round(
+              Employee.totalGrossPerAnnum + Employee.pfPreAnuum + 
+              Employee.esiPerAnnum
+            );
+            this.jobErrorMessage = '';
+            this.employeeForm.get('jobValid')?.setValue(true);
           }
-
-        }
-        else {
-          Employee.employeeEsi = 0
-        }
-        //condtitions for professionaltax calulation.
-        if (Employee.totalGrossSalary <= 15000) {
-          Employee.professionalTax = 0
-        }
-        else if (Employee.totalGrossSalary >= 15001 && Employee.totalGrossSalary <= 20000) {
-          Employee.professionalTax = 150;
-        }
-        else if (Employee.totalGrossSalary >= 20001) {
-          Employee.professionalTax = 200;
-        }
-        else {
-          Employee.professionalTax = 0;
-        }
-
-        Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100))
-        //calculation for the hraSalary
-        Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100))
-
-        //calculation for the educationAllowances
-        Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-
-        //calculation for the conveyance
-        Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
-
-        //total deductions per month
-        Employee.totalDeduction = Math.round(Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax)
-
-        //total net salary  per month
-        Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
-
-        //calculation for the otherallowances
-        Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (10 / 100))
-
-        //pfcontribution per annum
-        Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby)
-
-        //totalGrossPerAnnum calculation
-        Employee.totalGrossPerAnnum = Math.round(Employee.totalGrossSalary * Employee.grossby)
-
-        //basicsalaryperannum
-        Employee.basicPerannum = Math.round(Employee.basicSalary * Employee.grossby)
-
-        //HRA per annum
-        Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
-
-        //esiper anuum
-        Employee.esiPerAnnum = Math.round(Employee.esicContribution * Employee.grossby);
-
-        //esiper anuum for employee
-        Employee.esiPerAnnumemployee = Math.round(Employee.employeeEsi * Employee.grossby);
-
-        //educationper annum
-        Employee.educationallowancesPerAnnum = Math.round(Employee.educationAllowances * Employee.grossby)
-        //conveyance per annum
-        Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
-
-        //otherAllowancesper annum
-        Employee.otherAllowancesPerAnnum = Math.round(Employee.otherAllowances * Employee.grossby);
-
-        //professional per annum
-        Employee.professionalPerAnnum = Math.round(Employee.professionalTax * Employee.grossby);
-
-        //salary deductions per annum
-        Employee.totalDeductionsPerAnnum = Math.round(Employee.pfPreAnuum + Employee.esiPerAnnumemployee + Employee.professionalPerAnnum);
-
-
-        //net salary per annum
-        Employee.netSalaryPerAnnum = Math.round(Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum);
-
-        //Ctc per annum
-        Employee.ctcperannum = Math.round(Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum)
-
-      }
-    })
+          }
+      });
   }
+
+  
   // authority details
   onclickDesignation() {
     // Parse localStorage data
@@ -441,7 +486,7 @@ export class PromotionLetterAcknowedgementComponent {
         const imgWidth = pdf.internal.pageSize.getWidth();
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_Promotion_Letter.pdf`;
+        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Letter.pdf`;
         pdf.save(fileName);
         const blob = pdf.output('blob');
         this.PromotionFile = new File([blob], fileName, { type: 'application/pdf' });
@@ -593,7 +638,7 @@ export class PromotionLetterAcknowedgementComponent {
           this.isRejecting = false;
           this.modalService.dismissAll();
           this.http.triggerRefresh();
-          this.conformationPopup.openSuccessModal('Promotion Letter Acknowledged Successfully');
+          this.conformationPopup.openSuccessModal('Salary Revision Letter Acknowledged Successfully');
 
         },
         error: (error: any) => {
@@ -635,7 +680,7 @@ export class PromotionLetterAcknowedgementComponent {
           this.isRejecting = false;
           this.modalService.dismissAll();
           this.http.triggerRefresh();
-          this.conformationPopup.openSuccessModal('Promotion Letter Rejected Successfully');
+          this.conformationPopup.openSuccessModal('Salary Revision Letter Rejected Successfully');
 
         },
         error: (error: any) => {

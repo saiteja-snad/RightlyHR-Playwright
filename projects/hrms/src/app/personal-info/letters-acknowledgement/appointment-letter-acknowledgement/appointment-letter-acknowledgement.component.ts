@@ -16,6 +16,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { IEmployeeIdentity } from '../../../letters/appointment-letter/appointment-letter-model';
 
 @Component({
   selector: 'app-appointment-letter-acknowledgement',
@@ -34,7 +35,7 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
   currentDate: any;
 
   subscription!: Subscription;
-
+ panDetails: IEmployeeIdentity[] = [];
   constructor(
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
@@ -67,15 +68,24 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
       this.appointmentletter.notes = this.letterdata.note;
       this.appointmentletter.addressType = this.letterdata.addressType;
       this.appointmentletter.appointmentdate = this.letterdata.issuedDate;
-      this.appointmentletter.Copys = this.letterdata.docType;
+      this.appointmentletter.docType = this.letterdata.docType;
     }
     console.log(this.appointmentletter);
     this.getJobdetails(this.appointmentletter);
     this.getEmployeeAddress(this.appointmentletter.employeeId);
+    this.getIdentityByEmpid(this.appointmentletter.employeeId);
     this.getAuthorityDetails();
-    this.getAssestTypeByEmployeeId();
   }
-
+  getIdentityByEmpid(employeeId: number) {
+    this.subscription = this.http.getData(`IdentityTable/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.panDetails = data.filter((item: { identityType: string; }) => item.identityType === 'PAN');
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    })
+  }
   formatDatewithDate(date: Date): string | void {
     if (date) {
       return moment(date).format('YYYY-MM-DD');
@@ -150,23 +160,6 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
             this.appointmentletter.authorityName = `${signatureAuthorityDetails.firstName ?? ''} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''}`;
           }
         }
-      }
-    })
-  }
-
-  //function to get assest type by employeeid
-  assesttypegetdetails = [] as IAssertsType[];
-  getAssestTypeByEmployeeId() {
-    const EmployeeId = parseInt(this.empdata.employeeId)
-    console.log(EmployeeId);
-    this.subscription = this.http.getData(`AssetTable/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.assesttypegetdetails = data as IAssertsType[];
-        const res = data.find((emp: any) => emp.id == this.letterdata.assetId)
-        this.appointmentletter.asserttype = res.assetType;
-        this.appointmentletter.model = res.model;
-        this.appointmentletter.serial = res.serialNumber;
       }
     })
   }

@@ -84,9 +84,6 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
       documentType: ['', Validators.required],
-      assertType: ['', Validators.required],
-      model: ['', Validators.required],
-      serial: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
@@ -348,32 +345,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     //creating form file to upload into AZure
     this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf', });
     this.sendEmployeeDetails();
-    this.postAssetDetails();
     this.uploadAppointLetter();
-    this.assertDetailsupdate();
-  }
-
-  //function to update the assert details
-  assertDetailsupdate() {
-    if (this.assesttypegetdetails?.length > 0) {
-      this.selectedfieldsassest = this.assesttypegetdetails[0];
-      this.updateassert();
-    } else {
-      this.postAssetDetails();
-    }
-  }
-
-  //function to update assert data
-  selectedfieldsassest = {} as any;
-  updateassert() {
-    this.selectedfieldsassest.isdeleted = false
-    this.subscription = this.http.postdata("AssetTable/UPDATER", this.selectedfieldsassest).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      }, error: (err: any) => {
-        console.log(err);
-      },
-    })
   }
 
   sendEmployeeDetails() {
@@ -423,7 +395,6 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         'YYYY-MM-DD'
       ),
       jobId: this.employeeJobDetails?.id,
-      assetId: `${this.assertdata.id ? this.assertdata.id : this.selectedfieldsassest.id}`,
     };
     this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {

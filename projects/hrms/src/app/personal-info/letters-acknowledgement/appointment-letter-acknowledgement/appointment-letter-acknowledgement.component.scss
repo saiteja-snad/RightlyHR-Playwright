@@ -1,3 +1,7 @@
+* {
+   
+    font-family: Verdana, Tahoma, sans-serif;
+}
 .letter-data-content {
     width: 100%;
     flex: 1;
@@ -16,26 +20,36 @@
     .letter-page-content {
         height: 380mm;
         width: 270mm;
-        padding-top: 5.5% !important;
         position: relative;
-          background-image: url('/images/snad-letter-bg.jpg') !important;
+         // background-image: url('/images/snad-letter-bg.jpg') !important;
         background-repeat: no-repeat;
         background-position: center;
+        background-size: cover;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         overflow: hidden;
 
         .letter-page-sub-content {
-            padding: 1.5rem 5rem;
-            font-size: var(--fontsize16) !important;
-            color: #000000;
+            padding: 20px 110px;
+                font-size: 16px;
+                color: #000000;
+                line-height: 18px;
         }
 
     
     }
 }
 
+.soft-copy-letter {
+    background-image: url('/images/snad-letter-bg.jpg') !important;
+    padding-top: 8.5rem !important;
+
+}
 
 .confirmation-delete-icon {
     width: 5.5rem;
     margin-bottom: 1.5rem;
+}
+
+.roman-numbers-fornt li::marker {
+  font-weight: bold;
 }

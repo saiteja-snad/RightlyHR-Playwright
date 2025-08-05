@@ -67,13 +67,12 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
       this.appointmentletter.notes = this.letterdata.note;
       this.appointmentletter.addressType = this.letterdata.addressType;
       this.appointmentletter.appointmentdate = this.letterdata.issuedDate;
-      this.appointmentletter.Copys = this.letterdata.docType;
+      this.appointmentletter.docType = this.letterdata.docType;
     }
     console.log(this.appointmentletter);
     this.getJobdetails(this.appointmentletter);
     this.getEmployeeAddress(this.appointmentletter.employeeId);
     this.getAuthorityDetails();
-    this.getAssestTypeByEmployeeId();
   }
 
   formatDatewithDate(date: Date): string | void {
@@ -150,23 +149,6 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
             this.appointmentletter.authorityName = `${signatureAuthorityDetails.firstName ?? ''} ${signatureAuthorityDetails.middleName ?? ''} ${signatureAuthorityDetails.lastName ?? ''}`;
           }
         }
-      }
-    })
-  }
-
-  //function to get assest type by employeeid
-  assesttypegetdetails = [] as IAssertsType[];
-  getAssestTypeByEmployeeId() {
-    const EmployeeId = parseInt(this.empdata.employeeId)
-    console.log(EmployeeId);
-    this.subscription = this.http.getData(`AssetTable/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.assesttypegetdetails = data as IAssertsType[];
-        const res = data.find((emp: any) => emp.id == this.letterdata.assetId)
-        this.appointmentletter.asserttype = res.assetType;
-        this.appointmentletter.model = res.model;
-        this.appointmentletter.serial = res.serialNumber;
       }
     })
   }

@@ -17,6 +17,7 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { IAssertsType } from '../../Interfaces/job-model';
 @Component({
   selector: 'app-appointment-letter',
   imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule],
@@ -25,19 +26,19 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class AppointmentLetterComponent implements OnInit,OnDestroy {
-  subscription!: Subscription; 
+ subscription!: Subscription;
   appointmentLetterTemplate: any | string | ArrayBuffer | null = null;
   JoinDateValid: boolean = true;
   currentDate: Date = new Date();
   AppointmentFile!: File;
   employeeForm!: FormGroup;
-  spinnerLoader= false;
-  employeeiddetails: IemployeeDetails[]=[];
-  departmentDetails: IDepartment[]=[];
-  branchLocations:IIssuelocation[]=[];
-  authorityDetails: IEmployeeSignatures[]=[];
-  panDetails: IEmployeeIdentity[]=[];
-  assestDetails: IAsset[]=[];
+  spinnerLoader = false;
+  employeeiddetails: IemployeeDetails[] = [];
+  departmentDetails: IDepartment[] = [];
+  branchLocations: IIssuelocation[] = [];
+  authorityDetails: IEmployeeSignatures[] = [];
+  panDetails: IEmployeeIdentity[] = [];
+  assestDetails: IAsset[] = [];
   employeeJobDetails: IEmployeeJobInfo | undefined;
   employeeaddress!: IEmployeeProfile;
   selectedEmployee!: IemployeeDetails;
@@ -57,11 +58,11 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
   ];
 
   constructor(
-    private http: HttpService, 
-    private router: Router, 
+    private http: HttpService,
+    private router: Router,
     private authService: AuthService,
-    private conformationPopup: OpenModalService, 
-    private fb: FormBuilder ) {}
+    private conformationPopup: OpenModalService,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -73,7 +74,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
   }
-  
+
   initializeForm() {
     this.employeeForm = this.fb.group({
       fusionEmployeeId: ['', Validators.required],
@@ -83,9 +84,9 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       department: ['', Validators.required],
       branchCode: ['', Validators.required],
       documentType: ['', Validators.required],
-      // assertType: ['', Validators.required],
-      // model: ['', Validators.required],
-      // serial: ['', Validators.required],
+      assertType: ['', Validators.required],
+      model: ['', Validators.required],
+      serial: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
@@ -144,7 +145,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim()
         }));
       },
       error: (error: any) => {
@@ -152,7 +153,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       }
     });
   }
-  
+
   getAssertType() {
     this.subscription = this.http.getData(`AssetType`).subscribe({
       next: (data: any) => {
@@ -161,9 +162,9 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     })
   }
 
-  onClickEmployee(event: any){
+  onClickEmployee(event: any) {
     console.log(event)
-    this.selectedEmployee= event.value;
+    this.selectedEmployee = event.value;
     this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ? this.selectedEmployee.middleName + ' ' : '') + this.selectedEmployee.lastName;
     const doj = this.formatDatewithDate(this.selectedEmployee.dateOfJoining);
     this.employeeForm.patchValue({
@@ -173,6 +174,26 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     this.getEmployeeAddress(this.selectedEmployee.employeeId);
     this.getIdentityByEmpid(this.selectedEmployee.employeeId);
     this.getOfferLetterDetails(this.selectedEmployee.employeeId);
+    this.getAssestTypeByEmployeeId(this.selectedEmployee.employeeId);
+  }
+
+  assesttypegetdetails = [] as IAssertsType[];
+  appointmentletter = {} as any;
+  //function to get assest type by employeeid
+  getAssestTypeByEmployeeId(EmployeeId: number) {
+    this.subscription = this.http
+      .getData(`AssetTable/${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.assesttypegetdetails = data as IAssertsType[];
+          if (this.assesttypegetdetails?.length > 0) {
+            this.appointmentletter.asserttype = data[0].assetType;
+            this.appointmentletter.model = data[0].model;
+            this.appointmentletter.serial = data[0].serialNumber;
+          }
+
+        },
+      });
   }
 
   getJobdetails(employeeId: number) {
@@ -182,7 +203,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
           this.errorMsg = 'No job details found for this employee.';
           this.employeeForm.get('jobValid')?.setValue(false);
         } else {
-          let res = data.reverse()[0];  
+          let res = data.reverse()[0];
           this.employeeJobDetails = res;
           this.errorMsg = '';
           this.employeeForm.get('jobValid')?.setValue(true);
@@ -193,11 +214,12 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       },
     });
   }
-  
+
   getEmployeeAddress(employeeId: number) {
     this.subscription = this.http.getData(`Employeedata/getProspectiveEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employeeaddress = data as IEmployeeProfile;
+        this.appointmentletter = data;
       }
     })
   }
@@ -225,12 +247,12 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
   }
 
   onclickDesignation(event: any) {
-    this.selectedAuthority= event.value;
+    this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName
         ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
         : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
-    } 
+    }
   }
 
   private formatDatewithDate(date: Date): string | void {
@@ -252,6 +274,13 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         country: selectedAddress.country,
         pinCode: selectedAddress.zipCode
       });
+
+      this.appointmentletter.addressLine1 = selectedAddress.addressLine1;
+      this.appointmentletter.addressLine2 = selectedAddress.addressLine2;
+      this.appointmentletter.city = selectedAddress.city;
+      this.appointmentletter.state = selectedAddress.state;
+      this.appointmentletter.country = selectedAddress.country;
+      this.appointmentletter.zipCode = selectedAddress.zipCode;
     }
   }
 
@@ -263,21 +292,21 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       const joinDate = new Date(dateOfJoining);
       this.JoinDateValid = joinDate > appDate;
     } else {
-      this.JoinDateValid = true; 
+      this.JoinDateValid = true;
     }
   }
-  
+
   async onAppointmentLetterSubmit(f: FormGroup) {
     console.log(f)
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const data = f.value;
     let fileName = '';
-    
+
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
       fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_AppointmentLetter_Unsigned.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
-      return; 
+      return;
     }
 
     // const data = this.appointmentletter;
@@ -285,7 +314,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
     const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6', 'pdfContent7',
-      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12','pdfContent13' ];
+      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11', 'pdfContent12', 'pdfContent13'];
 
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -305,31 +334,54 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
     // Add all images to the PDF except for the last one
     for (let i = 0; i < imagesData.length - 1; i++) {
       const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData,'PNG',0,0,imgWidth,imageData.imgHeight,'','FAST');
+      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
       pdf.addPage(); // Add a new page for the next image (except for the last one)
     }
     // Add the last image without adding a new page
     if (imagesData.length > 0) {
       const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData,'PNG',0,0,imgWidth,lastImageData.imgHeight,'','FAST');
+      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
     }
     // const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_AppointmentLetter_Unsigned.pdf`;
     pdf.save(fileName);
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
-    this.AppointmentFile = new File([blob],fileName,{type: 'application/pdf',});
+    this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf', });
     this.sendEmployeeDetails();
     this.postAssetDetails();
     this.uploadAppointLetter();
+    this.assertDetailsupdate();
+  }
+
+  //function to update the assert details
+  assertDetailsupdate() {
+    if (this.assesttypegetdetails?.length > 0) {
+      this.selectedfieldsassest = this.assesttypegetdetails[0];
+      this.updateassert();
+    } else {
+      this.postAssetDetails();
+    }
+  }
+
+  //function to update assert data
+  selectedfieldsassest = {} as any;
+  updateassert() {
+    this.selectedfieldsassest.isdeleted = false
+    this.subscription = this.http.postdata("AssetTable/UPDATER", this.selectedfieldsassest).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      }, error: (err: any) => {
+        console.log(err);
+      },
+    })
   }
 
   sendEmployeeDetails() {
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.selectedEmployee).subscribe({
       next: (data: any) => {
-        this.spinnerLoader= false;
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
     });
   }
@@ -344,11 +396,11 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         }
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.conformationPopup.openErrorModal('File upload  is failed')
       },
-      complete: ()=>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     });
   }
@@ -362,19 +414,29 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       appointmentSentStatus: 'Document Sent',
       appointmentSentBy: loggedInUser.employeeId,
       documentUrl: docUrl,
+      status: 'Generated',
+      addressType: this.employeeForm.get('SelectDropDown')?.value,
+      note: this.employeeForm.get('notes')?.value,
+      authoritySignature: this.selectedAuthority?.employeeId,
+      docType: this.employeeForm.get('documentType')?.value.value,
+      issuedDate: moment(this.employeeForm.get('appointmentdate')?.value).format(
+        'YYYY-MM-DD'
+      ),
+      jobId: this.employeeJobDetails?.id,
+      assetId: `${this.assertdata.id ? this.assertdata.id : this.selectedfieldsassest.id}`,
     };
     this.subscription = this.http.postdata('AppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
-        setTimeout(()=>{
+        setTimeout(() => {
           this.navigateDashboard();
-        }, 3000);
+        }, 2000);
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
-      complete: ()=>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     });
   }
@@ -412,30 +474,32 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
       },
       error: (err: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
-      complete: ()=>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     })
   }
+
   //Post Asset Details
+  assertdata = {} as any;
   postAssetDetails() {
-    const formData= this.employeeForm.value;
+    const formData = this.employeeForm.value;
     let postAssetDetails = {
       empid: this.selectedEmployee.employeeId,
-      // assetType: formData.assertType.assetType1,
+      assetType: formData.assertType.assetType1,
       maker: null,
       model: formData.model,
-      serialNumber:formData.serial,
+      serialNumber: formData.serial,
     };
     this.subscription = this.http.postdata('AssetTable', postAssetDetails).subscribe({
       next: (data: any) => {
-         this.spinnerLoader= false;
-       },
-      
-      error: (reason: any) => {
+        this.assertdata = data;
         this.spinnerLoader= false;
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
       },
     });
   }

@@ -4,7 +4,7 @@
             <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content my-4" id="pdfContent1"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+                    <div class="letter-page-content my-4" id="pdfContent1"    [ngClass]="{'soft-copy-letter': appraisalData?.docType, 'hard-copy-letter': !appraisalData?.docType}">
                         <div class="letter-page-sub-content">
                            
                             <div class="letter-header text-center">Salary Revision Letter</div>

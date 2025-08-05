@@ -32,9 +32,9 @@
                 contributions to the organization. Your hard work and commitment have made a significant impact on our
                 success.</p>
 
-              <p *ngIf="employeeForm.get('JobRole')?.value?.value">We are happy with your performance and are equally pleased to
+              <!-- <p *ngIf="employeeForm.get('JobRole')?.value?.value">We are happy with your performance and are equally pleased to
                 share that you have been promoted to <u><b><span>{{employeeForm.get('JobRole')?.value?.value}}</span></b></u>.
-              </p>
+              </p> -->
 
               <p *ngIf="nopromotion">Based on your excellent performance, we have revised your compensation and benefits, effective from <u>
                   <span *ngIf="!employeeCompensationDetails.compeffectivedate">DD/MM/YYYY</span>

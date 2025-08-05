@@ -601,22 +601,23 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
   }
  postAppraisalLettersDetails(docUrl: string) {
   let loggedInUser = this.authService.getToken();
-  const postAppDetails = {
-    employeeId: this.appraisalData.employeeId,
-    status: 'Released',
-    documentLink: docUrl,
-    createdBy: loggedInUser.employeeId,
-    signatureempId: this.appraisalData.signatureempId, 
-    createdAt: new Date().toISOString(),
-    revisedSalary: this.appraisalData.revisedSalary || 0,
-    letterType: 'Salary Revision Letter',
-    note: this.appraisalData.note || '',
-    authoritySignature: this.appraisalData.authoritySignature,
-    issuedDate: this.appraisalData.dateofpromotion,
-    candidateStatus:'Generated',
-    docType:this.appraisalData.Documenttype,
-  };
-
+      const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
+const postAppDetails = {
+      employeeId: this.appraisalData.employeeId,
+      status: 'Released',
+      documentLink: docUrl,
+      createdBy: loggedInUser.employeeId,
+      signatureempId: this.appraisalData.authorityid,
+      createdAt: new Date().toISOString(),
+      revisedSalary: this.appraisalData.revisedSalary || 0,
+      letterType: 'Salary Revision Letter',
+      note: this.appraisalData.notes || '',
+      authoritySignature: this.appraisalData.authorityid,
+      issuedDate: issuedDate,
+      docType: this.appraisalData.Documenttype,
+      candidateStatus: 'Generated',
+    };
   this.subscription = this.http
     .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)
     .subscribe({

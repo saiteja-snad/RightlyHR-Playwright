@@ -131,7 +131,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          console.log('Fetched role claims:', data);
           this.permissionsReset(data);
         },
         error: (error: any) => {
@@ -319,6 +318,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'WFH Entitlement Tab',
       'Permission Elgibility Tab',
       'Attendance Regularization Eligibility Tab',
+      'Remote Login Eligibility Tab',
       'Shifts Published Tab',
       'Policies Published Tab',
       'Holidays Published Tab',
@@ -517,11 +517,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',
     'Attendance Eligibility Permissions Tab',
+    'Remote Login Eligibility Tab',
     'Permission Elgibility Tab',
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
   ];
+
+  
   settingsAssetConfigurationFields = [
     'Vendor Details',
     'Asset Catagory',
@@ -724,7 +727,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
-  pendingApprovalRemoteLoginSubTabs = ['For You (WFH)', 'For Role (WFH)'];
+  pendingApprovalRemoteLoginSubTabs = ['For You (Remote Login)', 'For Role (Remote Login)'];
   pendingApprovalCompOffSubTabs = ['For You (Comp Off)', 'For Role (Comp Off)'];
   pendingApprovalPermissionSubTabs = [
     'For You (Permission)',
@@ -1211,6 +1214,30 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
+
+
+isattendenceCheckboxDisabled(
+  per: any,
+  action: 'View' | 'Update' | 'Create' | 'Delete'
+): boolean {
+  if (action === 'View' || action === 'Update') {
+    return !this.roleToFilter?.id;
+  }
+
+  if (action === 'Create' || action === 'Delete') {
+    // Only enable Create/Delete for specific fields
+    const allowedFields = [
+      'Attendance Regularization Tab',
+      'Attendance Eligibility Permissions Tab', 
+      'Eligibility Global Permissions Tab'
+    ];
+    
+    // Return true to disable checkbox if field is NOT in allowed list
+    return !allowedFields.includes(per.fields) || !this.roleToFilter?.id;
+  }
+
+  return false;
+}
   isSettingsEmployeeJobCheckboxDisabled(
     per: any,
     action: 'View' | 'Update' | 'Create' | 'Delete'

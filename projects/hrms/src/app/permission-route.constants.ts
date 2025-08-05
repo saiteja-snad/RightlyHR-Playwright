@@ -312,7 +312,8 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria', permission: 'Permission Elgibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/global-permissions', permission: 'Eligibility Global Permissions Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
-  { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' }
+  { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
+  { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' }
 ]
 
 

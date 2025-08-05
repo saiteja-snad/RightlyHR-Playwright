@@ -6,7 +6,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -17,6 +16,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',

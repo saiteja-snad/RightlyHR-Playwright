@@ -16,7 +16,7 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
   active!: string;
   subscription !: Subscription;
   selectedFile: any;
-  empinfo = {} as any;
+  
   Documents = [] as any;
   @Input() document: any;
 
@@ -27,7 +27,6 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.empinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     this.getAllLettersAcknowledgement();
   }
 
@@ -44,6 +43,7 @@ export class DocumentAcknowledgementTabsComponent implements OnInit, OnDestroy {
         // );
         // this.active = traineeLetter ? traineeLetter.documentName : (this.Documents[0]?.documentName || '');
         this.active = this.Documents[0]?.documentName || '';
+        console.log( this.active)
 
         // this.getAllSignatureLetterType();
       },

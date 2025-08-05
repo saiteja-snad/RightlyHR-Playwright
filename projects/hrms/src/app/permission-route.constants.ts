@@ -54,7 +54,10 @@ export const SETTINGS_EMPLOYEE_FIELDS_TABS = [
   { route: '/settings/employee-fields/manage-weekends', permission: 'Manage Weekends Tab.view' },
   { route: '/settings/employee-fields/expenes', permission: 'Expense Tab.view' },
   { route: '/settings/employee-fields/manage-dsts', permission: 'Manage DST Tab.view' },
-  { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' }
+  { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' },
+  { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' },
+{ route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
+
 ]
 
 type SettingsRolesTab = {

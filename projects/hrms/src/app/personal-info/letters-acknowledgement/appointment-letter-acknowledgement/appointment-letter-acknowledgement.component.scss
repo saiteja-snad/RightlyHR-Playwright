@@ -1,7 +1,7 @@
 .letter-data-content {
     width: 100%;
     flex: 1;
-    height: calc(100dvh - 8rem);
+     height: calc(100dvh - 16rem) !important;
     overflow: auto;
     padding: 1.125rem;
     text-align: justify;
@@ -16,8 +16,9 @@
     .letter-page-content {
         height: 380mm;
         width: 270mm;
+        padding-top: 5.5% !important;
         position: relative;
-        background-image: url('/images/water-mark.png');
+          background-image: url('/images/snad-letter-bg.jpg') !important;
         background-repeat: no-repeat;
         background-position: center;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -29,30 +30,10 @@
             color: #000000;
         }
 
-        .letter-footer {
-            width: 270mm;
-            background-color: #0B3A83;
-            color: #fff;
-            position: absolute;
-            bottom: 0px;
-            padding: 0.625rem;
-
-            .company-name {
-                font-size: var(--fontsize14);
-                font-weight: 600;
-            }
-
-            .company-address {
-                font-size: var(--fontsize12);
-                font-weight: 500;
-            }
-        }
+    
     }
 }
 
-.letter-data-content {
-    height: calc(100dvh - 16rem) !important;
-}
 
 .confirmation-delete-icon {
     width: 5.5rem;

@@ -1,0 +1,22 @@
+<div class="document-history-layout w-100">
+  <div class="component-left-tabs-container">
+    <div class="custom-sub-tabs-container">
+      <ul ngbNav #nav="ngbNav" class="nav flex-column" [(activeId)]="active">
+        <li *ngFor="let folder of Documents" [ngbNavItem]="folder.documentName" class="nav-item"
+          (click)="onSelectedFile(folder.documentName)">
+          <button class="nav-link" ngbNavLink>
+            <img src="/letters-icon/appointment-letter-icon.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">{{ folder.documentName }}</div>
+          </button>
+          <ng-template ngbNavContent>
+            <app-acknowledgeletter [folder]="folder.documentName"></app-acknowledgeletter>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="component-right-content">
+    <div [ngbNavOutlet]="nav"></div>
+  </div>
+</div>

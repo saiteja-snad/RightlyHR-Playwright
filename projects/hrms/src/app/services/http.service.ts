@@ -133,7 +133,12 @@ export class HttpService {
     this.activeTabSubject.next(isActive);
   }
 
-
+// set attendancelocking count
+private refreshTrigger = new Subject<void>();
+  refresh$ = this.refreshTrigger.asObservable();
+  triggerRefresh() {
+    this.refreshTrigger.next();
+  }
   // OnBehalf Of 
   onBehalfOfTriggerSignal = signal<boolean>(false);
 

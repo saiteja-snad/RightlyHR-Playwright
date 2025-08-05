@@ -28,6 +28,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 export class ApprisalLetterAcknowedgementComponent {
 isacknowledged = true;
 isLoading = false;
+employeeForm!: FormGroup;
 appraisalData = {} as any;
 empdata = {} as any;
 employeeName:any;

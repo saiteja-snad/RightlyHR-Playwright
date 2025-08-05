@@ -26,7 +26,8 @@ export class PromotionLetterAcknowedgementComponent {
   promotiondata = {} as any;
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
-  Status: any
+  Status: any;
+  employeeForm!: FormGroup;
   Employeeinfo = {} as any;
   subscription!: Subscription;
   employeedata = {} as any;

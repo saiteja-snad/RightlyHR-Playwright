@@ -556,7 +556,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           if (data) {
             this.result.documentUrl = data.path;
-            this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
+            // this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
           }
           let emaildetails = {
             personEmail: this.appraisalData.workEmail,
@@ -592,12 +592,45 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
                 this.spinnerLoader= false;
               },
             });
+             this.postAppraisalLettersDetails(this.result.documentUrl);
         },
         error: (reason: any) => {
           this.spinnerLoader= false;
         },
       });
   }
+ postAppraisalLettersDetails(docUrl: string) {
+  let loggedInUser = this.authService.getToken();
+  const postAppDetails = {
+    employeeId: this.appraisalData.employeeId,
+    status: 'Released',
+    documentLink: docUrl,
+    createdBy: loggedInUser.employeeId,
+    signatureempId: this.appraisalData.signatureempId, 
+    createdAt: new Date().toISOString(),
+    revisedSalary: this.appraisalData.revisedSalary || 0,
+    letterType: 'Salary Revision Letter',
+    note: this.appraisalData.note || '',
+    authoritySignature: this.appraisalData.authoritySignature,
+    issuedDate: this.appraisalData.dateofpromotion,
+    candidateStatus:'Generated',
+    docType:this.appraisalData.Documenttype,
+  };
+
+  this.subscription = this.http
+    .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)
+    .subscribe({
+      next: (data: any) => {
+        console.log(data);
+       this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
+        this.router.navigate(['/admin']);
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal('The Letter cannot be Acknowledged');
+        console.log(reason);
+      },
+    });
+}
 
   //to fromat Date
   private formatDate(dateString: Date): string {

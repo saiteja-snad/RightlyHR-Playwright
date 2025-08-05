@@ -783,13 +783,48 @@ bonusValidator = (salary: number): ValidatorFn => {
             this.spinnerLoader = false;
           },
         });
+        this.postAppraisalLetter();
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
       },
     });
   }
+  postAppraisalLetter() {
+    console.log(this.appraisalData.dateofAppraisal);
+    const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
+    const payload = {
+      employeeId: this.appraisalData.employeeId,
+      status: 'Released',
+      documentLink: this.result.documentUrl,
+      createdBy: this.Employeeinfo.employeeId,
+      signatureempId: this.appraisalData.authorityid,
+      createdAt: new Date().toISOString(),
+      revisedSalary: this.appraisalData.salary,
+      letterType: 'Appraisal Letter',
+      note: this.appraisalData.notes,
+      authoritySignature: this.appraisalData.authorityid,
+      issuedDate: issuedDate,
+      docType: this.appraisalData.Documenttype,
+      candidateStatus: 'Generated',
+    };
 
+    this.http
+      .postdata(
+        'AppraisalLetter/postgeneratedappraisalpromotionletter',
+        payload
+      )
+      .subscribe({
+        next: (response) => {
+          //console.log('Letter posted successfully:', response);
+          this.router.navigate(['/admin']);
+        },
+        error: (error) => {
+          console.error('Error posting letter:', error);
+        },
+      });
+  }
   //to format Date
   formatDate(date: any) {
     return date?.split('T')[0];

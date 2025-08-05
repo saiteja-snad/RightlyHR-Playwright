@@ -65,10 +65,7 @@ export class OnboardingDetailsComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
-  WorkFromHome = [
-    { name: 'Remote/Hybrid', value: true },
-    { name: 'Work Location', value: true },
-  ];
+  
   wfh = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -82,8 +79,11 @@ export class OnboardingDetailsComponent {
     { name: 'Remote/Hybrid', value: 'Remote/Hybrid', allowWFH: false },
     { name: 'Work From Home', value: 'Work From Home', allowWFH: true },
   ];
+  filteredRemoteLoginWorkLocations = [
+    { name: 'Remote', value: 'Remote'},
+    { name: 'Hybrid', value: 'Hybrid' },
+  ];
   filteredWorkLocations: any[] = [];
-  filteredRemoteLoginWorkLocations: any[] = [];
   statustoprint: any;
   remoteLoginManagers: any = [];
 
@@ -179,16 +179,10 @@ export class OnboardingDetailsComponent {
   }
 
   remoteLoginChange() {
-    // Initialize filteredWorkLocations if allowwfh has a default
-    const initialRemoteLogin =
-      this.onboardingForm.get('allowRemoteLogin')?.value;
-    this.filterWorkLocationOptionsForRemoteLogin(initialRemoteLogin);
-
     // Listen to changes
     this.onboardingForm
       .get('allowRemoteLogin')
       ?.valueChanges.subscribe((value) => {
-        this.filterWorkLocationOptionsForRemoteLogin(value);
         if (value) {
           this.onboardingForm.patchValue({
             remoteLoginManager: null,
@@ -244,12 +238,6 @@ export class OnboardingDetailsComponent {
   filterWorkLocationOptions(allowWFH: boolean) {
     this.filteredWorkLocations = this.worklocation.filter(
       (loc) => loc.allowWFH === allowWFH
-    );
-  }
-
-  filterWorkLocationOptionsForRemoteLogin(allowRemoteLogin: boolean) {
-    this.filteredRemoteLoginWorkLocations = this.worklocation.filter(
-      (loc) => loc.allowWFH !== allowRemoteLogin
     );
   }
   //function to get offer letter data using getbyemployeeid
@@ -316,11 +304,9 @@ export class OnboardingDetailsComponent {
   }
 
   patchForm(data: any): void {
-    this.filterWorkLocationOptionsForRemoteLogin(data?.allowRemoteLogin);
     const remoteLoginWorkLocation = this.filteredRemoteLoginWorkLocations.find(
       (item: any) => item.value == data?.remoteLoginWorkLocation
     );
-    console.log(remoteLoginWorkLocation);
     this.onboardingForm.patchValue({
       dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       branchLocation: data?.branchCode,
@@ -353,8 +339,7 @@ export class OnboardingDetailsComponent {
     });
     this.onboardingForm.patchValue({
         remoteLoginWorkLocation:remoteLoginWorkLocation?.value,
-    });
-    console.log(this.onboardingForm.value); // Check values in the onboardingForm
+    }); 
   }
 
   //function to get traineeofferletter data using getbyemployeeid

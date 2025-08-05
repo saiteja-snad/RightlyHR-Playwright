@@ -16,6 +16,7 @@ import { LetterFooterComponent } from '../../shared/letters-shared-content/lette
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { IAssertsType } from '../../Interfaces/job-model';
 @Component({
   selector: 'app-trainee-appointment-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule ,NgbPopoverModule],
@@ -61,7 +62,7 @@ export class TraineeAppointmentLetterComponent {
   addressFlag = false;
   address = {} as IAddress;
   todayDate!: string;
-  spinnerLoader= false;
+  spinnerLoader = false;
   constructor(private http: HttpService, private router: Router, private authService: AuthService, private fb: FormBuilder,
     private conformationPopup: OpenModalService,) {
   }
@@ -140,7 +141,7 @@ export class TraineeAppointmentLetterComponent {
   }
 
   Onclick(fusionemployeeId: any) {
-    if(fusionemployeeId.value){
+    if (fusionemployeeId.value) {
       this.fusionEmployeeId = fusionemployeeId.value;
       this.traineeAppointmentletterData = {}
       this.traineeAppointmentletterData = this.employeeiddetails.find(
@@ -167,23 +168,23 @@ export class TraineeAppointmentLetterComponent {
       this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId);
       this.getOfferdetails(this.traineeAppointmentletterData.employeeId);
     }
-    else{
+    else {
       this.employeeForm.reset();
       this.traineeAppointmentletterData = {};
     }
- 
+
   }
-  
-getOfferdetails(Value: any) {
-  this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Value}`).subscribe({
-    next: (data: any) => {
-      this.traineeAppointmentletterData.offerIssueddate = data.offerSentDate;
-      console.log(this.traineeAppointmentletterData.offerIssueddate);
-    const today = moment(this.traineeAppointmentletterData.offerIssueddate);
-    this.todayDate = today.toISOString().split('T')[0];
-    }
-  })
-}
+
+  getOfferdetails(Value: any) {
+    this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Value}`).subscribe({
+      next: (data: any) => {
+        this.traineeAppointmentletterData.offerIssueddate = data.offerSentDate;
+        console.log(this.traineeAppointmentletterData.offerIssueddate);
+        const today = moment(this.traineeAppointmentletterData.offerIssueddate);
+        this.todayDate = today.toISOString().split('T')[0];
+      }
+    })
+  }
 
 
   //function to get the address 
@@ -192,6 +193,9 @@ getOfferdetails(Value: any) {
     this.subscription = this.http.getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.employeeaddress = data as IAddress[];
+        this.getAssestTypeByEmployeeId(
+          this.traineeAppointmentletterData.employeeId
+        );
       }
     })
   }
@@ -255,7 +259,7 @@ getOfferdetails(Value: any) {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
       error: (error: any) => {
@@ -272,7 +276,7 @@ getOfferdetails(Value: any) {
     const day = String(localDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`; // format: YYYY-MM-DD
   }
-  
+
   //get Job Details by empployeeid
   getJobdetails(Employee: any) {
     this.subscription = this.http.getData(`JobDetails/Empname/${Employee.employeeId}`).subscribe({
@@ -360,7 +364,7 @@ getOfferdetails(Value: any) {
 
   isLoading: boolean = false;
   async onTraineeAppointmentLetterSubmit() {
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const data = this.traineeAppointmentletterData;
     //data.dateOfJoining = this.formatDate(data.dateOfJoining);
     //data.appointmentdate = this.formatDate(data.appointmentdate);
@@ -387,22 +391,63 @@ getOfferdetails(Value: any) {
     // Add all images to the PDF except for the last one
     for (let i = 0; i < imagesData.length - 1; i++) {
       const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData,'PNG',0,0,imgWidth,imageData.imgHeight,'','FAST');
+      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
       pdf.addPage(); // Add a new page for the next image (except for the last one)
     }
     // Add the last image without adding a new page
     if (imagesData.length > 0) {
       const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData,'PNG',0,0,imgWidth,lastImageData.imgHeight,'','FAST');
+      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
     }
     const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_TraineeAppointmentLetter_Unsigned.pdf`;
     pdf.save(fileName);
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
-    this.AppointmentFile = new File([blob],fileName,{type: 'application/pdf',});
+    this.AppointmentFile = new File([blob], fileName, { type: 'application/pdf', });
     this.sendEmployeeDetails();
-    this.postAssetDetails();
+    this.assertDetailsupdate() 
     this.uploadAppointLetter();
+  }
+
+  //function to update the assert details
+  assertDetailsupdate() {
+    if (this.assesttypegetdetails?.length > 0) {
+      this.selectedfieldsassest = this.assesttypegetdetails[0];
+      this.updateassert();
+    } else {
+      this.postAssetDetails();
+    }
+  }
+
+  //function to update assert data
+  selectedfieldsassest = {} as any;
+  updateassert() {
+    this.selectedfieldsassest.isdeleted = false;
+    this.subscription = this.http
+      .postdata('AssetTable/UPDATER', this.selectedfieldsassest)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
+  }
+
+  assesttypegetdetails = [] as IAssertsType[];
+  //function to get assest type by employeeid
+  getAssestTypeByEmployeeId(EmployeeId: number) {
+    this.subscription = this.http
+      .getData(`AssetTable/${EmployeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.assesttypegetdetails = data as IAssertsType[];
+          this.traineeAppointmentletterData.asserttype = data[0].assetType;
+          this.traineeAppointmentletterData.model = data[0].model;
+          this.traineeAppointmentletterData.serial = data[0].serialNumber;
+        },
+      });
   }
 
   //Update Employee details along with Appointment details
@@ -414,7 +459,7 @@ getOfferdetails(Value: any) {
       next: (data: any) => {
       },
       error: (reason: any) => {
-       this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
     });
   }
@@ -441,6 +486,18 @@ getOfferdetails(Value: any) {
       appointmentSentBy: loggedInUser.employeeId,
       documentURL: docUrl,
       isDeleted: false,
+      status: 'Generated',
+      addressType: this.employeeForm.get('SelectDropDown')?.value,
+      note: this.traineeAppointmentletterData.notes,
+      authoritySignature: this.employeeForm.get('signatureAuthority')?.value.employeeId,
+      docType: this.employeeForm.get('documentType')?.value.value,
+      issuedDate: moment(
+        this.traineeAppointmentletterData.appointmentdate
+      ).format('YYYY-MM-DD'),
+      requestedDate: moment().format('YYYY-MM-DD'),
+      jobId: this.employeeJobDetails.id,
+      compensationDataId: this.employeeCompensationDetails.id,
+      assetId: `${this.assertdata.id ? this.assertdata.id : this.selectedfieldsassest.id}`,
     };
     this.subscription = this.http.postdata('TraineeAppointmentLetter', postAppDetails).subscribe({
       next: (data: any) => {
@@ -448,7 +505,7 @@ getOfferdetails(Value: any) {
         this.router.navigate(['/admin/dashboard']);
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
     });
   }
@@ -464,11 +521,11 @@ getOfferdetails(Value: any) {
         }
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.conformationPopup.openErrorModal('File upload Failed');
       },
-      complete: ()=>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     });
   }
@@ -506,6 +563,7 @@ getOfferdetails(Value: any) {
   }
 
   //Post Asset Details
+  assertdata = {} as any;
   postAssetDetails() {
     let postAssetDetails = {
       empid: this.traineeAppointmentletterData.employeeId,
@@ -516,6 +574,7 @@ getOfferdetails(Value: any) {
     };
     this.subscription = this.http.postdata('AssetTable', postAssetDetails).subscribe({
       next: (data: any) => {
+        this.assertdata = data;
       },
       error: (reason: any) => {
         console.log(reason);

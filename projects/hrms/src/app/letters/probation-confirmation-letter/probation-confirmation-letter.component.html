@@ -25,7 +25,7 @@
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate"
                         placeholder="Please enter Date" [min]="todayDate"
-                        (change)="pathValuesFuction();DateValidation()" (keydown)="preventTyping($event)" />
+                        (onChange)="pathValuesFuction();DateValidation()" (keydown)="preventTyping($event)" />
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
@@ -44,7 +44,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveDate"
-                        placeholder="Please enter Date" (change)="pathValuesFuction();CheckDateValidation()" />
+                        placeholder="Please enter Date" (onChange)="pathValuesFuction();CheckDateValidation()" />
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('effectiveDate')?.invalid && probationConfirmationForm.get('effectiveDate')?.touched">

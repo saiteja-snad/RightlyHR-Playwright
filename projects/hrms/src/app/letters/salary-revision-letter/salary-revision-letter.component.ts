@@ -481,7 +481,9 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
       return;
     }
     const data = await this.appraisalData;
-    data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
+    const formattedIssuedDate = this.formatDate(data.dateofAppraisal); // use this for PDF/upload only
+    const formattedEffectiveDate = this.formatDate(data.compeffectivedate);
+    //data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
@@ -603,8 +605,12 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
   }
  postAppraisalLettersDetails(docUrl: string) {
   let loggedInUser = this.authService.getToken();
-      const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
-    const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
+         const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+const originalDate = new Date(`${year}-${month}-${day}`);
+// Add one day (in milliseconds)
+originalDate.setDate(originalDate.getDate() + 1);
+// Convert to ISO format
+const issuedDate = originalDate.toISOString();
 const postAppDetails = {
       employeeId: this.appraisalData.employeeId,
       status: 'Released',

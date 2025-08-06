@@ -177,7 +177,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authoruty: any) => ({
           ...authoruty,
-          fullName: `${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
+          fullName:  `${authoruty.fusionEmpId  ?? ''}  ${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
         }));
       }
     })

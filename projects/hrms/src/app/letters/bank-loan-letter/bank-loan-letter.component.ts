@@ -25,7 +25,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss',
-  encapsulation: ViewEncapsulation.None,
+  
 })
 
 export class BankLoanLetterComponent  implements OnInit,OnDestroy {
@@ -101,7 +101,7 @@ export class BankLoanLetterComponent  implements OnInit,OnDestroy {
             return {
               ...employee,
               fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${
                 employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,

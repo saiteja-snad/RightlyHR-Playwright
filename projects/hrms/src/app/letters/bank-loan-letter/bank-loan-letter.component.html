@@ -120,8 +120,10 @@
                                 enable {{herOrHimdata}} to apply for a bank Loan.
                             </p>
                             <p class="mb-5">If you have any further questions, you can call us at 8886651309.</p>
-                            <p class=" mb-2">Sincerely,</p>
+                            <p>Your Sincerely,</p>
                             <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
+                            <div class="mb-3"></div>
+
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!authorityFullName" class="letter-sub-header mb-1">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
@@ -130,14 +132,14 @@
                                 <p class="letter-sub-header mb-1">Designation</p>
                             </div>
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <div *ngIf="authorityFullName" class="letter-signature mb-3">
+                            <p *ngIf="authorityFullName" class="letter-signature">
                                 {{authorityFullName }}
-                            </div>
+                            </p>
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="authorityFullName">
-                                <p class="letter-sub-header mb-1">Authority Signature</p>
-                                <p class="letter-sub-header mb-1">{{authorityFullName }}</p>
-                                <p class="letter-sub-header mb-1">{{selectedAuthority.designation}}</p>
+                                <p class="authorized-signatory mb-1">Authority Signature</p>
+                                <p class="authorized-signatory mb-1">{{authorityFullName }}</p>
+                                <p class="authorized-signatory mb-1">{{selectedAuthority.designation}}</p>
                             </div>
                         </div>
 

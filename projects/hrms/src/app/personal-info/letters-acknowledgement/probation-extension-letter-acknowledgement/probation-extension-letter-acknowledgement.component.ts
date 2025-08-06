@@ -286,7 +286,7 @@ export class ProbationExtensionLetterAcknowledgementComponent implements OnInit,
     // pdf.save(fileName);
     const middleNamePart = data.middleName && data.middleName.trim() !== '' ? `_${data.middleName}` : '';
     const lastNamePart = data.lastName && data.lastName.trim() !== '' ? `_${data.lastName}` : '';
-    const fileName = `${data.firstName}${middleNamePart}${lastNamePart}_${new Date().getTime()}_ProbationExtensionLetter.pdf`;
+    const fileName = `${data.firstName}${middleNamePart}${lastNamePart}_${new Date().getTime()}_ProbationExtensionLetterSigned.pdf`;
     pdf.save(fileName);
     const blob = pdf.output('blob');
     console.log(blob);

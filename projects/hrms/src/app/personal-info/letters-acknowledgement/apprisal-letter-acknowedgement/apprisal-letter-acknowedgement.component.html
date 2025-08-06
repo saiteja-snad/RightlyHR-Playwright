@@ -53,7 +53,7 @@
               <p>Your new compensation structure is as follows:</p>
 
               <!--Components Table-->
-              <div class="salary-details-table mb-3 mt-4">
+              <div class="salary-details-table mb-3 mt-2">
                 <table class="mytable w-100">
                   <thead>
                     <tr>
@@ -92,12 +92,12 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="bold text-center"><b>Total Gross Salary</b></td>
-                      <td class="text-center bold"><span *ngIf="!appraisalData.totalGrossSalary;else totalgross">
+                      <td class="text-center"><b>Total Gross Salary</b></td>
+                      <td class="text-center"><span *ngIf="!appraisalData.totalGrossSalary;else totalgross">
                         </span>
                         <ng-template #totalgross><b>{{appraisalData.totalGrossSalary}}</b></ng-template>
                       </td>
-                      <td class="text-center bold"><span *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
+                      <td class="text-center"><span *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
                         </span>
                         <ng-template #totalgrossper><b>{{appraisalData.totalGrossPerAnnum}}</b></ng-template>
                       </td>
@@ -145,39 +145,27 @@
                     <tr>
                       <td class=" text-center"><b>Total Deductions (PF+ESI+PT)</b>
                       </td>
-                      <td class="text-center bold"><span *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
+                      <td class="text-center "><span *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
                         <ng-template #totdec><b>{{appraisalData.totalDeduction}}</b></ng-template>
                       </td>
-                      <td class="text-center bold"><span *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
+                      <td class="text-center "><span *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
                         </span>
                         <ng-template #totdecper><b>{{appraisalData.totalDeductionsPerAnnum}}</b></ng-template>
                       </td>
                     </tr>
                     <tr>
                       <td class="text-center"><b>Net Salary</b></td>
-                      <td class="text-center bold"><span *ngIf="!appraisalData.netSalary;else net"> </span>
+                      <td class="text-center "><span *ngIf="!appraisalData.netSalary;else net"> </span>
                         <ng-template #net> <b>{{appraisalData.netSalary}}</b></ng-template>
                       </td>
-                      <td class="text-center bold"><span *ngIf="!appraisalData.netSalaryPerAnnum;else netper"></span>
+                      <td class="text-center"><span *ngIf="!appraisalData.netSalaryPerAnnum;else netper"></span>
                         <ng-template #netper><b>{{appraisalData.netSalaryPerAnnum}}</b></ng-template>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-
-           
-            </div>
-
-           
-          </div>
-
-          <!--page-2-->
-          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
-            <div class="letter-page-sub-content">
-             <!--CTC table-->
                  <!--CTC table-->
-               <!--CTC table-->
              <div class="salary-details-table mb-3">
                 <table class="secondtable w-100">
                   <thead>
@@ -235,6 +223,18 @@
                   </tbody>
                 </table>
               </div>
+           
+            </div>
+
+           
+          </div>
+
+          <!--page-2-->
+          <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
+            <div class="letter-page-sub-content">
+             <!--CTC table-->
+                 <!--CTC table-->
+            
               
               <p class="letter-sub-header mt-4 pt-4"><b>Additional Details Related to Salary Structure:</b></p>
                 <div *ngIf="appraisalData.note">

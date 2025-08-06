@@ -25,20 +25,20 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
-  employeedetails :IEmployee[]=[];
+  employeedetails: IEmployee[] = [];
   probationExtensionLetterData = {} as any;
   probationFile!: File;
   Employeeinfo = {} as any;
-  authorityDetails: IEmployeeSignatures[]=[];
+  authorityDetails: IEmployeeSignatures[] = [];
   disableFieldsForApproval: boolean = true;
   loading: boolean = false;
   Status: any;
   probationExtensionForm!: FormGroup;
-  enableBtn= false;
-  spinnerLoader= false;
-  releaseLoader= false;
+  enableBtn = false;
+  spinnerLoader = false;
+  releaseLoader = false;
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
@@ -49,6 +49,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
   ngOnInit(): void {
+    this.Employeeinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.getProbationEmployees();
     this.getAuthorityDetails();
@@ -56,7 +57,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
     this.todayDate = today.toISOString().split('T')[0];
   }
 
-  naviagte(){
+  naviagte() {
     this.router.navigate(['/employee-management/probation-employees']);
   }
 
@@ -108,7 +109,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.employeedetails = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.fusionEmpId ?? ''} - ${employee.firstName } ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
       },
       error: (reason: any) => {
@@ -130,7 +131,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
     })
   }
 
-  onClickEmployee(event: any){
+  onClickEmployee(event: any) {
     const newlySelectedEmployee = event?.value;
     if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
       return;
@@ -163,38 +164,27 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
 
   preventTyping(event: KeyboardEvent) {
     event.preventDefault();
-  } 
-pathValuesFuction() {
-  const formValues = this.probationExtensionForm.value;
+  }
 
-  // Safely access employee details
-  const employee = formValues.employeeId;
-  const jobDetails = employee?.jobDetails;
-
-  this.probationExtensionLetterData.firstName = employee?.firstName || '';
-  this.probationExtensionLetterData.middleName = employee?.middleName || '';
-  this.probationExtensionLetterData.lastName = employee?.lastName || '';
-  this.probationExtensionLetterData.fusionEmpId = employee?.fusionEmpId || '';
-  this.probationExtensionLetterData.jobRole = jobDetails?.jobRole || '';
-  this.probationExtensionLetterData.department = employee?.departmentName || '';
-  this.probationExtensionLetterData.workLocation = jobDetails?.subLocation && jobDetails?.lopcation 
-    ? `${jobDetails.subLocation}, ${jobDetails.lopcation}` 
-    : '';
-
-  // Issued date and doc type
-  this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate || '';
-  this.probationExtensionLetterData.Documenttype = formValues?.Documenttype || '';
-
-  // Authority
-  const authority = formValues.authorityid;
-  this.probationExtensionLetterData.authorityName = authority?.fullName || '';
-  this.probationExtensionLetterData.authorityDesignation = authority?.designation || '';
-  this.probationExtensionLetterData.employeeId = employee?.employeeId || '';
-}
-
+  //function to patch the values in the form to the template
+  pathValuesFuction() {
+    const formValues = this.probationExtensionForm.value;
+    this.probationExtensionLetterData.firstName = formValues.employeeId?.firstName,
+      this.probationExtensionLetterData.middleName = formValues.employeeId?.middleName,
+      this.probationExtensionLetterData.lastName = formValues.employeeId?.lastName,
+      this.probationExtensionLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
+      this.probationExtensionLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
+      this.probationExtensionLetterData.department = formValues.employeeId?.departmentName,
+      this.probationExtensionLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation + ', ' + formValues.employeeId?.jobDetails?.lopcation,
+      this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate,
+      this.probationExtensionLetterData.Documenttype = formValues?.Documenttype;
+    this.probationExtensionLetterData.authorityName = formValues.authorityid?.fullName,
+      this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
+      this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
+  }
 
   async postProbationExtensionLetterFormSubmit() {
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const data = await this.probationExtensionLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
@@ -218,7 +208,7 @@ pathValuesFuction() {
         this.uploadprobationextentionLetter();
       });
     }
-    //this.openModalService.openSuccessModal('Probation extension letter generated successfully');
+    this.openModalService.openSuccessModal('Probation extension letter generated successfully');
   }
 
   //function to get the separation request details
@@ -231,7 +221,7 @@ pathValuesFuction() {
         });
         this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails.probationExtendedDate
         this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate,
-           this.getProbationDetails.probationExtendedDate)
+          this.getProbationDetails.probationExtendedDate)
       }
     })
   }
@@ -241,44 +231,50 @@ pathValuesFuction() {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
         if (data) {
-          this.enableBtn= true;
+          this.enableBtn = true;
           this.postProbationDetails(data.path);
           // this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
         }
-        
+
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.openModalService.openErrorModal('file upload is failed');
       },
-      complete: () =>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     });
   }
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
-
     let payload = {
-      probationId : this.getProbationDetails.probationId,
-      formId : this.getProbationDetails.formId,
-      employeeId : this.getProbationDetails.employeeId,
-      responseId : this.getProbationDetails.responseId,
-      probationStartDate : this.getProbationDetails.probationStartDate,
-      probationEndDate : this.getProbationDetails.probationEndDate,
-      probationExtendedDate : this.getProbationDetails.probationExtendedDate,
-      status : this.getProbationDetails.status,
-      createdBy : this.getProbationDetails.createdBy,
-      updatedBy : this.getProbationDetails.updatedBy,
-      probationDays : this.getProbationDetails.probationDays,
-      raisedBy : this.getProbationDetails.raisedBy,
-      documentURL : docurl,
-      parentId : this.getProbationDetails.parentId,
-      probationExtendCount : this.getProbationDetails.probationExtendCount,
-      meta : this.getProbationDetails.meta,
-      appliedDate : this.getProbationDetails.appliedDate,
-      comments : this.getProbationDetails.comments
+      probationId: this.getProbationDetails.probationId,
+      formId: this.getProbationDetails.formId,
+      employeeId: this.getProbationDetails.employeeId,
+      responseId: this.getProbationDetails.responseId,
+      probationStartDate: this.getProbationDetails.probationStartDate,
+      probationEndDate: this.getProbationDetails.probationEndDate,
+      probationExtendedDate: this.getProbationDetails.probationExtendedDate,
+      status: this.getProbationDetails.status,
+      createdBy: this.Employeeinfo.employeeId,
+      updatedBy: this.Employeeinfo.employeeId,
+      updatedAt: this.todayDate,
+      probationDays: this.getProbationDetails.probationDays,
+      raisedBy: this.getProbationDetails.raisedBy,
+      documentURL: docurl,
+      parentId: this.getProbationDetails.parentId,
+      probationExtendCount: this.getProbationDetails.probationExtendCount,
+      meta: this.getProbationDetails.meta,
+      appliedDate: this.getProbationDetails.appliedDate,
+      comments: this.getProbationDetails.comments,
+      candidateStatus: 'Generated',
+      IssuedDate: this.probationExtensionForm.get('issuedDate')?.value,
+      AuthoritySignature: this.probationExtensionForm.get('authorityid')?.value.employeeId,
+      generatedDate: this.todayDate,
+      generatedBy: this.Employeeinfo.employeeId,
+      DocType: this.probationExtensionForm.get('Documenttype')?.value
     }
     this.getProbationDetails.documentURL = docurl;
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
@@ -289,10 +285,10 @@ pathValuesFuction() {
         this.openModalService.openSuccessModal('Probation extension letter generated successfully');
       },
       error: (reason: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
-      complete: () =>{
-        this.spinnerLoader= false;
+      complete: () => {
+        this.spinnerLoader = false;
       }
     });
   }
@@ -307,7 +303,7 @@ pathValuesFuction() {
   }
 
   probationExtendeEmail() {
-    this.releaseLoader= true;
+    this.releaseLoader = true;
     let pdata =
     {
       employeeId: this.probationExtensionLetterData.employeeId,
@@ -316,15 +312,15 @@ pathValuesFuction() {
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
         this.openModalService.openSuccessModal("Email has been sent successfully");
-        setTimeout(() =>{
+        setTimeout(() => {
           this.naviagte();
         }, 2000)
       },
       error: (err: any) => {
-        this.releaseLoader= false;
+        this.releaseLoader = false;
       },
-      complete: ()=>{
-        this.releaseLoader= false;
+      complete: () => {
+        this.releaseLoader = false;
         this.probationExtensionForm.reset();
       }
     })

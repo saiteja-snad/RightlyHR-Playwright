@@ -23,7 +23,6 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,NgbPopoverModule],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss',
- 
 })
 
 export class ApprisalLetterComponent implements OnInit,OnDestroy {

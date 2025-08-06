@@ -280,30 +280,30 @@
                     <tr>
                       <td class="text-center">ESI Contribution by Employee</td>
                       <td class="text-center"><span *ngIf="!appraisalData.employeeEsi;else esiemployees"> </span>
-                        <ng-template #esiemployees>{{appraisalData.employeeEsi}}</ng-template>
+                        <ng-template #esiemployees>{{appraisalData.employeeEsi?appraisalData.employeeEsi:0}}</ng-template>
                       </td>
                       <td class="text-center"> <span *ngIf="!appraisalData.esiPerAnnumemployee;else esiemployee"></span>
-                        <ng-template #esiemployee>{{appraisalData.esiPerAnnumemployee}}</ng-template>
+                        <ng-template #esiemployee>{{appraisalData.esiPerAnnumemployee?appraisalData.esiPerAnnumemployee:0}}</ng-template>
                       </td>
                     </tr>
                     <tr>
                       <td class="text-center">Professional Tax (PT)</td>
                       <td class="text-center"><span *ngIf="!appraisalData.professionalTax;else pftax"> </span>
-                        <ng-template #pftax>{{appraisalData.professionalTax}}</ng-template>
+                        <ng-template #pftax>{{appraisalData.professionalTax?appraisalData.professionalTax:0}}</ng-template>
                       </td>
                       <td class="text-center"><span *ngIf="!appraisalData.professionalPerAnnum;else pftaxper">
                         </span>
-                        <ng-template #pftaxper>{{appraisalData.professionalPerAnnum}}</ng-template>
+                        <ng-template #pftaxper>{{appraisalData.professionalPerAnnum?appraisalData.professionalPerAnnum:0}}</ng-template>
                       </td>
                     </tr>
                     <!-- <tr>
                       <td class="text-center">Medical insurance</td>
                       <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ"> </span>
-                        <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
+                        <ng-template #educ>{{appraisalData.educationAllowances?appraisalData.educationAllowances:0}}</ng-template>
                       </td>
                       <td class="text-center"><span *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
                         </span>
-                        <ng-template #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
+                        <ng-template #educper>{{appraisalData.educationallowancesPerAnnum?appraisalData.educationallowancesPerAnnum:0}}</ng-template>
                       </td>
                     </tr> -->
                     <tr>
@@ -320,10 +320,10 @@
                     <tr>
                       <td class="text-center"><b>Net Salary</b></td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.netSalary;else net"> </span>
-                        <ng-template #net> <b>{{appraisalData.netSalary}}</b></ng-template>
+                        <ng-template #net> <b>{{appraisalData.netSalary?appraisalData.netSalary:0}}</b></ng-template>
                       </td>
                       <td class="text-center bold"><span *ngIf="!appraisalData.netSalaryPerAnnum;else netper"></span>
-                        <ng-template #netper><b>{{appraisalData.netSalaryPerAnnum}}</b></ng-template>
+                        <ng-template #netper><b>{{appraisalData.netSalaryPerAnnum?appraisalData.netSalaryPerAnnum:0}}</b></ng-template>
                       </td>
                     </tr>
                   </tbody>
@@ -343,31 +343,25 @@
                       <td style="width:59%;" class="text-center">Employer PF Contribution</td>
                       <td style="width:21%;" class="text-center">
                         <span *ngIf="!appraisalData.pfContribution;else pfempr"></span>
-                        <ng-template #pfempr>{{appraisalData.pfContribution}}</ng-template>
+                        <ng-template #pfempr>{{appraisalData.pfContribution?appraisalData.pfContribution:0}}</ng-template>
                       </td>
                       <td class="text-center">
                         <span *ngIf="!appraisalData.pfPreAnuum;else pfempper"></span>
-                        <ng-template #pfempper>{{appraisalData.pfPreAnuum}}</ng-template>
+                        <ng-template #pfempper>{{appraisalData.pfPreAnuum?appraisalData.pfPreAnuum:0}}</ng-template>
                       </td>
                     </tr>
                     <tr>
                       <td class="text-center">Employer ESI Contribution</td>
                       <td class="text-center">
                         <span *ngIf="!appraisalData.esicContribution;else esiempr"></span>
-                        <ng-template #esiempr>{{appraisalData.esicContribution}}</ng-template>
+                        <ng-template #esiempr>{{appraisalData.esicContribution?appraisalData.esicContribution:0}}</ng-template>
                       </td>
                       <td class="text-center">
                         <span *ngIf="!appraisalData.esiPerAnnum;else esiempper"></span>
-                        <ng-template #esiempper>{{appraisalData.esiPerAnnum}}</ng-template>
+                        <ng-template #esiempper>{{appraisalData.esiPerAnnum?appraisalData.esiPerAnnum:0}}</ng-template>
                       </td>
                     </tr>
-                    <tr>
-                      <td class="text-center"><b>Variable Amount</b></td>
-                      <td colspan="2" class="text-center">
-                        <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
-                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount  }}</b></ng-template>
-                      </td>
-                    </tr>
+                   
                     <tr>
                       <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Medical Insurance)</b></td>
                       <td class="text-center bold">
@@ -379,27 +373,33 @@
                         <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
                       </td>
                     </tr>
-                    <!-- <tr>
-                      <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
-                      <td colspan="2" class="text-center "><b>{{appraisalData.bonus}} </b><span
-                          *ngIf="appraisalData.bonus">Per
-                          Annum</span></td>
-                    </tr> -->
+                     <tr>
+                      <td class="text-center"><b>Variable Pay</b></td>
+                      <td colspan="2" class="text-center">
+                        <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
+                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount  }}</b></ng-template>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center"><b>Total CTC (Including Variable Pay & ESOP)</b></td>
+                      <td colspan="2" class="text-center "><b>{{ (employeeCompensationDetails?.compensationamount || 0) + (appraisalData?.variablePayAmount || 0) }} </b></td>
+                    </tr>
                     
                   </tbody>
                 </table>
               </div>
+              
             </div>
+            
 
-           
           </div>
 
           <!--page-2-->
           <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
-            <div class="letter-page-sub-content">
-          
+            <div class="letter-page-sub-content pt-4 mt-4">
+             <b>Note:</b><p> <b>Variable pay will be processed annually.</b> 60% of the variable pay is the <b>minimum guaranteed amount</b>, while the remaining <b> 40% will be based on company performance</b>.</p>
 
-              <p class="letter-sub-header mt-4 pt-4"><b>Additional Details Related to Salary Structure:</b></p>
+              <p class="letter-sub-header "><b>Additional Details Related to Salary Structure:</b></p>
               
               <ol>
                 <li class="mb-2">TDS will be deducted from the Gross Salary after statutory deductions.</li>

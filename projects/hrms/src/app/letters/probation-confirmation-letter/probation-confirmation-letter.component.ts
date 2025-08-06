@@ -68,12 +68,13 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
       ? new Date(this.selectedEmployee.probationEndDate)
       : null;
     if (issuedDate && probationEndDate && issuedDate > probationEndDate) {
+      
       this.isdateofprobationIssued = false;
     } else {
+     
       this.isdateofprobationIssued = true;
     }
   }
-
   CheckDateValidation() {
     const effectiveDate = new Date(this.probationConfirmationForm.get('effectiveDate')?.value);
     const joiningDate = this.selectedEmployee?.dateOfJoining

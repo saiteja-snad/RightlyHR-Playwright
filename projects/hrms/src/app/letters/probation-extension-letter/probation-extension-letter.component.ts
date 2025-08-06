@@ -21,7 +21,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './probation-extension-letter.component.html',
   styleUrl: './probation-extension-letter.component.scss',
-  encapsulation: ViewEncapsulation.None
+ 
 })
 
 export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {

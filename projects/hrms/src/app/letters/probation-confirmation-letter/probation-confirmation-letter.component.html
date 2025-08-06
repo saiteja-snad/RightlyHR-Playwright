@@ -126,7 +126,8 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter': probationLetterData.Copys}">
+                    <div class="letter-page-content" id="pdfContent1"
+                        [ngClass]="{'soft-copy-letter': probationLetterData.Copys}">
                         <div class="letter-page-sub-content">
                             <!-- <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
@@ -134,20 +135,23 @@
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
                             </ng-template> -->
-                            <div  class="letter-div" *ngIf="probationLetterData" >
+                            <div class="text-center mb-5">
+                                <p class="letter-header text-center">PROBATION CONFIRMATION</p>
+                            </div>
+                            <div class="letter-div" *ngIf="probationLetterData">
                                 <div class="d-flex justify-content-between mb-3">
                                     <ul class="list-style-none ps-0">
-                                        <li>To</li>
-                                        <li
+                                        <li class="mb-2">To</li>
+                                        <li class="mb-1"
                                             *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
                                             Name:</li>
                                         <ng-template #fullname>
-                                            <li>{{probationLetterData.firstName}} {{probationLetterData.middleName}}
+                                            <li class="mb-1">{{probationLetterData.firstName}} {{probationLetterData.middleName}}
                                                 {{probationLetterData.lastName}},</li>
                                         </ng-template>
-                                        <li>{{probationLetterData.fusionEmpId}}</li>
-                                        <li>{{probationLetterData.jobRole}}</li>
-                                        <li>{{probationLetterData.department}}</li>
+                                        <li class="mb-1">{{probationLetterData.fusionEmpId}}</li>
+                                        <li class="mb-1">{{probationLetterData.jobRole}}</li>
+                                        <li class="mb-1" >{{probationLetterData.department}}</li>
                                         <li>{{probationLetterData.workLocation}}</li>
                                     </ul>
                                     <div>
@@ -181,22 +185,21 @@
                                     successful and rewarding journey together.
                                 </p>
 
-                                <p class="mb-2 pt-4">Sincerely,</p>
-                                <p class="letter-sub-header"><b>For SNAD Developers India Pvt Ltd</b></p>
+                                <p class="pt-4"> Your Sincerely,</p>
+                                <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
-                              
-                             
-                                <div class="letter-signature pt-4">{{probationLetterData.authorityName}}</div>
-                                  <div class="letter-sub-header mb-1 pt-4">Authority
-                                    Signature</div>
-                                       <!-- Show Name & Designation only when authorityName is set -->
+                                <div class="mb-3"></div>
+
+                                <p class="letter-signature">{{probationLetterData.authorityName}}</p>
+                                <p class="authorized-signatory mb-1">AuthoritySignature</p>
+                                <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationLetterData.authorityName">
-                                    <p class="letter-sub-header mb-1">Authority Name</p>
-                                    <p class="letter-sub-header mb-1">Designation</p>
+                                    <p class="authorized-signatory mb-1">Authority Name</p>
+                                    <p class="authorized-signatory mb-1">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="mb-1"><b>{{probationLetterData.authorityName}}</b></p>
-                                    <p><b>{{probationLetterData.authorityDesignation}}</b></p>
+                                    <p class="mb-1 authorized-signatory">{{probationLetterData.authorityName}}</p>
+                                    <p class="authorized-signatory">{{probationLetterData.authorityDesignation}}</p>
                                 </div>
                             </div>
                         </div>

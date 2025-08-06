@@ -1,6 +1,6 @@
 * {
    
-    font-family: Verdana, Tahoma, sans-serif;
+    font-family: 'VERDANA', sans-serif !important;
 }
 
 
@@ -17,13 +17,18 @@ input:focus {
 }
 .soft-copy-letter {
     background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top: 12rem !important;
+    padding-top: 12.5rem !important;
 
 }
 .authorized-signatory {
-    font-size: 18px;
-    font-weight: 800;
+    font-size: 16px;
+    font-weight: 700;
 }
 .roman-numbers-fornt li::marker {
   font-weight: bold;
+}
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }

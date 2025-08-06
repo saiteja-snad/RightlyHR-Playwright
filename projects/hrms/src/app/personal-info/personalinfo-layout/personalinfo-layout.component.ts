@@ -640,7 +640,7 @@ submitrevoke() {
   'probation-details': 'Probation Info',
   'separation-details': 'Separation Request',
   'employee-off-boarding': 'Employee Offboarding',
-  'tranee-onboarding-requests': 'Trainee Onboarding Requests',
+  'trainee-onboarding-requests': 'Trainee Onboarding Verification',
 
   // Documents
   'documents': 'Documents',

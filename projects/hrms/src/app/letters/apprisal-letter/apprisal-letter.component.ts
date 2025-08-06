@@ -23,7 +23,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,NgbPopoverModule],
   templateUrl: './apprisal-letter.component.html',
   styleUrl: './apprisal-letter.component.scss',
-  encapsulation: ViewEncapsulation.None
+ 
 })
 
 export class ApprisalLetterComponent implements OnInit,OnDestroy {
@@ -499,8 +499,8 @@ bonusValidator = (salary: number): ValidatorFn => {
           Employee.totalDeduction = Math.round(
             Employee.pfContribution +
             Employee.employeeEsi +
-            Employee.professionalTax +
-            Employee.educationAllowances
+            Employee.professionalTax 
+            //Employee.educationAllowances
           );
 
           //total net salary  per month
@@ -562,7 +562,6 @@ bonusValidator = (salary: number): ValidatorFn => {
           Employee.totalDeductionsPerAnnum = Math.round(
             Employee.pfPreAnuum +
             Employee.esiPerAnnumemployee +
-            Employee.educationallowancesPerAnnum +
             Employee.professionalPerAnnum
           );
 

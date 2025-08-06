@@ -487,7 +487,7 @@ previusSalary:any
         const imgWidth = pdf.internal.pageSize.getWidth();
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Letter.pdf`;
+        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Signed_Document.pdf`;
         pdf.save(fileName);
         const blob = pdf.output('blob');
         this.PromotionFile = new File([blob], fileName, { type: 'application/pdf' });

@@ -21,7 +21,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-salary-revision-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './salary-revision-letter.component.html',
-  styleUrls: ['./salary-revision-letter.component.scss'],
+  styleUrl: './salary-revision-letter.component.scss',
+
 })
 
 export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {

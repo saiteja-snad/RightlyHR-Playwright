@@ -21,10 +21,11 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { SaleryRevisionLetterAcknowedgementComponent } from "../salery-revision-letter-acknowedgement/salery-revision-letter-acknowedgement.component";
+import { ProbationConformitionLetterAcknowledgementComponent } from "../probation-conformition-letter-acknowledgement/probation-conformition-letter-acknowledgement.component";
 
 @Component({
   selector: 'app-acknowledgeletter',
-  imports: [NgbNavModule, TranslateModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, LastValuePipe, PromotionLetterAcknowedgementComponent, AppointmentLetterAcknowledgementComponent, ApprisalLetterAcknowedgementComponent, TraineeAppointmentLetterAcknowledgementComponent, ProbationExtensionLetterAcknowledgementComponent, NgbPopoverModule, DownloadIconComponent, InfoIconComponent, SaleryRevisionLetterAcknowedgementComponent],
+  imports: [NgbNavModule, TranslateModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, LastValuePipe, PromotionLetterAcknowedgementComponent, AppointmentLetterAcknowledgementComponent, ApprisalLetterAcknowedgementComponent, TraineeAppointmentLetterAcknowledgementComponent, ProbationExtensionLetterAcknowledgementComponent, NgbPopoverModule, DownloadIconComponent, InfoIconComponent, SaleryRevisionLetterAcknowedgementComponent, ProbationConformitionLetterAcknowledgementComponent],
   templateUrl: './acknowledgeletter.component.html',
   styleUrl: './acknowledgeletter.component.scss'
 })

@@ -3,25 +3,26 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
 import { HttpService } from '../../services/http.service';
-import { catchError, filter, map, Observable, of, Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { TreeNode } from 'primeng/api'
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DomSanitizer } from '@angular/platform-browser';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import ExcelJS from 'exceljs';
-import FileSaver from 'file-saver';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Skeleton } from 'primeng/skeleton';
+
+import { OrgchartService } from './../../services/orgchartservices/orgchart.service';
+import { OrgChartGridComponent } from './org-chart-grid/org-chart-grid.component';
+
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, TranslateModule, ModuleInformationComponent, Skeleton],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, TranslateModule,
+    ModuleInformationComponent, Skeleton, ModuleInformationComponent, OrgChartGridComponent],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -42,7 +43,8 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
   dataload = false;
   isDataPresent = false;
 
-  constructor(private http: HttpService, private sanitizer: DomSanitizer, public rbac: RbacService, public readonly router: Router) { }
+  constructor(private http: HttpService, private sanitizer: DomSanitizer, public rbac: RbacService,
+    public readonly router: Router, private OrgchartService: OrgchartService) { }
 
   ngOnInit(): void {
     this.employeedata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -56,333 +58,122 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
   }
 
   initiateUpdateModuleInfo() {
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-
     const routeToInfoMap: { [key: string]: string } = {
       '/organization-chart': MODULE_INFOS.ORGANIZATIONAL_HIERARCHY_MODULE_INFO
     };
-
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  // function to get the data of employees by hierarchy
-  getAllEmployeeDetails() {
-    const satus = ['Active', 'Trainee Active'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
-      next: (res: any) => {
-        this.activeEmplist = res.map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
-      },
-    });
+  // Org Feature Functions
+  compact() {
+    this.OrgchartService.triggerAction('toggleCompact');
+  }
+  
+  swap() {
+    this.OrgchartService.triggerAction('swapLayout');
   }
 
-  mangeractiveEmplist = [] as any;
-  getAllEmployeeDetailsformanger() {
-    const EmployeeId = this.employeedata.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (res: any) => {
-        // console.log(response);
-        const myTeam = res.filter((e: any) => e.isAccess);
-        this.mangeractiveEmplist = myTeam.map((employee: any) => {
-          return {
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-            employeeid: employee.employeeId
-          };
-        });
-      },
-    });
+  exportImg() {
+    this.OrgchartService.triggerAction('exportImg');
   }
+
+  exportFullImg() {
+    this.OrgchartService.triggerAction('exportFullImg');
+  }
+
+  exportSvg() {
+    this.OrgchartService.triggerAction('exportSvg');
+  }
+
+  expandAll() {
+    this.OrgchartService.triggerAction('expandAll');
+  }
+
+  collapseAll() {
+    this.OrgchartService.triggerAction('collapseAll');
+  }
+
+  downloadPdf() {
+    this.OrgchartService.triggerAction('downloadPdf');
+  }
+  
+  onCompensationChange(value: boolean) {
+  this.OrgchartService.setCompensationAmount(value);
+}
+
+  // function to get the data of employees by hierarchy
+getAllEmployeeDetails() {
+  const status = ['Active', 'Trainee Active'];
+  this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+    next: (res: any) => {
+      this.activeEmplist = res
+        .map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+          value: employee.employeeId
+        }))
+        .sort((a: any, b: any) => {
+          const idA = parseInt((a.label.split('-')[0] ?? '').replace(/\D/g, ''), 10) || 0;
+          const idB = parseInt((b.label.split('-')[0] ?? '').replace(/\D/g, ''), 10) || 0;
+          return idA - idB;
+        });
+    }
+  });
+}
+
+
+mangeractiveEmplist: any[] = [];
+
+getAllEmployeeDetailsformanger() {
+  const EmployeeId = this.employeedata.employeeId;
+  this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+    next: (res: any) => {
+      this.mangeractiveEmplist = res
+        .map((employee: any) => ({
+          ...employee,
+          fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+          employeeid: employee.employeeId
+        }))
+        .sort((a: any, b: any) => {
+          const idA = parseInt((a.fusionEmpId ?? '').replace(/\D/g, ''), 10) || 0;
+          const idB = parseInt((b.fusionEmpId ?? '').replace(/\D/g, ''), 10) || 0;
+          return idA - idB;
+        });
+    }
+  });
+}
+
 
   onEmployeeChange(event: any) {
     this.selectedEmployeeId = event.value.value;
     this.getOrghierarchy(this.selectedEmployeeId)
   }
 
-  async downloadToExcel(): Promise<void> {
-    if (!this.data || this.data.length === 0) {
-      console.error('No data available to export!');
-      return;
-    }
-    const flattenedData: any[] = [];
-    const seenNames = new Set<string>();
-    this.flattenHierarchy(this.data, flattenedData, seenNames);
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Organization Chart');
-    // Add headers
-    worksheet.columns = [
-      { header: 'Name', key: 'name', width: 20 },
-      { header: 'DOJ', key: 'doj', width: 15 },
-      { header: 'Title', key: 'title', width: 20 },
-      { header: 'Compensation', key: 'compensation', width: 20 },
-      { header: 'Department', key: 'department', width: 20 },
-      { header: 'Manager', key: 'manager', width: 20 },
-      { header: 'Image', key: 'image', width: 10 },
-    ];
-    for (let i = 0; i < flattenedData.length; i++) {
-      const emp = flattenedData[i];
-      worksheet.addRow({
-        name: emp.Name,
-        doj: emp.DOJ,
-        title: emp.Title,
-        compensation: emp.Compensation,
-        department: emp.Department,
-        manager: emp.Manager,
-      });
-      // Add the image to the sheet
-      if (emp.image) {
-        const base64 = await this.getBase64FromUrl(emp.image);
-        const imageId = workbook.addImage({
-          base64: base64,
-          extension: 'png',
-        });
-        worksheet.addImage(imageId, {
-          tl: { col: 6, row: i + 1 },
-          ext: { width: 60, height: 60 },
-        });
-      }
-    }
-    const buffer = await workbook.xlsx.writeBuffer();
-    FileSaver.saveAs(new Blob([buffer]), 'organization-chart-with-images.xlsx');
-  }
-
-  // Utility function to get base64 from image URL
-  private async getBase64FromUrl(imageUrl: string): Promise<string> {
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result as string);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
+  private flattenTree(node: any, parentId: number | null = null, flat: any[] = []): any[] {
+    const n = node.data || node;
+    flat.push({
+      id: n.employeeId,
+      parentId: parentId,
+      name: n.name,
+      title: n.title,
+      department: n.department,
+      doj: n.doj,
+      Compensation: n.compensationamount || 0,
+      image: n.image || '',
+      imageUrl: n.imageUrl || '', // default initially
     });
-  }
-
-  private flattenHierarchy(
-    nodes: TreeNode[],
-    flattenedData: any[],
-    seenNames: Set<string>,
-    parentName: string = ''
-  ): void {
-    nodes.forEach((node) => {
-      const { name, doj, title, compensationamount, department, imageUrl } = node.data;
-      if (!seenNames.has(name)) {
-        flattenedData.push({
-          Name: name,
-          DOJ: doj,
-          Title: title,
-          Compensation: compensationamount,
-          Department: department,
-          Manager: parentName,
-          image: imageUrl,
-        });
-        seenNames.add(name);
-      }
-      if (node.children) {
-        this.flattenHierarchy(node.children, flattenedData, seenNames, name);
-      }
-    });
-  }
-  downloadChart(format: 'pdf' | 'jpg'): void {
-    const chartElement = document.querySelector('.organization-chart-container');
-
-    if (!chartElement) {
-      console.error('Chart element not found!');
-      return;
+    const children = n.children || [];
+    for (const child of children) {
+      this.flattenTree(child, n.employeeId, flat);
     }
-
-    // Store original style before modifying
-    const originalStyle = chartElement.getAttribute('style');
-    const originalWidth = chartElement.scrollWidth;
-    const originalHeight = chartElement.scrollHeight;
-
-    // Temporarily set dimensions for capture
-    chartElement.setAttribute(
-      'style',
-      `width: ${originalWidth}px; height: ${originalHeight}px; overflow: visible; position: absolute; top: 0; left: 0;`
-    );
-
-    // Create a promise to handle image loading
-    const capturePromise = new Promise<void>((resolve) => {
-      // Wait for images to load
-      const images = chartElement.querySelectorAll('img');
-      let loadedCount = 0;
-
-      if (images.length === 0) {
-        resolve();
-        return;
-      }
-
-      const onLoad = () => {
-        loadedCount++;
-        if (loadedCount === images.length) {
-          resolve();
-        }
-      };
-
-      images.forEach(img => {
-        if (img.complete) {
-          onLoad();
-        } else {
-          img.addEventListener('load', onLoad);
-          img.addEventListener('error', onLoad); // Continue even if some images fail
-        }
-      });
-    });
-
-    capturePromise.then(() => {
-      return html2canvas(chartElement as HTMLElement, {
-        width: originalWidth,
-        height: originalHeight,
-        scale: 1, // Reduced from 2 to prevent memory issues
-        useCORS: true,
-        logging: true,
-        allowTaint: true,
-        scrollX: 0,
-        scrollY: 10
-      });
-    })
-      .then((canvas) => {
-        const imageData = canvas.toDataURL('image/jpeg', 0.85); // Using JPEG for better compression
-
-        if (format === 'pdf') {
-          const pdf = new jsPDF('l', 'mm', 'a4');
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const pageHeight = pdf.internal.pageSize.getHeight();
-
-          // Calculate dimensions to fit PDF page
-          const ratio = Math.min(
-            (pageWidth - 20) / canvas.width,  // 10mm margins
-            (pageHeight - 20) / canvas.height
-          );
-
-          const imgWidth = canvas.width * ratio;
-          const imgHeight = canvas.height * ratio;
-
-          // Center on page
-          const xOffset = (pageWidth - imgWidth) / 2;
-          const yOffset = (pageHeight - imgHeight) / 2;
-
-          pdf.addImage(imageData, 'JPEG', xOffset, yOffset, imgWidth, imgHeight);
-          pdf.save('organization-chart.pdf');
-        } else {
-          const link = document.createElement('a');
-          link.href = imageData;
-          link.download = `organization-chart.${format}`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      })
-      .catch((error: any) => {
-        console.error('Error capturing chart:', error);
-      })
-      .finally(() => {
-        // Restore original style
-        if (originalStyle) {
-          chartElement.setAttribute('style', originalStyle);
-        } else {
-          chartElement.removeAttribute('style');
-        }
-      });
-  }
-
-
-
-  // downloadChart(format: 'pdf' | 'jpg'): void {
-  //   const chartElement = document.querySelector('.organization-chart-container');
-
-  //   if (!chartElement) {
-  //     console.error('Chart element not found!');
-  //     return;
-  //   }
-
-  //   // Set the width and height to capture the entire chart
-  //   const originalWidth = chartElement.scrollWidth;
-  //   const originalHeight = chartElement.scrollHeight;
-
-  //   // Temporarily set the chart container's dimensions to ensure the entire chart is rendered
-  //   const originalStyle = chartElement.getAttribute('style');
-  //   chartElement.setAttribute(
-  //     'style',
-  //     `width: ${originalWidth}px; height: ${originalHeight}px; overflow: visible;`
-  //   );
-
-  //   html2canvas(chartElement as HTMLElement, {
-  //     width: originalWidth,
-  //     height: originalHeight,
-  //     scale: 2,
-  //     useCORS: true,
-  //   })
-  //     .then((canvas) => {
-  //       const imageData = canvas.toDataURL('image/png');
-
-  //       if (format === 'pdf') {
-  //         // Generate PDF
-  //         const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape mode
-  //         const pageWidth = pdf.internal.pageSize.getWidth();
-  //         const pageHeight = pdf.internal.pageSize.getHeight();
-
-  //         const canvasWidth = canvas.width;
-  //         const canvasHeight = canvas.height;
-
-  //         // Calculate scaling factor to fit the chart within the PDF page
-  //         const scaleFactor = Math.min(pageWidth / canvasWidth, pageHeight / canvasHeight);
-
-  //         const imgWidth = canvasWidth * scaleFactor;
-  //         const imgHeight = canvasHeight * scaleFactor;
-
-  //         // Center the image on the PDF page
-  //         const xOffset = (pageWidth - imgWidth) / 2;
-  //         const yOffset = (pageHeight - imgHeight) / 2;
-
-  //         pdf.addImage(imageData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
-  //         pdf.save('organization-chart.pdf');
-  //       } else if (format === 'jpg') {
-  //         // Generate JPG
-  //         const link = document.createElement('a');
-  //         link.href = imageData;
-  //         link.download = 'organization-chart.jpg';
-  //         link.click();
-  //       }
-  //     })
-  //     .catch((error: any) => {
-  //       console.error('Error capturing chart:', error);
-  //     })
-  //     .finally(() => {
-  //       // Restore the original style of the chart container
-  //       if (originalStyle) {
-  //         chartElement.setAttribute('style', originalStyle);
-  //       } else {
-  //         chartElement.removeAttribute('style');
-  //       }
-  //     });
-  // }
-
-  onSelectprofilePicDownload(employee: any): Observable<any> {
-    return this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee).pipe(
-      map((res: any) => {
-        const blob = new Blob([res['body']], { type: 'image/png' });
-        const objectURL = URL.createObjectURL(blob);
-        return this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      }),
-      catchError(() => of('images/alternate.png')) // Use default image on error
-    );
+    return flat;
   }
 
   getOrghierarchy(employeeId?: any) {
@@ -392,32 +183,22 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.getData(`Employeedata/getOrganizationalhierarchybyid/${employeeId}`).subscribe({
       next: (response: any) => {
-        this.dataload = false
-        if (response.length > 0) {
-          this.dataload = false
-          this.data = response || [];
+        this.dataload = false;
+        if (Array.isArray(response) && response.length > 0) {
+          const rawTree = response[0]; // response is an array with one root object
+          const flatData = this.flattenTree(rawTree); // convert nested to flat
+          this.data = flatData;
           this.isDataPresent = false;
-          this.data.forEach((rootNode: any) => {
-            this.processEmployeeNode(rootNode);
-          });
-          // this.data.forEach((employee: any) => {
-          //   this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
-          //     employee.data.imageUrl = imageUrl;
-          //   });
-          //   employee.children?.forEach((child: any) => {
-          //     this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
-          //       child.data.imageUrl = imageUrl;
-          //     });
-          //   });
-          // });
         } else {
-          this.data = []
+          this.data = [];
           this.isDataPresent = true;
-          this.dataload = false
+          this.dataload = false;
         }
-      }, error: (error: any) => {
-        this.dataload = false
-      }, complete: () => {
+      },
+      error: () => {
+        this.dataload = false;
+      },
+      complete: () => {
         this.dataload = false;
       }
     });
@@ -427,11 +208,11 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     const employeeData = node.data ? node.data : node;
 
     // Fetch image for current node
-    if (employeeData.image) {
-      this.onSelectprofilePicDownload(employeeData.image).subscribe((imageUrl: string) => {
-        employeeData.imageUrl = imageUrl;
-      });
-    }
+    // if (employeeData.image) {
+    //   this.onSelectprofilePicDownload(employeeData.image).subscribe((imageUrl: string) => {
+    //     employeeData.imageUrl = imageUrl;
+    //   });
+    // }
 
     // Process children - handle both node.children and nested node.data.children
     const children = node.children || (node.data && node.data.children);

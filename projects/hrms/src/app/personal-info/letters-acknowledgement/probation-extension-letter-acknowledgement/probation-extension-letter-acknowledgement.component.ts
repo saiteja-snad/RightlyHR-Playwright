@@ -8,14 +8,12 @@ import { IAddress, IaddressemployeeDetails } from '../../../Interfaces/letters-m
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 
 @Component({
   selector: 'app-probation-extension-letter-acknowledgement',
-  imports: [LettersheaderComponent, CommonModule, DateformatPipe, LetterFooterComponent],
+  imports: [ CommonModule, DateformatPipe],
   templateUrl: './probation-extension-letter-acknowledgement.component.html',
   styleUrl: './probation-extension-letter-acknowledgement.component.scss'
 })

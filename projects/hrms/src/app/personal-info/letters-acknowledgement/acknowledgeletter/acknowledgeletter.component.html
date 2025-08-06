@@ -124,14 +124,17 @@
                                         <td>{{item.generatedByName?item.generatedByName:'-' }}</td>
                                         <td class="text-center">{{item.acknowledgedDate?(item.acknowledgedDate |
                                             dateformat):'-'}}</td>
-                                        <td>{{item.generatedDocUrl| lastValue}}
-                                            <a type="button" (click)="onSelectDownload(item.generatedDocUrl)">
+                                        <td><div class="text-nowrap">
+                                            {{item.generatedDocUrl| lastValue}}<a type="button" (click)="onSelectDownload(item.generatedDocUrl)">
                                                <app-download-icon /></a>
+                                        </div>
                                         </td>
-                                        <td>{{item.signedDocUrl?(item.signedDocUrl| lastValue):'-'}}
+                                        <td><div class="text-nowrap">
+                                            {{item.signedDocUrl?(item.signedDocUrl| lastValue):'-'}}
                                             <a *ngIf="item.signedDocUrl" type="button"
                                                 (click)="onSelectDownload(item.signedDocUrl)">
                                                 <app-download-icon /></a>
+                                        </div>
                                         </td>
                                         @if(canAccess('view','letteracknowledge')){
                                         <td>
@@ -216,9 +219,11 @@
                                         <td>{{item.generatedByName?item.generatedByName:'-' }}</td>
                                         <td class="text-center">
                                             {{item.acknowledgedDate?(item.acknowledgedDate|dateformat):'-'}}</td>
-                                        <td>{{item.generatedDocUrl| lastValue}}
+                                        <td><div class="text-nowrap">
+                                            {{item.generatedDocUrl| lastValue}}
                                             <a type="button" (click)="onSelectDownload(item.generatedDocUrl)">
                                                 <app-download-icon /></a>
+                                        </div>
                                         </td>
                                         @if (canAccess('view','letteracknowledge')) {
                                         <td>

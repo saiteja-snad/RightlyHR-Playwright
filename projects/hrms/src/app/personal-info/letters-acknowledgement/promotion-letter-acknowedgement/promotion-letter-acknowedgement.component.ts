@@ -527,7 +527,7 @@ previusSalary:any
   }
 
   uploadPromotionLetter() {
-   const [day, month, year] = this.promotiondata.dateofAppraisal.split('/');
+   const [day, month, year] = this.promotiondata.compeffectivedate.split('/');
     const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
     let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.Employeeinfo.employeeId}`;
     this.subscription = this.http

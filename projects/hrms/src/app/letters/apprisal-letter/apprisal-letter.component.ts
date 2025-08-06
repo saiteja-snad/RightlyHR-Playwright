@@ -974,7 +974,7 @@ console.log(issuedDate);
       reviewdate: [{value:'',disabled:true}, Validators.required],
       JobRole:[''],
       Documenttype: [null, Validators.required],
-      note:'' ,
+       note: [''],
       // bonus: [''],
       authorityid: [null, Validators.required],
       isPromotion: [false, Validators.required],

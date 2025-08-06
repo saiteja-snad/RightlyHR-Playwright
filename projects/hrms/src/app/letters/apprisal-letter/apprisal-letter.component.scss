@@ -67,32 +67,6 @@ input:focus {
 
 }
 
-// .salary-details-table {
-//     .secondtable {
-
-//         table,
-//         th,
-//         td {
-//             border: 1px solid #474747;
-//             border-collapse: collapse;
-//             color: #000;
-//         }
-
-//         th,
-//         td {
-//             padding: 0.25rem 0.25rem;
-//             text-align: center;
-//             color: #000;
-//             font-size: var(--fontsize16) !important;
-//         }
-
-//         th {
-//             font-weight: bold;
-//         }
-//     }
-
-// }
-
 .salary-details-table {
     .mytable,
     .secondtable {
@@ -101,11 +75,6 @@ input:focus {
         }
     }
 }
-// .secondtable tr:nth-child(3) td:nth-child(3),
-// .secondtable tr:nth-child(3) td:nth-child(2) {
-//   background: #fce4d6;
-// }
-
 .secondtable tr:nth-child(3) td:nth-child(3),
 .secondtable tr:nth-child(3) td:nth-child(2) {
   background: #fce4d6;

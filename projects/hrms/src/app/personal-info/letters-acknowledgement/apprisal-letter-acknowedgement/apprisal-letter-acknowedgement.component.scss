@@ -1,59 +1,58 @@
+* {
 
-  
-  * {
-   
     font-family: 'VERDANA', sans-serif !important;
 }
 
-  .letter-data-content {
-     width: 100%;
-     flex: 1;
-     height: calc(100dvh - 8rem);
-     overflow: auto;
-     padding: 1.125rem;
-     text-align: justify;
+.letter-data-content {
+    width: 100%;
+    flex: 1;
+    height: calc(100dvh - 8rem);
+    overflow: auto;
+    padding: 1.125rem;
+    text-align: justify;
 
-     .letter-sub-data-content {
-         display: flex;
-         justify-content: center;
-         width: 100%;
-         min-width: 280mm;
-     }
+    .letter-sub-data-content {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        min-width: 280mm;
+    }
 
-     .letter-page-content {
-         height: 380mm;
-         width: 270mm;
-         position: relative;
+    .letter-page-content {
+        height: 380mm;
+        width: 270mm;
+        position: relative;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        overflow: hidden;
 
-         background-repeat: no-repeat;
-         background-size: cover;
-         background-position: center;
-         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-         overflow: hidden;
-
-         .letter-page-sub-content {
-             padding: 1.5rem 5rem;
-             font-size: var(--fontsize16) !important;
-             color: #000000;
-         }
-
-
-     }
- }
-
- .soft-copy-letter {
-     background-image: url('/images/snad-letter-bg.jpg') !important;
-     padding-top: 8rem !important;
-
- }
+        .letter-page-sub-content {
+            padding: 20px 110px;
+            font-size: 16px;
+            color: #000000;
+            line-height: 18px;
+            text-align: justify;
+        }
 
 
+    }
+}
 
- .letter-data-content {
-     height: calc(100dvh - 16rem) !important;
- }
+.soft-copy-letter {
+    background-image: url('/images/snad-letter-bg.jpg') !important;
+    padding-top: 8rem !important;
 
- .salary-details-table {
+}
+
+
+
+.letter-data-content {
+    height: calc(100dvh - 16rem) !important;
+}
+
+.salary-details-table {
     .mytable {
 
         table,
@@ -80,6 +79,7 @@
 }
 
 .salary-details-table {
+
     .mytable,
     .secondtable {
         th {
@@ -87,16 +87,22 @@
         }
     }
 }
+
 .secondtable tr:nth-child(3) td:nth-child(3),
 .secondtable tr:nth-child(3) td:nth-child(2) {
-  background: #fce4d6;
+    background: #fce4d6;
 }
 
 .mytable tr:nth-child(4),
 .mytable tr:nth-child(10) {
-  background: #fff2cc;
+    background: #fff2cc;
 }
 
 .mytable tr:nth-child(9) {
-  background: #fff2cc;
+    background: #fff2cc;
+}
+
+.letter-signature {
+    font-size: xx-large !important;
+    font-family: "autographsignatureFont" !important;
 }

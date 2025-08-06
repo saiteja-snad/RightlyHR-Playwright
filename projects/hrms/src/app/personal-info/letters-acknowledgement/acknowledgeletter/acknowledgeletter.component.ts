@@ -49,8 +49,6 @@ export class AcknowledgeletterComponent {
   ngOnInit() {
     this.active = 1; // Default active tab
     this.getEmpInfoFromRoute();
-
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUserData') || '{}');
     // console.log(this.folder);
     this.getEmployeeDocuments(this.empdata.employeeId);
     this.subscription = this.http.refresh$.subscribe(() => {

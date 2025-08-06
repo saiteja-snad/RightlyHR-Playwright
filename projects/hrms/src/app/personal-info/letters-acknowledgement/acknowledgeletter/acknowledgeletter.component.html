@@ -3,7 +3,7 @@
         <ul ngbNav #nav="ngbNav" class="nav flex-row" [(activeId)]="active">
             <li [ngbNavItem]="1" class="nav-item mb-3">
                 <button class="nav-link" ngbNavLink>
-                    <div class="d-flex">{{'Genarated' | translate}}</div>
+                    <div class="d-flex">{{'Generated' | translate}}</div>
                 </button>
                 <div class="tabs-border-bottom"></div>
                 <ng-template ngbNavContent>
@@ -40,7 +40,7 @@
                                                 *ngIf="(item.isAcknowledgmentRequired &&item?.status?.toLowerCase()==='generated'&& i===0) else acknowledgementNotApplicable">
                                                 <div *ngIf="item?.letterType?.toLowerCase() === 'appointment letter'">
                                                     <a class="link-btn text-primary"
-                                                        (click)="openpopup(openpopupAcknowledgement,item)"><span><u>Acknowledge</u></span>
+                                                        (click)="openpopup(openpopupAcknowledgement,item)"><span><u><b>Acknowledge</b></u></span>
                                                     </a>
                                                 </div>
                                                 <div
@@ -124,14 +124,17 @@
                                         <td>{{item.generatedByName?item.generatedByName:'-' }}</td>
                                         <td class="text-center">{{item.acknowledgedDate?(item.acknowledgedDate |
                                             dateformat):'-'}}</td>
-                                        <td>{{item.generatedDocUrl| lastValue}}
-                                            <a type="button" (click)="onSelectDownload(item.generatedDocUrl)">
+                                        <td><div class="text-nowrap">
+                                            {{item.generatedDocUrl| lastValue}}<a type="button" (click)="onSelectDownload(item.generatedDocUrl)">
                                                <app-download-icon /></a>
+                                        </div>
                                         </td>
-                                        <td>{{item.signedDocUrl?item.signedDocUrl:'-'}}
+                                        <td><div class="text-nowrap">
+                                            {{item.signedDocUrl?(item.signedDocUrl| lastValue):'-'}}
                                             <a *ngIf="item.signedDocUrl" type="button"
                                                 (click)="onSelectDownload(item.signedDocUrl)">
                                                 <app-download-icon /></a>
+                                        </div>
                                         </td>
                                         @if(canAccess('view','letteracknowledge')){
                                         <td>
@@ -216,9 +219,11 @@
                                         <td>{{item.generatedByName?item.generatedByName:'-' }}</td>
                                         <td class="text-center">
                                             {{item.acknowledgedDate?(item.acknowledgedDate|dateformat):'-'}}</td>
-                                        <td>{{item.generatedDocUrl| lastValue}}
+                                        <td><div class="text-nowrap">
+                                            {{item.generatedDocUrl| lastValue}}
                                             <a type="button" (click)="onSelectDownload(item.generatedDocUrl)">
                                                 <app-download-icon /></a>
+                                        </div>
                                         </td>
                                         @if (canAccess('view','letteracknowledge')) {
                                         <td>

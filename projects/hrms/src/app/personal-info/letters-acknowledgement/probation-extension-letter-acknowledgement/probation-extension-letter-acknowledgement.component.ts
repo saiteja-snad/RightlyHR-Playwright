@@ -8,14 +8,12 @@ import { IAddress, IaddressemployeeDetails } from '../../../Interfaces/letters-m
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { LettersheaderComponent } from "../../../shared/letters-shared-content/lettersheader/lettersheader.component";
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { LetterFooterComponent } from "../../../shared/letters-shared-content/letter-footer/letter-footer.component";
 
 @Component({
   selector: 'app-probation-extension-letter-acknowledgement',
-  imports: [LettersheaderComponent, CommonModule, DateformatPipe, LetterFooterComponent],
+  imports: [ CommonModule, DateformatPipe],
   templateUrl: './probation-extension-letter-acknowledgement.component.html',
   styleUrl: './probation-extension-letter-acknowledgement.component.scss'
 })
@@ -286,7 +284,7 @@ export class ProbationExtensionLetterAcknowledgementComponent implements OnInit,
     // pdf.save(fileName);
     const middleNamePart = data.middleName && data.middleName.trim() !== '' ? `_${data.middleName}` : '';
     const lastNamePart = data.lastName && data.lastName.trim() !== '' ? `_${data.lastName}` : '';
-    const fileName = `${data.firstName}${middleNamePart}${lastNamePart}_${new Date().getTime()}_ProbationExtensionLetter.pdf`;
+    const fileName = `${data.firstName}${middleNamePart}${lastNamePart}_${new Date().getTime()}_ProbationExtensionLetterSigned.pdf`;
     pdf.save(fileName);
     const blob = pdf.output('blob');
     console.log(blob);

@@ -1,0 +1,83 @@
+<div class="card letter-data-content">
+    <div class="letter-sub-data-content">
+        <div>
+            <div class="letter-page-content" id="pdfContent1" [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
+                <div class="letter-page-sub-content">
+                    <!-- <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
+                                <app-lettersheader />
+                            </div>
+                            <ng-template #doc>
+                                <div class="hard-copy-letter"></div>
+                            </ng-template> -->
+                    <div class="letter-div">
+                        <div class="d-flex justify-content-between mb-3">
+                            <ul class="list-style-none ps-0">
+                                <li>{{employeeName}}</li>
+                                <li>{{employeeiddetails.fusionEmpId}}</li>
+                                <li>{{jobRole}}</li>
+                                <li>{{department}}</li>
+                                <li>{{workLocation}}</li>
+                            </ul>
+                            <div>
+                                <p><span class="letter-sub-header">Issued Date:</span>
+                                    {{probationDate | dateformat}}</p>
+                            </div>
+                        </div>
+
+                        <p class="letter-sub-header mb-3">Dear {{employeeName}},</p>
+
+                        <p class="mb-4">We are pleased to inform you that, following a comprehensive
+                            assessment of your performance during the probationary period, you have successfully
+                            completed your probationary period with SNAD Developers India Pvt Ltd. </p>
+
+                        <p class="mb-4">
+                            Effective from {{probationExtensionLetterData.effectiveDate|dateformat}}, your position as
+                            <b>{{jobRole}}</b> within our organization is officially
+                            confirmed,
+                            and your terms and conditions of employment will remain unchanged.
+                        </p>
+
+                        <p class="mb-4">
+                            We believe that your continued presence at SNAD Developers India Pvt Ltd will
+                            further contribute to our success, and we look forward to seeing your continued
+                            growth and contributions to the organization.
+                        </p>
+
+                        <p class="mb-4">
+                            Congratulations on this milestone in your career, and we look forward to a
+                            successful and rewarding journey together.
+                        </p>
+
+                        <p class="mb-2 pt-4">Sincerely,</p>
+                        <p class="letter-sub-header"><b>For SNAD Developers India Pvt Ltd</b></p>
+                        <!-- Show "Authority Signature" only when no authority is selected -->
+
+
+                        <div class="letter-signature pt-4">{{probationExtensionLetterData.authorityName}}</div>
+                        <div class="letter-sub-header mb-1 pt-4">Authority
+                            Signature</div>
+                        <!-- Show Name & Designation only when authorityName is set -->
+                        <div *ngIf="!probationExtensionLetterData.authorityName">
+                            <p class="letter-sub-header mb-1">Authority Name</p>
+                            <p class="letter-sub-header mb-1">Designation</p>
+                        </div>
+                        <div class="letter-signature  pt-4">{{probationExtensionLetterData?.authorityName}}</div>
+                        <div>
+                            <p class="letter-sub-header">{{probationExtensionLetterData?.authorityName}}</p>
+                            <p class="letter-sub-header">{{authorityDesignation}}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end text-end">
+                        <div>
+                            <div class="letter-signature">{{employeeName}}</div>
+                            <div>Employee's Signature</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

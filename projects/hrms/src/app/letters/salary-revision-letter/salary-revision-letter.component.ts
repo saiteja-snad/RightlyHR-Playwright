@@ -549,6 +549,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
   //to Upload Appraisal letter
   uploadAppraisalLetter() {
     let loggedInUser = this.authService.getToken();
+     const [day, month, year] = this.appraisalData.compeffectivedate.split('/');
+    const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
     let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
     this.subscription = this.http
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.AppraisalFile)
@@ -568,7 +570,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             personRole: this.appraisalData.jobRole,
             documentUrl: this.result.documentUrl,
             compeffectivedate: `${
-              this.appraisalData.compeffectivedate ?? 'N/A'
+               compeffectivedate ?? 'N/A'
             }`,
             employeeId: this.appraisalData.employeeId,
             compensationamount: this.appraisalData.salary,
@@ -592,7 +594,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
                 this.spinnerLoader= false;
               },
             });
-             this.postAppraisalLettersDetails(this.result.documentUrl);
+            this.postAppraisalLettersDetails(this.result.documentUrl); 
         },
         error: (reason: any) => {
           this.spinnerLoader= false;
@@ -624,7 +626,8 @@ const postAppDetails = {
       next: (data: any) => {
         console.log(data);
        this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
-        this.router.navigate(['/admin']);
+        // this.router.navigate(['/']);
+          this.router.navigate(['/employee-management/all-employees'])
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal('The Letter cannot be Acknowledged');

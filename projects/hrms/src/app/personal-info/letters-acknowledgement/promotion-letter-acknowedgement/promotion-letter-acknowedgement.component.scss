@@ -47,6 +47,21 @@
 
 }
 
+.salary-details-table {
+    .mytable,
+    .secondtable {
+        th {
+            background: #e7f0fd !important;
+        }
+    }
+}
+
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
+}
+
 
 
  .letter-data-content {

@@ -92,7 +92,7 @@
 
                 <div class="d-flex flex-wrap gap-3">
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="probationConfirmationForm.invalid || spinnerLoader || jobErrorMessage">
+                        [disabled]="probationConfirmationForm.invalid ">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
                                 <span class="spinner-border button-spinner text-light" role="status"

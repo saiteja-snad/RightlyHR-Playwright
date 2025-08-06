@@ -86,6 +86,7 @@ previusSalary:any
     this.getdatepromotion();
     this.getJobDetails(this.promotiondata);
     // this.getCompensationById(this.promotiondata);
+    this.getCompensationByIdsalery(this.promotiondata);
     this.getIssuedEmployeebyId(this.promotiondata);
     this.getAuthorityDetails();
      if (this.promotiondata.gender == 'Male') {

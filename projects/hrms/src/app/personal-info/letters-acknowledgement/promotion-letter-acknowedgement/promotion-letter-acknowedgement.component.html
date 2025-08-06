@@ -1,0 +1,419 @@
+<div class="card letter-data-content">
+    <div class="letter-sub-data-content">
+        <div>
+            <!--page-1-->
+            <div class="letter-page-content my-4" id="pdfContent1"
+                [ngClass]="{'soft-copy-letter':docType, 'hard-copy-letter': !docType}">
+                <div class="letter-page-sub-content">
+
+                    <div class="letter-header text-center">Salary Revision Letter</div>
+                    <div class="text-end my-3"><span class="letter-sub-header">Date: </span>
+                        {{promotionDate| dateformat}}
+                    </div>
+                    <p class="letter-sub-header">{{promotiondata.firstName}} {{promotiondata.middleName}}
+                        {{promotiondata.lastName}}
+                    </p>
+                    <p *ngIf="promotiondata.addressLine1">
+                        <b>{{promotiondata.addressLine1}}
+                            <br>{{promotiondata.addressLine2}}
+                            <br>{{promotiondata.city}}
+                            <br>{{promotiondata.state}}</b>
+                    </p>
+                    <p class="letter-sub-header">Dear {{gender}} {{promotiondata.firstName}}
+                        {{promotiondata.middleName}} {{promotiondata.lastName}},</p>
+
+                    <p class="mb-4">Management has truly recognized your potential for growth with
+                        the
+                        company and thus has given you a good increment with great expectations. We would
+                        like
+                        you to take it as a challenge and prove your mettle. </p>
+                    <p class="mb-4">Keeping in view the above, Management has also decided to give
+                        you
+                        a revision of Rs. {{incrementSalary}}/- w.e.f.
+                        <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
+                        This will be in addition to your existing CTC, thereby increasing your CTC from Rs
+                        <span *ngIf="previusSalary?.compensationamount"></span>
+                        {{previusSalary?.compensationamount}}/- to current CTC of Rs
+                        {{promotiondata.salary}} /-
+                    </p>
+
+                    <p class="mb-4">We are confident that you will put in your best efforts in
+                        discharging your duties and responsibilities even more efficiently and in the best
+                        of
+                        interest of the organization
+                        and measure up to the confidence and faith reposed in you by the Management
+                        repeatedly.
+                    </p>
+
+                    <p class="mb-4">All other terms & conditions of your Appointment Letter will
+                        remain
+                        unchanged. </p>
+                    <p>Yours sincerely, </p><br>
+                    <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
+                    <p class="letter-signature  pt-3">{{promotiondata.authorityName}}</p>
+                    <p class="letter-sub-header mb-1">Authorized Signatory,</p>
+                    <p class="letter-sub-header mb-1">{{promotiondata.authorityName}}</p>
+                    <p class="letter-sub-header mb-0">{{authorityDesignation}}</p>
+                </div>
+                <!-- <div class="letter-footer">
+                            <app-letter-footer />
+                        </div> -->
+            </div>
+
+            <div class="letter-page-content my-4" id="pdfContent2"
+                [ngClass]="{'soft-copy-letter': docType, 'hard-copy-letter': !docType}">
+                <div class="letter-page-sub-content">
+
+                    <div class="letter-header text-center mb-3">CONFIDENTIAL</div>
+                    <div class="letter-header text-center">Annexure – A</div>
+
+                    <!-- start of paragraphs -->
+                    <p class="m-0"><span class="text-decoration-underline">Name:</span>
+                        {{promotiondata.firstName}} {{promotiondata.middleName}} {{promotiondata.lastName}},
+                    </p>
+                    <p class="p-0 m-0">
+                        <span class="text-decoration-underline">Designation:</span>
+                        {{promotiondata.jobRole}}
+                    </p>
+                    <p><span class="text-decoration-underline">Salary Structure:</span> </p>
+                    <!-- second paragraph -->
+                    <div class="salary-details-table mb-3">
+                        <table class="mytable w-100">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Components in Salary</th>
+                                    <th class="text-center">Per Month</th>
+                                    <th class="text-center">Per Annum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center">Basic Salary</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.basicSalary;else basic"></span>
+                                    </td>
+                                    <ng-template #basic>{{promotiondata.basicSalary}}</ng-template>
+                                    <td class="text-center"><span
+                                            *ngIf="!promotiondata.basicPerannum;else basicper"></span>
+                                        <ng-template #basicper>{{promotiondata.basicPerannum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">HRA</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.hraSalary;else hra">
+                                        </span>
+                                        <ng-template #hra>{{promotiondata.hraSalary}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.hraPerAnnum;else hraper">
+                                        </span>
+                                        <ng-template #hraper>{{promotiondata.hraPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">Other Allowances</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.otherAllowances;else other">
+                                        </span>
+                                        <ng-template #other>{{promotiondata.otherAllowances}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span
+                                            *ngIf="!promotiondata.otherAllowancesPerAnnum;else otherper">
+                                        </span>
+                                        <ng-template #otherper>{{promotiondata.otherAllowancesPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="bold text-center"><b>Total Gross Salary</b>
+                                    </td>
+                                    <td class="text-center bold"><span
+                                            *ngIf="!promotiondata.totalGrossSalary;else totalgross"> </span>
+                                        <ng-template #totalgross>
+                                            <b>{{promotiondata.totalGrossSalary}}</b></ng-template>
+                                    </td>
+                                    <td class="text-center bold"><span
+                                            *ngIf="!promotiondata.totalGrossPerAnnum;else totalgrossper">
+                                        </span>
+                                        <ng-template
+                                            #totalgrossper><b>{{promotiondata.totalGrossPerAnnum}}</b></ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">PF Contribution by Employee</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.pfContribution;else pf">
+                                        </span>
+                                        <ng-template #pf>{{promotiondata.pfContribution}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.pfPreAnuum;else pfper">
+                                        </span>
+                                        <ng-template #pfper>{{promotiondata.pfPreAnuum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">ESI Contribution by Employee</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.employeeEsi;else esiemployees">
+                                        </span>
+                                        <ng-template #esiemployees>{{promotiondata.employeeEsi}}</ng-template>
+                                    </td>
+                                    <td class="text-center"> <span
+                                            *ngIf="!promotiondata.esiPerAnnumemployee;else esiemployee"></span>
+                                        <ng-template #esiemployee>{{promotiondata.esiPerAnnumemployee}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">Professional Tax (PT)</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.professionalTax;else pftax">
+                                        </span>
+                                        <ng-template #pftax>{{promotiondata.professionalTax}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span
+                                            *ngIf="!promotiondata.professionalPerAnnum;else pftaxper">
+                                        </span>
+                                        <ng-template #pftaxper>{{promotiondata.professionalPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">Medical insurance</td>
+                                    <td class="text-center"><span *ngIf="!promotiondata.educationAllowances;else educ">
+                                        </span>
+                                        <ng-template #educ>{{promotiondata.educationAllowances}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span
+                                            *ngIf="!promotiondata.educationallowancesPerAnnum;else educper">
+                                        </span>
+                                        <ng-template
+                                            #educper>{{promotiondata.educationallowancesPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><b>Total Deductions (PF+ESI+PT+Medical Insurance)</b>
+                                    </td>
+                                    <td class="text-center bold"><span
+                                            *ngIf="!promotiondata.totalDeduction;else totdec"> </span>
+                                        <ng-template #totdec><b>{{promotiondata.totalDeduction}}</b></ng-template>
+                                    </td>
+                                    <td class="text-center bold"><span
+                                            *ngIf="!promotiondata.totalDeductionsPerAnnum;else totdecper">
+                                        </span>
+                                        <ng-template
+                                            #totdecper><b>{{promotiondata.totalDeductionsPerAnnum}}</b></ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center"><b>Net Salary</b></td>
+                                    <td class="text-center bold"><span *ngIf="!promotiondata.netSalary;else net">
+                                        </span>
+                                        <ng-template #net><b>{{promotiondata.netSalary}}</b></ng-template>
+                                    </td>
+                                    <td class="text-center bold"><span
+                                            *ngIf="!promotiondata.netSalaryPerAnnum;else netper"> </span>
+                                        <ng-template #netper><b>{{promotiondata.netSalaryPerAnnum}}</b></ng-template>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- second table -->
+                    <div class="salary-details-table mb-3">
+                        <table class="secondtable w-100">
+                            <thead>
+                                <tr>
+                                    <th colspan="3" class="text-center">CTC Calculation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="width:59%;" class="p-0 pt-1 pb-1 text-center">Employer PF
+                                        Contribution</td>
+                                    <td style="width:21%;" class="text-center p-0 pt-1 pb-1"><span
+                                            *ngIf="!promotiondata.pfContribution;else pfempr"> </span>
+                                        <ng-template #pfempr>{{promotiondata.pfContribution}}</ng-template>
+                                    </td>
+                                    <td class="text-center p-0 pt-1 pb-1"><span
+                                            *ngIf="!promotiondata.pfPreAnuum;else pfempper">
+                                        </span>
+                                        <ng-template #pfempper>{{promotiondata.pfPreAnuum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-0 pt-1 pb-1 text-center">Employer ESI Contribution</td>
+                                    <td class="text-center p-0 pt-1 pb-1"><span
+                                            *ngIf="!promotiondata.esicContribution;else esiempr"> </span>
+                                        <ng-template #esiempr>{{promotiondata.esicContribution}}</ng-template>
+                                    </td>
+                                    <td class="text-center p-0 pt-1 pb-1"><span
+                                            *ngIf="!promotiondata.esiPerAnnum;else esiempper">
+                                        </span>
+                                        <ng-template #esiempper>{{promotiondata.esiPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer
+                                            PF+ESI+Medical Insurance)</b></td>
+                                    <td class="text-center p-0 pt-1 pb-1 bold"><span
+                                            *ngIf="!promotiondata.grossSalary;else gross">
+                                        </span>
+                                        <ng-template #gross><b>{{promotiondata.grossSalary}}</b></ng-template>
+                                    </td>
+                                    <td class="text-center p-0 pt-1 pb-1 bold"><span
+                                            *ngIf="!promotiondata.salary;else grossper">
+                                        </span>
+                                        <ng-template #grossper><b>{{promotiondata.salary}}</b></ng-template>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- </div> -->
+                    <p class="note text-decoration-underline">Note:</p>
+                    <ul>
+                        <li>Medical insurance amount will be calculated based on the
+                            number of
+                            dependents; the respective amount will be deducted from your monthly salary.
+                        </li>
+                    </ul>
+                    <!-- end of second table -->
+                    <p class="letter-sub-header ">For SNAD Developers India Pvt Ltd</p>
+                    <div class="img-space  mb-5"></div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="mb-3 letter-signature">{{promotiondata.authorityName}}</div>
+                            <div>
+                                <p class="letter-sub-header mb-1">Authorized Signatory,</p>
+                                <p class="letter-sub-header mb-1">{{promotiondata.authorityName}}</p>
+                                <p class="letter-sub-header mb-1">{{authorityDesignation}}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="letter-sub-header">Employee Name: {{promotiondata.firstName}}
+                                {{promotiondata.middleName}} {{promotiondata.lastName}}
+                            </p>
+                            <p class="letter-sub-header mb-1">Employee Signature: <p class="mb-3 letter-signature"> {{promotiondata.firstName}}
+                                {{promotiondata.middleName}} {{promotiondata.lastName}}</p>
+                            <p class="letter-sub-header">Date : </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="d-flex justify-content-between w-100 align-items-center">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="ackCheckbox"
+                (change)="isacknowledged = !isacknowledged" />
+            <label class="form-check-label" for="ackCheckbox">
+                I acknowledge that I have read and agree to the policy.
+            </label>
+        </div>
+        <div class="d-flex">
+            <button class="btn btn-primary me-2" [disabled]="isacknowledged"
+                (click)="openpopup(confirmationpopup)">Acknowledge
+
+            </button>
+            <button class="btn btn-danger" [disabled]="isRejecting || isacknowledged" (click)="openpopup(rejectModal)">
+                <span *ngIf="!isRejecting">Reject</span>
+
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- reject modal -->
+<ng-template #rejectModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon" />
+            <p class="confirmation-text">
+                {{ 'Are you sure you want to Reject?' | translate }}
+            </p>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form [formGroup]="rejectForm" (ngSubmit)="postPromotionLetter()">
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label labell">
+                        {{ "Comments" | translate }}<span class="text-danger">*</span>
+                    </label>
+
+                    <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
+                        formControlName="comments" placeholder="Please enter comments" maxlength="250"
+                        (keydown)="formsValidation.restrictInitialSpace($event)" rows="3"></textarea>
+
+                    <div class="textarea-count-text">
+                        {{ rejectForm.get('comments')?.value?.length || 0 }}/250
+                    </div>
+
+                    <div class="error-msg"
+                        *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                        <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
+                            Comments are required
+                        </div>
+                        <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
+                            Comments cannot exceed 250 characters
+                        </div>
+                    </div>
+                </div>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(rejectconfirmationpopup)">
+                        {{ 'Cancel' | translate }}
+                    </button>
+
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="rejectForm.invalid || spinnerLoader">
+
+
+                        @if (spinnerLoader) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Reject'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<!-- acknowledge modal -->
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text pt-3">{{'Are you sure you want to Acknowledge?' | translate}}</p>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="closepopup(rejectconfirmationpopup)">{{'No'|
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="spinnerLoader"
+                (click)="postPromotionLetterFormSubmit()">
+
+                @if (spinnerLoader) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{'Loading' | translate}}...</span>
+                } @else {
+                <span>{{'Yes'| translate}}</span>
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>
+<!--reject confirmation Model-->
+<ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate }}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="clearRejectForm()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>

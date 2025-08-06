@@ -93,6 +93,10 @@ export class ApprisalLetterComponent implements OnInit,OnDestroy {
     { name: 'Yes', value: true },
     { name: 'No', value: false }
   ];
+   promotionPayOptions: { name: string, value: boolean }[]  = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false }
+  ];
   jobErrorMessage!: string;
   spinnerLoader= false;
 
@@ -168,7 +172,18 @@ export class ApprisalLetterComponent implements OnInit,OnDestroy {
        this.appraisalData.variablePayAmount = '0';
     }
   }
-
+ onPromotionChange() {
+    const isPromotion = this.employeeForm.get('isPromotion')?.value;
+    if (isPromotion === true) {
+      this.employeeForm.get('JobRole')?.enable();
+      this.employeeForm.get('JobRole')?.reset();
+      this.appraisalData.JobRole = this.employeeForm.get('JobRole')?.value;
+    } else {
+      this.employeeForm.get('JobRole')?.disable();
+      this.employeeForm.get('JobRole')?.setValue(null);
+       this.appraisalData.JobRole = null;
+    }
+  }
   gender: any;
   gender2: any;
   // Onclick(fusionemployeeId: any) {
@@ -190,7 +205,7 @@ selectedEmployeeSalary: number = 0; // Add this at class level
 Onclick(fusionemployeeId: any) {
   this.fusionEmpId = fusionemployeeId;
   this.appraisalData = this.employeeiddetails.find(
-    (c: any) => c.fusionEmpId == fusionemployeeId.fusionEmpId
+    (c: any) => c.employeeId == fusionemployeeId
   );
 
   this.disablebuttonforemployeeid = true;
@@ -201,12 +216,12 @@ Onclick(fusionemployeeId: any) {
     this.selectedEmployeeSalary = this.appraisalData.salary;
 
     // 👉 Set validator dynamically based on current salary
-    const bonusControl = this.employeeForm.get('bonus');
-    bonusControl?.setValidators([
-      Validators.required,
-      this.bonusValidator(this.selectedEmployeeSalary)
-    ]);
-    bonusControl?.updateValueAndValidity();
+    // const bonusControl = this.employeeForm.get('bonus');
+    // bonusControl?.setValidators([
+    //   Validators.required,
+    //   this.bonusValidator(this.selectedEmployeeSalary)
+    // ]);
+    // bonusControl?.updateValueAndValidity();
   }
 
   this.gender = this.appraisalData.gender === 'Male' ? 'Mr.' : 'Ms.';
@@ -336,7 +351,6 @@ bonusValidator = (salary: number): ValidatorFn => {
     input.value = input.value.replace(/[^0-9]/g, '');
     this.appraisalData.bonus = input.value ? parseInt(input.value, 10) : null;
   }
-
   previusSalary: any;
   incrementSalary: any;
 
@@ -351,15 +365,24 @@ bonusValidator = (salary: number): ValidatorFn => {
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-            let res = data.reverse()[0];
+            let res = data.sort((a: any, b: any) => b.compeffectivedate - a.compeffectivedate)[0];
           this.employeeCompensationData = res;
           this.appraisalData.employeeId = res.employeeId;
-          this.appraisalData.bonus = res.bonusAmountData;
+          // this.appraisalData.bonus = res.bonusAmountData;
           this.previusSalary = data[0];
           this.incrementSalary = res?.compensationamount - this.previusSalary.compensationamount;
           this.employeeCompensationDetails = res;
           this.appraisalData.salary = res?.compensationamount;
           this.appraisalData.compeffectivedate = res.compeffectivedate;
+          this.appraisalData.reviewdate = this.formatDate(res.nextCompReviewDate);
+          this.appraisalData.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
+          this.appraisalData.isVariablePay = res.isVariablePay ? res.isVariablePay : false;
+          this.employeeForm.patchValue({
+            isVariablePay: res.isVariablePay ? res.isVariablePay : false,
+            variablePayAmount: res.variablePayAmount ? res.variablePayAmount : null,
+            reviewdate: this.formatDate(res.nextCompReviewDate),
+            
+          });
           //CTC calculation stated
           Employee.grossby = 12;
           Employee.grossSalary = Math.round(res?.compensationamount / Employee.grossby);
@@ -467,7 +490,7 @@ bonusValidator = (salary: number): ValidatorFn => {
 
           //calculation for the educationAllowances taking as medical insurenc per month
           // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-          //Employee.educationAllowances = Math.round(558);
+          Employee.educationAllowances = Math.round(0);
 
           //calculation for the conveyance
           // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
@@ -520,7 +543,7 @@ bonusValidator = (salary: number): ValidatorFn => {
           );
 
           //educationper annum using for medical insurence
-          //Employee.educationallowancesPerAnnum = 12 * 558;
+          Employee.educationallowancesPerAnnum = 12 * 0;
 
           //conveyance per annum
           // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
@@ -565,7 +588,7 @@ bonusValidator = (salary: number): ValidatorFn => {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
@@ -635,14 +658,14 @@ bonusValidator = (salary: number): ValidatorFn => {
     this.appraisalData.status = 'Active';
     const jobdata = {
       employeeId: data.employeeId,
-      effectiveDate: new Date(),
+      effectiveDate: this.employeeCompensationDetails.compeffectivedate,
       locationid: data.locationid,
       sublocationid: data.sublocationid,
-      jobRole: this.appraisalData.designation,
+      jobRole: this.employeeForm.get('JobRole')?.value?.value,
       status: 'Active',
       subdeptId: data.subdeptId,
       createddate: data.createddate,
-      gradeId: data.gradeId,
+      gradeId: this.gradeIdValue.gradeId ? this.gradeIdValue.gradeId : data.gradeId,
       reportsto: data.reportsto,
       shiftId: data.shiftId,
       jobTypeId: data.jobTypeId,
@@ -650,6 +673,8 @@ bonusValidator = (salary: number): ValidatorFn => {
       bussinessArea: data.bussinessArea,
       updateddate: data.updateddate,
     };
+    console.log(jobdata);
+    
     this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
       next: (data: any) => {
       },
@@ -674,7 +699,7 @@ bonusValidator = (salary: number): ValidatorFn => {
       isVariablePay: this.appraisalData.isVariablePay,
       status: 'Active',
       compensationcomments: data.compensationcomments,
-      bonusAmountData: this.appraisalData.bonus,
+      // bonusAmountData: this.appraisalData.bonus,
       nextCompReviewDate: this.appraisalData.reviewdate,
     };
     this.subscription = this.http.postdata('Compensationdata/UPDATER', Compensationdataupdate).subscribe({
@@ -732,13 +757,17 @@ bonusValidator = (salary: number): ValidatorFn => {
           compeffectivedate: this.employeeCompensationData.compeffectivedate,
           employeeId: this.appraisalData.employeeId,
           compensationamount: this.appraisalData.salary,
+          effectiveDate : this.employeeCompensationData.compeffectivedate,
+          jobRole : this.employeeForm.get('JobRole')?.value?.value,
+
         };
         if (loggedInUser.middleName) {
           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
         } else {
           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
         }
-        this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+        const ispromotion =this.employeeForm.get('isPromotion')?.value
+        this.subscription = this.http.postdata(`CustomEmail/AppraisalPromotionLetter?isPromotion=${ispromotion}`, emaildetails,).subscribe({
           next: (data: any) => {
             this.conformationPopup.openSuccessModal('Email has been sent successfully');
             setTimeout(() => {
@@ -753,20 +782,51 @@ bonusValidator = (salary: number): ValidatorFn => {
             this.spinnerLoader = false;
           },
         });
+        this.postAppraisalLetter();
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
       },
     });
   }
+  postAppraisalLetter() {
+    console.log(this.appraisalData.dateofAppraisal);
+    const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
+    const payload = {
+      employeeId: this.appraisalData.employeeId,
+      status: 'Released',
+      documentLink: this.result.documentUrl,
+      createdBy: this.Employeeinfo.employeeId,
+      signatureempId: this.appraisalData.authorityid,
+      createdAt: new Date().toISOString(),
+      revisedSalary: this.appraisalData.salary,
+      letterType: 'Appraisal Letter',
+      note: this.appraisalData.notes,
+      authoritySignature: this.appraisalData.authorityid,
+      issuedDate: issuedDate,
+      docType: this.appraisalData.Documenttype,
+      candidateStatus: 'Generated',
+    };
 
-  //to fromat Date
-  private formatDate(dateString: Date): string {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear().toString();
-    return `${day}/${month}/${year}`;
+    this.http
+      .postdata(
+        'AppraisalLetter/postgeneratedappraisalpromotionletter',
+        payload
+      )
+      .subscribe({
+        next: (response) => {
+          //console.log('Letter posted successfully:', response);
+          this.router.navigate(['/admin']);
+        },
+        error: (error) => {
+          console.error('Error posting letter:', error);
+        },
+      });
+  }
+  //to format Date
+  formatDate(date: any) {
+    return date?.split('T')[0];
   }
 
   formatDates(date: Date): string {
@@ -873,7 +933,7 @@ bonusValidator = (salary: number): ValidatorFn => {
       this.selectedValueJobRoledrop = option;
       this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
         (ele: { designationName: string }) =>
-          ele.designationName === this.selectedValueJobRoledrop
+          ele.designationName === event.designationName
       );
       this.getGradeNameById();
     } else if (dropdownCategory === 'reportingtoUpdate') {
@@ -901,13 +961,14 @@ bonusValidator = (salary: number): ValidatorFn => {
     this.employeeForm = this.fb.group({
       fusionEmpId: [null, Validators.required],
       dateofAppraisal: ['', Validators.required],
-      reviewdate: ['', Validators.required],
+      reviewdate: [{value:'',disabled:true}, Validators.required],
       JobRole:[''],
       Documenttype: [null, Validators.required],
-      bonus: [''],
+      // bonus: [''],
       authorityid: [null, Validators.required],
-      isVariablePay: [null, Validators.required],
-      variablePayAmount: ['', Validators.required],
+      isPromotion: [false, Validators.required],
+      isVariablePay: [{value:'',disabled:true}, Validators.required],
+      variablePayAmount: [{value:'',disabled:true}, Validators.required],
       jobValid: [false, Validators.requiredTrue]
     })
   }

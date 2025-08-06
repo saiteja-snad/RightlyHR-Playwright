@@ -6,7 +6,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-comp-off-approval-tabs',
   imports: [CommonModule, RouterModule, SidetabsloadersComponent],
@@ -22,10 +22,11 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
   selectempid: any;
-  loading=false
+  loading = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService) {
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.tirggerCountSignal().compOff) {
         this.getCompOffRequest();
@@ -38,18 +39,21 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.selectempid = '';
-    this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getCompOffEMPRequest();
-      }
-      else {
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-        this.getCompOffRequest();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.selectempid = '';
+        this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getCompOffEMPRequest();
+          }
+          else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getCompOffRequest();
+          }
+        });
       }
     });
   }
@@ -61,7 +65,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   getCompOffRequest() {
     this.loading=true
     let empId = this.empinfo.employeeId;
-    this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.loading=false
         this.compOff = response;
@@ -80,7 +84,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
 
   getCompOffEMPRequest() {
     let empId = this.selectempid;
-    this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
         this.waitingForApprovalCompOffCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;

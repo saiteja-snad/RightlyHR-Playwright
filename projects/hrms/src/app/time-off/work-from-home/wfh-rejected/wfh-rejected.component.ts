@@ -14,7 +14,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-wfh-rejected',
   imports: [
@@ -28,10 +28,11 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './wfh-rejected.component.html',
   styleUrl: './wfh-rejected.component.scss',
 })
+
 export class WfhRejectedComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -49,64 +50,56 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedYear: any;
 
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    public rbac: RbacService,
-  ) {
-    
-  }
+  constructor(private http: HttpService,public rbac: RbacService,private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-      this.http.selectedEmployeeIdWFH$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getWFHRequests();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getWFHRequests();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getWFHRequests();
+          }
+        });
       }
     });
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
-    this.getWFHRequests();
   }
 
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
 
   getWFHRequests() {
-    let empId = this.empinfo.employeeId || this.selectempid;
-    console.log(empId);
-    this.dataload = true; 
-    this.http
-      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.compOff = response;
-          this.rejectedWFHs = this.compOff.filter(
-            (element: { status: string }) =>
-              element.status === 'Rejected'
-          );
-          this.rejectedWFHsCount = this.rejectedWFHs.length;
-        },
-        error: (error) => {
-          this.dataload = false;
-          console.error('Error fetching data:', error);
-          this.rejectedWFHs = []; // Set to empty array on error
-        },complete: () =>{
-          this.dataload = false;
-        },
-      });
+    let empId = this.selectempid ?? this.empinfo.employeeId;
+    this.dataload = true;
+    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.rejectedWFHs = this.compOff.filter(
+          (element: { status: string }) => element.status === 'Rejected'
+        );
+        this.rejectedWFHsCount = this.rejectedWFHs.length;
+      },
+      error: (error) => {
+        this.dataload = false;
+        console.error('Error fetching data:', error);
+        this.rejectedWFHs = []; // Set to empty array on error
+      }, complete: () => {
+        this.dataload = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {

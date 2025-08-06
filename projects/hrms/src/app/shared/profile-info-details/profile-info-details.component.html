@@ -135,6 +135,9 @@
         <div *ngIf="isActive('personalinfo/job')">
             <app-personal-job-tabs />
         </div>
+         <div *ngIf="isActive('personalinfo/documents')">
+            <app-personal-documents-tabs />
+        </div>
         <!--My Info Tabs-->
         <div *ngIf="isActive('myinfo/personal')">
             <app-my-info-personal-tabs />
@@ -142,6 +145,9 @@
         <!--My Info Job Tabs-->
         <div *ngIf="isActive('myinfo/job' )">
             <app-myinfo-job-tabs />
+        </div>
+          <div *ngIf="isActive('myinfo/documents' )">
+            <app-my-info-doc-tabs />
         </div>
     </div>
 </div>

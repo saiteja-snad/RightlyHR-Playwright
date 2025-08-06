@@ -18,6 +18,7 @@ import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule,
@@ -53,23 +54,29 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
   isLoading = false;
+  selectedYear: any;
 
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private signalService: SignalsService,
-    private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder) { }
+    private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder,
+    private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        // Example: this.loadEmployeeDetails(id);
-        this.getDataByLPEMPID();
-      }
-      else {
-        this.loggedinuser = this.authService.getToken();
-        this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-        this.getDataByLPID();
-        this.formInializer();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataByLPEMPID();
+          }
+          else {
+            this.loggedinuser = this.authService.getToken();
+            this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+            this.getDataByLPID();
+            this.formInializer();
+          }
+        });
       }
     });
   }
@@ -135,7 +142,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
     this.loading = true;
     let empid = this.empdata.employeeId;
     this.permissionForLoggedInUser = true;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         this.loading = false;
         if (Array.isArray(response)) {
@@ -157,7 +164,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   getDataByLPEMPID() {
     let empid = this.selectempid;
     this.permissionForLoggedInUser = false;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');

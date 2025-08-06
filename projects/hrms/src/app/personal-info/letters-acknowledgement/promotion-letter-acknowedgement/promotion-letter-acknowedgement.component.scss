@@ -1,0 +1,47 @@
+  .letter-data-content {
+     width: 100%;
+     flex: 1;
+     height: calc(100dvh - 8rem);
+     overflow: auto;
+     padding: 1.125rem;
+     text-align: justify;
+
+     .letter-sub-data-content {
+         display: flex;
+         justify-content: center;
+         width: 100%;
+         min-width: 280mm;
+     }
+
+     .letter-page-content {
+         height: 380mm;
+         width: 270mm;
+         position: relative;
+
+         background-repeat: no-repeat;
+         background-size: cover;
+         background-position: center;
+         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+         overflow: hidden;
+
+         .letter-page-sub-content {
+             padding: 1.5rem 5rem;
+             font-size: var(--fontsize16) !important;
+             color: #000000;
+         }
+
+        
+     }
+ }
+
+ .soft-copy-letter {
+    background-image: url('/images/snad-letter-bg.jpg') !important;
+    padding-top: 8rem !important;
+
+}
+
+
+
+ .letter-data-content {
+     height: calc(100dvh - 16rem) !important;
+ }

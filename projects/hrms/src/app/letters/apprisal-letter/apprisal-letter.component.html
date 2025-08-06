@@ -7,7 +7,7 @@
           <label class="form-label custom-label mb-2">{{'Select Employee'| translate }} <span
               class="error-msg">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="employeeiddetails" optionLabel="fullName" [(ngModel)]="fusionEmpId" [filter]="true"
+            <p-select [options]="employeeiddetails" optionLabel="fullName" optionValue="employeeId" [(ngModel)]="fusionEmpId" [filter]="true"
               filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"
               class="custom-select w-100" (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)" resetFilterOnHide="true">
             </p-select>
@@ -17,18 +17,31 @@
           </div>
           <div *ngIf="!disablebuttonforemployeeid" class="error-msg">{{'No results found'| translate }}</div>
         </div>
-    
+       <div class="mb-3">
+          <label class="form-label custom-label mb-2">
+            {{ 'Promotion' | translate }}<span class="error-msg"></span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select [options]="promotionPayOptions" optionLabel="name" optionValue="value" formControlName="isPromotion"
+              placeholder="Please select Promotion" (onChange)="onPromotionChange()" [autoDisplayFirst]="false"
+              class="custom-select w-100" id="Promotion" resetFilterOnHide="true"></p-select>
+          </div>
+          <div *ngIf="employeeForm.get('isPromotion')?.invalid && employeeForm.get('isPromotion')?.touched">
+            <div class="error-msg">{{ 'Promotion is required' | translate }}</div>
+          </div>
+        </div>
+        @if(employeeForm.get('isPromotion')?.value === true) {
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Promotion Designation'| translate }}</label>
           <div class="custom-p-select-content">
             <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true"
-              filterBy="designationName" placeholder="Please select promotion designation"
-              formControlName="JobRole" (optionsFound)="updateOptionsFound(true)" (isListitem)="isItemIntheList($event)"
-              (selectedOption)="onOptionSelected($event, 'JobRole')" class="custom-select w-100">
+              filterBy="designationName" placeholder="Please select promotion designation" formControlName="JobRole"
+              (optionsFound)="updateOptionsFound(true)" (isListitem)="isItemIntheList($event)"
+              (onChange)="onOptionSelected($event.value, 'JobRole')" class="custom-select w-100">
             </p-select>
           </div>
         </div>
-    
+        }
         <!-- Issued Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Issued Date'| translate }}<span class="text-danger">*</span></label>
@@ -46,7 +59,7 @@
         <!-- Next Compensation Review Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Next Compensation Review Date'| translate }}
-            <span class="text-danger">*</span></label>
+            <span class="text-danger"></span></label>
           <input type="date" formControlName="reviewdate" [(ngModel)]="appraisalData.reviewdate" min="{{ currentDate | date: 'yyyy-MM-dd' }}"
             class="form-control custom-input" id="reviewdate" required (change)="DateValidation2()">
           <div *ngIf="employeeForm.get('reviewdate')?.invalid && employeeForm.get('reviewdate')?.touched">
@@ -55,22 +68,12 @@
           <div *ngIf="!isNextApprisal" class="error-msg">{{'Date should be after the probation end date'| translate }}</div>
         </div>
     
-        <div class="mb-3">
-          <label class="form-label custom-label mb-2">{{'Document Type'| translate }}<span class="error-msg">*</span></label>
-          <div class="custom-p-select-content">
-            <p-select [options]="employeementType" optionLabel="name" optionValue="value"
-              placeholder="Please select document type" [(ngModel)]="appraisalData.Documenttype" formControlName="Documenttype"
-              inputId="documenttype" class="custom-select w-100" resetFilterOnHide="true"></p-select>
-          </div>
-          <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
-            <div class="error-msg"> {{'Document Type is required'| translate }}</div>
-          </div>
-        </div>
+        
     
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label class="form-label custom-label mb-2">{{ 'Performance Variable Bonus' | translate }}</label>
           <input type="number" class="form-control custom-input" placeholder="Please enter performance variable bonus"
-            formControlName="bonus" (input)="sanitizeInput($event)" />
+            formControlName="bonus" (input)="sanitizeInput($event)"  />
           <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
             <div *ngIf="employeeForm.get('bonus')?.errors?.['required']" class="error-msg">
               {{ 'Performance variable bonus is required' | translate }}
@@ -79,12 +82,12 @@
               Bonus cannot exceed employee's salary
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Varibale Pay -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">
-            {{ 'Variable Pay' | translate }}<span class="error-msg">*</span>
+            {{ 'Variable Pay' | translate }}<span class="error-msg"></span>
           </label>
           <div class="custom-p-select-content">
             <p-select [options]="variablePayOptions" optionLabel="name" optionValue="value" formControlName="isVariablePay"
@@ -95,9 +98,9 @@
             <div class="error-msg">{{ 'Variable pay is required' | translate }}</div>
           </div>
         </div>
-    
+        @if (employeeForm.get('isVariablePay')?.value === true) {
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">{{'Variable Amount'| translate }}<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">{{'Variable Amount'| translate }}<span class="error-msg"></span></label>
           <input type="text" formControlName="variablePayAmount" class="form-control custom-input" id="variableamount"
             placeholder="Please enter variable amount" [(ngModel)]="appraisalData.variablePayAmount" maxlength="10"
             [disabled]="!appraisalData.isVariablePay" (keypress)="numbers($event)" autocomplete="off" required>
@@ -105,7 +108,19 @@
             <div class="error-msg">{{'Variable amount is required '| translate }}</div>
           </div>
         </div>
-    
+        }
+       
+    <div class="mb-3">
+          <label class="form-label custom-label mb-2">{{'Document Type'| translate }}<span class="error-msg">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="employeementType" optionLabel="name" optionValue="value"
+              placeholder="Please select document type" [(ngModel)]="appraisalData.Documenttype" formControlName="Documenttype"
+              inputId="documenttype" class="custom-select w-100" resetFilterOnHide="true"></p-select>
+          </div>
+          <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+            <div class="error-msg"> {{'Document Type is required'| translate }}</div>
+          </div>
+        </div>
         <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
             {{'Signature Authority Name' | translate }}<span class="error-msg">*</span></label>
@@ -182,15 +197,14 @@
                 success.</p>
 
               <p *ngIf="employeeForm.get('JobRole')?.value?.value">We are happy with your performance and are equally pleased to
-                share that you have been promoted to <u><b><span>{{employeeForm.get('JobRole')?.value?.value}}</span></b></u> with immediate
-                effect.
+                share that you have been promoted to <u><b><span>{{employeeForm.get('JobRole')?.value?.value}}</span></b></u>.
               </p>
 
               <p *ngIf="nopromotion">Based on your excellent performance, we have revised your compensation and benefits, effective from <u>
                   <span *ngIf="!employeeCompensationDetails.compeffectivedate">DD/MM/YYYY</span>
                   {{employeeCompensationDetails.compeffectivedate | dateformat}}</u>. 
                   Your annual remuneration has been revised to <b> 
-                  <span *ngIf="!incrementSalary">Rs.{{employeeCompensationDetails.compensationamount}}</span></b>
+                  <span *ngIf="!incrementSalary">Rs.{{ (employeeCompensationDetails?.compensationamount || 0) + (appraisalData?.variablePayAmount || 0) }}</span></b>
               </p>
 
               <p>We are confident that you will put in your best efforts in
@@ -348,7 +362,14 @@
                       </td>
                     </tr>
                     <tr>
-                      <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI)</b></td>
+                      <td class="text-center"><b>Variable Amount</b></td>
+                      <td colspan="2" class="text-center">
+                        <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
+                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount  }}</b></ng-template>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Medical Insurance)</b></td>
                       <td class="text-center bold">
                         <span *ngIf="!appraisalData.grossSalary;else gross"></span>
                         <ng-template #gross><b>{{appraisalData.grossSalary}}</b></ng-template>
@@ -358,19 +379,13 @@
                         <ng-template #grossper><b>{{appraisalData.salary}}</b></ng-template>
                       </td>
                     </tr>
-                    <tr>
+                    <!-- <tr>
                       <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
                       <td colspan="2" class="text-center "><b>{{appraisalData.bonus}} </b><span
                           *ngIf="appraisalData.bonus">Per
                           Annum</span></td>
-                    </tr>
-                    <tr>
-                      <td class="text-center"><b>Variable Amount</b></td>
-                      <td colspan="2" class="text-center">
-                        <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
-                        <ng-template #vamount> <b>{{appraisalData.variablePayAmount }}</b></ng-template>
-                      </td>
-                    </tr>
+                    </tr> -->
+                    
                   </tbody>
                 </table>
               </div>
@@ -384,19 +399,19 @@
             <div class="letter-page-sub-content">
           
 
-              <p class="letter-sub-header mt-4 pt-4"><b>Note:</b></p>
+              <p class="letter-sub-header mt-4 pt-4"><b>Additional Details Related to Salary Structure:</b></p>
               
-              <ul>
-                <li class="mb-2">Medical insurance amount will be calculated based on the number
-                  of dependents; the respective amount will be deducted from your monthly salary.</li>
-                <li class="mb-2">Apart from your CTC, You will receive a Variable bonus of
-                  {{appraisalData.bonus}}
-                  annually, based on your performance.</li>
-              </ul>
+              <ol>
+                <li class="mb-2">TDS will be deducted from the Gross Salary after statutory deductions.</li>
+                <li class="mb-2">Employees are responsible for their Tax Planning.</li>
+                <li class="mb-2">All the above benefits are as per the Company’s policies, which are subjective to change from time to time. Further salary, allowances, any alteration in salary structure and other payments/benefits will be governed by The Company’s rules as well as statutory provisions in force from time to time and subject to deduction of appropriate taxes as applicable under government norms.</li>
+                <li class="mb-2">While the other terms and conditions of your appointment remain unchanged, please do take note that as per the current Company’s Separation Policy, if you resign from the services of the company, you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period.</li>
+                <li class="mb-2"><b>Medical insurance amount will be calculated based on the number of dependents; the respective amount will be deducted from your monthly salary.</b></li>
+              </ol>
 
-              <p>The raise in your salary would be applicable from
+              <!-- <p>The raise in your salary would be applicable from
                 <u><b>{{appraisalData.dateofAppraisal| dateformat}}</b></u>.
-              </p>
+              </p> -->
 
               <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate |
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>

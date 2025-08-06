@@ -14,7 +14,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-permissions-cancellation',
   imports: [
@@ -28,10 +28,11 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './permissions-cancellation.component.html',
   styleUrl: './permissions-cancellation.component.scss',
 })
+
 export class PermissionsCancellationComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -48,28 +49,32 @@ export class PermissionsCancellationComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedYear: any;
 
-  constructor(private http: HttpService, public rbac: RbacService) {}
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdPermission$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getDataempPermissions();
-      } else {
-        this.empinfo = JSON.parse(
-          localStorage.getItem('rightlyHrUser') ?? '{}'
-        );
-        this.getDataPermissions();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataempPermissions();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getDataPermissions();
+          }
+        });
       }
     });
   }
+  
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -78,46 +83,42 @@ export class PermissionsCancellationComponent implements OnInit, OnDestroy {
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
     this.dataload = true;
-    this.http
-      .getData(`RegularizationRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.permissions = response as RegularizationRequest[];
-          this.approvedPerimisions = this.permissions.filter(
-            (element: { status: string }) => element.status === 'Cancelled'
-          );
-          this.dataload = false;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.permissions = [];
-          this.dataload = false; // Set to empty array on error
-        },
-      });
+    this.http.getFilterPermissionDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.approvedPerimisions = this.permissions.filter(
+          (element: { status: string }) => element.status === 'Cancelled'
+        );
+        this.dataload = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = [];
+        this.dataload = false; // Set to empty array on error
+      },
+    });
   }
+
   // this method use when choose my team in dropdown
   getDataempPermissions() {
     let empId = this.selectempid;
     this.dataload = true;
-    this.http
-      .getData(`RegularizationRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.permissions = response as RegularizationRequest[];
-          this.approvedPerimisions = this.permissions.filter(
-            (element: { status: string }) => element.status === 'Cancelled'
-          );
-          this.dataload = false;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.permissions = [];
-          this.dataload = false; // Set to empty array on error
-        },
-      });
+    this.http.getFilterPermissionDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.approvedPerimisions = this.permissions.filter(
+          (element: { status: string }) => element.status === 'Cancelled'
+        );
+        this.dataload = false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = [];
+        this.dataload = false; // Set to empty array on error
+      },
+    });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

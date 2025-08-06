@@ -55,6 +55,10 @@ export const permissionsData = [
   { fields: 'Settings Job Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Signature Authority', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Acknowledgment Configuration', View: false, Update: false, Create: false, Delete: false },
+ 
+  
+  
 
   //Manage Shifts tab 
   { fields: 'Shifts Pending Tab', View: false, Update: false, Create: false, Delete: false },
@@ -798,7 +802,9 @@ export const permissionsData = [
 
   //Settings Header Icon
   { fields: 'Settings Icon', View: false, Update: false, Create: false, Delete: false },
-
+ { fields: 'Employee Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
+ //My Info Letter Acknowledgement
+ { fields: 'My Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
   //Draft Forms MArk As Active Action
   { fields: 'Mark As Active Action', View: false, Update: false, Create: false, Delete: false },
 ];

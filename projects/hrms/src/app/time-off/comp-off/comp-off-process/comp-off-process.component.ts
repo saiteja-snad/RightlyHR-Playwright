@@ -14,7 +14,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
-
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-comp-off-process',
   imports: [
@@ -28,10 +28,11 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent
-],
+  ],
   templateUrl: './comp-off-process.component.html',
   styleUrl: './comp-off-process.component.scss',
 })
+
 export class CompOffProcessComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -40,7 +41,7 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
   compOff = [] as any;
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
-  selectemp : any;
+  selectemp: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
   options = [
@@ -49,20 +50,25 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectedYear: any;
 
-  constructor(private http: HttpService, public rbac: RbacService) {}
+  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
-      if (id) {
-        this.selectemp = id;
-        this.getCompOffRequest();
-      }else{
-        this.getCompOffRequest();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getCompOffRequest();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getCompOffRequest();
+          }
+        });
       }
     });
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getCompOffRequest();
   }
 
   onRowsChange() {
@@ -75,31 +81,26 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
   }
 
   getCompOffRequest() {
-    // let empId = this.empinfo.employeeId || this.selectemp;
     let empId = this.selectemp ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http
-      .getData(`Timeoff/getCompoffRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.compOff = response;
-          this.processedCompOffRequests = this.compOff.filter(
-            (element: { status: string }) => element.status === 'Processed'
-          );
-          this.processedCompOffRequestsCount =
-            this.processedCompOffRequests.length;
-        },
-        error: (error) => {
-          this.dataload = false;
-          this.processedCompOffRequestsCount= 0;
-          this.processedCompOffRequests = [];
-          console.error('Error fetching data:', error);
-        },
-        complete: () => {
-          this.dataload = false;
-        },
-      });
+    this.http.getFilterCompoffDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.processedCompOffRequests = this.compOff.filter(
+          (element: { status: string }) => element.status === 'Processed'
+        );
+        this.processedCompOffRequestsCount = this.processedCompOffRequests.length;
+      },
+      error: (error) => {
+        this.dataload = false;
+        this.processedCompOffRequestsCount = 0;
+        this.processedCompOffRequests = [];
+        console.error('Error fetching data:', error);
+      },
+      complete: () => {
+        this.dataload = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {

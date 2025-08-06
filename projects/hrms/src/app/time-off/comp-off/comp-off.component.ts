@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IJob } from '../../Interfaces/letters-model';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -19,6 +19,7 @@ import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-comp-off',
   imports: [
@@ -59,7 +60,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
   pastDatesAllowed!:number;
   futureDatesAllowed!:number;
   compOffCriterias = [] as any;
-   getEmployeeInfo = [] as any;
+  getEmployeeInfo = [] as any;
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -67,7 +73,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     public formsValidation:FormValidationsService,
-    public readonly router: Router
+    public readonly router: Router,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {}
 
   ngOnInit(): void {
@@ -80,51 +87,61 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/comp-off': MODULE_INFOS.TIME_OFF_COMPOFF_ENTITLEMENT_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
   // function to get the data of employees by hierarchy
   
-   getTeamManagersDetails() {
-   const EmployeeId = this.empinfo.employeeId;
-   this.subscription = this.http
-     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-     .subscribe({
-       next: (response: any) => {
-         console.log('getEmployeesByhierarchy', response);
-         if (response && response.length) {
-           // No filter
-            const myTeam = response.filter((e: any) => e.isAccess);
-           this.getEmployeeInfo = myTeam.map((employee: any) => ({
-             ...employee,
-             fullName: `${
-               employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-             }${employee.firstName} ${
-               employee.middleName ? employee.middleName + ' ' : ''
-             }${employee.lastName}`,
-           }));
-           console.log('getEmployeeInfo', this.getEmployeeInfo);
-         }
-       },
-     });
- }
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          // No filter
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          }));
+        }
+      },
+    });
+  }
  
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -170,7 +187,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
         element.holidayDate = `${year}-${month}-${day}`;
       });
     }
-    
     const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate);
     this.isHolidaySelected = isDatePresent;
   }
@@ -248,12 +264,10 @@ export class CompOffComponent implements OnInit, OnDestroy {
  
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
-  
     if (isNaN(days)) {
       console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-  
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     futureDate.setDate(currentDate.getDate() + days);
@@ -286,10 +300,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getCompOffRequest(employeeId?: any) {
     let empId = employeeId;
-    console.log(empId);
-    this.subscription = this.http.getData(`Timeoff/getCompoffRequests/${empId}`).subscribe({
+    this.subscription = this.http.getFilterCompoffDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.compOff = response
         this.pendingCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
         this.ApprovedCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
@@ -299,7 +311,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason)
     })
   }
-
 
   applyCompOff(addForm: FormGroup) {
     if (addForm.valid) {

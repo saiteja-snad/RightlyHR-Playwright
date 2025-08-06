@@ -13,9 +13,11 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-leaves-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,
+    NoDataFoundComponent, InfoIconComponent, DataLoaderContentComponent],
   templateUrl: './leaves-approval.component.html',
   styleUrl: './leaves-approval.component.scss'
 })
@@ -43,24 +45,28 @@ export class LeavesApprovalComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
+  selectedYear: any;
 
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) { }
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     // this.loggedinuser = this.authService.getToken();
     // this.empdata = this.loggedinuser;
     // this.getDataByLPID();
-    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
-      if (id) {
-        // Use the new employee ID here
-        this.selectempid = id;
-        console.log('Updated employee ID:', id);
-        // Example: this.loadEmployeeDetails(id);
-        this.getDataByEmpLPID();
-      } else {
-        this.loggedinuser = this.authService.getToken();
-        this.empdata = this.loggedinuser;
-        this.getDataByLPID();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getDataByEmpLPID();
+          } else {
+            this.loggedinuser = this.authService.getToken();
+            this.empdata = this.loggedinuser;
+            this.getDataByLPID();
+          }
+        });
       }
     });
   }
@@ -68,7 +74,7 @@ export class LeavesApprovalComponent {
   getDataByLPID() {
     this.loading = true;
     let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
@@ -77,7 +83,8 @@ export class LeavesApprovalComponent {
         }
         this.loading = false;
       },
-      error: (reason: any) => {console.log(reason)
+      error: (reason: any) => {
+        console.log(reason)
         this.loading = false;
       },
       complete: () => {
@@ -89,9 +96,8 @@ export class LeavesApprovalComponent {
   getDataByEmpLPID() {
     this.loading = true;
     let empid = this.selectempid;
-    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+    this.subscription = this.http.getFilteredleavesDataByID(empid, this.selectedYear).subscribe({
       next: (response: any) => {
-
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Approved');
         } else {

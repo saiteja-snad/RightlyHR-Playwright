@@ -67,11 +67,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
     const probationEndDate = this.selectedEmployee?.probationEndDate
       ? new Date(this.selectedEmployee.probationEndDate)
       : null;
-
-    console.log('Issued Date:', issuedDate);
-    console.log('Probation End Date:', probationEndDate);
-
-    if (issuedDate && probationEndDate && issuedDate <= probationEndDate) {
+    if (issuedDate && probationEndDate && issuedDate > probationEndDate) {
       
       this.isdateofprobationIssued = false;
     } else {

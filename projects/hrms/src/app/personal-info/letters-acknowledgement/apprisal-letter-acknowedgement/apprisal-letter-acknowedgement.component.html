@@ -235,12 +235,11 @@
                   </tbody>
                 </table>
               </div>
-              
-              <p class="letter-sub-header mt-4 pt-4"><b>Additional Details Related to Salary Structure:</b></p>
-                <div *ngIf="appraisalData.note">
+              <div *ngIf="appraisalData.note">
                 <b>Note:</b>
                 <p><b>{{ appraisalData.note }}</b>.</p>
                </div>
+              <p class="letter-sub-header mt-4 pt-4"><b>Additional Details Related to Salary Structure:</b></p>              
               <ol>
                 <li class="mb-2">TDS will be deducted from the Gross Salary after statutory deductions.</li>
                 <li class="mb-2">Employees are responsible for their Tax Planning.</li>

@@ -15,9 +15,8 @@ import { Select } from 'primeng/select';
 import { IJob } from '../../Interfaces/letters-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-apprisal-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,NgbPopoverModule],
@@ -106,7 +105,7 @@ export class ApprisalLetterComponent implements OnInit,OnDestroy {
     private conformationPopup: OpenModalService,
     private router: Router,
     private authService: AuthService,
-    private modalService: NgbModal,private fb: FormBuilder
+    private modalService: NgbModal,private fb: FormBuilder,public formValidation: FormValidationService
   ) {  }
 
   openmodel(content: any) {
@@ -930,7 +929,7 @@ bonusValidator = (salary: number): ValidatorFn => {
       reviewdate: [{value:'',disabled:true}, Validators.required],
       JobRole:[''],
       Documenttype: [null, Validators.required],
-      // bonus: [''],
+      note: [''],
       authorityid: [null, Validators.required],
       isPromotion: [false, Validators.required],
       isVariablePay: [{value:'',disabled:true}, Validators.required],

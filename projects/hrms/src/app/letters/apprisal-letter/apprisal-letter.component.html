@@ -109,6 +109,15 @@
           </div>
         </div>
         }
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Note</label>
+          <textarea class="form-control custom-input" formControlName="note"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
+            placeholder="Please enter note" maxlength="250"></textarea>
+          <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
+          <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched" class="error-msg">
+            Note is required
+          </div>
+        </div>
        
     <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Document Type'| translate }}<span class="error-msg">*</span></label>
@@ -394,8 +403,9 @@
           <!--page-2-->
           <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content pt-4 mt-4">
-             <b>Note:</b><p> <b>Variable pay will be processed annually.</b> 60% of the variable pay is the <b>minimum guaranteed amount</b>, while the remaining <b> 40% will be based on company performance</b>.</p>
-
+              @if(employeeForm.get('note')?.value) {
+              <b>Note:</b><p> <b>{{employeeForm.get('note')?.value}}</b></p>
+              }
               <p class="letter-sub-header "><b>Additional Details Related to Salary Structure:</b></p>
               
               <ol>

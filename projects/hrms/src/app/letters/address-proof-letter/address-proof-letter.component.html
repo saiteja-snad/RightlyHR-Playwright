@@ -101,7 +101,7 @@
                         <div class="py-5">
                             <div class="letter-header text-center"><u>TO WHOMSOEVER IT MAY CONCERN</u></div>
                         </div>
-                        <div class="mb-5">
+                        <div class="mb-4">
                             <p>
                                 <span>
                                     This letter is to confirm that
@@ -158,11 +158,12 @@
                         <div class="mb-4">
                             <p>If you have any further questions, you can call us at 8886651309.</p>
                         </div>
-                        <div class="mb-5">
-                            <p class="mb-2">Sincerely,</p>
-                            <p><b>For SNAD Developers India Pvt Ltd</b></p>
+                          <div class="mb-5">
+                            <p>Your Sincerely,</p>
+                           <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
                         </div>
-                        <div>
+                           <div class="mb-3"></div>
+                         <div>
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!addressLetterData.authorityName?.trim()">
                              <p class="letter-sub-header mb-1">  Authority Signature</p>
@@ -170,20 +171,20 @@
 
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="!addressLetterData.authorityName?.trim()">
-                                <p class="letter-sub-header mb-1">Authority Name</p>
-                                <p class="letter-sub-header mb-1">Designation</p>
+                                <p class="authorized-signatory mb-1">Authority Name</p>
+                                <p class="authorized-signatory ">Designation</p>
                             </div>
 
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <div *ngIf="addressLetterData.authorityName?.trim()" class="letter-signature mb-3">
+                            <p *ngIf="addressLetterData.authorityName?.trim()" class="letter-signature">
                                 {{ addressLetterData.authorityName }}
-                            </div>
+                            </p>
 
                             <!-- Stamp & Designation (Only show when valid name exists) -->
                             <div *ngIf="addressLetterData.authorityName?.trim()">
-                                <p class="letter-sub-header mb-1">  Authority Signature</p>
-                                <p class="letter-sub-header mb-1">{{ addressLetterData.authorityName }}</p>
-                                <p class="letter-sub-header mb-1">{{ authorityDesignation }}</p>
+                                <p class="authorized-signatory mb-1">  Authority Signature</p>
+                                <p class="authorized-signatory mb-1">{{ addressLetterData.authorityName }}</p>
+                                <p class="authorized-signatory mb-1">{{ authorityDesignation }}</p>
                             </div>
                         </div>
                     </div>

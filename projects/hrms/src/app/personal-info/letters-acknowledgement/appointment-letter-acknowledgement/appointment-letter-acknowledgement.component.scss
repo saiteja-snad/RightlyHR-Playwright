@@ -1,17 +1,18 @@
 * {
-   
-    font-family: Verdana, Tahoma, sans-serif;
+        font-family: 'VERDANA', sans-serif !important;
 }
+
 .letter-data-content {
     width: 100%;
     flex: 1;
-     height: calc(100dvh - 16rem) !important;
+    height: calc(100dvh - 16rem) !important;
     overflow: auto;
     padding: 1.125rem;
     text-align: justify;
 
     .letter-sub-data-content {
         // display: flex;
+
         justify-content: center;
         width: 100%;
         min-width: 280mm;
@@ -21,7 +22,7 @@
         height: 380mm;
         width: 270mm;
         position: relative;
-         // background-image: url('/images/snad-letter-bg.jpg') !important;
+        // background-image: url('/images/snad-letter-bg.jpg') !important;
         background-repeat: no-repeat;
         background-position: center;
         background-size: cover;
@@ -30,18 +31,18 @@
 
         .letter-page-sub-content {
             padding: 20px 110px;
-                font-size: 16px;
-                color: #000000;
-                line-height: 18px;
+            font-size: 16px;
+            color: #000000;
+            line-height: 18px;
         }
 
-    
+
     }
 }
 
 .soft-copy-letter {
     background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top:12.5rem !important;
+    padding-top: 12.5rem !important;
 
 }
 
@@ -51,5 +52,5 @@
 }
 
 .roman-numbers-fornt li::marker {
-  font-weight: bold;
+    font-weight: bold;
 }

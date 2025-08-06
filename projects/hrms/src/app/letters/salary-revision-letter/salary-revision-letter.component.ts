@@ -22,7 +22,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss',
-  encapsulation: ViewEncapsulation.None
+
 })
 
 export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
@@ -417,8 +417,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             );
   
             //educationper annum using for medical insurence
-            Employee.educationallowancesPerAnnum = 12 * 558;
-  
+           // Employee.educationallowancesPerAnnum = 12 * 558;
+
             //conveyance per annum
             // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
   
@@ -435,7 +435,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             //salary deductions per annum
             Employee.totalDeductionsPerAnnum = Math.round(
               Employee.pfPreAnuum + Employee.esiPerAnnumemployee + 
-              Employee.educationallowancesPerAnnum + 
+              //Employee.educationallowancesPerAnnum + 
               Employee.professionalPerAnnum
             );
   
@@ -462,7 +462,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
                 ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });

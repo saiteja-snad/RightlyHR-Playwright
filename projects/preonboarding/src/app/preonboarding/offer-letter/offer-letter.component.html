@@ -13,7 +13,7 @@
                         <div class="letter-page-content my-4" id="pdfContent1">
                             <div class="letter-page-sub-content">
                                 <br />
-                               
+
                                 <div class="w-100 mt-5 mb-4">
                                     <p class="letter-header text-center mb-0">OFFER LETTER</p>
                                 </div>
@@ -34,36 +34,47 @@
                                         <ng-template #address>
                                             <li>{{ offerLetterData.addressLine1}},</li>
                                             @if(offerLetterData.addressLine2){
-                                                <li>{{ offerLetterData.addressLine2}},</li>
+                                            <li>{{ offerLetterData.addressLine2}},</li>
                                             }
                                             <li>{{ offerLetterData.city}}, {{ offerLetterData.state}},</li>
                                             <li>{{ offerLetterData.country}} - {{ offerLetterData.zipCode}}.</li>
                                         </ng-template>
                                     </ul>
                                 </div>
-                                <p class="mb-3"><b>Dear {{offerLetterData.firstName}} {{offerLetterData.middleName}} {{offerLetterData.lastName}}</b>,</p>
+                                <p class="mb-3"><b>Dear {{offerLetterData.firstName}} {{offerLetterData.middleName}}
+                                        {{offerLetterData.lastName}}</b>,</p>
                                 <div class="watermark">
-                                    <p class="mb-3">Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
-                                    <p class="mb-3">Further to your application for employment with us, and the subsequent
-                                        selection process, we are delighted to offer you the role of <b>{{offerLetterData.jobRole}}</b> in our organization and
-                                        your <b>CTC</b> will be <b>INR {{(+offerLetterData.salary || 0) + (+offerLetterData.variablePayAmount || 0)}}</b> per
+                                    <p class="mb-4">Congratulations and Welcome to SNAD Developers India Pvt Ltd!!!</p>
+                                    <p class="mb-4">Further to your application for employment with us, and the
+                                        subsequent
+                                        selection process, we are delighted to offer you the role of
+                                        <b>{{offerLetterData.jobRole}}</b> in our organization and
+                                        your <b>CTC</b> will be <b>INR {{(+offerLetterData.salary || 0) +
+                                            (+offerLetterData.variablePayAmount || 0)}}</b> per
                                         annum.
                                     </p>
-                                    <p class="mb-3">SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of AVERON SOLUTIONS INC., a US based
-                                        organization for providing \ Software Development and Services to various IT Organizations across
+                                    <p class="mb-4">SNAD Developers India Pvt Ltd is formed as an INDIAN Spin-off of
+                                        AVERON SOLUTIONS INC., a US based
+                                        organization for providing \ Software Development and Services to various IT
+                                        Organizations across
                                         the globe. We are a core team of engineers with
                                         a mindset to excel as a family under the guidance of our superior leadership.
                                     </p>
-                                    <p class="mb-3">Your reporting location will be <strong>SNAD Developers India Pvt Ltd, {{offerLetterData.address}}. Your date of joining would
+                                    <p class="mb-4">Your reporting location will be <strong>SNAD Developers India Pvt
+                                            Ltd, {{offerLetterData.address}}. Your date of joining would
                                             be {{offerLetterData.dateOfJoining | dateFormat}}.</strong></p>
                                     <p class="mb-3">Your respective <strong>Cost to Company</strong> as applicable has
-                                        been detailed in Annexure 2 of this letter. On your joining, you are expected to enter into an agreement,
-                                        which specifies the details of the scope, terms, and conditions of your employment.
+                                        been detailed in Annexure 2 of this letter. On your joining, you are expected to
+                                        enter into an agreement,
+                                        which specifies the details of the scope, terms, and conditions of your
+                                        employment.
                                     </p>
                                     <ol class="liststylenumber">
                                         <li class="mb-3"><b>Offer Letter Valid Period:</b> The currently issued offer
-                                            letter will be valid up to {{offerLetterData.offerExpiryDate | dateFormat}}.<b> </b> The
-                                            accepted offer letter along with the list of documents should be provided at least 30 days before
+                                            letter will be valid up to {{offerLetterData.offerExpiryDate |
+                                            dateFormat}}.<b> </b> The
+                                            accepted offer letter along with the list of documents should be provided at
+                                            least 30 days before
                                             the
                                             Joining Date for performing
                                             the necessary Background verification and initial setup.
@@ -95,6 +106,19 @@
                                             and
                                             Public Holidays yearly as per your eligibility and the Company policies.
                                         </li>
+
+                                    </ol>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="letter-page-content my-4" id="pdfContent2">
+                            <div class="letter-page-sub-content">
+                                <br>
+                                <div class="my-5 py-5">
+
+                                    <ol style="list-style: decimal;" start="4" class="mb-0">
                                         <li class="mb-3">
                                             <strong>Notice Period:</strong> Your services can be terminated by you by
                                             giving
@@ -107,25 +131,20 @@
                                             immediately
                                             without notice.
                                         </li>
-                                    </ol>
-                                </div>
-                            </div>
-                         
-                        </div>
+                                        <li class="mb-0">
+                                            <b class="mb-0">Other Terms & Conditions of this Offer</b>
 
-                        <div class="letter-page-content my-4" id="pdfContent2">
-                            <div class="letter-page-sub-content">
-                                <br />
-                            
-                                <ol style="list-style: decimal;" type="1" start="5" class="pt-5">
-                                    <li class="mb-3"><b>Other Terms & Conditions of this Offer</b></li>
-                                    <ul>
+                                        </li>
+                                    </ol>
+                                    <ul class="bullet mb-3">
                                         <li class="mb-3">During your service with the Company, you are expected to
                                             dedicate your whole time and attention to the Company's affairs and abstain
                                             from
                                             directly or
                                             indirectly engaging in any other business.</li>
-                                        <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                                        <li class="mb-3">Information pertaining to SNAD Developers India Pvt Ltd
+                                            operations and
+                                            intellectual
                                             property is
                                             confidential
                                             and you will sign a non-disclosure agreement. If you are bound by a
@@ -188,99 +207,115 @@
                                             force from time
                                             to time. </li>
                                     </ul>
-                                </ol>
-                                <p class="mb-3">To confirm please send your <b>acceptance</b> of the offer via reply to
-                                    the
-                                    same
-                                    <b>email</b> on or before <b> {{offerLetterData.offerExpiryDate | dateFormat}}.</b>
-                                    We
-                                    request you
-                                    to please carry
-                                    a signed copy of the offer letter & other required documents (<b>Annexure 1</b>) on
-                                    the
-                                    day of your
-                                    joining.
-                                </p>
-                                <p class="mb-3">We wish you a long, rewarding and fulfilling career experience and look
-                                    forward to having you on board with us. Please visit our website
-                                    <a>www.SNAD Developers India Pvt Ltd.com</a>
-                                    for more information about our Company.
-                                </p>
-                                <p class="mb-3">All other detailed terms and conditions of your employment will be
-                                    specified
-                                    in the
-                                    appointment letter,
-                                    invention assignment and confidentiality agreement and the Company policies which
-                                    will
-                                    be provided
-                                    to you separately.
-                                    This Offer Letter along with the appointment letter, invention assignment and
-                                    confidentiality
-                                    agreement and the Company policies
-                                    collectively form a part of your employment conditions.</p>
-                                <p class="mb-3">This Offer Letter is conditional upon you executing the appointment
-                                    letter
-                                    and/or any
-                                    other agreement as may be
-                                    requested by the Company at the time of joining. The Company may revoke this offer
-                                    of
-                                    employment
-                                    anytime before execution of the appointment letter.
-                                    Similarly, after accepting this offer, if you do not intend to join the Company, you
-                                    shall have a
-                                    right to inform
-                                    your intentions any-time before your joining date.</p>
-                                <p class="mb-3">For any further information or clarification required, please feel free
-                                    to
-                                    reach us on our email at <a>hr&#64;snaddevelopers.com</a></p>
+                                    <p class="mb-3">To confirm please send your <b>acceptance</b> of the offer via reply
+                                        to
+                                        the
+                                        same
+                                        <b>email</b> on or before <b> {{offerLetterData.offerExpiryDate |
+                                            dateFormat}}.</b>
+                                        We
+                                        request you
+                                        to please carry
+                                        a signed copy of the offer letter & other required documents (<b>Annexure 1</b>)
+                                        on
+                                        the
+                                        day of your
+                                        joining.
+                                    </p>
+                                    <p class="mb-3">We wish you a long, rewarding and fulfilling career experience and
+                                        look
+                                        forward to having you on board with us. Please visit our website
+                                        <a>www.SNAD Developers India Pvt Ltd.com</a>
+                                        for more information about our Company.
+                                    </p>
+                                    <p class="mb-3">All other detailed terms and conditions of your employment will be
+                                        specified
+                                        in the
+                                        appointment letter,
+                                        invention assignment and confidentiality agreement and the Company policies
+                                        which
+                                        will
+                                        be provided
+                                        to you separately.
+                                        This Offer Letter along with the appointment letter, invention assignment and
+                                        confidentiality
+                                        agreement and the Company policies
+                                        collectively form a part of your employment conditions.</p>
+
+                                </div>
                             </div>
-                          
+
                         </div>
 
-                        <div class="letter-page-content my-4" id="pdfContent3" >
+                        <div class="letter-page-content my-4" id="pdfContent3">
                             <div class="letter-page-sub-content">
                                 <br />
-                             
                                 <div class="my-5 py-5">
+                                    <p class="mb-3">This Offer Letter is conditional upon you executing the appointment
+                                        letter
+                                        and/or any
+                                        other agreement as may be
+                                        requested by the Company at the time of joining. The Company may revoke this
+                                        offer
+                                        of
+                                        employment
+                                        anytime before execution of the appointment letter.
+                                        Similarly, after accepting this offer, if you do not intend to join the Company,
+                                        you
+                                        shall have a
+                                        right to inform
+                                        your intentions any-time before your joining date.</p>
+                                    <p class="mb-3">For any further information or clarification required, please feel
+                                        free
+                                        to
+                                        reach us on our email at<a
+                                            href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
+                                            target="_blank" rel="noopener noreferrer"><u>
+                                                hr&#64;snaddevelopers.com</u></a>
+                                    </p>
+
                                     <p class="mb-3">Yours Sincerely,</p>
-                                    <p class="mb-5"> For SNAD Developers India Pvt Ltd </p>
-                                    <div class="stamp"></div>
-                                    <p class="mb-3 authority-signature">{{offerLetterData.authorityName}} </p>
-                                    <p class="mb-3"> Authorized Signatory, </p>
-                                    <p class="mb-3">{{offerLetterData.authorityName}} </p>
-                                    <p class="mb-3">{{authorityDesignation}} </p>
-                                    <p class="mb-3">I accept this offer of employment.</p>
+                                    <p class="mb-5 signature"> For SNAD Developers India Pvt Ltd </p>
+
+                                    <div class="mb-3"></div>
+                                    <p class="letter-signature">{{offerLetterData.authorityName}} </p>
+                                    <p class="mb-1 signature"> Authorized Signatory, </p>
+                                    <p class="mb-1 signature">{{offerLetterData.authorityName}} </p>
+                                    <p class="mb-5 signature">{{authorityDesignation}} </p>
+                                    <p class="mb-5">I accept this offer of employment.</p>
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <p class="">______________________________</p>
                                         </div>
                                         <div>
-                                            <p class="">Date (DD/MM/YYYY)</p>
+                                            <p class="me-5 pe-5">Date (DD/MM/YYYY)</p>
                                         </div>
                                     </div>
                                     <p class="letter-heading my-5">Acceptance</p>
                                     <p class="mb-3">I accept this offer letter and will complete all the necessary
                                         documents
                                         as required.</p>
-                                    <p class="mb-3 mt-4 ">Signature: <span class="authority-signature">{{ offerLetterData.firstName ??''}} {{offerLetterData.middleName??''}}
-                                                {{offerLetterData.lastName ??''}}</span> </p>
-                                    <p class="mb-3">Name:{{ offerLetterData.firstName}} {{offerLetterData.middleName}}
-                                                {{offerLetterData.lastName}} </p>
-                                    <p class="mb-3">Date:{{currentDate|dateFormat}} </p>
-                                    <p class="mb-3">Place: </p>
-                                    <p class="mb-5">My Date of joining will be {{offerLetterData.dateOfJoining | dateFormat}} (If different
+                                    <p class="mb-3 mt-4 ">Signature: <span class="letter-signature">{{
+                                            offerLetterData.firstName ??''}} {{offerLetterData.middleName??''}}
+                                            {{offerLetterData.lastName ??''}}</span> </p>
+                                    <p class="mb-1">Name:{{ offerLetterData.firstName}} {{offerLetterData.middleName}}
+                                        {{offerLetterData.lastName}} </p>
+                                    <p class="mb-1">Date:{{currentDate|dateFormat}} </p>
+                                    <p class="mb-1">Place: </p>
+                                    <p class="mb-5">My Date of joining will be {{offerLetterData.dateOfJoining |
+                                        dateFormat}} (If different
                                         from
                                         the joining Date above)</p>
                                 </div>
                             </div>
-                        
+
                         </div>
 
                         <div class="letter-page-content my-4" id="pdfContent4">
                             <div class="letter-page-sub-content">
                                 <br />
-                              
-                                <div class="">
+
+                                <div class="pt-2">
                                     <div class="letter-header text-center w-100 my-5"><b>ANNEXURE - 1</b></div>
                                     <p><b>Documents / Infermation required to be submitted on the day of joining:</b>
                                     </p>
@@ -289,7 +324,8 @@
                                         documents and certificates (For verification purpose), along with 1 copy of each
                                     </p>
                                     <div class="paragraph mb-3">
-                                        <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer
+                                        <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly
+                                        signed offer
                                         Letter.
                                     </div>
                                     <div class="paragraph mb-3">
@@ -298,109 +334,106 @@
                                             qualifications with marks
                                             sheet
                                         </div>
-                                        <ul class="list-style-none">
-                                            <li class="paragraph mb-3">
-                                                <div class="box"></div> X th certificate & marks sheet
+                                        <ul class="list-style-none mb-3">
+                                            <li class="mb-1">
+                                                <div class="box"></div> Xth certificate & marks sheet
                                             </li>
-                                            <li class="paragraph mb-3">
+                                            <li class="mb-1">
                                                 <div class="box"></div> XII th certificate & marks sheet
                                             </li>
-                                            <li class="paragraph mb-3">
+                                            <li class="mb-1">
                                                 <div class="box"></div> Graduation Degree certificate &
-                                                Semester/Year-wise
-                                                mark sheets
+                                                Semester/year-wise mark sheets
                                             </li>
-                                            <li class="paragraph mb-3">
-                                                <div class="box"></div> Master's Degree certificate & Semester/Year-wise
+                                            <li class="mb-1">
+                                                <div class="box"></div> Master's Degree certificate & Semester/year-wise
                                                 mark sheets (If
-                                                applicable)
+                                                Applicable)
                                             </li>
-                                            <li class="paragraph mb-3">
+                                            <li class="mb-1">
                                                 <div class="box"></div> Diploma/PG Diploma certificate & Transcripts (If
-                                                applicable)
+                                                Applicable)
                                             </li>
-                                            <li class="paragraph mb-3">
+                                            <li class="mb-1">
                                                 <div class="box"></div> Any other Certificate with supporting documents
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class="d-flex">
                                         <p> <span class="box"></span> PAN Card (Mandatory)</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class="d-flex ">
                                         <p> <span class="box"></span> AADHAR Card (Mandatory)</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class="d-flex ">
                                         <p> <span class="box"></span> Passport size photographs 3 colored photos.</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class=" d-flex ">
                                         <p> <span class="box"></span> Fitness/Medical report with proper blood group
                                             certified by
                                             medical practitioner.</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class="d-flex">
                                         <p><span class="box"></span> Offer Letter from your current employer and all
                                             previous employer’s
                                             (If Applicable).</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class="d-flex">
                                         <p> <span class="box"></span> Experience letter from your current employer and
                                             all
                                             previous
                                             employer’s
                                             (If Applicable).</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class=" d-flex mb-2">
                                         <p><span class="box"></span> Relieving letter from your current employer (If
                                             Applicable).</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2 ">
-                                        <p class="lh-base"><span class="box"></span> Valid Passport – Please submit a
-                                            copy
-                                            of the valid
+                                    <div class="d-flex align-items-start">
+                                        <span class="box-serpately"></span>
+                                        <p> Valid Passport – Please submit a copy of the valid
                                             Passport (inclusive of all blank pages). In case you have applied for it,
-                                            please
-                                            submit the
-                                            proof of
+                                            please submit the proof of
                                             Passport Office submission ticket. Upon receipt of Passport from Passport
-                                            Office, please
-                                            submit the documents to HCM Team. if
+                                            Office, please submit the
+                                            documents to HCM Team. if
                                             you do not have a passport, please apply ASAP, and submit the
-                                            acknowledgement.
-                                        </p>
+                                            acknowledgement.</p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2">
+                                    <div class="d-flex">
                                         <span class="box"></span>
                                         <p>Three last drawn salary pay slips of your previous employer (If Applicable).
                                         </p>
                                     </div>
-                                    <div class="paragraph d-flex mb-2 ">
+                                    <div class="d-flex">
                                         <p><span class="box"></span>Form 16 of last year if paying tax previously (If
                                             Applicable).</p>
                                     </div>
                                 </div>
                             </div>
-                          
+
                         </div>
 
                         <div class="letter-page-content my-4" id="pdfContent5">
                             <div class="letter-page-sub-content">
                                 <br />
-                             
+
                                 <div class="my-5">
-                                    <div class="letter-header text-center"><b>ANNEXURE - 2</b></div>
-                                    <div class="letter-header text-center">STRICTLY PRIVATE & CONFIDENTIAL</div>
-                                    <div class="row">
+                                    <div class="letter-header text-center mb-3"><b>ANNEXURE - 2</b></div>
+                                    <div class="letter-header text-center mb-3">STRICTLY PRIVATE & CONFIDENTIAL</div>
+                                    <div class="row mb-3">
                                         <div class="p-2 border-box col-md-2">NAME</div>
-                                        <div class="p-2 border-box col-md-4">{{offerLetterData.firstName}} {{offerLetterData.middleName}}
+                                        <div class="p-2 border-box col-md-4">{{offerLetterData.firstName}}
+                                            {{offerLetterData.middleName}}
                                             {{offerLetterData.lastName}}</div>
                                         <div class="p-2 border-box col-md-2">Designation</div>
                                         <div class="p-2 border-box col-md-4">{{offerLetterData.jobRole}}</div>
                                     </div>
-                                    <p class="text-center mb-3"><b>Compensation Details</b> <span class="text-font">(All figures in Rs.)</span></p>
+                                    <p class="text-center mb-3"><b>Compensation Details</b> <span class="text-font">(All
+                                            figures in Rs.)</span></p>
                                     <!-- table start -->
                                     <div class="salary-details-table mb-3">
-                                        <table class="w-100">
+                                        <table class="mytable mb-2 w-100">
                                             <thead>
                                                 <tr>
                                                     <th>Components In Salary</th>
@@ -410,42 +443,39 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center">Basic Salary</td>
-                                                    <td class="text-center p-0 pt-1 "><span
+                                                    <td style="width:63%;">Basic Salary</td>
+                                                    <td><span
                                                             *ngIf="! offerLetterData.basicSalary; else basicpermonth"></span>
                                                     </td>
                                                     <ng-template #basicpermonth>{{
                                                         offerLetterData.basicSalary}}</ng-template>
-                                                    <td class="text-center p-0 pt-1  family"><span
+                                                    <td><span
                                                             *ngIf="! offerLetterData.basicPerannum; else basicperannum"></span>
                                                         <ng-template #basicperannum> {{ offerLetterData.basicPerannum
                                                             }}</ng-template>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center">HRA</td>
-                                                    <td class="text-center p-0 pt-1  family"><span
-                                                            *ngIf="! offerLetterData.hraSalary; else hrapermonth">
+                                                    <td>HRA</td>
+                                                    <td><span *ngIf="! offerLetterData.hraSalary; else hrapermonth">
                                                         </span>
                                                         <ng-template #hrapermonth>{{ offerLetterData.hraSalary
                                                             }}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"><span
-                                                            *ngIf="! offerLetterData.hraPerAnnum; else hraperannum">
+                                                    <td><span *ngIf="! offerLetterData.hraPerAnnum; else hraperannum">
                                                         </span>
                                                         <ng-template #hraperannum>{{ offerLetterData.hraPerAnnum
                                                             }}</ng-template>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center">Other Allowances</td>
-                                                    <td class="text-center p-0 pt-1  family"><span
-                                                            *ngIf="! offerLetterData.otherAllowances; else other">
+                                                    <td>Other Allowances</td>
+                                                    <td><span *ngIf="! offerLetterData.otherAllowances; else other">
                                                         </span>
                                                         <ng-template #other>{{ offerLetterData.otherAllowances
                                                             }}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"><span
+                                                    <td><span
                                                             *ngIf="! offerLetterData.otherAllowancesPerAnnum; else otherper">
                                                         </span>
                                                         <ng-template #otherper>{{
@@ -454,51 +484,48 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  bold family text-center"><b
-                                                            class="family">Total
+                                                    <td><b class="family">Total
                                                             Gross
                                                             Salary</b></td>
-                                                    <td class="text-center p-0 pt-1  bold family"><span
+                                                    <td><span
                                                             *ngIf="! offerLetterData.totalGrossSalary; else totalgross ">
                                                         </span>
-                                                        <ng-template #totalgross>{{ offerLetterData.totalGrossSalary
-                                                            }}</ng-template>
+                                                        <ng-template #totalgross><b>{{ offerLetterData.totalGrossSalary
+                                                            }}</b></ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  bold family"><span
+                                                    <td><span
                                                             *ngIf=" ! offerLetterData.totalGrossPerAnnum;else totalgrossper ">
                                                         </span>
-                                                        <ng-template #totalgrossper>{{
+                                                        <ng-template #totalgrossper><b>{{
                                                             offerLetterData.totalGrossPerAnnum
-                                                            }}</ng-template>
+                                                            }}</b></ng-template>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center">PF Contribution by Employee
+                                                    <td>PF Contribution by Employee
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"><span
-                                                            *ngIf="! offerLetterData.pfContribution; else pfpermonth">
+                                                    <td><span *ngIf="! offerLetterData.pfContribution; else pfpermonth">
                                                         </span>
                                                         <ng-template #pfpermonth>{{
                                                             offerLetterData.pfContribution}}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"><span
-                                                            *ngIf="! offerLetterData.pfPreAnuum; else pfempper">
+                                                    <td><span *ngIf="! offerLetterData.pfPreAnuum; else pfempper">
                                                         </span>
                                                         <ng-template #pfempper>{{ offerLetterData.pfPreAnuum
                                                             }}</ng-template>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center">ESI Contribution by
+                                                    <td>ESI Contribution by
                                                         Employee
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"><span
+                                                    <td><span
                                                             *ngIf="! offerLetterData.employeeEsi; else empresipermonth">
                                                         </span>
                                                         <ng-template #empresipermonth>{{ offerLetterData.employeeEsi
                                                             }}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"> <span
+                                                    <td> <span
                                                             *ngIf="! offerLetterData.esiPerAnnumemployee; else empresicperannum"></span>
                                                         <ng-template #empresicperannum>{{
                                                             offerLetterData.esiPerAnnumemployee
@@ -506,14 +533,13 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center">Professional Tax (PT)</td>
-                                                    <td class="text-center p-0 pt-1  family"><span
-                                                            *ngIf="! offerLetterData.professionalTax; else pftax">
+                                                    <td>Professional Tax (PT)</td>
+                                                    <td><span *ngIf="! offerLetterData.professionalTax; else pftax">
                                                         </span>
                                                         <ng-template #pftax>{{ offerLetterData.professionalTax
                                                             }}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  family"><span
+                                                    <td><span
                                                             *ngIf="! offerLetterData.professionalPerAnnum;else pftaxper ">
                                                         </span>
                                                         <ng-template
@@ -521,35 +547,32 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-2 pb-2 family text-center"><b class="family">Total
+                                                    <td><b class="family">Total
                                                             Deductions
                                                             (PF+ESI+PT)</b></td>
-                                                    <td class="text-center p-0 pt-1  bold family"><span
-                                                            *ngIf="! offerLetterData.totalDeduction; else totdec">
+                                                    <td><span *ngIf="! offerLetterData.totalDeduction; else totdec">
                                                         </span>
                                                         <ng-template
-                                                            #totdec>{{offerLetterData.totalDeduction}}</ng-template>
+                                                            #totdec><b>{{offerLetterData.totalDeduction}}</b></ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  bold family"><span
+                                                    <td><span
                                                             *ngIf="! offerLetterData.totalDeductionsPerAnnum;else totdecper ">
                                                         </span>
                                                         <ng-template
-                                                            #totdecper>{{offerLetterData.totalDeductionsPerAnnum}}</ng-template>
+                                                            #totdecper><b>{{offerLetterData.totalDeductionsPerAnnum}}</b></ng-template>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  family text-center"><b class="family">Net
+                                                    <td><b class="family">Net
                                                             Salary</b></td>
-                                                    <td class="text-center p-0 pt-1  bold family"><span
-                                                            *ngIf="! offerLetterData.netSalary; else net">
+                                                    <td><span *ngIf="! offerLetterData.netSalary; else net">
                                                         </span>
-                                                        <ng-template #net>{{offerLetterData.netSalary}}</ng-template>
+                                                        <ng-template #net><b>{{offerLetterData.netSalary}}</b></ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1  bold family"><span
-                                                            *ngIf="! offerLetterData.netSalaryPerAnnum; else netper">
+                                                    <td><span *ngIf="! offerLetterData.netSalaryPerAnnum; else netper">
                                                         </span>
                                                         <ng-template
-                                                            #netper>{{offerLetterData.netSalaryPerAnnum}}</ng-template>
+                                                            #netper><b>{{offerLetterData.netSalaryPerAnnum}}</b></ng-template>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -557,27 +580,27 @@
                                     </div>
 
                                     <!-- second table -->
-                                    <div class="secondtable mb-3">
-                                        <table class="w-100">
+                                    <div class="salary-details-table  mb-3">
+                                        <table class="secondtable w-100">
                                             <thead>
                                                 <tr>
-                                                    <th style="text-align: center;" class="family" colspan="3">CTC
+                                                    <th colspan="3">CTC
                                                         Calculation</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td style="width:63%;" class="p-0 pt-1  family text-center">Employer
+                                                    <td style="width:63%;">Employer
                                                         PF
                                                         Contribution
                                                     </td>
-                                                    <td style="width:18%;" class="text-center p-0 pt-1 family">
+                                                    <td style="width:18%;">
                                                         <span *ngIf="! offerLetterData.pfContribution; else pfempr">
                                                         </span>
                                                         <ng-template
                                                             #pfempr>{{offerLetterData.pfContribution}}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1">
+                                                    <td>
                                                         <span *ngIf="! offerLetterData.pfPreAnuum; else pfempper">
                                                         </span>
                                                         <ng-template
@@ -585,15 +608,15 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1 family text-center">Employer ESI Contribution
+                                                    <td>Employer ESI Contribution
                                                     </td>
-                                                    <td class="text-center p-0 pt-1 family">
+                                                    <td>
                                                         <span *ngIf="! offerLetterData.esicContribution; else esiempr">
                                                         </span>
                                                         <ng-template #esiempr>{{
                                                             offerLetterData.esicContribution}}</ng-template>
                                                     </td>
-                                                    <td class="text-center p-0 pt-1 family">
+                                                    <td>
                                                         <span *ngIf="! offerLetterData.esiPerAnnum; else esiempper">
                                                         </span>
                                                         <ng-template #esiempper>{{offerLetterData.esiPerAnnum
@@ -601,27 +624,27 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-1  text-center"><b>Variable Amount</b></td>
-                                                    <td colspan="2" class="text-center p-0 pt-1 bold">
+                                                    <td><b>Variable Amount</b></td>
+                                                    <td colspan="2">
                                                         <span *ngIf="!offerLetterData.variablePayAmount; else vamount">
                                                         </span>
-                                                        <ng-template #vamount>{{offerLetterData.variablePayAmount
-                                                            }}</ng-template>
+                                                        <ng-template #vamount><b>{{offerLetterData.variablePayAmount
+                                                            }}</b></ng-template>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="p-0 pt-3 pb-3 text-center"><b>CTC = Gross Salary +
+                                                    <td class="text-center p-0 pt-1  bold"><b>CTC = Gross Salary +
                                                             (Employer
                                                             PF+ESI+Variable Amount)</b></td>
-                                                    <td class="text-center p-0 pt-1 bold family">
+                                                    <td>
                                                         <span *ngIf="! offerLetterData.grossSalary; else gross"> </span>
-                                                        <ng-template #gross>{{ offerLetterData.grossSalary
-                                                            }}</ng-template>
+                                                        <ng-template #gross><b>{{ offerLetterData.grossSalary
+                                                            }}</b></ng-template>
                                                     </td>
-                                                    <td class="text-centerp-0 pt-1 bold family">
+                                                    <td>
                                                         <span *ngIf="! offerLetterData.salary; else grossper"></span>
-                                                        <ng-template #grossper>{{ (+offerLetterData.salary || 0) +
-                                                            (+offerLetterData.variablePayAmount || 0)}}</ng-template>
+                                                        <ng-template #grossper><b>{{ (+offerLetterData.salary || 0) +
+                                                            (+offerLetterData.variablePayAmount || 0)}}</b></ng-template>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -632,7 +655,8 @@
                                         {{offerLetterData.note}}</p>
                                     <b class="paragraph bold mb-1 mt-1">The Company presently has a Perfomance Award
                                         Program.Performance
-                                        Award Program will be made available to you upon joining SNAD Developers India Pvt Ltd. Please note:
+                                        Award Program will be made available to you upon joining SNAD Developers India
+                                        Pvt Ltd. Please note:
                                         SNAD Developers India Pvt Ltd
                                         reserves the right in
                                         its sole discretion to amend, change, suspend, or terminate the Performance
@@ -640,46 +664,66 @@
                                         Program at any
                                         time.
                                     </b>
-                                    <p class="paragraph bold mb-1">Additional Details Related to Salary Structure: </p>
-                                    <ol class="list-style-none mb-3">
-                                        <li>a) TDS will be deducted from the Gross Salary after statutory deductions.
-                                        </li>
-                                        <li>b) Employees are responsible for their Tax Planning.</li>
-                                        <li>c) Employees may avail tax benefit by submitting bills against Leave Travel
-                                            Allowance.</li>
-                                        <li>d) All eligible employees as per the respective policies of the Company will
-                                            be
-                                            covered under the Group Medical Coverage
-                                            Policy and Group Covid policy.</li>
-                                        <li>e) All the above benefits are as per the Company’s policies, which are
-                                            subjective to change from time
-                                            to time. Further salary, allowances, any alteration in salary structure and
-                                            other
-                                            payments/benefits will be governed by The Company’s rules as well as
-                                            statutory
-                                            provisions in force from time
-                                            to time and subject to deduction of appropriate taxes as applicable under
-                                            government norms.</li>
-                                        <li>f) While the other terms and conditions of your appointment remain
-                                            unchanged,
-                                            please do take note
-                                            that as per the current Company’s Separation Policy, if you resign from the
-                                            services of the
-                                            company, you will be liable to serve Ninety (90) days i.e. Three (3) months
-                                            of
-                                            Notice Period.</li>
-                                        <li>g)Medical insurance amount will be calculated based on the number of
-                                            dependents;
-                                            the respective amount will be deducted
-                                            from your monthly salary.</li>
-                                    </ol>
-                                    <p class="note">Note: The above compensation package is strictly confidential
-                                            between
-                                            you and the Company and should not be discussed with anyone nor divulged to
-                                            anyone in any manner whatsoever.</p>
+
                                 </div>
                             </div>
-                         
+
+                        </div>
+
+
+                        <div class="letter-page-content my-4" id="pdfContent6">
+                            <div class="letter-page-sub-content">
+                                <br>
+                                <div class="my-5 py-5">
+                                    <b class="mb-3">Additional Details Related to Salary Structure: </b>
+                                    <ol class="list-style-none mb-3 pt-2">
+                                        <li class="mb-2"><span>a)</span> TDS will be deducted from the Gross Salary
+                                            after statutory
+                                            deductions.</li>
+                                        <li class="mb-2"><span>b)</span> Employees are responsible for their Tax
+                                            Planning.</li>
+                                        <li class="mb-2"><span>c)</span> Employees may avail tax benefit by submitting
+                                            bills against Leave
+                                            Travel Allowance.</li>
+                                        <li class="mb-2"><span>d)</span> All eligible employees as per the respective
+                                            policies of the Company
+                                            will be covered under
+                                            the Group Medical Coverage Policy and Group Covid policy. </li>
+                                        <li class="mb-2"><span>e)</span> All the above benefits are as per the Company’s
+                                            policies, which are
+                                            subjective to change from time
+                                            to time. Further salary, allowances, any alteration in salary structure and
+                                            other payments/benefits
+                                            will be governed by The Company’s rules as well as statutory provisions in
+                                            force from time to time
+                                            and subject to deduction of appropriate taxes as applicable under government
+                                            norms. </li>
+                                        <li class="mb-2"><span>f)</span> While the other terms and conditions of your
+                                            appointment
+                                            remain unchanged, please do take note that as per the current Company’s
+                                            Separation Policy, if you
+                                            resign from the services of the company,
+                                            you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice
+                                            Period. </li>
+                                        <li class="mb-2"><span>g)</span> Medical insurance amount will be calculated
+                                            based on the
+                                            number of dependents; the respective amount will be deducted from your
+                                            monthly salary. </li>
+                                    </ol>
+
+
+
+                                    <p class=" mt-2"><b>Note</b>: <i class="note">The above compensation package is
+                                            strictly confidential between
+                                            you
+                                            and the Company and should not be discussed with anyone nor divulged to
+                                            anyone in any manner
+                                            whatsoever.</i></p>
+                                </div>
+                            </div>
+                            <!-- <div class="letter-footer">
+              <app-letter-footer />
+            </div> -->
                         </div>
                     </div>
                 </div>
@@ -709,9 +753,9 @@
                 <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
                 }
                 @if(this.updatedOfferLetterDetails.candidateStatus!=='Offer Letter Rejected'){
-                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
                 }
-                
+
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
                 }
@@ -734,11 +778,11 @@
                     @if(!loadingcircle){ Yes }
                     @else {
                     <div class="button-loader-content">
-                      <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
-                      <div> Submitting</div>
+                        <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div> Submitting</div>
                     </div>
                     }
-                  </button>
+                </button>
             </div>
         </div>
     </div>
@@ -758,14 +802,16 @@
                             class="error-msg">*</span></label>
                     <textarea type="note" name="rejectReason" class="form-control custom-input"
                         formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
-                        id="rejectReason" autocomplete="off"
-                        required></textarea>
-                    <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
-                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is required</ng-container>
-                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
-                       
+                        id="rejectReason" autocomplete="off" required></textarea>
+                    <div class="error-msg py-1"
+                        *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is
+                            required</ng-container>
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not
+                            allowed</ng-container>
+
                     </div>
-                      <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
+                    <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
                         <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['required']"> {{'Reject Reason is required'| translate}}</ng-container>
                         <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
                     </div> -->

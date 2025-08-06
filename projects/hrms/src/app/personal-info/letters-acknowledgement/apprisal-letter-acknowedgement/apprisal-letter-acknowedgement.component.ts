@@ -57,6 +57,8 @@ result = {} as any;
 isLoadingreject = false;
   gender: any;
   gender2: any;
+  jobErrorMessage: string = '';
+  latestjobRole: any;
   constructor(
     private http: HttpService,
     private httpclient: HttpClient,
@@ -90,7 +92,8 @@ Onclick(fusionemployeeId: any) {
     );
     console.log(this.appraisalData)
     this.getCompensationById(this.appraisalData)
-    // this.getJobdetails(this.appraisalData)
+     this.getJobdetails(this.appraisalData)
+    this.getJobdetailsapprisal(this.appraisalData)
     this.getAppraisaldetails(this.appraisalData)
 }
 
@@ -113,14 +116,14 @@ Onclick(fusionemployeeId: any) {
 
       getJobdetails(Employee: any) {
       this.subscription = this.http
-        .getData(`JobDetails/LatestRecord/${Employee.employeeId}`)
+        .getData(`JobDetails/Empname/${Employee.employeeId}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);
             let res = data;
-            this.employeeJobDetails = res;
-            Employee.jobRole = res.jobRole;
-  
+            this.employeeJobDetails = res[0];
+            this.latestjobRole = this.employeeJobDetails.jobRole;
+
             Employee.workLocation = res.lopcation;
   
             console.log(Employee.jobRole);
@@ -130,6 +133,27 @@ Onclick(fusionemployeeId: any) {
           },
         });
     }
+  //get Job Details by empployeeid
+  getJobdetailsapprisal(Employee: any) {
+    this.subscription = this.http.getData(`JobDetails/${Employee.employeeId}`).subscribe({
+      next: (data: any) => {
+        if (!data || data.length === 0) {
+          this.jobErrorMessage = 'No job details found for this employee.';
+           this.employeeForm.get('jobValid')?.setValue(false);
+        } else {
+          let res = data.reverse()[0];
+          this.employeeJobDetails = res;
+          Employee.jobRole = res.jobRole;
+          Employee.workLocation = res.lopcation;
+          this.jobErrorMessage = '';
+          this.employeeForm.get('jobValid')?.setValue(true);
+        }
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+  }
 
 getAppraisaldetails(Employee: any) {
   const employeeId = Employee.employeeId;

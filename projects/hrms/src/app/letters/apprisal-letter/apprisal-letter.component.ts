@@ -792,13 +792,23 @@ bonusValidator = (salary: number): ValidatorFn => {
   }
   postAppraisalLetter() {
     console.log(this.appraisalData.dateofAppraisal);
+    // const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    // const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
     const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
-    const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
+const originalDate = new Date(`${year}-${month}-${day}`);
+
+// Add one day (in milliseconds)
+originalDate.setDate(originalDate.getDate() + 1);
+
+// Convert to ISO format
+const issuedDate = originalDate.toISOString();
+
+console.log(issuedDate);
     const payload = {
       employeeId: this.appraisalData.employeeId,
       status: 'Released',
       documentLink: this.result.documentUrl,
-      createdBy: this.Employeeinfo.employeeId,
+      createdBy: this.appraisalData.employeeId,
       signatureempId: this.appraisalData.authorityid,
       createdAt: new Date().toISOString(),
       revisedSalary: this.appraisalData.salary,
@@ -808,6 +818,7 @@ bonusValidator = (salary: number): ValidatorFn => {
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
       candidateStatus: 'Generated',
+        // generatedBy: this.Employeeinfo.employeeId
     };
 
     this.http

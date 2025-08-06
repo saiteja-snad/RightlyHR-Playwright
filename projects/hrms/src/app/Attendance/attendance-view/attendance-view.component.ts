@@ -102,6 +102,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   ];
   empName!: string | null;
   logsDuration!: string;
+  breakDuration!: string;
   totalDurationHours!: string;
   permissionsDuration!: string;
   regularizationAttendDuration!: string;
@@ -273,8 +274,10 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     regularizations: any,
     permissionduration:any,
     regularizationduration:any,
+    breakDuration : any,
   ) {
     this.logsDuration = totalduration;
+    this.breakDuration = breakDuration;
     this.permissionsDuration=permissionduration;
     this.regularizationAttendDuration=regularizationduration;
     this.selectedDate = date;

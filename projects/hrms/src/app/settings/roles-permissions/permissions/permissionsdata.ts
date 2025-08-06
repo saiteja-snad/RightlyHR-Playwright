@@ -55,6 +55,10 @@ export const permissionsData = [
   { fields: 'Settings Job Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Signature Authority', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Acknowledgment Configuration', View: false, Update: false, Create: false, Delete: false },
+ 
+  
+  
 
   //Manage Shifts tab 
   { fields: 'Shifts Pending Tab', View: false, Update: false, Create: false, Delete: false },

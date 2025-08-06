@@ -24,6 +24,10 @@ export const EMPLOYEE_INFO_CLAIMS = [
     claim: 'Employee Info Identity Details'
   },
   {
+    permission: 'letteracknowledge',
+    claim: 'Employee Info Letter Acknowledgement'
+  },
+  {
     permission: 'family',
     claim: 'Employee Info Family Details'
   },
@@ -203,7 +207,7 @@ export const MY_INFO_CLAIMS = [
   {
     permission: 'recall',
     claim: 'Recall'
-  }, 
+  },
   {
     permission: 'raisenodue',
     claim: 'Raise No Due'
@@ -248,13 +252,16 @@ export const MY_INFO_CLAIMS = [
   },
   { permission: 'documents', claim: 'My Info Documents Tab' },
   { permission: 'upload', claim: 'My Info Documents Upload File' },
-   { permission: 'dowload', claim: 'My Info Documents Dowload File' },
+  { permission: 'dowload', claim: 'My Info Documents Dowload File' },
 
 
 
   { permission: 'team-members', claim: 'My Info Team Members Tab' },
 
-  
+  {
+    permission: 'letteracknowledge',
+    claim: 'My Info Letter Acknowledgement'
+  },
 
   { permission: 'onboarding-request', claim: 'My Info Onboard Request Tab' }
 

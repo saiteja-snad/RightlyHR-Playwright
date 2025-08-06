@@ -44,6 +44,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
   enableBtn = false;
   spinnerLoader = false;
   releaseLoader = false;
+  Employeeinfo = {} as any;
 
   constructor(
     private http: HttpService,
@@ -52,6 +53,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
     private openModalService: OpenModalService) { }
 
   ngOnInit(): void {
+  this.Employeeinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initializeForm();
     this.getProbationEmployees();
     this.getAuthorityDetails();
@@ -261,24 +263,31 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
   Documenturlresult: any;
   postProbationDetails(path: any) {
     let payload = {
-      probationId: this.getProbationDetails.probationId,
-      formId: this.getProbationDetails.formId,
-      employeeId: this.getProbationDetails.employeeId,
-      responseId: this.getProbationDetails.responseId,
-      probationStartDate: this.getProbationDetails.probationStartDate,
-      probationEndDate: this.getProbationDetails.probationEndDate,
-      probationExtendedDate: this.getProbationDetails.probationExtendedDate,
-      status: this.getProbationDetails.status,
-      createdBy: this.getProbationDetails.createdBy,
-      updatedBy: this.getProbationDetails.updatedBy,
-      probationDays: this.getProbationDetails.probationDays,
-      raisedBy: this.getProbationDetails.raisedBy,
+    probationId: this.getProbationDetails?.probationId,
+      formId: this.getProbationDetails?.formId,
+      employeeId: this.getProbationDetails?.employeeId,
+      responseId: this.getProbationDetails?.responseId,
+      probationStartDate: this.getProbationDetails?.probationStartDate,
+      probationEndDate: this.getProbationDetails?.probationEndDate,
+      probationExtendedDate: this.getProbationDetails?.probationExtendedDate,
+      status: this.getProbationDetails?.status,
+      createdBy: this.Employeeinfo?.employeeId,
+      updatedBy: this.Employeeinfo?.employeeId,
+      updatedAt: this.todayDate,
+      probationDays: this.getProbationDetails?.probationDays,
+      raisedBy: this.getProbationDetails?.raisedBy,
       documentURL: path,
-      parentId: this.getProbationDetails.parentId,
-      probationExtendCount: this.getProbationDetails.probationExtendCount,
-      meta: this.getProbationDetails.meta,
-      appliedDate: this.getProbationDetails.appliedDate,
-      comments: this.getProbationDetails.comments
+      parentId: this.getProbationDetails?.parentId,
+      probationExtendCount: this.getProbationDetails?.probationExtendCount,
+      meta: this.getProbationDetails?.meta,
+      appliedDate: this.getProbationDetails?.appliedDate,
+      comments: this.getProbationDetails?.comments,
+      candidateStatus: 'Generated',
+      IssuedDate: this.probationConfirmationForm.get('issuedDate')?.value,
+      AuthoritySignature: this.probationConfirmationForm.get('authorityid')?.value.employeeId,
+      generatedDate: this.todayDate,
+      generatedBy: this.Employeeinfo?.employeeId,
+      DocType: this.probationConfirmationForm.get('Documenttype')?.value
     }
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {

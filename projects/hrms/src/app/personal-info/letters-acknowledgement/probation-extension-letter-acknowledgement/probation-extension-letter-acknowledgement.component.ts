@@ -97,7 +97,7 @@ export class ProbationExtensionLetterAcknowledgementComponent implements OnInit,
           }
           // this.probationDate = data[0].issuedDate;
           this.probationDate= this.letterdata.issuedDate;
-          this.probationExtensionLetterData.Documenttype = this.letterdata.docType;
+          this.probationExtensionLetterData.docType = this.letterdata.docType;
           console.log('Issued Date:', this.probationDate);
           this.getAuthorityDetails();
         },

@@ -438,7 +438,7 @@
                     </ul>
                   </div>
                   <div class="col-md-4 letter-sub-header">
-                    <p class="text-end p-0"> {{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
+                    <p class="text-end p-0"> {{employeeForm.get('offerIssuedDate')?.value | dateformat}}</p>
                   </div>
                 </div>
               </div>
@@ -464,7 +464,7 @@
 
               <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining
                   would
-                  be {{prospectiveEmpData.dateOfJoining | dateformat}}.</b></p>
+                  be {{employeeForm.get('dateOfJoining')?.value | dateformat}}.</b></p>
 
               <p class="mb-4">
                 Your respective <b>Cost to Company</b> as applicable has been detailed in Annexure 2 of
@@ -475,7 +475,7 @@
               <ol>
                 <li class="mb-4">
                   <b>Offer Letter Valid Period:</b> The currently issued offer letter will be valid up to
-                  <b>{{prospectiveEmpData.offerExpiryDate | dateformat}}.</b> The accepted offer letter along
+                  <b>{{employeeForm.get('offerExpiryDate')?.value | dateformat}}.</b> The accepted offer letter along
                   with the list of documents should be provided at least 30 days before the Joining Date for performing
                   the necessary Background verification and initial setup.
                 </li>
@@ -521,30 +521,30 @@
                   </li>
                 </ol>
                 <ul class="bullet mb-3">
-                  <li>During your service with the Company, you are expected to dedicate
+                  <li class="mb-1">During your service with the Company, you are expected to dedicate
                     your whole time and attention to the Company's affairs and abstain from directly or indirectly
                     engaging in any other business.</li>
-                  <li>Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
+                  <li class="mb-1">Information pertaining to SNAD Developers India Pvt Ltd operations and intellectual
                     property
                     is confidential and you will sign a non-disclosure agreement. If you are bound by a
                     confidentiality
                     agreement with a previous employer, you must notify the Company and indemnify the Company against
                     any breach thereof. </li>
 
-                  <li>You may be required to travel on Company work, and you will be reimbursed expenses as
+                  <li class="mb-1">You may be required to travel on Company work, and you will be reimbursed expenses as
                     per Company policy. </li>
 
-                  <li>Your Remuneration and the terms and conditions of this offer letter
+                  <li class="mb-1">Your Remuneration and the terms and conditions of this offer letter
                     shall remain confidential and are not to be disclosed to any third party. </li>
 
-                  <li>Upon acceptance of the offer letter, your official Employment ID will
+                  <li class="mb-1">Upon acceptance of the offer letter, your official Employment ID will
                     be created with us and you will entitled to the corporate benefits structure based on the category
                     of
                     work. Your employment with the company as a FTE will stand confirmed subjected to the terms and
                     conditions
                     as per rules, regulations, and policies of The Company.</li>
 
-                  <li>On termination of employment, you will immediately give up to the
+                  <li class="mb-1">On termination of employment, you will immediately give up to the
                     Company all correspondence, specifications, formulae, books, documents, hardware, market data,
                     cost
                     data, literature,
@@ -552,12 +552,12 @@
                     Company and any other Company property or relating to its business and shall not make or retain
                     any copies of the items. </li>
 
-                  <li>If you are absent from work without prior notification & approval as
+                  <li class="mb-1">If you are absent from work without prior notification & approval as
                     per Company policies, you will be liable for disciplinary action depending on the severity of the
                     effects caused by the
                     individual’s absence. </li>
 
-                  <li>If you are absent for a continuous period of 7 days without leave or
+                  <li class="mb-1">If you are absent for a continuous period of 7 days without leave or
                     obtaining your manager’s approval, you will be deemed to have voluntarily terminated your service
                     without notice. </li>
 
@@ -571,7 +571,7 @@
 
 
                 <p>To confirm please send your <b>acceptance</b> of the offer via reply
-                  to the same <b>email</b> on or before <b> {{prospectiveEmpData.offerExpiryDate | dateformat}}.</b>
+                  to the same <b>email</b> on or before <b> {{employeeForm.get('offerExpiryDate')?.value | dateformat}}.</b>
                   We request you to please carry a signed copy of the offer letter & other required documents
                   (<b>Annexure 1</b>) on the day of your joining.
                 </p>
@@ -617,8 +617,8 @@
                       target="_blank" rel="noopener noreferrer"><u> hr&#64;snaddevelopers.com</u></a></p>
                   <p>Yours Sincerely,</p>
                   <p class="mb-5 signature">For SNAD Developers India Pvt Ltd </p>
-                  <div class="stamp"></div>
-                  <p class="mb-3 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
+                  <div class="mb-3"></div>
+                  <p class="letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">
                     {{prospectiveEmpData.authorityName}}</p>
                   <p class="mb-1 signature "> Authorized Signatory, </p>
                   <p class="mb-1 signature">{{prospectiveEmpData.authorityName}} </p>
@@ -653,7 +653,7 @@
           <div class="letter-page-content my-4" id="pdfContent4"
             [ngClass]="{'soft-copy-letter':prospectiveEmpData.Copys}">
             <div class="letter-page-sub-content">
-              <div class="pt-2">
+               <div class="pt-2">
                 <!-- <div *ngIf="prospectiveEmpData.Copys; else doc" class="soft-copy-letter">
                   <app-lettersheader />
                 </div>
@@ -665,15 +665,15 @@
                   joining:</p>
                 <p class="mb-3">On the day joining, you are requested to bring to the following original
                   documents and certificates (For verification purpose), along with 1 copy of each</p>
-                <div class="mb-1">
-                  <div class="box"></div> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.
+                <div class="mb-2">
+                    <p><span class="box"></span> Acceptance copies of SNAD Developers India Pvt Ltd. duly signed offer Letter.</p>
                 </div>
-                <div class="mb-1">
-                  <div class="mb-2">
-                    <div class="box"></div> Certificates' supporting your educational qualifications along with marks
-                    sheet
+                <div class="mb-2">
+                  <div class="mb-3">
+                    <p><span class="box"></span> Certificates' supporting your educational qualifications along with marks
+                    sheet</p>
                   </div>
-                  <ul class="list-style-none mb-2">
+                  <ul class="list-style-none mb-3">
                     <li class="mb-1">
                       <div class="box"></div> Xth certificate & marks sheet
                     </li>
@@ -719,8 +719,9 @@
                 <div class="d-flex">
                   <p><span class="box"></span> Relieving letter from your current employer (If Applicable).</p>
                 </div>
-                <div class="d-flex ">
-                  <p class=""><span class="box"></span> Valid Passport – Please submit a copy of the valid
+                <div class="d-flex align-items-start">
+                  <span class="box-serpately"></span>
+                  <p > Valid Passport – Please submit a copy of the valid
                     Passport (inclusive of all blank pages). In case you have applied for it, please submit the proof of
                     Passport Office submission ticket. Upon receipt of Passport from Passport Office, please submit the
                     documents to HCM Team. if
@@ -728,7 +729,7 @@
                 </div>
                 <div class="d-flex">
                   <span class="box"></span>
-                  <p>Three last drawn salary pay slips of your previous employer (If Applicable).</p>
+                  <p class="mb-3"> Three last drawn salary pay slips of your previous employer (If Applicable).</p>
                 </div>
                 <div class="d-flex ">
                   <p><span class="box"></span> Form 16 of last year if paying tax previously (If Applicable).</p>
@@ -946,29 +947,26 @@
               <div class="pt-2">
                 <b class="mb-2">Additional Details Related to Salary Structure: </b>
                 <ol class="list-style-none mb-2 pt-2">
-                  <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
+                  <li class="mb-2"><span>a)</span> TDS will be deducted from the Gross Salary after statutory
                     deductions.</li>
-                  <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
-                  <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave
+                  <li class="mb-2"><span>b)</span> Employees are responsible for their Tax Planning.</li>
+                  <li class="mb-2"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave
                     Travel Allowance.</li>
-                  <li class="mb-1"><span>d)</span> All eligible employees as per the respective policies of the Company
+                  <li class="mb-2"><span>d)</span> All eligible employees as per the respective policies of the Company
                     will be covered under
                     the Group Medical Coverage Policy and Group Covid policy. </li>
-                  <li class="mb-1"><span>e)</span> All the above benefits are as per the Company’s policies, which are
+                  <li class="mb-2"><span>e)</span> All the above benefits are as per the Company’s policies, which are
                     subjective to change from time
                     to time. Further salary, allowances, any alteration in salary structure and other payments/benefits
                     will be governed by The Company’s rules as well as statutory provisions in force from time to time
                     and subject to deduction of appropriate taxes as applicable under government norms. </li>
-                  <li class="mb-1"><span>f)</span> While the other terms and conditions of your appointment
+                  <li class="mb-2"><span>f)</span> While the other terms and conditions of your appointment
                     remain unchanged, please do take note that as per the current Company’s Separation Policy, if you
                     resign from the services of the company,
                     you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period. </li>
-                  <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
+                  <li class="mb-2"><span>g)</span> Medical insurance amount will be calculated based on the
                     number of dependents; the respective amount will be deducted from your monthly salary. </li>
                 </ol>
-
-                
-                
                 <p class=" mt-2"><b>Note</b>:  <i class="note">The above compensation package is strictly confidential between
                   you
                   and the Company and should not be discussed with anyone nor divulged to anyone in any manner

@@ -25,6 +25,11 @@
     src: url("/fonts/Lexend-VariableFont_wght.ttf");
 }
 
+@font-face {
+    font-family: "VERDANA";
+    src: url("/fonts/VerdanaNow.ttf");
+}
+
 /* You can add global styles to this file, and also import other style files */
 :root {
     --login-logo-color: #d8ecff;
@@ -842,7 +847,7 @@ select:focus {
         border-radius: 0.5rem !important;
         padding: 0px !important;
     }
- 
+
     .p-select-option {
         white-space: normal !important;
     }
@@ -1187,10 +1192,11 @@ select:focus {
             overflow: hidden;
 
             .letter-page-sub-content {
-                  padding: 20px 110px;
+                padding: 20px 110px;
                 font-size: 16px;
                 color: #000000;
                 line-height: 18px;
+                text-align: justify;
 
             }
 
@@ -1255,7 +1261,7 @@ select:focus {
     td {
         padding: 0.5rem 0.625rem;
         text-align: center;
-       color: #000;
+        color: #000;
         font-size: var(--fontsize16) !important;
     }
 
@@ -1263,9 +1269,10 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4){
-         background: rgba(255, 255, 204, 255);
+    tr:nth-child(4) {
+        background: rgba(255, 255, 204, 255);
     }
+
     tr:nth-child(9) {
         background: #fff2cc;
     }
@@ -1329,6 +1336,7 @@ select:focus {
     font-size: 18px;
     font-weight: 800;
 }
+
 // note text stylings
 .note-text {
     font-size: var(--fontsize12) !important;
@@ -2693,4 +2701,9 @@ input[type=number]::-webkit-outer-spin-button {
     .p-datepicker-today>.p-datepicker-day-selected {
         background: var(--primary-color);
     }
+}
+
+.authorized-signatory {
+    font-size: 16px;
+    font-weight: 700;
 }

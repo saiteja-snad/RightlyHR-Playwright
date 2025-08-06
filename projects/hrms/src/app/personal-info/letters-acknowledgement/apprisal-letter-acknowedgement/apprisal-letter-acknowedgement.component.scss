@@ -1,4 +1,10 @@
+
   .letter-data-content {
+
+ * {
+
+     font-family: 'VERDANA', sans-serif !important;
+ }
      width: 100%;
      flex: 1;
      height: calc(100dvh - 8rem);
@@ -30,15 +36,15 @@
              color: #000000;
          }
 
-        
+
      }
  }
 
  .soft-copy-letter {
-    background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top: 8rem !important;
+     background-image: url('/images/snad-letter-bg.jpg') !important;
+     padding-top: 8rem !important;
 
-}
+ }
 
 
 

@@ -1,8 +1,7 @@
 * {
-  
-    font-family: Verdana, Tahoma, sans-serif;
-}
 
+    font-family: 'VERDANA', sans-serif !important;
+}
 
 
 
@@ -22,18 +21,13 @@ input:focus{
     .mytable,
     .secondtable {
         th {
-            background: #f4f8ff;
+            background: #e7f0fd;
         }
     }
 }
 
-.secondtable tr:nth-child(3) td:nth-child(2),
-.secondtable tr:nth-child(3) td:nth-child(3) {
-  background: #fce4d6;
-}
 
-.mytable tr:nth-child(4),
-.mytable tr:nth-child(10),
-.mytable tr:nth-child(9) {
-  background: #fff2cc;
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }

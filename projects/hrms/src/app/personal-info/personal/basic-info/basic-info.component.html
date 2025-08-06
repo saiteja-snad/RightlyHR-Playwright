@@ -3,7 +3,7 @@
   <div class="card custom-background-card">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="component-sub-header">Basic Info</div>
-      @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
+      @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !=='trainee inactive' && empyployeedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
 
       @if(canAccessfield('update','basicinfo')){
       <div>

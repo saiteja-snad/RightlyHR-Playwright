@@ -166,6 +166,7 @@ getAppraisaldetails(Employee: any) {
         console.log('Appraisal Letter:', data);
         this.appraisalData.Documenttype = data.docType;
         this.appraisalData.dateofAppraisal = data.issuedDate;
+         this.appraisalData.note = data.note;
 
         const authorityId = data.authoritySignature;
 
@@ -265,12 +266,20 @@ getAuthorityDetails(authorityId: number) {
         this.appraisalData.salary = res.compensationamount
         this.appraisalData.compeffectivedate = res.compeffectivedate
         console.log(this.appraisalData);
+        this.appraisalData.variablePayAmount = res.variablePayAmount ? res.variablePayAmount : null;
+          this.appraisalData.isVariablePay = res.isVariablePay ? res.isVariablePay : false;
+          // this.employeeForm.patchValue({
+          //   isVariablePay: res.isVariablePay ? res.isVariablePay : false,
+          //   variablePayAmount: res.variablePayAmount ? res.variablePayAmount : null,
+          //   reviewdate: this.formatDate(res.nextCompReviewDate),
+            
+          // });
         //CTC calculation stated
         Employee.grossby = 12
         Employee.grossSalary = Math.round(res.compensationamount / Employee.grossby)
         this.grossSalary = Employee.grossSalary
         console.log(this.grossSalary);
-
+       
         console.log(Employee.grossby);
         console.log(Employee.grossSalary);
         console.log(this.appraisalData);

@@ -19,7 +19,8 @@
 }
 
 .text-primary {
-    color: var(--primary-color);
+    text-decoration: none !important;
+    color: var(--primary-color)!important;
 }
 
 .letter-data-content {

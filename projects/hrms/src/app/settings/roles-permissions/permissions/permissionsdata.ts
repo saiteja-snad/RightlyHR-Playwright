@@ -36,7 +36,6 @@ export const permissionsData = [
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Status', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Background check Status', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Letter Acknoledgement', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Notice Period', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Frequency', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Paytype', View: false, Update: false, Create: false, Delete: false },

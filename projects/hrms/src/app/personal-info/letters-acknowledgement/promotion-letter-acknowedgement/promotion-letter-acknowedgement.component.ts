@@ -487,7 +487,7 @@ previusSalary:any
         const imgWidth = pdf.internal.pageSize.getWidth();
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Letter.pdf`;
+        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Signed_Document.pdf`;
         pdf.save(fileName);
         const blob = pdf.output('blob');
         this.PromotionFile = new File([blob], fileName, { type: 'application/pdf' });
@@ -527,8 +527,9 @@ previusSalary:any
   }
 
   uploadPromotionLetter() {
-
-    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.promotiondata.employeeId}`;
+   const [day, month, year] = this.promotiondata.dateofAppraisal.split('/');
+    const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
+    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.Employeeinfo.employeeId}`;
     this.subscription = this.http
       .uploadFileWithQuery(
         'FileSystem/uploadfiletodirectory',
@@ -557,7 +558,7 @@ previusSalary:any
             middleName: this.promotiondata.middleName,
             jobRole: this.promotiondata.jobRole,
             documentUrl: this.result.documentUrl,
-            compeffectivedate: this.formatDate(this.promotiondata.compeffectivedate),
+            compeffectivedate: compeffectivedate,
             employeeId: this.promotiondata.employeeId,
             compensationamount: this.promotiondata.salary
           }

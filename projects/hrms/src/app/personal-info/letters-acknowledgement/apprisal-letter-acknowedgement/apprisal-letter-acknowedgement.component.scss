@@ -1,9 +1,10 @@
- * {
 
-     font-family: 'VERDANA', sans-serif !important;
- }
+  .letter-data-content {
 
- .letter-data-content {
+//  * {
+
+//      font-family: 'VERDANA', sans-serif !important;
+//  }
      width: 100%;
      flex: 1;
      height: calc(100dvh - 8rem);
@@ -44,6 +45,7 @@
      padding-top: 8rem !important;
 
  }
+
 
 
  .letter-data-content {

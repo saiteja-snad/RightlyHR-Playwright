@@ -133,6 +133,13 @@
             <div class="error-msg"> {{'Signature Authority Name is required'| translate }}</div>
           </div>
         </div>
+         <div class="mb-3">
+          <label class="form-label custom-label mb-2">{{'Note'| translate }}<span class="error-msg"></span></label>
+          <input type="text" formControlName="note" class="form-control custom-input" id="note"
+            placeholder="Please enter note" [(ngModel)]="appraisalData.note" maxlength="50"
+             autocomplete="off" required>
+        </div>
+
     
         <div>
           <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Updated Salary,
@@ -397,7 +404,11 @@
           <!--page-2-->
           <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content pt-4 mt-4">
-             <b>Note:</b><p> <b>Variable pay will be processed annually.</b> 60% of the variable pay is the <b>minimum guaranteed amount</b>, while the remaining <b> 40% will be based on company performance</b>.</p>
+             <!-- <b>Note:</b><p> <b>Variable pay will be processed annually.</b> 60% of the variable pay is the <b>minimum guaranteed amount</b>, while the remaining <b> 40% will be based on company performance</b>.</p> -->
+             <div *ngIf="appraisalData.note">
+                <b>Note:</b>
+                <p><b>{{ appraisalData.note }}</b>.</p>
+              </div>
 
               <p class="letter-sub-header "><b>Additional Details Related to Salary Structure:</b></p>
               

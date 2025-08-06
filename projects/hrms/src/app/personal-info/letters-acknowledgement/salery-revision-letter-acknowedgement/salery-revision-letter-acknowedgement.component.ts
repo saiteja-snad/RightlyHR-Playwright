@@ -770,8 +770,10 @@ export class SaleryRevisionLetterAcknowedgementComponent {
   }
 
   uploadPromotionLetter() {
+     const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
 
-    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.promotiondata.employeeId}`;
+    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.Employeeinfo.employeeId}`;
     this.subscription = this.http
       .uploadFileWithQuery(
         'FileSystem/uploadfiletodirectory',
@@ -800,7 +802,7 @@ export class SaleryRevisionLetterAcknowedgementComponent {
             middleName: this.promotiondata.middleName,
             jobRole: this.promotiondata.jobRole,
             documentUrl: this.result.documentUrl,
-            compeffectivedate: this.formatDate(this.promotiondata.compeffectivedate),
+            compeffectivedate: compeffectivedate,
             employeeId: this.promotiondata.employeeId,
             compensationamount: this.promotiondata.salary
           }

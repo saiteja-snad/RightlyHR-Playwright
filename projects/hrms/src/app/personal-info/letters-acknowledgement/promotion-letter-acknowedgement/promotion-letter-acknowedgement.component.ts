@@ -595,38 +595,38 @@ previusSalary:any
           }
           let loggedInUser = this.authService.getToken();
           console.log(loggedInUser);
-          let emaildetails = {
-            personEmail: this.promotiondata.workEmail,
-            senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-            senderEmail: loggedInUser.workEmail,
-            firstName: this.promotiondata.firstName,
-            lastName: this.promotiondata.lastName,
-            middleName: this.promotiondata.middleName,
-            jobRole: this.promotiondata.jobRole,
-            documentUrl: this.result.documentUrl,
-            compeffectivedate: this.promotiondata.compeffectivedate,
-            employeeId: this.promotiondata.employeeId,
-            compensationamount: this.promotiondata.salary
-          }
-          if (loggedInUser.middleName) {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-          } else {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-          }
-          console.log(emaildetails);
-          this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
-            next: (data: any) => {
-              console.log(data);
-              this.conformationPopup.openSuccessModal("Email Sent Successfully")
-              this.router.navigate(['/employee-management/active-employees']);
-            },
-            error: (err: any) => {
-              console.log(err);
-            },
-            complete: () => {
-              this.spinnerLoader = false;
-            }
-          })
+          // let emaildetails = {
+          //   personEmail: this.promotiondata.workEmail,
+          //   senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+          //   senderEmail: loggedInUser.workEmail,
+          //   firstName: this.promotiondata.firstName,
+          //   lastName: this.promotiondata.lastName,
+          //   middleName: this.promotiondata.middleName,
+          //   jobRole: this.promotiondata.jobRole,
+          //   documentUrl: this.result.documentUrl,
+          //   compeffectivedate: this.promotiondata.compeffectivedate,
+          //   employeeId: this.promotiondata.employeeId,
+          //   compensationamount: this.promotiondata.salary
+          // }
+          // if (loggedInUser.middleName) {
+          //   emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+          // } else {
+          //   emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
+          // }
+          // console.log(emaildetails);
+          // this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+          //   next: (data: any) => {
+          //     console.log(data);
+          //     this.conformationPopup.openSuccessModal("Email Sent Successfully")
+          //     this.router.navigate(['/employee-management/active-employees']);
+          //   },
+          //   error: (err: any) => {
+          //     console.log(err);
+          //   },
+          //   complete: () => {
+          //     this.spinnerLoader = false;
+          //   }
+          // })
            this.postPromotionlettersDetails(this.result.documentUrl);
         },
         error: (reason: any) => {
@@ -662,9 +662,10 @@ previusSalary:any
       addressType: "string",
       authoritySignature: this.letterdata.authoritySignature,
       note: "",
-      issuedDate: "2025-06-20T11:57:47.591Z",
+      issuedDate:  this.letterdata.issuedDate,
       rejectedComments: this.rejectForm.get('comments')?.value || '',
-      candidateStatus: 'Acknowledged'
+      candidateStatus: 'Acknowledged',
+      generatedBy: this.Employeeinfo.employeeId,
     };
     this.subscription = this.http
       .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)
@@ -703,9 +704,10 @@ previusSalary:any
       addressType: "string",
       authoritySignature: this.letterdata.authorityName,
       note: "",
-      issuedDate: "2025-06-20T11:57:47.591Z",
+      issuedDate:  this.letterdata.issuedDate,
       rejectedComments: this.rejectForm.get('comments')?.value || '',
-      candidateStatus: 'Rejected'
+      candidateStatus: 'Rejected',
+      generatedBy: this.Employeeinfo.employeeId,
     };
     this.subscription = this.http
       .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)

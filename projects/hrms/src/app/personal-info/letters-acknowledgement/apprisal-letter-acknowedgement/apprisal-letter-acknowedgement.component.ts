@@ -721,6 +721,8 @@ getAuthorityDetails(authorityId: number) {
       letterType: this.letterdata.letterType,
       acknowledgeDate: moment().format('YYYY-MM-DD'),
       employeeId: this.empdata.employeeId,
+      generatedBy: this.empdata.employeeId,
+      issuedDate:  this.letterdata.issuedDate,
       signedDocUrl: filePath,
       status: 'Released',
       candidateStatus: 'Acknowledged',
@@ -783,6 +785,8 @@ getAuthorityDetails(authorityId: number) {
       letterType: this.letterdata.letterType,
       acknowledgeDate: moment().format('YYYY-MM-DD'),
       employeeId:this.empdata.employeeId,
+      generatedBy: this.empdata.employeeId,
+      issuedDate:  this.letterdata.issuedDate,
       // signedDocUrl: filePath,
       status: 'Released',
       candidateStatus: 'Rejected',
@@ -806,7 +810,8 @@ getAuthorityDetails(authorityId: number) {
         this.isLoadingreject=false;
         this.dataFailureMsg(error.error.message);
       },
-    });  }
+    });  
+  }
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

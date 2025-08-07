@@ -758,6 +758,8 @@ bonusValidator = (salary: number): ValidatorFn => {
           compensationamount: this.appraisalData.salary,
           effectiveDate : this.employeeCompensationData.compeffectivedate,
           jobRole : this.employeeForm.get('JobRole')?.value?.value,
+          generatedBy: this.appraisalData.employeeId,
+          generatedDate: new Date().toISOString(),
 
         };
         if (loggedInUser.middleName) {
@@ -815,9 +817,7 @@ console.log(issuedDate);
       authoritySignature: this.appraisalData.authorityid,
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
-      candidateStatus: 'Generated',
-      generatedBy: this.appraisalData.employeeId,
-      generatedDate: new Date().toISOString(),
+      candidateStatus: 'Generated'
     };
 
     this.http

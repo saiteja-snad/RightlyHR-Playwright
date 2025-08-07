@@ -571,6 +571,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             middleName: this.appraisalData.middleName,
             personRole: this.appraisalData.jobRole,
             documentUrl: this.result.documentUrl,
+            generatedBy: this.appraisalData.employeeId,
+           generatedDate: new Date().toISOString(),
             compeffectivedate: `${
                compeffectivedate ?? 'N/A'
             }`,
@@ -625,8 +627,7 @@ const postAppDetails = {
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
       candidateStatus: 'Generated',
-      generatedBy: this.appraisalData.employeeId,
-      generatedDate: new Date().toISOString(),
+      
     };
   this.subscription = this.http
     .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)

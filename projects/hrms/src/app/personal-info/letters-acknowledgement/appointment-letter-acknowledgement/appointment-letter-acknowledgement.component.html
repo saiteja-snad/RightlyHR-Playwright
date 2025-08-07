@@ -1090,10 +1090,10 @@
             </label>
         </div>
         <div class="d-flex">
-            <button class="btn btn-primary-approve me-2" [disabled]="isLoading||isacknowledged||isLoadingreject"
+            <button class="custom-btn  btn-primary-approve me-2" [disabled]="isLoading||isacknowledged||isLoadingreject"
                 (click)="openpopup(acknowlegeconfimation)">Accept
             </button>
-            <button class="btn btn-danger" [disabled]="isLoading||isLoadingreject"
+            <button class="custom-btn  btn-primary-reject " [disabled]="isLoading||isLoadingreject"
                 (click)="openpopup(rejectmodal)">Reject
             </button>
         </div>

@@ -317,7 +317,7 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
           console.log(data);
           this.isacknowledged = true;
           this.isLoading = false;
-          this.confirmation.openSuccessModal('Appointment Letter Acknowledged Successfully');
+          this.confirmation.openSuccessModal('Appointment Letter Accepted Successfully');
           setTimeout(() => {
             this.modalService.dismissAll();
             this.http.triggerRefresh();

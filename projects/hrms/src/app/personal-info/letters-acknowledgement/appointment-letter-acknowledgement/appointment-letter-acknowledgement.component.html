@@ -1079,8 +1079,8 @@
             </label>
         </div>
         <div class="d-flex">
-            <button class="btn btn-primary me-2" [disabled]="isLoading||isacknowledged||isLoadingreject"
-                (click)="openpopup(acknowlegeconfimation)">Acknowledge
+            <button class="btn btn-primary-approve me-2" [disabled]="isLoading||isacknowledged||isLoadingreject"
+                (click)="openpopup(acknowlegeconfimation)">Accept
             </button>
             <button class="btn btn-danger" [disabled]="isLoading||isLoadingreject"
                 (click)="openpopup(rejectmodal)">Reject
@@ -1095,7 +1095,7 @@
     <div class="result-popup-content" ngbAutofocus>
       <div>
         <app-confirmation-icon/>
-        <p class="confirmation-text mt-2"> Are you sure you want to Acknowledge?</p>
+        <p class="confirmation-text mt-2"> Are you sure you want to Accept?</p>
       </div>
       <div class="custom-modal-footer">
         <button type="button" (click)="model.dismiss()" [disabled]="isLoading" class="custom-btn btn-secondary">

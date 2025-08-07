@@ -81,9 +81,23 @@ export class AcknowledgeletterComponent {
         next: (data: any) => {
           console.log(data);
           this.documents = data;
-          this.generated = data.filter((ele: any) => ele.status === 'Generated');
-          this.acknowleged = data.filter((ele: any) => ele.status === 'Acknowledged');
-          this.rejected = data.filter((ele: any) => ele.status === 'Rejected');
+         this.documents = data.map((ele: any) => {
+           if (ele.status === 'Generated')
+             return { ...ele, status: 'Waiting for Review' };
+           if (ele.status === 'Acknowledged')
+             return { ...ele, status: 'Accepted' };
+           return ele;
+         });
+
+         this.generated = this.documents.filter(
+           (ele: any) => ele.status === 'Waiting for Review'
+         );
+         this.acknowleged = this.documents.filter(
+           (ele: any) => ele.status === 'Accepted'
+         );
+         this.rejected = this.documents.filter(
+           (ele: any) => ele.status === 'Rejected'
+         );
           console.log(this.documents);
         },
         error: (reason: any) => {

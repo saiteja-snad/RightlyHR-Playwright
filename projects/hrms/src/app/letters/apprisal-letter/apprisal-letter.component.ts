@@ -331,7 +331,7 @@ bonusValidator = (salary: number): ValidatorFn => {
           this.jobErrorMessage = 'No job details found for this employee.';
            this.employeeForm.get('jobValid')?.setValue(false);
         } else {
-          let res = data.reverse()[0];
+          let res = data.sort((a: any, b: any) => b.effectiveDate - a.effectiveDate)[0];
           this.employeeJobDetails = res;
           Employee.jobRole = res.jobRole;
           Employee.workLocation = res.lopcation;

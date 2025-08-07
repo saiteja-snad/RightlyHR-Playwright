@@ -341,7 +341,9 @@ pathValuesFuction() {
     this.releaseLoader = true;
     let pdata = {
       employeeId: this.probationLetterData.employeeId,
-      documentUrl: this.Documenturlresult
+      documentUrl: this.Documenturlresult,
+      generatedBy: this.Employeeinfo.employeeId,
+      generatedDate: new Date().toISOString(),
     }
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {

@@ -15,6 +15,7 @@ import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-remote-rejected',
   imports: [
@@ -27,7 +28,8 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     TranslateModule,
     NoDataFoundComponent,
     InfoIconComponent,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './remote-rejected.component.html',
   styleUrl: './remote-rejected.component.scss',
 })
@@ -40,7 +42,7 @@ export class RemoteRejectedComponent implements OnInit, OnDestroy {
   approvedRemotesCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataLoad = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -100,6 +102,7 @@ export class RemoteRejectedComponent implements OnInit, OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
+    this.dataLoad = true;
     this.http
       .getFilterRemoteLoginDataByID(
         empId,
@@ -114,8 +117,11 @@ export class RemoteRejectedComponent implements OnInit, OnDestroy {
             (element: { status: string }) => element.status === 'Rejected'
           );
           this.approvedRemotesCount = this.approvedRemotes.length;
+          this.dataLoad = false;
         },
         error: (error) => {
+          this.dataLoad = false;
+
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
         },

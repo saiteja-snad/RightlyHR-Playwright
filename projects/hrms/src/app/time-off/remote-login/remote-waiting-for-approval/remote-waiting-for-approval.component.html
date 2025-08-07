@@ -1,6 +1,7 @@
-@if(!dataLoad){
+
 <div class="custom-main-component-container">
   <div class="custom-table-content ">
+    @if(!dataLoad){
     <table class="w-100">
       <thead>
         <tr>
@@ -47,6 +48,6 @@
         </ng-template>
       </tbody>
     </table>
+    }@else{<app-data-loader-content />}
   </div>
 </div>
-}@else{<app-data-loader-content />}

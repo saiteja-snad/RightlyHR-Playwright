@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -13,7 +13,6 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
-import { HttpParams } from '@angular/common/http';
 @Component({
   selector: 'app-onboarding-details',
   imports: [CommonModule, ReactiveFormsModule, Select, Skeleton],
@@ -65,7 +64,7 @@ export class OnboardingDetailsComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
-  
+
   wfh = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -80,20 +79,20 @@ export class OnboardingDetailsComponent {
     { name: 'Work From Home', value: 'Work From Home', allowWFH: true },
   ];
   filteredRemoteLoginWorkLocations = [
-    { name: 'Remote', value: 'Remote'},
+    { name: 'Remote', value: 'Remote' },
     { name: 'Hybrid', value: 'Hybrid' },
   ];
   filteredWorkLocations: any[] = [];
   statustoprint: any;
   remoteLoginManagers: any = [];
-
+  @ViewChild('confirmationpopup') confirmationpopup: any;
   constructor(
     private fb: FormBuilder,
     private conformationPopup: OpenModalService,
     private http: HttpService,
     public rbac: RbacService,
     public permissionRouteService: AccessForEmployeeinfoService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -129,30 +128,83 @@ export class OnboardingDetailsComponent {
     }
   }
   initializeForm(): void {
-    this.onboardingForm = this.fb.group({
-      status: [{ value: null, disabled: true }],
-      dateOfJoining: [{ value: null, disabled: true }],
-      branchLocation: [{ value: null, disabled: true }],
-      probationEndDate: [{ value: null, disabled: true }],
-      probationStatus: [{ value: null, disabled: true }],
-      noticePeriodStatus: [{ value: null, disabled: true }],
-      backgroundCheckStatus: [{ value: null, disabled: true }],
-      salaryHold: [{ value: null, disabled: true }],
-      pf: [{ value: null, disabled: true }],
-      esic: [{ value: null, disabled: true }],
-      pt: [{ value: null, disabled: true }],
-      totalExperience: [{ value: null, disabled: true }],
-      allowwfh: [{ value: null, disabled: true }],
-      allowRemoteLogin: [{ value: null, disabled: true }],
-      workLocation: [{ value: null, disabled: true }],
-      wfhmanger: [{ value: null, disabled: true }],
-      remoteLoginManager: [{ value: null, disabled: true }],
-      remoteLoginWorkLocation: [{ value: null, disabled: true }],
-    });
+    this.onboardingForm = this.fb.group(
+      {
+        status: [{ value: null, disabled: true }],
+        dateOfJoining: [{ value: null, disabled: true }],
+        branchLocation: [{ value: null, disabled: true }],
+        probationEndDate: [{ value: null, disabled: true }],
+        probationStatus: [{ value: null, disabled: true }],
+        noticePeriodStatus: [{ value: null, disabled: true }],
+        backgroundCheckStatus: [{ value: null, disabled: true }],
+        salaryHold: [{ value: null, disabled: true }],
+        pf: [{ value: null, disabled: true }],
+        esic: [{ value: null, disabled: true }],
+        pt: [{ value: null, disabled: true }],
+        totalExperience: [{ value: null, disabled: true }],
+        allowwfh: [{ value: null, disabled: true }],
+        allowRemoteLogin: [{ value: null, disabled: true }],
+        workLocation: [{ value: null, disabled: true }],
+        wfhmanger: [{ value: null, disabled: true }],
+        remoteLoginManager: [{ value: null, disabled: true }],
+        remoteLoginWorkLocation: [{ value: null, disabled: true }],
+      },
+      {
+        validators: this.wfhOrRemoteLoginValidator,
+      }
+    );
 
-     this.setupConditionalValidation();
+    this.setupConditionalValidation();
   }
 
+ wfhOrRemoteLoginValidator: ValidatorFn = (form: AbstractControl): ValidationErrors | null => {
+  const wfhCtrl = form.get('allowwfh');
+  const remoteCtrl = form.get('allowRemoteLogin');
+
+  const allowWFH = wfhCtrl?.value;
+  const allowRemoteLogin = remoteCtrl?.value;
+
+  // Reset previous conflict errors
+  if (wfhCtrl?.hasError('conflict')) {
+    const { conflict, ...other } = wfhCtrl.errors || {};
+    wfhCtrl.setErrors(Object.keys(other).length ? other : null);
+  }
+
+  if (remoteCtrl?.hasError('conflict')) {
+    const { conflict, ...other } = remoteCtrl.errors || {};
+    remoteCtrl.setErrors(Object.keys(other).length ? other : null);
+  }
+
+  // Apply conditional field-level conflict error
+  if (allowWFH && allowRemoteLogin) {
+    if (wfhCtrl?.pristine) {
+      // Remote was just changed, conflict on remote
+      remoteCtrl?.setErrors({
+        ...remoteCtrl.errors,
+        conflict: `'Work From Home' is already enabled to activate 'Remote Login', please disable Work From Home.`
+      });
+    } else if (remoteCtrl?.pristine) {
+      // WFH was just changed, conflict on WFH
+      wfhCtrl?.setErrors({
+        ...wfhCtrl.errors,
+        conflict: `'Remote Login' is already enabled to activate 'Work From Home', please disable Remote Login.`
+      });
+    } else {
+      // Default: Show conflict on both
+      wfhCtrl?.setErrors({
+        ...wfhCtrl.errors,
+        conflict: `'Remote Login' is already enabled to activate 'Work From Home', please disable Remote Login.`
+      });
+
+      remoteCtrl?.setErrors({
+        ...remoteCtrl.errors,
+        conflict: `'Work From Home' is already enabled to activate 'Remote Login', please disable Work From Home.`
+      });
+    }
+  }
+
+  return null;
+};
   initializeTrainee() {
     this.traineeForm = this.fb.group({
       empType: [{ value: null, disabled: true }],
@@ -193,47 +245,49 @@ export class OnboardingDetailsComponent {
   }
 
   setupConditionalValidation(): void {
-  this.onboardingForm.get('allowwfh')?.valueChanges.subscribe(() => {
-    this.updateConditionalValidators();
-  });
+    this.onboardingForm.get('allowwfh')?.valueChanges.subscribe(() => {
+      this.updateConditionalValidators();
+    });
 
-  this.onboardingForm.get('allowRemoteLogin')?.valueChanges.subscribe(() => {
-    this.updateConditionalValidators();
-  });
-}
+    this.onboardingForm.get('allowRemoteLogin')?.valueChanges.subscribe(() => {
+      this.updateConditionalValidators();
+    });
+  }
 
   updateConditionalValidators(): void {
-  const allowwfh = this.onboardingForm.get('allowwfh')?.value;
-  const allowRemoteLogin = this.onboardingForm.get('allowRemoteLogin')?.value;
+    const allowwfh = this.onboardingForm.get('allowwfh')?.value;
+    const allowRemoteLogin = this.onboardingForm.get('allowRemoteLogin')?.value;
 
-  const workLocation = this.onboardingForm.get('workLocation');
-  const wfhmanger = this.onboardingForm.get('wfhmanger');
-  const remoteLoginManager = this.onboardingForm.get('remoteLoginManager');
-  const remoteLoginWorkLocation = this.onboardingForm.get('remoteLoginWorkLocation');
+    const workLocation = this.onboardingForm.get('workLocation');
+    const wfhmanger = this.onboardingForm.get('wfhmanger');
+    const remoteLoginManager = this.onboardingForm.get('remoteLoginManager');
+    const remoteLoginWorkLocation = this.onboardingForm.get(
+      'remoteLoginWorkLocation'
+    );
 
-  // Reset validators
-  workLocation?.clearValidators();
-  wfhmanger?.clearValidators();
-  remoteLoginManager?.clearValidators();
-  remoteLoginWorkLocation?.clearValidators();
+    // Reset validators
+    workLocation?.clearValidators();
+    wfhmanger?.clearValidators();
+    remoteLoginManager?.clearValidators();
+    remoteLoginWorkLocation?.clearValidators();
 
-  // Add required validators based on conditions
-  if (allowwfh) {
-    workLocation?.setValidators(Validators.required);
-    wfhmanger?.setValidators(Validators.required);
+    // Add required validators based on conditions
+    if (allowwfh) {
+      workLocation?.setValidators(Validators.required);
+      wfhmanger?.setValidators(Validators.required);
+    }
+
+    if (allowRemoteLogin) {
+      remoteLoginManager?.setValidators(Validators.required);
+      remoteLoginWorkLocation?.setValidators(Validators.required);
+    }
+
+    // Update form controls
+    workLocation?.updateValueAndValidity();
+    wfhmanger?.updateValueAndValidity();
+    remoteLoginManager?.updateValueAndValidity();
+    remoteLoginWorkLocation?.updateValueAndValidity();
   }
-
-  if (allowRemoteLogin) {
-    remoteLoginManager?.setValidators(Validators.required);
-    remoteLoginWorkLocation?.setValidators(Validators.required);
-  }
-
-  // Update form controls
-  workLocation?.updateValueAndValidity();
-  wfhmanger?.updateValueAndValidity();
-  remoteLoginManager?.updateValueAndValidity();
-  remoteLoginWorkLocation?.updateValueAndValidity();
-}
 
   filterWorkLocationOptions(allowWFH: boolean) {
     this.filteredWorkLocations = this.worklocation.filter(
@@ -338,8 +392,8 @@ export class OnboardingDetailsComponent {
       remoteLoginManager: data?.remoteLoginManagerId,
     });
     this.onboardingForm.patchValue({
-        remoteLoginWorkLocation:remoteLoginWorkLocation?.value,
-    }); 
+      remoteLoginWorkLocation: remoteLoginWorkLocation?.value,
+    });
   }
 
   //function to get traineeofferletter data using getbyemployeeid
@@ -464,30 +518,33 @@ export class OnboardingDetailsComponent {
       });
   }
 
-getRemoteLoginManagers() {
-  const normalizedName = encodeURIComponent('REMOTE LOGIN MANAGER');
-  const includeAssignee = true;
-  const url = `FusionRole/getbyNormalizedName?Nname=${normalizedName}&includeAssignee=${includeAssignee}`;
-  this.subscription = this.http.getData(url).subscribe({
-    next: (data: any) => {
-      this.remoteLoginManagers = data.getUserWithRoleNames.map((user: {
-        firstName: any;
-        middleName: any;
-        lastName: any;
-        employeeId: any;
-        fusionEmpId: any;
-      }) => ({
-        ...user,
-        name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${user.middleName ?? ''} ${user.lastName ?? ''}`.trim(),
-        value: user.employeeId
-      }));
-    },
-    error: (error) => {
-      console.error('Error fetching data:', error);
-    }
-  });
-}
-
+  getRemoteLoginManagers() {
+    const normalizedName = encodeURIComponent('REMOTE LOGIN MANAGER');
+    const includeAssignee = true;
+    const url = `FusionRole/getbyNormalizedName?Nname=${normalizedName}&includeAssignee=${includeAssignee}`;
+    this.subscription = this.http.getData(url).subscribe({
+      next: (data: any) => {
+        this.remoteLoginManagers = data.getUserWithRoleNames.map(
+          (user: {
+            firstName: any;
+            middleName: any;
+            lastName: any;
+            employeeId: any;
+            fusionEmpId: any;
+          }) => ({
+            ...user,
+            name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${
+              user.middleName ?? ''
+            } ${user.lastName ?? ''}`.trim(),
+            value: user.employeeId,
+          })
+        );
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+      },
+    });
+  }
 
   //function to get notice dropdown
   getNotice() {
@@ -515,7 +572,7 @@ getRemoteLoginManagers() {
       : this.empdata.probationEndDate
       ? this.formatDateToLocal(this.empdata.probationEndDate)
       : null;
-      // Work From Home
+    // Work From Home
     const allowWFH =
       this.onboardingForm.get('allowwfh')?.value ?? this.empdata.allowWFH;
     const wfhData = {
@@ -544,7 +601,6 @@ getRemoteLoginManagers() {
           this.empdata.remoteLoginManagerId
         : null,
     };
-
 
     const payload = {
       ...this.empdata,
@@ -613,6 +669,7 @@ getRemoteLoginManagers() {
   }
 
   showButtons(): void {
+    this.onboardingForm.reset();
     this.getEmployeeId();
     this.buttons = !this.buttons;
 
@@ -627,6 +684,7 @@ getRemoteLoginManagers() {
       }
     } else {
       this.getEmployeeId();
+      
       this.onboardingForm.disable();
     }
   }

@@ -15,6 +15,7 @@ import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-remote-processed',
   imports: [CommonModule,
@@ -24,7 +25,7 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     DropdownModule,
     TranslateModule,
     InfoIconComponent,
-    DateformatPipe, NoDataFoundComponent],
+    DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './remote-processed.component.html',
   styleUrl: './remote-processed.component.scss'
 })
@@ -37,6 +38,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
   approvedRemotesCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  dataLoad = false;
 
   options = [
     { label: 10, value: 10 },
@@ -98,6 +100,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
+    this.dataLoad = true;
     this.http
       .getFilterRemoteLoginDataByID(
       empId,this.selectedYear
@@ -105,7 +108,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
+          this.dataLoad = false;
           this.remoteLogin = response;
           this.approvedRemotes = this.remoteLogin.filter(
             (element: { status: string }) => element.status === 'Processed'
@@ -113,6 +116,7 @@ export class RemoteProcessedComponent implements OnInit,OnDestroy {
           this.approvedRemotesCount = this.approvedRemotes.length;
         },
         error: (error) => {
+          this.dataLoad = false;
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
         },

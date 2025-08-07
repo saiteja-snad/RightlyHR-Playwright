@@ -43,14 +43,14 @@
                   @if(canAccess('update','visa')){
                   <li (click)="openModalupdate(updatevisamodal, visa)">
                     <a class="dropdown-item">
-                      <app-settings-update-icon />Update
+                       <i class="bi bi-trash3 me-2"></i>Update
                     </a>
                   </li>
                   }
                   @if(canAccess('delete','visa')){
                   <li (click)="opendeletModal(deleteconformation,visa)">
                     <a class="dropdown-item">
-                        <app-settings-delete-icon />Delete
+                          <i class="bi bi-trash3 me-2"></i>Delete
                     </a>
                   </li>
                   }

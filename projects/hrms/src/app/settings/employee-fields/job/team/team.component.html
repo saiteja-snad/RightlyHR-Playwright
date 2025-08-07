@@ -31,12 +31,12 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li (click)="openupdateDialog(teams)" *ngIf="rbac.allowedToAccess('Team.update')">
                       <a class="dropdown-item">
-                        <app-settings-update-icon />Update
+                        <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
                     <li (click)="opendelete(teams)" *ngIf="rbac.allowedToAccess('Team.delete')">
                       <a class="dropdown-item">
-                          <app-settings-delete-icon />Delete
+                           <i class="bi bi-trash3 me-2"></i>Delete
                       </a>
                     </li>
                   </ul>

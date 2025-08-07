@@ -45,14 +45,11 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(type)" *ngIf="rbac.allowedToAccess('Identity Type.update')"><img
-                                        src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
+                                <a (click)="openupdate(type)" *ngIf="rbac.allowedToAccess('Identity Type.update')"><app-settings-update-icon /></a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(type)" *ngIf="rbac.allowedToAccess('Identity Type.delete')"><img
-                                        src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(type)" *ngIf="rbac.allowedToAccess('Identity Type.delete')"> <app-settings-delete-icon /></a>
                             </div>
                         </div>
                     </td>

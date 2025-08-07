@@ -32,12 +32,12 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li (click)="openupdateDialog(roles)" *ngIf="rbac.allowedToAccess('Job Role.update')">
                       <a class="dropdown-item">
-                        <app-settings-update-icon />{{'Update' |translate}}
+                        <i class="bi bi-pencil me-2"></i>{{'Update' |translate}}
                       </a>
                     </li>
                     <li (click)="opendelete(roles)" *ngIf="rbac.allowedToAccess('Job Role.delete')">
                       <a class="dropdown-item">
-                          <app-settings-delete-icon />{{'Delete' | translate}}
+                          <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
                       </a>
                     </li>
                   </ul>

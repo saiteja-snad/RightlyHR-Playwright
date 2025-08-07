@@ -37,14 +37,14 @@
                     @if(rbac.allowedToAccess('Form Settings.update')){
                     <li>
                       <a class="dropdown-item" (click)="assignValues(formSetting.ratingType)">
-                        <app-settings-update-icon />Update
+                        <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
                     }
                     @if(rbac.allowedToAccess('Form Settings.delete')){
                     <li>
                       <a class="dropdown-item" (click)="openDeleteModal(formSetting.ratingType)">
-                          <app-settings-delete-icon />Delete
+                            <i class="bi bi-trash3 me-2"></i>Delete
                       </a>
                     </li>
                     }

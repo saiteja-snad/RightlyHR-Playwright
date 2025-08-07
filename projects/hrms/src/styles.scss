@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 // Font styles
-
+@import './new-theme-style-sheets/new-themes.scss';
+@import './new-theme-style-sheets/font-styles.scss';
 
 @font-face {
     font-family: "autographsignatureFont";

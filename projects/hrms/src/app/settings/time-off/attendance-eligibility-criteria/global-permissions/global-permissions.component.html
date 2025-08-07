@@ -36,12 +36,12 @@
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.update')">
                                         <a class="dropdown-item" (click)="openModal(updatePermissionModal,permission)">
-                                            <app-settings-update-icon />Update
+                                            <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
                                     <li *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.delete')">
                                         <a class="dropdown-item" (click)="openDeleteModal(deletePermissionModal,permission)">
-                                              <app-settings-delete-icon />Delete
+                                            <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
                                 </ul>

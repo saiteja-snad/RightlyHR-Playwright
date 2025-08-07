@@ -13,10 +13,11 @@ import { MyInfoPersonalTabsComponent } from "../myinfo-tabs/my-info-personal-tab
 import { MyinfoJobTabsComponent } from "../myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
 import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs/personal-job-tabs.component";
 import { Skeleton } from 'primeng/skeleton';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-profile-info-details',
-  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent,Skeleton, PersonalPersonalTabsComponent,
-    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent],
+  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, Skeleton, PersonalPersonalTabsComponent,
+    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent, ProfileIconComponent],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
 })

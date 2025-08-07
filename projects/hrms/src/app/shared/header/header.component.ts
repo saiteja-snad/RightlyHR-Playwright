@@ -11,9 +11,10 @@ import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ProfileIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

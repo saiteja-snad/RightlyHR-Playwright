@@ -23,6 +23,7 @@ import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [
@@ -39,7 +40,8 @@ import { FormValidationsService } from '../../../../services/form-validations.se
     SearchfordeskPipe,
     InfoIconComponent,
     DataLoaderContentComponent,
-  ],
+    DocumentViewIconComponent
+],
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })

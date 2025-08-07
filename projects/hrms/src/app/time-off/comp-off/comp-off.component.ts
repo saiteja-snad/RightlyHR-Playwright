@@ -20,6 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-comp-off',
   imports: [
@@ -28,7 +29,8 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
     CommonModule,
     CompOffApprovalTabsComponent, DropdownModule, Select, TranslateModule,
     ModuleInformationComponent,
-    NgbPopoverModule
+    NgbPopoverModule,
+    ConfirmationIconComponent
 ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',

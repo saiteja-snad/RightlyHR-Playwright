@@ -16,9 +16,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule,NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DocumentViewIconComponent, SettingsUpdateIconComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe],

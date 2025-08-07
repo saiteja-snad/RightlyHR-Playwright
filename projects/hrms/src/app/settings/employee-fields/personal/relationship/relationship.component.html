@@ -46,13 +46,13 @@
                             <!--Update-->
                             <div>
                                 <a (click)="openupdate(rel)" *ngIf="rbac.allowedToAccess('Relationship.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                     <app-settings-update-icon />
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
                                 <a (click)="opendelete(rel)" *ngIf="rbac.allowedToAccess('Relationship.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                       <app-settings-delete-icon />
                                 </a>
                             </div>
                         </div>

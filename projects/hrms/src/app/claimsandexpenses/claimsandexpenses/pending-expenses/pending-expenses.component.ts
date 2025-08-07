@@ -12,9 +12,10 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })

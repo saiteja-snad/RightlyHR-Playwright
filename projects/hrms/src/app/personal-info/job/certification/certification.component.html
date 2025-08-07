@@ -42,7 +42,7 @@
                         </td>
                         <td class="text-center">
                             <span *ngIf="empcreficition.attachment;else noData" (click)="onSelectBankProofDownload(empcreficition)">
-                                <img src="/icons/Download.png" alt="Icon" class="download-icon">
+                                  <app-download-icon />
                             </span>
                             <ng-template #noData><span class="text-center">-</span></ng-template>
                         </td>
@@ -62,7 +62,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <app-settings-update-icon />Update
                                         </a>
                                     </li>}
                                     }
@@ -73,7 +73,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="opendeletModal(deleteconformation,empcreficition)">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                              <app-settings-delete-icon />Delete
                                         </a>
                                     </li>}
                                     }

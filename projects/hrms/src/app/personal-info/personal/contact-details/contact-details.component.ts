@@ -13,11 +13,12 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 
 
 @Component({
   selector: 'app-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, Skeleton, EditIconComponent],
   templateUrl: './contact-details.component.html',
   styleUrl: './contact-details.component.scss',
   encapsulation: ViewEncapsulation.None,

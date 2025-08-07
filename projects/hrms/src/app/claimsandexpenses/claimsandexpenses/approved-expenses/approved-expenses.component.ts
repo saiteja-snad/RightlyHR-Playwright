@@ -14,9 +14,10 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })

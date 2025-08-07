@@ -50,7 +50,7 @@
                         <td class="text-center">
                             <span *ngIf="empexperimentdata.attachment;else noData" class="download-text"
                                 (click)="onSelectBankProofDownload(empexperimentdata)">
-                                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
+                                  <app-download-icon /></span>
                             <ng-template #noData>-</ng-template>
                         </td>
                         @if(canAccess('update','experience') ||
@@ -72,7 +72,7 @@
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
                                     <li (click)="openModalupdate(updateexperincemodal, empexperimentdata)">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <app-settings-update-icon />Update
                                         </a>
                                     </li>
                                     }
@@ -84,7 +84,7 @@
                                     @if(canAccess('delete','experience')){
                                     <li (click)="opendeletModal(deleteconformation,empexperimentdata)">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                              <app-settings-delete-icon />Delete
                                         </a>
                                     </li>
                                     }

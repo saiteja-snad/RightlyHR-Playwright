@@ -15,18 +15,28 @@
                         </p>
                         <p class="m-0 job-role">{{jobRole}}</p>
                     </div>
-                    <div>
-                        <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
-                            class="profile-img">
-                    </div>
+                      <div>
+                            <ng-container *ngIf="imageUrl; else showProfileIcon">
+                                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image" class="profile-img">
+                            </ng-container>
+
+                            <ng-template #showProfileIcon>
+                                <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'" />
+                            </ng-template>
+                        </div>
                 </div>
                 <ul class="dropdown-menu">
                     <div class="dropdown-content">
-                        <div class="image-content">
-                            <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
-                                class="profile-image">
-                            <div class="edit-icon-content"></div>
-                        </div>
+                         <div class="image-content">
+                                <ng-container *ngIf="imageUrl; else showLargeProfileIcon">
+                                    <img [src]="imageUrl" alt="Profile Image" class="profile-image">
+                                </ng-container>
+
+                                <ng-template #showLargeProfileIcon>
+                                    <app-profile-icon [iconWidth]="'64'" [iconHeight]="'64'" />
+                                </ng-template>
+                                <div class="edit-icon-content"></div>
+                            </div>
                         <div class="data-content">
                             <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                                 {{empdata?.lastName}}</p>

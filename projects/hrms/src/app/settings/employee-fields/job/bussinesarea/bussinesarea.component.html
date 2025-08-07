@@ -42,13 +42,13 @@
                             <!--Update-->
                             <div>
                                 <a (click)="openupdate(loc)" *ngIf="rbac.allowedToAccess('Business Area.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                     <app-settings-update-icon />
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
                                 <a (click)="opendelete(loc)" *ngIf="rbac.allowedToAccess('Business Area.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                       <app-settings-delete-icon />
                                 </a>
                             </div>
                         </div>

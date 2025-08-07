@@ -19,6 +19,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -29,7 +30,8 @@ import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.ser
     PremissionsTabsComponent, TranslateModule,
     ModuleInformationComponent,
     NgbPopoverModule,
-  ],
+    ConfirmationIconComponent
+],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
   encapsulation: ViewEncapsulation.None,

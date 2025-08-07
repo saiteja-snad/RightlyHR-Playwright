@@ -41,7 +41,7 @@
                     @if(rbac.allowedToAccess('Active Forms.update')){
                     <li>
                       <a class="dropdown-item" (click)="navigateToUpdateComponent(form.formId)">
-                        <i class="bi bi-pencil me-2"></i>Update
+                        <app-settings-update-icon />Update
                       </a>
                     </li>
                     }
@@ -55,7 +55,7 @@
                     @if(rbac.allowedToAccess('Active Forms.delete')){
                     <li>
                       <a class="dropdown-item" (click)="openmodal(confirmation);setfromid=form.formId">
-                        <i class="bi bi-trash3 me-2"></i>Inactive
+                          <app-settings-delete-icon />Inactive
                       </a>
                     </li>
                     }

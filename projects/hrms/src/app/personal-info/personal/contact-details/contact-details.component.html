@@ -8,7 +8,7 @@
       @if(canAccessfield('update','contact')){
       @if(!buttons && ( employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()!=='trainee inactive' )){
       <div>
-        <a (click)="enableForm()"><img src="/icons/edit-colored-icon.png" alt="Icon" class="component-edit-icon"></a>
+        <a (click)="enableForm()"><app-edit-icon /></a>
       </div>
       }
       }

@@ -32,12 +32,12 @@
                     <li (click)="openupdateDialog(pro)"
                       *ngIf="rbac.allowedToAccess('Settings Job Probation Details.update')">
                       <a class="dropdown-item">
-                        <i class="bi bi-pencil me-2"></i>Update
+                        <app-settings-update-icon />Update
                       </a>
                     </li>
                     <li (click)="opendelete(pro)" *ngIf="rbac.allowedToAccess('Settings Job Probation Details.delete')">
                       <a class="dropdown-item">
-                        <i class="bi bi-trash3 me-2"></i>Delete
+                          <app-settings-delete-icon />Delete
                       </a>
                     </li>
                   </ul>

@@ -30,12 +30,12 @@
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li (click)="openupdateDialog(roles)" *ngIf="rbac.allowedToAccess('Grade Details.update')">
                       <a class="dropdown-item">
-                        <i class="bi bi-pencil me-2"></i>Update
+                        <app-settings-update-icon />Update
                       </a>
                     </li>
                     <li (click)="opendelete(roles)" *ngIf="rbac.allowedToAccess('Grade Details.delete')">
                       <a class="dropdown-item">
-                        <i class="bi bi-trash3 me-2"></i>Delete
+                          <app-settings-delete-icon />Delete
                       </a>
                     </li>
                   </ul>

@@ -13,9 +13,10 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DocumentViewIconComponent } from "../../../icons/document-view-icon/document-view-icon.component";
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DocumentViewIconComponent],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })

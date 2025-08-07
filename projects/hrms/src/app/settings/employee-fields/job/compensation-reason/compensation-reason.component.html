@@ -46,14 +46,14 @@
                             <div>
                                 <a (click)="openupdate(reason)"
                                     *ngIf="rbac.allowedToAccess('Compensation Reason.update')">
-                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                     <app-settings-update-icon />
                                 </a>
                             </div>
                             <!--Delete-->
                             <div>
                                 <a (click)="opendelete(reason)"
                                     *ngIf="rbac.allowedToAccess('Compensation Reason.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                       <app-settings-delete-icon />
                                 </a>
                             </div>
                         </div>

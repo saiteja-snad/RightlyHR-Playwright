@@ -11,10 +11,12 @@ import { PreOnBoardingDocumentsData } from './pre-on-boarding.model';
 import { RbacService } from '../../../../services/rbac.service';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 
 @Component({
   selector: 'app-pre-on-boarding-documents',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, DataLoaderContentComponent,SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './pre-on-boarding-documents.component.html',
   styleUrl: './pre-on-boarding-documents.component.scss',
 })

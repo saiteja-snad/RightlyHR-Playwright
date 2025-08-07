@@ -41,7 +41,7 @@
             <td class="text-center">
               <span *ngIf="edacationDetails.attachment;else noData"
                 (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span><ng-template #noData>-</ng-template>
+                  <app-download-icon /></span><ng-template #noData>-</ng-template>
             </td>
             @if( canAccess('update','education' ) || canAccess('delete','education')){
             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
@@ -56,13 +56,13 @@
                   @if( canAccess('update','education' )){
                   <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
                     <a class="dropdown-item">
-                      <i class="bi bi-pencil me-2"></i>Update
+                      <app-settings-update-icon />Update
                     </a>
                   </li>
                   }@if( canAccess('delete','education' )){
                   <li (click)="opendeletModal(deleteconformation,edacationDetails)">
                     <a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Delete
+                        <app-settings-delete-icon />Delete
                     </a>
                   </li>
                   }

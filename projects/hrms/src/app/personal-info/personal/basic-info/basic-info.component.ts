@@ -13,6 +13,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import {Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 
 
 
@@ -20,7 +21,7 @@ import { Skeleton } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-basic-info',
-  imports: [CommonModule, ReactiveFormsModule, Select,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Select, Skeleton, EditIconComponent],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })

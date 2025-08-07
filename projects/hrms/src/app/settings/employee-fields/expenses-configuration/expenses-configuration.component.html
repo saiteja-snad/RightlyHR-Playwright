@@ -45,13 +45,13 @@
                                     <li (click)="openupdate(updateexpeses, exp)"
                                         *ngIf="rbac.allowedToAccess('Expenes Configuartion.update')">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <app-settings-update-icon />Update
                                         </a>
                                     </li>
                                     <li (click)="opendelete(deleteconformation,exp)"
                                         *ngIf="rbac.allowedToAccess('Expenes Configuartion.delete')">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                              <app-settings-delete-icon />Delete
                                         </a>
                                     </li>
                                 </ul>
@@ -70,8 +70,7 @@
                         <p class="popup-heading mb-0">Add Expense Type</p>
                     </div>
                     <div>
-                        <a (click)="modal.dismiss();expenseForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                                class="close-icon"></a>
+                        <a (click)="modal.dismiss();expenseForm.reset()"></a>
                     </div>
                 </div>
                 <div class="custom-main-popup-content">

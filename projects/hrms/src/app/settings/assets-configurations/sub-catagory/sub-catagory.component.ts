@@ -13,9 +13,11 @@ import { Select } from 'primeng/select';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 @Component({
   selector: 'app-sub-catagory',
-  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DataLoaderContentComponent],
+  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DataLoaderContentComponent, SettingsUpdateIconComponent, SettingsDeleteIconComponent],
   templateUrl: './sub-catagory.component.html',
   styleUrl: './sub-catagory.component.scss'
 })

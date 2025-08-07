@@ -11,9 +11,10 @@ import { Skeleton } from 'primeng/skeleton';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-contact-directory',
-  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, FormsModule, TranslateModule, TabsModule, Skeleton, NgbPopoverModule, ModuleInformationComponent, ProfileIconComponent],
   templateUrl: './contact-directory.component.html',
   styleUrl: './contact-directory.component.scss'
 })

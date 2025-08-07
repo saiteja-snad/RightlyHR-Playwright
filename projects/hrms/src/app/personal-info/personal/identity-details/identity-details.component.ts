@@ -15,10 +15,13 @@ import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
+import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent, DownloadIconComponent],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })

@@ -15,10 +15,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
+import { EditIconComponent } from "../../../icons/edit-icon/edit-icon.component";
 
 @Component({
   selector: 'app-emergency-contact-details',
-  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule,Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule, Skeleton, EditIconComponent],
   templateUrl: './emergency-contact-details.component.html',
   styleUrl: './emergency-contact-details.component.scss',
   encapsulation: ViewEncapsulation.None,

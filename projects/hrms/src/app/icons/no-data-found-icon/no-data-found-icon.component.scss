@@ -1,0 +1,11 @@
+.no-data-image {
+    --no-data-icon-width: 191px;
+    --no-data-icon-height: 171px;
+}
+
+@media (max-width: 1300px) and (max-height: 800px) {
+    .no-data-image {
+        --no-data-icon-width: 150px;
+        --no-data-icon-height: 120px;
+    }
+}

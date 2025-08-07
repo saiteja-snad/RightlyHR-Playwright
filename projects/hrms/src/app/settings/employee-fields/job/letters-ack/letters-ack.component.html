@@ -24,7 +24,7 @@
                                         <li (click)="openupdateDialog(teams)"
                                             *ngIf="rbac.allowedToAccess('Letter Acknoledgement.update')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
+                                                <app-settings-update-icon />Update
                                             </a>
                                         </li>
                                     </ul>

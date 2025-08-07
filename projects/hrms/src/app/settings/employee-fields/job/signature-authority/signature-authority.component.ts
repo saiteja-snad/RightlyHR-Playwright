@@ -3,18 +3,20 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { SelectModule } from 'primeng/select';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails, ISignatureAuthority, ISignatureList } from './signature-authority.model';
-import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 
 @Component({
   selector: 'app-signature-authority',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent, DataLoaderContentComponent],
   templateUrl: './signature-authority.component.html',
   styleUrl: './signature-authority.component.scss',
 })

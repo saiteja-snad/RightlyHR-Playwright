@@ -19,9 +19,10 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent, SettingsDeleteIconComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })

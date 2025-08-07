@@ -12,9 +12,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-nodue-form-details',
-  imports: [TranslateModule, CommonModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent],
+  imports: [TranslateModule, CommonModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, ConfirmationIconComponent],
   templateUrl: './nodue-form-details.component.html',
   styleUrl: './nodue-form-details.component.scss',
   encapsulation: ViewEncapsulation.None

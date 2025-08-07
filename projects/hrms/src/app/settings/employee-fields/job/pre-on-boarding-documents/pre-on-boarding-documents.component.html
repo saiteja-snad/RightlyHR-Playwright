@@ -51,13 +51,13 @@
                                         <li (click)="openupdateDialog(preonboarding)"
                                             *ngIf="rbac.allowedToAccess('Pre Onboard Documents.update')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
+                                                <app-settings-update-icon />Update
                                             </a>
                                         </li>
                                         <li (click)="opendelete(preonboarding)"
                                             *ngIf="rbac.allowedToAccess('Pre Onboard Documents.delete')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
+                                                  <app-settings-delete-icon />Delete
                                             </a>
                                         </li>
                                     </ul>

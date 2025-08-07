@@ -36,7 +36,7 @@
                         <td>{{bankiteams.ifscCode}}</td>
                         <td class="text-center">
                             <span *ngIf="bankiteams.docUrl;else noData" (click)="onSelectBankProofDownload(bankiteams)">
-                                <img src="/icons/Download.png" alt="Icon" class="download-icon"></span>
+                                  <app-download-icon /></span>
                             <ng-template #noData>-</ng-template>
                         </td>
                         <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
@@ -50,14 +50,14 @@
                                     @if( canAccess('update','bank')){
                                     <li (click)="openModalupdate(updateBankmodal, bankiteams)">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
+                                            <app-settings-update-icon />Update
                                         </a>
                                     </li>
                                     }
                                     @if( canAccess('delete','bank')){
                                     <li (click)="opendeletModal(deleteconformation,bankiteams)">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                              <app-settings-delete-icon />Delete
                                         </a>
                                     </li>
                                     }

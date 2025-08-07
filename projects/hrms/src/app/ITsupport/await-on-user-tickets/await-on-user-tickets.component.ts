@@ -15,10 +15,11 @@ import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-await-on-user-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe, DataLoaderContentComponent, SettingsUpdateIconComponent],
   templateUrl: './await-on-user-tickets.component.html',
   styleUrl: './await-on-user-tickets.component.scss'
 })

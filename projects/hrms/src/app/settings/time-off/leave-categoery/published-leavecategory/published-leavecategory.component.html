@@ -51,7 +51,7 @@
                   <li *ngIf="rbac.allowedToAccess('Leave Category Published Tab.view')">
                     <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
                     (click)="navigateToViewLeaveCategory(details)">
-                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
+                      <app-document-view-icon />{{'View' | translate}}
                     </a>
                   </li>
                 </ul>

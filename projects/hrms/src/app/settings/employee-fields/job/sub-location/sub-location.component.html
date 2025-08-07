@@ -43,13 +43,13 @@
                                         <li (click)="openupdateDialog(subloc)"
                                             *ngIf="rbac.allowedToAccess('Sub Location.update')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
+                                                <app-settings-update-icon />Update
                                             </a>
                                         </li>
                                         <li (click)="opendelete(subloc)"
                                             *ngIf="rbac.allowedToAccess('Sub Location.delete')">
                                             <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
+                                                  <app-settings-delete-icon />Delete
                                             </a>
                                         </li>
                                     </ul>

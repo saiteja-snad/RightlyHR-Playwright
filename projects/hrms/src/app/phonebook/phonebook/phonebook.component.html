@@ -48,8 +48,14 @@
       <div class="phone-book-content">
         <div class="phone-book-card" *ngFor="let emp of filteredPhoneDetails()">
           <div class="profile-content">
-            <div>
-              <img [src]="emp.profileUrl" alt="profile" class="profile-icon" />
+              <div>
+              <ng-container *ngIf="emp.profileUrl; else showProfileIcon">
+                <img [src]="emp.profileUrl" alt="profile" class="profile-icon">
+              </ng-container>
+            
+              <ng-template #showProfileIcon>
+                <app-profile-icon [iconWidth]="'28'" [iconHeight]="'28'" />
+              </ng-template>
             </div>
             <div>
               <p class="name text-truncate m-0">

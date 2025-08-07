@@ -827,7 +827,7 @@ console.log(issuedDate);
       .subscribe({
         next: (response) => {
           //console.log('Letter posted successfully:', response);
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/employee-management/active-employees']);
         },
         error: (error) => {
           console.error('Error posting letter:', error);

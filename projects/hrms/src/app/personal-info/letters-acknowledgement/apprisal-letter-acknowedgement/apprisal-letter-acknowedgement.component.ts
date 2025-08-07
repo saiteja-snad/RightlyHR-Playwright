@@ -796,7 +796,7 @@ getAuthorityDetails(authorityId: number) {
         this.isLoadingreject=false;
          this.modalService.dismissAll();
          this.http.triggerRefresh();
-        this.confirmationPopup.openSuccessModal('Appointment Letter Rejected Successfully');
+        this.confirmationPopup.openSuccessModal('Appraisal Letter Rejected Successfully');
        
       },
       error: (error: any) => {

@@ -48,3 +48,7 @@
 .letter-data-content {
     height: calc(100dvh - 16rem) !important;
 }
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
+}

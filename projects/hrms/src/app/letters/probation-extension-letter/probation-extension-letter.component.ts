@@ -274,7 +274,8 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
       AuthoritySignature: this.probationExtensionForm.get('authorityid')?.value.employeeId,
       generatedDate: this.todayDate,
       generatedBy: this.Employeeinfo.employeeId,
-      DocType: this.probationExtensionForm.get('Documenttype')?.value
+      DocType: this.probationExtensionForm.get('Documenttype')?.value,
+      letterType : 'Probation Extension Letter'
     }
     this.getProbationDetails.documentURL = docurl;
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({

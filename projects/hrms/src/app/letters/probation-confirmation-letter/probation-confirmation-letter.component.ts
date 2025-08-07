@@ -288,7 +288,8 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
       AuthoritySignature: this.probationConfirmationForm.get('authorityid')?.value.employeeId,
       generatedDate: this.todayDate,
       generatedBy: this.Employeeinfo?.employeeId,
-      DocType: this.probationConfirmationForm.get('Documenttype')?.value
+      DocType: this.probationConfirmationForm.get('Documenttype')?.value,
+      letterType : 'Probation Confirmation Letter'
     }
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {

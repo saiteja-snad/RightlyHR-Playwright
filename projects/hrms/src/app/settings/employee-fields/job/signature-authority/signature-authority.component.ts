@@ -13,10 +13,11 @@ import { IemployeeDetails, ISignatureAuthority, ISignatureList } from './signatu
 import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
 import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-signature-authority',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule,Select, TranslateModule,SettingsDeleteIconComponent, SettingsUpdateIconComponent, DataLoaderContentComponent],
   templateUrl: './signature-authority.component.html',
   styleUrl: './signature-authority.component.scss',
 })

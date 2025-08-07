@@ -316,7 +316,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
         this.openModalService.openSuccessModal("Email has been sent successfully");
         setTimeout(() => {
           this.naviagte();
-        }, 2000)
+        }, 3000)
       },
       error: (err: any) => {
         this.releaseLoader = false;

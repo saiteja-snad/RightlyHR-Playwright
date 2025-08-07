@@ -11,10 +11,11 @@ import { FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { DocumentViewIconComponent } from "../../../../icons/document-view-icon/document-view-icon.component";
 
 @Component({
   selector: 'app-published-dsts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, DataLoaderContentComponent],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, DataLoaderContentComponent, DocumentViewIconComponent],
   templateUrl: './published-dsts.component.html',
   styleUrl: './published-dsts.component.scss',
 })

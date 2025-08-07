@@ -15,10 +15,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SettingsDeleteIconComponent } from "../../../icons/settings-delete-icon/settings-delete-icon.component";
+import { SettingsUpdateIconComponent } from "../../../icons/settings-update-icon/settings-update-icon.component";
 
 @Component({
   selector: 'app-no-due-clearance-configurations',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, SelectModule, MultiSelectModule, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, SelectModule, MultiSelectModule, TranslateModule, DataLoaderContentComponent, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
   templateUrl: './no-due-clearance-configurations.component.html',
   styleUrl: './no-due-clearance-configurations.component.scss'
 })

@@ -307,7 +307,9 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
     let pdata =
     {
       employeeId: this.probationExtensionLetterData.employeeId,
-      documentUrl: this.Documenturlresult
+      documentUrl: this.Documenturlresult,
+      generatedBy: this.Employeeinfo.employeeId,
+      generatedDate: new Date().toISOString(),
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {

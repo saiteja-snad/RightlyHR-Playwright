@@ -818,7 +818,6 @@ console.log(issuedDate);
       candidateStatus: 'Generated',
       generatedBy: this.appraisalData.employeeId,
       generatedDate: new Date().toISOString(),
-        // generatedBy: this.Employeeinfo.employeeId
     };
 
     this.http

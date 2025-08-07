@@ -216,6 +216,7 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
       'pdfContent10',
       'pdfContent11',
       'pdfContent12',
+      'pdfContent13'
     ]; // Add more content IDs if needed
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');

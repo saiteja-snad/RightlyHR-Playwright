@@ -786,13 +786,11 @@ getAuthorityDetails(authorityId: number) {
       acknowledgeDate: moment().format('YYYY-MM-DD'),
       employeeId:this.empdata.employeeId,
       generatedBy: this.empdata.employeeId,
-      issuedDate:  this.letterdata.issuedDate,
+      IssuedDate:  this.letterdata.issuedDate,
       // signedDocUrl: filePath,
       status: 'Released',
       candidateStatus: 'Rejected',
       rejectedComments: this.rejectForm.get('comments')?.value || '',
-      generatedBy: this.letterdata.generatedBy,
-      IssuedDate: this.letterdata.generatedDate
     };
     this.subscription=this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({
       next: (data: any) => {

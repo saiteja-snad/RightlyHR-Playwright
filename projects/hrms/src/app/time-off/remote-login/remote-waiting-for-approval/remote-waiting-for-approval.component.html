@@ -1,14 +1,15 @@
-@if(!dataLoad){
+
 <div class="custom-main-component-container">
   <div class="custom-table-content ">
+    @if(!dataLoad){
     <table class="w-100">
       <thead>
         <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Comments</th>
-          <th>Applied Date</th>
-          <!-- <th>Status</th> -->
+          <th>{{'Worked Date' | translate}}</th>
+          <th>{{'Availed' | translate}}</th>
+          <th class="text-center">{{'Reason' | translate}}</th>
+          <th>{{'Applied Date '|translate}}</th>
+          <th>{{'Status'|translate}}</th>
         </tr>
       </thead>
 
@@ -22,19 +23,19 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
-              <div class="mt-2" *ngIf="remoteRequest.reason;else res">
+            <td class="text-center">
+              <div class="mt-2" *ngIf="remoteRequest.requestedComments;else res">
                 <a type="button" [ngbPopover]="reason">
                   <app-info-icon />
                 </a>
                 <ng-template #reason>
-                  <p class="mb-0">{{remoteRequest.reason}}</p>
+                  <p class="mb-0">{{remoteRequest.requestedComments}}</p>
                 </ng-template>
               </div>
               <ng-template #res>-</ng-template>
             </td>
             <td>{{ remoteRequest.requestedDate | dateformat }}</td>
-            <!-- <td>{{ RemoteRequest.status }}</td> -->
+            <td>{{ remoteRequest.status }}</td>
           </tr>
         </ng-container>
 
@@ -47,6 +48,6 @@
         </ng-template>
       </tbody>
     </table>
+    }@else{<app-data-loader-content />}
   </div>
 </div>
-}@else{<app-data-loader-content />}

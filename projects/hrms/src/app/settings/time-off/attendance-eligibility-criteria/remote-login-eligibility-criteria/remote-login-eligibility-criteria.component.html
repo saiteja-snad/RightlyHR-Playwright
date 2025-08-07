@@ -1,0 +1,73 @@
+<div class="custom-main-component-container">
+    @if(!dataLoad){
+    <div class="custom-table-content w-50">
+    
+        <ng-container *ngIf="regularizationValues!.length > 0; else noDataTemplate">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th *ngIf="rbac.allowedToAccess('Remote Login Eligibility Tab.update')">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor=" let permi of regularizationValues ;let i = index">
+                        <td class="table-text">{{ permi.attribute }}</td>
+                        <td class="table-text">
+                            <ng-container *ngIf="editingIndex !== i">
+                                {{ permi.value }}
+                            </ng-container>
+    
+                            <ng-container *ngIf="editingIndex === i">
+                                <input class="form-control custom-input" type="text" placeholder="Please enter value" [(ngModel)]="temporaryValue"
+                                    (keypress)="allowOnlyWholeNumbers($event)" [maxlength]="3" (paste)="blockPaste($event)"
+                                    (copy)="blockPaste($event)"
+                                    (cut)="blockPaste($event)"
+                                    (drop)="blockPaste($event)"
+                                    (keydown.tab)="editingIndex === i" />
+                            </ng-container>
+                        </td>
+    
+                        <td *ngIf="rbac.allowedToAccess('Remote Login Eligibility Tab.update')">
+    
+                            <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <button class="dropdown-item"
+                                            (click)="enableEditForRemoteLogin(i, permi.id, permi.value, permi.entity)"  ><i
+                                                class="bi bi-pencil me-2"></i>Update</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ng-template #editingMode>
+                                <div class="d-flex gap-2">
+                                    <button class="custom-btn btn-primary" type="button"
+                                        (click)="submitRemoteLoginEligibilityValue(i, temporaryValue)"  [disabled]="!temporaryValue || temporaryValue.trim() === ''">
+                                        Update
+                                    </button>
+                                    <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </ng-container>
+    
+    </div>
+    }@else { <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>}
+</div>
+
+<ng-template #noDataTemplate>
+    <tr>
+        <td colspan="3"><app-no-data-found></app-no-data-found></td>
+    </tr>
+</ng-template>

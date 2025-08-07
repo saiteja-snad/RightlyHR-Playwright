@@ -640,7 +640,7 @@ previusSalary:any
           this.isRejecting = false;
           this.modalService.dismissAll();
           this.http.triggerRefresh();
-          this.conformationPopup.openSuccessModal('Salary Revision Letter Acknowledged Successfully');
+          this.conformationPopup.openSuccessModal('Salary Revision Letter Accepted Successfully');
 
         },
         error: (error: any) => {

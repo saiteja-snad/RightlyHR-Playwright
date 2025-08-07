@@ -299,16 +299,16 @@
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="ackCheckbox" (change)="isacknowledged = !isacknowledged" />
         <label class="form-check-label" for="ackCheckbox">
-          I acknowledge that I have read and agree to the appraisal letter.
+         I hereby acknowledge that I’ve read and accepted to the letter issued.
         </label>
       </div>
       <div class="d-flex">
-        <button class="btn btn-primary me-2" [disabled]="isLoading||isacknowledged||isLoadingreject"
-          (click)="openpopup(confirmationpopup)">Acknowledge
+        <button class="custom-btn  btn-primary-approve me-2" [disabled]="isLoading||isacknowledged||isLoadingreject"
+          (click)="openpopup(confirmationpopup)">Accept
 
           <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         </button>
-        <button class="btn btn-danger" [disabled]="isLoading||isLoadingreject" (click)="openpopup(rejectModal)">
+        <button class="custom-btn  btn-primary-reject" [disabled]="isLoading||isLoadingreject" (click)="openpopup(rejectModal)">
           <span *ngIf="!isLoadingreject">Reject</span>
 
         </button>

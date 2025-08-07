@@ -310,6 +310,8 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
       employeeId: this.empdata.employeeId,
       signedDocUrl: filePath,
       status: 'Acknowledged',
+      generatedBy: this.letterdata.generatedBy,
+      IssuedDate: this.letterdata.generatedDate
     };
     this.subscription = this.http
       .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)
@@ -361,6 +363,8 @@ export class AppointmentLetterAcknowledgementComponent implements OnInit, OnDest
       employeeId: this.empdata.employeeId,
       status: 'Rejected',
       rejectedComments: form.value.notes,
+      generatedBy: this.letterdata.generatedBy,
+      IssuedDate: this.letterdata.generatedDate
     };
 
     this.subscription = this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({

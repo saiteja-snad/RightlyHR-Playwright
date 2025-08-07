@@ -240,12 +240,12 @@
       <!--page-2-->
       <div class="letter-page-content my-4" id="pdfContent2"
         [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
-        <div class="letter-page-sub-content">
+         <div class="letter-page-sub-content pt-4 mt-4">
           <div *ngIf="appraisalData.note">
             <b>Note:</b>
             <p><b>{{ appraisalData.note }}</b>.</p>
           </div>
-          <p class="letter-sub-header mt-4 pt-4"><b>Additional Details Related to Salary Structure:</b></p>
+          <p class="letter-sub-header"><b>Additional Details Related to Salary Structure:</b></p>
           <ol>
             <li class="mb-2">TDS will be deducted from the Gross Salary after statutory deductions.</li>
             <li class="mb-2">Employees are responsible for their Tax Planning.</li>

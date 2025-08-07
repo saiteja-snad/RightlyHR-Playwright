@@ -121,6 +121,7 @@
                         </p-accordion-panel>
                     </li>
                     }
+
                     @if(rbac.allowedToAccess('Project Management Configuration Module.view')){
                     <!--Attendance Configuration-->
                     <li class="accordian-list-item"  (click)="navigateToAccessedRoute('/settings/project-management-config')">
@@ -130,6 +131,22 @@
                                     <div class="d-flex align-items-center gap-2 mb-2">
                                         <img src="/main-menu-icons/project-management-configuration.png" alt="Icon" class="list-icon">
                                         <div class="list-label-name">Project Management Configurations</div>
+                                    </div>
+                                    <p class="list-description m-0">{{settingAttendanceConfigurationModule}}</p>
+                                </div>
+                            </p-accordion-header>
+                        </p-accordion-panel>
+                    </li>
+                    }
+                    @if(rbac.allowedToAccess('Attendance Configuration Module.view')){
+                    <!--Attendance Configuration-->
+                    <li class="accordian-list-item" (click)="navigateToAccessedRoute('/settings/attendance-configuration')">
+                        <p-accordion-panel value="6">
+                            <p-accordion-header>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <img src="/main-menu-icons/attendance-locking-icon.png" alt="Icon" class="list-icon">
+                                        <div class="list-label-name">Attendance Locking</div>
                                     </div>
                                     <p class="list-description m-0">{{settingAttendanceConfigurationModule}}</p>
                                 </div>

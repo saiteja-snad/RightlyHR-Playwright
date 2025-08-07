@@ -72,6 +72,10 @@ export class SidenavComponent implements OnInit {
       label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
       route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
     },
+      {
+      label: 'Themes', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
+      route: '/theme', permission: { feature: 'Themes', action: 'view' } 
+    },
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon
@@ -199,7 +203,11 @@ export class SidenavComponent implements OnInit {
       this.updateFilteredModules();
       if (module.route === '/organization-chart') {
         this.router.navigate(['/organization-chart']);
-      } else {
+      } else if (module.route === '/theme') {
+        this.router.navigate(['/theme']);
+      }
+      
+      else {
         this.goToAccessibleRoute(module.route);
       }
     }

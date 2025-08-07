@@ -300,7 +300,7 @@ previusSalary:any
   
             //calculation for the educationAllowances taking as medical insurenc per month
             // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-            Employee.educationAllowances = Math.round(558);
+            Employee.educationAllowances = 0;
   
             //calculation for the conveyance
             // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))

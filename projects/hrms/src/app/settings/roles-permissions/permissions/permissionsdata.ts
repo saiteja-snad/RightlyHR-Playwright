@@ -31,7 +31,10 @@ export const permissionsData = [
   { fields: 'Identity Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Relationship', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bank Names', View: false, Update: false, Create: false, Delete: false },
-
+   // Attendance Locking
+  { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Published Tab', View: false, Update: false, Create: false, Delete: false },
+  
   //Job Tab
   { fields: 'Job Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },

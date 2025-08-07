@@ -493,6 +493,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Draft Forms',
     'Form Settings',
   ];
+   AttendanceTypeFields = [
+    'Attendance Pending Tab',
+    'Attendance Published Tab'
+  ];
   sidebarTabsFields = [
     'Dashboard',
     'My Info',

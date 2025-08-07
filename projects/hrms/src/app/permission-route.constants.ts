@@ -89,6 +89,12 @@ export const SETTINGS_ASSEST_CONFIGURATION_TABS = [
   { route: '/settings/assets-configuration/asset-catagory', permission: 'Asset Catagory.view' },
   { route: '/settings/assets-configuration/asset-subcatagory', permission: 'Asset Sub Catagory.view' }
 ];
+// Attendance Locking
+export const SETTINGS_AttendanceLock_TABS = [
+  
+  { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
+  { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
+];
 
 export const SETTINGS_DYNAMIC_FORMS_TABS = [
   { route: '/settings/dynamic-forms/active-forms', permission: 'Active Forms.view' },

@@ -527,8 +527,8 @@ previusSalary:any
   }
 
   uploadPromotionLetter() {
-   const [day, month, year] = this.promotiondata.dateofAppraisal.split('/');
-    const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
+  //  const [day, month, year] = this.promotiondata.compeffectivedate.split('/');
+  //   const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
     let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.Employeeinfo.employeeId}`;
     this.subscription = this.http
       .uploadFileWithQuery(
@@ -542,7 +542,7 @@ previusSalary:any
 
             this.spinnerLoader = false;
             this.result.documentUrl = data.path;
-            this.postPromotionlettersDetails(this.result.documentUrl);
+            // this.postPromotionlettersDetails(this.result.documentUrl);
 
             console.log(data);
           }
@@ -558,7 +558,7 @@ previusSalary:any
             middleName: this.promotiondata.middleName,
             jobRole: this.promotiondata.jobRole,
             documentUrl: this.result.documentUrl,
-            compeffectivedate: compeffectivedate,
+            compeffectivedate: this.promotiondata.compeffectivedate,
             employeeId: this.promotiondata.employeeId,
             compensationamount: this.promotiondata.salary
           }
@@ -573,7 +573,7 @@ previusSalary:any
           }
           console.log(emaildetails);
 
-          this.subscription = this.http.postdata(`CustomEmail/Promotionletter`, emaildetails).subscribe({
+          this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
             next: (data: any) => {
               console.log(data);
               this.conformationPopup.openSuccessModal("Email Sent Successfully")
@@ -588,7 +588,7 @@ previusSalary:any
               this.spinnerLoader = false;
             }
           })
-          // this.postPromotionlettersDetails(this.result.documentUrl);
+           this.postPromotionlettersDetails(this.result.documentUrl);
 
         },
         error: (reason: any) => {

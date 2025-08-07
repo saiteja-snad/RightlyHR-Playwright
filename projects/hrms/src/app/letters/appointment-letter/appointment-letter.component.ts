@@ -200,7 +200,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
           this.errorMsg = 'No job details found for this employee.';
           this.employeeForm.get('jobValid')?.setValue(false);
         } else {
-          let res = data.reverse()[0];
+          let res = data.sort((a: any, b: any) => b.effectiveDate - a.effectiveDate)[0];
           this.employeeJobDetails = res;
           this.errorMsg = '';
           this.employeeForm.get('jobValid')?.setValue(true);
@@ -401,7 +401,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(() => {
           this.navigateDashboard();
-        }, 2000);
+        }, 3000);
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
@@ -430,7 +430,9 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
       reportingManagerId: this.employeeJobDetails?.reportsto,
       teamManagerId: this.employeeJobDetails?.reportingmanagerId,
       reportingManagerName: `${this.employeeJobDetails?.fName} ${this.employeeJobDetails?.mName} ${this.employeeJobDetails?.lName}`,
-      teamManagerName: `${this.employeeJobDetails?.firstName} ${this.employeeJobDetails?.middleName} ${this.employeeJobDetails?.lastName}`
+      teamManagerName: `${this.employeeJobDetails?.firstName} ${this.employeeJobDetails?.middleName} ${this.employeeJobDetails?.lastName}`,
+      generatedBy:loggedInUser.employeeId,
+      generatedDate: new Date().toISOString(),
     }
     if (loggedInUser.middleName) {
       emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`

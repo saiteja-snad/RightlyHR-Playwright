@@ -133,8 +133,8 @@
                                 <u>{{employeeCompensationDetails.compeffectivedate | dateformat}}</u>.
                                 This will be in addition to your existing CTC, thereby increasing your CTC from Rs
                                 <span *ngIf="previusSalary?.compensationamount"></span>
-                                {{appraisalData.salary}}/- to current CTC of Rs
-                                {{previusSalary?.compensationamount}}/-
+                                {{previusSalary?.compensationamount}}/- to current CTC of Rs
+                                {{appraisalData.salary}} /-
                             </p>
 
                             <p class="mb-4">We are confident that you will put in your best efforts in
@@ -277,6 +277,19 @@
                                                     #pftaxper>{{appraisalData.professionalPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
+                                        <tr>
+                                    <td class="text-center">Medical insurance</td>
+                                    <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ">
+                                        </span>
+                                        <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span
+                                            *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
+                                        </span>
+                                        <ng-template
+                                            #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
                                         <!-- <tr>
                                             <td class="text-center">Medical insurance</td>
                                             <td class="text-center"><span
@@ -358,7 +371,7 @@
                                         </tr>
                                         <tr>
                                             <td class="p-0 pt-1 pb-1 text-center"><b>CTC=Gross Salary +(Employer
-                                                    PF+ESI)</b></td>
+                                                    PF+ESI+Medical Insurance)</b></td>
                                             <td class="text-center p-0 pt-1 pb-1 bold"><span
                                                     *ngIf="!appraisalData.grossSalary;else gross">
                                                 </span>

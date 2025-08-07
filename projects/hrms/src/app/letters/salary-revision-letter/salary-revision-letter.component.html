@@ -277,6 +277,19 @@
                                                     #pftaxper>{{appraisalData.professionalPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
+                                        <tr>
+                                    <td class="text-center">Medical insurance</td>
+                                    <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ">
+                                        </span>
+                                        <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span
+                                            *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
+                                        </span>
+                                        <ng-template
+                                            #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
+                                    </td>
+                                </tr>
                                         <!-- <tr>
                                             <td class="text-center">Medical insurance</td>
                                             <td class="text-center"><span

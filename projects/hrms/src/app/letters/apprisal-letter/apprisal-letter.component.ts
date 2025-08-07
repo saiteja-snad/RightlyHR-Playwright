@@ -816,7 +816,8 @@ console.log(issuedDate);
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
       candidateStatus: 'Generated',
-        // generatedBy: this.Employeeinfo.employeeId
+      generatedBy: this.appraisalData.employeeId,
+      generatedDate: new Date().toISOString(),
     };
 
     this.http

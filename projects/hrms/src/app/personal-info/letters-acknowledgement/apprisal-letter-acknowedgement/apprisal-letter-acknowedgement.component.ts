@@ -507,85 +507,119 @@ getAuthorityDetails(authorityId: number) {
 
   // }
   //=================================================================================================================
-        // calculation for the basicsalary
-        Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100))
-        console.log(Employee.basicSalary);
+     //=================================================================================================================
 
-        //calculation for the hraSalary
-        Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100))
-        console.log(Employee.hraSalary);
+          //condtitions for professionaltax calulation.
+          if (Employee.grossSalary < 15000) {
+            Employee.professionalTax = 0;
+          } else if (
+            Employee.grossSalary > 15000 &&
+            Employee.grossSalary < 21000
+          ) {
+            Employee.professionalTax = 150;
+          } else if (Employee.grossSalary >= 21000) {
+            Employee.professionalTax = 200;
+          } else {
+            Employee.professionalTax = 0;
+          }
 
-        //calculation for the educationAllowances
-        Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-        console.log(Employee.educationAllowances);
+          // calculation for the basicsalary
+          Employee.basicSalary = Math.round(
+            Employee.totalGrossSalary * (60 / 100)
+          );
 
-        //calculation for the conveyance
-        Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
-        console.log(Employee.Conveyance);
+          //calculation for the hraSalary
+          Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
 
-        //total deductions per month
-        Employee.totalDeduction = Math.round(Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax)
-        console.log(Employee.totalDeduction);
+          //calculation for the educationAllowances taking as medical insurenc per month
+          // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
+          Employee.educationAllowances = Math.round(0);
 
-        //total net salary  per month
-        Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
-        console.log(Employee.netSalary);
+          //calculation for the conveyance
+          // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
 
-        //calculation for the otherallowances
-        Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (10 / 100))
-        console.log(Employee.otherAllowances);
+          //total deductions per month
+          Employee.totalDeduction = Math.round(
+            Employee.pfContribution +
+            Employee.employeeEsi +
+            Employee.professionalTax 
+            //Employee.educationAllowances
+          );
 
-        //pfcontribution per annum
-        Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby)
-        console.log(Employee.pfPreAnuum);
+          //total net salary  per month
+          Employee.netSalary = Math.round(
+            Employee.totalGrossSalary - Employee.totalDeduction
+          );
 
+          //calculation for the otherallowances
+          Employee.otherAllowances = Math.round(
+            Employee.totalGrossSalary * (16 / 100)
+          );
 
-        //totalGrossPerAnnum calculation
-        Employee.totalGrossPerAnnum = Math.round(Employee.totalGrossSalary * Employee.grossby)
-        console.log(Employee.totalGrossPerAnnum);
+          //pfcontribution per annum
+          Employee.pfPreAnuum = Math.round(
+            Employee.pfContribution * Employee.grossby
+          );
 
-        //basicsalaryperannum
-        Employee.basicPerannum = Math.round(Employee.basicSalary * Employee.grossby)
-        console.log(Employee.basicPerannum);
+          //totalGrossPerAnnum calculation
+          Employee.totalGrossPerAnnum = Math.round(
+            Employee.totalGrossSalary * Employee.grossby
+          );
 
-        //HRA per annum
-        Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
-        console.log(Employee.hraPerAnnum);
+          //basicsalaryperannum
+          Employee.basicPerannum = Math.round(
+            Employee.basicSalary * Employee.grossby
+          );
 
-        //esiper anuum
-        Employee.esiPerAnnum = Math.round(Employee.esicContribution * Employee.grossby);
-        console.log(Employee.esiPerAnnum);
-         //esiper anuum for employee
-         Employee.esiPerAnnumemployee = Math.round(Employee.employeeEsi * Employee.grossby);
-         console.log(Employee.esiPerAnnumemployee);
+          //HRA per annum
+          Employee.hraPerAnnum = Math.round(
+            Employee.hraSalary * Employee.grossby
+          );
 
-        //educationper annum
-        Employee.educationallowancesPerAnnum = Math.round(Employee.educationAllowances * Employee.grossby)
-        console.log(Employee.educationallowancesPerAnnum);
-        //conveyance per annum
-        Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
-        console.log(Employee.conveyancePerAnnum);
+          //esiper anuum
+          Employee.esiPerAnnum = Math.round(
+            Employee.esicContribution * Employee.grossby
+          );
+          //esiper anuum for employee
+          Employee.esiPerAnnumemployee = Math.round(
+            Employee.employeeEsi * Employee.grossby
+          );
 
-        //otherAllowancesper annum
-        Employee.otherAllowancesPerAnnum = Math.round(Employee.otherAllowances * Employee.grossby);
-        console.log(Employee.otherAllowancesPerAnnum);
+          //educationper annum using for medical insurence
+          Employee.educationallowancesPerAnnum = 12 * 0;
 
-        //professional per annum
-        Employee.professionalPerAnnum = Math.round(Employee.professionalTax * Employee.grossby);
-        console.log(Employee.professionalPerAnnum);
+          //conveyance per annum
+          // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
 
-        //salary deductions per annum
-        Employee.totalDeductionsPerAnnum = Math.round(Employee.pfPreAnuum + Employee.esiPerAnnumemployee + Employee.professionalPerAnnum);
-        console.log(Employee.totalDeductionsPerAnnum);
+          //otherAllowancesper annum
+          Employee.otherAllowancesPerAnnum = Math.round(
+            Employee.otherAllowances * Employee.grossby
+          );
 
-        //net salary per annum
-        Employee.netSalaryPerAnnum = Math.round(Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum);
-        console.log(Employee.netSalaryPerAnnum);
-        //Ctc per annum
-        Employee.ctcperannum = Math.round(Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum)
-        console.log(Employee.ctcperannum);
+          //professional per annum
+          Employee.professionalPerAnnum = Math.round(
+            Employee.professionalTax * Employee.grossby
+          );
 
+          //salary deductions per annum
+          Employee.totalDeductionsPerAnnum = Math.round(
+            Employee.pfPreAnuum +
+            Employee.esiPerAnnumemployee +
+            Employee.professionalPerAnnum
+          );
 
+          //net salary per annum
+          Employee.netSalaryPerAnnum = Math.round(
+            Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
+          );
+          //Ctc per annum
+          Employee.ctcperannum = Math.round(
+            Employee.totalGrossPerAnnum +
+            Employee.pfPreAnuum +
+            Employee.esiPerAnnum
+          );
+        
+    
 
         // console.log(Employee.salary);
       }

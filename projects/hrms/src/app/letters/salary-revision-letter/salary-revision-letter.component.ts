@@ -589,7 +589,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
                 this.conformationPopup.openSuccessModal('Email has been sent successfully');
                 setTimeout(() => {
                   this.navigateDashboard();
-                }, 2000)
+                }, 3000)
               },
               error: (err: any) => {
                 this.spinnerLoader= false;

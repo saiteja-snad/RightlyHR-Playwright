@@ -401,7 +401,7 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.conformationPopup.openSuccessModal('Appointment letter generated successfully')
         setTimeout(() => {
           this.navigateDashboard();
-        }, 2000);
+        }, 3000);
       },
       error: (reason: any) => {
         this.spinnerLoader = false;

@@ -790,7 +790,9 @@ getAuthorityDetails(authorityId: number) {
       // signedDocUrl: filePath,
       status: 'Released',
       candidateStatus: 'Rejected',
-      rejectedComments: this.rejectForm.get('comments')?.value || ''
+      rejectedComments: this.rejectForm.get('comments')?.value || '',
+      generatedBy: this.letterdata.generatedBy,
+      IssuedDate: this.letterdata.generatedDate
     };
     this.subscription=this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({
       next: (data: any) => {

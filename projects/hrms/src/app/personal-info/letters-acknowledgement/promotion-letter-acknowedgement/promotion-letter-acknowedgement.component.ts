@@ -47,6 +47,7 @@ previusSalary:any
   PromotionFile!: File;
     gender: any;
   gender2: any;
+  AppraisalFile!: File;
     jobErrorMessage!: string;
   @Input() letterdata: any;
 
@@ -466,49 +467,99 @@ previusSalary:any
   //       });
   //     }
   //   }
+  // async postPromotionLetterFormSubmit() {
+
+  //   this.spinnerLoader = true;
+  //   // if (this.employeeForm.invalid) {
+  //   //   this.employeeForm.markAllAsTouched();
+  //   //   this.spinnerLoader = false;
+  //   //   return;
+  //   // }
+    
+  //   const data = await this.promotiondata;
+  //   // data.dateofAppraisal = this.formatDate(data.dateofpromotion);
+  //   // data.compeffectivedate = this.formatDate(data.compeffectivedate);
+  //    const pdfContents = [
+  //     'pdfContent1',
+  //     'pdfContent2'
+  //   ];
+    
+  //    for (const contentId of pdfContents) {
+  //   const pdfContent = document.getElementById(contentId);
+  //   if (pdfContent) {
+  //     html2canvas(pdfContent, { scale: 3 }).then(canvas => {
+  //       const imgData = canvas.toDataURL('image/png');
+  //       const pdf = new jsPDF('p', 'mm', 'a4');
+  //       const imgWidth = pdf.internal.pageSize.getWidth();
+  //       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  //       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
+  //       const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Signed_Document.pdf`;
+  //       pdf.save(fileName);
+  //       const blob = pdf.output('blob');
+  //       this.PromotionFile = new File([blob], fileName, { type: 'application/pdf' });
+  //       //creating form file to upload into AZure
+  //       let d: Date = new Date()
+  //       this.PromotionFile = new File(
+  //         [blob],
+  //         fileName,
+  //         {
+  //           type: 'application/pdf',
+  //         }
+  //       );
+  //       this.uploadPromotionLetter();
+  //       // this.documentGenerated = true;
+  //       // this.spinnerLoader = false;
+  //       // this.conformationPopup.openSuccessModal("Promotion letter generated successfully");
+  //       // Do NOT call uploadPromotionLetter() here!
+  //     });
+  //   }
+  // }
+  // }
+
   async postPromotionLetterFormSubmit() {
-
-    this.spinnerLoader = true;
-    // if (this.employeeForm.invalid) {
-    //   this.employeeForm.markAllAsTouched();
-    //   this.spinnerLoader = false;
-    //   return;
-    // }
+    this.spinnerLoader= true;
     const data = await this.promotiondata;
-    // data.dateofAppraisal = this.formatDate(data.dateofpromotion);
-    // data.compeffectivedate = this.formatDate(data.compeffectivedate);
-
-    const pdfContent = document.getElementById('pdfContent1');
-    if (pdfContent) {
-      html2canvas(pdfContent, { scale: 3 }).then(canvas => {
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = pdf.internal.pageSize.getWidth();
+    const imgHeight = pdf.internal.pageSize.getHeight();
+    // const pdfContent = document.getElementById('pdfContent');
+    const pdfContent = ['pdfContent1', 'pdfContent2'];
+    const combinedCanvas = document.createElement('canvas');
+    combinedCanvas.width = imgWidth;
+    combinedCanvas.height = pdfContent.length * imgHeight;
+    const imagesData = [];
+    // this.isLoading = true;
+    for (const contentId of pdfContent) {
+      const pdfContent = document.getElementById(contentId);
+      if (pdfContent) {
+        const canvas = await html2canvas(pdfContent, { scale: 3 });
         const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = pdf.internal.pageSize.getWidth();
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-        const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_SalaryRevisionLetter_Signed_Document.pdf`;
-        pdf.save(fileName);
-        const blob = pdf.output('blob');
-        this.PromotionFile = new File([blob], fileName, { type: 'application/pdf' });
-        //creating form file to upload into AZure
-        let d: Date = new Date()
-        this.PromotionFile = new File(
-          [blob],
-          fileName,
-          {
-            type: 'application/pdf',
-          }
-        );
-        this.uploadPromotionLetter();
-        // this.documentGenerated = true;
-        // this.spinnerLoader = false;
-        // this.conformationPopup.openSuccessModal("Promotion letter generated successfully");
-        // Do NOT call uploadPromotionLetter() here!
-      });
+        imagesData.push({ imgData, imgHeight });
+      }
     }
+    // Add all images to the PDF except for the last one
+    for (let i = 0; i < imagesData.length - 1; i++) {
+      const imageData = imagesData[i];
+      pdf.addImage(imageData.imgData,'PNG',0,0,imgWidth,imageData.imgHeight,'','FAST');
+      pdf.addPage(); // Add a new page for the next image (except for the last one)
+    }
+    // Add the last image without adding a new page
+    if (imagesData.length > 0) {
+      const lastImageData = imagesData[imagesData.length - 1];
+      pdf.addImage(lastImageData.imgData,'PNG',0,0,imgWidth,lastImageData.imgHeight,'','FAST');
+    }
+    const fileName = `${data.firstName}_${
+      data.lastName
+    }_${new Date().getTime()}_SalaryRevisionLetter.pdf`;
+    pdf.save(fileName);
+    const blob = pdf.output('blob');
+    //creating form file to upload into AZure
+    this.PromotionFile = new File([blob], fileName, {
+      type: 'application/pdf',
+    });
+    this.uploadPromotionLetter();
   }
-
-
   //to format string date to actual date
   private formatDatebyDatestring(data: string) {
     let stringarray = data.split('/');
@@ -538,16 +589,12 @@ previusSalary:any
       .subscribe({
         next: (data: any) => {
           if (data) {
-
             this.spinnerLoader = false;
             this.result.documentUrl = data.path;
-            // this.postPromotionlettersDetails(this.result.documentUrl);
-
             console.log(data);
           }
           let loggedInUser = this.authService.getToken();
           console.log(loggedInUser);
-
           let emaildetails = {
             personEmail: this.promotiondata.workEmail,
             senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
@@ -561,17 +608,12 @@ previusSalary:any
             employeeId: this.promotiondata.employeeId,
             compensationamount: this.promotiondata.salary
           }
-
           if (loggedInUser.middleName) {
-
             emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-
           } else {
             emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-
           }
           console.log(emaildetails);
-
           this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
             next: (data: any) => {
               console.log(data);
@@ -580,15 +622,12 @@ previusSalary:any
             },
             error: (err: any) => {
               console.log(err);
-
-
             },
             complete: () => {
               this.spinnerLoader = false;
             }
           })
            this.postPromotionlettersDetails(this.result.documentUrl);
-
         },
         error: (reason: any) => {
           console.log(reason);
@@ -600,13 +639,11 @@ previusSalary:any
   //to post Appraisal Letter Details
   postPromotionDetails(docurl: string) {
     let loggedInUser = this.authService.getToken();
-
     let postPromotionDetails = {
       empid: this.result.employeeId,
       promotionSentDate: this.formatDatebyDatestring(
         this.promotiondata.dateofPromotion
       ),
-
       promotionSentStatus: 'Promotion Generated',
       appraisalSentBy: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
       documentUrl: docurl,
@@ -640,7 +677,6 @@ previusSalary:any
           this.modalService.dismissAll();
           this.http.triggerRefresh();
           this.conformationPopup.openSuccessModal('Salary Revision Letter Accepted Successfully');
-
         },
         error: (error: any) => {
           console.error('Error:', error);
@@ -696,9 +732,6 @@ previusSalary:any
 
         }
       });
-  }
-  formatDate(dateofAppraisal: any): any {
-    throw new Error('Method not implemented.');
   }
   clearRejectForm() {
     this.rejectForm.reset();

@@ -139,7 +139,7 @@
             placeholder="Please enter note" [(ngModel)]="appraisalData.note" maxlength="250"
              autocomplete="off">
         </div>
-
+        <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
     
         <div>
           <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Updated Salary,

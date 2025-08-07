@@ -104,22 +104,25 @@
         </div>
     </div>
 </div>
-<!-- confirmation popup for the acknowledgement -->
-<ng-template #acknowlegeconfimation let-modal>
-    <div class="modal-content" ngbAutofocus>
-        <div class="modal-body mt-4 text-center">
-            <img src="./assets/images/Vector@2x.png" alt="" class="imgg">
-            <h5 class="want text-center mt-4">Are you sure you want to Accept?</h5>
-            <div class="d-flex justify-content-center mt-4">
-                <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal"
-                    (click)="modal.dismiss('Cross click')" [disabled]="isLoading">No</button>
-                <button type="button" class="btn btn-primary me-2" [disabled]="isLoading||isacknowledged"
-                    (click)="onAppointmentLetterSubmit()">
-                    <span *ngIf="!isLoading">Yes</span>
-                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status"
-                        aria-hidden="true"></span>
-                </button>
-            </div>
+
+
+
+<ng-template #acknowlegeconfimation let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text mt-2"> Are you sure you want to Accept?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" [disabled]="isLoading" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="isLoading||isacknowledged"
+                (click)="onAppointmentLetterSubmit()">
+                <span *ngIf="!isLoading">Yes</span>
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status"
+                    aria-hidden="true"></span>
+            </button>
         </div>
     </div>
 </ng-template>

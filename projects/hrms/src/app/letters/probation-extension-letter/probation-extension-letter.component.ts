@@ -216,6 +216,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   getProbationRequest(EmployeeId: any) {
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
       next: (response: any) => {
+        console.log(response)
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
@@ -307,7 +308,12 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
     let pdata =
     {
       employeeId: this.probationExtensionLetterData.employeeId,
-      documentUrl: this.Documenturlresult
+      documentUrl: this.Documenturlresult,
+      generatedDate: this.todayDate,
+      generatedBy: this.Employeeinfo.employeeId,
+       createdBy: this.Employeeinfo.employeeId,
+      updatedBy: this.Employeeinfo.employeeId,
+      updatedAt: this.todayDate
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {

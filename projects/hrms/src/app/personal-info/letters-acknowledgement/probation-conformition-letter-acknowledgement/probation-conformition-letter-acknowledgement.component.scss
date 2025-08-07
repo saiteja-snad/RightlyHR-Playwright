@@ -1,3 +1,8 @@
+* {
+
+    font-family: 'VERDANA', sans-serif !important;
+}
+
 .letter-data-content {
     width: 100%;
     flex: 1;
@@ -43,4 +48,8 @@
 
 .letter-data-content {
     height: calc(100dvh - 16rem) !important;
+}
+.letter-signature {
+    font-size: xx-large !important;
+    font-family: "autographsignatureFont" !important;
 }

@@ -1,7 +1,7 @@
 <div class="card letter-data-content">
     <div class="letter-sub-data-content">
         <div>
-            <div class="letter-page-content" id="pdfContent1" [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
+            <div class="letter-page-content" id="pdfContent" [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
                 <div class="letter-page-sub-content">
                     <!-- <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
@@ -53,7 +53,7 @@
                         <!-- Show "Authority Signature" only when no authority is selected -->
 
 
-                        <div class="letter-signature pt-4">{{probationExtensionLetterData.authorityName}}</div>
+                        <div class="letter-signature pt-3">{{probationExtensionLetterData.authorityName}}</div>
                     
                         <!-- Show Name & Designation only when authorityName is set -->
                         <div *ngIf="!probationExtensionLetterData.authorityName">
@@ -62,7 +62,7 @@
                         </div>
                     
                         <div>
-                            <p class="letter-sub-header">{{probationExtensionLetterData?.authorityName}}</p>
+                            <p class="letter-sub-header mt-4">{{probationExtensionLetterData?.authorityName}}</p>
                             <p class="letter-sub-header">{{authorityDesignation}}
                             </p>
                         </div>
@@ -90,9 +90,9 @@
             </label>
         </div>
         <div class="d-flex">
-            <button class="btn btn-primary me-2" [disabled]="isLoading||isacknowledged"
-                (click)="openpopup(acknowlegeconfimation)">Acknowledge
-                <!-- <span *ngIf="!isLoading">Acknowledge</span>
+            <button class="custom-btn  btn-primary-approve me-2" [disabled]="isLoading||isacknowledged"
+                (click)="openpopup(acknowlegeconfimation)">Accept
+                <!-- <span *ngIf="!isLoading">Accept</span>
                 <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status"
                     aria-hidden="true"></span> -->
             </button>
@@ -109,7 +109,7 @@
     <div class="modal-content" ngbAutofocus>
         <div class="modal-body mt-4 text-center">
             <img src="./assets/images/Vector@2x.png" alt="" class="imgg">
-            <h5 class="want text-center mt-4">Are you sure you want to Acknowledge?</h5>
+            <h5 class="want text-center mt-4">Are you sure you want to Accept?</h5>
             <div class="d-flex justify-content-center mt-4">
                 <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal"
                     (click)="modal.dismiss('Cross click')" [disabled]="isLoading">No</button>

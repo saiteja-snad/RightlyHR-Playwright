@@ -206,7 +206,7 @@
                 </ng-template>
             </li>
 
-            @if(folder?.toLowerCase() !== 'probation extension letter'){
+            @if(folder?.toLowerCase() !== 'probation extension letter' && folder?.toLowerCase() !== 'probation confirmation letter'){
             <li [ngbNavItem]="3" class="nav-item">
                 <button class="nav-link" ngbNavLink>
                     <div class="d-flex">{{'Rejected' | translate}}</div>

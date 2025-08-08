@@ -6,6 +6,11 @@
     src: url("/fonts/Autography-DOLnW.otf");
 }
 
+@font-face {
+    font-family: "Verdana";
+    src: url("/fonts/VerdanaNow.ttf");
+}
+
 /* You can add global styles to this file, and also import other style files */
 :root {
     --login-logo-color: #d8ecff;

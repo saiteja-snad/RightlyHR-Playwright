@@ -358,6 +358,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Certification Details',
       'Employee Info Compensation Details',
       'Draft Tab',
+      "Letter Acknowledgment Configuration"
     ];
     return (
       enabledTabs.includes(field) &&

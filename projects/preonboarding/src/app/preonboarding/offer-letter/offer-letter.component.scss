@@ -1,3 +1,7 @@
+* {
+    font-family: 'Verdana', sans-serif !important;
+}
+
 .custom-main-sub-content {
     width: 100%;
     height: calc(100dvh - 21rem);
@@ -16,42 +20,68 @@
 
 .box {
     display: inline-block;
-    width: 14px;
-    height: 14px;
+    width: 24px;
+    height: 20px;
     border: 1px solid black;
     margin-right: 8px;
 }
 
-table,th,td {
-    border: 1px solid #474747;
-    border-collapse: collapse;
-    color: #000;
-}
-
-th,td {
-    padding: 6px 20px;
-}
-
-th {
-    font-weight: bold;
-    text-align: center;
-}
-
 .salary-details-table {
-    tr:nth-child(4),tr:nth-child(9) {
+
+    table,
+    th,
+    td {
+        border: 1px solid #474747;
+        border-collapse: collapse;
+        color: #000;
+    }
+
+    th,
+    td {
+        padding: 0.5rem 0.625rem;
+        text-align: center;
+        color: #000;
+        font-size: var(--fontsize16) !important;
+    }
+
+    th {
+        font-weight: bold;
+    }
+
+    tr:nth-child(4) {
         background: rgba(255, 255, 204, 255);
     }
 
-    tr:nth-child(8) {
+    tr:nth-child(9) {
         background: #fff2cc;
+    }
+
+    .secondtable {
+        tr:nth-child(4) {
+            background: #FFFFFF;
+        }
     }
 }
 
-.note{
+.letter-header{
+    font-size: 18px;
+    font-weight: 600;
+}
+.salary-details-table {
+
+    .mytable,
+    .secondtable {
+        th {
+            background: #e7f0fd;
+        }
+    }
+}
+
+.note {
     font-weight: 600;
 }
 
-.count-text{
+.count-text {
     font-size: 14px;
     font-weight: 400;
 }
@@ -66,13 +96,14 @@ textarea:focus {
 .border-box {
     border: 1px solid #000;
 }
+
 .letter-data-content {
     width: 100%;
 
     .letter-page-content {
         height: 380mm;
         width: 270mm;
-        padding-top: 6.5% !important;
+        padding-top: 7% !important;
         position: relative;
         background-image: url('/images/snad-letter-bg.jpg') !important;
         background-size: 100% 100%;
@@ -82,12 +113,31 @@ textarea:focus {
         overflow: hidden;
 
         .letter-page-sub-content {
-            padding: 1.25rem 3.75rem;
-            font-size: var(--fontsize14);
+            padding: 20px 110px;
+            font-size: 16px;
             color: #000000;
-            text-align: justify
+            line-height: 18px;
+            text-align: justify;
         }
 
 
     }
+}
+
+.signature {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
+}
+
+.box-serpately{
+    display: inline-block;
+    width: 91px;
+    height: 19px;
+    border: 1px solid black;
+    margin-right: 8px;
 }

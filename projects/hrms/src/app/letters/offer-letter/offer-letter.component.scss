@@ -1,6 +1,6 @@
 * {
 
-    font-family: Verdana, Tahoma, sans-serif;
+    font-family: 'VERDANA', sans-serif !important;
 }
 
 input:focus {
@@ -65,7 +65,7 @@ input:focus {
     .mytable,
     .secondtable {
         th {
-            background: #f4f8ff;
+            background: #e7f0fd;
         }
     }
 }
@@ -86,4 +86,16 @@ input:focus {
 .name {
     font-size: 18px;
    
+}
+.box-serpately{
+    display: inline-block;
+    width: 91px;
+    height: 20px;
+    border: 1px solid black;
+    margin-right: 8px;
+}
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }

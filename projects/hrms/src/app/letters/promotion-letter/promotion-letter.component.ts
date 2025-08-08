@@ -435,7 +435,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
           this.employeeiddetails = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -552,12 +552,48 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
               this.spinnerLoader= false;
             }
           })
+           this.postPromotionlettersDetails(this.result.documentUrl);
         },
         error: (reason: any) => {
           this.spinnerLoader= false;
         },
       });
   }
+ postPromotionlettersDetails(docUrl: string) {
+  let loggedInUser = this.authService.getToken();
+
+  const postAppDetails = {
+    employeeId: this.promotiondata.employeeId,
+    status: 'Released',
+    documentLink: docUrl,
+    createdBy: loggedInUser.employeeId,
+    signatureempId: this.promotiondata.signatureempId, 
+    createdAt: new Date().toISOString(),
+    revisedSalary: this.promotiondata.revisedSalary || 0,
+    letterType: 'Promotion Letter',
+    note: this.promotiondata.note || '', 
+    authoritySignature: this.promotiondata.authoritySignature, 
+    issuedDate: this.promotiondata.dateofpromotion,
+    candidateStatus:'Generated',
+    docType:this.promotiondata.Documenttype,
+  };
+
+
+
+  this.subscription = this.http
+    .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)
+    .subscribe({
+      next: (data: any) => {
+        console.log(data);
+       this.conformationPopup.openSuccessModal('Promotion Letter Generated Successfully');
+        this.router.navigate(['/admin']);
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal('The Letter cannot be Acknowledged');
+        console.log(reason);
+      },
+    });
+}
 
   //to post Appraisal Letter Details
   postPromotionDetails(docurl: string) {

@@ -142,6 +142,13 @@
             <div class="error-msg"> {{'Signature Authority Name is required'| translate }}</div>
           </div>
         </div>
+         <div class="mb-3">
+          <label class="form-label custom-label mb-2">{{'Note'| translate }}<span class="error-msg"></span></label>
+          <input type="text" formControlName="note" class="form-control custom-input" id="note"
+            placeholder="Please enter note" [(ngModel)]="appraisalData.note" maxlength="250"
+             autocomplete="off">
+        </div>
+        <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
     
         <div>
           <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Updated Salary,
@@ -177,21 +184,24 @@
               
 
               <!-- start of letter -->
-              <div class="mb-2 mt-2">
-              
-                <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
+              <!-- start of letter -->
+              <div class="mt-2">
+                <div class="text-center ">
+                  <p class="letter-header text-center">APPRAISAL LETTER</p>
+                </div>
+                <!-- <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div> -->
               </div>
-              <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
+              <div class="text-end  mt-1"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
               </div>
 
               <!-- start of paragraphs -->
-              <p class="letter-sub-header">
-                <span *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
-                <span class="me-1">{{gender}}</span>{{appraisalData.firstName}}
+              <p class="letter-sub-header ">
+                <span class='pb-1'  *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
+                <span class="pb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
                 {{appraisalData.middleName}} {{appraisalData.lastName}},
-                <br>
-                <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
+              <br>
+                <span    *ngIf="!appraisalData.jobRole" > {{'Designation'| translate }}</span>
                 <span>{{appraisalData.jobRole}}</span>
               </p>
 
@@ -223,7 +233,7 @@
               <p>Your new compensation structure is as follows:</p>
 
               <!--Components Table-->
-              <div class="salary-details-table mb-3 mt-4">
+                 <div class="salary-details-table mb-3 mt-2">
                 <table class="mytable w-100">
                   <thead>
                     <tr>
@@ -337,7 +347,7 @@
               </div>
 
               <!--CTC table-->
-              <div class="salary-details-table mb-3">
+             <div class="salary-details-table mb-3">
                 <table class="secondtable w-100">
                   <thead>
                     <tr>
@@ -423,14 +433,24 @@
               <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate |
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
+                <p>Your Sincerely,</p>
+             <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
 
-              <p class="letter-sub-header mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
-                   <div class="letter-signature  " >{{appraisalData.authorityName}}</div><br>
-              <div class="pb-3">
-                <p  class="mb-1"><b>Authorized Signatory,</b></p>
-                <p class="mb-1"><b><p class="mb-1" *ngIf="!appraisalData.authorityName">Name</p>{{appraisalData.authorityName}}</b></p>
-                <p class="mb-1"><b><p class="mb-1" *ngIf="!authorityDesignation">Designation</p>{{authorityDesignation}}</b></p>
-              </div>
+              <div class="mb-3"></div>
+              <p class="letter-signature">{{appraisalData.authorityName}}</p>
+
+              <p class="mb-1 authorized-signatory">Authorized Signatory,</p>
+
+              <p class="mb-1 authorized-signatory">
+                <ng-container *ngIf="!appraisalData.authorityName">Name</ng-container>
+                <ng-container *ngIf="appraisalData.authorityName">{{ appraisalData.authorityName }}</ng-container>
+              </p>
+
+              <p class="authorized-signatory">
+                <ng-container *ngIf="!authorityDesignation">Designation</ng-container>
+                <ng-container *ngIf="authorityDesignation">{{ authorityDesignation }}</ng-container>
+              </p>
+
 
               <div class="pt-4 pb-4">
                 <p><b>Employee Name:<span class="employee-field ms-2">{{appraisalData.firstName}}

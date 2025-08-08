@@ -1,26 +1,33 @@
 * {
-  
-    font-family: Verdana, Tahoma, sans-serif;
+   
+    font-family: 'VERDANA', sans-serif !important;
 }
 
 
-.employee-field{
-    display: inline-block;
-    border-bottom: 1px solid #000;
-    width: 210px; 
-}
-.employee-signature{
-    display: inline-block;
-    border-bottom: 1px solid #000;
-    width: 185px; 
-}
-.employee-date{
-    display: inline-block;
-    border-bottom: 1px solid #000;
-    width: 300px; 
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }
 
-input:focus{
+.employee-field {
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 210px;
+}
+
+.employee-signature {
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 185px;
+}
+
+.employee-date {
+    display: inline-block;
+    border-bottom: 1px solid #000;
+    width: 300px;
+}
+
+input:focus {
     outline: none !important;
     box-shadow: none !important;
     border: 1px solid #DEE8F3 !important;
@@ -32,19 +39,42 @@ input:focus{
     opacity: 0.5;
 }
 
+
+
+.salary-details-table {
+    .mytable {
+
+        table,
+        th,
+        td {
+            border: 1px solid #474747;
+            border-collapse: collapse;
+            color: #000;
+        }
+
+        th,
+        td {
+            padding: 0.40rem 0.625rem;
+            text-align: center;
+            color: #000;
+            font-size: var(--fontsize16) !important;
+        }
+
+        th {
+            font-weight: bold;
+        }
+    }
+
+}
+
 .salary-details-table {
     .mytable,
     .secondtable {
         th {
-            background: #f4f8ff;
+            background: #e7f0fd;
         }
     }
 }
-// .secondtable tr:nth-child(3) td:nth-child(3),
-// .secondtable tr:nth-child(3) td:nth-child(2) {
-//   background: #fce4d6;
-// }
-
 .secondtable tr:nth-child(3) td:nth-child(3),
 .secondtable tr:nth-child(3) td:nth-child(2) {
   background: #fce4d6;

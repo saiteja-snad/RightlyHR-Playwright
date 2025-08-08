@@ -118,12 +118,14 @@
                             <p>We wish <b>{{employeeFullname}}</b> the very best for {{gender}} future endeavors, and we trust that {{gender2}} 
                                 will achieve continued success in {{gender}} professional journey.
                             </p>
-                            <p class="pt-4">Sincerely,</p>
-                            <p class="letter-sub-header mb-3">For SNAD Developers India Pvt Ltd,</p>
-                            <p class="mb-1 letter-signature mb-3 pt-4" *ngIf="authorityFullName">{{authorityFullName}}</p>
-                            <p class="mb-1 letter-sub-header" >Authorized Signatory</p>
-                            <p class="mb-1 letter-sub-header">{{authorityFullName}}</p>
-                            <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
+                            <p class="pt-4">Your Sincerely,</p>
+                            <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
+
+                            <div class="mb-3"></div>
+                            <p class="letter-signature" *ngIf="authorityFullName">{{authorityFullName}}</p>
+                            <p class="authorized-signatory mb-1">Authorized Signatory</p>
+                            <p class="authorized-signatory mb-1">{{authorityFullName}}</p>
+                            <p class="authorized-signatory mb-1">{{selectedAuthority?.designation}}</p>
                         </div>
                         <!-- <div class="letter-footer">
                             <app-letter-footer />

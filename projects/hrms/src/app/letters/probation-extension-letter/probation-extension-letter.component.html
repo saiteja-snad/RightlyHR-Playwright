@@ -102,7 +102,8 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content" id="pdfContent"  [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">
+                    <div class="letter-page-content" id="pdfContent"
+                        [ngClass]="{'soft-copy-letter': probationExtensionLetterData.Documenttype}">
                         <div class="letter-page-sub-content">
                             <!-- <div *ngIf="probationExtensionLetterData.Documenttype;else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
@@ -110,19 +111,22 @@
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
                             </ng-template> -->
-
+                            <div class="text-center mt-3 mb-5">
+                                <p class="letter-header text-center"> EXTENSION OF PROBATION PERIOD </p>
+                            </div>
                             <div *ngIf="probationExtensionLetterData" class="d-flex justify-content-between mb-3">
                                 <div>
                                     <ul class="list-style-none ps-0">
-                                        <li *ngIf="probationExtensionLetterData.firstName || probationExtensionLetterData.lastName; else noName">
+                                        <li class="mb-1"
+                                            *ngIf="probationExtensionLetterData.firstName || probationExtensionLetterData.lastName; else noName">
                                             {{ probationExtensionLetterData.firstName || '' }}
                                             {{ probationExtensionLetterData.middleName || '' }}
                                             {{ probationExtensionLetterData.lastName || '' }}
                                         </li>
                                         <ng-template #noName></ng-template>
-                                        <li>{{ probationExtensionLetterData.fusionEmpId || '' }}</li>
-                                        <li>{{ probationExtensionLetterData.jobRole || '' }}</li>
-                                        <li>{{ probationExtensionLetterData.department || '' }}</li>
+                                        <li class="mb-1">{{ probationExtensionLetterData.fusionEmpId || '' }}</li>
+                                        <li class="mb-1">{{ probationExtensionLetterData.jobRole || '' }}</li>
+                                        <li class="mb-1">{{ probationExtensionLetterData.department || '' }}</li>
                                         <li>{{ probationExtensionLetterData.workLocation || '' }}</li>
                                     </ul>
                                 </div>
@@ -135,12 +139,12 @@
                             </div>
 
 
-                            <div>
-                                <p class="letter-sub-header">Dear {{probationExtensionLetterData.firstName}}
+                            
+                                <p class="letter-sub-header mb-3 ">Dear {{probationExtensionLetterData.firstName}}
                                     {{probationExtensionLetterData.middleName}}
                                     {{probationExtensionLetterData.lastName}},
                                 </p>
-                            </div>
+                            
 
                             <div>
                                 <p>We are pleased to inform that following a performance appraisal
@@ -175,22 +179,23 @@
                                     during
                                     this extended probationary period.</p>
 
-                                <p class="pt-4">Sincerely,</p>
-                                <p class="letter-sub-header">For SNAD Developers India Pvt Ltd</p>
-
-                             
-                                <div class="letter-signature  pt-4">{{probationExtensionLetterData.authorityName}}</div>
-                                   <!-- Show "Authority Signature" only when no authority is selected -->
-                                <div  class="letter-sub-header pt-4 mb-1">
-                                    Authority Signature</div>
+                                <p class="pt-4">Your Sincerely,</p>
+                                <p class="letter-sub-header  mb-4">For SNAD Developers India Pvt Ltd</p>
+                                
+                                <p class="letter-signature mb-4">{{probationExtensionLetterData.authorityName}}</p>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <p class="authorized-signatory mb-1">
+                                    Authority Signature</p>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationExtensionLetterData.authorityName">
-                                    <p class="letter-sub-header mb-1">Authority Name</p>
-                                    <p class="letter-sub-header mb-1">Designation</p>
+                                    <p class="authorized-signatory mb-2">Authority Name</p>
+                                    <p class="authorized-signatory mb-2">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="letter-sub-header mb-1">{{probationExtensionLetterData.authorityName}}</p>
-                                    <p class="letter-sub-header mb-1">{{probationExtensionLetterData.authorityDesignation}}
+                                    <p class="authorized-signatory mb-2">{{probationExtensionLetterData.authorityName}}
+                                    </p>
+                                    <p class="authorized-signatory mb-2">
+                                        {{probationExtensionLetterData.authorityDesignation}}
                                     </p>
                                 </div>
                             </div>

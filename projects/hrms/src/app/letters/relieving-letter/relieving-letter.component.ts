@@ -20,7 +20,7 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../l
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss',
-  encapsulation: ViewEncapsulation.None
+  
 })
 
 export class RelievingLetterComponent implements OnInit,OnDestroy {

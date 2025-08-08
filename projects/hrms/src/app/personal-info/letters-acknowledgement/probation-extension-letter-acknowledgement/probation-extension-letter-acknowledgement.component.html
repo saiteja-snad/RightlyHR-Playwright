@@ -6,9 +6,8 @@
                     [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
                     <div class="letter-page-sub-content">
                         <div class="mb-2 mt-2">
-
-            <div class="text-center letter-header mb-3">Probation Extension Letter</div>
-          </div>
+                            <div class="text-center letter-header mb-3">Probation Extension Letter</div>
+                        </div>
                         <div class="d-flex justify-content-between mb-3">
                             <div>
                                 <ul class="list-style-none ps-0">
@@ -17,6 +16,7 @@
                                     </li>
                                     <ng-template #fullname> 
                                     </ng-template> -->
+                                    <li>To</li>
                                     <li>{{employeeName}}</li>
                                     <li>{{employeeiddetails.fusionEmpId}}</li>
                                     <li>{{jobRole}}</li>
@@ -70,7 +70,7 @@
 
                             <p class="pt-4">Sincerely,</p>
 
-                            <p>for SNAD Developers India Pvt Ltd</p>
+                            <p><b>For SNAD Developers India Pvt Ltd</b></p>
 
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-2">
@@ -82,8 +82,9 @@
                             </div>
                             <div class="letter-signature pt-3">{{probationExtensionLetterData?.authorityName}}</div>
                             <div>
-                                <p class="letter-sub-header mt-4 ">{{probationExtensionLetterData?.authorityName}}</p>
-                                <p class="letter-sub-header">{{authorityDesignation}}
+                                <p class="authorized-signatory mt-2 mb-1">Authorized Signature</p>
+                                <p class="letter-sub-header mb-1">{{probationExtensionLetterData?.authorityName}}</p>
+                                <p class="letter-sub-header mb-1">{{authorityDesignation}}
                                 </p>
                             </div>
                         </div>
@@ -91,7 +92,7 @@
                         <div class="d-flex justify-content-end text-end">
                             <div>
                                 <div class="letter-signature mb-2">{{employeeName}}</div>
-                                <div>Employee's Signature</div>
+                                <div><b>Employee's Signature</b></div>
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,9 @@
         <div>
             <div class="letter-page-content" id="pdfContent" [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
                 <div class="letter-page-sub-content">
+                     <div class="mb-2 mt-2">
+                            <div class="text-center letter-header mb-3">Probation Confirmation Letter</div>
+                        </div>
                     <!-- <div *ngIf="probationLetterData.Copys; else doc" class="soft-copy-letter">
                                 <app-lettersheader />
                             </div>
@@ -62,6 +65,7 @@
                         </div>
                     
                         <div>
+                            <p class="authorized-signatory mt-2 mb-1">Authorized Signature</p>
                             <p class="letter-sub-header mt-4">{{probationExtensionLetterData?.authorityName}}</p>
                             <p class="letter-sub-header">{{authorityDesignation}}
                             </p>

@@ -228,6 +228,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   }
 
   uploadprobationextentionLetter() {
+
     let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationExtensionLetterData.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {

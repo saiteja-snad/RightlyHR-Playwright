@@ -62,7 +62,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
   employeeiddetails = [] as any;
   getEmployeeId() {
     this.subscription = this.http
-      .getData(`ProbationFlow/getAllProbationEmployees?substatus=${'Probation Extended'}`)
+      .getData(`ProbationFlow/getAllProbationEmployees?substatus=${'Probation Confirmed'}`)
       .subscribe({
         next: (data: any) => {
           console.log(data);

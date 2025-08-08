@@ -38,6 +38,7 @@ prodationeffectivedate:any
   probationExtensionLetterData = {} as any;
 
   ngOnInit(): void {
+    
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.Employeeinfo);
     this.employeeName = `${this.Employeeinfo.firstName ?? ''} ${this.Employeeinfo.middleName ?? ''
@@ -47,6 +48,7 @@ prodationeffectivedate:any
     this.getEmployeeId();
   }
 
+  
   fusionEmpId: any;
   Onclick(employeeid: any) {
     this.fusionEmpId = employeeid;

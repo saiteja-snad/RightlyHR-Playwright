@@ -303,7 +303,7 @@
                         <ng-template #pftaxper>{{appraisalData.professionalPerAnnum?appraisalData.professionalPerAnnum:0}}</ng-template>
                       </td>
                     </tr>
-                    <!-- <tr>
+                    <tr>
                       <td class="text-center">Medical insurance</td>
                       <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ"> </span>
                         <ng-template #educ>{{appraisalData.educationAllowances?appraisalData.educationAllowances:0}}</ng-template>
@@ -312,7 +312,7 @@
                         </span>
                         <ng-template #educper>{{appraisalData.educationallowancesPerAnnum?appraisalData.educationallowancesPerAnnum:0}}</ng-template>
                       </td>
-                    </tr> -->
+                    </tr>
                     <tr>
                       <td class=" text-center"><b>Total Deductions (PF+ESI+PT)</b>
                       </td>
@@ -405,9 +405,9 @@
           <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
             <div class="letter-page-sub-content pt-4 mt-4">
              <!-- <b>Note:</b><p> <b>Variable pay will be processed annually.</b> 60% of the variable pay is the <b>minimum guaranteed amount</b>, while the remaining <b> 40% will be based on company performance</b>.</p> -->
-             <div *ngIf="appraisalData.note">
+             <div *ngIf="appraisalData.note" class="pb-2">
                 <b>Note:</b>
-                <p><b>{{ appraisalData.note }}</b>.</p>
+                <p ><b>{{ appraisalData.note }}</b>.</p>
               </div>
 
               <p class="letter-sub-header "><b>Additional Details Related to Salary Structure:</b></p>

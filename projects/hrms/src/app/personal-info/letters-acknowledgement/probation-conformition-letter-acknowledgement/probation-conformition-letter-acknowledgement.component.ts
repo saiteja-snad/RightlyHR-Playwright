@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
 export class ProbationConformitionLetterAcknowledgementComponent {
 @Input() letterdata: any;
   subscription!: Subscription;
-
+prodationeffectivedate:any
   constructor(
     private http: HttpService,
     private router: Router,
@@ -96,6 +96,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
           // this.probationDate = data[0].issuedDate;
           this.probationDate= this.letterdata.issuedDate;
           this.probationExtensionLetterData.docType = this.letterdata.docType;
+          this.prodationeffectivedate.effectiveDate=this.letterdata.effectiveDate
           console.log('Issued Date:', this.probationDate);
           this.getAuthorityDetails();
         },

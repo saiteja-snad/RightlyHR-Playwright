@@ -180,21 +180,21 @@
                                     this extended probationary period.</p>
 
                                 <p class="pt-4">Your Sincerely,</p>
-                                <p class="letter-sub-header  mb-5">For SNAD Developers India Pvt Ltd</p>
+                                <p class="letter-sub-header  mb-4">For SNAD Developers India Pvt Ltd</p>
                                 
-                                <p class="letter-signature">{{probationExtensionLetterData.authorityName}}</p>
+                                <p class="letter-signature mb-4">{{probationExtensionLetterData.authorityName}}</p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <p class="authorized-signatory mb-1">
                                     Authority Signature</p>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationExtensionLetterData.authorityName">
-                                    <p class="authorized-signatory mb-1">Authority Name</p>
-                                    <p class="authorized-signatory mb-1">Designation</p>
+                                    <p class="authorized-signatory mb-2">Authority Name</p>
+                                    <p class="authorized-signatory mb-2">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="authorized-signatory mb-1">{{probationExtensionLetterData.authorityName}}
+                                    <p class="authorized-signatory mb-2">{{probationExtensionLetterData.authorityName}}
                                     </p>
-                                    <p class="authorized-signatory mb-1">
+                                    <p class="authorized-signatory mb-2">
                                         {{probationExtensionLetterData.authorityDesignation}}
                                     </p>
                                 </div>

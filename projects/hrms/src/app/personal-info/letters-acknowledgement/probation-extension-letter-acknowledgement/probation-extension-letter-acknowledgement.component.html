@@ -2,19 +2,22 @@
     <div class="letter-data-content">
         <div class="letter-sub-data-content">
             <div>
-                <div class="letter-page-content" id="pdfContent" [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
+                <div class="letter-page-content" id="pdfContent"
+                    [ngClass]="{'soft-copy-letter': probationExtensionLetterData?.docType, 'hard-copy-letter': !probationExtensionLetterData?.docType}">
                     <div class="letter-page-sub-content">
-
-
+                        <div class="mb-2 mt-2">
+                            <div class="text-center letter-header mb-3">Probation Extension Letter</div>
+                        </div>
                         <div class="d-flex justify-content-between mb-3">
                             <div>
                                 <ul class="list-style-none ps-0">
                                     <!-- <li
                                         *ngIf="!probationExtensionLetterData.firstName && !probationExtensionLetterData.lastName;else fullname">
                                     </li>
-                                    <ng-template #fullname>
-                                       
+                                    <ng-template #fullname> 
                                     </ng-template> -->
+                                    
+                                    <li>To</li>
                                     <li>{{employeeName}}</li>
                                     <li>{{employeeiddetails.fusionEmpId}}</li>
                                     <li>{{jobRole}}</li>
@@ -67,33 +70,32 @@
                                 this extended probationary period.</p>
 
                             <p class="pt-4">Sincerely,</p>
-                            
-                            <p>for SNAD Developers India Pvt Ltd</p>
+
+                            <p><b>For SNAD Developers India Pvt Ltd</b></p>
 
                             <!-- Show "Authority Signature" only when no authority is selected -->
-                            <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-4">
+                            <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-2">
                                 Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="!probationExtensionLetterData.authorityName">
-                                <p class="letter-sub-header m-0">Authority Name</p>
-                                <p class="letter-sub-header m-0">Designation</p>
+                                <p class="letter-sub-header mb-1">Authority Name</p>
+                                <p class="letter-sub-header mb-1">Designation</p>
                             </div>
-                            <div class="letter-signature  pt-4">{{probationExtensionLetterData?.authorityName}}</div>
+                            <div class="letter-signature pt-3">{{probationExtensionLetterData?.authorityName}}</div>
                             <div>
-                                <p class="letter-sub-header">{{probationExtensionLetterData?.authorityName}}</p>
-                                <p class="letter-sub-header">{{authorityDesignation}}
+                                <p class="authorized-signatory mt-2 mb-1">Authorized Signature</p>
+                                <p class="letter-sub-header mb-1">{{probationExtensionLetterData?.authorityName}}</p>
+                                <p class="letter-sub-header mb-1">{{authorityDesignation}}
                                 </p>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end text-end">
                             <div>
-                                 <div class="letter-signature">{{employeeName}}</div>
-                                 <div>Employee's Signature</div>
+                                <div class="letter-signature mb-2">{{employeeName}}</div>
+                                <div><b>Employee's Signature</b></div>
                             </div>
                         </div>
-
-                    
                     </div>
                 </div>
             </div>
@@ -126,21 +128,24 @@
 </div>
 
 <!-- confirmation popup for the acknowledgement -->
-<ng-template #acknowlegeconfimation let-modal>
-    <div class="modal-content" ngbAutofocus>
-        <div class="modal-body mt-4 text-center">
-            <img src="./assets/images/Vector@2x.png" alt="" class="imgg">
-            <h5 class="want text-center mt-4">Are you sure you want to Accept?</h5>
-            <div class="d-flex justify-content-center mt-4">
-                <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal"
-                    (click)="modal.dismiss('Cross click')" [disabled]="isLoading">No</button>
-                <button type="button" class="btn btn-primary me-2" [disabled]="isLoading||isacknowledged"
-                    (click)="onAppointmentLetterSubmit()">
-                    <span *ngIf="!isLoading">Yes</span>
-                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status"
-                        aria-hidden="true"></span>
-                </button>
-            </div>
+
+
+<ng-template #acknowlegeconfimation let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text mt-2"> Are you sure you want to Accept?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" [disabled]="isLoading" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="isLoading||isacknowledged"
+                (click)="onAppointmentLetterSubmit()">
+                <span *ngIf="!isLoading">Yes</span>
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status"
+                    aria-hidden="true"></span>
+            </button>
         </div>
     </div>
 </ng-template>

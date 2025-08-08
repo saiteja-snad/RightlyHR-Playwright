@@ -10,10 +10,11 @@ import jsPDF from 'jspdf';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 
 @Component({
   selector: 'app-probation-extension-letter-acknowledgement',
-  imports: [ CommonModule, DateformatPipe],
+  imports: [CommonModule, DateformatPipe, ConfirmationIconComponent],
   templateUrl: './probation-extension-letter-acknowledgement.component.html',
   styleUrl: './probation-extension-letter-acknowledgement.component.scss'
 })

@@ -216,6 +216,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   getProbationRequest(EmployeeId: any) {
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
       next: (response: any) => {
+        console.log(response)
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
@@ -227,6 +228,7 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
   }
 
   uploadprobationextentionLetter() {
+
     let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationExtensionLetterData.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {

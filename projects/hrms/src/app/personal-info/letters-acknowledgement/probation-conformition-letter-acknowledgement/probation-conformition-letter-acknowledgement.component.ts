@@ -109,7 +109,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
   getAuthorityDetails() {
-    let offertype = 'Probation Extension Letter'
+    let offertype = 'Probation Confirmation Letter'
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);

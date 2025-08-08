@@ -89,7 +89,7 @@ export class FormValidationService {
     }
   
     // Allow alphabetic characters, numbers, and special characters
-    const isValidCharacter = /^[A-Za-z0-9\s!@#$^&*(),.":{}/|-]$/.test(key);
+    const isValidCharacter = /^[A-Za-z0-9\s!@#$^&*%''(),.":{}/|-]$/.test(key);
     if (!isValidCharacter) {
       event.preventDefault();
     }

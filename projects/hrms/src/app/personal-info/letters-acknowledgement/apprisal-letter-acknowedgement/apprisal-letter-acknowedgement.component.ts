@@ -44,6 +44,7 @@ nopromotion: boolean = true;
 comments!: string;
 Status!: string;
  spinnerLoader = false;
+currentDate = new Date();
 @ViewChild('successhide') private readonly successhide!: NgbModal;
 @ViewChild('errorhide') private readonly errorhide!: NgbModal;
 @Input() letterdata: any;

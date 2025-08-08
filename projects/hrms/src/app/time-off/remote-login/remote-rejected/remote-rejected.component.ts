@@ -11,20 +11,29 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
-
+import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-remote-rejected',
-  imports: [ CommonModule,
+  imports: [
+    CommonModule,
     NgbPopoverModule,
     FormsModule,
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-    NoDataFoundComponent],
+    TranslateModule,
+    NoDataFoundComponent,
+    InfoIconComponent,
+    DataLoaderContentComponent
+],
   templateUrl: './remote-rejected.component.html',
-  styleUrl: './remote-rejected.component.scss'
+  styleUrl: './remote-rejected.component.scss',
 })
-export class RemoteRejectedComponent implements OnInit,OnDestroy {
+export class RemoteRejectedComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -33,37 +42,54 @@ export class RemoteRejectedComponent implements OnInit,OnDestroy {
   approvedRemotesCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataLoad = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectempid: any;
+  selectedYear: any;
 
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     public rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
-         // Signal reaction for employee switch
-         effect(() =>{
-          if (this.http.tirggerCountSignal().remote) {
-            this.getRemoteRequests();
-            this.http.tirggerCountSignal.update((status) => ({
-              ...status,
-              remote: false,
-            }));
-          }
-    
-      })
+    // Signal reaction for employee switch
+    effect(() => {
+      if (this.http.tirggerCountSignal().remote) {
+        this.getRemoteRequests();
+        this.http.tirggerCountSignal.update((status) => ({
+          ...status,
+          remote: false,
+        }));
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
-    this.getRemoteRequests();
+    // this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    // this.getRemoteRequests();
+
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdRemoteLogin$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getRemoteLoginEMPRequests();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getRemoteRequests();
+          }
+        });
+      }
+    });
   }
 
   onRowsChange() {
@@ -76,16 +102,45 @@ export class RemoteRejectedComponent implements OnInit,OnDestroy {
 
   getRemoteRequests() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
+    this.dataLoad = true;
     this.http
-      .getData(`AttendanceRequests/getbyempid/${empId}?requestedCategory=11`)
+      .getFilterRemoteLoginDataByID(
+        empId,
+        this.selectedYear
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
           this.remoteLogin = response;
           this.approvedRemotes = this.remoteLogin.filter(
-            (element: { status: string }) => element.status === 'Approved'
+            (element: { status: string }) => element.status === 'Rejected'
+          );
+          this.approvedRemotesCount = this.approvedRemotes.length;
+          this.dataLoad = false;
+        },
+        error: (error) => {
+          this.dataLoad = false;
+
+          console.error('Error fetching data:', error);
+          this.approvedRemotes = []; // Set to empty array on error
+        },
+      });
+  }
+
+  getRemoteLoginEMPRequests() {
+    let empId = this.selectempid;
+    this.http
+      .getFilterRemoteLoginDataByID(
+        empId,this.selectedYear
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.remoteLogin = response;
+          this.approvedRemotes = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Rejected'
           );
           this.approvedRemotesCount = this.approvedRemotes.length;
         },

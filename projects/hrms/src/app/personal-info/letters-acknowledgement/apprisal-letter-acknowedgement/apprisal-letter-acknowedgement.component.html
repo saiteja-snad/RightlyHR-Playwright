@@ -281,10 +281,11 @@
           </div>
 
           <div class="pt-4 pb-4">
-            <p><b>Employee Name:<span class="letter-signature">{{appraisalData.firstName}}
+            <p><b>Employee Name:<span class="">{{appraisalData.firstName}}
                   {{appraisalData.middleName}} {{appraisalData.lastName}}</span></b></p>
-            <p><b>Employee Signature:<span class="employee-signature ms-2"></span></b></p>
-            <p><B>Date:<span class="employee-date ms-2"></span></B></p>
+            <p><b>Employee Signature:</b><span class="letter-signature  ms-2">{{appraisalData.firstName}}
+                  {{appraisalData.middleName}} {{appraisalData.lastName}}</span></p>
+            <p><b>Date:</b><span class="employee-date ms-2"></span>{{currentDate | dateformat}}</p>
           </div>
         </div>
 

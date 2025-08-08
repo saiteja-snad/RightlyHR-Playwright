@@ -24,7 +24,6 @@ interface NavLink {
   templateUrl: './pending-approvals-tabs.component.html',
   styleUrl: './pending-approvals-tabs.component.scss',
 })
-
 export class PendingApprovalsTabsComponent {
   LOGIN: any;
   subscription!: Subscription;
@@ -34,73 +33,118 @@ export class PendingApprovalsTabsComponent {
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   countEmp: any;
   countRole: any;
-  loading = false
+  loading = false;
   nodue_Request_data = [] as any[];
   navLinks: NavLink[] = [
     {
       label: 'Leaves',
       route: '/time-off/pending-approvals/time-off-request',
-      moduleId: environment.leavesModuleId, permission: { feature: 'Time Off Tab', action: 'view' },
+      moduleId: environment.leavesModuleId,
+      permission: { feature: 'Time Off Tab', action: 'view' },
       icon: '/time-off-icon/leaves-icon.png',
     },
-    { label: 'Regularizations', route: '/time-off/pending-approvals/regularization-request', moduleId: environment.attendanceRegularizationModuleId, icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Tab', action: 'view' } },
-    { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId, icon: '/time-off-icon/permissions-icon.png', permission: { feature: 'Permissions Tab', action: 'view' } },
-    { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId, icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'WFH Tab', action: 'view' } },
-    { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId, icon: '/time-off-icon/comp-off.png', permission: { feature: 'Comp Off Tab', action: 'view' } },
+    {
+      label: 'Regularizations',
+      route: '/time-off/pending-approvals/regularization-request',
+      moduleId: environment.attendanceRegularizationModuleId,
+      icon: '/time-off-icon/regularization-icon.png',
+      permission: { feature: 'Regularization Tab', action: 'view' },
+    },
+    {
+      label: 'Permissions',
+      route: '/time-off/pending-approvals/permissions',
+      moduleId: environment.permissionsModuleId,
+      icon: '/time-off-icon/permissions-icon.png',
+      permission: { feature: 'Permissions Tab', action: 'view' },
+    },
+    {
+      label: 'WFH',
+      route: '/time-off/pending-approvals/wfh',
+      moduleId: environment.wfhModuleId,
+      icon: '/time-off-icon/WFH-icon.png',
+      permission: { feature: 'WFH Tab', action: 'view' },
+    },
+    {
+      label: 'Remote Login',
+      route: '/time-off/pending-approvals/remote',
+      moduleId: environment.remoteLoginModuleId,
+      icon: '/time-off-icon/WFH-icon.png',
+      permission: { feature: 'Remote Login Tab', action: 'view' },
+    },
+    {
+      label: 'Comp-Off',
+      route: '/time-off/pending-approvals/comp-off',
+      moduleId: environment.compoffModuleId,
+      icon: '/time-off-icon/comp-off.png',
+      permission: { feature: 'Comp Off Tab', action: 'view' },
+    },
     {
       label: 'Probations',
       route: '/time-off/pending-approvals/probation-request',
-      moduleId: environment.ProbationrequestmoduleId, permission: { feature: 'Probation Details Tab', action: 'view' },
+      moduleId: environment.ProbationrequestmoduleId,
+      permission: { feature: 'Probation Details Tab', action: 'view' },
       icon: '/time-off-icon/Probation-icon.png',
     },
     {
-      label: 'Trainees', route: '/time-off/pending-approvals/trainee-approvals',
-      moduleId: environment.traineeoffboardingModuleId, permission: { feature: 'Trainee Details Tab', action: 'view' },
+      label: 'Trainees',
+      route: '/time-off/pending-approvals/trainee-approvals',
+      moduleId: environment.traineeoffboardingModuleId,
+      permission: { feature: 'Trainee Details Tab', action: 'view' },
       icon: '/time-off-icon/trainee-icon.png',
     },
     {
       label: 'Separations',
       route: '/time-off/pending-approvals/separation-request',
-      moduleId: environment.SeparationrequestmoduleId, permission: { feature: 'Separation Request Tab', action: 'view' },
+      moduleId: environment.SeparationrequestmoduleId,
+      permission: { feature: 'Separation Request Tab', action: 'view' },
       icon: '/time-off-icon/seperation-icon.png',
     },
     {
       label: 'Recalls',
       route: '/time-off/pending-approvals/recall-request',
-      moduleId: environment.RecallrequestmoduleId, permission: { feature: 'Recall Request Tab', action: 'view' },
+      moduleId: environment.RecallrequestmoduleId,
+      permission: { feature: 'Recall Request Tab', action: 'view' },
       icon: '/time-off-icon/recall-icon.png',
     },
     {
       label: 'No Due Clearances',
       route: '/time-off/pending-approvals/nodue-request',
-      moduleId: environment.nodueModuleId, permission: { feature: 'No Due Clearence Requests Tab', action: 'view' },
+      moduleId: environment.nodueModuleId,
+      permission: { feature: 'No Due Clearence Requests Tab', action: 'view' },
       icon: '/time-off-icon/No-due-icon.png',
     },
     {
       label: 'Desks',
       route: '/time-off/pending-approvals/desk-approval',
-      moduleId: environment.deskAllocationModuleId, permission: { feature: 'Desk Requests Tab', action: 'view' },
+      moduleId: environment.deskAllocationModuleId,
+      permission: { feature: 'Desk Requests Tab', action: 'view' },
       icon: '/main-menu-icons/desk-icon.png',
     },
     {
       label: 'Expenses',
       route: '/time-off/pending-approvals/claimsandexpenses-request',
-      moduleId: environment.expensesModuleId, permission: { feature: 'Claims and Expenses Tab', action: 'view' },
+      moduleId: environment.expensesModuleId,
+      permission: { feature: 'Claims and Expenses Tab', action: 'view' },
       icon: '/main-menu-icons/expenses-icon.png',
     },
   ];
 
   constructor(
     public readonly router: Router,
-    private http: HttpService, public rbac: RbacService,
+    private http: HttpService,
+    public rbac: RbacService,
     private signalService: SignalsService,
-    private accessNav: AccessNavigationService) {
+    private accessNav: AccessNavigationService
+  ) {
     effect(() => {
-      if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
-        || (this.http.tirggerPendingApprovalCountSignal().nodue)) {
+      if (
+        this.http.tirggerPendingApprovalCountSignal().wfh ||
+        this.http.tirggerPendingApprovalCountSignal().separation ||
+        this.http.tirggerPendingApprovalCountSignal().nodue
+      ) {
         this.getAllPendingApprovalsCount();
         this.getAllPendingApprovalsNoDue();
-        this.http.tirggerPendingApprovalCountSignal.update(status => ({
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           wfh: status.wfh ? false : status.wfh,
           separation: status.separation ? false : status.separation,
@@ -150,17 +194,28 @@ export class PendingApprovalsTabsComponent {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
     this.getAllPendingApprovalsNoDue();
-    this.navLinks = this.navLinks.filter((tab) => tab.permission && tab.permission.feature &&
-      tab.permission.action && this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`));
+    this.navLinks = this.navLinks.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
   }
 
   getAllPendingApprovalsNoDue() {
     const EmployeeId = this.LOGIN.employeeId;
-    this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        this.nodue_Request_data = data;
-      },
-    });
+    this.subscription = this.http
+      .getData(
+        `NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.nodue_Request_data = data;
+        },
+      });
   }
 
   getAllPendingApprovalsCount() {
@@ -169,17 +224,17 @@ export class PendingApprovalsTabsComponent {
     this.http.getAllPendingApprovalsCount(undefined, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
         const countMap = new Map<number, number>();
-        data.forEach(item => countMap.set(item.moduleId, item.totalCount));
-        this.navLinks = this.navLinks.map(link => ({
+        data.forEach((item) => countMap.set(item.moduleId, item.totalCount));
+        this.navLinks = this.navLinks.map((link) => ({
           ...link,
-          count: countMap.get(link.moduleId) || 0
+          count: countMap.get(link.moduleId) || 0,
         }));
         this.loading = false;
       },
       error: (err) => {
         console.error('Error fetching approvals:', err);
         this.loading = false;
-      }
+      },
     });
   }
 

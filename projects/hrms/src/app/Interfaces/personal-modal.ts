@@ -97,6 +97,9 @@ export interface Ipersonal {
     employeeAddresses?: IAddress[]
     trainingEndDate: any;
     durationOfTrainee:any;
+    remoteLoginWorkLocation: string;
+    allowRemoteLogin: boolean;
+    remoteLoginManagerId: number;
 }
 export interface IStatus {
 

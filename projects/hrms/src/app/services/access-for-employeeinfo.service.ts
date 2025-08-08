@@ -24,9 +24,9 @@ export class AccessForEmployeeinfoService {
     let claim: string | undefined;
 
     switch (currentUrl) {
-      // case 'personalinfo':
-      //   claim = EMPLOYEE_INFO_CLAIMS.find(r => r.permission === permission)?.claim;
-      //   break;
+      case 'personalinfo':
+        claim = EMPLOYEE_INFO_CLAIMS.find(r => r.permission === permission)?.claim;
+        break;
       case 'myinfo':
         claim = MY_INFO_CLAIMS.find(r => r.permission === permission)?.claim;
         break;

@@ -286,7 +286,7 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
       candidateStatus: 'Generated',
       IssuedDate: this.probationConfirmationForm.get('issuedDate')?.value,
       AuthoritySignature: this.probationConfirmationForm.get('authorityid')?.value.employeeId,
-      generatedDate: this.todayDate,
+      generatedDate: this.probationConfirmationForm.get('effectiveDate')?.value,
       generatedBy: this.Employeeinfo?.employeeId,
       DocType: this.probationConfirmationForm.get('Documenttype')?.value,
       letterType : 'Probation Confirmation Letter'

@@ -21,7 +21,7 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 export class ProbationConformitionLetterAcknowledgementComponent {
 @Input() letterdata: any;
   subscription!: Subscription;
-
+prodationeffectivedate:any
   constructor(
     private http: HttpService,
     private router: Router,
@@ -38,6 +38,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
   probationExtensionLetterData = {} as any;
 
   ngOnInit(): void {
+    
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     console.log(this.Employeeinfo);
     this.employeeName = `${this.Employeeinfo.firstName ?? ''} ${this.Employeeinfo.middleName ?? ''
@@ -47,6 +48,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
     this.getEmployeeId();
   }
 
+  
   fusionEmpId: any;
   Onclick(employeeid: any) {
     this.fusionEmpId = employeeid;
@@ -63,7 +65,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
   employeeiddetails = [] as any;
   getEmployeeId() {
     this.subscription = this.http
-      .getData(`ProbationFlow/getAllProbationEmployees?substatus=${'Probation Extended'}`)
+      .getData(`ProbationFlow/getAllProbationEmployees?substatus=${'Probation Confirmed'}`)
       .subscribe({
         next: (data: any) => {
           console.log(data);
@@ -97,6 +99,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
           // this.probationDate = data[0].issuedDate;
           this.probationDate= this.letterdata.issuedDate;
           this.probationExtensionLetterData.docType = this.letterdata.docType;
+          this.probationExtensionLetterData.effectiveDate=this.letterdata?.effectiveDate
           console.log('Issued Date:', this.probationDate);
           this.getAuthorityDetails();
         },
@@ -110,7 +113,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
   authorityDesignation!: string | null;
   authorityDetails = [] as any;
   getAuthorityDetails() {
-    let offertype = 'Probation Extension Letter'
+    let offertype = 'Probation Confirmation Letter'
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -338,7 +341,7 @@ export class ProbationConformitionLetterAcknowledgementComponent {
           console.log(data);
           this.isacknowledged = true;
           this.isLoading = false;
-          this.confirmation.openSuccessModal('Probation Extenstion Letter Acknowledged Successfully');
+          this.confirmation.openSuccessModal('Probation Confirmation Letter Acknowledged Successfully');
           setTimeout(() => {
             this.modalService.dismissAll();
             this.http.triggerRefresh();

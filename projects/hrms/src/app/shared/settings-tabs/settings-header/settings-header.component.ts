@@ -177,6 +177,15 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = ' Letter Configurations Frequency';
     }
+
+    else if (url.startsWith('/settings/attendance-configuration/pending-for-submission')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/attendance-configuration/published')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Published';
+    }
   }
 
   navigateToSettings() {

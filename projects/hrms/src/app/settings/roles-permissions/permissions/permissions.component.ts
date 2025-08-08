@@ -460,6 +460,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
   settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
+  
+    settingsAttendanceLockingTab = [
+    'Pending Attendance Locking',
+    'Published Attendance Locking'
+  ]
   timeoffSettingsFields = [
     'Leave Category Tab',
     'Leave Allocation Tab',

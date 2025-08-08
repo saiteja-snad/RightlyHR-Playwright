@@ -263,6 +263,9 @@ export class AccessNavigationService {
             }
           }
         }
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
+          return '/settings/attendance-configuration';
+        }
         break;
 
       case '/policies':

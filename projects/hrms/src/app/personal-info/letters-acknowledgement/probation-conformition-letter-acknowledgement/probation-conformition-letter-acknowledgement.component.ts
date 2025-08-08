@@ -96,7 +96,7 @@ prodationeffectivedate:any
           // this.probationDate = data[0].issuedDate;
           this.probationDate= this.letterdata.issuedDate;
           this.probationExtensionLetterData.docType = this.letterdata.docType;
-          this.prodationeffectivedate.effectiveDate=this.letterdata?.effectiveDate
+          this.probationExtensionLetterData.effectiveDate=this.letterdata?.effectiveDate
           console.log('Issued Date:', this.probationDate);
           this.getAuthorityDetails();
         },

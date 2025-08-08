@@ -254,7 +254,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-            let res = data.reverse()[0];
+            let res = data[0];
             if (data.length > 1) {
               this.previusSalary = data[1];
               this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
@@ -571,6 +571,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             middleName: this.appraisalData.middleName,
             personRole: this.appraisalData.jobRole,
             documentUrl: this.result.documentUrl,
+            generatedBy: this.appraisalData.employeeId,
+           generatedDate: new Date().toISOString(),
             compeffectivedate: `${
                compeffectivedate ?? 'N/A'
             }`,
@@ -587,7 +589,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
                 this.conformationPopup.openSuccessModal('Email has been sent successfully');
                 setTimeout(() => {
                   this.navigateDashboard();
-                }, 2000)
+                }, 3000)
               },
               error: (err: any) => {
                 this.spinnerLoader= false;
@@ -625,6 +627,7 @@ const postAppDetails = {
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
       candidateStatus: 'Generated',
+      
     };
   this.subscription = this.http
     .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)

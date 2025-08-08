@@ -309,18 +309,23 @@ export class ProbationExtensionLetterComponent implements OnInit,OnDestroy {
     {
       employeeId: this.probationExtensionLetterData.employeeId,
       documentUrl: this.Documenturlresult,
+<<<<<<< HEAD
       generatedDate: this.todayDate,
       generatedBy: this.Employeeinfo.employeeId,
        createdBy: this.Employeeinfo.employeeId,
       updatedBy: this.Employeeinfo.employeeId,
       updatedAt: this.todayDate
+=======
+      generatedBy: this.Employeeinfo.employeeId,
+      generatedDate: new Date().toISOString(),
+>>>>>>> ba65840db225e9c934101e42a7b695fa6488c568
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
         this.openModalService.openSuccessModal("Email has been sent successfully");
         setTimeout(() => {
           this.naviagte();
-        }, 2000)
+        }, 3000)
       },
       error: (err: any) => {
         this.releaseLoader = false;

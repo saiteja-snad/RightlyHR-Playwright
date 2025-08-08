@@ -721,6 +721,8 @@ getAuthorityDetails(authorityId: number) {
       letterType: this.letterdata.letterType,
       acknowledgeDate: moment().format('YYYY-MM-DD'),
       employeeId: this.empdata.employeeId,
+      generatedBy: this.empdata.employeeId,
+      issuedDate:  this.letterdata.issuedDate,
       signedDocUrl: filePath,
       status: 'Released',
       candidateStatus: 'Acknowledged',
@@ -734,7 +736,7 @@ getAuthorityDetails(authorityId: number) {
           this.isLoading = false;
            this.modalService.dismissAll();
           this.http.triggerRefresh();
-           this.confirmationPopup.openSuccessModal('Appraisal Letter Acknowledged Successfully');
+           this.confirmationPopup.openSuccessModal('Appraisal Letter Accepted Successfully');
           
         },
         error: (error: any) => {
@@ -783,10 +785,12 @@ getAuthorityDetails(authorityId: number) {
       letterType: this.letterdata.letterType,
       acknowledgeDate: moment().format('YYYY-MM-DD'),
       employeeId:this.empdata.employeeId,
+      generatedBy: this.empdata.employeeId,
+      IssuedDate:  this.letterdata.issuedDate,
       // signedDocUrl: filePath,
       status: 'Released',
       candidateStatus: 'Rejected',
-      rejectedComments: this.rejectForm.get('comments')?.value || ''
+      rejectedComments: this.rejectForm.get('comments')?.value || '',
     };
     this.subscription=this.http.putData('LetterAcknowledgementDetails/updateAcknowledgement', payload).subscribe({
       next: (data: any) => {
@@ -806,7 +810,8 @@ getAuthorityDetails(authorityId: number) {
         this.isLoadingreject=false;
         this.dataFailureMsg(error.error.message);
       },
-    });  }
+    });  
+  }
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

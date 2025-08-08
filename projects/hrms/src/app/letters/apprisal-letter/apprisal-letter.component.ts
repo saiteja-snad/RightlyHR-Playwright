@@ -331,7 +331,7 @@ bonusValidator = (salary: number): ValidatorFn => {
           this.jobErrorMessage = 'No job details found for this employee.';
            this.employeeForm.get('jobValid')?.setValue(false);
         } else {
-          let res = data.reverse()[0];
+          let res = data.sort((a: any, b: any) => b.effectiveDate - a.effectiveDate)[0];
           this.employeeJobDetails = res;
           Employee.jobRole = res.jobRole;
           Employee.workLocation = res.lopcation;
@@ -758,6 +758,8 @@ bonusValidator = (salary: number): ValidatorFn => {
           compensationamount: this.appraisalData.salary,
           effectiveDate : this.employeeCompensationData.compeffectivedate,
           jobRole : this.employeeForm.get('JobRole')?.value?.value,
+          generatedBy: this.appraisalData.employeeId,
+          generatedDate: new Date().toISOString(),
 
         };
         if (loggedInUser.middleName) {
@@ -771,7 +773,7 @@ bonusValidator = (salary: number): ValidatorFn => {
             this.conformationPopup.openSuccessModal('Email has been sent successfully');
             setTimeout(() => {
               this.navigateDashboard();
-            }, 2000)
+            }, 3000)
           },
           error: (err: any) => {
             this.spinnerLoader = false;
@@ -815,8 +817,7 @@ console.log(issuedDate);
       authoritySignature: this.appraisalData.authorityid,
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
-      candidateStatus: 'Generated',
-        // generatedBy: this.Employeeinfo.employeeId
+      candidateStatus: 'Generated'
     };
 
     this.http

@@ -338,7 +338,7 @@ prodationeffectivedate:any
           console.log(data);
           this.isacknowledged = true;
           this.isLoading = false;
-          this.confirmation.openSuccessModal('Probation Extenstion Letter Acknowledged Successfully');
+          this.confirmation.openSuccessModal('Probation Confirmation Letter Acknowledged Successfully');
           setTimeout(() => {
             this.modalService.dismissAll();
             this.http.triggerRefresh();

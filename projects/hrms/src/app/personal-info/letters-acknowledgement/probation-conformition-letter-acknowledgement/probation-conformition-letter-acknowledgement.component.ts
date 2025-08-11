@@ -331,7 +331,7 @@ prodationeffectivedate:any
       candidateStatus: 'Acknowledged',
       // status: 'Acknowledged',
       generatedDate: this.letterdata.generatedDate,
-      generatedBy: this.Employeeinfo.employeeId,
+      generatedBy:  this.letterdata.generatedBy,
       issuedDate: this.letterdata.issuedDate,
     };
     this.subscription = this.http

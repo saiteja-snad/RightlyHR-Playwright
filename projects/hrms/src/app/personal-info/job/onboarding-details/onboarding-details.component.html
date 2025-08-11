@@ -8,14 +8,15 @@
             @if(canAccess('view','onboarding')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
             'trainee inactive' )){
-    
+
             @if(canAccess('update','onboarding')){
+
             <div>
-                <a (click)="showButtons()"><img src="/icons/edit-colored-icon.png" alt="Icon"
-                        class="component-edit-icon"></a>
+                <a (click)="showButtons()"><app-edit-icon /></a>
             </div>
+
             }
-    
+
             }
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
@@ -24,7 +25,7 @@
             </div>
             }
         </div>
-    
+
         <!--input content-->
         <form autocomplete="off" [formGroup]="onboardingForm">
             <div class="row">
@@ -39,7 +40,7 @@
                         Status is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining" [min]="offerletttersentdate"
@@ -49,7 +50,7 @@
                         Date Of Joining is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="branchLocation" class="form-label custom-label mb-2">Branch Code</label>
                     <div class="custom-p-select-content">
@@ -63,7 +64,7 @@
                         Branch Location / Code is required
                     </div>
                 </div>
-    
+
                 <!-- Add New Fields -->
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date</label>
@@ -74,7 +75,7 @@
                         Probation End Date is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
                     <div class="custom-p-select-content">
@@ -87,11 +88,11 @@
                         Probation Status is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status
                     </label>
-    
+
                     <div class="custom-p-select-content">
                         <p-select [options]="noticePeriod" optionLabel="name" formControlName="noticePeriodStatus"
                             placeholder="Select Notice Period" class="form-select custom-select">
@@ -102,7 +103,7 @@
                         Notice Period Status is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="backgroundCheckStatus" class="form-label custom-label mb-2">Background Check
                         Status</label>
@@ -117,7 +118,7 @@
                         Background Check Status is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="salaryHold" class="form-label custom-label mb-2">Salary Hold</label>
                     <div class="custom-p-select-content">
@@ -130,7 +131,7 @@
                         Salary Hold is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="pf" class="form-label custom-label mb-2">PF</label>
                     <div class="custom-p-select-content">
@@ -138,11 +139,12 @@
                             placeholder="Please enter PF details" class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div class="error-msg" *ngIf="onboardingForm.get('pf')?.invalid && onboardingForm.get('pf')?.touched">
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('pf')?.invalid && onboardingForm.get('pf')?.touched">
                         PF is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="esic" class="form-label custom-label mb-2">ESIC</label>
                     <div class="custom-p-select-content">
@@ -155,7 +157,7 @@
                         ESIC is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="pt" class="form-label custom-label mb-2">PT</label>
                     <div class="custom-p-select-content">
@@ -163,11 +165,12 @@
                             placeholder="Please enter PT details" class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div class="error-msg" *ngIf="onboardingForm.get('pt')?.invalid && onboardingForm.get('pt')?.touched">
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('pt')?.invalid && onboardingForm.get('pt')?.touched">
                         PT is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years
                         Experience</label>
@@ -178,7 +181,7 @@
                         Total Experience is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="remoteLogin" class="form-label custom-label mb-2">Allow Work From Home</label>
                     <div class="custom-p-select-content">
@@ -192,13 +195,14 @@
                         Allow Work From Home is required
                     </div>
                 </div>
-    
+
                 @if (onboardingForm.get('remoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="value"
-                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select" appendTo="body">
+                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select"
+                            appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
@@ -207,7 +211,7 @@
                     </div>
                 </div>
                 }
-    
+
                 @if (onboardingForm.get('remoteLogin')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
@@ -242,7 +246,8 @@
     </div>
     }
 
-    <div class="card custom-background-card p-4" *ngIf="empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active'">
+    <div class="card custom-background-card p-4"
+        *ngIf="empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active'">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <span class="component-sub-header">Trainee Details</span>
@@ -256,14 +261,16 @@
                         placeholder="Employment type status" />
                 </div>
 
-                @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') && isEditing){
+                @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
+                isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Trainee Start Date</label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining" />
                 </div>
                 }
 
-                @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') && !isEditing){
+                @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
+                !isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Trainee Start Date</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining"
@@ -275,7 +282,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Duration of Training</label>
                     <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
-                        placeholder="Duration of Training" (keypress)="letters($event)"  />
+                        placeholder="Duration of Training" (keypress)="letters($event)" />
                 </div>
 
                 @if(!isEditing ){
@@ -289,5 +296,5 @@
             </div>
         </form>
     </div>
-    
+
 </div>

@@ -73,7 +73,7 @@ export class SidenavComponent implements OnInit {
       route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
     },
       {
-      label: 'Themes', icon: '/main-menu-icons/themes-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
+      label: 'Themes', icon: '/main-menu-icons/themes-color-icon.png', activeIcon: '/main-menu-icons/themes-icon.png',
       route: '/theme', permission: { feature: 'Themes', action: 'view' } 
     },
   ];

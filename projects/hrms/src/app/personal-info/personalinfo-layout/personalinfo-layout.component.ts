@@ -15,10 +15,11 @@ import { AccessForEmployeeinfoService } from '../../services/access-for-employee
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule],
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule,ModuleInfoIconComponent],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss',
   encapsulation: ViewEncapsulation.None

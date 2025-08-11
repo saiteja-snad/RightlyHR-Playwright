@@ -6,10 +6,11 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-claimsandexpenses',
-  imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent,NgbPopoverModule,ModuleInfoIconComponent],
   templateUrl: './claimsandexpenses.component.html',
   styleUrl: './claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None

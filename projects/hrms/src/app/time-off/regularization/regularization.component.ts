@@ -14,9 +14,10 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule],
+  imports: [RouterModule, ReactiveFormsModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent, NgbPopoverModule,ModuleInfoIconComponent],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,

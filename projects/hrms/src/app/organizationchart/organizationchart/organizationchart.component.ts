@@ -18,11 +18,12 @@ import { Skeleton } from 'primeng/skeleton';
 
 import { OrgchartService } from './../../services/orgchartservices/orgchart.service';
 import { OrgChartGridComponent } from './org-chart-grid/org-chart-grid.component';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-organizationchart',
   imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, TranslateModule,
-    ModuleInformationComponent, Skeleton, ModuleInformationComponent, OrgChartGridComponent],
+    ModuleInformationComponent, Skeleton, ModuleInformationComponent, OrgChartGridComponent,ModuleInfoIconComponent],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,

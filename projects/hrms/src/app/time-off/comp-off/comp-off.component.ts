@@ -21,6 +21,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-comp-off',
   imports: [
@@ -30,7 +31,8 @@ import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirm
     CompOffApprovalTabsComponent, DropdownModule, Select, TranslateModule,
     ModuleInformationComponent,
     NgbPopoverModule,
-    ConfirmationIconComponent
+    ConfirmationIconComponent,
+    ModuleInfoIconComponent
 ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',

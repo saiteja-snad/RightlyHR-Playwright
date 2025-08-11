@@ -7,9 +7,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../modules-info';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-all-employees-header',
-  imports: [CommonModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule],
+  imports: [CommonModule, TranslateModule, ModuleInformationComponent, NgbPopoverModule,ModuleInfoIconComponent],
   templateUrl: './all-employees-header.component.html',
   styleUrl: './all-employees-header.component.scss'
 })

@@ -25,9 +25,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-calendar-view',
-  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent],
+  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, NgbPopoverModule, ModuleInformationComponent,ModuleInfoIconComponent],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss',
   encapsulation: ViewEncapsulation.None,

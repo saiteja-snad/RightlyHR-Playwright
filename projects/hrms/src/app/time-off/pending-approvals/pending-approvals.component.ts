@@ -6,9 +6,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule,ModuleInfoIconComponent],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
   encapsulation:ViewEncapsulation.None,

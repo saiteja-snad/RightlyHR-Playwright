@@ -17,10 +17,11 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ItsuporrtHeaderTabsComponent } from "../../shared/itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-my-tickets',
   imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, NgbPopoverModule,
-    TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent],
+    TranslateModule, DateformatPipe, ModuleInformationComponent, ItsuporrtHeaderTabsComponent, DataLoaderContentComponent,ModuleInfoIconComponent],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss',
   encapsulation: ViewEncapsulation.None

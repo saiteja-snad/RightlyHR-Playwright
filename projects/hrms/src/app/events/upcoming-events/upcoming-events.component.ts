@@ -21,10 +21,11 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { Skeleton } from 'primeng/skeleton';
 import { SettingsDeleteIconComponent } from "../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsUpdateIconComponent } from "../../icons/settings-update-icon/settings-update-icon.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent, Skeleton, SettingsDeleteIconComponent, SettingsUpdateIconComponent],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent, Skeleton, SettingsDeleteIconComponent, SettingsUpdateIconComponent,ModuleInfoIconComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })

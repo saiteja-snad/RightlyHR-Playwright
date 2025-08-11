@@ -3,7 +3,7 @@
         <div class="heading-content">
             <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){({{empName}})}</p>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" class="module-icon">
+                <app-module-info-icon  placement="bottom" [ngbPopover]="popContent" (click)="updateModuleInfo()" />
             </div>
         </div>
 
@@ -76,7 +76,7 @@
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
-                        <td class="max-width">{{(item.date|dateformat)??'-'}}</td>
+                        <td class="max-width">{{(item.date | dateformat)??'-'}}</td>
                         <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
                         <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
                         <td class="max-width">{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :

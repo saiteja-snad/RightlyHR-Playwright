@@ -23,6 +23,7 @@ import { TabsModule } from 'primeng/tabs';
 import { ChartModule } from 'primeng/chart';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -38,7 +39,8 @@ import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirm
     ModuleInformationComponent,
     NgbPopoverModule,
     FormsModule,
-    ConfirmationIconComponent
+    ConfirmationIconComponent,
+    ModuleInfoIconComponent,
 ],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',

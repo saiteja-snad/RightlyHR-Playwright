@@ -13,9 +13,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
 import { Skeleton } from 'primeng/skeleton';
+import { ModuleInfoIconComponent } from '../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule,Skeleton],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent, NgbPopoverModule, ChartModule,Skeleton,ModuleInfoIconComponent],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss',
   encapsulation: ViewEncapsulation.None

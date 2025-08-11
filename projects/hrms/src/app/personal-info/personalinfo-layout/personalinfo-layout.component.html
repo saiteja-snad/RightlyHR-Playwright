@@ -10,9 +10,8 @@
                 </div>
             </ng-template>
             <div class="component-header">{{subHeader}}</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+             <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
             </div>
         </div>
 

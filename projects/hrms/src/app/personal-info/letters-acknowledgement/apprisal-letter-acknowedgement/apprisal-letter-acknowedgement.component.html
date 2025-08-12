@@ -6,12 +6,9 @@
         <div class="letter-page-sub-content">
 
 
-          <!-- start of letter -->
-          <div class="mt-2">
-            <div class="text-center ">
-              <p class="letter-header text-center">APPRAISAL LETTER</p>
-            </div>
-            <!-- <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div> -->
+          <div class="mb-2 mt-2">
+
+            <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
           </div>
           <div class="text-end mt-1"><span class="letter-sub-header">Date:</span><span
               class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
@@ -19,8 +16,8 @@
 
           <!-- start of paragraphs -->
           <p class="letter-sub-header">
-            <span  class='pb-1 me-1'*ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
-            <span  class="pb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
+            <span class='pb-1 me-1' *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
+            <span class="pb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
             {{appraisalData.middleName}} {{appraisalData.lastName}},
             <br>
             <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
@@ -58,7 +55,7 @@
           <p>Your new compensation structure is as follows:</p>
 
           <!--Components Table-->
-          <div class="salary-details-table mb-3 mt-2">
+          <div class="salary-details-table mb-3 mt-4">
             <table class="mytable w-100">
               <thead>
                 <tr>
@@ -243,10 +240,10 @@
       <div class="letter-page-content my-4" id="pdfContent2"
         [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
         <div class="letter-page-sub-content my-5  py-5">
-           @if(appraisalData.note ) {
-            <b>Note:</b>
-            <p><b>{{ appraisalData.note }}</b>.</p>
-           }
+          @if(appraisalData.note ) {
+          <b>Note:</b>
+          <p><b>{{ appraisalData.note }}</b>.</p>
+          }
           <p class="letter-sub-header"><b>Additional Details Related to Salary Structure:</b></p>
           <ol>
             <li class="mb-2">TDS will be deducted from the Gross Salary after statutory deductions.</li>
@@ -270,10 +267,10 @@
               dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
           <!-- end of second table -->
 
-          <p class="letter-sub-header mb-5"><b>For SNAD Developers India Pvt Ltd</b></p>
-             <div class="mb-3"></div>
+          <p class="letter-sub-header mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
+          <!-- <div class="mb-3"></div> -->
           <p class="letter-signature ">{{appraisalData.authorityName}}</p>
-       
+          <div class="pb-3">
             <p class="mb-1"><b>Authorized Signatory,</b></p>
             <p class="mb-1"><b>
                 <p class="mb-1" *ngIf="!appraisalData.authorityName">Name</p>{{appraisalData.authorityName}}
@@ -281,7 +278,7 @@
             <p class="mb-1"><b>
                 <p class="mb-1" *ngIf="!authorityDesignation">Designation</p>{{authorityDesignation}}
               </b></p>
-        
+          </div>
 
           <div class="pt-4 pb-4">
             <p><b>Employee Name:<span>{{appraisalData.firstName}}

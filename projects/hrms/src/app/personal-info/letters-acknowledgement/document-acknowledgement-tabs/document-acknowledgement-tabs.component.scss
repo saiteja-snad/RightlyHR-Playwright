@@ -1,0 +1,20 @@
+.document-history-layout {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  width: 100%;
+
+  &.active {
+    background: linear-gradient(180deg, #FFFFFF 0%, var(--custom-component-tabs-bg-color) 100%);
+  }
+}
+
+.component-left-tabs-container {
+  height: calc(100dvh - 10rem) !important;
+}
+
+.component-right-content {
+  width: calc(100vw - 38rem) !important;
+}

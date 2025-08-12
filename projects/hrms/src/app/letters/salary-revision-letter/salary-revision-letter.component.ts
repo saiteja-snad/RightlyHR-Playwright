@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -22,7 +22,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss',
-  encapsulation: ViewEncapsulation.None
+
 })
 
 export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
@@ -254,7 +254,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-            let res = data.reverse()[0];
+            let res = data[0];
             if (data.length > 1) {
               this.previusSalary = data[1];
               this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
@@ -363,7 +363,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
   
             //calculation for the educationAllowances taking as medical insurenc per month
             // Employee.educationAllowances = Math.round(Employee.totalGrossSalary * (2 / 100))
-            Employee.educationAllowances = Math.round(558);
+            Employee.educationAllowances = 0;
   
             //calculation for the conveyance
             // Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100))
@@ -417,8 +417,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             );
   
             //educationper annum using for medical insurence
-            Employee.educationallowancesPerAnnum = 12 * 558;
-  
+           // Employee.educationallowancesPerAnnum = 12 * 558;
+
             //conveyance per annum
             // Employee.conveyancePerAnnum = Math.round(Employee.Conveyance * Employee.grossby);
   
@@ -435,7 +435,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
             //salary deductions per annum
             Employee.totalDeductionsPerAnnum = Math.round(
               Employee.pfPreAnuum + Employee.esiPerAnnumemployee + 
-              Employee.educationallowancesPerAnnum + 
+              //Employee.educationallowancesPerAnnum + 
               Employee.professionalPerAnnum
             );
   
@@ -462,7 +462,7 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
         this.employeeiddetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
                 ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
@@ -481,7 +481,9 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
       return;
     }
     const data = await this.appraisalData;
-    data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
+    const formattedIssuedDate = this.formatDate(data.dateofAppraisal); // use this for PDF/upload only
+    const formattedEffectiveDate = this.formatDate(data.compeffectivedate);
+    //data.dateofAppraisal = this.formatDate(data.dateofAppraisal);
     data.compeffectivedate = this.formatDate(data.compeffectivedate);
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
@@ -546,58 +548,168 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
       .toPromise();
   }
 
-  //to Upload Appraisal letter
-  uploadAppraisalLetter() {
-    let loggedInUser = this.authService.getToken();
-    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.AppraisalFile)
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.result.documentUrl = data.path;
-            this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
-          }
-          let emaildetails = {
-            personEmail: this.appraisalData.workEmail,
-            senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-            senderEmail: loggedInUser.workEmail,
-            firstName: this.appraisalData.firstName,
-            lastName: this.appraisalData.lastName,
-            middleName: this.appraisalData.middleName,
-            personRole: this.appraisalData.jobRole,
-            documentUrl: this.result.documentUrl,
-            compeffectivedate: `${
-              this.appraisalData.compeffectivedate ?? 'N/A'
-            }`,
-            employeeId: this.appraisalData.employeeId,
-            compensationamount: this.appraisalData.salary,
-          };
-          if (loggedInUser.middleName) {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-          } else {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-          }
-          this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
-              next: (data: any) => {
-                this.conformationPopup.openSuccessModal('Email has been sent successfully');
-                setTimeout(() => {
-                  this.navigateDashboard();
-                }, 2000)
-              },
-              error: (err: any) => {
-                this.spinnerLoader= false;
-              },
-              complete: () => {
-                this.spinnerLoader= false;
-              },
-            });
-        },
-        error: (reason: any) => {
-          this.spinnerLoader= false;
-        },
-      });
+  // //to Upload Appraisal letter
+  // uploadAppraisalLetter() {
+  //   let loggedInUser = this.authService.getToken();
+  //    const [day, month, year] = this.appraisalData.compeffectivedate.split('/');
+  //   const compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
+  //   let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
+  //   this.subscription = this.http
+  //     .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.AppraisalFile)
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         if (data) {
+  //           this.result.documentUrl = data.path;
+  //           // this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
+  //         }
+  //         let emaildetails = {
+  //           personEmail: this.appraisalData.workEmail,
+  //           senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+  //           senderEmail: loggedInUser.workEmail,
+  //           firstName: this.appraisalData.firstName,
+  //           lastName: this.appraisalData.lastName,
+  //           middleName: this.appraisalData.middleName,
+  //           personRole: this.appraisalData.jobRole,
+  //           documentUrl: this.result.documentUrl,
+  //           generatedBy: this.appraisalData.employeeId,
+  //          generatedDate: new Date().toISOString(),
+  //           compeffectivedate: `${
+  //              compeffectivedate ?? 'N/A'
+  //           }`,
+  //           employeeId: this.appraisalData.employeeId,
+  //           compensationamount: this.appraisalData.salary,
+  //         };
+  //         if (loggedInUser.middleName) {
+  //           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+  //         } else {
+  //           emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+  //         }
+  //         this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+  //             next: (data: any) => {
+  //               this.conformationPopup.openSuccessModal('Email has been sent successfully');
+  //               setTimeout(() => {
+  //                 this.navigateDashboard();
+  //               }, 3000)
+  //             },
+  //             error: (err: any) => {
+  //               this.spinnerLoader= false;
+  //             },
+  //             complete: () => {
+  //               this.spinnerLoader= false;
+  //             },
+  //           });
+  //           this.postAppraisalLettersDetails(this.result.documentUrl); 
+  //       },
+  //       error: (reason: any) => {
+  //         this.spinnerLoader= false;
+  //       },
+  //     });
+  // }
+
+  // Upload Appraisal Letter and send email
+uploadAppraisalLetter() {
+  const loggedInUser = this.authService.getToken();
+
+  // Convert compensation effective date from dd/MM/yyyy to ISO format
+  let compeffectivedate: string | null = null;
+  if (this.appraisalData.compeffectivedate) {
+    const [day, month, year] = this.appraisalData.compeffectivedate.split('/');
+    compeffectivedate = new Date(`${year}-${month}-${day}`).toISOString();
   }
+
+  const filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
+
+  this.subscription = this.http
+    .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.AppraisalFile)
+    .pipe(
+      switchMap((data: any) => {
+        if (!data?.path) {
+          throw new Error("File upload failed or path is missing");
+        }
+
+        this.result.documentUrl = data.path;
+
+        const senderName = loggedInUser.middleName
+          ? `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+          : `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+
+        const emailDetails = {
+          personEmail: this.appraisalData.workEmail,
+          senderName: senderName,
+          senderEmail: loggedInUser.workEmail,
+          firstName: this.appraisalData.firstName,
+          lastName: this.appraisalData.lastName,
+          middleName: this.appraisalData.middleName,
+          personRole: this.appraisalData.jobRole,
+          documentUrl: this.result.documentUrl,
+          generatedBy: this.appraisalData.employeeId,
+          generatedDate: new Date().toISOString(),
+          compeffectivedate: compeffectivedate ?? 'N/A',
+          employeeId: this.appraisalData.employeeId,
+          compensationamount: this.appraisalData.salary,
+        };
+
+        return this.http.postdata('CustomEmail/Appraisalletter', emailDetails);
+      })
+    )
+    .subscribe({
+      next: () => {
+        this.conformationPopup.openSuccessModal('Email has been sent successfully');
+        this.postAppraisalLettersDetails(this.result.documentUrl); // Call AFTER email is sent
+        setTimeout(() => {
+          this.navigateDashboard();
+        }, 3000);
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal('An error occurred while processing the appraisal letter.');
+        console.error('Upload or email error:', err);
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      },
+    });
+}
+
+ postAppraisalLettersDetails(docUrl: string) {
+  let loggedInUser = this.authService.getToken();
+         const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+const originalDate = new Date(`${year}-${month}-${day}`);
+// Add one day (in milliseconds)
+originalDate.setDate(originalDate.getDate() + 1);
+// Convert to ISO format
+const issuedDate = originalDate.toISOString();
+const postAppDetails = {
+      employeeId: this.appraisalData.employeeId,
+      status: 'Released',
+      documentLink: docUrl,
+      createdBy: loggedInUser.employeeId,
+      signatureempId: this.appraisalData.authorityid,
+      createdAt: new Date().toISOString(),
+      revisedSalary: this.appraisalData.revisedSalary || 0,
+      letterType: 'Salary Revision Letter',
+      note: this.appraisalData.notes || '',
+      authoritySignature: this.appraisalData.authorityid,
+      issuedDate: issuedDate,
+      docType: this.appraisalData.Documenttype,
+      candidateStatus: 'Generated',
+      
+    };
+  this.subscription = this.http
+    .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)
+    .subscribe({
+      next: (data: any) => {
+        console.log(data);
+       this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
+        // this.router.navigate(['/']);
+          this.router.navigate(['/employee-management/all-employees'])
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal('The Letter cannot be Acknowledged');
+        console.log(reason);
+      },
+    });
+}
 
   //to fromat Date
   private formatDate(dateString: Date): string {

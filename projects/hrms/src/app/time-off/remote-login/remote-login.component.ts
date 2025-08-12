@@ -1,21 +1,42 @@
 import { CommonModule } from '@angular/common';
 import { Component, Signal } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../Interfaces/letters-model';
-import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
+import { Ileavesdatas, Ilpid, IPermissionsvalue, IValidations } from '../../Interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { environment } from '../../../environments/environment';
 import { SignalsService } from '../../services/signals.service';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { RemoteloginApprovalTabsComponent } from "../../shared/time-off-module-tabs/remotelogin-approval-tabs/remotelogin-approval-tabs.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { Select } from 'primeng/select';
+import { DropdownModule } from 'primeng/dropdown';
+import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
+// import { TranslateModule } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-remote-login',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    ModuleInformationComponent,
+    RemoteloginApprovalTabsComponent,
+    TranslateModule,
+    NgbPopoverModule,
+    DropdownModule,
+    Select,
+    // TranslateModule,
+  ],
   templateUrl: './remote-login.component.html',
   styleUrl: './remote-login.component.scss',
 })
@@ -38,6 +59,19 @@ export class RemoteLoginComponent {
   availablebalance!: number;
   totalbalance: any;
   todayDate: string = new Date().toISOString().split('T')[0];
+  moduleinfo: string = '';
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
+  pastDatesAllowed!: number;
+  futureDatesAllowed!: number;
+  regularizationValues = [] as IPermissionsvalue[];
+  holidaysData!: OrgHolidayHeader;
+  weekendsData!: OrgWeekendHeader;
+  isWeekOffSelected = false;
+  isHolidaySelected = false;
+  selectedDay = '';
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -45,7 +79,9 @@ export class RemoteLoginComponent {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalsService: SignalsService,
-    public formsValidation:FormValidationsService
+    public formsValidation: FormValidationsService,
+    public readonly router: Router,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {}
 
   ngOnInit(): void {
@@ -53,19 +89,156 @@ export class RemoteLoginComponent {
     this.intializewfhForm();
 
     this.handleAvailingChange();
+    this.getRemotLoginCriteria();
+    this.getTeamManagersDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+    this.getEmployeeeHolidays();
+    this.getEmployeeeWeekends();
+    // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear),
+    });
+    // Send initial year to the service so other component can pick it up
+    this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/remote': MODULE_INFOS.TIME_OFF_REMOTE_LOGIN_MODULE_INFO,
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
+      url.includes(route)
+    );
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear; // Update the local variable so template sees the change
+    this.TimeoffYearFilterService.setSelectedYear(selectedYear);
+    this.http.setSelectedYear(selectedYear);
   }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  // function to get the data of employees by hierarchy
+  getEmployeeInfo = [] as any;
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log('getEmployeesByhierarchy', response);
+          if (response && response.length) {
+            // No filter
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            }));
+            console.log('getEmployeeInfo', this.getEmployeeInfo);
+          }
+        },
+      });
+  }
+
+  pendingCount = 0;
+  remoteLogin: any[] = [];
+  ApprovedCount = 0;
+  rejectedCount = 0;
+  ProcessedCount = 0;
+  disaplyapplybutton = true;
+  onCheckemployee(employeedId: any) {
+    this.ProcessedCount = 0;
+    this.rejectedCount = 0;
+    this.ApprovedCount = 0;
+    this.pendingCount = 0;
+    this.remoteLogin = [];
+    if (employeedId) {
+      this.http.setEmployeeIdRemoteLogin(employeedId);
+      this.disaplyapplybutton = false;
+      this.getRemoteLoginRequests(employeedId);
+    } else {
+      this.http.setEmployeeIdRemoteLogin(null);
+      this.disaplyapplybutton = true;
+      this.getRemoteLoginRequests(this.empinfo.employeeId);
+    }
+  }
+
+  getRemoteLoginRequests(employeeId?: any) {
+    let empId = employeeId;
+    this.http
+      .getFilterRemoteLoginDataByID(empId, this.selectedYear)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.remoteLogin = response;
+          this.pendingCount = this.remoteLogin.filter(
+            (element: { status: string }) =>
+              element.status === 'Waiting for Approval'
+          ).length;
+          this.ApprovedCount = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Approved'
+          ).length;
+          this.rejectedCount = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Rejected'
+          ).length;
+          this.ProcessedCount = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Processed'
+          ).length;
+        },
+        error: (reason: any) => console.log(reason),
+      });
+  }
+
   intializewfhForm() {
     this.addremoteForm = this.fb.group({
-      workedDate: ['', [Validators.required]],
+      workedDate: ['', [Validators.required,this.afterJoiningDateValidator.bind(this)]],
       availing: ['', Validators.required],
       halfType: [''],
-      reason: ['', Validators.required],
+      reason: ['', [Validators.required, Validators.minLength(10)]],
     });
+  }
+
+
+   // Custom Validator: Ensure date is after the date of joining
+  afterJoiningDateValidator(
+    control: AbstractControl
+  ): { [key: string]: boolean } | null {
+    if (control.value && this.empinfo.dateOfJoining) {
+      const selectedDate = new Date(control.value);
+      const joiningDate = new Date(this.empinfo.dateOfJoining);
+      // Check if the selected date is before the date of joining
+      if (selectedDate < joiningDate) {
+        return { beforeJoining: true };
+      }
+    }
+    return null;
   }
 
   handleAvailingChange() {
@@ -166,6 +339,63 @@ export class RemoteLoginComponent {
     }
   }
 
+  getFutureDate(): string {
+    const days = Number(this.futureDatesAllowed ?? 0);
+
+    if (isNaN(days)) {
+      console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+
+    const currentDate = new Date();
+    const futureDate = new Date(currentDate);
+    futureDate.setDate(currentDate.getDate() + days);
+    return futureDate.toISOString().split('T')[0];
+  }
+
+  getPastDate(): string {
+    const days = Number(this.pastDatesAllowed ?? 0);
+    if (isNaN(days)) {
+      console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+    const currentDate = new Date();
+    const pastDate = new Date(currentDate);
+    pastDate.setDate(currentDate.getDate() - days); // subtract days for past
+    return pastDate.toISOString().split('T')[0];
+  }
+
+  getRemotLoginCriteria() {
+    const params = 'RemoteLoginEligibilityCriteria';
+    const param = ['allowedPerMonth', 'pastDatesAllowed', 'futureDatesAllowed'];
+    this.http
+      .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.regularizationValues = (data as IPermissionsvalue[])?.sort(
+            (a, b) => a.id - b.id
+          );
+          this.futureDatesAllowed = parseInt(
+            this.regularizationValues?.find(
+              (item: any) => item.attribute === 'futureDatesAllowed'
+            )?.value ?? '0',
+            10
+          );
+
+          this.pastDatesAllowed = parseInt(
+            this.regularizationValues?.find(
+              (item: any) => item.attribute === 'pastDatesAllowed'
+            )?.value ?? '0',
+            10
+          );
+        },
+        error: (err) => {
+          console.log('errors', err);
+        },
+      });
+  }
+
   applyremote(addForm: FormGroup) {
     if (addForm.valid) {
       const formData = addForm.value;
@@ -174,11 +404,10 @@ export class RemoteLoginComponent {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
-        requestedComments: this.remotedata.requestedComments,
-        durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
+        requestedComments: formData.reason,
+        durationType: isFullDay ? 2 : +formData.halfType,
         duration: isFullDay ? 1 : 0.5,
-        status: 'Processed',
-        reason: formData.reason,
+        status: 'Waiting for Approval',
         requestedCategory: environment.remoteLoginModuleId,
         requestedBy: this.empinfo.employeeId,
         requestedDate: new Date(),
@@ -189,12 +418,12 @@ export class RemoteLoginComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
-            this.modalService.dismissAll();
+           this.cleardata();
             this.sharedModalService.openSuccessModal(
-              'Request submitted successfully'
+              'Remote Login request submitted successfully'
             );
-            this.addremoteForm.reset();
             this.signalsService.remoteLoginRequestTriggerSignal.set(true);
+            this.signalsService.remoteLoginSidNavCountTriggerSignal.set(true);
           },
           error: (err: any) => {
             this.spinnerLoader = false;
@@ -216,6 +445,107 @@ export class RemoteLoginComponent {
     return `${year}-${month}-${day}`;
   }
 
+  getEmployeeeWeekends() {
+    let EmployeeId = parseInt(this.empinfo.employeeId);
+    this.http
+      .getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.weekendsData = data;
+        },
+      });
+  }
+
+  getEmployeeeHolidays() {
+    let EmployeeId = parseInt(this.empinfo.employeeId);
+    this.http
+      .getData(`orgHolidays/getOrgHoliday/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.holidaysData = data;
+        },
+      });
+  }
+
+   weekendAndHolidaysCheck(selectedDate:string){
+      this.dateCheckWithHoliday(selectedDate);
+      this.checkWeekends(selectedDate);
+    }
+  
+    dateCheckWithHoliday(selectedDate: string) {
+      if (this.holidaysData?.orgHolidaysItems) {
+        this.holidaysData?.orgHolidaysItems?.forEach((element: any) => {
+          const currentDate = new Date(element.holidayDate);
+          const year = currentDate.getFullYear();
+          const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+          const day = String(currentDate.getDate()).padStart(2, '0');
+          element.holidayDate = `${year}-${month}-${day}`;
+        });
+      }
+      const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate && holiday.isOptional == false);
+      this.isHolidaySelected = isDatePresent;
+    }
+  
+    checkWeekends(selectedDate: string) {
+      let selectedDate1 = moment(selectedDate);
+      let dayOfMonth = selectedDate1.date();
+      let weekNumber = Math.ceil(dayOfMonth / 7);
+      const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      this.selectedDay = weekdayNames[selectedDate1.day()];
+      let captureHoliday: any;
+      const dayPresent = this.weekendsData?.orgWeekendItems?.some((holiday: any) => {
+        if (holiday.weekday === this.selectedDay) {
+          captureHoliday = holiday;
+          return true;
+        }
+        this.isWeekOffSelected = false;
+        return false;
+      });
+      if (captureHoliday && dayPresent) {
+        if (weekNumber === 1 && dayPresent) {
+          if (captureHoliday.firstweek) {
+            this.isWeekOffSelected = true;
+          } else {
+            this.isWeekOffSelected = false;
+          }
+        } else if (weekNumber === 2 && dayPresent) {
+          if (captureHoliday.secondweek) {
+            this.isWeekOffSelected = true;
+          } else {
+            this.isWeekOffSelected = false;
+          }
+        } else if (weekNumber === 3) {
+          if (captureHoliday.thirdweek) {
+            this.isWeekOffSelected = true;
+          } else {
+            this.isWeekOffSelected = false;
+          }
+        } else if (weekNumber === 4) {
+          if (captureHoliday.fourthweek) {
+            this.isWeekOffSelected = true;
+          } else {
+            this.isWeekOffSelected = false;
+          }
+        } else if (weekNumber === 5) {
+          if (captureHoliday.fifthweek) {
+            this.isWeekOffSelected = true;
+          } else {
+            this.isWeekOffSelected = false;
+          }
+        }
+      }
+    }
+
+    
+  cleardata() {
+    this.modalService.dismissAll();
+    this.addremoteForm.reset();
+    this.isWeekOffSelected = false;
+    this.isHolidaySelected = false;
+    this.selectedDay = '';
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

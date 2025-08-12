@@ -1429,7 +1429,7 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Permissions)' 
-                                            || per.fields === 'Approved (Permissions)'  ||per.fields==='Cancel (Permissions)'
+                                            || per.fields === 'Processed (Permissions)'  ||per.fields==='Cancel (Permissions)'
                                             || per.fields === 'Rejected (Permissions)' || per.fields === 'Request Permission Button'
                                             || per.fields === 'My Team (Permissions)' ">
                                 <td class="text-align-center">{{ per.fields }}</td>

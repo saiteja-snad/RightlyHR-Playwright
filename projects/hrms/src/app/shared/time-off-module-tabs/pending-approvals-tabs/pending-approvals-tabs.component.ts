@@ -68,7 +68,7 @@ export class PendingApprovalsTabsComponent {
       label: 'Remote Login',
       route: '/time-off/pending-approvals/remote',
       moduleId: environment.remoteLoginModuleId,
-      icon: '/time-off-icon/WFH-icon.png',
+      icon: '/time-off-icon/remote-login-icon.png',
       permission: { feature: 'Remote Login Tab', action: 'view' },
     },
     {

@@ -298,7 +298,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
         this.requestBody = {
           requestProcessedBy: approvedBy,
-          status: 'Processed',
+          status: 'Approved',
           comments: comments,
           moduleId: environment.permissionsModuleId,
           headerRequests: this.selectedLeavesItems.map((item) => ({
@@ -309,7 +309,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       } else {
         this.requestBody = {
           requestProcessedBy: approvedBy,
-          status: 'Processed',
+          status: 'Approved',
           comments: comments,
           moduleId: environment.permissionsModuleId,
           headerRequests: [

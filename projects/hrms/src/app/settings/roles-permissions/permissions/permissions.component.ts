@@ -679,6 +679,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   permissionsModuleSubTabs = [
     'Waiting For Approval (Permissions)',
     'Approved (Permissions)',
+    'Processed (Permissions)',
     'Cancel (Permissions)',
     'Rejected (Permissions)',
     'Request Permission Button',

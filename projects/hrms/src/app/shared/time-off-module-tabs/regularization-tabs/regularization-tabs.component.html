@@ -12,7 +12,7 @@
       <div class="tabs-border-bottom"></div>
     </li>
     }
-    @if(rbac.allowedToAccess('Approved (Regularization).view')){
+    <!-- @if(rbac.allowedToAccess('Approved (Regularization).view')){
     <li class="nav-item">
       <div class="nav-link" [routerLink]="['/time-off/regularization/approved']" routerLinkActive="active-nav-link">
         <img src="/time-off-icon/approved-icon.png" alt="Icon" class="icon mb-2">
@@ -20,7 +20,7 @@
       </div>
       <div class="tabs-border-bottom"></div>
     </li>
-    }
+    } -->
     @if(rbac.allowedToAccess('Processed (Regularization).view')){
     <li class="nav-item">
       <div class="nav-link" [routerLink]="['/time-off/regularization/process']" routerLinkActive="active-nav-link">

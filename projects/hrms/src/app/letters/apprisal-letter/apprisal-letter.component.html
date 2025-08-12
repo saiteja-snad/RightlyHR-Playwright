@@ -412,7 +412,7 @@
 
           <!--page-2-->
           <div class="letter-page-content my-4" id="pdfContent2"  [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
-            <div class="letter-page-sub-content pt-4 mt-4">
+            <div class="letter-page-sub-content my-5 py-5">
               @if(employeeForm.get('note')?.value) {
               <b>Note:</b><p> <b>{{employeeForm.get('note')?.value}}</b></p>
               }
@@ -434,7 +434,7 @@
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
                 <p>Your Sincerely,</p>
-             <p class="letter-sub-header mb-5">FOR SNAD Developers India Pvt Ltd</p>
+             <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
 
               <div class="mb-3"></div>
               <p class="letter-signature">{{appraisalData.authorityName}}</p>

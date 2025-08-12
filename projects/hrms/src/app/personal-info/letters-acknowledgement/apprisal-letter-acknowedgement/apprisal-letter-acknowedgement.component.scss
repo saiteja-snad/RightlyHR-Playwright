@@ -65,7 +65,7 @@
 
         th,
         td {
-            padding: 0.40rem 0.625rem;
+           padding: 0.5rem 0.625rem;
             text-align: center;
             color: #000;
             font-size: var(--fontsize16) !important;
@@ -103,6 +103,6 @@
 }
 
 .letter-signature {
-    font-size: xx-large !important;
+    font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }

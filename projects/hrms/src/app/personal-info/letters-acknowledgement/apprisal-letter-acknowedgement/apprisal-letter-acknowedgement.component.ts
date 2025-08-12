@@ -45,8 +45,7 @@ comments!: string;
 Status!: string;
  spinnerLoader = false;
 currentDate = new Date();
-@ViewChild('successhide') private readonly successhide!: NgbModal;
-@ViewChild('errorhide') private readonly errorhide!: NgbModal;
+
 @Input() letterdata: any;
 authorityDetails = [] as any;
 authorityDesignation: any;
@@ -80,7 +79,7 @@ ngOnInit(): void {
    this.rejectForm = this.fb.group({
       comments: ['', [Validators.required, Validators.pattern(/^(?!\s).*/)]]
     });
-  
+    this.gender = this.appraisalData.gender === 'Male' ? 'Mr.' : 'Ms.';
 }
  clearRejectForm() {
     this.rejectForm.reset();
@@ -123,7 +122,7 @@ Onclick(fusionemployeeId: any) {
             console.log(data);
             let res = data;
             this.employeeJobDetails = res[0];
-            this.latestjobRole = this.employeeJobDetails.jobRole;
+            this.latestjobRole = this.employeeJobDetails?.jobRole;
 
             Employee.workLocation = res.lopcation;
   
@@ -778,7 +777,7 @@ getAuthorityDetails(authorityId: number) {
           console.error('Error:', error);
           this.isacknowledged = false;
           this.isLoading = false;
-          this.dataFailureMsg(error.error.message);
+          this.confirmationPopup.openErrorModal(error.error.message);
         },
         complete: () => {
 
@@ -792,22 +791,6 @@ getAuthorityDetails(authorityId: number) {
     this.modalService.open(content, { centered: true })
   }
 
-      dataSuccessMsg(msg:string){
-    this.Status = msg;
-          this.openmodel(this.successhide);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 2000);
-
-  }
-
-  dataFailureMsg(msg:string){
-    this.Status = msg;
-          this.openmodel(this.errorhide);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 2000);
-  }
 
   openpopup(content: any) {
     this.modalService.open(content, { centered: true });
@@ -843,7 +826,7 @@ getAuthorityDetails(authorityId: number) {
         this.isacknowledged = false;
         this.isLoading = false;
         this.isLoadingreject=false;
-        this.dataFailureMsg(error.error.message);
+        this.confirmationPopup.openErrorModal(error.error.message);
       },
     });  
   }

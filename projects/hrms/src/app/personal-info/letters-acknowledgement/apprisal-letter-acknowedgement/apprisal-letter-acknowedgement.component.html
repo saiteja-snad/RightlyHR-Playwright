@@ -1,4 +1,4 @@
-<div class="card letter-data-content">
+<div class="letter-data-content">
   <div class="letter-sub-data-content">
     <div>
       <!--page-1-->
@@ -7,18 +7,20 @@
 
 
           <!-- start of letter -->
-          <div class="mb-2 mt-2">
-
-            <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div>
+          <div class="mt-2">
+            <div class="text-center ">
+              <p class="letter-header text-center">APPRAISAL LETTER</p>
+            </div>
+            <!-- <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div> -->
           </div>
-          <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
+          <div class="text-end mt-1"><span class="letter-sub-header">Date:</span><span
               class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
           </div>
 
           <!-- start of paragraphs -->
           <p class="letter-sub-header">
-            <span *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
-            <span class="me-1">{{gender}}</span>{{appraisalData.firstName}}
+            <span  class='pb-1 me-1'*ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
+            <span  class="pb-1 me-1">{{gender}}</span>{{appraisalData.firstName}}
             {{appraisalData.middleName}} {{appraisalData.lastName}},
             <br>
             <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
@@ -33,7 +35,7 @@
             contributions to the organization. Your hard work and commitment have made a significant impact on our
             success.</p>
 
-          <p *ngIf="latestjobRole">We are happy with your performance and are equally pleased to
+          <p *ngIf="letterdata?.isPromotion">We are happy with your performance and are equally pleased to
             share that you have been promoted to <u><b><span>{{latestjobRole}}</span></b></u>.
           </p>
 
@@ -240,11 +242,11 @@
       <!--page-2-->
       <div class="letter-page-content my-4" id="pdfContent2"
         [ngClass]="{'soft-copy-letter':appraisalData.Documenttype}">
-         <div class="letter-page-sub-content pt-5 mt-4">
-          <div *ngIf="appraisalData.note">
+        <div class="letter-page-sub-content my-5  py-5">
+           @if(appraisalData.note ) {
             <b>Note:</b>
             <p><b>{{ appraisalData.note }}</b>.</p>
-          </div>
+           }
           <p class="letter-sub-header"><b>Additional Details Related to Salary Structure:</b></p>
           <ol>
             <li class="mb-2">TDS will be deducted from the Gross Salary after statutory deductions.</li>
@@ -268,9 +270,10 @@
               dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
           <!-- end of second table -->
 
-          <p class="letter-sub-header mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
-          <div class="letter-signature  ">{{appraisalData.authorityName}}</div><br>
-          <div class="pb-3">
+          <p class="letter-sub-header mb-5"><b>For SNAD Developers India Pvt Ltd</b></p>
+             <div class="mb-3"></div>
+          <p class="letter-signature ">{{appraisalData.authorityName}}</p>
+       
             <p class="mb-1"><b>Authorized Signatory,</b></p>
             <p class="mb-1"><b>
                 <p class="mb-1" *ngIf="!appraisalData.authorityName">Name</p>{{appraisalData.authorityName}}
@@ -278,13 +281,13 @@
             <p class="mb-1"><b>
                 <p class="mb-1" *ngIf="!authorityDesignation">Designation</p>{{authorityDesignation}}
               </b></p>
-          </div>
+        
 
           <div class="pt-4 pb-4">
-            <p><b>Employee Name:<span class="">{{appraisalData.firstName}}
+            <p><b>Employee Name:<span>{{appraisalData.firstName}}
                   {{appraisalData.middleName}} {{appraisalData.lastName}}</span></b></p>
             <p><b>Employee Signature:</b><span class="letter-signature  ms-2">{{appraisalData.firstName}}
-                  {{appraisalData.middleName}} {{appraisalData.lastName}}</span></p>
+                {{appraisalData.middleName}} {{appraisalData.lastName}}</span></p>
             <p><b>Date:</b><span class="employee-date ms-2"></span>{{currentDate | dateformat}}</p>
           </div>
         </div>
@@ -300,7 +303,7 @@
       <div class="form-check">
         <input class="form-check-input" type="checkbox" id="ackCheckbox" (change)="isacknowledged = !isacknowledged" />
         <label class="form-check-label" for="ackCheckbox">
-         I hereby acknowledge that I’ve read and accepted to the letter issued.
+          I hereby acknowledge that I’ve read and accepted to the letter issued.
         </label>
       </div>
       <div class="d-flex">
@@ -309,7 +312,8 @@
 
           <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         </button>
-        <button class="custom-btn  btn-primary-reject" [disabled]="isLoading||isLoadingreject" (click)="openpopup(rejectModal)">
+        <button class="custom-btn  btn-primary-reject" [disabled]="isLoading||isLoadingreject"
+          (click)="openpopup(rejectModal)">
           <span *ngIf="!isLoadingreject">Reject</span>
 
         </button>
@@ -423,11 +427,5 @@
           translate}}</button>
         <button type="submit" class="custom-btn btn-primary" (click)=" clearRejectForm()">{{'Yes' | translate}}</button>
       </div>
-    </div>
-  </ng-template>
-  <ng-template #errorhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-      <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-      <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
     </div>
   </ng-template>

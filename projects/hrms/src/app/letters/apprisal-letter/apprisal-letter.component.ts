@@ -870,7 +870,8 @@ console.log(issuedDate);
       authoritySignature: this.appraisalData.authorityid,
       issuedDate: issuedDate,
       docType: this.appraisalData.Documenttype,
-      candidateStatus: 'Generated'
+      candidateStatus: 'Generated',
+      isPromotion: this.employeeForm.get('isPromotion')?.value
     };
 
     this.http

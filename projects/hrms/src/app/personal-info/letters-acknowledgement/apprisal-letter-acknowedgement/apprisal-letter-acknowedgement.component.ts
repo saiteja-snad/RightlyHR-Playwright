@@ -139,14 +139,14 @@ Onclick(fusionemployeeId: any) {
       next: (data: any) => {
         if (!data || data.length === 0) {
           this.jobErrorMessage = 'No job details found for this employee.';
-           this.employeeForm.get('jobValid')?.setValue(false);
+          //  this.employeeForm.get('jobValid')?.setValue(false);
         } else {
           let res = data.reverse()[0];
           this.employeeJobDetails = res;
           Employee.jobRole = res.jobRole;
           Employee.workLocation = res.lopcation;
           this.jobErrorMessage = '';
-          this.employeeForm.get('jobValid')?.setValue(true);
+          // this.employeeForm.get('jobValid')?.setValue(true);
         }
       },
       error: (reason: any) => {

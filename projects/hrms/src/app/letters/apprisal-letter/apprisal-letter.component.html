@@ -185,12 +185,13 @@
 
               <!-- start of letter -->
               <!-- start of letter -->
-              <div class="mt-2">
+              <!-- <div class="mt-2">
                 <div class="text-center ">
                   <p class="letter-header text-center">APPRAISAL LETTER</p>
                 </div>
-                <!-- <div class="text-center letter-header mb-3">{{'Appraisal Letter' | translate }}</div> -->
-              </div>
+             
+              </div> -->
+                  <div class="text-center letter-header mt-2 mb-3">{{'Appraisal Letter' | translate }}</div> 
               <div class="text-end  mt-1"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
               </div>
@@ -233,7 +234,7 @@
               <p>Your new compensation structure is as follows:</p>
 
               <!--Components Table-->
-                 <div class="salary-details-table mb-3 mt-2">
+                 <div class="salary-details-table mb-3 mt-4">
                 <table class="mytable w-100">
                   <thead>
                     <tr>
@@ -433,13 +434,17 @@
               <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate |
                   dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
-                <p>Your Sincerely,</p>
-             <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
+              
+             <p class="letter-sub-header mb-4">For SNAD Developers India Pvt Ltd</p>
 
-              <div class="mb-3"></div>
+              <!-- <div class="mb-3"></div> -->
               <p class="letter-signature">{{appraisalData.authorityName}}</p>
-
-              <p class="mb-1 authorized-signatory">Authorized Signatory,</p>
+                   <div class="pb-3">
+                <p  class="mb-1"><b>Authorized Signatory,</b></p>
+                <p class="mb-1"><b><p class="mb-1" *ngIf="!appraisalData.authorityName">Name</p>{{appraisalData.authorityName}}</b></p>
+                <p class="mb-1"><b><p class="mb-1" *ngIf="!authorityDesignation">Designation</p>{{authorityDesignation}}</b></p>
+              </div>
+              <!-- <p class="mb-1 authorized-signatory">Authorized Signatory,</p>
 
               <p class="mb-1 authorized-signatory">
                 <ng-container *ngIf="!appraisalData.authorityName">Name</ng-container>
@@ -449,7 +454,7 @@
               <p class="authorized-signatory">
                 <ng-container *ngIf="!authorityDesignation">Designation</ng-container>
                 <ng-container *ngIf="authorityDesignation">{{ authorityDesignation }}</ng-container>
-              </p>
+              </p> -->
 
 
               <div class="pt-4 pb-4">

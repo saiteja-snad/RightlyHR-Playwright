@@ -1,6 +1,6 @@
 * {
-
-    font-family: 'VERDANA', sans-serif !important;
+  
+    font-family: Verdana, Tahoma, sans-serif;
 }
 
 .letter-data-content {
@@ -33,7 +33,7 @@
             font-size: 16px;
             color: #000000;
             line-height: 18px;
-            text-align: justify;
+          
         }
 
 
@@ -65,7 +65,7 @@
 
         th,
         td {
-           padding: 0.5rem 0.625rem;
+             padding: 0.5rem 0.625rem;
             text-align: center;
             color: #000;
             font-size: var(--fontsize16) !important;
@@ -83,7 +83,7 @@
     .mytable,
     .secondtable {
         th {
-            background: #e7f0fd;
+            background:  #f4f8ff !important;
         }
     }
 }

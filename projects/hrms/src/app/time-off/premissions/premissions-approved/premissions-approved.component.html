@@ -7,7 +7,7 @@
                 <th>{{'Permission Date'| translate}}</th>
                 <th>Duration(In<span class="text-lowercase"> hrs)</span></th> 
                 <th class="text-center">{{'Reason'| translate}}</th>
-                <!-- <th class="text-center">{{'Approver Reason'| translate}}</th> -->
+                <th class="text-center">{{'Approver Comments'| translate}}</th>
                 <th>{{'Permission Type'| translate}}</th>
                 <th>{{'Status'| translate}}</th>
             </thead>
@@ -27,7 +27,7 @@
                                 </ng-template>
                             </div>
                         </td>
-                        <!-- @if(permissionRequest.regularizationApproverComments.length > 0) {
+                        @if(permissionRequest.regularizationApproverComments.length > 0) {
                         <td class="text-center">
                             <div>
                                 <a type="button" [ngbPopover]="comments">
@@ -40,7 +40,7 @@
                         </td>
                         }@else {
                         <td class="text-center">-</td>
-                        } -->
+                        }
                         <td>{{permissionRequest.type}}</td>
                         <td> 
                             {{permissionRequest.status}}

@@ -19,8 +19,8 @@ filteredTabs: any[] = [];
 
   ngOnInit(): void {
     this.navTabs = [
-      { label: 'Documents', link: '/personalinfo/documents/general-documents', icon: '/my-info-icons/basic-info-icon.png', permission: { feature: 'Employee Info Documents Tab', action: 'view' } },
-      { label: 'Documents Acknowledgement', link: '/personalinfo/documents/letter-acknowledge-documents', icon: '/my-info-icons/contact-icon.png', permission: { feature: 'Employee Info Documents Tab', action: 'view' } },
+      { label: 'Documents', link: '/personalinfo/documents/general-documents', icon: '/my-info-icons/documentation.png', permission: { feature: 'Employee Info Documents Tab', action: 'view' } },
+      { label: 'Letters', link: '/personalinfo/documents/letter-acknowledge-documents', icon: '/my-info-icons/letter.png', permission: { feature: 'Employee Info Documents Tab', action: 'view' } },
     ];
     this.filterTabsByRbac();
   }

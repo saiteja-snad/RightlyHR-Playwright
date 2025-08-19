@@ -562,7 +562,7 @@ export const permissionsData = [
   //My Info Documents Sub Tabs Section
   { fields: 'My Info Documents Upload File', View: false, Update: false, Create: false, Delete: false },
    { fields: 'My Info Documents Dowload File', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'My Info Documents Letters', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Documents Acknowledgment', View: false, Update: false, Create: false, Delete: false },
 
 
   //My Info Team Members Sub Tabs Section
@@ -623,7 +623,7 @@ export const permissionsData = [
   //Employee Info Documents Sub Tabs Section
   { fields: 'Employee Info Documents Upload File', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Documents Dowload File', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Employee Info Documents Letters', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee Info Documents Acknowledgment', View: false, Update: false, Create: false, Delete: false },
 
 
 

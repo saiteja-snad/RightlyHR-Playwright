@@ -867,10 +867,10 @@ export class SaleryRevisionLetterAcknowedgementComponent {
       employeeId: this.Employeeinfo.employeeId,
       signedDocUrl: filePath,
       status: 'Released',
-      addressType: "string",
+      // addressType: "string",
       authoritySignature: this.letterdata.authoritySignature,
       note: "",
-      issuedDate: "2025-06-20T11:57:47.591Z",
+      issuedDate: this.letterdata.issuedDate,
       rejectedComments: this.rejectForm.get('comments')?.value || '',
       candidateStatus: 'Acknowledged'
     };
@@ -909,10 +909,10 @@ export class SaleryRevisionLetterAcknowedgementComponent {
       employeeId: this.Employeeinfo.employeeId,
       signedDocUrl: '',
       status: 'Released',
-      addressType: "string",
+      // addressType: "string",
       authoritySignature: this.letterdata.authorityName,
       note: "",
-      issuedDate: "2025-06-20T11:57:47.591Z",
+      issuedDate: this.letterdata.issuedDate,
       rejectedComments: this.rejectForm.get('comments')?.value || '',
       candidateStatus: 'Rejected'
     };

@@ -659,13 +659,13 @@ previusSalary:any
       employeeId: this.Employeeinfo.employeeId,
       signedDocUrl: filePath,
       status: 'Released',
-      addressType: "string",
+      // addressType: "string",
       authoritySignature: this.letterdata.authoritySignature,
       note: "",
       issuedDate:  this.letterdata.issuedDate,
       rejectedComments: this.rejectForm.get('comments')?.value || '',
       candidateStatus: 'Acknowledged',
-      generatedBy: this.Employeeinfo.employeeId,
+      generatedBy: this.letterdata.generatedBy,
     };
     this.subscription = this.http
       .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)
@@ -701,7 +701,7 @@ previusSalary:any
       employeeId: this.Employeeinfo.employeeId,
       signedDocUrl: '',
       status: 'Released',
-      addressType: "string",
+      // addressType: "string",
       authoritySignature: this.letterdata.authorityName,
       note: "",
       issuedDate:  this.letterdata.issuedDate,

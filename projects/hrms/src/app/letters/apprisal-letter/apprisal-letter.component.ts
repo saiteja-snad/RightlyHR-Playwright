@@ -818,7 +818,7 @@ bonusValidator = (salary: number): ValidatorFn => {
           compensationamount: this.appraisalData.salary,
           effectiveDate: this.employeeCompensationData.compeffectivedate,
           jobRole: this.employeeForm.get('JobRole')?.value?.value,
-          generatedBy: this.appraisalData.employeeId,
+          generatedBy: loggedInUser.employeeId,
           generatedDate: new Date().toISOString(),
         };
 
@@ -844,6 +844,7 @@ bonusValidator = (salary: number): ValidatorFn => {
 }
 
   postAppraisalLetter() {
+      const loggedInUser = this.authService.getToken();
     console.log(this.appraisalData.dateofAppraisal);
     // const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
     // const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
@@ -861,7 +862,7 @@ console.log(issuedDate);
       employeeId: this.appraisalData.employeeId,
       status: 'Released',
       documentLink: this.result.documentUrl,
-      createdBy: this.appraisalData.employeeId,
+      createdBy: loggedInUser.employeeId,
       signatureempId: this.appraisalData.authorityid,
       createdAt: new Date().toISOString(),
       revisedSalary: this.appraisalData.salary,

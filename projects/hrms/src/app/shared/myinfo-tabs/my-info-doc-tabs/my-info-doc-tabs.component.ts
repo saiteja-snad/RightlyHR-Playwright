@@ -22,7 +22,7 @@ export class MyInfoDocTabsComponent {
   ngOnInit(): void {
     this.navTabs = [
       { label: 'Documents', link: '/myinfo/documents/general-documents', icon: '/my-info-icons/documentation.png', permission: { feature: 'My Info Documents Tab', action: 'view' } },
-      { label: 'Letters', link: '/myinfo/documents/letter-acknowledge-documents', icon: '/my-info-icons/letter.png', permission: { feature: 'My Info Documents Tab', action: 'view' } },
+      { label: 'Letters', link: '/myinfo/documents/letter-acknowledge-documents', icon: '/my-info-icons/letter.png', permission: { feature: 'My Info Documents Letters', action: 'view' } },
     ];
     this.filterTabsByRbac();
   }

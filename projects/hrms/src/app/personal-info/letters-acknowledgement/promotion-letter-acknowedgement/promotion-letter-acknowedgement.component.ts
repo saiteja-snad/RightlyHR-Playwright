@@ -665,7 +665,7 @@ previusSalary:any
       issuedDate:  this.letterdata.issuedDate,
       rejectedComments: this.rejectForm.get('comments')?.value || '',
       candidateStatus: 'Acknowledged',
-      generatedBy: this.letterdata.employeeId,
+      generatedBy: this.letterdata.generatedBy,
     };
     this.subscription = this.http
       .putData('LetterAcknowledgementDetails/updateAcknowledgement', payload)

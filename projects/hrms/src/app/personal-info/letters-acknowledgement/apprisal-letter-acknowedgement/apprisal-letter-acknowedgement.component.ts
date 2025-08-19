@@ -803,7 +803,7 @@ getAuthorityDetails(authorityId: number) {
       letterType: this.letterdata.letterType,
       acknowledgeDate: moment().format('YYYY-MM-DD'),
       employeeId:this.empdata.employeeId,
-      generatedBy: this.empdata.employeeId,
+      generatedBy: this.letterdata.employeeId,
       IssuedDate:  this.letterdata.issuedDate,
       // signedDocUrl: filePath,
       status: 'Released',

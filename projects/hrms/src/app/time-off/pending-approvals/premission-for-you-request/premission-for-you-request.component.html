@@ -5,17 +5,20 @@
             <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
             }
             <div class="d-flex gap-3">
-                @if (canBulkApprove()) {
+                <!-- @if (canBulkApprove()) {
                 @if(rbac.allowedToAccess('For You (Permission).update')){
                 <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
                 }
                 @if(rbac.allowedToAccess('For You (Permission).delete')){
                 <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
                 }
-                }
+                } -->
                 @if (canBulkProcess()) {
-                @if(rbac.allowedToAccess('For You (Permission).update')){
+                <!-- @if(rbac.allowedToAccess('For You (Permission).update')){
                 <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                } -->
+                @if(rbac.allowedToAccess('For You (Permission).update')){
+                <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
                 }
                 @if(rbac.allowedToAccess('For You (Permission).delete')){
                 <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
@@ -89,8 +92,8 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                 @if(rbac.allowedToAccess('For You (Permission).update') ) {
-                                @if( leave?.approvalHeader?.currentapprovalStage !=
+                                 <!-- @if(rbac.allowedToAccess('For You (Permission).update') ) {
+                                 @if( leave?.approvalHeader?.currentapprovalStage !=
                                 leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="openApproveModal(approval,leave)"
                                     >
@@ -98,13 +101,23 @@
                                         translate}}</a>
                                 </li>
                             }
-                                }
-                                 @if(rbac.allowedToAccess('For You (Permission).update')) {
+                                } -->
+                            
+                            <!-- @if(rbac.allowedToAccess('For You (Permission).update')) {
                                 @if( leave?.approvalHeader?.currentapprovalStage ==
                                 leave?.approvalHeader?.finalapprovalStage){
-                                <li (click)="handleProcess(leave)" >
+                                <li  (click)="handleProcess(leave)"  >
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
                                         {{'Process' | translate}}</a>
+                                </li>
+                                }
+                            } -->
+                                @if(rbac.allowedToAccess('For You (Permission).update')) {
+                                @if( leave?.approvalHeader?.currentapprovalStage ==
+                                leave?.approvalHeader?.finalapprovalStage){
+                                <li   (click)="openApproveModal(approval,leave)"  >
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                        {{'Approve' | translate}}</a>
                                 </li>
                                 }
                             }

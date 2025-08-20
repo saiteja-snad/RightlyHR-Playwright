@@ -145,7 +145,7 @@ export const WFH_ONDUTY_SUB_TABS = [
 
 export const PERMISSIONS_SUB_TABS = [
   { route: '/time-off/premissions/waiting-for-approval', permission: 'Waiting For Approval (Permissions).view' },
-  { route: '/time-off/permissions/approved', permission: 'Approved (Permissions).view' },
+  // { route: '/time-off/permissions/approved', permission: 'Approved (Permissions).view' },
   { route: '/time-off/permissions/processed', permission: 'Processed (Permissions).view' },
   { route: '/time-off/permissions/rejected', permission: 'Rejected (Permissions).view', },
 ]

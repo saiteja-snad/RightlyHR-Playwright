@@ -71,9 +71,9 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
         this.waitingForApprovalregularizationCount = this.regularization.filter(
           (element: { status: string }) =>  element.status === 'Waiting for Approval'
         ).length;
-        this.approvalregularizationRequestsCount = this.regularization.filter(
-          (element: { status: string }) => element.status === 'Approved'
-        ).length;
+        // this.approvalregularizationRequestsCount = this.regularization.filter(
+        //   (element: { status: string }) => element.status === 'Approved'
+        // ).length;
         this.rejectedregularizationRequestsCount = this.regularization.filter(
           (element: { status: string }) => element.status === 'Rejected'
         ).length;
@@ -98,9 +98,9 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
         this.waitingForApprovalregularizationCount = this.regularization.filter(
           (element: { status: string }) => element.status === 'Waiting for Approval'
         ).length;
-        this.approvalregularizationRequestsCount = this.regularization.filter(
-          (element: { status: string }) => element.status === 'Approved'
-        ).length;
+        // this.approvalregularizationRequestsCount = this.regularization.filter(
+        //   (element: { status: string }) => element.status === 'Approved'
+        // ).length;
         this.rejectedregularizationRequestsCount = this.regularization.filter(
           (element: { status: string }) => element.status === 'Rejected'
         ).length;

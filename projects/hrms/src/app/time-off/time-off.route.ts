@@ -214,9 +214,9 @@ export default [
         data: { permission: 'Waiting For Approval (Permissions).view' },
       },
       {
-        path: 'approved',
+        path: 'processed',
         component: PremissionsApprovedComponent,
-        data: { permission: 'Approved (Permissions).view' },
+        data: { permission: 'Processed (Permissions).view' },
       },
       {
         path: 'rejected',

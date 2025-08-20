@@ -53,9 +53,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   subHeader: string = '';
   loginEmployee = {} as any;
 
-  constructor(private http: HttpService, private authService: AuthService, private router: Router,public rbac: RbacService,
-     private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
-      public fieldpremission: AccessForEmployeeinfoService) { }
+  constructor(private http: HttpService, private authService: AuthService, private router: Router, public rbac: RbacService,
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
+    public fieldpremission: AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
@@ -252,7 +252,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   submitArchive() {
     (this.empdata.empstatus = 'Archived'),
-      (this.empdata.substatus = 'Employee Created'),
+    (this.empdata.substatus = 'Employee Created'),
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           this.getEmployeeId();
@@ -348,43 +348,37 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   //     },
   //   });
   // }
-  
-submitrevoke() {
-  this.empdata.empstatus = 'Revoked';
-  this.empdata.substatus = 'Offer Revoked';
-  this.empdata.revokeComments = this.revokeForm.get('revokeComments')?.value;
 
-  if (this.empdata.marriedDate === 'Invalid date') {
-    this.empdata.marriedDate = null;
-  }
-
-  this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
-    next: (data: any) => {
-      if (data) {
-        this.getEmployeeId(); 
-        this.modalService.dismissAll(); 
-        this.conformationPopup.openSuccessModal('Offer revoked successfully');
-
-        this.revokeEmail();
-        this.updateRevokeStatustooffer();
-        this.revokeEmailToEmployee();
-        this.updateOnboardingStatus();
-
-        if (this.jobPostData?.id) {
-          this.updateJobapplicantdata();
-        }
-        
-        setTimeout(() => {
-          this.router.navigate(['/employee-management/all-employees']);
-        }, 2000);
-      }
-    },
-    error: (err: any) => {
-      console.error('Error revoking offer:', err);
+  submitrevoke() {
+    this.empdata.empstatus = 'Revoked';
+    this.empdata.substatus = 'Offer Revoked';
+    this.empdata.revokeComments = this.revokeForm.get('revokeComments')?.value;
+    if (this.empdata.marriedDate === 'Invalid date') {
+      this.empdata.marriedDate = null;
     }
-  });
-}
-
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.getEmployeeId();
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Offer revoked successfully');
+          this.revokeEmail();
+          this.updateRevokeStatustooffer();
+          this.revokeEmailToEmployee();
+          this.updateOnboardingStatus();
+          if (this.jobPostData?.id) {
+            this.updateJobapplicantdata();
+          }
+          setTimeout(() => {
+            this.router.navigate(['/employee-management/all-employees']);
+          }, 2000);
+        }
+      },
+      error: (err: any) => {
+        console.error('Error revoking offer:', err);
+      }
+    });
+  }
 
   revokeEmail() {
     let loggedInUser = this.authService.getToken();
@@ -460,7 +454,6 @@ submitrevoke() {
     this.subscription = this.http.getData(`OfferLetter/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getOfferDetails = data;
-        console.log(data)
       },
       error: (err: any) => {
         console.log(err);
@@ -614,6 +607,7 @@ submitrevoke() {
 
   // Map route paths to sub-header names
   subHeaderMap: { [key: string]: string } = {
+    // Personal Info
     'basic-info': 'Basic Info',
     'address-info': 'Addresses',
     'family-details': 'Family Members',
@@ -625,27 +619,24 @@ submitrevoke() {
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Team Members',
-
     // Job Info
-  'pre-onboarding-details': 'Pre-Onboarding Info',
-  'onboarding-details': 'Onboarding Info',
-  'employmentType': 'Offboarding Info',
-  'desk-details': 'Desk Info',
-  'assets-details': 'Assigned Assets',
-  'past-experiences': 'Employment History',
-  'certifications': 'Certifications',
-  'job-details': 'Job Info',
-  'compensation-details': 'Compensations',
-  'no-due-clearance-details': 'No Due Clearance',
-  'probation-details': 'Probation Info',
-  'separation-details': 'Separation Request',
-  'employee-off-boarding': 'Employee Offboarding',
-  'trainee-onboarding-requests': 'Trainee Onboarding Verification',
-
-  // Documents
-  'documents': 'Documents',
-
-
+    'pre-onboarding-details': 'Pre-Onboarding Info',
+    'onboarding-details': 'Onboarding Info',
+    'employmentType': 'Offboarding Info',
+    'desk-details': 'Desk Info',
+    'assets-details': 'Assigned Assets',
+    'past-experiences': 'Employment History',
+    'certifications': 'Certifications',
+    'job-details': 'Job Info',
+    'compensation-details': 'Compensations',
+    'no-due-clearance-details': 'No Due Clearance',
+    'probation-details': 'Probation Info',
+    'separation-details': 'Separation Request',
+    'employee-off-boarding': 'Employee Offboarding',
+    'trainee-onboarding-requests': 'Trainee Onboarding Verification',
+    // Documents
+    'general-documents': 'Documents',
+    'letter-acknowledge-documents': 'Letter Acknowledgement',
   };
 
   setSubHeader() {
@@ -702,7 +693,7 @@ submitrevoke() {
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       // Personal Info perosnal
       '/personalinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
-      '/personalinfo/job/onboarding-verification': MODULE_INFOS. JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
+      '/personalinfo/job/onboarding-verification': MODULE_INFOS.JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
       '/personalinfo/personal/address-info': MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
       '/personalinfo/personal/contact-details': MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
       '/personalinfo/personal/emergency-contact-details': MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,

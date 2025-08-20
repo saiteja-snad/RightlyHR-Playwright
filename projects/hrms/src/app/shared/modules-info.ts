@@ -134,7 +134,7 @@ export const MODULE_INFOS = {
     RELIEVING_LETTER_MODULE_INFO: "Issue relieving letters to employees upon exit. This letter confirms their resignation acceptance, last working date, and relieving status. It can be generated after completing the exit process.",
     PROBATION_CONFIRMATION_LETTER_MODULE_INFO: "Generate confirmation letters for employees who successfully complete their probation. The letter includes confirmation date and updated employment status, and can be downloaded or shared by HR.",
     PROBATION_EXTENSION_LETTER_MODULE_INFO: "Issue extension letters when an employee’s probation is extended. The letter outlines the new extension period and expectations. HR can generate it with relevant remarks and approvals.",
-
+    TRAINEE_RELIEVING_LETTER_MODULE_INFO: "Issue relieving letters to trainees upon exit. This letter confirms their resignation acceptance, last working date, and relieving status. It can be generated after completing the exit process.",
     //Dashboard Module Info
     DASHBOARD_MODULE_INFO: "The Dashboard provides a summary view of employee and trainee statuses, prospective employees, current job openings, and probation details. It also offers quick access to document history, displaying key information like username, date, designation, status, and options to download relevant documents.",
     PROSPECTIVE_EMPLOYEES_MODULE_INFO: "The Prospective Employees page lists candidates with details such as ID, name, personal email, phone number, location, designation, and sub-status reflecting their onboarding progress. Users can add new prospective employees and search the list for efficient candidate management.",

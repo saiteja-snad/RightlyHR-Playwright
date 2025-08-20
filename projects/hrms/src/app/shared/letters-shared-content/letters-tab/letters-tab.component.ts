@@ -91,6 +91,13 @@ export class LettersTabComponent {
       permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' }
     },
     {
+      label: 'Trainee Relieving Letter',
+      link: '/letters/trainee-relieving-letter',
+      icon: '/letters-icon/reliveing-letter.png',
+      subject: MODULE_INFOS.TRAINEE_RELIEVING_LETTER_MODULE_INFO,
+      permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' }
+    },
+    {
       label: 'Probation Confirmation Letter',
       link: '/letters/probation-confirmation-letter',
       icon: '/letters-icon/probation-confirmation-letter.png',

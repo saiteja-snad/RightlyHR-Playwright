@@ -95,6 +95,9 @@ export class LettersInfoComponent {
     else if (this.router.url === '/letters/probation-extension-letter') {
       this.componentname = 'Probation Extension Letter';
     }
+    else if (this.router.url === '/letters/trainee-relieving-letter') {
+      this.componentname = 'Trainee Relieving Letter';
+    }
   }
 
   navigateEmployeeManagement() {

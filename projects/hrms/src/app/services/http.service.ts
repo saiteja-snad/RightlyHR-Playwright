@@ -3,11 +3,10 @@ import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
-
-
 @Injectable({
   providedIn: 'root',
 })
+
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
   tirggerCountSignal = signal<{
@@ -48,11 +47,11 @@ export class HttpService {
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
-
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<boolean>(false);
+
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -67,6 +66,7 @@ export class HttpService {
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
+
   // Function to set the communication service data for basic info
   basicDetailes = new Subject<void>();
   basicDetailesadded$ = this.basicDetailes.asObservable();
@@ -108,18 +108,22 @@ export class HttpService {
   setseparationDetails() {
     this.separationDetailes.next();
   }
+
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
   selectedYear$ = this.selectedYearSubject.asObservable();
+
   //holidays year
   setSelectedYear(year: number) {
     this.selectedYearSubject.next(year);
   }
+
   private triggerSignal = signal(false);
   readonly trigger = this.triggerSignal;
   triggerActionSignal() {
     this.triggerSignal.set(true);
   }
+
   resetTriggerSignal() {
     this.triggerSignal.set(false);
   }
@@ -128,26 +132,32 @@ export class HttpService {
     this.activeTabSubject.next(isActive);
   }
 
-// set attendancelocking count
-private refreshTrigger = new Subject<void>();
+  // set attendancelocking count
+  private refreshTrigger = new Subject<void>();
   refresh$ = this.refreshTrigger.asObservable();
   triggerRefresh() {
     this.refreshTrigger.next();
   }
+
   // OnBehalf Of 
   onBehalfOfTriggerSignal = signal<boolean>(false);
-
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
   // function for employeid TIMEOFF
   private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
+
   // Observable for components to subscribe to
   selectedEmployeeIdTimeoff$ = this.selectedEmployeeIdTimeoff.asObservable();
+
   // Method to update the employeeId
   setEmployeeIdTimeoff(id: any): void {
     this.selectedEmployeeIdTimeoff.next(id);
-    console.log('Selected Employee Timeoff ID:', id);
+  }
+
+  // Add this getter 👇
+  getCurrentEmployeeIdTimeoff(): any {
+    return this.selectedEmployeeIdTimeoff.getValue();
   }
 
   // function for employeid COMPOFF
@@ -157,7 +167,6 @@ private refreshTrigger = new Subject<void>();
   // Method to update the employeeId
   setEmployeeIdCompOff(id: any): void {
     this.selectedEmployeeIdCompOff.next(id);
-    console.log('Selected Employee Compoff ID:', id);
   }
 
   // function for employeid wfh
@@ -167,7 +176,6 @@ private refreshTrigger = new Subject<void>();
   // Method to update the employeeId
   setEmployeeIdWFH(id: any): void {
     this.selectedEmployeeIdWFH.next(id);
-    console.log('Selected Employee WFH ID:', id);
   }
 
   // function for employeid remote login
@@ -178,7 +186,6 @@ private refreshTrigger = new Subject<void>();
   // Method to update the employeeId
   setEmployeeIdRemoteLogin(id: any): void {
     this.selectedEmployeeIdRemoteLogin.next(id);
-    console.log('Selected Employee remote login ID:', id);
   }
 
   // function for employeid permission
@@ -189,7 +196,6 @@ private refreshTrigger = new Subject<void>();
   // Method to update the employeeId
   setEmployeeIdPermission(id: any): void {
     this.selectedEmployeeIdPermission.next(id);
-    console.log('Selected Employee Permission ID:', id);
   }
 
   // function for employeid regularization
@@ -200,7 +206,6 @@ private refreshTrigger = new Subject<void>();
   // Method to update the employeeId
   setEmployeeIdRegularization(id: any): void {
     this.selectedEmployeeIdRegularization.next(id);
-    console.log('Selected Employee Regularization ID:', id);
   }
 
   // function for employeid itsupport team ticket
@@ -208,13 +213,14 @@ private refreshTrigger = new Subject<void>();
   refreshRequested$ = this.refreshSubject.asObservable();
   // Method to update the employeeId
   requestRefresh() {
-    console.log('Selected Employee team ticket ID:', 'refresh');
     this.refreshSubject.next();
   }
+
   //function to update the desk Updatelocation
   deskUpdateLocationId(id: string | null) {
     this.desklocationIdSubject.next(id);
   }
+
   //function to update the desk sublocation
   deskUpdateSubLocationId(id: string | null) {
     this.desksublocationIdSubject.next(id);
@@ -226,6 +232,7 @@ private refreshTrigger = new Subject<void>();
   assetsUpdateLocationId(id: string | null) {
     this.assetslocationIdSubject.next(id);
   }
+
   //function to update the desk sublocation
   assetsUpdateSubLocationId(id: string | null) {
     this.assetssublocationIdSubject.next(id);
@@ -234,21 +241,17 @@ private refreshTrigger = new Subject<void>();
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
-
   updateemployeeId(employeeid: number) {
     this.employeeIdSubject.next(employeeid);
   }
+
   //to get template on offer letter
   getTemplate(): Observable<ArrayBuffer> {
-    return this.http
-      .get('../assets/offer.docx', {
-        responseType: 'arraybuffer',
+    return this.http.get('../assets/offer.docx', { responseType: 'arraybuffer', }).pipe(
+      catchError((error) => {
+        throw error; // You can handle the error more specifically here
       })
-      .pipe(
-        catchError((error) => {
-          throw error; // You can handle the error more specifically here
-        })
-      );
+    );
   }
 
   getDatabyid(url: string, _params?: any) {
@@ -292,12 +295,15 @@ private refreshTrigger = new Subject<void>();
   get(url: string, options?: any) {
     return this.http.get(`${this.ApiUrl}${url}`, options);
   }
+
   getByDownload<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);
   }
+
   postfile<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);
   }
+
   // to get the ip
   getIpAddress() {
     return this.http.get('https://jsonip.com/');
@@ -306,11 +312,7 @@ private refreshTrigger = new Subject<void>();
   uploadFileWithQuery(url: string, directoryPath: string, file: any) {
     const formData = new FormData();
     formData.append('file', file);
-
-    return this.http.post(
-      `${this.ApiUrl}${url}?directoryPath=${directoryPath}`,
-      formData
-    );
+    return this.http.post(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`, formData);
   }
 
   uploadfile(url: string, data: any) {
@@ -325,10 +327,7 @@ private refreshTrigger = new Subject<void>();
       observe: 'response' as const,
       responseType: 'blob' as const,
     };
-    return this.http.get(
-      `${this.ApiUrl}${url}?fileName=${directoryPath}`,
-      options
-    );
+    return this.http.get(`${this.ApiUrl}${url}?fileName=${directoryPath}`, options);
   }
 
   DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
@@ -337,14 +336,15 @@ private refreshTrigger = new Subject<void>();
       responseType: 'blob',
     });
   }
+
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
   }
+
   postDatareport(url: string, data: any): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      Accept:
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     return this.http.post(`${this.ApiUrl}${url}`, data, {
       headers,
@@ -355,23 +355,18 @@ private refreshTrigger = new Subject<void>();
   postdata(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
+
   /* to the post dynamic form details*/
   postData(url: string, data: any, options: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data, options);
   }
+
   createExpense(url: string, data: any): Observable<any> {
     return this.http.post<any>(`${this.ApiUrl}${url}`, data);
   }
 
-  getstatusdesk(
-    url: string,
-    selectedLocationId: any,
-    selectedSubLocationId: any,
-    status: string,
-    page: number,
-    pageSize: number,
-    searchQuery: string
-  ): any {
+  getstatusdesk(url: string, selectedLocationId: any, selectedSubLocationId: any, status: string,
+    page: number, pageSize: number, searchQuery: string): any {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
@@ -380,16 +375,13 @@ private refreshTrigger = new Subject<void>();
       pageSize: pageSize,
       searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
     };
-
     // Build the query string dynamically, excluding null or undefined values
     const queryString = Object.entries(params)
       .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-
     // Construct the full URL
     const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
-
     // Make the HTTP GET request
     return this.http.get(dataUrl);
   }
@@ -411,29 +403,19 @@ private refreshTrigger = new Subject<void>();
       pageSize: pageSize,
       searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
     };
-
     // Build the query string dynamically, excluding null or undefined values
     const queryString = Object.entries(params)
       .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-
     // Construct the full URL
     const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
-
     // Make the HTTP GET request
     return this.http.get(dataUrl);
   }
-  postProbation(
-    url: string,
-    employeeId: number,
-    referenceId: number,
-    raisedbyempId: number
-  ) {
-    let params = new HttpParams()
-      .set('employeeId', employeeId)
-      .set('referenceId', referenceId)
-      .set('currentApproverId', raisedbyempId);
+
+  postProbation(url: string, employeeId: number, referenceId: number, raisedbyempId: number) {
+    let params = new HttpParams().set('employeeId', employeeId).set('referenceId', referenceId).set('currentApproverId', raisedbyempId);
     return this.http.post(`${this.ApiUrl}${url}`, null, { params });
   }
 
@@ -449,6 +431,7 @@ private refreshTrigger = new Subject<void>();
   putFormsData(url: string) {
     return this.http.put(`${this.ApiUrl}${url}`, null);
   }
+
   getfile(url: string, filename: string) {
     return this.http.get(`${this.ApiUrl}${url}` + filename, {
       observe: 'response',
@@ -463,9 +446,7 @@ private refreshTrigger = new Subject<void>();
   }
 
   getUserDetails(email: string) {
-    return this.http.get(
-      `${this.ApiUrl}Employeedata/GetemployeebyemailID?emailid=${email}`
-    );
+    return this.http.get(`${this.ApiUrl}Employeedata/GetemployeebyemailID?emailid=${email}`);
   }
 
   getDatabytype(url: string, _params?: any) {
@@ -478,12 +459,7 @@ private refreshTrigger = new Subject<void>();
     return this.http.get(data_url);
   }
 
-  getDatabypermissions(
-    url: string,
-    _params?: any,
-    _param?: any,
-    paramvalue?: string
-  ) {
+  getDatabypermissions(url: string, _params?: any, _param?: any, paramvalue?: string) {
     const data_url = `${this.ApiUrl}${url}?RaisedFor=${_params}&RequestedBy=${_param}&Status=${paramvalue}`;
     return this.http.get(data_url);
   }
@@ -497,7 +473,6 @@ private refreshTrigger = new Subject<void>();
     for (let key in queryParams) {
       params.set(key, queryParams[key]);
     }
-
     return this.http.get(`${this.ApiUrl}${url}?${params.toString()}`);
   }
 
@@ -512,13 +487,9 @@ private refreshTrigger = new Subject<void>();
   updatePermissionEligibilityValues(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
-  downloadMonthlyAttendanceReport(
-    url: string,
-    month: string | null,
-    year: number
-  ): Observable<Blob> {
-    const apiurl = `${this.ApiUrl}${url}?month=${month}&year=${year}`;
 
+  downloadMonthlyAttendanceReport(url: string, month: string | null, year: number): Observable<Blob> {
+    const apiurl = `${this.ApiUrl}${url}?month=${month}&year=${year}`;
     // Make the GET request and return the file as a Blob
     return this.http.get(apiurl, {
       responseType: 'blob', // Set response type to 'blob' to handle file download
@@ -531,7 +502,6 @@ private refreshTrigger = new Subject<void>();
   //     .set('searchQuery', searchQuery)
   //     .set('page', page.toString())
   //     .set('pageSize', pageSize.toString());
-
   //   return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   // }
 
@@ -547,14 +517,13 @@ private refreshTrigger = new Subject<void>();
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
       .set('pageSize', pagesize.toString());
-
     if (searchparam) params = params.set('searchparam', searchparam);
     if (employeeId) params = params.set('employeeIds', employeeId);
     if (name) params = params.set('name', name);
     if (formStatus) params = params.set('formstatus', formStatus);
-
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
+
   getReviewCyclesteam(
     url: string,
     pagenum: number,
@@ -567,42 +536,25 @@ private refreshTrigger = new Subject<void>();
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
       .set('pageSize', pagesize.toString());
-
     if (searchparam) params = params.set('searchparam', searchparam);
     if (employeeId) params = params.set('assessorempid', employeeId);
     if (name) params = params.set('name', name);
     if (formStatus) params = params.set('formstatus', formStatus);
-
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
 
-  getAssesnmentFormById(
-    url: string,
-    reviewcycleitemid: number,
-    employeeId: number
-  ): Observable<any> {
-    return this.http.get<any>(
-      `${this.ApiUrl}${url.replace(
-        '{reviewcycleitemid}',
-        reviewcycleitemid.toString()
-      )}?employeeId=${employeeId}`
-    );
+  getAssesnmentFormById(url: string, reviewcycleitemid: number, employeeId: number): Observable<any> {
+    return this.http.get<any>(`${this.ApiUrl}${url.replace('{reviewcycleitemid}', reviewcycleitemid.toString())}?employeeId=${employeeId}`);
   }
 
-  getAllPendingApprovalsCount(
-    moduleId?: number,
-    employeeId?: number
-  ): Observable<ApprovalStatusCount[]> {
+  getAllPendingApprovalsCount(moduleId?: number, employeeId?: number): Observable<ApprovalStatusCount[]> {
     let params = new HttpParams();
-
     if (moduleId !== undefined && moduleId !== null) {
       params = params.set('moduleId', moduleId.toString());
     }
-
     if (employeeId !== undefined && employeeId !== null) {
       params = params.set('EmployeeId', employeeId.toString());
     }
-
     return this.http.get<ApprovalStatusCount[]>(
       `${this.ApiUrl}PendingApproval/getApprovalStatusCounts`,
       { params }
@@ -611,7 +563,6 @@ private refreshTrigger = new Subject<void>();
 
   deskTotalCountSubject = new BehaviorSubject<number>(0);
   deskAvailableCountSubject = new BehaviorSubject<number>(0);
-
   deskAllocatedCountSubject = new BehaviorSubject<number>(0);
   deskUndermaindanaenceCountSubject = new BehaviorSubject<number>(0);
   deskinactiveCountSubject = new BehaviorSubject<number>(0);
@@ -635,6 +586,7 @@ private refreshTrigger = new Subject<void>();
   setinactiveSubjectDeskCount(count: number) {
     this.deskinactiveCountSubject.next(count);
   }
+
   setWFASubjectDeskCount(count: number) {
     this.deskWiatingforapprovalCountsubject.next(count);
   }
@@ -644,7 +596,6 @@ private refreshTrigger = new Subject<void>();
   allocatedassetCountSubject = new BehaviorSubject<number>(0);
   undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
   inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
-
   setAssetCount(count: number) {
     this.assetCountSubject.next(count);
   }
@@ -670,36 +621,22 @@ private refreshTrigger = new Subject<void>();
   }
 
   getFilterCompoffDataByID(employeeId: number, params?: any) {
-    return this.http.get(
-      `${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`
-    );
+    return this.http.get(`${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`);
   }
 
-  getFilterRemoteLoginDataByID(
-    employeeId: number,
-    params?: any
-  ) {
-    return this.http.get(
-      `${this.ApiUrl}Timeoff/getRemoteLoginRequests/${employeeId}?year=${params}`
-    );
-    
+  getFilterRemoteLoginDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getRemoteLoginRequests/${employeeId}?year=${params}`);
   }
 
   getFilterWFHDataByID(employeeId: number, params?: any) {
-    return this.http.get(
-      `${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`
-    );
+    return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {
-    return this.http.get(
-      `${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`
-    );
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
   }
 
   getFilterPermissionDataByID(employeeId: number, params?: any) {
-    return this.http.get(
-      `${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`
-    );
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`);
   }
 }

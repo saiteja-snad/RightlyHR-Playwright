@@ -1,0 +1,87 @@
+<div class="expense-container family">
+    <div class="page-div family" id="pdfContent1">
+        <div>
+            <p class="expense-record-header text-center m-0 py-4">Expense Statement</p>
+            <p class="table-heading mt-2">Employee Details</p>
+            <div class="d-flex expense-record-content pt-2 mb-3">
+                <div class="w-50">
+                    <p><b>Employee ID:</b> {{empdata.fusionEmpId?empdata.fusionEmpId:'NA'}}</p>
+                    <p><b>Employee Name:</b> {{empdata.firstName?empdata.firstName:''}} {{empdata.middleName?empdata.middleName:''}} {{empdata.lastName?empdata.lastName:''}}</p>
+                    <p><b>Designation:</b> {{empdata.jobRole?empdata.jobRole:'NA'}}</p>
+                </div>
+                <div class="w-50">
+                    <p><b>Department:</b> {{empdata.departmentName?empdata.departmentName:'NA'}}</p>
+                    <p><b>Team:</b> {{empdata.subdepartmentName?empdata.subdepartmentName:'NA'}}</p>
+                    <p><b>Location:</b> {{empdata.workLocation?empdata.workLocation:'NA'}},{{empdata.subLocation?empdata.subLocation:'NA'}}</p>
+                </div>
+            </div>
+            <p class="table-heading">Expense Details</p>
+            <div class="d-flex justify-content-between expense-record-content pt-2 mb-3">
+                <div>
+                    <p><b>Expense Title:</b> {{selectedItems.expenses_Title?selectedItems.expenses_Title:'NA'}}</p>
+                    <p><b>Applied On:</b> {{selectedItems.applied_date | dateformat:'mediumDate'}}</p>
+                </div>
+                <div>
+                    <p><b>Approver Email:</b> {{selectedItems.approverEmail?selectedItems.approverEmail:'NA'}}</p>
+                    <p><b>Amount:</b> {{ (downloadData.totalExpenseAmount?downloadData.totalExpenseAmount:'NA') |
+                        currency:currencyCode }}</p>
+                </div>
+            </div>
+            <div class="custom-expense-table">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Expense Item</th>
+                            <th>Date</th>
+                            <th>Expense Type</th>
+                            <th>Receipt Number</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let expense of selectedItems.expenseitem">
+                            <td>{{ expense.item_Name?expense.item_Name:'NA' }}</td>
+                            <td>{{ (expense.expense_Date?expense.expense_Date:'NA') | dateformat }}</td>
+                            <td>{{ expense.expenseType?expense.expenseType:'NA' }}</td>
+                            <td>{{ expense.receipt_Number?expense.receipt_Number:'NA' }}</td>
+                            <td>{{ (expense.expense_Amount?expense.expense_Amount:'NA') | currency:currencyCode }}</td>
+                        </tr>
+                        <tr>
+                        <td colspan="4" class="text-end pe-2">
+                            <b>Total Amount</b>
+                        </td>
+                        <td class="text-end">
+                            <b>{{ (downloadData.totalExpenseAmount ? downloadData.totalExpenseAmount : 'NA') | currency:currencyCode }}</b>
+                        </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- <div *ngIf="Approverdata" class="d-flex justify-content-between expense-record-content mt-4 pt-2 mb-3">
+                <div >
+                    <p><b>Approved By:</b> {{Approverdata?.addedName?Approverdata?.addedName:'NA'}}</p>
+                </div>
+                <div>
+                    <p><b>Approved On:</b> {{(Approverdata?.addedDate?Approverdata?.addedDate:'NA')|dateformat}}</p>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+
+</div>
+<div class="modal-footer">
+    <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
+        <button type="button" class="btn btn-primary me-2" (click)="downloadfile()" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Download</span>
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+    </div>
+</div>
+
+<ng-template #successhide let-model>
+    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
+        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
+        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
+    </div>
+</ng-template>

@@ -1,0 +1,53 @@
+.family {
+    font-family: "Times New Roman";
+}
+
+.expense-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.expense-record-header {
+    font-size: 36px;
+    font-weight: 600;
+    line-height: 100%;
+    border-bottom: 1px solid #000;
+}
+
+.expense-record-content {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.expense-record-content p {
+    text-wrap: wrap;
+}
+
+.table-heading {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.custom-expense-table table {
+    width: 100%;
+}
+
+.custom-expense-table th, .custom-expense-table td {
+    border: 1px solid #000;
+}
+.bi-check-circle-fill{
+  color: #304ffd;
+  font-size: 3rem;
+
+}
+
+.page-div{
+    height: 380mm;
+    width: 270mm;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    padding: 1.5rem 5rem;
+}

@@ -14,9 +14,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -34,6 +35,7 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   searchTerm: any = '';
   selectemp: any;
   selectedYear: any;
+  selectedData={} as any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
   constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
@@ -65,6 +67,11 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
 
   comments_Function(comments: any) {
     this.commentsrecivced = comments;
+  }
+  //download expenses popup open function
+  openpopupforDownload(content: any, expenseDetails: any) {
+     this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
   }
 
   getexpensesheaderbyemployeeid(): void {

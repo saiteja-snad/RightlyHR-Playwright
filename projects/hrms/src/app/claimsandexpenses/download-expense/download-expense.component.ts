@@ -9,9 +9,10 @@ import { HttpService } from '../../services/http.service';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { environment } from '../../../environments/environment.dev';
 import { CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-download-expense',
-  imports: [DateformatPipe, CurrencyPipe],
+  imports: [DateformatPipe,CommonModule, CurrencyPipe],
   templateUrl: './download-expense.component.html',
   styleUrl: './download-expense.component.scss',
 })

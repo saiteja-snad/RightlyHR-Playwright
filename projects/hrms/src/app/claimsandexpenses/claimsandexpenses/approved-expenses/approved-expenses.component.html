@@ -103,6 +103,10 @@
                     (click)="onViewAttachement(item?.attachment_url)">
                     <i class="bi bi-eye-fill me-2"></i>View
                   </a>
+                  <a type="button" class="me-2 download-text text-nowrap"
+                    (click)="openpopupforDownload(openpopupForDownload,item)">
+                    <i class="bi bi-download me-2"></i>{{'Download' | translate}}
+                  </a>
                 </div>
               </td>
             </tr>
@@ -165,3 +169,14 @@
     </div>
   </div>
 </ng-template>
+ <ng-template #openpopupForDownload let-modal>
+        <div class="popup-container" ngbAutofocus>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Expense</h4>
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="popup-content">
+                <app-download-expense [downloadData]="selectedData" />
+            </div>
+        </div>
+    </ng-template>

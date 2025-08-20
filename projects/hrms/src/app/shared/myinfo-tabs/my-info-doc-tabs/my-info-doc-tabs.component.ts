@@ -21,8 +21,8 @@ export class MyInfoDocTabsComponent {
 
   ngOnInit(): void {
     this.navTabs = [
-      { label: 'Documents', link: '/myinfo/documents/general-documents', icon: '/my-info-icons/basic-info-icon.png', permission: { feature: 'Employee Info Documents Tab', action: 'view' } },
-      { label: 'Documents Acknowledgement', link: '/myinfo/documents/letter-acknowledge-documents', icon: '/my-info-icons/contact-icon.png', permission: { feature: 'Employee Info Documents Tab', action: 'view' } },
+      { label: 'Documents', link: '/myinfo/documents/general-documents', icon: '/my-info-icons/documentation.png', permission: { feature: 'My Info Documents Tab', action: 'view' } },
+      { label: 'Letters', link: '/myinfo/documents/letter-acknowledge-documents', icon: '/my-info-icons/letter.png', permission: { feature: 'My Info Documents Acknowledgment', action: 'view' } },
     ];
     this.filterTabsByRbac();
   }

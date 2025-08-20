@@ -2772,7 +2772,7 @@
                             <th colspan="5" class="custom-header">My Info Documents</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'My Info Documents Upload File' || per.fields ==='My Info Documents Dowload File'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'My Info Documents Upload File' || per.fields ==='My Info Documents Dowload File' || per.fields ==='My Info Documents Acknowledgment'">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -3542,7 +3542,7 @@
                             <th colspan="5" class="custom-header">Employee Info Documents</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Documents Upload File' || per.fields ==='Employee Info Documents Dowload File'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Documents Upload File' || per.fields ==='Employee Info Documents Dowload File' || per.fields ==='Employee Info Documents Acknowledgment' ">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

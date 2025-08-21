@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit,ViewEncapsulation} from '@angular/core';
+import { Component, OnDestroy, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -15,18 +15,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../letters.modal';
-import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-trainee-relieving-letter',
- imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,
-    NgxCountriesDropdownModule, NgbPopoverModule, LettersheaderComponent,LetterFooterComponent],
+imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './trainee-relieving-letter.component.html',
   styleUrl: './trainee-relieving-letter.component.scss'
 })
 export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
-  subscription!: Subscription;
+   subscription!: Subscription;
   relievingTemplate: any | string | ArrayBuffer | null = null; 
   result = {} as any;
   RelievingFile!: File;
@@ -60,7 +57,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.getRelievingTemplate();
     this.initializeForm();
-    this.getAllInActiveEmployees();
+    this.getEmployeeId();
     this.getAuthorityDetails();
   }
 
@@ -75,7 +72,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/employee-management/all-employees'])
+    this.router.navigate(['/admin/dashboard'])
   }
 
   DateValidation() {
@@ -101,22 +98,28 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       }).toPromise();
   }
 
-  getAllInActiveEmployees() {
-    this.subscription = this.http.getData('Employeedata/InactiveEmployees').subscribe({
-      next: (data: any) => {
-        this.employeeDetails = data.map((employee: any) => {
-          return {
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-          };
-        });
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    getEmployeeId() {
+    const status = ['Trainee Inactive'];
+    this.subscription = this.http
+      .getData(`Employeedata/Getallemployees?statuses=${status}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.employeeDetails = data as IEmployeeDetails[];
+          this.employeeDetails = data.map((employee: any) => {
+            return {
+              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+              // Concatenate first, middle (if present), and last name
+            };
+          });
+          console.log(this.employeeDetails);
+        },
+        error: (reason: any) => {
+
+          console.log(reason);
+        },
+      });
   }
 
   getAuthorityDetails() {
@@ -125,7 +128,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.signatureAuthorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` 
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() 
         }));
       },
       error: (error: any) => {
@@ -191,7 +194,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
     let fileName = '';
     this.spinnerLoader= true;
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
-      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_Trainee_RelievingLetter.pdf`;
+      fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_RelievingLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
       return; 
@@ -223,7 +226,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         if (data) {
           this.result.documentUrl = data.path;
-          this.conformationPopup.openSuccessModal('Trainee Relieving letter generated successfully')
+          this.conformationPopup.openSuccessModal('Relieving letter generated successfully')
           this.relievingemail();
         }
       },
@@ -275,5 +278,4 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       this.subscription.unsubscribe()
     }
   }
-
 }

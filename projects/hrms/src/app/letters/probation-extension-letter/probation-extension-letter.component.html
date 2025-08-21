@@ -139,12 +139,12 @@
                             </div>
 
 
-                            
-                                <p class="letter-sub-header mb-3 ">Dear {{probationExtensionLetterData.firstName}}
-                                    {{probationExtensionLetterData.middleName}}
-                                    {{probationExtensionLetterData.lastName}},
-                                </p>
-                            
+
+                            <p class="letter-sub-header mb-3 ">Dear {{probationExtensionLetterData.firstName}}
+                                {{probationExtensionLetterData.middleName}}
+                                {{probationExtensionLetterData.lastName}},
+                            </p>
+
 
                             <div>
                                 <p>We are pleased to inform that following a performance appraisal
@@ -178,26 +178,27 @@
                                 <p> We look forward to witnessing your continued progress and contributions to our team
                                     during
                                     this extended probationary period.</p>
-
                                 <p class="pt-4">Your Sincerely,</p>
-                                <p class="letter-sub-header  mb-4">For SNAD Developers India Pvt Ltd</p>
-                                
-                                <p class="letter-signature mb-4">{{probationExtensionLetterData.authorityName}}</p>
+                                <p class="letter-sub-header  mb-5">For SNAD Developers India Pvt Ltd</p>
+                                <div class="mb-3"></div>
+                                <p class="letter-signature">{{probationExtensionLetterData.authorityName}}</p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
                                 <p class="authorized-signatory mb-1">
                                     Authority Signature</p>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationExtensionLetterData.authorityName">
-                                    <p class="authorized-signatory mb-2">Authority Name</p>
-                                    <p class="authorized-signatory mb-2">Designation</p>
+                                    <p class="authorized-signatory mb-1">Authority Name</p>
+                                    <p class="authorized-signatory mb-1">Designation</p>
                                 </div>
                                 <div>
-                                    <p class="authorized-signatory mb-2">{{probationExtensionLetterData.authorityName}}
+                                    <p class="authorized-signatory mb-1">{{probationExtensionLetterData.authorityName}}
                                     </p>
-                                    <p class="authorized-signatory mb-2">
+                                    <p class="authorized-signatory mb-1">
                                         {{probationExtensionLetterData.authorityDesignation}}
                                     </p>
                                 </div>
+
+
                             </div>
                         </div>
                         <!-- <div class="letter-footer">

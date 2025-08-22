@@ -6,13 +6,16 @@
             <div class="d-flex expense-record-content pt-2 mb-3">
                 <div class="w-50">
                     <p><b>Employee ID:</b> {{empdata.fusionEmpId?empdata.fusionEmpId:'NA'}}</p>
-                    <p><b>Employee Name:</b> {{empdata.firstName?empdata.firstName:''}} {{empdata.middleName?empdata.middleName:''}} {{empdata.lastName?empdata.lastName:''}}</p>
+                    <p><b>Employee Name:</b> {{empdata.firstName?empdata.firstName:''}}
+                        {{empdata.middleName?empdata.middleName:''}} {{empdata.lastName?empdata.lastName:''}}</p>
                     <p><b>Designation:</b> {{empdata.jobRole?empdata.jobRole:'NA'}}</p>
                 </div>
                 <div class="w-50">
                     <p><b>Department:</b> {{empdata.departmentName?empdata.departmentName:'NA'}}</p>
                     <p><b>Team:</b> {{empdata.subdepartmentName?empdata.subdepartmentName:'NA'}}</p>
-                    <p><b>Location:</b> {{empdata.workLocation?empdata.workLocation:'NA'}},{{empdata.subLocation?empdata.subLocation:'NA'}}</p>
+                    <p><b>Location:</b>
+                        {{empdata.workLocation?empdata.workLocation:'NA'}},{{empdata.subLocation?empdata.subLocation:'NA'}}
+                    </p>
                 </div>
             </div>
             <p class="table-heading">Expense Details</p>
@@ -45,31 +48,28 @@
                             <td>{{ expense.expenseType?expense.expenseType:'NA' }}</td>
                             <td>{{ expense.receipt_Number?expense.receipt_Number:'NA' }}</td>
                             <td>{{ (expense.expense_Amount?expense.expense_Amount:'NA') | currency:currencyCode }}</td>
-                        </tr>
-                        <tr>
-                        <td colspan="4" class="text-end pe-2">
-                            <b>Total Amount</b>
-                        </td>
-                        <td class="text-end">
-                            <b>{{ (downloadData.totalExpenseAmount ? downloadData.totalExpenseAmount : 'NA') | currency:currencyCode }}</b>
-                        </td>
-                        </tr>
+                        </tr>                    
                     </tbody>
                 </table>
-            </div>
-            <div *ngIf="Approverdata" class="d-flex justify-content-between expense-record-content mt-4 pt-2 mb-3">
-                <div >
-                    <p><b>Approved By:</b> {{Approverdata?.addedName?Approverdata?.addedName:'NA'}}</p>
-                </div>
-                <div>
-                    <p><b>Approved On:</b> {{(Approverdata?.addedDate?Approverdata?.addedDate:'NA')|dateformat}}</p>
+                <div class="text-center mt-3">
+                    <b>Total Amount : {{ (downloadData.totalExpenseAmount ? downloadData.totalExpenseAmount : 'NA') |
+                        currency:currencyCode }}</b>
                 </div>
             </div>
         </div>
+        <div *ngIf="Approverdata" class="d-flex justify-content-between expense-record-content mt-4 pt-2 mb-3">
+            <div>
+                <p><b>Approved By:</b> {{Approverdata?.addedName?Approverdata?.addedName:'NA'}}</p>
+            </div>
+            <div>
+                <p><b>Approved On:</b> {{(Approverdata?.addedDate?Approverdata?.addedDate:'NA')|dateformat}}</p>
+            </div>
+        </div>
     </div>
-
-
 </div>
+
+
+
 <div class="modal-footer">
     <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
         <button type="button" class="btn btn-primary me-2" (click)="downloadfile()" [disabled]="isLoading">

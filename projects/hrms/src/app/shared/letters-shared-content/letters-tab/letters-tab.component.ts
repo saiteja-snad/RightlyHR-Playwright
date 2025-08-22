@@ -95,7 +95,7 @@ export class LettersTabComponent {
       link: '/letters/trainee-relieving-letter',
       icon: '/letters-icon/reliveing-letter.png',
       subject: MODULE_INFOS.TRAINEE_RELIEVING_LETTER_MODULE_INFO,
-      permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' }
+      permission: { feature: 'Dashboard Generate Documents Trainee Relieving Letter', action: 'view' }
     },
     {
       label: 'Probation Confirmation Letter',

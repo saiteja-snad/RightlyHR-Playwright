@@ -708,6 +708,7 @@ export const permissionsData = [
   //Dashboard Generate Documents History
   { fields: 'Dashboard Generate Documents Offer Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard Generate Documents Appointment Letter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Dashboard Generate Documents Trainee Relieving Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard Generate Documents Trainee Offer Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard Generate Documents Trainee Appointment Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard Generate Documents Welcome Letter', View: false, Update: false, Create: false, Delete: false },

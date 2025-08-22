@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -40,10 +40,11 @@ export class AddProspectiveInternComponent {
   initialLocationId: any;
   isLoading: boolean = false;
   spinnerLoader = false;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
+  formvalue!: NgForm;
+  RevokeComments = [] as any;
+ 
   @ViewChild('success') success: any;
-  @ViewChild('pospectivecreate') private readonly pospectivecreate!: NgbModal;
+  @ViewChild('Confirmation') Confirmation!: NgbModal;
   sublocation: any[] | undefined;
   employeementType: { id: number; name: string }[] = [
     { id: 1, name: 'Trainee' },
@@ -87,6 +88,9 @@ export class AddProspectiveInternComponent {
 
         error: (reason: any) => console.log(reason),
       });
+  }
+      openmodelforConfirm(content: any) {
+    this.modalService.open(this.Confirmation, { centered: true });
   }
 
   selectgradId(event: any) {
@@ -204,7 +208,7 @@ export class AddProspectiveInternComponent {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  postTraineeData() {
+  postTraineeData(f: NgForm) {
     this.spinnerLoader = true;
     let loggedInUser = this.authService.getToken();
     let postdata = {
@@ -215,7 +219,8 @@ export class AddProspectiveInternComponent {
       employeeStatus: 'Trainee Prospective',
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
-      empType: 'Trainee'
+      empType: 'Trainee',
+      allowEmployee: false,
     }
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
@@ -251,7 +256,13 @@ export class AddProspectiveInternComponent {
         else if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
 
-        } else {
+        } 
+        else if (res.statusCode == 403) {
+          this.formvalue = f;
+          this.Status = res.message;
+          this.RevokeComments = res.revokedComments;
+          this.openmodelforConfirm(this.Confirmation);
+        }else {
           this.conformationPopup.openErrorModal(res.message);
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -268,7 +279,73 @@ export class AddProspectiveInternComponent {
       },
     });
   }
+ UpdateTraineeData(f: NgForm) {
+    this.spinnerLoader = true;
+    let loggedInUser = this.authService.getToken();
+    let postdata = {
+      firstName: this.employeeForm.get('firstName')?.value,
+      middleName: this.employeeForm.get('middleName')?.value,
+      lastName: this.employeeForm.get('lastName')?.value,
+      experienceType: this.employeeForm.get('employmentType')?.value?.name,
+      employeeStatus: 'Trainee Prospective',
+      emailaddress: this.employeeForm.get('personalEmail')?.value,
+      createdBy: loggedInUser.employeeId,
+      empType: 'Trainee',
+      allowEmployee: true,
+      
+    }
+    this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        // this.result = res.employeeData;
+        console.log(this.result);
+        if (res.statusCode == 201) {
+          this.result = res.employeeData;
+          console.log(this.result);
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Prospective trainee created successfully');
+          this.http.activeTabSubject.next(this.result.employeeId);
+          // this.isLoading = false;
+          if (this.result.employeeId != null) {
+            const jobdata = {
+              employeeId: this.result.employeeId,
+              gradeId: this.gradeIdValue.gradeId,
+              locationid: this.postProspectiveEmpDetails.locationid,
+              sublocationid: parseInt(this.employeeForm.get('subLocation')?.value),
+              jobRole: this.gradeIdValue.designationName,
+            };
+            this.subscription = this.http
+              .postdata('JobDetails', jobdata)
+              .subscribe({
+                next: (data: any) => {
+                  console.log(data);
+                  this.select(this.result);
+                },
+                error: (Reason) => console.log(Reason),
+              });
+          }
+        }
+        else if (res.statusCode == 409) {
+          this.conformationPopup.openErrorModal(res.message);
 
+        } 
+       else {
+          this.conformationPopup.openErrorModal(res.message);
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.Message);
+        console.log(err)
+        this.spinnerLoader = false;
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      },
+    });
+  }
   close() {
     this.modalService.dismissAll();
   }

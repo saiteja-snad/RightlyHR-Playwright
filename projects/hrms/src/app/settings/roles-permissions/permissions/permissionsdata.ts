@@ -722,8 +722,6 @@ export const permissionsData = [
 
   //Inactive Generate Documents
   { fields: 'Relieving Letter', View: false, Update: false, Create: false, Delete: false },
-
-  { fields: 'Trainee Relieving Letter', View: false, Update: false, Create: false, Delete: false },
   //Probation Letters
   { fields: 'Probation Confirmation Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Extension Letter', View: false, Update: false, Create: false, Delete: false },

@@ -32,5 +32,5 @@ export default [
     { path: 'probation-confirmation-letter', component: ProbationConfirmationLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Probation Confirmation Letter.view' } },
     { path: 'probation-extension-letter', component: ProbationExtensionLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Probation Extension Letter.view' } },
     { path: 'welcome-letter', component: WelcomeLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Welcome Letter.view' } },
-    { path: 'trainee-relieving-letter', component: TraineeRelievingLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Trainee Relieving Letter.view' } }
+    { path: 'trainee-relieving-letter', component: TraineeRelievingLetterComponent, canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Trainee Relieving Letter.view' } },
 ] as Route[];

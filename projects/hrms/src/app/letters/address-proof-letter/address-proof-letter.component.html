@@ -118,8 +118,8 @@
                                         <b>{{ employeeForm.get('jobRole')?.value || '' }}</b>
                                     </ng-template> since
                                     <span
-                                        *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>
-                                    <ng-template #joining><b>{{ employeeForm.value.dateOfJoining | dateformat
+                                        *ngIf="!employeeForm.get('effectiveDate')?.value;  else joining">_______________________</span>
+                                    <ng-template #joining><b>{{employeeForm.get('effectiveDate')?.value | dateformat
                                             }}</b></ng-template>.
                                     Currently, residential address is
                                     <span *ngIf="!addressFlag; else address">_______________________</span>

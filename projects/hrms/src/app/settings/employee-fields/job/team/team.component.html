@@ -118,12 +118,12 @@
               <!-- Template to show selected value -->
               <ng-template pTemplate="selectedItem" let-manager>
                 <span *ngIf="manager">
-                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                {{manager.fusionEmpId}} - {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
                 </span>
               </ng-template>
               <!-- Template to show items in dropdown -->
               <ng-template pTemplate="item" let-manager>
-                {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                {{manager.fusionEmpId}} - {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
               </ng-template>
             </p-select>
           </div>
@@ -211,13 +211,13 @@
               filterBy="firstName,middleName,lastName" [styleClass]="'white-dropdown'">
               <!-- Template to show selected value -->
               <ng-template pTemplate="selectedItem" let-manager>
-                <span *ngIf="manager">{{ manager.firstName }} {{ manager.middleName }}
-                  {{ manager.lastName }}</span>
+                <span *ngIf="manager">  {{manager.fusionEmpId}} - {{ manager.firstName }} {{ manager.middleName }}
+                 {{ manager.lastName }}</span>
               </ng-template>
         
               <!-- Template to show items in dropdown -->
               <ng-template pTemplate="item" let-manager>
-                {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                 {{ manager.fusionEmpId }} -{{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
               </ng-template>
             </p-select>
           </div>

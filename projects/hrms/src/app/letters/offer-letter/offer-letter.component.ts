@@ -413,6 +413,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //function to reset the feilds
   resetInputFields() {
+    
     this.employeeForm?.reset();
     this.prospectiveEmpData.personalEmail = '';
     this.prospectiveEmpData = {};
@@ -1072,9 +1073,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.ApprovalLoader = true;
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
-      personName: `${this.prospectiveEmpData.firstName ?? ''} ${this.prospectiveEmpData.middleName ?? ''} ${this.prospectiveEmpData.lastName ?? ''}`,
+      personName: [this.prospectiveEmpData.firstName, this.prospectiveEmpData.middleName, this.prospectiveEmpData.lastName].filter(Boolean)   .join(" "),
       personEmail: this.prospectiveEmpData.personalEmail,
-      personRole: this.jobRoleDetails,
+      personRole: this.prospectiveEmpData?.jobRole,
       employeeId: loggedInUser.employeeId,
       documentUrl: this.documentUrl,
       workLocation: this.prospectiveEmpData.jobLocationName + ', ' + this.prospectiveEmpData.jobSubLocationName,

@@ -180,7 +180,7 @@ export class OfferLetterComponent implements OnInit {
 
   submitRejectReason() {
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    offerUpdateDetails.candidateComments = this.rejectionReason.comments;
+    offerUpdateDetails.candidateComments = this.rejectForm.get('rejectReason')?.value;
     offerUpdateDetails.candidateStatus = "Offer Letter Rejected";
     this.updateOfferDetails(offerUpdateDetails);
     this.updateEmployeeDetails(this.updateempdata);

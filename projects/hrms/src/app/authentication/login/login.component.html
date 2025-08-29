@@ -16,22 +16,61 @@
   <div class="login-right-content">
     <!-- login page card starts -->
     <div class="login-card">
-      <div class="d-flex flex-column justify-content-center text-center w-100">
-        <div class="mb-5">
+      <div class="d-flex flex-column w-100">
+        <div class="mb-5 d-flex justify-content-center">
           <img src="/logos/SNAD-horizontal-logo.png" alt="Logo" class="company-logo">
         </div>
-        <div class="mb-5">
+        <!-- <div class="mb-5">
           <img src="/logos/logos-microsoft-icon.png" alt="Microsoft Logo" class="microsoft-logo">
-        </div>
+        </div> -->
         <div>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)">
+            <!-- Email -->
+            <div class="mb-4">
+              <label class="form-label custom-label">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control custom-input" formControlName="email"
+                placeholder="Please enter email" (input)="formsValidation.validateInput(loginForm.get('email'))">
+              <div class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+                <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</div>
+                <div *ngIf="loginForm.get('email')?.errors?.['pattern']">Invalid Email Format</div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label for="exampleInputPassword1" class="form-label custom-label">Password
+                <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input [type]="changetype ? 'password' : 'text'"
+                  class="form-control custom-input login-input border-right-none" placeholder="Please enter password"
+                  formControlName="password" (ngModelChange)="errorCheck(loginForm.get('password')?.value)"
+                  (input)="formsValidation.validateInput(loginForm.get('password'))">
+                <span class="input-group-text border-left-none" (click)="viewpassword()">
+                  <i [ngClass]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                </span>
+              </div>
+              <div class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                Password is required
+              </div>
+              <div *ngIf="!disableerrormsg" class="text-danger error-msg">Invalid Email ID or Password</div>
+            </div>
+            <div>
+              <p class="error-msg mb-0">{{Status}}</p>
+            </div>
+            <div class="error-msg">{{wrongCredentials}}</div>
+            <div class="login-button-content pt-2">
+              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="d-flex justify-content-center my-4">OR</div>
+        <div class="d-flex justify-content-center pt-2">
           <a (click)="goToUserValidate()" class="link-text">Login with Microsoft</a>
         </div>
       </div>
-    </div>
-    <!--card ends-->
-    <!-- <div class="copy-right-content">
+      <!--card ends-->
+      <!-- <div class="copy-right-content">
       <p class="copy-right-text m-0">Copy rights reserved by &#64;Snad Developers Inc. 2024</p>
     </div> -->
+    </div>
   </div>
 </div>
 
@@ -39,7 +78,7 @@
   <div class="d-flex flex-column justify-content-center align-items-center pb-5">
     <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
     <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-  </div>
+  </div> 
 </ng-template>
 
 <ng-template #errorhide let-model>

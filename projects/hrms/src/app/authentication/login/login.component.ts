@@ -1,20 +1,21 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Carousel } from 'primeng/carousel';
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule, Carousel,],
+  imports: [FormsModule, CommonModule, Carousel, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
   errormsg: string | any;
   signIn = {} as any;
   visible = false;
@@ -36,7 +37,9 @@ export class LoginComponent {
     private http: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private fb: FormBuilder,
     config: NgbModalConfig, private modalService: NgbModal,
+    public formsValidation: FormValidationsService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -46,7 +49,8 @@ export class LoginComponent {
     if (this.http.isLoggedIn()) {
       this.router.navigate(['/uservalidation']);
     }
-    this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get("returnUrl")
+    this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get("returnUrl");
+    this.intialiseForm();
   }
 
   openmodel(content: any) {
@@ -103,4 +107,68 @@ export class LoginComponent {
       }
     })
   }
+
+  // Normal Login
+
+  loginForm!: FormGroup;
+  intialiseForm() {
+    this.loginForm = this.fb.group({
+      email: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+        ],
+      ],
+      password: ['', Validators.required],
+    });
+
+    this.loginForm.valueChanges.subscribe(() => {
+      this.Status = '';
+    });
+  }
+
+  disableerrormsg: boolean = true;
+  wrongCredentials: any;
+  errorCheck(Value: any) {
+    if (Value == '' || Value == null) {
+      this.disableerrormsg = true;
+      this.wrongCredentials = '';
+    }
+  }
+
+  onSubmit(loginForm: FormGroup) {
+    if (loginForm.valid) {
+      const loginData = loginForm.value;
+      this.subscription = this.http.login(`v2/Auth/login`, loginData).subscribe({
+          next: (res: any) => {
+            if (res != null) {
+              this.http.storeToken(res);
+              if (res.token) {
+                this.router.navigate(['/uservalidation']);
+              } else {
+                //this.router.navigate(['/login']);
+              }
+            } else {
+              this.disableerrormsg = false;
+            }
+          },
+          error: (err: any) => {
+            console.log(err);
+            if (err.status == '401') {
+              this.Status = err.error.message;
+            } else {
+              this.disableerrormsg = false;
+            }
+          },
+        });
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
 }

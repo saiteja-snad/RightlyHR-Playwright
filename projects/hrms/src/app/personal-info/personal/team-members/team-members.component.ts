@@ -508,30 +508,36 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
     this.selectedEmployeeDetails = details;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  getEmployee() {
-    this.subscription = this.http
-      .getData('JobDetails/getAllReportingManagers')
-      .subscribe({
-        next: (data: any) => {
-          this.managers = data
-            .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-            .map(
-              (emp: {
-                fusionEmpId: string;
-                firstName: string;
-                middleName?: string;
-                lastName: string;
-              }) => ({
-                ...emp,
-                name: `${emp.fusionEmpId} - ${emp.firstName} ${
-                  emp.middleName ? emp.middleName + ' ' : ''
-                }${emp.lastName}`,
-              })
-            );
-        },
-        error: (err) => console.log(err),
-      });
-  }
+ getEmployee() {
+  this.subscription = this.http
+    .getData('JobDetails/getAllReportingManagers')
+    .subscribe({
+      next: (data: any) => {
+        this.managers = data
+          .map((emp: {
+            fusionEmpId?: string;
+            firstName: string;
+            middleName?: string;
+            lastName: string;
+          }) => {
+            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+            const name = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
+            return {
+              ...emp,
+              name
+            };
+          });
+
+        //  Alphabetical sorting by firstName
+        this.managers.sort((a: any, b: any) =>
+          a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+        );
+      },
+      error: (err) => console.log(err),
+    });
+}
+
   selectedManager: any = null;
   onSelectManager(event: any) {
     this.selectedManager = event.value;

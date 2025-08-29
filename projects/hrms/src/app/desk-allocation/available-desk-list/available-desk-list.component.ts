@@ -559,8 +559,10 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
           // Transform data to include `employeeName`
           this.approvalname = res.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-          }));
+            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          })).sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
         },
         error: (errormessage) => {
           console.log(errormessage);

@@ -47,8 +47,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.http.isLoggedIn()) {
-      this.router.navigate(['/uservalidation']);
+      debugger
+      console.log("User is logged in, navigating...");
+      this.router.navigateByUrl('/uservalidation')
+        .then(ok => console.log("Navigation success?", ok))
+        .catch(err => console.error("Navigation failed:", err));
     }
+
     this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get("returnUrl");
     this.intialiseForm();
   }
@@ -58,8 +63,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   goToUserValidate() {
-    this.router.navigate(['/uservalidation'])
+    this.http.loginWithMicrosoft();
   }
+
 
   dataSuccessMsg(msg: string) {
     this.Status = msg;
@@ -137,31 +143,40 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit(loginForm: FormGroup) {
+  async onSubmit(loginForm: FormGroup) {
     if (loginForm.valid) {
       const loginData = loginForm.value;
-      this.subscription = this.http.login(`v2/Auth/login`, loginData).subscribe({
-          next: (res: any) => {
-            if (res != null) {
-              this.http.storeToken(res);
-              if (res.token) {
-                this.router.navigate(['/uservalidation']);
-              } else {
-                //this.router.navigate(['/login']);
-              }
-            } else {
-              this.disableerrormsg = false;
-            }
-          },
-          error: (err: any) => {
-            console.log(err);
-            if (err.status == '401') {
-              this.Status = err.error.message;
-            } else {
-              this.disableerrormsg = false;
-            }
-          },
-        });
+      const deviceName = this.http.getDeviceName();
+      const ipAddress = await this.http.getIpAddress();
+
+      const payload = {
+        email: loginData.email,
+        password: loginData.password,
+        deviceName: deviceName,
+        ipAddress: ipAddress
+      }
+
+      this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
+        next: (res: any) => {
+          if (res != null) {
+            debugger
+            this.http.storeAuthResponse(res);
+            setTimeout(()=>{
+              this.router.navigate(['/uservalidation']);
+            }, 2000)
+          } else {
+            this.disableerrormsg = false;
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+          if (err.status == '401') {
+            this.Status = err.error.message;
+          } else {
+            this.disableerrormsg = false;
+          }
+        },
+      });
     }
   }
 

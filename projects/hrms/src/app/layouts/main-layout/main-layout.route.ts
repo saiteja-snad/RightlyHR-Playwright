@@ -3,7 +3,6 @@ import { AdminLayoutComponent } from "../../admin/admin-layout/admin-layout.comp
 import { TimeOffLayoutComponent } from "../../time-off/time-off-layout/time-off-layout.component";
 import { EventsLayoutComponent } from "../../events/events-layout/events-layout.component";
 import { ClaimsandexpensesLayoutComponent } from "../../claimsandexpenses/claimsandexpenses-layout/claimsandexpenses-layout.component";
-import { MsalGuard } from "@azure/msal-angular";
 import { PersonalinfoLayoutComponent } from "../../personal-info/personalinfo-layout/personalinfo-layout.component";
 import { PmsLayoutComponent } from "../../pms/pms-layout/pms-layout.component";
 import { DeskAlloctionLayoutComponent } from "../../desk-allocation/desk-alloction-layout/desk-alloction-layout.component";
@@ -23,32 +22,33 @@ import { LettersLayoutComponent } from "../../letters/letters-layout/letters-lay
 import { BloodBankComponent } from "../../blood-bank/blood-bank/blood-bank.component";
 import { PhonebookComponent } from "../../phonebook/phonebook/phonebook.component";
 import { ContactDirectoryComponent } from "../../contact-directory/contact-directory/contact-directory.component";
+import { authGuard } from "../../auth/auth-guard/auth.guard";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
-    { path: 'admin', component: AdminLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../admin/admin.route') },
-    { path: 'dashboard', component: PersonalinfoLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
-    { path: 'personalinfo', component: PersonalinfoLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
-    { path: 'myinfo', component: PersonalinfoLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
-    { path: 'time-off', component: TimeOffLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../time-off/time-off.route') },
-    { path: 'events', component: EventsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../events/events.route') },
-    { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') },
-    { path: 'pms', component: PmsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../pms/pms.route') },
-    { path: 'calendar-view', component: CalendarViewComponent, canActivate: [MsalGuard] },
-    { path: 'policies', component: PolicieslayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../policies/policies.route') },
-    { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../desk-allocation/desk.route') },
-    { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../reports/reports.routes') },
-    { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../assets-allocation/assets-allocation.route') },
-    { path: 'it-support', component: ItsupportLayOutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../ITsupport/itsupport.route') },
-    { path: 'pmsconfiguration', component: PmsConfigurationLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../pms-configuration/pms-configuration.route') },
-    { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [MsalGuard] },
-    { path: 'holidays', component: HolidaysLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../holidays/holidays.route') },
+    { path: 'admin', component: AdminLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/admin.route') },
+    { path: 'dashboard', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
+    { path: 'personalinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
+    { path: 'myinfo', component: PersonalinfoLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../personal-info/personal-info-routes') },
+    { path: 'time-off', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/time-off.route') },
+    { path: 'events', component: EventsLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../events/events.route') },
+    { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') },
+    { path: 'pms', component: PmsLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../pms/pms.route') },
+    { path: 'calendar-view', component: CalendarViewComponent, canActivate: [authGuard] },
+    { path: 'policies', component: PolicieslayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../policies/policies.route') },
+    { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../desk-allocation/desk.route') },
+    { path: 'reports', component: ReportsLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../reports/reports.routes') },
+    { path: 'assets-management', component: AssetsAllocationsLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../assets-allocation/assets-allocation.route') },
+    { path: 'it-support', component: ItsupportLayOutComponent, canActivate: [authGuard], loadChildren: () => import('../../ITsupport/itsupport.route') },
+    { path: 'pmsconfiguration', component: PmsConfigurationLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../pms-configuration/pms-configuration.route') },
+    { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [authGuard] },
+    { path: 'holidays', component: HolidaysLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../holidays/holidays.route') },
     { path: 'theme', component: ThemeLayoutComponent, loadChildren: () => import('../../theme-customization/theme.route') },
-    { path: 'attendance', component: AttendanceViewComponent, canActivate: [MsalGuard] },
-    { path: 'employee-management', component: EmployeeManagementLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../admin/employee-management.route') },
-    { path: 'invite-user', component: InviteUserLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../invite-new-user/invite-user.route') },
+    { path: 'attendance', component: AttendanceViewComponent, canActivate: [authGuard] },
+    { path: 'employee-management', component: EmployeeManagementLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../admin/employee-management.route') },
+    { path: 'invite-user', component: InviteUserLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../invite-new-user/invite-user.route') },
     { path: 'letters', component: LettersLayoutComponent, loadChildren: () => import('../../letters/letters.route') },
-    { path: 'blood-bank', component: BloodBankComponent, canActivate: [MsalGuard] },
-     { path: 'phonebook', component: PhonebookComponent, canActivate: [MsalGuard] },
-      { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [MsalGuard] },
+    { path: 'blood-bank', component: BloodBankComponent, canActivate: [authGuard] },
+     { path: 'phonebook', component: PhonebookComponent, canActivate: [authGuard] },
+      { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
 ] as Route[];

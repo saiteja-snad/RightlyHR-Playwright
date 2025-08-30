@@ -217,7 +217,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onLogout() {
     this.authService.removeToken();
-    localStorage.clear();
+    this.authService.logout();
+    this.authService.onLogout();
+
     window.location.href =
       'https://login.microsoftonline.com/common/oauth2/v2.0/logout';
   }

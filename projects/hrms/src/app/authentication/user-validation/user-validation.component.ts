@@ -11,6 +11,7 @@ import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, 
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WelcomePopupComponent } from '../../shared/welcome-popup/welcome-popup.component';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-user-validation',
   imports: [
@@ -35,36 +36,55 @@ export class UserValidationComponent {
 
 
   constructor(
-    private _msalService: MsalService,
     private router: Router,
     private http: HttpService,
     private accessNav: AccessNavigationService,
     private rbac: RbacService,
     private modalService: NgbModal,
+    private auth: AuthService
   ) { }
 
   async ngOnInit() {
-    await this.postLogin();
+    debugger
+    this.postLogin();
   }
 
   async postLogin() {
-    await this._msalService.instance.initialize();
-    //  const loginResponse = await this._msalService.instance.loginRedirect();
-    //console.log(loginResponse.accessToken);
-    const account = this._msalService.instance.getAllAccounts()[0];
-    if (account) {
-      this._msalService.instance.setActiveAccount(account);
+    const tokens = await this.auth.getTokenResponse();
+
+    if (tokens) {
+      const deviceName = this.auth.getDeviceName();
+      const ipAddress = await this.auth.getIpAddress();
+      // Microsoft login
+      const payload = {
+        provider: 'Microsoft',
+        accessToken: tokens.id_token,
+        deviceName: deviceName,
+        ipAddress: ipAddress
+      };
+
+      this.auth.postData('v2/Auth/social', payload).subscribe({
+        next: (res: any) => {
+          this.auth.storeAuthResponse(res);
+          console.log('MS Backend login success:', res);
+          this.getUserDetails(res.email);
+        },
+        error: (err) => console.error('MS Backend login failed:', err)
+      });
+
     } else {
-      return;
+      // 2. Fallback to classic login (get from localStorage)
+      const storedRes = localStorage.getItem('authResponse');
+      if (storedRes) {
+        const parsedRes = JSON.parse(storedRes);
+        const email = parsedRes.email;
+        console.log('Classic login email:', email);
+        this.getUserDetails(email);
+      } else {
+        console.warn('No auth data found. Redirecting to login.');
+        this.router.navigate(['/login']);
+      }
     }
-    const response = await this._msalService.instance.acquireTokenSilent({
-      account: account,
-      scopes: ['user.read'],
-    });
-    const token = response.accessToken;
-    //console.log(token);
-    this.name = account?.name as string;
-    this.getUserDetails(account?.username);
   }
 
   getUserDetails(email: string) {
@@ -93,7 +113,7 @@ export class UserValidationComponent {
               this.stayBack()
 
             } else {
-               this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
+              this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
               // this.navigateToOldUIApplication();
             }
           } else {

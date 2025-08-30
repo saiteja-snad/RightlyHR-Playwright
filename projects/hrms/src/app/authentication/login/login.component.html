@@ -57,7 +57,16 @@
             </div>
             <div class="error-msg">{{wrongCredentials}}</div>
             <div class="login-button-content pt-2">
-              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid">Login</button>
+              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid || spinnerLoader">
+                @if(spinnerLoader){
+                <div class="button-loader-content">
+                  <div class="spinner-border button-spinner text-light" role="status"></div>
+                  <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>Login</span>
+                }
+              </button>
             </div>
           </form>
         </div>
@@ -66,8 +75,9 @@
           <p class="or-text m-0">OR</p>
         </div>
         <div>
-          <button class="microsoft-login-btn w-100" (click)="goToUserValidate()"><img src="./icons/microsoft-login-btn-icon.png" alt="Microsoft Icon"
-             class="microsoft-icon me-2">Login with Microsoft</button>
+          <button class="microsoft-login-btn w-100" (click)="goToUserValidate()"><img
+              src="./icons/microsoft-login-btn-icon.png" alt="Microsoft Icon" class="microsoft-icon me-2">Login with
+            Microsoft</button>
         </div>
       </div>
       <!--card ends-->
@@ -82,7 +92,7 @@
   <div class="d-flex flex-column justify-content-center align-items-center pb-5">
     <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
     <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-  </div> 
+  </div>
 </ng-template>
 
 <ng-template #errorhide let-model>

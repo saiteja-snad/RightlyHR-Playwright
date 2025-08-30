@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   returnUrl!: string | null;
   Status: any;
+  spinnerLoader= false;
   carouselItems = [
     { subject: 'From onboarding to offboarding, manage every step of the employee journey with ease. RightlyHR streamlines your workflows and puts people first.' },
     { subject: 'Configure letters, automate approvals, and customize forms in just a few clicks. Say goodbye to paperwork chaos and hello to powerful simplicity.' },
@@ -47,7 +48,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.http.isLoggedIn()) {
-      debugger
+       
       console.log("User is logged in, navigating...");
       this.router.navigateByUrl('/uservalidation')
         .then(ok => console.log("Navigation success?", ok))
@@ -145,6 +146,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   async onSubmit(loginForm: FormGroup) {
     if (loginForm.valid) {
+      this.spinnerLoader= true;
       const loginData = loginForm.value;
       const deviceName = this.http.getDeviceName();
       const ipAddress = await this.http.getIpAddress();
@@ -159,13 +161,16 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
         next: (res: any) => {
           if (res != null) {
-            debugger
+             
             this.http.storeAuthResponse(res);
+            this.spinnerLoader= false;
+           localStorage.setItem('loginType', 'Classic Login');
             setTimeout(()=>{
               this.router.navigate(['/uservalidation']);
             }, 2000)
           } else {
             this.disableerrormsg = false;
+            this.spinnerLoader= false;
           }
         },
         error: (err: any) => {

@@ -6,6 +6,6 @@ import { authGuard } from "../auth/auth-guard/auth.guard";
 
 export default [
     { path: 'login', component: LoginComponent },
-    { path: 'uservalidation', component: UserValidationComponent, canActivate:[authGuard] },
+    { path: 'uservalidation', component: UserValidationComponent},
     { path: 'unauthorized', component: UnauthorizedLoginComponent },
 ] as Route[];

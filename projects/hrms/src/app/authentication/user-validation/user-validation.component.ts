@@ -45,47 +45,56 @@ export class UserValidationComponent {
   ) { }
 
   async ngOnInit() {
-    debugger
+     
     this.postLogin();
   }
 
   async postLogin() {
-    const tokens = await this.auth.getTokenResponse();
+     
+    const tokens = await this.auth.getTokenResponse(); // Microsoft tokens
+    const storedRes = localStorage.getItem('currentUser');
 
-    if (tokens) {
+    // ✅ Case 1: Microsoft tokens exist but no stored response → first time login
+    if (tokens && !storedRes) {
       const deviceName = this.auth.getDeviceName();
       const ipAddress = await this.auth.getIpAddress();
-      // Microsoft login
+
       const payload = {
         provider: 'Microsoft',
         accessToken: tokens.id_token,
-        deviceName: deviceName,
-        ipAddress: ipAddress
+        deviceName,
+        ipAddress
       };
 
       this.auth.postData('v2/Auth/social', payload).subscribe({
         next: (res: any) => {
-          this.auth.storeAuthResponse(res);
+          this.auth.storeAuthResponse(res);  // Save access/refresh tokens + user info
+          localStorage.setItem('loginType', 'Microsoft Login');
           console.log('MS Backend login success:', res);
           this.getUserDetails(res.email);
-        },
-        error: (err) => console.error('MS Backend login failed:', err)
+        },  
+        error: (err) => {
+          console.error('MS Backend login failed:', err);
+          this.router.navigate(['/login']); // fallback
+        }
       });
 
-    } else {
-      // 2. Fallback to classic login (get from localStorage)
-      const storedRes = localStorage.getItem('authResponse');
-      if (storedRes) {
-        const parsedRes = JSON.parse(storedRes);
-        const email = parsedRes.email;
-        console.log('Classic login email:', email);
-        this.getUserDetails(email);
-      } else {
-        console.warn('No auth data found. Redirecting to login.');
-        this.router.navigate(['/login']);
-      }
+      return;
     }
+
+    // ✅ Case 2: Stored response already present → skip API
+    if (storedRes) {
+      const parsedRes = JSON.parse(storedRes);
+      console.log('Using cached login data:', parsedRes.email);
+      this.getUserDetails(parsedRes.email);
+      return;
+    }
+
+    // ❌ Case 3: No tokens, no stored data → force login
+    console.warn('No auth data found. Redirecting to login.');
+    this.router.navigate(['/login']);
   }
+
 
   getUserDetails(email: string) {
     this.subscription = this.http.getUserDetails(email).subscribe({

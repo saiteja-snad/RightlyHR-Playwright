@@ -501,7 +501,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   //function to recall the request
   postRecallRequest() {
-    debugger
+     
     this.isLoading = true;
     let currentDate = new Date();
     let payLoad = {

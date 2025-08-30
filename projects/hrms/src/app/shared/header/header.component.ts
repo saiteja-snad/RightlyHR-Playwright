@@ -104,7 +104,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
   }
 
- getJobDetails() {
+  getJobDetails() {
     this.isloading = true;
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
@@ -215,13 +215,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  onLogout() {
-    this.authService.removeToken();
-    this.authService.logout();
-    this.authService.onLogout();
-
-    window.location.href =
-      'https://login.microsoftonline.com/common/oauth2/v2.0/logout';
+  async onLogout() {
+    const logInType = localStorage.getItem('loginType');
+     
+  
+    if (logInType === 'Classic Login') {
+      this.authService.onLogout();
+      setTimeout(()=>{
+          localStorage.clear();
+        this.modalservie.dismissAll();
+        this.router.navigate(['/login'])
+      }, 100)
+      
+    }
+    else if (logInType === 'Microsoft Login') {
+      this.authService.logout();
+      this.authService.onLogout();
+      setTimeout(()=>{
+        localStorage.clear();
+        this.modalservie.dismissAll();
+        this.router.navigate(['/login'])
+      }, 100)
+      window.location.href =
+        'https://login.microsoftonline.com/common/oauth2/v2.0/logout';
+    }
   }
 
   close() {
@@ -229,7 +246,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openlogoutModal() {
-    this.modalservie.open(this.logoutpopup, { centered: true , backdrop: 'static', keyboard: false });
+    this.modalservie.open(this.logoutpopup, { centered: true, backdrop: 'static', keyboard: false });
   }
 
   isActiveRoute(link: string): boolean {

@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
 import { Router } from '@angular/router';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
 
 
 @Injectable({
@@ -124,27 +125,42 @@ export class AuthService {
     return this.oauthService.getIdToken();
   }
 
-  async getTokenResponse(): Promise<TokenResponse> {
-    // If token is expired or about to expire, refresh it
-    if (this.oauthService.hasValidAccessToken()) {
-      return {
-        access_token: this.oauthService.getAccessToken(),
-        id_token: this.oauthService.getIdToken(),
-        refresh_token: this.oauthService.getRefreshToken(),
-        scope: this.oauthService.scope,
-        token_type: 'Bearer',
-        expires_in: this.oauthService.getAccessTokenExpiration() - Date.now(),
-      } as TokenResponse;
-    }
+  async getTokenResponse(): Promise<TokenResponse | null> {
+    try {
+      // Case 1: If token is valid → return it
+      if (this.oauthService.hasValidAccessToken()) {
+        return {
+          access_token: this.oauthService.getAccessToken(),
+          id_token: this.oauthService.getIdToken(),
+          refresh_token: this.oauthService.getRefreshToken(),
+          scope: this.oauthService.scope,
+          token_type: 'Bearer',
+          expires_in: this.oauthService.getAccessTokenExpiration() - Date.now(),
+        } as TokenResponse;
+      }
 
-    // If expired → refresh
-    return (await this.oauthService.refreshToken()) as TokenResponse;
+      // Case 2: If token expired → refresh only if refresh_token is present
+      const refreshToken = this.oauthService.getRefreshToken();
+      if (refreshToken) {
+        const refreshed = await this.oauthService.refreshToken();
+        if (refreshed) {
+          return refreshed as TokenResponse;
+        }
+      }
+
+      // Case 3: No access_token and no refresh_token → user not logged in
+      return null;
+    } catch (error) {
+      console.error('Token fetch/refresh failed:', error);
+      return null;
+    }
   }
 
   storeAuthResponse(authResponse: any): void {
     if (authResponse) {
+       
       // Store whole object
-      localStorage.setItem('authResponse', JSON.stringify(authResponse));
+      localStorage.setItem('currentUser', JSON.stringify(authResponse));
 
       // Optionally store important parts separately for quick access
       if (authResponse.accessToken) {
@@ -183,22 +199,47 @@ export class AuthService {
     }
   }
 
-  onLogout(){
+  onLogout() {
     const refreshToken = localStorage.getItem("refreshToken");
 
-    const payload ={
-      refreshToken : refreshToken
+    const payload = {
+      refreshToken: refreshToken
     }
 
     this.postData(`v2/Auth/logout`, payload).subscribe({
       next: (res) => {
-        localStorage.clear();
+        // localStorage.clear();
       }
     });
   }
 
-}
-function next(value: Object): void {
-  throw new Error('Function not implemented.');
-}
+  refreshToken() {
+    const tokenString = localStorage.getItem("currentUser");
+    const token = tokenString ? JSON.parse(tokenString) : null;
+    if (!token || !token.refreshToken) {
+      // this.logout();
+      return throwError(() => new Error("No refresh token found"));
+    }
 
+    const payload ={
+      accessToken : token.accessToken,
+      refreshToken: token.refreshToken,
+      deviceName: this.getDeviceName()
+    }
+
+    return this.http.post<any>(`${this.ApiUrl}v2/Auth/refresh`, payload).pipe(
+      map((res) => {
+        console.log(res)
+        if (res) {
+          this.storeAuthResponse(res); // saves new tokens
+        }
+        return res;
+      }),
+      catchError((error) => {
+        // this.logout();
+        throw error;
+      })
+    );
+  }
+
+}

@@ -30,9 +30,8 @@
                 (click)="navigation()">Inactive</button>
             }
 
-            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus
-            =='Employee Created'
-            || empdata?.substatus=='Requested Documents') ){
+            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created' || 
+            empdata?.substatus=='Requested Documents') ){
             <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
                 <span *ngIf="!isLoading">{{'Request for Documents'|translate}}</span>
@@ -51,12 +50,10 @@
             </button>
 
             <!-- <div *ngIf=""> -->
-            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
-            getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released'){
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
-            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
-                (click)="openModal(revokeoffer)">
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
                 {{' Revoke Offer'|translate}}
             </button>
             }
@@ -99,8 +96,7 @@
                 <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
             </div>
             <div>
-                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 

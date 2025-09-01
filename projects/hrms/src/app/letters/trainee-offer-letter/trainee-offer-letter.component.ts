@@ -262,7 +262,7 @@ export class TraineeOfferLetterComponent implements OnInit,OnDestroy {
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
               ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
         }
       },
     });
@@ -291,7 +291,7 @@ export class TraineeOfferLetterComponent implements OnInit,OnDestroy {
             fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
             ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
-        });
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (reason: any) => {
         console.log(reason);
@@ -328,7 +328,7 @@ export class TraineeOfferLetterComponent implements OnInit,OnDestroy {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
-        }));
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (error: any) => {
         console.error(error);

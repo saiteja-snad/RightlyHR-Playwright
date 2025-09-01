@@ -112,7 +112,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
               fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
               // Concatenate first, middle (if present), and last name
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
           console.log(this.employeeDetails);
         },
         error: (reason: any) => {
@@ -129,7 +129,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
         this.signatureAuthorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() 
-        }));
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (error: any) => {
         console.error(error);

@@ -109,7 +109,7 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
-        });
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (reason: any) => {
         console.log(reason);
@@ -124,7 +124,7 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
         this.signatureAuthorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` 
-        }));
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (error: any) => {
         console.error(error);

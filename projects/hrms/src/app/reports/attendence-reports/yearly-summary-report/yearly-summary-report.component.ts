@@ -97,33 +97,27 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
     );
   }
 
- 
-
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
-    this.subscription = this.http
-
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            };
-          });
-
-          this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        const employeedata = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          };
+        });
+        this.employeeiddetails = [
+          { fullName: 'All Employees', employeeId: 'all' },
+          ...employeedata
+        ];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   getTeam() {

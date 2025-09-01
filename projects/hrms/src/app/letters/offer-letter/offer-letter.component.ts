@@ -278,6 +278,14 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.employeeaddress = data as IAddress[];
+        if (this.employeeaddress?.employeeAddresses.length > 0) {
+          if(this.employeeaddress.offerIssueddate){
+            this.employeeForm.get('offerIssuedDate')?.setValue(this.formatDateForOfferIssedandExpiry(new Date(this.employeeaddress.offerIssueddate)));
+          }
+          if(this.employeeaddress.offerExpiryDate){
+            this.employeeForm.get('offerExpiryDate')?.setValue(this.formatDateForOfferIssedandExpiry(new Date(this.employeeaddress.offerExpiryDate)));
+          }
+        }
         if (this.employeeaddress.substatus == 'Documents Verified' ||
           this.employeeaddress.substatus == 'Trainee Onboarded'
         ) {
@@ -821,6 +829,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
+    
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
@@ -841,6 +850,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.password = this.employeeaddress.password
     this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
     this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
+    this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
+    this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';

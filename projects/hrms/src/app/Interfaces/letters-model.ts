@@ -155,7 +155,9 @@ export interface IJob {
   relationship1: string,
   emergencyNumber1: any,
   emergencyEmail1: string,
-  emergencyName1: string
+  emergencyName1: string,
+    isPasswordChanged:boolean,
+  isUserRegistred:boolean
 }
 export interface Iprospective {
   employeeId: number,

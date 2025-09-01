@@ -13,3 +13,106 @@
       </div>
    </div>
 </div>
+
+
+<ng-template #getstarted  let-modal >
+    <div class="custom-modal-bg" ngbAutofocus>
+        <div class="container get-started-content">
+            <div>
+                <p class="name">Welcome, {{employeeName}}</p>
+                <p class="header">Transforming <span class="primary-text">Employee Management</span> into<br> Seamless Journey</p>
+                <p class="context mb-4">Streamline your HR processes with RightlyHR — from Employee Self Service, onboarding and attendance tracking to leave management and document handling. Enjoy real-time access, easy approvals, and Manage everything on the go, effortlessly.</p>
+                <form [formGroup]="getStartedForm" (ngSubmit)="getstartyourlogin()">
+                    <div class="mb-3">
+                        <input class="form-check-input me-2" type="checkbox" formControlName="terms" >
+                        <label class="form-check-label custom-term-label">
+                            I have read and accept the
+                            <a href="https://rightlyhr.com/terms-and-conditions/" target="_blank" class="ms-1 link-text"><u>Terms & Conditions</u></a>
+                        </label>
+                    </div>
+                    <button class="custom-btn btn-primary get-started-btn" type="submit" [disabled]="getStartedForm.invalid">Get Started</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #changepasswordModal let-modal>
+    <div class="custom-modal-bg">
+        <div class="custom-main-popup-container custom-new-bg" ngbAutofocus>
+            <div class="w-50 password-left-content">
+                <p class="name">Welcome, {{employeeName}}</p>
+                <p class="header">Setting Up Your <span class="primary-text">New Password</span> for a Secure Start</p>
+                <p class="context">For your security, system-generated passwords are valid only for 7 days.
+                    Please set a strong new password to continue using RightlyHR without interruptions.</p>
+            </div>
+            <div class="d-flex justify-content-end w-50">
+                <div class="password-content-card">
+                    <p class="header mb-4">Create new password</p>
+                    <form class="custom-form" [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()"
+                        autocomplete="off">
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label custom-label mb-2">New Password
+                                <span class="text-danger">*</span></label>
+                            <div class="input-group border-input">
+                                <input type="{{ showPassword1 ? 'text' : 'password' }}" id="newPassword"
+                                    placeholder="Please enter new password"
+                                    class="form-control custom-input border-none" formControlName="newPassword"
+                                    maxlength="15" (keydown.space)="$event.preventDefault()" />
+                                <span class="input-group-text border-none cursor" id="basic-addon1"
+                                    (click)="togglePasswordVisibility1()">
+                                    <i [ngClass]="showPassword1 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['required'] && changePasswordForm.get('newPassword')?.touched"
+                                class="error-msg">
+                                New Password is required
+                            </div>
+                            <div *ngIf="changePasswordForm.controls['newPassword'].errors?.['pattern']"
+                                class="error-msg">
+                                Your password must be at least 8 characters long and include at least one uppercase
+                                letter,
+                                one number, and one special character
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label custom-label mb-2">Confirm New Password<span
+                                    class="text-danger">*</span></label>
+                            <div class="input-group border-input">
+                                <input type="{{ showPassword2 ? 'text' : 'password' }}" id="confirmPassword"
+                                    placeholder="Please re enter new password"
+                                    class="form-control custom-input border-none" formControlName="confirmPassword"
+                                    maxlength="15" (keydown.space)="$event.preventDefault()"  />
+                                <span class="input-group-text border-none cursor" id="basic-addon1"
+                                    (click)="togglePasswordVisibility2()">
+                                    <i [ngClass]="showPassword2 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                                </span>
+                            </div>
+                            <div *ngIf="changePasswordForm.get('confirmPassword')?.errors?.['required'] && changePasswordForm.get('confirmPassword')?.touched"
+                                class="error-msg">
+                                Confirm New Password is required
+                            </div>
+                            <div *ngIf="changePasswordForm.hasError('passwordMismatch') && changePasswordForm.get('confirmPassword')?.touched"
+                                class="error-msg">
+                                Confirm new password must match the new password
+                            </div>
+                        </div>
+                        <!-- <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="terms" formControlName="terms">
+                                <label class="form-check-label custom-term-label">I have read and accept
+                                    the
+                                    <a href="https://rightlyhr.com/terms-and-conditions/" target="_blank" class="ms-1 link-text" type="button" tabindex="0" (click)="$event.stopPropagation()"><u>Terms & Conditions</u></a></label>
+                            </div>
+                        </div> -->
+                        <div class="pt-2">
+                            <button type="submit" class="custom-btn btn-primary"
+                                [disabled]="changePasswordForm.invalid">Save & Proceed
+                                <img src="/images/right-arrow.png" alt="right Arrow" class="right-arrow ms-2"></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

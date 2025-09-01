@@ -589,6 +589,8 @@ export const permissionsData = [
   { fields: 'Employee Info Job Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Reset Password Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Generate Credentials Button', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Info Personal Sub Tabs Section

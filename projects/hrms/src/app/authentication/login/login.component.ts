@@ -161,10 +161,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
         next: (res: any) => {
           if (res != null) {
-             
             this.http.storeAuthResponse(res);
             this.spinnerLoader= false;
-           localStorage.setItem('loginType', 'Classic Login');
+            localStorage.setItem('loginType', 'Classic Login');
             setTimeout(()=>{
               this.router.navigate(['/uservalidation']);
             }, 2000)
@@ -174,7 +173,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          console.log(err);
+          debugger
+          this.spinnerLoader= false;
           if (err.status == '401') {
             this.Status = err.error.message;
           } else {

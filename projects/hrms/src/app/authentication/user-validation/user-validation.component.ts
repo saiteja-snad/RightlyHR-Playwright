@@ -82,7 +82,6 @@ export class UserValidationComponent {
       return;
     }
 
-    // ✅ Case 2: Stored response already present → skip API
     if (storedRes) {
       const parsedRes = JSON.parse(storedRes);
       console.log('Using cached login data:', parsedRes.email);
@@ -90,7 +89,6 @@ export class UserValidationComponent {
       return;
     }
 
-    // ❌ Case 3: No tokens, no stored data → force login
     console.warn('No auth data found. Redirecting to login.');
     this.router.navigate(['/login']);
   }

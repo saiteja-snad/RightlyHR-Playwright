@@ -15,10 +15,11 @@ import { AccessForEmployeeinfoService } from '../../services/access-for-employee
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { RbacService } from '../../services/rbac.service';
+import { ConfirmationIconComponent } from "../../icons/confirmation-icon/confirmation-icon.component";
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule],
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule, ConfirmationIconComponent],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -171,6 +172,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  openCredentialsModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'md' });
+  }
+
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
@@ -252,7 +257,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   submitArchive() {
     (this.empdata.empstatus = 'Archived'),
-    (this.empdata.substatus = 'Employee Created'),
+      (this.empdata.substatus = 'Employee Created'),
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           this.getEmployeeId();
@@ -722,6 +727,41 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  resetPassword() {
+    this.spinnerLoader = true;
+    this.subscription = this.http.postdata(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null).subscribe({
+      next: (data: any) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email')
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        console.log(err);
+        this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
+      },
+    });
+  }
+
+  generateCredentials(){
+    this.spinnerLoader = true;
+    this.subscription = this.http.postdata(`Employeedata/generate-credentials/${this.empinfo.employeeId}`,null).subscribe({
+      next: (data: any) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email');
+        this.getEmployeeId();
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        console.log(err);
+        this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
+      },
+    });
   }
 
   ngOnDestroy(): void {

@@ -158,6 +158,8 @@ export interface IJob {
   emergencyName1: string,
     isPasswordChanged:boolean,
   isUserRegistred:boolean
+  loginType: string;
+  name: string
 }
 export interface Iprospective {
   employeeId: number,

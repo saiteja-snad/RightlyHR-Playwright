@@ -11,9 +11,10 @@ import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -27,6 +28,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   img: any;
   spinnerLoader = false;
   isloading: boolean = false;
+  currentUser: any;
   @ViewChild('logoutpopup') logoutpopup: any;
 
   constructor(
@@ -37,11 +39,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private modalservie: NgbModal,
     private conformationPopup: OpenModalService,
-    private accessNav: AccessNavigationService
+    private accessNav: AccessNavigationService,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser') ?? '{}');
+    if (!this.currentUser.loginType) {
+      this.currentUser.loginType = '';
+    }
     this.getEmployeeId();
     this.getJobDetails();
     this.http.profliepicadd$.subscribe(() => {
@@ -217,21 +224,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   async onLogout() {
     const logInType = localStorage.getItem('loginType');
-     
-  
+
+
     if (logInType === 'Classic Login') {
       this.authService.onLogout();
-      setTimeout(()=>{
-          localStorage.clear();
+      setTimeout(() => {
+        localStorage.clear();
         this.modalservie.dismissAll();
         this.router.navigate(['/login'])
       }, 100)
-      
+
     }
     else if (logInType === 'Microsoft Login') {
       this.authService.logout();
       this.authService.onLogout();
-      setTimeout(()=>{
+      setTimeout(() => {
         localStorage.clear();
         this.modalservie.dismissAll();
         this.router.navigate(['/login'])
@@ -251,6 +258,93 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
+  }
+
+  // Change Password
+  changePasswordForm!: FormGroup;
+  intilaizeChangePasswordForm() {
+    this.changePasswordForm = this.fb.group(
+      {
+        currentPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required, Validators.maxLength(15)]],
+        confirmPassword: ['', [Validators.required]],
+      }
+    );
+
+    this.changePasswordForm.valueChanges.subscribe(() => {
+      this.backendError = '';
+    })
+  }
+
+  openchangepasswordModal(content: any) {
+    this.intilaizeChangePasswordForm();
+    this.modalservie.open(content, { centered: true, backdrop: 'static', keyboard: false });
+  }
+
+  showPassword1 = false;
+  showPassword2 = false;
+  showPassword3 = false;
+  togglePasswordVisibility1() {
+    this.showPassword1 = !this.showPassword1;
+  }
+
+  togglePasswordVisibility2() {
+    this.showPassword2 = !this.showPassword2;
+  }
+
+  togglePasswordVisibility3() {
+    this.showPassword3 = !this.showPassword3;
+  }
+
+  resetPasswordIcons() {
+    this.showPassword1 = false;
+    this.showPassword2 = false;
+    this.showPassword3 = false;
+  }
+
+  closeModal() {
+    this.modalservie.dismissAll();
+    this.changePasswordForm.reset();
+    this.resetPasswordIcons();
+  }
+
+  backendError!: string;
+  onSubmit(form: FormGroup): void {
+    if (form.invalid) {
+      form.markAllAsTouched();
+      return;
+    }
+    this.spinnerLoader= true;
+    const formData = form.value;
+    const payload = {
+      employeeId: this.empinfo.employeeId,
+      password: formData.newPassword,
+      currentPassword: formData.currentPassword,
+      confirmPassword: formData.confirmPassword
+    };
+    this.http.postdata('Employeedata/internal-update-password', payload)
+      .subscribe({
+        next: (response: any) => {
+          this.modalservie.dismissAll();
+          this.conformationPopup.openSuccessModal('Password changed successfully');
+          this.resetPasswordIcons();
+          setTimeout(() => {
+            this.spinnerLoader= false;
+            this.modalservie.dismissAll()
+            this.onLogout();
+          }, 2000)
+        },
+        error: (error: any) => {
+          this.spinnerLoader= false;
+          if (error?.error?.message) {
+            this.backendError = error.error.message;
+          } else if (typeof error?.error === 'string') {
+            this.backendError = error.error;
+          } else {
+            this.backendError = 'Failed to change password. Please try again later.';
+          }
+        }
+      });
   }
 
   ngOnDestroy() {

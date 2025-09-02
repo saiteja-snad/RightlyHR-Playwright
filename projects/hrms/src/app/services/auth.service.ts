@@ -158,7 +158,7 @@ export class AuthService {
 
   storeAuthResponse(authResponse: any): void {
     if (authResponse) {
-       
+
       // Store whole object
       localStorage.setItem('currentUser', JSON.stringify(authResponse));
 
@@ -216,30 +216,31 @@ export class AuthService {
   refreshToken() {
     const tokenString = localStorage.getItem("currentUser");
     const token = tokenString ? JSON.parse(tokenString) : null;
+
     if (!token || !token.refreshToken) {
-      // this.logout();
+      console.log("No refresh token found");
       return throwError(() => new Error("No refresh token found"));
     }
 
-    const payload ={
-      accessToken : token.accessToken,
+    const payload = {
+      accessToken: token.accessToken,
       refreshToken: token.refreshToken,
       deviceName: this.getDeviceName()
-    }
+    };
 
     return this.http.post<any>(`${this.ApiUrl}v2/Auth/refresh`, payload).pipe(
       map((res) => {
-        console.log(res)
         if (res) {
-          this.storeAuthResponse(res); // saves new tokens
+          this.storeAuthResponse(res);
         }
         return res;
       }),
       catchError((error) => {
         // this.logout();
-        throw error;
+        return throwError(() => error);
       })
     );
   }
+
 
 }

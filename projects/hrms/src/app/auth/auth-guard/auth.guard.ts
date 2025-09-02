@@ -10,10 +10,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   const token = localStorage.getItem("accessToken")
 
   if (auth.accessToken || token) {
-   
     return true;
   }
-
+  
+  localStorage.clear();
+  sessionStorage.clear();
   router.navigate(['/login']);
   return false;
 };

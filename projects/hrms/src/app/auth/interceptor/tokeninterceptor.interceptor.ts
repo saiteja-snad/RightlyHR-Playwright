@@ -20,6 +20,11 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem("accessToken");
 
+    // ✅ Skip token handling for login or refresh endpoints
+    if (request.url.includes('/api/v2/Auth/login') || request.url.includes('/api/v2/Auth/refresh')) {
+      return next.handle(request);
+    }
+    
     // ✅ Check if token exists and is expired
     // if (token && this.jwtService.isTokenExpired(token)) {
     //   if (!this.isRefreshing) {

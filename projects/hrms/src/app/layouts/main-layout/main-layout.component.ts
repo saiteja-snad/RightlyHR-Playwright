@@ -50,7 +50,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         if (!res.data.isUserRegistred) {
           this.openModal(this.getstarted);
         }
-        else if (this.empinfo.loginType.toLowerCase() === 'classic login' && !res.data.isPasswordChanged) {
+        else if (this.empinfo?.loginType?.toLowerCase() === 'classic login' && !res.data.isPasswordChanged) {
           // Open change password modal
           this.modalService.open(this.changepasswordModal, {
             centered: true,

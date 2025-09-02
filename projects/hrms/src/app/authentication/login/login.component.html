@@ -50,16 +50,16 @@
               <div class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
                 Password is required
               </div>
-              <div *ngIf="!disableerrormsg" class="text-danger error-msg">Invalid Email ID or Password</div>
+              <div *ngIf="Status" class="text-danger error-msg">{{Status}}</div>
             </div>
-            <div>
+            <!-- <div>
               <p class="error-msg mb-0">{{Status}}</p>
-            </div>
+            </div> -->
             <div class="error-msg">{{wrongCredentials}}</div>
             <div class="login-button-content pt-2">
               <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid || spinnerLoader">
                 @if(spinnerLoader){
-                <div class="button-loader-content">
+                <div class="button-loader-content d-flex justify-content-center">
                   <div class="spinner-border button-spinner text-light" role="status"></div>
                   <span>{{'Loading...'}}</span>
                 </div>

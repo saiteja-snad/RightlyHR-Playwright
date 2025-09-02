@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   returnUrl!: string | null;
   Status: any;
-  spinnerLoader= false;
+  spinnerLoader = false;
   carouselItems = [
     { subject: 'From onboarding to offboarding, manage every step of the employee journey with ease. RightlyHR streamlines your workflows and puts people first.' },
     { subject: 'Configure letters, automate approvals, and customize forms in just a few clicks. Say goodbye to paperwork chaos and hello to powerful simplicity.' },
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.http.isLoggedIn()) {
-       
+
       console.log("User is logged in, navigating...");
       this.router.navigateByUrl('/uservalidation')
         .then(ok => console.log("Navigation success?", ok))
@@ -132,6 +132,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.loginForm.valueChanges.subscribe(() => {
       this.Status = '';
+      // this.disableerrormsg= false;
     });
   }
 
@@ -144,46 +145,53 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onSubmit(loginForm: FormGroup) {
-    if (loginForm.valid) {
-      this.spinnerLoader= true;
-      const loginData = loginForm.value;
-      const deviceName = this.http.getDeviceName();
-      const ipAddress = await this.http.getIpAddress();
+async onSubmit(loginForm: FormGroup) {
+  console.log('Submit clicked, spinnerLoader:', this.spinnerLoader);
 
-      const payload = {
-        email: loginData.email,
-        password: loginData.password,
-        deviceName: deviceName,
-        ipAddress: ipAddress
-      }
+  if (loginForm.valid) {
+    this.spinnerLoader = true;
+    console.log('Form valid, calling API...');
 
-      this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
+    const loginData = loginForm.value;
+    const deviceName = this.http.getDeviceName();
+    const ipAddress = await this.http.getIpAddress();
+
+    const payload = {
+      email: loginData.email,
+      password: loginData.password,
+      deviceName,
+      ipAddress
+    };
+
+    this.subscription = this.http.login(`v2/Auth/login`, payload)
+      .pipe(finalize(() => {
+        console.log('Finalize triggered, resetting loader');
+        this.spinnerLoader = false;
+      }))
+      .subscribe({
         next: (res: any) => {
-          if (res != null) {
+          console.log('API success:', res);
+          if (res) {
             this.http.storeAuthResponse(res);
-            this.spinnerLoader= false;
             localStorage.setItem('loginType', 'Classic Login');
-            setTimeout(()=>{
+            setTimeout(() => {
+              console.log('Navigating to /uservalidation');
               this.router.navigate(['/uservalidation']);
-            }, 2000)
+            }, 2000);
           } else {
             this.disableerrormsg = false;
-            this.spinnerLoader= false;
           }
         },
         error: (err: any) => {
-          debugger
-          this.spinnerLoader= false;
-          if (err.status == '401') {
-            this.Status = err.error.message;
-          } else {
-            this.disableerrormsg = false;
-          }
-        },
+          console.error('API error:', err);
+          this.Status = 'Invalid Email ID or Password';
+        }
       });
-    }
+  } else {
+    console.log('Form invalid');
   }
+}
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

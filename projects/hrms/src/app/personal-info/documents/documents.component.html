@@ -92,7 +92,11 @@
                            <td class="text-center text-nowrap">{{ file.contentLength | fileSize }}</td>
                            @if(canAccess('view','dowload')) {
                            <td class="text-center">
-                              <div></div>
+                                    <div>
+                                 <span class="dowload-text cursor" (click)="onSelectDownload(file)">
+                                 <app-download-icon />
+                                 </span>
+                              </div>
                            </td>
                            }
                         </tr>

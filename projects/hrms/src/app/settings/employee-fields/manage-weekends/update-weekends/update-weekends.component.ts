@@ -264,7 +264,7 @@ export class UpdateWeekendsComponent {
   }
 
   updateWeekend(form: FormGroup) {
-    debugger
+     
     console.log(form);
     
     if (form.invalid) {

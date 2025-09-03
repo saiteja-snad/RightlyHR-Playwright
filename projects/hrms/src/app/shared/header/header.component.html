@@ -5,11 +5,12 @@
             <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="company-logo-image">
         </div>
 
-         <!--Header profile content-->
+        <!--Header profile content-->
         @if(!isloading){
         <div class="header-profile-dropdown-content">
             <div class="dropdown">
-                <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    data-bs-auto-close="outside">
                     <div class="text-end">
                         <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
                         </p>
@@ -37,6 +38,12 @@
                             <div class="mb-2">
                                 <a class="profile-btn" (click)="goToAccessibleRoute('/myinfo')">View Profile</a>
                             </div>
+                            @if(currentUser?.loginType?.toLowerCase() === 'classic login'){
+                            <div class="mb-2">
+                                <a class="profile-btn" (click)="openchangepasswordModal(changepasswordModal)">Change
+                                    Password</a>
+                            </div>
+                            }
                             <button class="custom-btn btn-primary" (click)="openlogoutModal()">
                                 <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-1">Logout
                             </button>
@@ -82,6 +89,115 @@
         }
     </div>
 </div>
+
+<!-- Change Password Modal -->
+<ng-template #changepasswordModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Change Password</p>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form class="custom-form" [formGroup]="changePasswordForm" (ngSubmit)="onSubmit(changePasswordForm)"
+                autocomplete="off">
+
+                <!-- New Password Field -->
+                <div class="mb-3">
+                    <label for="currentPassword" class="form-label custom-label mb-2">Current Password<span
+                            class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="{{ showPassword1 ? 'text' : 'password' }}" id="currentPassword"
+                            placeholder="Please enter current password"
+                            class="form-control custom-input border-right-none" formControlName="currentPassword" />
+                        <span class="input-group-text border-left-none" id="basic-addon1"
+                            (click)="togglePasswordVisibility1()">
+                            <i [ngClass]="showPassword1 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                        </span>
+                    </div>
+                    <div *ngIf="changePasswordForm.get('currentPassword')?.errors?.['required'] && changePasswordForm.get('currentPassword')?.touched"
+                        class="error-msg">
+                        Current Password is required
+                    </div>
+                </div>
+
+                <!-- New Password Field -->
+                <div class="mb-3">
+                    <label for="newPassword" class="form-label custom-label mb-2">New Password<span
+                            class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="{{ showPassword2 ? 'text' : 'password' }}" id="newPassword"
+                            placeholder="Please enter new password" class="form-control custom-input border-right-none"
+                            formControlName="newPassword" />
+                        <span class="input-group-text border-left-none" id="basic-addon1"
+                            (click)="togglePasswordVisibility2()">
+                            <i [ngClass]="showPassword2 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                        </span>
+                    </div>
+                    <div *ngIf="changePasswordForm.get('newPassword')?.errors?.['required'] && changePasswordForm.get('newPassword')?.touched"
+                        class="error-msg">
+                        New Password is required
+                    </div>
+
+                    <div *ngIf="changePasswordForm.controls['newPassword'].errors?.['pattern']" class="error-msg">
+                        Your password must be at least 8 characters long and include at least one uppercase
+                        letter,
+                        one number, and one special character
+                    </div>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label custom-label mb-2">Confirm Password<span
+                            class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="{{ showPassword3 ? 'text' : 'password' }}" id="confirmPassword"
+                            placeholder="Please re enter new password"
+                            class="form-control custom-input border-right-none" formControlName="confirmPassword" />
+                        <span class="input-group-text border-left-none" id="basic-addon1"
+                            (click)="togglePasswordVisibility3()">
+                            <i [ngClass]="showPassword3 ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                        </span>
+                    </div>
+                    <div *ngIf="changePasswordForm.get('confirmPassword')?.errors?.['required'] && changePasswordForm.get('confirmPassword')?.touched"
+                        class="error-msg">
+                        Confirm Password is required
+                    </div>
+                    <div *ngIf="changePasswordForm.hasError('passwordMismatch') && changePasswordForm.get('confirmPassword')?.touched"
+                        class="error-msg">
+                        Confirm Password must match the new password
+                    </div>
+                     <div *ngIf="changePasswordForm.controls['confirmPassword'].errors?.['pattern']" class="error-msg">
+                        Your password must be at least 8 characters long and include at least one uppercase
+                        letter,
+                        one number, and one special character
+                    </div>
+                </div>
+
+                <div *ngIf="backendError" class="error-msg">
+                    {{ backendError }}
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="closeModal()">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="changePasswordForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<!-- Change Password Modal -->
 
 <ng-template #logoutpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>

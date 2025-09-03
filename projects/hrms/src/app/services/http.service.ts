@@ -356,6 +356,10 @@ export class HttpService {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
+  postbyId(url: string) {
+    return this.http.post(`${this.ApiUrl}${url}`, {}); // empty body for POST
+  }
+
   /* to the post dynamic form details*/
   postData(url: string, data: any, options: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data, options);

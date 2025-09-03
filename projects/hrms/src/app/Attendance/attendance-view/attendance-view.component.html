@@ -13,11 +13,11 @@
                 <!-- <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
                     (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
                     dateFormat="mm/yy" [readonlyInput]="true" /> -->
-                    <div class="custom-year-month-picker">
-                        <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)"
-                            [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true"
-                            [maxDate]="maxMonth"></p-datepicker>
-                    </div>
+                <div class="custom-year-month-picker">
+                    <p-datepicker [(ngModel)]="date" placeholder="Select month and year" (ngModelChange)="checkdates($event)" 
+                    [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true" 
+                    [maxDate]="maxMonth"></p-datepicker>
+                </div>
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
@@ -72,21 +72,21 @@
                     <th class="max-width">Logs</th>
                     <th class="text-end pe-5">Status</th>
                 </thead>
-                <tbody>           
+                <tbody>
                     @if(attendanceData.value.length>0){
                     @for (item of attendanceData|async; track $index) {
                     <tr>
                         <td class="max-width">{{(item.date|dateformat)??'-'}}</td>
                         <td class="max-width">{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
                         <td class="max-width">{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-                        <td class="max-width">{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
-                            item.duration.totalDuration}}
+                        <td class="max-width">
+                            {{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration.totalDuration}}
                         </td>
                         <td class="max-width">
                             @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
                             <div>
-                                <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
-                                            item.permissions,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
+                                <a type="button" (click)="openModalLarge(punchintimes);
+                                dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,item.permissions,item.regularizations,item.duration?.permissionDuration,item.duration?.regularizationDuration,item.duration?.breakDuration)">
                                     <app-info-icon />
                                 </a>
                             </div>
@@ -97,8 +97,7 @@
                             <div class="d-flex justify-content-end">
                                 @if(item.status !== '-'){
                                 <ul class="ps-0 mb-2">
-                                    <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">
-                                        {{item?.status}}</li>
+                                    <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">{{item?.status}}</li>
                                 </ul>
                                 }
                                 @else {
@@ -125,8 +124,8 @@
                                 }
                                 @if(rbac.allowedToAccess('Request Regularization.view')){
                                 @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
-                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable 
-                                && currentMonth==selectedMonth && item.employeeId==empdata.employeeId){ 
+                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable && 
+                                currentMonth == selectedMonth && item.employeeId == empdata.employeeId){ 
                                 <a class="application-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                     <u>Regularization</u>
                                 </a>
@@ -144,14 +143,14 @@
             </table>
             }
             @else {
-                <app-data-loader-content />
+            <app-data-loader-content />
             }
         </div>
 
-        @if(statusCounts$.value.length>0){ 
+        @if(statusCounts$.value.length>0){
         <div class="attendance-summary-card">
             <div>
-               <p class="summary-header mb-2">Attendance Summary</p>
+                <p class="summary-header mb-2">Attendance Summary</p>
             </div>
             <div class="chart-content">
                 <p-chart type="doughnut" [data]="attendanceSummaryData" [options]="attendanceSummaryOptions" class="doughnut-chart" />
@@ -230,8 +229,7 @@
                         <div class="error-msg" *ngIf="regularizationForm.get('reason')?.errors?.['minlength']">
                             Reason must be at least 10 characters
                         </div>
-                        <div class="error-msg"
-                            *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
+                        <div class="error-msg" *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
                                 Reason is required
                             </div>
@@ -298,14 +296,14 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             <div class="popup-table-footer">
                                 <!-- Total Duration: <b>{{ logsDuration }}</b> -->
                                 <div>
-
-                                    <div class="d-flex justify-content-center">
-                                        <div class="custom-text">Working Hours: <b>{{logsDuration}}</b></div>
-                                                <div class="custom-text">Break Hours: <b>{{breakDuration}}</b></div>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <div class="custom-text">Working Hours: <b class="popup-heading">{{logsDuration}}</b></div>
+                                        <div class="break-line my-1"></div>
+                                        <div class="custom-text">Break Hours: <b class="popup-heading">{{breakDuration}}</b></div>
                                     </div>
                                     <!-- <div>Duration: <span *ngIf="logsDuration;else popupcomments">
                                             <div class="text-truncate" style="width:150px;">{{comment.comments}}</div>
@@ -326,7 +324,7 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-        
+
                 @if(permissions_list.length>0){
                 <p-accordion-panel value="1">
                     <p-accordion-header>Permissions</p-accordion-header>
@@ -354,7 +352,6 @@
                     </p-accordion-content>
                 </p-accordion-panel>
                 }
-        
                 @if(regularization_list.length>0){
                 <p-accordion-panel value="2">
                     <p-accordion-header>Regularizations</p-accordion-header>
@@ -402,7 +399,8 @@
                 <div class="d-block">
                     <div class="d-flex flex-column">
                         <p class="m-0 p-2 rounded popupcomments">
-                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal">
+                            Total Duration: 
+                            <span *ngIf="totalDurationHours;else durationtotal">
                                 {{totalDurationHours === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
                             </span>
                             <ng-template #durationtotal>{{logsDuration}}</ng-template>
@@ -412,20 +410,15 @@
                             Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
                         </p>
 
-                        <p class="m-0 p-2 rounded popupcomments">
-                            Permissions Duration: <span *ngIf="permissionsDuration;else permisiondur">
-                                {{permissionsDuration === '00:00:00' || !permissionsDuration ? '-' :
-                                permissionsDuration}}
-                            </span>
+                        <p class="m-0 p-2 rounded popupcomments">Permissions Duration:
+                            <span *ngIf="permissionsDuration;else permisiondur">{{permissionsDuration === '00:00:00'
+                                || !permissionsDuration ? '-' : permissionsDuration}}</span>
                             <ng-template #permisiondur>NA</ng-template>
                         </p>
 
-                        <p class="m-0 p-2 rounded popupcomments">
-                            Regularization Duration:
-                            <span *ngIf="regularizationAttendDuration;else regularization">
-                                {{regularizationAttendDuration === '00:00:00' || !regularizationAttendDuration ? '-' :
-                                regularizationAttendDuration}}
-                            </span>
+                        <p class="m-0 p-2 rounded popupcomments">Regularization Duration:
+                            <span *ngIf="regularizationAttendDuration;else regularization">{{regularizationAttendDuration === '00:00:00' || 
+                            !regularizationAttendDuration ? '-' : regularizationAttendDuration}}</span>
                             <ng-template #regularization>NA</ng-template>
                         </p>
                     </div>
@@ -442,13 +435,9 @@
             <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-                No
-            </button>
-            <button type="submit" class="custom-btn btn-primary"
-                (click)="modalService.dismissAll();this.regularizationForm.reset()">
-                Yes
-            </button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="modalService.dismissAll();
+            this.regularizationForm.reset()">Yes</button>
         </div>
     </div>
 </ng-template>

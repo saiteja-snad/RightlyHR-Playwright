@@ -21,7 +21,7 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
     const token = localStorage.getItem("accessToken");
 
     // ✅ Skip token handling for login or refresh endpoints
-    if (request.url.includes('/api/v2/Auth/login') || request.url.includes('/api/v2/Auth/refresh')) {
+    if (request.url.includes('/api/v2/Auth/login') || request.url.includes('/api/v2/Auth/refresh') || request.url.includes('v2/Auth/social')) {
       return next.handle(request);
     }
     

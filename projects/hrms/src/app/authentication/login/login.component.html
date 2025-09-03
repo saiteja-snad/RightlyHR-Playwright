@@ -110,15 +110,16 @@
 <ng-template #confirmationpopup let-modal>
   <div class="result-popup-content p-4" ngbAutofocus>
     <div class="d-flex justify-content-end w-100 mb-4">
-      <div>
-        <a>
+      <!-- <div>
+        <a (click)="modal.dismiss()">
           <img src="icons/close.png" alt="Close Icon" class="close-icon">
         </a>
-      </div>
+      </div> -->
     </div>
     <div>
       <img src="/images/administator-image.png" alt="failure icon" class="administator-image mb-4">
-      <p class="confirmation-text mb-4">Please Contact Administrator for your password!</p>
+      <p class="confirmation-text mb-4">Please Contact Administrator to reset your password!</p>
+      <button type="button" class="custom-btn btn-primary ok-btn mb-3" (click)="modal.dismiss()">OK</button>
     </div>
   </div>
 </ng-template>

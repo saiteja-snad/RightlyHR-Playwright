@@ -6,9 +6,10 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
+import { OpenModalService } from '../../../../services/open-modal.service';
 @Component({
   selector: 'app-pending-shifts',
   imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule, NgbPopoverModule, DataLoaderContentComponent, InfoIconComponent],
@@ -21,8 +22,10 @@ export class PendingShiftsComponent {
   shiftsData: any[] = [];
   pendingsubmittedshifts: any;
   loading = false;
-
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+  successModalRef: any;
+  deleteModalRef: any;
+   constructor(public router: Router, private http: HttpService, public rbac: RbacService,private confirmation: OpenModalService,
+  private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -59,7 +62,38 @@ export class PendingShiftsComponent {
     localStorage.setItem('selectedShift', JSON.stringify(shift));
     this.router.navigate(['/settings/employee-fields/updateshifts', id]);
   }
+  shiftsddata:any
+   DeleteShiftDailog(content: any, shift: any) {
+      this.shiftsddata = shift;
+      this.deleteModalRef = this.modalService.open(content, { centered: true });
+   }
+   onDelete(modal: any) {
+      this.http.deleteData(`OrgShifts/${this.shiftsddata.id}`).subscribe({
+         next: () => {
+            // Remove from list after successful delete
+            this.shiftsData = this.shiftsData.filter(item => item.id !== this.shiftsddata.id);
 
+            // Close delete popup
+            modal.close();
+                 this.http.triggerRefresh();
+                    
+            // Open success popup
+            this.confirmation.openSuccessModal('Shift deleted successfully');
+             this.getShifts();
+             
+            setTimeout(() => {
+               if (this.successModalRef) {
+                  this.successModalRef.close();
+                      
+               }
+            }, 2000);
+         },
+         error: () => {
+            modal.close();
+            this.confirmation.openErrorModal('Failed to delete Shifts.');
+         }
+      });
+   }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

@@ -116,8 +116,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   regularization_list = [] as any;
   currentDate: any;
   date!: Date;
-  attendanceSummaryData : any;
-  attendanceSummaryOptions : any;
+  attendanceSummaryData: any;
+  attendanceSummaryOptions: any;
   maxMonth: Date = new Date();
   constructor(
     private authService: AuthService,
@@ -128,11 +128,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
     public readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get current date
-    const now = moment().startOf('month'); 
+    const now = moment().startOf('month');
     this.date = now.toDate();
     this.currentDate = moment().date();
     // Get current month (1-based)
@@ -233,7 +233,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-
+  maxPastDaysAllowed: any;
   //function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
@@ -242,15 +242,22 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       'maxRegularizePerMonth',
       'maxRegularizeHoursPerDay',
       'maxRegularizeHoursPerMonth',
+      'pastDaysAllowed'
     ];
     this.subscription = this.http
       .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
       .subscribe({
         next: (data: any) => {
           this.regularizationValues = data as IPermissionsvalue[];
+          const pastDaysAllowedConfig = this.regularizationValues?.find(
+            (item: any) => item.attribute === 'pastDaysAllowed'
+          );
+          this.maxPastDaysAllowed = pastDaysAllowedConfig ? parseFloat(pastDaysAllowedConfig.value) : undefined;
+          console.log(this.maxPastDaysAllowed, 'maxPastDaysAllowed');
           const maxHoursConfig = this.regularizationValues?.find(
             (item) => item.attribute === 'maxRegularizeHoursPerDay'
           );
+
           const maxHours = maxHoursConfig
             ? parseFloat(maxHoursConfig.value)
             : 2; // default to 2 if not found
@@ -265,6 +272,15 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  isWithinPastDaysAllowed(date: Date | string): boolean {
+    if (this.maxPastDaysAllowed === undefined) return false;
+    const today = new Date();
+    const selected = new Date(date);
+    // Calculate the difference in days
+    const diff = Math.floor((today.getTime() - selected.getTime()) / (1000 * 60 * 60 * 24));
+    return diff <= this.maxPastDaysAllowed && diff >= 0;
+  }
+
   //function to get the day logs
   dayLogsData(
     Value: any,
@@ -272,14 +288,14 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     totalduration: any,
     permissions: any,
     regularizations: any,
-    permissionduration:any,
-    regularizationduration:any,
-    breakDuration : any,
+    permissionduration: any,
+    regularizationduration: any,
+    breakDuration: any,
   ) {
     this.logsDuration = totalduration;
     this.breakDuration = breakDuration;
-    this.permissionsDuration=permissionduration;
-    this.regularizationAttendDuration=regularizationduration;
+    this.permissionsDuration = permissionduration;
+    this.regularizationAttendDuration = regularizationduration;
     this.selectedDate = date;
     this.permissions_list = permissions;
     this.regularization_list = regularizations;
@@ -375,15 +391,15 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
-      employee.middleName ? ' ' + employee.middleName : ''
-    }${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
+      }${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
       )
       .subscribe({
         next: (response: any) => {
+          this.getAttendanceCriteria()
           this.dataLoader = false;
           const updatedAttendanceData = response.data.attendanceData.map(
             (item: any) => ({
@@ -449,11 +465,9 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
               .map((employee: any) => {
                 return {
                   ...employee,
-                  fullName: `${
-                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName ?? ''} ${
-                    employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
+                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                    }${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.lastName}`,
                 };
               });
           }
@@ -479,8 +493,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
             this.get_Employeelist_forTM = myTeam.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${ employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
-                ${ employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
               };
             });
           }

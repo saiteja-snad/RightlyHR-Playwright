@@ -200,10 +200,18 @@ export class AuthService {
   }
 
   onLogout() {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const tokenString = localStorage.getItem("currentUser");
+    const token = tokenString ? JSON.parse(tokenString) : null;
+
+    if (!token || !token.refreshToken) {
+      localStorage.clear();
+      sessionStorage.clear();
+      this.logout();
+      this.router.navigate(['/login']);
+    }
 
     const payload = {
-      refreshToken: refreshToken
+      refreshToken: token.refreshToken
     }
 
     this.postData(`v2/Auth/logout`, payload).subscribe({
@@ -218,8 +226,10 @@ export class AuthService {
     const token = tokenString ? JSON.parse(tokenString) : null;
 
     if (!token || !token.refreshToken) {
-      console.log("No refresh token found");
-      return throwError(() => new Error("No refresh token found"));
+      localStorage.clear();
+      sessionStorage.clear();
+      this.logout();
+      this.router.navigate(['/login']);
     }
 
     const payload = {

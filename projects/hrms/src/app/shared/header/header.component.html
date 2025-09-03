@@ -168,6 +168,11 @@
                         class="error-msg">
                         Confirm Password must match the new password
                     </div>
+                     <div *ngIf="changePasswordForm.controls['confirmPassword'].errors?.['pattern']" class="error-msg">
+                        Your password must be at least 8 characters long and include at least one uppercase
+                        letter,
+                        one number, and one special character
+                    </div>
                 </div>
 
                 <div *ngIf="backendError" class="error-msg">

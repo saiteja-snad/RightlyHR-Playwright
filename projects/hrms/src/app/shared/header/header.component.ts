@@ -262,12 +262,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // Change Password
   changePasswordForm!: FormGroup;
+  StrongPasswordRegx: RegExp = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])(?!.*\s).{8,}$/;
   intilaizeChangePasswordForm() {
     this.changePasswordForm = this.fb.group(
       {
         currentPassword: ['', [Validators.required]],
-        newPassword: ['', [Validators.required, Validators.maxLength(15)]],
-        confirmPassword: ['', [Validators.required]],
+        newPassword: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.StrongPasswordRegx)]],
+        confirmPassword: ['', [Validators.required, Validators.maxLength(15), Validators.pattern(this.StrongPasswordRegx)]],
       }
     );
 

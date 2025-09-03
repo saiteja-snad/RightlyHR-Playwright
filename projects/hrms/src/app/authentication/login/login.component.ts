@@ -124,7 +124,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$'),
+          Validators.pattern('[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'),
         ],
       ],
       password: ['', Validators.required],
@@ -145,53 +145,54 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-async onSubmit(loginForm: FormGroup) {
-  console.log('Submit clicked, spinnerLoader:', this.spinnerLoader);
+  async onSubmit(loginForm: FormGroup) {
+    console.log('Submit clicked, spinnerLoader:', this.spinnerLoader);
 
-  if (loginForm.valid) {
-    this.spinnerLoader = true;
-    console.log('Form valid, calling API...');
+    if (loginForm.valid) {
+      this.spinnerLoader = true;
+      console.log('Form valid, calling API...');
 
-    const loginData = loginForm.value;
-    const deviceName = this.http.getDeviceName();
-    const ipAddress = await this.http.getIpAddress();
+      const loginData = loginForm.value;
+      const deviceName = this.http.getDeviceName();
+      const ipAddress = await this.http.getIpAddress();
 
-    const payload = {
-      email: loginData.email,
-      password: loginData.password,
-      deviceName,
-      ipAddress
-    };
+      const payload = {
+        email: loginData.email,
+        password: loginData.password,
+        deviceName,
+        ipAddress
+      };
 
-    this.subscription = this.http.login(`v2/Auth/login`, payload)
-      .pipe(finalize(() => {
-        console.log('Finalize triggered, resetting loader');
-        this.spinnerLoader = false;
-      }))
-      .subscribe({
-        next: (res: any) => {
-          console.log('API success:', res);
-          if (res) {
-            this.http.storeAuthResponse(res);
-            localStorage.setItem('loginType', 'Classic Login');
-            setTimeout(() => {
-              console.log('Navigating to /uservalidation');
-              this.router.navigate(['/uservalidation']);
-            }, 2000);
-          } else {
-            this.disableerrormsg = false;
+      this.subscription = this.http.login(`v2/Auth/login`, payload)
+        .pipe(finalize(() => {
+          console.log('Finalize triggered, resetting loader');
+          this.spinnerLoader = false;
+        }))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API success:', res);
+            if (res) {
+              this.http.storeAuthResponse(res);
+              localStorage.setItem('loginType', 'Classic Login');
+              setTimeout(() => {
+                console.log('Navigating to /uservalidation');
+                this.router.navigate(['/uservalidation']);
+              }, 2000);
+            } else {
+              this.disableerrormsg = false;
+            }
+          },
+          error: (err: any) => {
+            console.error('API error:', err);
+            this.Status = 'Invalid Email ID or Password';
           }
-        },
-        error: (err: any) => {
-          console.error('API error:', err);
-          this.Status = 'Invalid Email ID or Password';
-        }
-      });
-  } else {
-    console.log('Form invalid');
+        });
+    } else {
+      console.log('Form invalid');
+    }
   }
-}
 
+  
 
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -35,6 +35,7 @@
                 <div *ngIf="loginForm.get('email')?.errors?.['pattern']">Invalid Email Format</div>
               </div>
             </div>
+
             <div class="mb-4">
               <label for="exampleInputPassword1" class="form-label custom-label">Password
                 <span class="text-danger">*</span></label>
@@ -52,6 +53,10 @@
               </div>
               <div *ngIf="Status" class="text-danger error-msg">{{Status}}</div>
             </div>
+            <div class="d-flex justify-content-end my-4">
+                    <a class="forget-text" (click)="openmodel(confirmationpopup)">Forgot Password?</a>
+            </div>
+
             <!-- <div>
               <p class="error-msg mb-0">{{Status}}</p>
             </div> -->
@@ -101,3 +106,17 @@
     <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
   </div>
 </ng-template>
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4">Please contact administrator for password</p>
+      </div>
+  
+      <div class="">
+        <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
+      </div>
+    </div>
+</ng-template>
+

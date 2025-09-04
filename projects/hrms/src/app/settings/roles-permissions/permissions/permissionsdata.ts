@@ -36,7 +36,6 @@ export const permissionsData = [
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Status', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Background check Status', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Letter Acknoledgement', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Notice Period', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Frequency', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Paytype', View: false, Update: false, Create: false, Delete: false },
@@ -55,6 +54,10 @@ export const permissionsData = [
   { fields: 'Settings Job Probation Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Signature Authority', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Acknowledgment Configuration', View: false, Update: false, Create: false, Delete: false },
+ 
+  
+  
 
   //Manage Shifts tab 
   { fields: 'Shifts Pending Tab', View: false, Update: false, Create: false, Delete: false },
@@ -105,6 +108,7 @@ export const permissionsData = [
   { fields: 'Permission Elgibility Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Regularization Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Regularization Eligibility Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Eligibility Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Eligibility Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
 
   // Settings Dynamic Forms Section    
@@ -251,7 +255,12 @@ export const permissionsData = [
   { fields: 'My Team (WFH)', View: false, Update: false, Create: false, Delete: false },
 
   //Remote Login
-  { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },   
+  { fields: 'Waiting For Approval (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (Remote Login)', View: false, Update: false, Create: false, Delete: false },
 
 
   //Comp Off Sub Tabs Section    
@@ -264,7 +273,7 @@ export const permissionsData = [
 
   //Permissions Sub Tabs Section
   { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Approved (Permissions)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancel (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },
@@ -302,6 +311,7 @@ export const permissionsData = [
   //Pending Approvals Sub Tabs Section
   { fields: 'Time Off Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Tab', View: false, Update: false, Create: false, Delete: false },
@@ -320,6 +330,10 @@ export const permissionsData = [
   //Pending Approval WFH Off Tabs Section
   { fields: 'For You (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (WFH)', View: false, Update: false, Create: false, Delete: false },
+
+  //Pending Approval Remote Login Off Tabs Section
+  { fields: 'For You (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'For Role (Remote Login)', View: false, Update: false, Create: false, Delete: false },
 
 
   //Pending Approval Comp Off Tabs Section
@@ -549,6 +563,8 @@ export const permissionsData = [
   //My Info Documents Sub Tabs Section
   { fields: 'My Info Documents Upload File', View: false, Update: false, Create: false, Delete: false },
    { fields: 'My Info Documents Dowload File', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Documents Acknowledgment', View: false, Update: false, Create: false, Delete: false },
+
 
   //My Info Team Members Sub Tabs Section
   { fields: 'My Info Reporting Managers Tab', View: false, Update: false, Create: false, Delete: false },
@@ -574,6 +590,8 @@ export const permissionsData = [
   { fields: 'Employee Info Job Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Reset Password Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Generate Credentials Button', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Info Personal Sub Tabs Section
@@ -608,6 +626,8 @@ export const permissionsData = [
   //Employee Info Documents Sub Tabs Section
   { fields: 'Employee Info Documents Upload File', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Documents Dowload File', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee Info Documents Acknowledgment', View: false, Update: false, Create: false, Delete: false },
+
 
 
   //Employee Info Team Members Sub Tabs Section
@@ -799,7 +819,9 @@ export const permissionsData = [
 
   //Settings Header Icon
   { fields: 'Settings Icon', View: false, Update: false, Create: false, Delete: false },
-
+ //{ fields: 'Employee Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
+ //My Info Letter Acknowledgement
+ { fields: 'My Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
   //Draft Forms MArk As Active Action
   { fields: 'Mark As Active Action', View: false, Update: false, Create: false, Delete: false },
 ];

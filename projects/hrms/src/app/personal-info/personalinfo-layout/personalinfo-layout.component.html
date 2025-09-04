@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div *ngIf="headerName !== 'My Info'; else nonClickableHeader" class="commpoment-name navigator" (click)="onBackSubmit()">
+            <div *ngIf="headerName !== 'My Info'; else nonClickableHeader" class="commpoment-name navigator"
+                (click)="onBackSubmit()">
                 <u>{{headerName}}</u><span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
             </div>
             <ng-template #nonClickableHeader>
@@ -22,12 +23,14 @@
 
         <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Inactive Button.view')){
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType') && 
+            <button class="custom-btn btn-primary"
+                *ngIf="isActive('personalinfo/job/employmentType') && 
             empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
-            (click)="navigation()">Inactive</button>
+                (click)="navigation()">Inactive</button>
             }
 
-            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created'
+            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus
+            =='Employee Created'
             || empdata?.substatus=='Requested Documents') ){
             <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
@@ -47,8 +50,9 @@
             </button>
 
             <!-- <div *ngIf=""> -->
-            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' || getOfferDetails.candidateStatus == 'Offer Letter Accepted'
-             || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released'){
+            @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released' ||
+            getOfferDetails.candidateStatus == 'Offer Letter Accepted'
+            || getTraineeOfferDetails.candidateStatus=='Offer Letter Accepted' || emppersonalinfo.empstatus=='Offer Letter Released'){
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
             || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
                 (click)="openModal(revokeoffer)">
@@ -56,10 +60,21 @@
             </button>
             }
 
-            <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info')"
-                [hidden]="!emppersonalinfo.isCredentialExpired" (click)="updatePassword()">
-                {{'Generate Credentials'|translate}}
+            @if(this.rbac.allowedToAccess('Generate Credentials Button.view') && !this.empdata?.isUserRegistred ){
+            <button class="custom-btn btn-secondary"
+                *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active') &&  empdata?.substatus !=='Prospective' &&  empdata?.substatus !=='Probation'"
+                (click)="openCredentialsModal(generateCredentialsModal)">
+                {{'Generate Credentials '|translate}}
             </button>
+            }
+
+            @if(this.rbac.allowedToAccess('Reset Password Button.view') && this.empdata?.isUserRegistred){
+            <button class="custom-btn btn-secondary"
+                *ngIf="isActive('personalinfo') && (empdata?.empstatus ==='Active' || empdata?.empstatus ==='Trainee Active') &&  empdata?.substatus !=='Prospective' &&  empdata?.substatus !=='Probation'"
+                (click)="openCredentialsModal(resetPasswordConfirmation)">
+                {{'Reset Password'|translate}}
+            </button>
+            }
         </div>
     </div>
 
@@ -83,7 +98,8 @@
                 <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
             </div>
             <div>
-                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
 
@@ -121,6 +137,51 @@
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
             <button type="submit" class="custom-btn btn-primary" (click)="submitArchive()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #resetPasswordConfirmation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text  mt-3">{{'Are you sure you want to generate new password' |translate}}?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="spinnerLoader" (click)="resetPassword()">
+                @if(spinnerLoader){
+                <div class="d-flex gap-1">
+                    <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
+                    <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>{{'Yes'}}</span>
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #generateCredentialsModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text  mt-3">{{'Are you sure you want to generate new credentials' |translate}}?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]=" spinnerLoader"
+                (click)="generateCredentials()">
+                @if(spinnerLoader){
+                <div class="d-flex gap-1">
+                    <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"></span>
+                    <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>{{'Yes'}}</span>
+                }
+            </button>
         </div>
     </div>
 </ng-template>

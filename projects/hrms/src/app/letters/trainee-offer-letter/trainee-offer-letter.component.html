@@ -391,23 +391,23 @@
                         [ngClass]="{'soft-copy-letter': traineeEmpData.documentType}">
                         <div class="letter-page-sub-content">
 
-                            <div class="letter-header text-center mb-4">{{'Trainee Offer Letter'|translate}}</div>
+                            <div class="letter-header text-center mb-5">TRAINEE OFFER LETTER</div>
                             <div class="d-flex justify-content-between mb-3">
                                 <ul class="list-style-none ps-0">
-                                    <li
+                                    <li class="mb-1"
                                         *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
                                         {{'Name'|translate}}:</li>
                                     <ng-template #fullname>
-                                        <li>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
+                                        <li class="mb-1">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
                                             {{traineeEmpData.lastName}},</li>
                                     </ng-template>
-                                    <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
+                                    <li class="mb-1" *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
-                                        <li>{{traineeEmpData.addressLine1}},</li>
+                                        <li class="mb-1">{{traineeEmpData.addressLine1}},</li>
                                         @if(traineeEmpData.addressLine2){
-                                        <li>{{traineeEmpData.addressLine2}},</li>
+                                        <li class="mb-1">{{traineeEmpData.addressLine2}},</li>
                                         }
-                                        <li>{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
+                                        <li class="mb-1">{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
                                         <li>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</li>
                                     </ng-template>
                                 </ul>
@@ -420,7 +420,7 @@
                             <div>
                                 <p class="mb-4">The details of your internship offer are as follows:</p>
                                 <ol class="liststylenumber">
-                                    <li class="mb-5">
+                                    <li class="mb-4">
                                         <b>{{'Start Date and Duration' | translate}}: </b>Your internship
                                         will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> and
                                         is
@@ -428,16 +428,16 @@
                                         lasting for a period of <b>{{traineeEmpData.internshipperiod | number:'1.0-0'}}
                                             Months</b>.
                                     </li>
-                                    <li class="mb-5"><b>{{'Working Hours and Location'|translate}}:
+                                    <li class="mb-4"><b>{{'Working Hours and Location'|translate}}:
                                         </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to
                                         Friday), at our office located at SNAD Developers India Pvt Ltd,. Occasionally,
                                         you may be required to work additional hours or remotely, depending on the
                                         nature of the projects and business requirements.
                                     </li>
-                                    <li class="mb-5"><b>{{'Reporting Manager'|translate}}: </b>You will be
-                                        reporting to <u>{{ traineeEmpData.reportingmanagerName }}</u>
+                                    <li class="mb-4"><b>{{'Reporting Manager'|translate}}: </b>You will be
+                                        reporting to <u>{{ traineeEmpData.reportingmanagerName }}</u>.
                                     </li>
-                                    <li class="mb-2">
+                                    <li class="mb-4">
                                         <b>{{'Stipend/Salary and Benefits'|translate}}: </b>During the internship
                                         period, you’re eligible to receive Rs.10,000/- per month as a stipend/salary.
                                         After successful completion of the internship period, you will be appointed as
@@ -445,20 +445,20 @@
                                         <b>{{traineeEmpData.amount}}</b> per
                                         annum.
                                     </li>
-                                    <li class="mb-5">
+                                    <li class="mb-4">
                                         <b>{{'Responsibilities'|translate}}: </b>Your primary responsibilities will be
                                         explained by your reporting
                                         manager during the onboarding process. We expect you to conduct yourself
                                         professionally and adhere to company policies and procedures at all times.
                                     </li>
-                                    <li class="mb-5">
+                                    <li class="mb-4">
                                         <b>{{'Confidentiality and Non-Disclosure'|translate}}: </b>As an intern, you
                                         will have
                                         access to sensitive and proprietary information. You are required to sign and
                                         adhere to the
                                         Confidentiality and Non-Disclosure Agreement, which will be provided separately.
                                     </li>
-                                    <li class="mb-5">
+                                    <li class="mb-4">
                                         <b>{{'Evaluation and Feedback'|translate}}: </b>Your performance will be
                                         evaluated periodically.
                                         Constructive feedback will be provided to help you grow and make the most out of
@@ -493,16 +493,18 @@
                                     </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
-                                    <p class="mb-2">Sincerely,</p>
-                                    <p class="mb-4"><b>For SNAD Developers India Pvt Ltd</b></p>
+                                
                                 </div>
-                                <div class="pt-3">
-                                    <p class="letter-signature mb-2">{{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header mb-1">
+                                 <p class="pt-3">Your Sincerely,</p>
+                                <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
+                                <div class="mb-3"></div>
+                                 <div>
+                                    <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
+                                    <p class="authorized-signatory mb-1">
                                         Authorized Signatory, </p>
-                                    <p class="letter-sub-header mb-1" *ngIf="traineeEmpData.authorityName?.trim()">
+                                    <p class="authorized-signatory mb-1" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header mb-0">{{authorityDesignation}} </p>
+                                    <p class="authorized-signatory mb-4">{{authorityDesignation}} </p>
                                     <br>
                                     <hr>
                                     <p class="mb-3">I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}

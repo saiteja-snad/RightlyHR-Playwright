@@ -12,11 +12,11 @@
       <div class="tabs-border-bottom"></div>
     </li>
     }
-    @if(rbac.allowedToAccess('Approved (Permissions).view')){
+    @if(rbac.allowedToAccess('Processed (Permissions).view')){
     <li class="nav-item">
-      <div class="nav-link" [routerLink]="['/time-off/premissions/approved']" routerLinkActive="active-nav-link">
-        <img src="/time-off-icon/approved-icon.png" alt="Icon" class="icon mb-2">
-        <div>Approved ({{approvalPermissionsRequestsCount}})</div>
+      <div class="nav-link" [routerLink]="['/time-off/premissions/processed']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/processed-icon.png" alt="Icon" class="icon mb-2">
+        <div>Processed ({{approvalPermissionsRequestsCount}})</div>
       </div>
       <div class="tabs-border-bottom"></div>
     </li>

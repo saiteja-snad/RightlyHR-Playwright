@@ -1,0 +1,28 @@
+.nav-link {
+    color: #000;
+    font-weight: 400;
+    border-radius: 0rem !important;
+    padding: 0.325rem 0.75rem !important;
+}
+
+.nav-link.active,
+.nav-link[aria-current="page"] {
+    color: var(--primary-color) !important;
+    border-bottom: 0.25rem solid var(--navtab-item-color) !important;
+    font-weight: 500;
+}
+
+.custom-table-content {
+    width: 100% !important;
+    height: calc(100vh - 13.625rem) !important;
+    border: 1px solid var(--table-header-bg-color) !important;
+}
+
+.text-primary {
+    text-decoration: none !important;
+    color: var(--primary-color)!important;
+}
+
+.letter-data-content {
+    height: calc(100dvh - 16rem) !important;
+}

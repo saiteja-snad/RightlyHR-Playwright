@@ -45,7 +45,7 @@ export default [
             // { path: 'appointment-details', loadComponent: () => import('./job/appointment-details/appointment-details.component').then((m) => m.AppointmentDetailsComponent)},
             { path: 'probation-frequency', loadComponent: () => import('./job/probation-frequency/probation-frequency.component').then((m) => m.ProbationFrequencyComponent)},
             { path: 'roles-and-responsibilities', loadComponent: () => import('./job/roles-and-responsibilities/roles-and-responsibilities.component').then((m) => m.RolesAndResponsibilitiesComponent)},
-            {path: 'letters-acknowledgment',loadComponent: () => import('./job/letters-ack/letters-ack.component').then((m) => m.LettersACKComponent),canActivate: [PermissionsGuard],data: { permission: 'Letter Acknoledgement.view' }}
+            { path: 'letter-acknowledgement', loadComponent: () => import('./job/letter-acknowledgement/letter-acknowledgement.component').then((m) => m.LetterAcknowledgementComponent), canActivate: [PermissionsGuard], data: { permission: 'Job Role.view' } }
 
         ]
     },

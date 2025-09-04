@@ -337,7 +337,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       if (this.selectedProducts && this.selectedProducts.length > 0) {
         this.requestBody = {
           requestProcessedBy: approvedBy,
-          status: 'Approved',
+          status: 'Processed',
           comments: comments,
           moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: this.selectedProducts.map((item) => ({
@@ -348,7 +348,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       } else {
         this.requestBody = {
           requestProcessedBy: approvedBy,
-          status: 'Approved',
+          status: 'Processed',
           comments: comments,
           moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: [

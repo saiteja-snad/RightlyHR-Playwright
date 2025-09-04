@@ -3,11 +3,10 @@ import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApprovalStatusCount } from '../Interfaces/timoff-model';
-
-
 @Injectable({
   providedIn: 'root',
 })
+
 export class HttpService {
   communicationService!: BehaviorSubject<any>;
   tirggerCountSignal = signal<{
@@ -16,14 +15,14 @@ export class HttpService {
     employeeId: number;
     permission: boolean;
     remote: boolean;
-    global: boolean
+    global: boolean;
   }>({
     compOff: false,
     wfh: false,
     employeeId: 0,
     permission: false,
     remote: false,
-    global: false
+    global: false,
   });
   tirggerPendingApprovalCountSignal = signal<{
     compOff: boolean;
@@ -31,9 +30,9 @@ export class HttpService {
     permission: boolean;
     separation: boolean;
     recall: boolean;
-    expenses:boolean;
-    nodue:boolean,
-    timeoff:boolean,
+    expenses: boolean;
+    nodue: boolean;
+    timeoff: boolean;
   }>({
     compOff: false,
     wfh: false,
@@ -41,26 +40,21 @@ export class HttpService {
     separation: false,
     recall: false,
     expenses: false,
-    nodue:false,
-    timeoff:false
-   
+    nodue: false,
+    timeoff: false,
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
-
-
-
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<boolean>(false);
+
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
-
-
 
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
@@ -72,20 +66,21 @@ export class HttpService {
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
-  // Function to set the communication service data for basic info 
+
+  // Function to set the communication service data for basic info
   basicDetailes = new Subject<void>();
   basicDetailesadded$ = this.basicDetailes.asObservable();
   setBasicDetails() {
     this.basicDetailes.next();
   }
 
-    // Function to set the communication service data for basic info 
-    profliepicDetailes = new Subject<void>();
-    profliepicadd$ = this.profliepicDetailes.asObservable();
-    setprofileDetails() {
-      this.profliepicDetailes.next();
-    }
-  
+  // Function to set the communication service data for basic info
+  profliepicDetailes = new Subject<void>();
+  profliepicadd$ = this.profliepicDetailes.asObservable();
+  setprofileDetails() {
+    this.profliepicDetailes.next();
+  }
+
   //funtion to call add desk
   deskadded = new Subject<void>();
   deskDetailesadded$ = this.deskadded.asObservable();
@@ -93,38 +88,42 @@ export class HttpService {
     this.deskadded.next();
   }
 
-    // Function to set the communication service data for basic info 
-    assetsadded = new Subject<void>();
-    assetDetailesadded$ = this.assetsadded.asObservable();
-    setnewassetsDetails() {
-      this.assetsadded.next();
-    }
-  
-        // Function to set the communication service data for basic info 
-    expensescount = new Subject<void>();
-    expensesprocesscount$ = this.expensescount.asObservable();
-    setnewcountDetails() {
-      this.expensescount.next();
-    }
-  
-  //Function to set the communication service data for basic info 
+  // Function to set the communication service data for basic info
+  assetsadded = new Subject<void>();
+  assetDetailesadded$ = this.assetsadded.asObservable();
+  setnewassetsDetails() {
+    this.assetsadded.next();
+  }
+
+  // Function to set the communication service data for basic info
+  expensescount = new Subject<void>();
+  expensesprocesscount$ = this.expensescount.asObservable();
+  setnewcountDetails() {
+    this.expensescount.next();
+  }
+
+  //Function to set the communication service data for basic info
   separationDetailes = new Subject<void>();
   separationDetailesadded$ = this.separationDetailes.asObservable();
   setseparationDetails() {
     this.separationDetailes.next();
   }
+
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
   selectedYear$ = this.selectedYearSubject.asObservable();
+
   //holidays year
   setSelectedYear(year: number) {
     this.selectedYearSubject.next(year);
   }
+
   private triggerSignal = signal(false);
   readonly trigger = this.triggerSignal;
   triggerActionSignal() {
     this.triggerSignal.set(true);
   }
+
   resetTriggerSignal() {
     this.triggerSignal.set(false);
   }
@@ -133,78 +132,95 @@ export class HttpService {
     this.activeTabSubject.next(isActive);
   }
 
+  // set attendancelocking count
+  private refreshTrigger = new Subject<void>();
+  refresh$ = this.refreshTrigger.asObservable();
+  triggerRefresh() {
+    this.refreshTrigger.next();
+  }
 
   // OnBehalf Of 
   onBehalfOfTriggerSignal = signal<boolean>(false);
-
-
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
-// function for employeid TIMEOFF
- private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
+  // function for employeid TIMEOFF
+  private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
+
   // Observable for components to subscribe to
   selectedEmployeeIdTimeoff$ = this.selectedEmployeeIdTimeoff.asObservable();
+
   // Method to update the employeeId
   setEmployeeIdTimeoff(id: any): void {
     this.selectedEmployeeIdTimeoff.next(id);
-    console.log('Selected Employee Timeoff ID:', id);
   }
 
-// function for employeid COMPOFF
- private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
+  // Add this getter 👇
+  getCurrentEmployeeIdTimeoff(): any {
+    return this.selectedEmployeeIdTimeoff.getValue();
+  }
+
+  // function for employeid COMPOFF
+  private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
   selectedEmployeeIdCompOff$ = this.selectedEmployeeIdCompOff.asObservable();
   // Method to update the employeeId
   setEmployeeIdCompOff(id: any): void {
     this.selectedEmployeeIdCompOff.next(id);
-    console.log('Selected Employee Compoff ID:', id);
   }
 
-// function for employeid wfh
+  // function for employeid wfh
   private selectedEmployeeIdWFH = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
   selectedEmployeeIdWFH$ = this.selectedEmployeeIdWFH.asObservable();
   // Method to update the employeeId
   setEmployeeIdWFH(id: any): void {
     this.selectedEmployeeIdWFH.next(id);
-    console.log('Selected Employee WFH ID:', id);
   }
 
-// function for employeid permission
+  // function for employeid remote login
+  private selectedEmployeeIdRemoteLogin = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdRemoteLogin$ =
+    this.selectedEmployeeIdRemoteLogin.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdRemoteLogin(id: any): void {
+    this.selectedEmployeeIdRemoteLogin.next(id);
+  }
+
+  // function for employeid permission
   private selectedEmployeeIdPermission = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
-  selectedEmployeeIdPermission$ = this.selectedEmployeeIdPermission.asObservable();
+  selectedEmployeeIdPermission$ =
+    this.selectedEmployeeIdPermission.asObservable();
   // Method to update the employeeId
   setEmployeeIdPermission(id: any): void {
     this.selectedEmployeeIdPermission.next(id);
-    console.log('Selected Employee Permission ID:', id);
   }
 
-
-// function for employeid regularization
+  // function for employeid regularization
   private selectedEmployeeIdRegularization = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
-  selectedEmployeeIdRegularization$ = this.selectedEmployeeIdRegularization.asObservable();
+  selectedEmployeeIdRegularization$ =
+    this.selectedEmployeeIdRegularization.asObservable();
   // Method to update the employeeId
   setEmployeeIdRegularization(id: any): void {
     this.selectedEmployeeIdRegularization.next(id);
-    console.log('Selected Employee Regularization ID:', id);
   }
 
   // function for employeid itsupport team ticket
- private refreshSubject = new Subject<void>();
+  private refreshSubject = new Subject<void>();
   refreshRequested$ = this.refreshSubject.asObservable();
   // Method to update the employeeId
-   requestRefresh() {
-    console.log('Selected Employee team ticket ID:', 'refresh');
+  requestRefresh() {
     this.refreshSubject.next();
-    
   }
+
   //function to update the desk Updatelocation
   deskUpdateLocationId(id: string | null) {
     this.desklocationIdSubject.next(id);
   }
+
   //function to update the desk sublocation
   deskUpdateSubLocationId(id: string | null) {
     this.desksublocationIdSubject.next(id);
@@ -216,6 +232,7 @@ export class HttpService {
   assetsUpdateLocationId(id: string | null) {
     this.assetslocationIdSubject.next(id);
   }
+
   //function to update the desk sublocation
   assetsUpdateSubLocationId(id: string | null) {
     this.assetssublocationIdSubject.next(id);
@@ -224,21 +241,17 @@ export class HttpService {
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
   employeeId$ = this.employeeIdSubject.asObservable();
-
   updateemployeeId(employeeid: number) {
     this.employeeIdSubject.next(employeeid);
   }
+
   //to get template on offer letter
   getTemplate(): Observable<ArrayBuffer> {
-    return this.http
-      .get('../assets/offer.docx', {
-        responseType: 'arraybuffer',
+    return this.http.get('../assets/offer.docx', { responseType: 'arraybuffer', }).pipe(
+      catchError((error) => {
+        throw error; // You can handle the error more specifically here
       })
-      .pipe(
-        catchError((error) => {
-          throw error; // You can handle the error more specifically here
-        })
-      );
+    );
   }
 
   getDatabyid(url: string, _params?: any) {
@@ -255,15 +268,15 @@ export class HttpService {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
 
-  getAllSignatureEmployeesData(url:string){
+  getAllSignatureEmployeesData(url: string) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
 
-  employeeSignatureAuthority(url:string, data: any){
-    return this.http.post(`${this.ApiUrl}${url}`,data);
+  employeeSignatureAuthority(url: string, data: any) {
+    return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
-  deleteSignatureEmployee(url:string){
+  deleteSignatureEmployee(url: string) {
     return this.http.post(`${this.ApiUrl}${url}`, {});
   }
 
@@ -282,12 +295,15 @@ export class HttpService {
   get(url: string, options?: any) {
     return this.http.get(`${this.ApiUrl}${url}`, options);
   }
+
   getByDownload<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);
   }
+
   postfile<T>(endpoint: string, options?: object): Observable<T> {
     return this.http.get<T>(`${this.ApiUrl}${endpoint}`, options);
   }
+
   // to get the ip
   getIpAddress() {
     return this.http.get('https://jsonip.com/');
@@ -296,11 +312,7 @@ export class HttpService {
   uploadFileWithQuery(url: string, directoryPath: string, file: any) {
     const formData = new FormData();
     formData.append('file', file);
-
-    return this.http.post(
-      `${this.ApiUrl}${url}?directoryPath=${directoryPath}`,
-      formData
-    );
+    return this.http.post(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`, formData);
   }
 
   uploadfile(url: string, data: any) {
@@ -315,26 +327,24 @@ export class HttpService {
       observe: 'response' as const,
       responseType: 'blob' as const,
     };
-    return this.http.get(
-      `${this.ApiUrl}${url}?fileName=${directoryPath}`,
-      options
-    );
+    return this.http.get(`${this.ApiUrl}${url}?fileName=${directoryPath}`, options);
   }
 
   DownloadDataWithQuerydata(endpoint: string, params: any): Observable<any> {
     return this.http.post(endpoint, params, {
       observe: 'response',
-      responseType: 'blob'
+      responseType: 'blob',
     });
   }
+
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
   }
+
   postDatareport(url: string, data: any): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      Accept:
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     return this.http.post(`${this.ApiUrl}${url}`, data, {
       headers,
@@ -345,23 +355,22 @@ export class HttpService {
   postdata(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
+
+  postbyId(url: string) {
+    return this.http.post(`${this.ApiUrl}${url}`, {}); // empty body for POST
+  }
+
   /* to the post dynamic form details*/
   postData(url: string, data: any, options: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data, options);
   }
+
   createExpense(url: string, data: any): Observable<any> {
     return this.http.post<any>(`${this.ApiUrl}${url}`, data);
   }
 
-  getstatusdesk(
-    url: string,
-    selectedLocationId: any,
-    selectedSubLocationId: any,
-    status: string,
-    page: number,
-    pageSize: number,
-    searchQuery: string
-  ): any {
+  getstatusdesk(url: string, selectedLocationId: any, selectedSubLocationId: any, status: string,
+    page: number, pageSize: number, searchQuery: string): any {
     const params: { [key: string]: any } = {
       locationid: selectedLocationId,
       sublocationid: selectedSubLocationId,
@@ -370,16 +379,13 @@ export class HttpService {
       pageSize: pageSize,
       searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
     };
-
     // Build the query string dynamically, excluding null or undefined values
     const queryString = Object.entries(params)
       .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-
     // Construct the full URL
     const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
-
     // Make the HTTP GET request
     return this.http.get(dataUrl);
   }
@@ -401,29 +407,19 @@ export class HttpService {
       pageSize: pageSize,
       searchQuery: searchQuery ? encodeURIComponent(searchQuery) : undefined,
     };
-
     // Build the query string dynamically, excluding null or undefined values
     const queryString = Object.entries(params)
       .filter(([_, value]) => value !== null && value !== undefined) // Exclude null/undefined values
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
-
     // Construct the full URL
     const dataUrl = `${this.ApiUrl}${url}?${queryString}`;
-
     // Make the HTTP GET request
     return this.http.get(dataUrl);
   }
-  postProbation(
-    url: string,
-    employeeId: number,
-    referenceId: number,
-    raisedbyempId: number
-  ) {
-    let params = new HttpParams()
-      .set('employeeId', employeeId)
-      .set('referenceId', referenceId)
-      .set('currentApproverId', raisedbyempId);
+
+  postProbation(url: string, employeeId: number, referenceId: number, raisedbyempId: number) {
+    let params = new HttpParams().set('employeeId', employeeId).set('referenceId', referenceId).set('currentApproverId', raisedbyempId);
     return this.http.post(`${this.ApiUrl}${url}`, null, { params });
   }
 
@@ -439,6 +435,7 @@ export class HttpService {
   putFormsData(url: string) {
     return this.http.put(`${this.ApiUrl}${url}`, null);
   }
+
   getfile(url: string, filename: string) {
     return this.http.get(`${this.ApiUrl}${url}` + filename, {
       observe: 'response',
@@ -453,9 +450,7 @@ export class HttpService {
   }
 
   getUserDetails(email: string) {
-    return this.http.get(
-      `${this.ApiUrl}Employeedata/GetemployeebyemailID?emailid=${email}`
-    );
+    return this.http.get(`${this.ApiUrl}Employeedata/GetemployeebyemailID?emailid=${email}`);
   }
 
   getDatabytype(url: string, _params?: any) {
@@ -468,12 +463,7 @@ export class HttpService {
     return this.http.get(data_url);
   }
 
-  getDatabypermissions(
-    url: string,
-    _params?: any,
-    _param?: any,
-    paramvalue?: string
-  ) {
+  getDatabypermissions(url: string, _params?: any, _param?: any, paramvalue?: string) {
     const data_url = `${this.ApiUrl}${url}?RaisedFor=${_params}&RequestedBy=${_param}&Status=${paramvalue}`;
     return this.http.get(data_url);
   }
@@ -487,7 +477,6 @@ export class HttpService {
     for (let key in queryParams) {
       params.set(key, queryParams[key]);
     }
-
     return this.http.get(`${this.ApiUrl}${url}?${params.toString()}`);
   }
 
@@ -502,13 +491,9 @@ export class HttpService {
   updatePermissionEligibilityValues(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
-  downloadMonthlyAttendanceReport(
-    url: string,
-    month: string | null,
-    year: number
-  ): Observable<Blob> {
-    const apiurl = `${this.ApiUrl}${url}?month=${month}&year=${year}`;
 
+  downloadMonthlyAttendanceReport(url: string, month: string | null, year: number): Observable<Blob> {
+    const apiurl = `${this.ApiUrl}${url}?month=${month}&year=${year}`;
     // Make the GET request and return the file as a Blob
     return this.http.get(apiurl, {
       responseType: 'blob', // Set response type to 'blob' to handle file download
@@ -521,7 +506,6 @@ export class HttpService {
   //     .set('searchQuery', searchQuery)
   //     .set('page', page.toString())
   //     .set('pageSize', pageSize.toString());
-
   //   return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   // }
 
@@ -537,14 +521,13 @@ export class HttpService {
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
       .set('pageSize', pagesize.toString());
-
     if (searchparam) params = params.set('searchparam', searchparam);
     if (employeeId) params = params.set('employeeIds', employeeId);
     if (name) params = params.set('name', name);
     if (formStatus) params = params.set('formstatus', formStatus);
-
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
+
   getReviewCyclesteam(
     url: string,
     pagenum: number,
@@ -557,52 +540,33 @@ export class HttpService {
     let params = new HttpParams()
       .set('pageNumber', pagenum.toString())
       .set('pageSize', pagesize.toString());
-
     if (searchparam) params = params.set('searchparam', searchparam);
     if (employeeId) params = params.set('assessorempid', employeeId);
     if (name) params = params.set('name', name);
     if (formStatus) params = params.set('formstatus', formStatus);
-
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
 
-  getAssesnmentFormById(
-    url: string,
-    reviewcycleitemid: number,
-    employeeId: number
-  ): Observable<any> {
-    return this.http.get<any>(
-      `${this.ApiUrl}${url.replace(
-        '{reviewcycleitemid}',
-        reviewcycleitemid.toString()
-      )}?employeeId=${employeeId}`
-    );
+  getAssesnmentFormById(url: string, reviewcycleitemid: number, employeeId: number): Observable<any> {
+    return this.http.get<any>(`${this.ApiUrl}${url.replace('{reviewcycleitemid}', reviewcycleitemid.toString())}?employeeId=${employeeId}`);
   }
 
-  getAllPendingApprovalsCount(
-    moduleId?: number,
-    employeeId?: number
-  ): Observable<ApprovalStatusCount[]> {
+  getAllPendingApprovalsCount(moduleId?: number, employeeId?: number): Observable<ApprovalStatusCount[]> {
     let params = new HttpParams();
-
     if (moduleId !== undefined && moduleId !== null) {
       params = params.set('moduleId', moduleId.toString());
     }
-
     if (employeeId !== undefined && employeeId !== null) {
       params = params.set('EmployeeId', employeeId.toString());
     }
-
     return this.http.get<ApprovalStatusCount[]>(
       `${this.ApiUrl}PendingApproval/getApprovalStatusCounts`,
       { params }
     );
   }
 
-
   deskTotalCountSubject = new BehaviorSubject<number>(0);
   deskAvailableCountSubject = new BehaviorSubject<number>(0);
-
   deskAllocatedCountSubject = new BehaviorSubject<number>(0);
   deskUndermaindanaenceCountSubject = new BehaviorSubject<number>(0);
   deskinactiveCountSubject = new BehaviorSubject<number>(0);
@@ -626,6 +590,7 @@ export class HttpService {
   setinactiveSubjectDeskCount(count: number) {
     this.deskinactiveCountSubject.next(count);
   }
+
   setWFASubjectDeskCount(count: number) {
     this.deskWiatingforapprovalCountsubject.next(count);
   }
@@ -635,7 +600,6 @@ export class HttpService {
   allocatedassetCountSubject = new BehaviorSubject<number>(0);
   undermatinaceassetCountSubject = new BehaviorSubject<number>(0);
   inactiveaceassetCountSubject = new BehaviorSubject<number>(0);
-
   setAssetCount(count: number) {
     this.assetCountSubject.next(count);
   }
@@ -644,7 +608,6 @@ export class HttpService {
     this.avilableassetCountSubject.next(count);
   }
 
-
   setallocatedAssetCount(count: number) {
     this.allocatedassetCountSubject.next(count);
   }
@@ -652,7 +615,6 @@ export class HttpService {
   setundermatinaceAssetCount(count: number) {
     this.undermatinaceassetCountSubject.next(count);
   }
-
 
   setinactiveSubjectAssetCount(count: number) {
     this.inactiveaceassetCountSubject.next(count);
@@ -664,6 +626,10 @@ export class HttpService {
 
   getFilterCompoffDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getCompoffRequests/${employeeId}?year=${params}`);
+  }
+
+  getFilterRemoteLoginDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getRemoteLoginRequests/${employeeId}?year=${params}`);
   }
 
   getFilterWFHDataByID(employeeId: number, params?: any) {

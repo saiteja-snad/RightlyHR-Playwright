@@ -8,7 +8,7 @@
       </div>
       @if(!buttons && canAccess('update','emergency')){
       @if((employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-      employedata?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+      employedata?.empstatus?.toLowerCase() !== 'trainee inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
       <div >
         <a (click)="enableForm()"><app-edit-icon /></a>
       </div>

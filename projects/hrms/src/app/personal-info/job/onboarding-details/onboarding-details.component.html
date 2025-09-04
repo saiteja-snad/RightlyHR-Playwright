@@ -21,7 +21,7 @@
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" (click)="onSubmit()">Save</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="this.onboardingForm.invalid" (click)="onSubmit()">Save</button>
             </div>
             }
         </div>
@@ -181,24 +181,32 @@
                         Total Experience is required
                     </div>
                 </div>
-
+            </div>
+            <div class="row">
+                <div class="mb-2">
+                    <span class="component-sub-header">Work From Home</span>
+                </div>
+                <!-- Work From Home -->
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="remoteLogin" class="form-label custom-label mb-2">Allow Work From Home</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="remoteLogin" optionLabel="name" optionValue="value"
-                            formControlName="remoteLogin" placeholder="Select Remote Login"
+                        <p-select [options]="wfh" optionLabel="name" optionValue="value"
+                            formControlName="allowwfh" placeholder="Select Remote Login"
                             class="form-select custom-select" appendTo="body">
                         </p-select>
                     </div>
                     <div class="error-msg"
-                        *ngIf="onboardingForm.get('remoteLogin')?.invalid && onboardingForm.get('remoteLogin')?.touched">
+                        *ngIf="onboardingForm.get('allowwfh')?.errors?.['required'] && onboardingForm.get('allowwfh')?.touched">
                         Allow Work From Home is required
                     </div>
+                    <div class="error-msg" *ngIf="onboardingForm.get('allowwfh')?.errors?.['conflict']">
+                        {{ onboardingForm.get('allowwfh')?.errors?.['conflict'] }}
+                    </div>
                 </div>
-
-                @if (onboardingForm.get('remoteLogin')?.value === true) {
+                <!-- Work From Home Work Location -->
+                @if (onboardingForm.get('allowwfh')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="workLocation" class="form-label custom-label mb-2">Work Location</label>
+                    <label for="workLocation" class="form-label custom-label mb-2">Work From Home Work Location</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="filteredWorkLocations" formControlName="workLocation" optionLabel="value"
                             optionValue="value" placeholder="Select Work Location" class="form-select custom-select"
@@ -207,12 +215,12 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
-                        Work Location is required
+                        Work From Home Work Location is required
                     </div>
                 </div>
                 }
-
-                @if (onboardingForm.get('remoteLogin')?.value === true) {
+                <!-- Work From Home Manager -->
+                @if (onboardingForm.get('allowwfh')?.value === true) {
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
                     <div class="custom-p-select-content">
@@ -226,7 +234,61 @@
                     </div>
                 </div>
                 }
+                </div>
+
+            <div class="row">
+                <div class="mb-2">
+                    <span class="component-sub-header">Remote Login</span>
+                </div>
+                <!-- Remote Login -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="remoteLogin" class="form-label custom-label mb-2">Allow Remote Login</label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="remoteLoginOptions" optionLabel="name" optionValue="value"
+                            formControlName="allowRemoteLogin" placeholder="Select Remote Login"
+                            class="form-select custom-select" appendTo="body">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('allowRemoteLogin')?.errors?.['required'] && onboardingForm.get('allowRemoteLogin')?.touched">
+                        Allow Remote Login is required
+                    </div>
+                    <div class="error-msg" *ngIf="onboardingForm.get('allowRemoteLogin')?.errors?.['conflict']">
+                        {{ onboardingForm.get('allowRemoteLogin')?.errors?.['conflict'] }}
+                    </div>
+                    </div>
+                <!-- Remote Login Work Location -->
+                @if (onboardingForm.get('allowRemoteLogin')?.value === true) {
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="workLocation" class="form-label custom-label mb-2">Remote Login Work Location</label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="filteredRemoteLoginWorkLocations" formControlName="remoteLoginWorkLocation" optionLabel="value"
+                            optionValue="value" placeholder="Select Work Location" class="form-select custom-select" appendTo="body">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('remoteLoginWorkLocation')?.invalid && onboardingForm.get('remoteLoginWorkLocation')?.touched">
+                        Remote Login Work Location is required
+                    </div>
+                </div>
+                }
+                <!-- Remote Login Manager -->
+                @if (onboardingForm.get('allowRemoteLogin')?.value === true) {
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label for="workLocation" class="form-label custom-label mb-2">Remote Login Manager</label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="remoteLoginManagers" formControlName="remoteLoginManager" optionLabel="name" optionValue="value"
+                            placeholder="Select Remote Login Manager" class="form-select custom-select" appendTo="body">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="onboardingForm.get('remoteLoginManager')?.invalid && onboardingForm.get('remoteLoginManager')?.touched">
+                        Remote Login Manager is required
+                    </div>
+                </div>
+                }
             </div>
+           
         </form>
     </div>
     }

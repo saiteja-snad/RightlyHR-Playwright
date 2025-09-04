@@ -16,22 +16,80 @@
   <div class="login-right-content">
     <!-- login page card starts -->
     <div class="login-card">
-      <div class="d-flex flex-column justify-content-center text-center w-100">
-        <div class="mb-5">
+      <div class="d-flex flex-column w-100">
+        <div class="d-flex justify-content-center mb-4 pb-2">
           <img src="/logos/SNAD-horizontal-logo.png" alt="Logo" class="company-logo">
         </div>
-        <div class="mb-5">
+        <!-- <div class="mb-5">
           <img src="/logos/logos-microsoft-icon.png" alt="Microsoft Logo" class="microsoft-logo">
+        </div> -->
+        <div>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)">
+            <!-- Email -->
+            <div class="mb-4">
+              <label class="form-label custom-label">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control custom-input" formControlName="email"
+                placeholder="Please enter email" (input)="formsValidation.validateInput(loginForm.get('email'))">
+              <div class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+                <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</div>
+                <div *ngIf="loginForm.get('email')?.errors?.['pattern']">Invalid Email Format</div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="exampleInputPassword1" class="form-label custom-label">Password
+                <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input [type]="changetype ? 'password' : 'text'"
+                  class="form-control custom-input login-input border-right-none" placeholder="Please enter password"
+                  formControlName="password" (ngModelChange)="errorCheck(loginForm.get('password')?.value)"
+                  (input)="formsValidation.validateInput(loginForm.get('password'))">
+                <span class="input-group-text border-left-none" (click)="viewpassword()">
+                  <i [ngClass]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+                </span>
+              </div>
+              <div class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                Password is required
+              </div>
+              <div *ngIf="Status" class="text-danger error-msg">{{Status}}</div>
+            </div>
+            <div class="d-flex justify-content-end my-4">
+                    <a class="forget-text" (click)="openmodel(confirmationpopup)">Forgot Password?</a>
+            </div>
+
+            <!-- <div>
+              <p class="error-msg mb-0">{{Status}}</p>
+            </div> -->
+            <div class="error-msg">{{wrongCredentials}}</div>
+            <div class="login-button-content pt-2">
+              <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid || spinnerLoader">
+                @if(spinnerLoader){
+                <div class="button-loader-content d-flex justify-content-center">
+                  <div class="spinner-border button-spinner text-light" role="status"></div>
+                  <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>Login</span>
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="or-content w-100 my-3">
+          <hr>
+          <p class="or-text m-0">OR</p>
         </div>
         <div>
-          <a (click)="goToUserValidate()" class="link-text">Login with Microsoft</a>
+          <button class="microsoft-login-btn w-100" (click)="goToUserValidate()"><img
+              src="./icons/microsoft-login-btn-icon.png" alt="Microsoft Icon" class="microsoft-icon me-2">Login with
+            Microsoft</button>
         </div>
       </div>
-    </div>
-    <!--card ends-->
-    <!-- <div class="copy-right-content">
+      <!--card ends-->
+      <!-- <div class="copy-right-content">
       <p class="copy-right-text m-0">Copy rights reserved by &#64;Snad Developers Inc. 2024</p>
     </div> -->
+    </div>
   </div>
 </div>
 
@@ -46,5 +104,22 @@
   <div class="d-flex flex-column justify-content-center align-items-center pb-5">
     <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
     <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
+  </div>
+</ng-template>
+
+<ng-template #confirmationpopup let-modal>
+  <div class="result-popup-content p-4" ngbAutofocus>
+    <div class="d-flex justify-content-end w-100 mb-4">
+      <!-- <div>
+        <a (click)="modal.dismiss()">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon">
+        </a>
+      </div> -->
+    </div>
+    <div>
+      <img src="/images/administator-image.png" alt="failure icon" class="administator-image mb-4">
+      <p class="confirmation-text mb-4">Please Contact Administrator to reset your password!</p>
+      <button type="button" class="custom-btn btn-primary ok-btn mb-3" (click)="modal.dismiss()">OK</button>
+    </div>
   </div>
 </ng-template>

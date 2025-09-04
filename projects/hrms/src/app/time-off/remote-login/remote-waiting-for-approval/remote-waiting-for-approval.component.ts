@@ -6,7 +6,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
@@ -14,6 +13,10 @@ import { ICompOff } from '../../comp-off/compoff.modal';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { environment } from '../../../../environments/environment';
+import { TranslateModule } from '@ngx-translate/core';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -23,6 +26,7 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
+    TranslateModule,
     NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
@@ -44,11 +48,14 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  selectempid: any;
+  selectedYear: any;
 
   constructor(
     private http: HttpService,
     public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService:SignalsService,
+    private TimeoffYearFilterService: TimeoffYearFilterService
   ) {
      effect(() =>{
       if (this.signalService.remoteLoginRequestTriggerSignal()) {
@@ -60,8 +67,21 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getRemoteRequests();
+    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdRemoteLogin$.subscribe((id) => {
+          if (id) {
+            // Use the new employee ID here
+            this.selectempid = id;
+            this.getRemoteLoginEMPRequests();
+          } else {
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getRemoteRequests();
+          }
+        });
+      }
+    });
   }
 
   onRowsChange() {
@@ -76,19 +96,45 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
     let empId = this.empinfo.employeeId;
     this.dataLoad = true;
     this.http
-      .getData(`AttendanceRequests/getbyempid/${empId}?requestedCategory=11`)
+      .getFilterRemoteLoginDataByID(
+        empId,
+        this.selectedYear
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.remoteLogin = response;
           this.dataLoad = false;
           this.approvedRemotes = this.remoteLogin?.filter(
-            (element: { status: string }) => element.status === 'Processed'
+            (element: { status: string }) =>
+              element.status === 'Waiting for Approval'
           );
-          
         },
         error: (error) => {
           this.dataLoad = false;
+          console.error('Error fetching data:', error);
+          this.approvedRemotes = []; // Set to empty array on error
+        },
+      });
+  }
+
+  getRemoteLoginEMPRequests() {
+    let empId = this.selectempid;
+    this.http
+      .getFilterRemoteLoginDataByID(
+        empId,this.selectedYear
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.remoteLogin = response;
+          this.approvedRemotes = this.remoteLogin.filter(
+            (element: { status: string }) => element.status === 'Waiting for Approval'
+          );
+          this.approvedRemotesCount = this.approvedRemotes.length;
+        },
+        error: (error) => {
           console.error('Error fetching data:', error);
           this.approvedRemotes = []; // Set to empty array on error
         },

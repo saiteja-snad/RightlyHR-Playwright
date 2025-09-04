@@ -65,11 +65,11 @@
         .login-card {
             position: relative;
             width: 25rem;
-            height: 25rem;
+            height: auto;
             box-shadow: 0px 0px 40px 0px #0B3A834D;
             background: #FFFFFF;
             border-radius: 1rem;
-            padding: 3rem 2rem;
+            padding: 2.25rem;
 
             .company-logo {
                 width: 10rem;
@@ -90,6 +90,15 @@
                 text-decoration-style: solid;
                 text-decoration-thickness: 0%;
             }
+
+            .input-group-text {
+                border: 1px solid var(--input-border-color);
+                background-color: var(--input-bg-color);
+            }
+
+            .border-right-none {
+                border-right: 0px !important;
+            }
         }
 
         .copy-right-content {
@@ -107,4 +116,59 @@
             }
         }
     }
+}
+
+.microsoft-login-btn {
+    background-color: #E4EAF4;
+    padding: 0.625rem;
+    border-radius: 0.625rem;
+    border: 0px !important;
+    font-weight: 500;
+    font-size: var(--fontsize12);
+    color: #222B45;
+}
+
+.microsoft-icon {
+    width: 22px;
+    height: 22px;
+}
+
+.or-content {
+    position: relative;
+
+    .or-text {
+        width: max-content;
+        position: absolute;
+        top: 5px;
+        z-index: 1;
+        background: #FFF;
+        left: 50%;
+        font-weight: 400;
+        font-size: 10px;
+        color: #98A1B4;
+        padding: 0.25rem;
+    }
+}
+
+.forget-text {
+    color: rgba(6, 117, 207, 1);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0px;
+    text-align: right;
+}
+
+.administator-image {
+    width: 16rem;
+}
+
+.close-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+}
+
+.ok-btn {
+    width: max-content !important;
+    padding: 0.5rem 3rem !important;
 }

@@ -54,9 +54,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   subHeader: string = '';
   loginEmployee = {} as any;
 
-  constructor(private http: HttpService, private authService: AuthService, private router: Router,public rbac: RbacService,
-     private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
-      public fieldpremission: AccessForEmployeeinfoService) { }
+  constructor(private http: HttpService, private authService: AuthService, private router: Router, public rbac: RbacService,
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,
+    public fieldpremission: AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(() => {
@@ -170,6 +170,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  openCredentialsModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'md' });
   }
 
   isActive(route: string): boolean {
@@ -349,43 +353,37 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   //     },
   //   });
   // }
-  
-submitrevoke() {
-  this.empdata.empstatus = 'Revoked';
-  this.empdata.substatus = 'Offer Revoked';
-  this.empdata.revokeComments = this.revokeForm.get('revokeComments')?.value;
 
-  if (this.empdata.marriedDate === 'Invalid date') {
-    this.empdata.marriedDate = null;
-  }
-
-  this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
-    next: (data: any) => {
-      if (data) {
-        this.getEmployeeId(); 
-        this.modalService.dismissAll(); 
-        this.conformationPopup.openSuccessModal('Offer revoked successfully');
-
-        this.revokeEmail();
-        this.updateRevokeStatustooffer();
-        this.revokeEmailToEmployee();
-        this.updateOnboardingStatus();
-
-        if (this.jobPostData?.id) {
-          this.updateJobapplicantdata();
-        }
-        
-        setTimeout(() => {
-          this.router.navigate(['/employee-management/all-employees']);
-        }, 2000);
-      }
-    },
-    error: (err: any) => {
-      console.error('Error revoking offer:', err);
+  submitrevoke() {
+    this.empdata.empstatus = 'Revoked';
+    this.empdata.substatus = 'Offer Revoked';
+    this.empdata.revokeComments = this.revokeForm.get('revokeComments')?.value;
+    if (this.empdata.marriedDate === 'Invalid date') {
+      this.empdata.marriedDate = null;
     }
-  });
-}
-
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.getEmployeeId();
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Offer revoked successfully');
+          this.revokeEmail();
+          this.updateRevokeStatustooffer();
+          this.revokeEmailToEmployee();
+          this.updateOnboardingStatus();
+          if (this.jobPostData?.id) {
+            this.updateJobapplicantdata();
+          }
+          setTimeout(() => {
+            this.router.navigate(['/employee-management/all-employees']);
+          }, 2000);
+        }
+      },
+      error: (err: any) => {
+        console.error('Error revoking offer:', err);
+      }
+    });
+  }
 
   revokeEmail() {
     let loggedInUser = this.authService.getToken();
@@ -461,7 +459,6 @@ submitrevoke() {
     this.subscription = this.http.getData(`OfferLetter/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getOfferDetails = data;
-        console.log(data)
       },
       error: (err: any) => {
         console.log(err);
@@ -615,6 +612,7 @@ submitrevoke() {
 
   // Map route paths to sub-header names
   subHeaderMap: { [key: string]: string } = {
+    // Personal Info
     'basic-info': 'Basic Info',
     'address-info': 'Addresses',
     'family-details': 'Family Members',
@@ -626,27 +624,24 @@ submitrevoke() {
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Team Members',
-
     // Job Info
-  'pre-onboarding-details': 'Pre-Onboarding Info',
-  'onboarding-details': 'Onboarding Info',
-  'employmentType': 'Offboarding Info',
-  'desk-details': 'Desk Info',
-  'assets-details': 'Assigned Assets',
-  'past-experiences': 'Employment History',
-  'certifications': 'Certifications',
-  'job-details': 'Job Info',
-  'compensation-details': 'Compensations',
-  'no-due-clearance-details': 'No Due Clearance',
-  'probation-details': 'Probation Info',
-  'separation-details': 'Separation Request',
-  'employee-off-boarding': 'Employee Offboarding',
-  'tranee-onboarding-requests': 'Trainee Onboarding Requests',
-
-  // Documents
-  'documents': 'Documents',
-
-
+    'pre-onboarding-details': 'Pre-Onboarding Info',
+    'onboarding-details': 'Onboarding Info',
+    'employmentType': 'Offboarding Info',
+    'desk-details': 'Desk Info',
+    'assets-details': 'Assigned Assets',
+    'past-experiences': 'Employment History',
+    'certifications': 'Certifications',
+    'job-details': 'Job Info',
+    'compensation-details': 'Compensations',
+    'no-due-clearance-details': 'No Due Clearance',
+    'probation-details': 'Probation Info',
+    'separation-details': 'Separation Request',
+    'employee-off-boarding': 'Employee Offboarding',
+    'trainee-onboarding-requests': 'Trainee Onboarding Verification',
+    // Documents
+    'general-documents': 'Documents',
+    'letter-acknowledge-documents': 'Letter Acknowledgement',
   };
 
   setSubHeader() {
@@ -703,7 +698,7 @@ submitrevoke() {
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       // Personal Info perosnal
       '/personalinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
-      '/personalinfo/job/onboarding-verification': MODULE_INFOS. JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
+      '/personalinfo/job/onboarding-verification': MODULE_INFOS.JOB_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
       '/personalinfo/personal/address-info': MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
       '/personalinfo/personal/contact-details': MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
       '/personalinfo/personal/emergency-contact-details': MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
@@ -732,6 +727,41 @@ submitrevoke() {
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  resetPassword() {
+    this.spinnerLoader = true;
+    this.subscription = this.http.postdata(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null).subscribe({
+      next: (data: any) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email')
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        console.log(err);
+        this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
+      },
+    });
+  }
+
+  generateCredentials(){
+    this.spinnerLoader = true;
+    this.subscription = this.http.postdata(`Employeedata/generate-credentials/${this.empinfo.employeeId}`,null).subscribe({
+      next: (data: any) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email');
+        this.getEmployeeId();
+      },
+      error: (err: any) => {
+        this.spinnerLoader = false;
+        console.log(err);
+        this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
+      },
+    });
   }
 
   ngOnDestroy(): void {

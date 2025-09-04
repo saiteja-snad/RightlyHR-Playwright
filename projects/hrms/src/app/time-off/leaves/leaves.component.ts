@@ -164,8 +164,12 @@ export class LeavesComponent {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.TimeoffYearFilterService.setSelectedYear(selectedYear);
-    this.http.setSelectedYear(selectedYear);
-    this.getCategoryDetails();
+    const employeeId = this.http.getCurrentEmployeeIdTimeoff();
+    if (employeeId) {
+      this.onCheckemployee(employeeId);
+    } else {
+      this.getCategoryDetails();
+    }
   }
 
   draftsCount = 0;
@@ -188,13 +192,12 @@ export class LeavesComponent {
       this.getDataByLPID(employeedId);
       this.getLeavesData(employeedId);
       this.getCategoryempDetails(employeedId);
-      this.getCategoryDetails();
     } else {
       this.http.setEmployeeIdTimeoff(null);
       this.disaplyapplybutton = true;
       this.getLeavesData(this.empdata.employeeId);
       this.getDataByLPID(this.empdata.employeeId);
-      this.getCategoryDetails();
+      this.getCategoryempDetails(this.empdata.employeeId);
     }
   }
 

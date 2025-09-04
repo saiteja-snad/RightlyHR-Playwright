@@ -54,7 +54,10 @@ export const SETTINGS_EMPLOYEE_FIELDS_TABS = [
   { route: '/settings/employee-fields/manage-weekends', permission: 'Manage Weekends Tab.view' },
   { route: '/settings/employee-fields/expenes', permission: 'Expense Tab.view' },
   { route: '/settings/employee-fields/manage-dsts', permission: 'Manage DST Tab.view' },
-  { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' }
+  { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' },
+  { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' },
+{ route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
+
 ]
 
 type SettingsRolesTab = {
@@ -120,10 +123,10 @@ export const TIME_OFF_SUB_TABS = [
 ]
 
 export const REMOTE_LOGIN_SUB_TABS = [
-  { route: '/time-off/remote/waiting-for-approval', permission: 'Remote Login Module.view' },
-  { route: '/time-off/remote/approved', permission: 'Remote Login.view' },
-  { route: '/time-off/remote/processed', permission: 'Remote Login.view' },
-  { route: '/time-off/remote/rejected', permission: 'Remote Login.view', },
+  { route: '/time-off/remote/waiting-for-approval', permission: 'Waiting For Approval (Remote Login).view' },
+  { route: '/time-off/remote/approved', permission: 'Approved (Remote Login).view' },
+  { route: '/time-off/remote/processed', permission: 'Processed (Remote Login).view' },
+  { route: '/time-off/remote/rejected', permission: 'Rejected (Remote Login).view', },
 ]
 
 export const COMP_OFF_SUB_TABS = [
@@ -142,7 +145,7 @@ export const WFH_ONDUTY_SUB_TABS = [
 
 export const PERMISSIONS_SUB_TABS = [
   { route: '/time-off/premissions/waiting-for-approval', permission: 'Waiting For Approval (Permissions).view' },
-  { route: '/time-off/permissions/approved', permission: 'Approved (Permissions).view' },
+  // { route: '/time-off/permissions/approved', permission: 'Approved (Permissions).view' },
   { route: '/time-off/permissions/processed', permission: 'Processed (Permissions).view' },
   { route: '/time-off/permissions/rejected', permission: 'Rejected (Permissions).view', },
 ]
@@ -246,6 +249,17 @@ export const PENDING_APPROVALS_WFH_SUB_TABS = [
   { route: '/time-off/pending-approvals/wfh/for-your-role', permission: 'For Role (WFH).view' },
 ]
 
+export const PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS = [
+  {
+    route: '/time-off/pending-approvals/remote/for-you',
+    permission: 'For You (Remote Login).view',
+  },
+  {
+    route: '/time-off/pending-approvals/remote/for-your-role',
+    permission: 'For Role (Remote Login).view',
+  },
+];
+
 export const PENDING_APPROVALS_COMP_OFF_SUB_TABS = [
   { route: '/time-off/pending-approvals/comp-off/for-you', permission: 'For You (Comp Off).view' },
   { route: '/time-off/pending-approvals/comp-off/for-your-role', permission: 'For Role (Comp Off).view' },
@@ -301,7 +315,8 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria', permission: 'Permission Elgibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/global-permissions', permission: 'Eligibility Global Permissions Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
-  { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' }
+  { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
+  { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' }
 ]
 
 

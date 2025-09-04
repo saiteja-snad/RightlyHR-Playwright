@@ -56,7 +56,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     private modal: OpenModalService,
     public rbac: RbacService,
     public readonly router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.dataLoad = true;
@@ -131,7 +131,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          console.log('Fetched role claims:', data);
           this.permissionsReset(data);
         },
         error: (error: any) => {
@@ -319,6 +318,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'WFH Entitlement Tab',
       'Permission Elgibility Tab',
       'Attendance Regularization Eligibility Tab',
+      'Remote Login Eligibility Tab',
       'Shifts Published Tab',
       'Policies Published Tab',
       'Holidays Published Tab',
@@ -358,6 +358,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Certification Details',
       'Employee Info Compensation Details',
       'Draft Tab',
+      "Letter Acknowledgment Configuration"
     ];
     return (
       enabledTabs.includes(field) &&
@@ -420,7 +421,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       this.modalService.dismissAll();
       setTimeout(() => {
         this.openSuccess();
-      }, 2000)
+      }, 2000);
     });
   }
 
@@ -429,8 +430,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   sidebarFields = [
-    'Roles', 'Employee Fields Module', 'Settings Timeoff Module',
-    'Assets Management Configuration Module', 'Dynamic Forms Module'
+    'Roles',
+    'Employee Fields Module',
+    'Settings Timeoff Module',
+    'Assets Management Configuration Module',
+    'Dynamic Forms Module',
   ];
   employeeFields = [
     'Personal Tab',
@@ -442,7 +446,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Manage Weekends Tab',
     'Manage DST Tab',
     'Expense Tab',
-    'NoDue Clearance Tab'
+    'NoDue Clearance Tab',
   ];
   settingsEmployeeJobFields = [
     'Job Role',
@@ -468,7 +472,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Consultancy',
     'Signature Authority',
     'Settings Job Probation Details',
-    'Signature Authority'
+    'Signature Authority',
   ];
   settingsEmployeePersonalFields = [
     'Salutation',
@@ -479,66 +483,60 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Visa Type',
     'Identity Type',
     'Relationship',
-    'Bank Names'
+    'Bank Names',
   ];
   settingsManageShiftsTabFields = [
     'Shifts Pending Tab',
-    'Shifts Published Tab'
+    'Shifts Published Tab',
   ];
   settingsManagePoliciesTabFields = [
     'Policies Pending Tab',
-    'Policies Published Tab'
+    'Policies Published Tab',
   ];
   settingsManageHolidaysTab = [
     'Holidays Pending Tab',
-    'Holidays Published Tab'
-  ]
+    'Holidays Published Tab',
+  ];
   settingsManageWeekendsTab = [
     'Weekends Pending Tab',
-    'Weekends Published Tab'
-  ]
-  settingsManageDSTTab = [
-    'DST Pending Tab',
-    'DST Published Tab'
-  ]
-  settingsManageExpenseTab = [
-    'Expenes Configuartion',
-    'Expense Allowed Days'
-  ]
+    'Weekends Published Tab',
+  ];
+  settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
+  settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
   timeoffSettingsFields = [
     'Leave Category Tab',
     'Leave Allocation Tab',
     'Flexible Leave Allocation Tab',
     'Attendance Eligibility Criteria Tab',
-    'Load Entitlements Tab'
+    'Load Entitlements Tab',
   ];
   leaveCategoryTabsFields = [
     'Leave Category Pending Tab',
-    'Leave Category Published Tab'
+    'Leave Category Published Tab',
   ];
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',
     'Attendance Eligibility Permissions Tab',
+    'Remote Login Eligibility Tab',
     'Permission Elgibility Tab',
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
-    'Eligibility Global Permissions Tab'
+    'Eligibility Global Permissions Tab',
   ];
+
+  
   settingsAssetConfigurationFields = [
     'Vendor Details',
     'Asset Catagory',
-    'Asset Sub Catagory'
+    'Asset Sub Catagory',
   ];
-  expensesTypeFields = [
-    'Expenses Type',
-    'Expense Types Tab'
-  ];
+  expensesTypeFields = ['Expenses Type', 'Expense Types Tab'];
   settingsDynamicFormsFields = [
     'Active Forms',
     'Inactive Forms',
     'Draft Forms',
-    'Form Settings'
+    'Form Settings',
   ];
   sidebarTabsFields = [
     'Dashboard',
@@ -560,39 +558,32 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance',
     'Blood Bank',
     'Phone Book',
-    'Contacts Directory'
-
+    'Contacts Directory',
   ];
   expensesModuleTabs = [
     'Draft Tab',
     'Approved Tab',
     'Pending Tab',
     'Processed Tab',
-    'Rejected Tab'
+    'Rejected Tab',
   ];
-  itSupportModule = [
-    'Team Tickets Tab',
-    'My Tickets Tab'
-  ]
+  itSupportModule = ['Team Tickets Tab', 'My Tickets Tab'];
   TeamTicketsTabs = [
     'Rejected Tickets Tab',
     'Await On User Tickets Tab',
     'Solved Tickets Tab',
     'Rejected Tickets Tab',
     'All Tickets Tab',
-    'Open Tickets Tab'
-  ]
-  HolidaysModule = [
-    'Public Holidays Tab',
-    'Optional Holidays Tab'
-  ]
+    'Open Tickets Tab',
+  ];
+  HolidaysModule = ['Public Holidays Tab', 'Optional Holidays Tab'];
   OrgHierarchyModule = [
     'Organization Hierarchy - HR',
     'Organization Hierarchy - Compensation',
     'Organization Hierarchy - Download JPG',
     'Organization Hierarchy - TM',
-    'Organization Hierarchy - Download PDF'
-  ]
+    'Organization Hierarchy - Download PDF',
+  ];
 
   deskAllocationModuleFields = [
     'Desk Allocation - Create',
@@ -601,7 +592,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Allocated',
     'Desk Allocation - Under Maintenance',
     'Desk Allocation - Inactive',
-    'Desk Allocation - Waiting For Approval'
+    'Desk Allocation - Waiting For Approval',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',
@@ -611,31 +602,29 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Release Desk',
     'Mark as Active',
     'Mark as Available',
-    'View Desk Details'
+    'View Desk Details',
   ];
   deskAllocationAvailableTabActions = [
     'Available Request for Allocation',
     'Available Inactive desk',
     'Available Schedule for Maintenance',
-    'Available View Desk Details'
+    'Available View Desk Details',
   ];
   deskAllocationAllocatedTabActions = [
     'Allocated Reallocate desk',
     'Allocated Release Desk',
-    'Allocated View Desk Details'
+    'Allocated View Desk Details',
   ];
   deskAllocationUnderMaintenanceTabActions = [
     'Under Maintenance Mark as Available',
     'Under Maintenance View Desk Details',
-
   ];
   deskAllocationInactiveTabActions = [
     'Inactive Mark as Available',
-    'Inactive View Desk Details'
+    'Inactive View Desk Details',
   ];
   deskAllocationWaitingForApprovalTabActions = [
     'Waiting For Approval View Desk Detailssk',
-
   ];
   timeOffTabsFields = [
     'Time Off Module',
@@ -647,7 +636,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'On Behalf Of Module',
     'On Behalf Of Approvals Module',
     'Global Permissions Module',
-    'Pending Approvals Module'
+    'Pending Approvals Module',
   ];
   timeOffModuleSubTabs = [
     'Waiting For Approval (Time Off)',
@@ -657,8 +646,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Request Leave Button',
     'Cancelled (Time Off)',
     'My Team (Time Off)',
-    'My Team (Regularization)'
-  
+    'My Team (Regularization)',
   ];
 
   // ////////
@@ -671,6 +659,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Request WFH Button',
     'My Team (WFH)',
   ];
+
+  RemoteLoginModuleSubTabs = [
+    'Waiting For Approval (Remote Login)',
+    'Approved (Remote Login)',
+    'Processed (Remote Login)',
+    'Rejected (Remote Login)',
+    'Request Remote Login Button',
+    'My Team (Remote Login)',
+  ];
   compOffModuleSubTabs = [
     'Waiting For Approval (Comp Off)',
     'Approved (Comp Off)',
@@ -682,6 +679,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   permissionsModuleSubTabs = [
     'Waiting For Approval (Permissions)',
     'Approved (Permissions)',
+    'Processed (Permissions)',
     'Cancel (Permissions)',
     'Rejected (Permissions)',
     'Request Permission Button',
@@ -702,21 +700,22 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Processed (On Behalf Of)',
     'Cancelled (On Behalf Of)',
     'My Team On Behalf Of',
-    'On Behalf Of All Employees'
+    'On Behalf Of All Employees',
   ];
   attendanceModuleSubTabs = [
     'Request Regularization',
     'Request Leave',
     'Attendance Select Employee For Manager',
-    'Attendance Select Employee For HR'
+    'Attendance Select Employee For HR',
   ];
   globalPermissionModuleSubTabs = [
     'Global Permissions',
-    'Request Global Permission Button'
+    'Request Global Permission Button',
   ];
   pendingApprovalsSubTabs = [
     'Time Off Tab',
     'WFH Tab',
+    'Remote Login Tab',
     'Comp Off Tab',
     'Permissions Tab',
     'Regularization Tab',
@@ -726,43 +725,35 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'No Due Clearence Requests Tab',
     'Claims and Expenses Tab',
     'Desk Requests Tab',
-    'Probation Details Tab'
+    'Probation Details Tab',
   ];
-  pendingApprovalTimeOffSubTabs = [
-    'For You (Time Off)',
-    'For Role (Time Off)'
-  ];
-  pendingApprovalWFHSubTabs = [
-    'For You (WFH)',
-    'For Role (WFH)'
-  ];
-  pendingApprovalCompOffSubTabs = [
-    'For You (Comp Off)',
-    'For Role (Comp Off)'
-  ];
+  pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
+  pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
+  pendingApprovalRemoteLoginSubTabs = ['For You (Remote Login)', 'For Role (Remote Login)'];
+  pendingApprovalCompOffSubTabs = ['For You (Comp Off)', 'For Role (Comp Off)'];
   pendingApprovalPermissionSubTabs = [
     'For You (Permission)',
-    'For Role (Permission)'
+    'For Role (Permission)',
   ];
   pendingApprovalRegularizationSubTabs = [
     'For You (Regularization)',
-    'For Role (Regularization)'
+    'For Role (Regularization)',
   ];
   pendingApprovalSeparationRequestsSubTabs = [
     'For You (Separation Requests)',
-    'For Role (Separation Requests)'
+    'For Role (Separation Requests)',
   ];
   pendingApprovalRecallRequestsSubTabs = [
     'For You (Recall Requests)',
-    'For Role (Recall Requests)'
+    'For Role (Recall Requests)',
   ];
   pendingApprovalClaimsAndExpensesSubTabs = [
     'For You (Claims and Expenses)',
-    'For Role (Claims and Expenses)'
+    'For Role (Claims and Expenses)',
   ];
   pendingApprovalDeskRequestsSubTabs = [
     'For You (Desk Requests)',
-    'For Role (Desk Requests)'
+    'For Role (Desk Requests)',
   ];
   onBehalfOfApprovalsSubTabs = [
     'Time Off (On Behalf Of Approvals)',
@@ -770,7 +761,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off (On Behalf Of Approvals)',
     'Permission (On Behalf Of Approvals)',
     'My Team On Behalf Of Approvals',
-    'On Behalf Of Approvals All Employees'
+    'On Behalf Of Approvals All Employees',
   ];
   reportsTabsFields = [
     'Standard Reports',
@@ -778,9 +769,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Policy Reports',
     'Attendance reports',
     'Monthly Attendance Reports',
-      'Org Leave Balance',
+    'Org Leave Balance',
     'Team Leave Balance Summary',
-    'Team Leave Balance'
+    'Team Leave Balance',
   ];
   standardReportsTabsFields = [
     'Employee Master Data',
@@ -794,11 +785,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Branch Location Wise Data - Export',
     'Family Members Data',
     'Family Members Data - Generate',
-    'Family Members Data - Export'
+    'Family Members Data - Export',
   ];
   customReportsTabsFields = [
     'Custom Reports - Generate',
-    'Custom Reports - Export'
+    'Custom Reports - Export',
   ];
   attendanceReportsTabsFields = [
     'Leave Report',
@@ -827,7 +818,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Permission Report - Export',
     'Regularization Report',
     'Regularization Report - Generate',
-    'Regularization Report - Export'
+    'Regularization Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -847,7 +838,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Team Report(Permission)',
     'Attendance All Employees List(Regularization)',
     'Attendance Team Manager List(Regularization)',
-    'My Team Report(Regularization)'
+    'My Team Report(Regularization)',
   ];
   assetManagementTabsFields = [
     'Asset Management - Create',
@@ -855,7 +846,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management - Available',
     'Asset Management - Allocated',
     'Asset Management - Under Maintenance',
-    'Asset Management - Inactive'
+    'Asset Management - Inactive',
   ];
 
   // allAssetActionsFields = [
@@ -870,7 +861,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'All Mark as Available Asset',
     'All Mark as Active Asset',
     'All View Asset Details',
-    'All Update Asset Details'
+    'All Update Asset Details',
   ];
 
   assetManagementAvailableTabActions = [
@@ -879,32 +870,32 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Available Mark as Maintenance Asset',
     'Available Transfer Asset',
     'Available View Asset Details',
-    'Available Update Asset Details'
+    'Available Update Asset Details',
   ];
 
   assetManagementAllocatedTabActions = [
     'Allocated Reallocate Asset',
     'Allocated Release Asset',
     'Allocated View Asset Details',
-    'Allocated Update Asset Details'
+    'Allocated Update Asset Details',
   ];
   assetManagementUnderMaintenanceTabActions = [
     'Under Maintenance Mark as Available Asset',
     'Under Maintenance View Asset Details',
-    'Under Maintenance Update'
+    'Under Maintenance Update',
   ];
 
   assetManagementInactiveTabActions = [
     'Inactive Mark as Active Asset',
     'Inactive View Asset Details',
-    'Inactive Update Asset Details'
+    'Inactive Update Asset Details',
   ];
   myInfoSubTabsFields = [
     'My Info Personal Tab',
     'My Info Job Tab',
     'My Info Documents Tab',
     'My Info Team Members Tab',
-    'My Info Onboard Request Tab'
+    'My Info Onboard Request Tab',
   ];
   myInfoPersonalSubTabsFields = [
     'My Info Basic Information',
@@ -915,7 +906,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Identity Details',
     'My Info Family Details',
     'My Info Bank Details',
-    'My Info Visa Details'
+    'My Info Visa Details',
   ];
   myInfoJobModuleFields = [
     'My Info Pre-Onboarding Details',
@@ -930,22 +921,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Compensation Details',
     'My Info Desk Details',
     'My Info Asset Details',
-    'My Info Separation Request Button'
+    'My Info Separation Request Button',
   ];
-  myInfoSeparationRequestFields = [
-    'Raise No Due',
-    'Recall',
-    'Early relieving'
-  ];
+  myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
     'Submission Of No Due Clearance',
-    'Re-request for no due'
+    'Re-request for no due',
   ];
   employeeInfoSubTabsFields = [
     'Employee Info Personal Tab',
     'Employee Info Job Tab',
     'Employee Info Documents Tab',
-    'Employee Info Team Members Tab'
+    'Employee Info Team Members Tab',
   ];
   employeeInfoJobModuleFields = [
     'Employee Info Pre-Onboarding Details',
@@ -962,7 +949,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Desk Details',
     'Employee Info Asset Details',
     'Employee Info Separation Request',
-    'No Due Form'
+    'No Due Form',
   ];
 
   employeeInfoJobModuleUpdateDisabledFields = [
@@ -975,7 +962,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Probation Details',
     'Employee Info Onboarding Request Details',
     'No Due Form',
-    'Employee Info Separation Request'
+    'Employee Info Separation Request',
   ];
 
   employeeInfoJobModuleCreateDeleteDisabledFields = [
@@ -989,21 +976,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Separation Request',
     'Employee Info No Due Clearance Details',
     'Employee Info Probation Details',
-    'Employee Info Onboarding Request Details'
+    'Employee Info Onboarding Request Details',
   ];
   employeeSeparationRequestFields = [
     'Employee Raise No Due',
     'Employee Recall',
-    'Employee Early relieving'
+    'Employee Early relieving',
   ];
   employeeNoDueClearanceFields = [
     'Employee Submission Of No Due Clearance',
-    'Employee Re-request for no due'
+    'Employee Re-request for no due',
   ];
 
   employeeProbationRequestFields = [
     'Employee Request for Probation Confirmation',
-    'Employee Re-Request for Probation Confirmation'
+    'Employee Re-Request for Probation Confirmation',
   ];
 
   dashboardModuleCardItemsFields = [
@@ -1019,18 +1006,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Add Prospective Trainee',
     'Dashboard Active Invite New User',
     'Invite New User',
-    'Dashboard Trainee Active Invite New User'
+    'Dashboard Trainee Active Invite New User',
   ];
   activeLettersFields = [
     'Address Proof Letter',
     'Bank Loan Letter',
     'Apprisal Letter',
     'Salary Revision Letter',
-    'Promotion Letter'
+    'Promotion Letter',
   ];
   probationGenerateDocumentsFields = [
     'Probation Confirmation Letter',
-    'Probation Extension Letter'
+    'Probation Extension Letter',
   ];
   dashboardDocumentHistoryActionsFields = [
     'Offer Letter Download',
@@ -1042,32 +1029,32 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Trainee Offer Letter Release Offer',
     'Trainee Offer Letter Approve',
     'Trainee Offer Letter Reject',
-    'Trainee Appointment Letter Download'
+    'Trainee Appointment Letter Download',
   ];
   documentsHistoryFields = [
     'Documents History Offer Letter',
     'Documents History Appointment Letter',
     'Documents History Trainee Offer Letter',
-    'Documents History Trainee Appointment Letter'
+    'Documents History Trainee Appointment Letter',
   ];
   dashboardGenerateDocumentsFields = [
     'Dashboard Generate Documents Offer Letter',
     'Dashboard Generate Documents Appointment Letter',
     'Dashboard Generate Documents Trainee Offer Letter',
     'Dashboard Generate Documents Trainee Appointment Letter',
-    'Dashboard Generate Documents Welcome Letter'
+    'Dashboard Generate Documents Welcome Letter',
   ];
   employeeInfoTeamManagerFields = [
     'Employee Info Reporting Manager Tab',
     'Employee Info Change RM Button',
     'Employee Info Team Managers Tab',
-    'Employee Info Change TM Button'
+    'Employee Info Change TM Button',
   ];
   pmsModuleFields = [
     'Review Cycle List',
     'Review Cycle Employee List',
     'My Performance Review',
-    'My Team Performance Review'
+    'My Team Performance Review',
   ];
   reviewCycleListActionsFields = [
     'Create Review Cycle',
@@ -1075,7 +1062,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Resume',
     'Update',
     'View',
-    'Initiate'
+    'Initiate',
   ];
   reviewCycleEmployeeListActionsFields = [
     'Assign Review Template',
@@ -1103,68 +1090,65 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Send Promotion Letter',
     'Re-Send Promotion Letter',
     'Re-Generate Promotion Letter(Appraisal Letter Generated)',
-    'Re-Send Promotion Letter(Appraisal Letter Sent)'
+    'Re-Send Promotion Letter(Appraisal Letter Sent)',
   ];
-  myPerformanceReviewTabsFields = [
-    'Pending Reviews',
-    'Completed Reviews'
-  ];
+  myPerformanceReviewTabsFields = ['Pending Reviews', 'Completed Reviews'];
   completedReviewsActionsFields = [
     'My Performance Assessment View',
     'My Performance Promotion Letter Download',
-    'My Performance Appraisal Letter Download'
+    'My Performance Appraisal Letter Download',
   ];
   teamPerformanceReviewTabsFields = [
     'Team Pending Reviews',
-    'Team Completed Reviews'
+    'Team Completed Reviews',
   ];
   teamCompletedReviewsFields = [
     'Team Assessment View',
     'Team Promotion Letter Download',
-    'Team Appraisal Letter Download'
+    'Team Appraisal Letter Download',
   ];
-  pmsConfigurationFields = [
-    'Increment Percentage',
-    'Assessor Configuration'
-  ];
+  pmsConfigurationFields = ['Increment Percentage', 'Assessor Configuration'];
   incrementActionsFields = [
     'Increment Create',
     'Increment Update(Status - Created)',
     'Increment Delete(Status - Created)',
     'Increment View(Status - Initialted)',
-    'Increment Update(Status - Review On Hold)'
+    'Increment Update(Status - Review On Hold)',
   ];
   assessorFields = [
     'Assessor Create',
     'Assessor Update(Status - Created)',
     'Assessor Delete(Status - Created)',
     'Assessor Update(Status - Initialted)',
-    'Assessor Update(Status - Review On Hold)'
+    'Assessor Update(Status - Review On Hold)',
   ];
   employeeInfoPersonalSubTabsFields = [
-  'Employee Info Basic Information',
-  'Employee Info Address Details',
-  'Employee Info Contact Details',
-  'Employee Info Emergency Contact Details',
-  'Employee Info Education Details',
-  'Employee Info Identity Details',
-  'Employee Info Family Details',
-  'Employee Info Bank Details',
-  'Employee Info Visa Details',
-  'Employee Info Documents Verification'
-];
+    'Employee Info Basic Information',
+    'Employee Info Address Details',
+    'Employee Info Contact Details',
+    'Employee Info Emergency Contact Details',
+    'Employee Info Education Details',
+    'Employee Info Identity Details',
+    'Employee Info Family Details',
+    'Employee Info Bank Details',
+    'Employee Info Visa Details',
+    'Employee Info Documents Verification',
+  ];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],
     checked: any,
-    disableFn: (per: any, action: 'View' | 'Update' | 'Create' | 'Delete') => boolean
+    disableFn: (
+      per: any,
+      action: 'View' | 'Update' | 'Create' | 'Delete'
+    ) => boolean
   ) {
     if (!Array.isArray(this.permissions)) return;
     this.permissions
-      .filter(per => fields.includes(per.fields))
-      .forEach(per => {
-        (['View', 'Update', 'Create', 'Delete'] as const).forEach(action => {
+      .filter((per) => fields.includes(per.fields))
+      .forEach((per) => {
+        (['View', 'Update', 'Create', 'Delete'] as const).forEach((action) => {
           if (!disableFn(per, action)) {
             per[action] = checked;
             this.onCheckboxChange(per, action);
@@ -1173,24 +1157,27 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       });
   }
 
-
   // Generic "all selected" function
   isAllSelected(fields: string[]): boolean {
     if (!Array.isArray(this.permissions)) return false;
     return this.permissions
-      .filter(per => fields.includes(per.fields))
-      .every(per => per.View);
+      .filter((per) => fields.includes(per.fields))
+      .every((per) => per.View);
   }
 
   // Generic "some selected" function
   isSomeSelected(fields: string[]): boolean {
     if (!Array.isArray(this.permissions)) return false;
-    const filtered = this.permissions.filter(per => fields.includes(per.fields));
-    return filtered.some(per => per.View) && !this.isAllSelected(fields);
+    const filtered = this.permissions.filter((per) =>
+      fields.includes(per.fields)
+    );
+    return filtered.some((per) => per.View) && !this.isAllSelected(fields);
   }
 
-
-  isSidebarCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSidebarCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1198,7 +1185,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       return true;
     }
     if (action === 'Create') {
-      return !this.isActionEnabled(per.fields, 'Create') || !this.roleToFilter?.id;
+      return (
+        !this.isActionEnabled(per.fields, 'Create') || !this.roleToFilter?.id
+      );
     }
     if (action === 'Delete') {
       return true;
@@ -1206,23 +1195,55 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-
-  isemployeeCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isemployeeCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
       // Only enabled for 'NoDue Clearance Tab'
-      return !this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields);
+      return (
+        !this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields)
+      );
     }
     if (action === 'Create' || action === 'Delete') {
-
-      return !this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields);
+      return (
+        !this.roleToFilter?.id ||
+        !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields)
+      );
     }
     return false;
   }
-  isSettingsEmployeeJobCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+
+
+isattendenceCheckboxDisabled(
+  per: any,
+  action: 'View' | 'Update' | 'Create' | 'Delete'
+): boolean {
+  if (action === 'View' || action === 'Update') {
+    return !this.roleToFilter?.id;
+  }
+
+  if (action === 'Create' || action === 'Delete') {
+    // Only enable Create/Delete for specific fields
+    const allowedFields = [
+      'Attendance Regularization Tab',
+      'Attendance Eligibility Permissions Tab', 
+      'Eligibility Global Permissions Tab'
+    ];
+    
+    // Return true to disable checkbox if field is NOT in allowed list
+    return !allowedFields.includes(per.fields) || !this.roleToFilter?.id;
+  }
+
+  return false;
+}
+  isSettingsEmployeeJobCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1235,8 +1256,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-  isSettingsEmployeePersonalCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsEmployeePersonalCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1249,8 +1272,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-  isSettingsManageShiftsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsManageShiftsCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1267,26 +1292,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-  isSettingsManagePoliciesCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update') {
-
-      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
-    }
-    if (action === 'Create') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Delete') {
-      return true;
-    }
-    return false;
-  }
-
-
-  isSettingsManageHolidaysCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsManagePoliciesCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1302,8 +1311,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-  isSettingsManageWeekendsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsManageHolidaysCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1319,31 +1330,48 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-
-
-  isSettingsManageExpensesCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsManageWeekendsCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
 
+  isSettingsManageExpensesCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Create') {
-
       return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Create');
     }
     if (action === 'Delete') {
-
       return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Delete');
     }
     return false;
   }
 
-
-  isSettingsManageDSTCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsManageDSTCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1359,30 +1387,31 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-  istimeoffSettingsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  istimeoffSettingsCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-
       return true;
     }
     if (action === 'Create') {
-
-      return !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id;
+      return (
+        !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id
+      );
     }
     if (action === 'Delete') {
-
       return true;
     }
     return false;
   }
 
-
-
-  isleaveCategoryCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isleaveCategoryCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1398,13 +1427,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-  isattendanceEligibilityCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isattendanceEligibilityCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Create') {
@@ -1416,15 +1446,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-
-  isSettingsAssetConfigurationCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsAssetConfigurationCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       // View is only enabled if a role is selected
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Create') {
@@ -1438,59 +1468,66 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-
-  isDynamicFormsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isDynamicFormsCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Create') {
-
       return this.isDisabled(per.fields, 'Create') || !this.roleToFilter?.id;
     }
     if (action === 'Delete') {
-
-      return !this.roleToFilter?.id || !['Active Forms', 'Draft Forms', 'Form Settings'].includes(per.fields);
+      return (
+        !this.roleToFilter?.id ||
+        !['Active Forms', 'Draft Forms', 'Form Settings'].includes(per.fields)
+      );
     }
     return false;
   }
   isAllSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
     return this.permissions
-      .filter(per => this.settingsDynamicFormsFields.includes(per.fields))
-      .every(per => per.View);
+      .filter((per) => this.settingsDynamicFormsFields.includes(per.fields))
+      .every((per) => per.View);
   }
   isSomeSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
-    const filtered = this.permissions.filter(per => this.settingsDynamicFormsFields.includes(per.fields));
-    return filtered.some(per => per.View) && !this.isAllSelectedDynamicForms();
+    const filtered = this.permissions.filter((per) =>
+      this.settingsDynamicFormsFields.includes(per.fields)
+    );
+    return (
+      filtered.some((per) => per.View) && !this.isAllSelectedDynamicForms()
+    );
   }
 
-
-  isExpensesTypeCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isExpensesTypeCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Create') {
-
       return !this.roleToFilter?.id;
     }
     if (action === 'Delete') {
-
       return !this.roleToFilter?.id;
     }
     return false;
   }
 
-  issideCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  issideCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       // View is only enabled if a role is selected
       return !this.roleToFilter?.id;
@@ -1502,13 +1539,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isexpensesdActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isexpensesdActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     // Example logic, adjust as needed for your requirements
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-      return !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id;
+      return (
+        !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id
+      );
     }
     if (action === 'Create' || action === 'Delete') {
       return true; // Always disabled in your current example
@@ -1516,7 +1558,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isItSupportActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isItSupportActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1529,9 +1574,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  
 
-  isHolidaysActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isHolidaysActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1542,7 +1589,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isOrgHierarchyActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isOrgHierarchyActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1551,27 +1601,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  isdekActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    return false;
-  }
-
-  isdeskallActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    return false;
-  }
-
-  isdeskavilableActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isdekActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1581,26 +1614,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isdeskallocationActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    return false;
-  }
-  isdeskundermaintanceDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    return false;
-  }
-
-  isdeskinactiveDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isdeskallActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1610,7 +1627,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlyviewfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isdeskavilableActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1620,8 +1640,61 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  isdeskallocationActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+  isdeskundermaintanceDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
 
-  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isdeskinactiveDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isonlyviewfunction(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isonlycreatfunction(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'Create') {
       return true;
     }
@@ -1632,54 +1705,97 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isEmployeeInfoJobActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isEmployeeInfoJobActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
       // Only enabled for fields NOT in the disabled list
-      return !this.roleToFilter?.id || [
-        'Employee Info Asset Details', 'Employee Info Desk Details',
-        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
-        'Employee Info Separation Request Details', 'Employee Info No Due Clearance Details',
-        'Employee Info Probation Details', 'Employee Info Onboarding Request Details',
-        'No Due Form', 'Employee Info Separation Request'
-      ].includes(per.fields);
+      return (
+        !this.roleToFilter?.id ||
+        [
+          'Employee Info Asset Details',
+          'Employee Info Desk Details',
+          'Employee Info Pre-Onboarding Details',
+          'Employee Info Offboarding Details',
+          'Employee Info Separation Request Details',
+          'Employee Info No Due Clearance Details',
+          'Employee Info Probation Details',
+          'Employee Info Onboarding Request Details',
+          'No Due Form',
+          'Employee Info Separation Request',
+        ].includes(per.fields)
+      );
     }
-    if ( action === 'Delete') {
+    if (action === 'Delete') {
       // Only enabled for fields NOT in the disabled list
-      return !this.roleToFilter?.id || [
-        'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
-        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
-        'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
-        'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
-        'Employee Info Onboarding Request Details','Employee Info Job Details'
-      ].includes(per.fields);
+      return (
+        !this.roleToFilter?.id ||
+        [
+          'Employee Info Onboarding Details',
+          'Employee Info Asset Details',
+          'Employee Info Desk Details',
+          'Employee Info Pre-Onboarding Details',
+          'Employee Info Offboarding Details',
+          'Employee Info Separation Request Details',
+          'No Due Form',
+          'Employee Info Separation Request',
+          'Employee Info No Due Clearance Details',
+          'Employee Info Probation Details',
+          'Employee Info Onboarding Request Details',
+          'Employee Info Job Details',
+        ].includes(per.fields)
+      );
     }
-       if (action === 'Create' ) {
+    if (action === 'Create') {
       // Only enabled for fields NOT in the disabled list
-      return !this.roleToFilter?.id || [
-        'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
-        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
-        'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
-        'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
-        'Employee Info Onboarding Request Details',
-      ].includes(per.fields);
+      return (
+        !this.roleToFilter?.id ||
+        [
+          'Employee Info Onboarding Details',
+          'Employee Info Asset Details',
+          'Employee Info Desk Details',
+          'Employee Info Pre-Onboarding Details',
+          'Employee Info Offboarding Details',
+          'Employee Info Separation Request Details',
+          'No Due Form',
+          'Employee Info Separation Request',
+          'Employee Info No Due Clearance Details',
+          'Employee Info Probation Details',
+          'Employee Info Onboarding Request Details',
+        ].includes(per.fields)
+      );
     }
-     if (action === 'Delete') {
+    if (action === 'Delete') {
       // Only enabled for fields NOT in the disabled list
-      return !this.roleToFilter?.id || [
-        'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
-        'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
-        'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
-        'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
-        'Employee Info Onboarding Request Details','Employee Info Job Details'
-      ].includes(per.fields);
+      return (
+        !this.roleToFilter?.id ||
+        [
+          'Employee Info Onboarding Details',
+          'Employee Info Asset Details',
+          'Employee Info Desk Details',
+          'Employee Info Pre-Onboarding Details',
+          'Employee Info Offboarding Details',
+          'Employee Info Separation Request Details',
+          'No Due Form',
+          'Employee Info Separation Request',
+          'Employee Info No Due Clearance Details',
+          'Employee Info Probation Details',
+          'Employee Info Onboarding Request Details',
+          'Employee Info Job Details',
+        ].includes(per.fields)
+      );
     }
     return false;
   }
 
-  isItSupportteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isItSupportteamActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1688,105 +1804,143 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     if (action === 'Update') {
       // Only enabled if role is selected and your custom logic (if any)
-      return !this.roleToFilter?.id || [
-      'Solved Tickets Tab'
-    ].includes(per.fields);
+      return (
+        !this.roleToFilter?.id || ['Solved Tickets Tab'].includes(per.fields)
+      );
     }
     return false;
   }
-  isEmployeeInfoPersonalActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  if (action === 'View' || action === 'Update') {
-    return !this.roleToFilter?.id;
+  isEmployeeInfoPersonalActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View' || action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'Employee Info Education Details',
+          'Employee Info Identity Details',
+          'Employee Info Family Details',
+          'Employee Info Bank Details',
+          'Employee Info Visa Details',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Delete') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'Employee Info Education Details',
+          'Employee Info Identity Details',
+          'Employee Info Family Details',
+          'Employee Info Bank Details',
+          'Employee Info Visa Details',
+          'Employee Info Documents Verification',
+        ].includes(per.fields)
+      );
+    }
+    return false;
   }
-  if (action === 'Create') {
-    return !this.roleToFilter?.id || ![
-      'Employee Info Education Details',
-      'Employee Info Identity Details',
-      'Employee Info Family Details',
-      'Employee Info Bank Details',
-      'Employee Info Visa Details'
-    ].includes(per.fields);
-  }
-  if (action === 'Delete') {
-    return !this.roleToFilter?.id || ![
-      'Employee Info Education Details',
-      'Employee Info Identity Details',
-      'Employee Info Family Details',
-      'Employee Info Bank Details',
-      'Employee Info Visa Details',
-      'Employee Info Documents Verification'
-    ].includes(per.fields);
-  }
-  return false;
-}
 
-isMyInfoPersonalActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  if (action === 'View' || action === 'Update') {
-    return !this.roleToFilter?.id;
+  isMyInfoPersonalActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View' || action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Education Details',
+          'My Info Identity Details',
+          'My Info Family Details',
+          'My Info Bank Details',
+          'My Info Visa Details',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Delete') {
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Education Details',
+          'My Info Identity Details',
+          'My Info Family Details',
+          'My Info Bank Details',
+          'My Info Visa Details',
+        ].includes(per.fields)
+      );
+    }
+    return false;
   }
-  if (action === 'Create') {
-    return !this.roleToFilter?.id || ![
-      'My Info Education Details',
-      'My Info Identity Details',
-      'My Info Family Details',
-      'My Info Bank Details',
-      'My Info Visa Details'
-    ].includes(per.fields);
-  }
-  if (action === 'Delete') {
-    return !this.roleToFilter?.id || ![
-      'My Info Education Details',
-      'My Info Identity Details',
-      'My Info Family Details',
-      'My Info Bank Details',
-      'My Info Visa Details'
-    ].includes(per.fields);
-  }
-  return false;
-}
-isMyInfoJobActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  if (action === 'View') {
-    return !this.roleToFilter?.id;
-  }
-  if (action === 'Update') {
-    // Only enable Update for Previous Experience and Certification Details
-    return !this.roleToFilter?.id || ![
-      'My Info Previous Experience Details',
-      'My Info Certification Details'
-    ].includes(per.fields);
-  }
-  if (action === 'Create' || action === 'Delete') {
-    // Only enable Create/Delete for Previous Experience and Certification Details
-    return !this.roleToFilter?.id || ![
-      'My Info Previous Experience Details',
-      'My Info Certification Details'
-    ].includes(per.fields);
-  }
-  return false;
-}
-
-isemployeeinfoteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-  if (action === 'View') {
-    return !this.roleToFilter?.id;
-  }
-  if (action === 'Update') {
-    // Only enable Update for Previous Experience and Certification Details
-    return !this.roleToFilter?.id || ![
-      'Employee Info Change TM Button' ,'Employee Info Change RM Button'
-    ].includes(per.fields);
-  }
-  if (action === 'Create' || action === 'Delete') {
-  return true
-  }
-  return false;
-}
-  isemployeeInfoCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isMyInfoJobActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-      return !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id;
+      // Only enable Update for Previous Experience and Certification Details
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Previous Experience Details',
+          'My Info Certification Details',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Create' || action === 'Delete') {
+      // Only enable Create/Delete for Previous Experience and Certification Details
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'My Info Previous Experience Details',
+          'My Info Certification Details',
+        ].includes(per.fields)
+      );
+    }
+    return false;
+  }
 
+  isemployeeinfoteamActionDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Only enable Update for Previous Experience and Certification Details
+      return (
+        !this.roleToFilter?.id ||
+        ![
+          'Employee Info Change TM Button',
+          'Employee Info Change RM Button',
+        ].includes(per.fields)
+      );
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+  isemployeeInfoCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return (
+        !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id
+      );
     }
     if (action === 'Create') {
       return true;
@@ -1796,7 +1950,10 @@ isemployeeinfoteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' 
     }
     return false;
   }
-  isPmsConfigurationCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isPmsConfigurationCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
       return !this.roleToFilter?.id;
@@ -1808,7 +1965,10 @@ isemployeeinfoteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' 
     return false;
   }
 
-  isAssetCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isAssetCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
       return !this.roleToFilter?.id;

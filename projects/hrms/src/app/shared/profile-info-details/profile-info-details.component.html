@@ -16,7 +16,7 @@
                     (change)="chooseNewProfile($event)">
             </div>
         </div>
-        <div class="profile-content text-nowrap">
+        <div class="profile-content">
             <p class="name text-center m-0 mb-2">{{empdata?.firstName}} {{empdata?.middleName || ''}}
                 {{empdata?.lastName}}</p>
             <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
@@ -40,8 +40,7 @@
                     <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
                     <span *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && 
                             (jobdata?.shiftStartTime && jobdata?.shiftEndTime)" class="mx-1">|</span>
-                    <span
-                        *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
+                    <span *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
                     <ng-template #noData>N/A</ng-template>
                 </span>
             </p>
@@ -50,15 +49,12 @@
                 <span class="link-text">
                     <span *ngIf="empdata?.workPhone">
                         <!-- <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u> -->
-                        <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') +
-                            empdata?.workPhone }}</u>
+                        <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') + empdata?.workPhone }}</u>
                     </span>
                     <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
                         <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>
                     </span>
-                    <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">
-                        NA
-                    </span>
+                    <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">NA</span>
                 </span>
             </p>
         </div>
@@ -84,7 +80,6 @@
             <p-skeleton width="12rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
             <p-skeleton width="12rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
             <p-skeleton width="10rem" height="0.75rem" styleClass="mb-2"></p-skeleton>
-
         </div>
     </div>
     }
@@ -141,6 +136,9 @@
         <div *ngIf="isActive('personalinfo/job')">
             <app-personal-job-tabs />
         </div>
+         <div *ngIf="isActive('personalinfo/documents')">
+            <app-personal-documents-tabs />
+        </div>
         <!--My Info Tabs-->
         <div *ngIf="isActive('myinfo/personal')">
             <app-my-info-personal-tabs />
@@ -148,6 +146,9 @@
         <!--My Info Job Tabs-->
         <div *ngIf="isActive('myinfo/job' )">
             <app-myinfo-job-tabs />
+        </div>
+          <div *ngIf="isActive('myinfo/documents' )">
+            <app-my-info-doc-tabs />
         </div>
     </div>
 </div>

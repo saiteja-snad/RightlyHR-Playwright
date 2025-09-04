@@ -54,6 +54,7 @@ import {
   MY_INFO_DOCUMENTS_ROUTES,
   MY_INFO_TEAM_MEMBERS,
   POLICY_REPORTS_TABS,
+  PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -435,6 +436,18 @@ export class AccessNavigationService {
             ) {
               if (item.route === '/time-off/pending-approvals/wfh') {
                 for (const item of PENDING_APPROVALS_WFH_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Remote Login Tab.view'
+            ) {
+              if (item.route === '/time-off/pending-approvals/remote') {
+                for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -1266,6 +1279,18 @@ export class AccessNavigationService {
                 }
               }
             }
+              if (
+                this.rbac.allowedToAccess(item.permission) &&
+                item.permission === 'Remote Login Tab.view'
+              ) {
+                if (item.route === '/time-off/pending-approvals/remote') {
+                  for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
+                    if (this.rbac.allowedToAccess(item.permission)) {
+                      return item.route;
+                    }
+                  }
+                }
+              }
             if (
               this.rbac.allowedToAccess(item.permission) &&
               item.permission === 'Permissions Tab.view'
@@ -1378,6 +1403,18 @@ export class AccessNavigationService {
             }
           }
         }
+        break;
+
+      case '/time-off/pending-approvals/remote':
+         if (
+           this.rbac.allowedToAccess('Remote Login Tab.view') 
+         ) {
+             for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
+               if (this.rbac.allowedToAccess(item.permission)) {
+                 return item.route;
+               }
+             } 
+         }
         break;
       case '/time-off/pending-approvals/comp-off':
         if (this.rbac.allowedToAccess('Comp Off Tab.view')) {
@@ -1502,10 +1539,10 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/reports/policy-reports' :
-        if(this.rbac.allowedToAccess('Policy Reports.view')){
-          for(const item of POLICY_REPORTS_TABS){
-            if(this.rbac.allowedToAccess(item.permission)){
+      case '/reports/policy-reports':
+        if (this.rbac.allowedToAccess('Policy Reports.view')) {
+          for (const item of POLICY_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
               console.log(item.route);
               return item.route;
             }

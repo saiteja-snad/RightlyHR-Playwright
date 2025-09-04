@@ -3,7 +3,8 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-       placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation " aria-label="Username" aria-describedby="basic-addon1">
+      placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation "
+      aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -24,57 +25,41 @@
         <tr *ngFor="let act of Active | activeEmployee : searchValue">
           <td>
             <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span>
-            <ng-template #fusionid>
-              -
-            </ng-template>
+            <ng-template #fusionid>-</ng-template>
           </td>
-          <td> <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
+          <td>
+            <span *ngIf="act.firstName;else fistname"> </span><a class="select-item cursor" (click)="select(act)">
               {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
-            <ng-template #fistname>
-              -
-            </ng-template>
+            <ng-template #fistname>-</ng-template>
           </td>
-          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
-            <ng-template #workemail>
-              -
-            </ng-template>
+          <td>
+            <span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>-</ng-template>
           </td>
-          <td class="text-nowrap"><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
-            <ng-template #contactnumb>
-              -
-            </ng-template>
+          <td class="text-nowrap">
+            <span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+            <ng-template #contactnumb>-</ng-template>
           </td>
           <!-- Location -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.lopcation; else noLocation">
-              {{ act.jobDetails?.[0]?.lopcation }}
-            </span>
+            <span *ngIf="act.jobDetails?.[0]?.lopcation; else noLocation">{{ act.jobDetails?.[0]?.lopcation }}</span>
             <ng-template #noLocation>-</ng-template>
           </td>
-         <!-- Sub Location -->
+          <!-- Sub Location -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">
-              {{ act.jobDetails?.[0]?.subLocation }}
-            </span>
+            <span *ngIf="act.jobDetails?.[0]?.subLocation; else noSubLocation">{{ act.jobDetails?.[0]?.subLocation }}</span>
             <ng-template #noSubLocation>-</ng-template>
           </td>
-
           <!-- Shift Name -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.shiftName; else noShift">
-              {{ act.jobDetails?.[0]?.shiftName }}
-            </span>
+            <span *ngIf="act.jobDetails?.[0]?.shiftName; else noShift">{{ act.jobDetails?.[0]?.shiftName }}</span>
             <ng-template #noShift>-</ng-template>
           </td>
-
           <!-- Designation -->
           <td>
-            <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">
-              {{ act.jobDetails?.[0]?.jobRole }}
-            </span>
+            <span *ngIf="act.jobDetails?.[0]?.jobRole; else noRole">{{ act.jobDetails?.[0]?.jobRole }}</span>
             <ng-template #noRole>-</ng-template>
           </td>
-
         </tr>
         }
         @if ((Active | activeEmployee : searchValue).length === 0) {

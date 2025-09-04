@@ -1,7 +1,7 @@
 * {
-  font-family: Verdana, Tahoma, sans-serif;
-}
 
+    font-family: 'VERDANA', sans-serif !important;
+}
 
 
 input:focus{
@@ -14,4 +14,9 @@ input:focus{
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
 }

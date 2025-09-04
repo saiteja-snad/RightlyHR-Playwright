@@ -53,6 +53,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   leaves = new BehaviorSubject<LeaveApproval[]>([]);
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
+  employeeLeaveEntitlementsList:ICategoryDetails[] = [] ;
   selectedLeaveData = {} as any;
   leavesselect!: LeaveApproval[];
   selectedProducts: LeaveApproval[] = [];
@@ -306,7 +307,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.leaveEntitlementsList = res.data.find(
             (ele: any) => ele.category.id === Value.entity.leaveCategoryId
           );
-          console.log(this.leaveEntitlementsList)
+          this.employeeLeaveEntitlementsList = res.data;
           // Check if isProbationAllowed is explicitly true or null
           const isProbationAllowed =
             this.leaveEntitlementsList?.category?.isProbationAllowed;
@@ -317,6 +318,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
+          this.leaveEntitlementsList = {} as ICategoryDetails;
+          this.employeeLeaveEntitlementsList = []
           console.log(err);
         },
       });

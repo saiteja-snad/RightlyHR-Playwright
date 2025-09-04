@@ -12,9 +12,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ProfileIconComponent } from "../../icons/profile-icon/profile-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, ProfileIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

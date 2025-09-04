@@ -13,6 +13,21 @@ export const environment = {
     redirectUrl: '/uservalidation',
     baseUrl: "https://localhost:44371/",
     scopeUri: ["api://f9ad74b1-d17f-4175-9097-f543691f6bec/api-access"],
+    auth: {
+    google: {
+      clientId: 'your-google-client-id.apps.googleusercontent.com',
+      redirectUri: window.location.origin + '/auth/callback',
+      scope: 'openid profile email',
+      issuer: 'https://accounts.google.com',
+    },
+    microsoft: {
+      clientId: '9a09dcfb-a22f-4fdf-a014-38990e558d80',
+      tenant: '0cc1bac4-bd4f-4994-8cf9-2d544c09d781',
+      redirectUri: window.location.origin + '/uservalidation',
+      authority: 'https://login.microsoftonline.com',
+      scope: 'openid profile email',
+    }
+  },
 
   dateformat: 'MMM d, y',
   paidLeaveCategoryId: 172,

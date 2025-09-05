@@ -157,7 +157,7 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
           this.jobErrorMessage = 'No job details found for this employee.';
           this.employeeForm.get('jobValid')?.setValue(false);
         } else {
-          let res = data.reverse()[0];  
+          let res = data[0];  
           this.selectedEmployeeJobDetails = res;
           this.jobErrorMessage = '';
           this.employeeForm.get('jobValid')?.setValue(true);

@@ -132,7 +132,9 @@ export const permissionsData = [
   { fields: 'Events Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false },
-
+  { fields: 'My Team (Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Expenses)', View: false, Update: false, Create: false, Delete: false },
+  
   //Calender Tabs Sections
   { fields: 'My Tickets Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Tickets Tab', View: false, Update: false, Create: false, Delete: false },

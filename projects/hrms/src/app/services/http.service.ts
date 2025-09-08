@@ -160,6 +160,15 @@ export class HttpService {
     return this.selectedEmployeeIdTimeoff.getValue();
   }
 
+  private selectedEmployeeIdExpenses = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdExpenses$ = this.selectedEmployeeIdExpenses.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdExpenses(id: any): void {
+    this.selectedEmployeeIdExpenses.next(id);
+    console.log('Selected Employee Expenses ID:', id);
+  }
+
   // function for employeid COMPOFF
   private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to

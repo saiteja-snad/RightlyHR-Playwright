@@ -15,8 +15,11 @@
                 {{empdata?.lastName}}</p>
             <p class="name emp-id text-center m-0 mb-2">{{empdata?.fusionEmpId}}</p>
             <p class="label-text text-truncate mb-2">
-                <img src="/icons/mail-icon.png" alt="Icon" class="custom-icon me-2">
-                <span class="link-text">{{this.empdata?.workEmail || 'NA'}}</span>
+                <a [href]="'mailto:' + (empdata?.workEmail || '')">
+                    <img src="/icons/mail-icon.png" alt="Icon" class="custom-icon me-2">
+                     <span class="link-text"><u>{{ empdata?.workEmail  }}</u></span>
+                </a>
+                <span *ngIf="!empdata?.workEmail"  class="link-text">NA</span>
             </p>
             <p class="label-text text-truncate mb-2">
                 <img src="/icons/profile-icon.png" alt="Icon" class="custom-icon me-2">
@@ -39,17 +42,25 @@
                 </span>
             </p>
             <p class="label-text text-truncate mb-2">
-                <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
-                <span class="link-text">
-                    <span *ngIf="empdata?.workPhone">
-                        <!-- <u>{{ empdata?.workPhoneCountryCode ||'NA' + ' ' + empdata?.workPhone }}</u> -->
-                        <u>{{ (empdata?.workPhoneCountryCode ? empdata.workPhoneCountryCode + ' ' : '') + empdata?.workPhone }}</u>
+                <a [href]="'tel:' +( ( ( empdata?.workPhoneCountryCode? empdata?.workPhoneCountryCode: '') + empdata?.workPhone) || ( ( empdata?.mobilePhoneCountryCode? empdata?.mobilePhoneCountryCode: '') + empdata?.contactnumber))">
+                    <img src="/icons/call-icon.png" alt="Icon" class="custom-icon me-2">
+                    <span class="link-text">
+                        <span *ngIf="empdata?.workPhone">
+                            <u>{{ empdata?.workPhone
+                                ? (empdata?.workPhone | formatcontactnumber:(empdata.workPhoneCountryFlag || ''))
+                                : '-' }}</u>
+                        </span>
+                        <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
+                            <u>{{ empdata?.contactnumber
+                                ? (empdata?.contactnumber | formatcontactnumber:(empdata.contactNumberCountryFlag ||
+                                ''))
+                                : '-' }}</u>
+                        </span>
+                
                     </span>
-                    <span *ngIf="!empdata?.workPhone && empdata?.contactnumber">
-                        <u>{{ empdata?.mobilePhoneCountryCode + ' ' + empdata?.contactnumber }}</u>
-                    </span>
-                    <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">NA</span>
-                </span>
+                    
+                </a>
+                <span *ngIf="!empdata?.workPhone && !empdata?.contactnumber">NA</span>
             </p>
         </div>
     </div>

@@ -17,6 +17,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
   styleUrl: './pending-shifts.component.scss'
 })
 export class PendingShiftsComponent {
+
   empinfo: any
   subscription!: Subscription;
   shiftsData: any[] = [];
@@ -94,6 +95,9 @@ export class PendingShiftsComponent {
          }
       });
    }
+   nagvition() {
+    this.router.navigate(['/settings/employee-fields/addshifts']);
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

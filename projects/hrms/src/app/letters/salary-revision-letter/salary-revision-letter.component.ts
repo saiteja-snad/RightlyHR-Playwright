@@ -64,6 +64,8 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
   spinnerLoader= false;
   jobErrorMessage!: string;
+  releaseLoader = false;
+  documentGenerated = false;
 
   constructor( private http: HttpService, 
     private httpclient: HttpClient, 
@@ -525,6 +527,9 @@ export class SalaryRevisionLetterComponent implements OnInit,OnDestroy {
       type: 'application/pdf',
     });
     this.uploadAppraisalLetter();
+    this.documentGenerated = true; // <-- Add this line
+    this.spinnerLoader = false;
+    // this.conformationPopup.openSuccessModal('Appraisal letter generated successfully');
   }
 
   //Update Employee details along with Appraisal details
@@ -657,7 +662,7 @@ uploadAppraisalLetter() {
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
         this.postAppraisalLettersDetails(this.result.documentUrl); // Call AFTER email is sent
         setTimeout(() => {
-          this.navigateDashboard();
+          // this.navigateDashboard();
         }, 3000);
       },
       error: (err: any) => {
@@ -702,7 +707,6 @@ const postAppDetails = {
         console.log(data);
        this.conformationPopup.openSuccessModal('Salary revision letter generated successfully');
         // this.router.navigate(['/']);
-          this.router.navigate(['/employee-management/all-employees'])
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal('The Letter cannot be Acknowledged');
@@ -710,6 +714,58 @@ const postAppDetails = {
       },
     });
 }
+  postAppraisalLetter() {
+    const loggedInUser = this.authService.getToken();
+    console.log(this.appraisalData.dateofAppraisal);
+    // const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    // const issuedDate = new Date(`${year}-${month}-${day}`).toISOString();
+    const [day, month, year] = this.appraisalData.dateofAppraisal.split('/');
+    const originalDate = new Date(`${year}-${month}-${day}`);
+
+    // Add one day (in milliseconds)
+    originalDate.setDate(originalDate.getDate() + 1);
+
+    // Convert to ISO format
+    const issuedDate = originalDate.toISOString();
+
+    console.log(issuedDate);
+    const payload = {
+      employeeId: this.appraisalData.employeeId,
+      status: 'Released',
+      documentLink: this.result.documentUrl,
+      createdBy: loggedInUser.employeeId,
+      signatureempId: this.appraisalData.authorityid,
+      createdAt: new Date().toISOString(),
+      revisedSalary: this.appraisalData.salary,
+      letterType: 'Appraisal Letter',
+      note: this.appraisalData.note,
+      authoritySignature: this.appraisalData.authorityid,
+      generatedBy: this.appraisalData.employeeId,
+      issuedDate: issuedDate,
+      docType: this.appraisalData.Documenttype,
+      candidateStatus: 'Generated',
+      jobId: this.appraisalData.jobId,
+      compensationDataId: this.appraisalData.compId,
+      isPromotion: this.employeeForm.get('isPromotion')?.value
+    };
+
+    this.http
+      .postdata(
+        'AppraisalLetter/postgeneratedappraisalpromotionletter',
+        payload
+      )
+      .subscribe({
+          next: (response) => {
+          this.conformationPopup.openSuccessModal(
+            'Appraisal letter generated successfully'
+          );
+          // this.sendEmail();
+        },
+        error: (error) => {
+          console.error('Error posting letter:', error);
+        },
+      });
+  }
 
   //to fromat Date
   private formatDate(dateString: Date): string {
@@ -746,6 +802,62 @@ const postAppDetails = {
 
   navigateDashboard() {
     this.router.navigate(['/employee-management/all-employees'])
+  }
+    releaseToEmployee() {
+    this.releaseLoader = true;
+    let loggedInUser = this.authService.getToken();
+    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
+    this.subscription = this.http.uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filePath,
+      this.AppraisalFile
+    ).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.result.documentUrl = data.path;
+        }
+        let emaildetails = {
+          personEmail: this.appraisalData.workEmail,
+          senderName: loggedInUser.middleName
+            ? `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+            : `${loggedInUser.firstName} ${loggedInUser.lastName}`,
+          senderEmail: loggedInUser.workEmail,
+          firstName: this.appraisalData.firstName,
+          lastName: this.appraisalData.lastName,
+          middleName: this.appraisalData.middleName,
+          personRole: this.appraisalData.jobRole,
+          documentUrl: this.result.documentUrl,
+          employeeId: this.appraisalData.employeeId,
+          generatedBy: this.appraisalData.employeeId,
+          generatedDate: new Date().toISOString(),
+          compensationamount: this.appraisalData.salary,
+          effectiveDate: this.formatDates(this.employeeCompensationDetails?.compeffectivedate),
+          jobRole: this.appraisalData.jobRole,
+          compeffectivedate: this.formatDates(this.employeeCompensationDetails?.compeffectivedate),          
+        };
+        this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+          next: (data: any) => {
+            this.conformationPopup.openSuccessModal('Email has been sent successfully'); // <-- Show popup here
+            setTimeout(() => {
+              this.employeeForm.reset();
+              this.appraisalData = {};
+              this.documentGenerated = false;
+              this.releaseLoader = false;
+              this.navigateDashboard();
+            }, 2000);
+          },
+          error: (err: any) => {
+            this.releaseLoader = false;
+          },
+          complete: () => {
+            this.releaseLoader = false;
+          },
+        });
+      },
+      error: (reason: any) => {
+        this.releaseLoader = false;
+      },
+    });
   }
 
   ngOnDestroy(): void {

@@ -593,6 +593,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
   openModalupdate(content: any, data: any): void {
+    console.log(data) 
     this.getReportingTo()
     this.getDepartment()
     this.onDepartmentChange(data.departmentId)
@@ -620,7 +621,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       team: data.subdepartmentId,
       teamManager: this.teamManagerName || null,
       jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
-      reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
+      reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportsto),
       grade: this.selectedJobRoleObj?.gradeName,
     });
     console.log(this.jobDetailsupdateForm.value);

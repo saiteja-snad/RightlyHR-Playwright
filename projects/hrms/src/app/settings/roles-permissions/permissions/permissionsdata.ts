@@ -132,7 +132,9 @@ export const permissionsData = [
   { fields: 'Events Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false },
-
+  { fields: 'My Team (Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Expenses)', View: false, Update: false, Create: false, Delete: false },
+  
   //Calender Tabs Sections
   { fields: 'My Tickets Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Tickets Tab', View: false, Update: false, Create: false, Delete: false },
@@ -589,6 +591,8 @@ export const permissionsData = [
   { fields: 'Employee Info Job Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Reset Password Button', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Generate Credentials Button', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Info Personal Sub Tabs Section

@@ -11,6 +11,7 @@ import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, 
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { WelcomePopupComponent } from '../../shared/welcome-popup/welcome-popup.component';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-user-validation',
   imports: [
@@ -35,37 +36,63 @@ export class UserValidationComponent {
 
 
   constructor(
-    private _msalService: MsalService,
     private router: Router,
     private http: HttpService,
     private accessNav: AccessNavigationService,
     private rbac: RbacService,
     private modalService: NgbModal,
+    private auth: AuthService
   ) { }
 
   async ngOnInit() {
-    await this.postLogin();
+     
+    this.postLogin();
   }
 
   async postLogin() {
-    await this._msalService.instance.initialize();
-    //  const loginResponse = await this._msalService.instance.loginRedirect();
-    //console.log(loginResponse.accessToken);
-    const account = this._msalService.instance.getAllAccounts()[0];
-    if (account) {
-      this._msalService.instance.setActiveAccount(account);
-    } else {
+     
+    const tokens = await this.auth.getTokenResponse(); // Microsoft tokens
+    const storedRes = localStorage.getItem('currentUser');
+
+    // ✅ Case 1: Microsoft tokens exist but no stored response → first time login
+    if (tokens && !storedRes) {
+      const deviceName = this.auth.getDeviceName();
+      const ipAddress = await this.auth.getIpAddress();
+
+      const payload = {
+        provider: 'Microsoft',
+        accessToken: tokens.id_token,
+        deviceName,
+        ipAddress
+      };
+
+      this.auth.postData('v2/Auth/social', payload).subscribe({
+        next: (res: any) => {
+          this.auth.storeAuthResponse(res);  // Save access/refresh tokens + user info
+          localStorage.setItem('loginType', 'Microsoft Login');
+          console.log('MS Backend login success:', res);
+          this.getUserDetails(res.email);
+        },  
+        error: (err) => {
+          console.error('MS Backend login failed:', err);
+          this.router.navigate(['/login']); // fallback
+        }
+      });
+
       return;
     }
-    const response = await this._msalService.instance.acquireTokenSilent({
-      account: account,
-      scopes: ['user.read'],
-    });
-    const token = response.accessToken;
-    //console.log(token);
-    this.name = account?.name as string;
-    this.getUserDetails(account?.username);
+
+    if (storedRes) {
+      const parsedRes = JSON.parse(storedRes);
+      console.log('Using cached login data:', parsedRes.email);
+      this.getUserDetails(parsedRes.email);
+      return;
+    }
+
+    console.warn('No auth data found. Redirecting to login.');
+    this.router.navigate(['/login']);
   }
+
 
   getUserDetails(email: string) {
     this.subscription = this.http.getUserDetails(email).subscribe({
@@ -93,7 +120,7 @@ export class UserValidationComponent {
               this.stayBack()
 
             } else {
-               this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
+              this.modalService.open(this.newFeatureValidationPopup, { backdrop: 'static', keyboard: false, centered: true });
               // this.navigateToOldUIApplication();
             }
           } else {

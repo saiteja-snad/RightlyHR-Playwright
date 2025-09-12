@@ -43,6 +43,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   responseSummary!: any;
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
+  employeeLeaveEntitlementsList:ICategoryDetails[] = [] ;
   selectedLeaveData = {} as any;
   spinnerLoader = false;
   multiSelect = false;
@@ -130,12 +131,13 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   }
 
   checkLeaveBalance(Value: any, checkbalancepopup: any) {
-    this.modalService.open(checkbalancepopup, { centered: true, backdrop: 'static' });
+    this.modalService.open(checkbalancepopup, { centered: true, backdrop: 'static',size: 'lg' });
     let employeeId = Value.entity.leaveempId;
     this.subscription = this.http.getData(`LeaveEntitlements/employee/${employeeId}`).subscribe({
       next: (res: any) => {
         // Find the category based on leaveCategoryId
         this.leaveEntitlementsList = res.data.find((ele: any) => ele.category.id === Value.entity.leaveCategoryId);
+        this.employeeLeaveEntitlementsList = res.data;
         // Check if isProbationAllowed is explicitly true or null
         const isProbationAllowed = this.leaveEntitlementsList?.category?.isProbationAllowed;
         if (isProbationAllowed) {
@@ -145,6 +147,8 @@ export class TimeOffComponent implements OnInit, OnDestroy {
         }
       },
       error: (err: any) => {
+        this.leaveEntitlementsList = {} as ICategoryDetails;
+        this.employeeLeaveEntitlementsList = [];
         console.log(err);
       }
     });

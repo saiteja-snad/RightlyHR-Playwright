@@ -272,7 +272,8 @@
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
+                                        
                                 </td>
                             </tr>
                         </ng-container>
@@ -310,7 +311,7 @@
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                                 </td>
                             </tr>
                         </ng-container>
@@ -346,7 +347,7 @@
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                                 </td>
                             </tr>
                         </ng-container>
@@ -418,9 +419,9 @@
                                     <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
                                         (change)="onCheckboxChange(per, 'Create')" [disabled]="!roleToFilter?.id">
                                 </td>
-                                <td>
+                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                                 </td>
                             </tr>
                         </ng-container>
@@ -740,10 +741,11 @@
                             </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Expenses Module'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Expenses Module' || per.fields === 'My Team (Expenses)' ||  per.fields === 'All Employees (Expenses)'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                    
                                         (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
                                 </td>
                                 <td scope="row">
@@ -2951,7 +2953,7 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Personal Tab' ||  per.fields === 'Employee Info Job Tab' || per.fields === 'Employee Info Documents Tab'
-                            ||  per.fields === 'Employee Info Team Members Tab'  ">
+                            ||  per.fields === 'Employee Info Team Members Tab' || per.fields === 'Reset Password Button'  || per.fields === 'Generate Credentials Button' ">
 
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">

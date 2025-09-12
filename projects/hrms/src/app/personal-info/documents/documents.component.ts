@@ -17,11 +17,12 @@ import { RbacService } from '../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 import { Skeleton } from 'primeng/skeleton';
+import { DownloadIconComponent } from "../../icons/download-icon/download-icon.component";
 
 @Component({
   selector: 'app-documents',
   imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, Skeleton, TranslateModule,
-     CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
+    CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })

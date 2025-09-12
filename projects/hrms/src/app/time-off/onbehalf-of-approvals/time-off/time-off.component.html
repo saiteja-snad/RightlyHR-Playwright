@@ -163,51 +163,49 @@
 <!-- checkbalancepopup -->
 <ng-template #checkbalancepopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border justify-content-end">
+        <div class="custom-poup-header-content popup-header-border">
             <div>
-                <a (click)="modal.dismiss('Cross click')">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <p class="popup-heading mb-0">
+                    Leave Balances
+                </p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content custom-accordians">
-            <div class="custom-popup-header"> @if(leaveEntitlementsList.category?.isProbationAllowed &&
-                leaveEntitlementsList.probationLeaves > 0){
-                Leave Balances({{leaveEntitlementsList?.category?.name}})
-                }@else{
-                Leave Balances({{leaveEntitlementsList?.category?.name}})
-                }</div>
             <div class="popup-table-wrapper">
-                <div class="popup-table-scroll-container">
+                <div class="popup-table-scroll-container custom-popup-table-scroll-container">
                     <table class="popup-table">
                         <thead>
                             <tr>
-                                <th>Entitiled</th>
-                                <th>Booked</th>
-                                <th>Processed</th>
-                                <th>Available</th>
-                                <th *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
+                                <th class="text-center">Leave Type</th>
+                                <th class="text-center">Entitled</th>
+                                <th class="text-center">Booked</th>
+                                <th class="text-center">Processed</th>
+                                <th class="text-center">Available</th>
+                                <th class="text-center"
+                                    *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
                                     Probation Leaves
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="log-time">{{this.leaveEntitlementsList.allowedDays}}</td>
-                                <td class="log-time">{{this.leaveEntitlementsList.booked}}</td>
-                                <td class="log-time">{{this.leaveEntitlementsList.utilizedDays}}</td>
-                                <td class="log-time">
-                                    <div *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);
-                                     else  untilizeddays">{{ this.leaveEntitlementsList.probationLeaves -
-                                        this.leaveEntitlementsList.utilizedDays }}</div>
-                                    <ng-template #untilizeddays>
-                                        <div>{{ this.leaveEntitlementsList.allowedDays -
-                                            this.leaveEntitlementsList.utilizedDays }}</div>
-                                    </ng-template>
+                            <tr *ngFor="let leaveEntitlementsList of employeeLeaveEntitlementsList">
+                                <td class="text-start">{{ leaveEntitlementsList?.category?.name }}</td>
+                                <td class="text-center">{{ leaveEntitlementsList.allowedDays }}</td>
+                                <td class="text-center">{{ leaveEntitlementsList.booked }}</td>
+                                <td class="text-center">{{ leaveEntitlementsList.utilizedDays }}</td>
+                                <td class="text-center">{{
+                                    (leaveEntitlementsList.category?.isProbationAllowed &&
+                                    leaveEntitlementsList.probationLeaves > 0)
+                                    ? (leaveEntitlementsList.probationLeaves - leaveEntitlementsList.utilizedDays)
+                                    : (leaveEntitlementsList.allowedDays - leaveEntitlementsList.utilizedDays)
+                                    }}
                                 </td>
-                                <td class="log-time"
+                                <td class="text-center"
                                     *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0">
-                                    {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
-                                    leaveEntitlementsList.probationLeaves : 'N/A' }}
+                                    {{ leaveEntitlementsList.probationLeaves }}
                                 </td>
                             </tr>
                         </tbody>

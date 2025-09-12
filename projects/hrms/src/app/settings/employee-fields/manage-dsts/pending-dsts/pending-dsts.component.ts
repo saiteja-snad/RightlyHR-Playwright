@@ -22,12 +22,16 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
   allDSTs = [] as ManageDST[];
   destroy$: Subject<boolean> = new Subject<boolean>();
   loading = false;
-  constructor(
+   message: any;
+   successModalRef: any;
+   deleteModalRef: any;
+   constructor(
     private http: HttpService,
     private sharedModalService: OpenModalService,
     private modalService: NgbModal,
     private router: Router,
-    public rbac: RbacService
+    public rbac: RbacService,
+      private confirmation: OpenModalService,
   ) { }
 
   ngOnInit(): void {
@@ -63,7 +67,36 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
       status.status === 'Pending for submission'
     ).reverse();
   }
+ Dstddata:any
+  DeleteDstDailog(content: any, dst: any) {
+    this.Dstddata = dst;
+    this.deleteModalRef = this.modalService.open(content, { centered: true });
+  }
+  onDelete(modal: any) {
+    this.http.deleteData(`OrgDayLight/${this.Dstddata.id}`).subscribe({
+      next: () => {
+        // Remove from list after successful delete
+        this.allDSTs = this.allDSTs.filter(item => item.id !== this.Dstddata.id);
 
+        // Close delete popup
+        modal.close();
+
+        // Open success popup
+        this.confirmation.openSuccessModal('DST deleted successfully');
+        this.getAllDayLight();
+
+        setTimeout(() => {
+          if (this.successModalRef) {
+            this.successModalRef.close();
+          }
+        }, 2000);
+      },
+      error: () => {
+        modal.close();
+        this.confirmation.openErrorModal('Failed to delete DST.');
+      }
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

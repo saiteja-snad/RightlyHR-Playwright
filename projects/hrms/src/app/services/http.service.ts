@@ -160,6 +160,15 @@ export class HttpService {
     return this.selectedEmployeeIdTimeoff.getValue();
   }
 
+  private selectedEmployeeIdExpenses = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdExpenses$ = this.selectedEmployeeIdExpenses.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdExpenses(id: any): void {
+    this.selectedEmployeeIdExpenses.next(id);
+    console.log('Selected Employee Expenses ID:', id);
+  }
+
   // function for employeid COMPOFF
   private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
@@ -354,6 +363,10 @@ export class HttpService {
 
   postdata(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
+  }
+
+  postbyId(url: string) {
+    return this.http.post(`${this.ApiUrl}${url}`, {}); // empty body for POST
   }
 
   /* to the post dynamic form details*/

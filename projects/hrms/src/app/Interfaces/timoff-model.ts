@@ -413,3 +413,9 @@ export interface ApprovalStatusCount {
   forYourRole: number;
   totalCount: number;
 }
+export interface  ILateLoginSetting {
+  id: number;
+  attribute: string;
+  value: string | number | boolean;
+  entity: string;
+}

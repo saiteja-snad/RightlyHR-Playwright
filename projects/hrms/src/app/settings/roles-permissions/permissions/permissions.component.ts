@@ -332,6 +332,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Inactive',
       'Desk Allocation - Create',
       'Team Tickets Tab',
+      'Late Login Alert Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&

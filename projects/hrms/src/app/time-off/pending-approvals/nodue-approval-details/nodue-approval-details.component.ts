@@ -181,17 +181,19 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
 
   //function to reject the nodue
   rejectNodue() {
+    debugger
     this.isLoading = true;
     const date = moment();
     let loggedInuser = this.authService.getToken();
     (this.selectedNoDueData.status = 'Rejected'),
       (this.selectedNoDueData.processedBy = loggedInuser.employeeId),
+      (this.selectedNoDueData.comments = this.rejectForm.get('notes')?.value),
       (this.selectedNoDueData.processdByFusionEmpId = loggedInuser.fusionEmpId);
     this.selectedNoDueData.processedDate = date;
     this.selectedNoDueData.processedByName = `${loggedInuser.firstName ?? ''} ${
       loggedInuser.middleName ?? ''
     } ${loggedInuser.lastName ?? ''}`;
-    this.selectedNoDueData.comments = this.AcceptForm.get('notes')?.value;
+    // this.selectedNoDueData.comments = this.AcceptForm.get('notes')?.value;
     this.subscription = this.http
       .postdata(
         `NoDueClearanceForm/pendingApprovalsUpdate`,

@@ -1,16 +1,39 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
             <div class="component-header">{{'WFH'|translate}}</div>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
                     class="module-icon">
             </div>
         </div>
-    
+
         <div class="d-flex align-items-center gap-3">
-            @if (rbac.allowedToAccess('My Team (WFH).view')) {
+            @if(rbac.allowedToAccess('All Employees (WFH).view') && rbac.allowedToAccess('My Team (WFH).view')) {
+            <div class="d-flex align-items-center gap-2">
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                    {{'Select Employee' | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                        (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
+                </div>
+            </div>
+            }
+            @else if(rbac.allowedToAccess('All Employees (WFH).view')) {
+            <div class="d-flex align-items-center gap-2">
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                    {{'Select Employee' | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
+                        (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
+                </div>
+            </div>
+            }
+            @else if (rbac.allowedToAccess('My Team (WFH).view')) {
             <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
@@ -20,7 +43,7 @@
                 </p-select>
             </div>
             }
-            
+
             <div class="d-flex gap-2 align-items-center">
                 <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
                 <form autocomplete="off" [formGroup]="yearSelectionForm">
@@ -50,7 +73,7 @@
             <app-wfh-approvaltabs />
         </div>
         <div class="component-right-content">
-            <router-outlet/>
+            <router-outlet />
         </div>
     </div>
 </div>
@@ -65,25 +88,20 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form autocomplete="off" [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form"
-               >
+            <form autocomplete="off" [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form">
                 <!-- Worked Date -->
                 <div class="mb-3">
-                    <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span
-                            class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
-                        autocomplete="off" formControlName="workedDate"
-                        (change)="getWFHBal(addWFHForm.get('workedDate')?.value)" [min]="getPastDate()"
+                    <label for="workedDate" class="form-label custom-label mb-2">Worked Date
+                        <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate" autocomplete="off"
+                        formControlName="workedDate" (change)="getWFHBal(addWFHForm.get('workedDate')?.value)" [min]="getPastDate()"
                         [max]="getFutureDate()">
-                    <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid"
-                        class="error-msg">
-                        Worked Date is required
+                    <div class="error-msg">
+                        <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid">
+                            Worked Date is required</div>
+                        <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for WFH</div>
+                        <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
                     </div>
-                    <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']" class="error-msg">
-                        Selected date is not eligible for WFH
-                    </div>
-                    <div class="error-msg" *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must
-                        be after your date of joining.</div>
                 </div>
 
                 <!-- Availing -->
@@ -91,7 +109,8 @@
                     <label class="form-label custom-label mb-3">Availing<span class="text-danger">*</span></label>
                     <div class="d-flex gap-3">
                         <div class="form-check">
-                            <input type="radio" class="form-check-input" id="halfDay" value="Half Day" formControlName="availing">
+                            <input type="radio" class="form-check-input" id="halfDay" value="Half Day"
+                                formControlName="availing">
                             <label class="form-check-label custom-label" for="halfDay">Half Day</label>
                             <!-- Half Day Selection -->
                             <div *ngIf="addWFHForm.get('availing')?.value === 'Half Day'">
@@ -99,7 +118,6 @@
                                     <input type="radio" class="form-check-input" id="firstHalf" [value]="1" formControlName="halfType">
                                     <label class="form-check-label" for="firstHalf">First Half</label>
                                 </div>
-                        
                                 <div class="form-check">
                                     <input type="radio" class="form-check-input" id="secondHalf" [value]="3" formControlName="halfType">
                                     <label class="form-check-label" for="secondHalf">Second Half</label>
@@ -117,23 +135,18 @@
 
                 <!-- Reason -->
                 <div class="mb-3">
-                    <label for="reason" class="form-label custom-label mb-2">Reason<span
-                            class="text-danger">*</span></label>
+                    <label for="reason" class="form-label custom-label mb-2">Reason
+                        <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
                         maxlength="250" placeholder="Reason for WFH"
                         (input)="formsValidation.validateInput(addWFHForm.get('reason'))"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ addWFHForm.get('reason')?.value?.length || 0 }}/250</div>
                     <div class="error-msg" *ngIf="addWFHForm.get('reason')?.errors?.['minlength']">
-                            Reason must be at least 10 characters
-                    </div>
-                    <div class="error-msg"
-                        *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
+                        Reason must be at least 10 characters</div>
+                    <div class="error-msg" *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
                         <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">Reason is required</div>
-                        <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">
-                            Reason cannot exceed 250 characters
-                        </div>
-                        
+                        <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters</div>
                     </div>
                 </div>
 
@@ -141,9 +154,10 @@
                 <div *ngIf="wfhValidations.isdurationValidated">{{wfhValidations.DurationErrorMessage}}</div>
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                    (click)="openModal(confirmationpopup)" [disabled]="spinnerLoader" >{{'Cancel' | translate }}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="addWFHForm.invalid || spinnerLoader">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)"
+                        [disabled]="spinnerLoader">{{'Cancel' | translate }}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="addWFHForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
                             <div class="spinner-border button-spinner text-light" role="status"></div>
@@ -159,15 +173,12 @@
     </div>
 </ng-template>
 
-
-
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
-
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>

@@ -13,6 +13,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-rejected-expenses',
   imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
@@ -31,15 +32,29 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   updataid!: number;
   loading = false;
   searchTerm: any = '';
+  selectemp: any;
+  selectedYear: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
-  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid();
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    });
   }
-
   openModalcomments(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -53,13 +68,15 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   }
 
   getexpensesheaderbyemployeeid(): void {
+    let empId = this.selectemp ?? this.empinfo.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Rejected&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata.next(data)
           this.loading = false
+          this.expenesEmplyeedata.next(data)
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },

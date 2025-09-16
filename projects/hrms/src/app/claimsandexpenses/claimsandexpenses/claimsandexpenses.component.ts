@@ -71,8 +71,6 @@ export class ClaimsandexpensesComponent implements OnInit {
 
 
   onCheckemployee(employeedId: any) {  
-  
-   
     if (employeedId) {
      this.http.setEmployeeIdExpenses(employeedId);
     } else {

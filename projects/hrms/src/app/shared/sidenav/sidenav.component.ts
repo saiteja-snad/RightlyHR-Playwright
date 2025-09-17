@@ -19,7 +19,7 @@ export class SidenavComponent implements OnInit {
   modules = [
     //Holidays
     {
-      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
+      label: 'Holidays', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
     },
     //Policies

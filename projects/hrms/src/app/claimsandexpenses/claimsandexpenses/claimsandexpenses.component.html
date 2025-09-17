@@ -54,7 +54,7 @@
             }
 
             @if(rbac.allowedToAccess('Expenses Module.create')){
-            <div>
+            <div *ngIf="!employeeSelected">
                 <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary">Add New Expense</button>
             </div>
             }

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
-import { MsalService } from '@azure/msal-angular';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { RbacService } from '../../services/rbac.service';
 import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, MY_INFO_PERSONAL_ROUTES, MY_INFO_TEAM_MEMBERS } from '../../permission-route.constants';
@@ -17,7 +16,6 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     FormsModule,
     CommonModule,
-    WelcomePopupComponent
   ],
   templateUrl: './user-validation.component.html',
   styleUrl: './user-validation.component.scss'
@@ -45,15 +43,15 @@ export class UserValidationComponent {
   ) { }
 
   async ngOnInit() {
-     
     this.postLogin();
   }
 
   async postLogin() {
      
-    const tokens = await this.auth.getTokenResponse(); // Microsoft tokens
+    const tokens = await this.auth.getTokenResponse();
     const storedRes = localStorage.getItem('currentUser');
 
+    // Case 1: Microsoft tokens exist but no stored response → first time login
     if (tokens && !storedRes) {
       const deviceName = this.auth.getDeviceName();
       const ipAddress = await this.auth.getIpAddress();
@@ -62,16 +60,17 @@ export class UserValidationComponent {
         provider: 'Microsoft',
         accessToken: tokens.id_token,
         deviceName,
-        ipAddress
+        ipAddress,
+        userAgent: navigator.userAgent
       };
 
       this.auth.postData('v2/Auth/social', payload).subscribe({
         next: (res: any) => {
-          this.auth.storeAuthResponse(res);  
+          this.auth.storeAuthResponse(res);
           this.getUserDetails(res.email);
         },  
         error: (err) => {
-          this.router.navigate(['/login']); 
+          this.router.navigate(['/login']);
         }
       });
 
@@ -83,7 +82,6 @@ export class UserValidationComponent {
       this.getUserDetails(parsedRes.email);
       return;
     }
-
     this.router.navigate(['/login']);
   }
 
@@ -215,7 +213,6 @@ export class UserValidationComponent {
   onClickGetStarted() {
     this.subscription = this.http.postdata('BetaUser/post', { employeeId: this.loginReposne.empdatum.employeeId, popUpShown: true }).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.modalService.dismissAll();
         this.stayBack()
       },

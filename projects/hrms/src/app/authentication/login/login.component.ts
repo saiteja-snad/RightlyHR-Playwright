@@ -48,11 +48,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.http.isLoggedIn()) {
-
-      console.log("User is logged in, navigating...");
-      this.router.navigateByUrl('/uservalidation')
-        .then(ok => console.log("Navigation success?", ok))
-        .catch(err => console.error("Navigation failed:", err));
+      this.router.navigateByUrl('/uservalidation');
     }
 
     this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get("returnUrl");
@@ -145,7 +141,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   async onSubmit(loginForm: FormGroup) {
-
     if (loginForm.valid) {
       this.spinnerLoader = true;
 
@@ -157,16 +152,15 @@ export class LoginComponent implements OnInit, OnDestroy {
         email: loginData.email,
         password: loginData.password,
         deviceName,
-        ipAddress
+        ipAddress,
+        userAgent: navigator.userAgent
       };
 
       this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
           next: (res: any) => {
-            console.log('API success:', res);
             if (res) {
               this.http.storeAuthResponse(res);
               setTimeout(() => {
-                console.log('Navigating to /uservalidation');
                 this.router.navigate(['/uservalidation']);
               }, 2000);
             } else {
@@ -174,6 +168,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
+            this.spinnerLoader= false;
             this.Status = 'Invalid Email ID or Password';
           }
         });

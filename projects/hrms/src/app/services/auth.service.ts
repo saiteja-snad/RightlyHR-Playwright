@@ -101,8 +101,6 @@ export class AuthService {
       if (loggedIn) {
         const accessToken = this.oauthService.getAccessToken();
         const idToken = this.oauthService.getIdToken();
-        console.log(accessToken);
-        console.log(idToken)
         this.router.navigate(['/uservalidation']);
         return { accessToken, idToken };
       } else {
@@ -226,6 +224,7 @@ export class AuthService {
       error: (err) => {
         localStorage.clear();
         sessionStorage.clear();
+        this.logout();
         this.router.navigate(['/login']);
       }
     });
@@ -257,8 +256,8 @@ export class AuthService {
         return res;
       }),
       catchError((error) => {
-        console.log(error);
-        
+        localStorage.clear();
+        sessionStorage.clear();
         this.logout();
         this.router.navigate(['/login']);
         return throwError(() => error);

@@ -224,7 +224,6 @@ export class AuthService {
       error: (err) => {
         localStorage.clear();
         sessionStorage.clear();
-        this.logout();
         this.router.navigate(['/login']);
       }
     });
@@ -256,8 +255,6 @@ export class AuthService {
         return res;
       }),
       catchError((error) => {
-        localStorage.clear();
-        sessionStorage.clear();
         this.logout();
         this.router.navigate(['/login']);
         return throwError(() => error);

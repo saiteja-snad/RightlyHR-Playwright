@@ -181,7 +181,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
 
   //function to reject the nodue
   rejectNodue() {
-    debugger
+
     this.isLoading = true;
     const date = moment();
     let loggedInuser = this.authService.getToken();

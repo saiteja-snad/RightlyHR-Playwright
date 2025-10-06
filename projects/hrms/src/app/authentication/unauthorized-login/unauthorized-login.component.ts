@@ -28,7 +28,9 @@ export class UnauthorizedLoginComponent implements OnInit {
     }
     else {
       this.auth.refreshToken().subscribe({
-        next: (res) => console.log('API triggered successfully', res),
+        next: (res) => {
+          this.router.navigate(['/uservalidation'])
+        },
         error: (err) => console.error('Error occurred', err)
       });
     }

@@ -179,9 +179,6 @@ export class AuthService {
       if (authResponse.accessToken) {
         localStorage.setItem('accessToken', authResponse.accessToken);
       }
-      if (authResponse.refreshToken) {
-        localStorage.setItem('refreshToken', authResponse.refreshToken);
-      }
     }
   }
 

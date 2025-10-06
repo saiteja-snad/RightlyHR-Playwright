@@ -131,7 +131,7 @@ export class UserValidationComponent {
         }
       },
       error: (err) => {
-        this.router.navigate(['/unauthorized']);
+        this.router.navigate(['/login']);
       },
     });
   }

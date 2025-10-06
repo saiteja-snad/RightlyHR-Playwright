@@ -115,8 +115,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     })
   }
 
-  // Normal Login
-
+  // Classic Login
   loginForm!: FormGroup;
   intialiseForm() {
     this.loginForm = this.fb.group({
@@ -191,8 +190,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       console.log('Form invalid');
     }
   }
-
-  
 
   ngOnDestroy(): void {
     if (this.subscription) {

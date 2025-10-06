@@ -206,8 +206,8 @@
             <p class="confirmation-text">{{'Are you sure you want to log out?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'| translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="onLogout()">
+            <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader" (click)="close()">{{'No'| translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="spinnerLoader" (click)="onLogout()">
                 @if(spinnerLoader){
                 <div class="button-loader-content">
                     <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>

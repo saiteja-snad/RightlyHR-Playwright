@@ -1,0 +1,105 @@
+.custom-main-popup-content {
+    position: relative;
+}
+
+.cross-btn {
+    position: absolute;
+    right: 1.5rem;
+}
+
+.profile-image {
+    width: 4.25rem;
+    height: 4.25rem;
+    box-shadow: 0px 0px 10px 0px #0B3A8333;
+    border: 2px solid #FFFFFF;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name {
+    font-weight: 700;
+    font-size: var(--fontsize16);
+    line-height: 14px;
+    text-wrap: wrap;
+    line-break: anywhere;
+    color: var(--primary-color);
+    text-transform: capitalize;
+}
+
+.job-role {
+    font-weight: 400;
+    font-size: 12px;
+    color: rgba(144, 144, 144, 1);
+    text-transform: capitalize;
+}
+
+.department {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--primary-color);
+    text-transform: capitalize;
+}
+
+.custom-card {
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 1);
+    border: 0.75px solid rgba(220, 227, 233, 1);
+
+    .label-text {
+        font-weight: 400;
+        font-size: 12px;
+        vertical-align: middle;
+        color: #989898;
+    }
+
+    .custom-icon {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+
+    .link-text {
+        color: var(--primary-color);
+    }
+}
+
+.manager-card {
+    width: 100%;
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: var(--body-bg-color);
+
+    .accent-bar {
+        width: 0.25rem;
+        border-radius: 0.5rem;
+        background-color: #1064CA;
+    }
+
+    .accent-bar1 {
+        width: 0.25rem;
+        border-radius: 0.5rem;
+        background-color: #E0433A;
+    }
+
+    .label-name {
+        font-weight: 400;
+        font-size: 11.2px;
+        line-height: 17.32px;
+        letter-spacing: 0%;
+        color: #686868;
+    }
+}
+
+.dashed-border {
+    width: 100%;
+    height: 2px;
+    border-bottom: 2px dashed #CBCBCB;
+}
+
+.shared-icons {
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+}

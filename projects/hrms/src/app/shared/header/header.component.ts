@@ -225,29 +225,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   async onLogout() {
-    const logInType = localStorage.getItem('loginType');
-
-
-    if (logInType === 'Classic Login') {
-      this.authService.onLogout();
-      setTimeout(() => {
-        localStorage.clear();
-        this.modalservie.dismissAll();
-        this.router.navigate(['/login'])
-      }, 100)
-
-    }
-    else if (logInType === 'Microsoft Login') {
-      this.authService.logout();
-      this.authService.onLogout();
-      setTimeout(() => {
-        localStorage.clear();
-        this.modalservie.dismissAll();
-        this.router.navigate(['/login'])
-      }, 100)
-      window.location.href =
-        'https://login.microsoftonline.com/common/oauth2/v2.0/logout';
-    }
+    this.spinnerLoader = true;
+    this.authService.logout();
   }
 
   close() {

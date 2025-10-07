@@ -119,6 +119,7 @@ export class CompOffEntitlementComponent {
       },
       error: (reason) => {
         this.dataLoad = false;
+        
       },
       complete: () => {
         this.dataLoad = false;

@@ -177,8 +177,10 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
 
   handleAccept(f: NgForm) {
     this.isLoading = true;
+    let loggedInUser = this.authService.getToken();
     let requestBody = {
       status: 'Approved',
+      approvedBy: loggedInUser.employeeId.toString(),
       comments: this.selectedLeaveData.trcomments,
       currentStage: parseInt(
         this.requesthandler.approvalHeader.currentapprovalStage
@@ -210,8 +212,10 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   //function to send the rejected status and comments
   handleReject(f: NgForm) {
     this.isLoading = true;
+    let loggedInUser = this.authService.getToken();
     let requestBody = {
       status: 'Rejected',
+      approvedBy: loggedInUser.employeeId.toString(),
       comments: this.selectedLeaveData.rejectedReason,
       currentStage: parseInt(
         this.requesthandler.approvalHeader.currentapprovalStage
@@ -242,6 +246,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   handleProcess(request: Itraineeapproval) {
     let requestBody = {
       status: 'Processed',
+      approvedBy: this.authService.getToken().employeeId.toString(),
       currentStage: parseInt(request.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
@@ -293,6 +298,7 @@ export class TraineeApprovalsComponent implements OnInit, OnDestroy {
   handleExtend(f: NgForm) {
     let requestBody = {
       status: 'Processed',
+      approvedBy: this.authService.getToken().employeeId.toString(),
       comments: this.selectedLeaveData.trcomments,
       trainingEndDate: this.selectedLeaveData.extenddate,
       currentStage: parseInt(

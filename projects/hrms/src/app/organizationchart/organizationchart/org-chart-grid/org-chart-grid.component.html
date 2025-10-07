@@ -27,7 +27,7 @@
           <div (click)="shareVia('outlook')" class="cursor">
             <app-mail-icon />
           </div>
-          <div (click)="shareVia('linkedin')" class="cursor">
+          <div *ngIf="linkedinurl" (click)="shareVia('linkedin')" class="cursor">
             <img src="\icons\logos_linkedin-icon.png" alt="LinkedIn" class="shared-icons">
           </div>
         </div>

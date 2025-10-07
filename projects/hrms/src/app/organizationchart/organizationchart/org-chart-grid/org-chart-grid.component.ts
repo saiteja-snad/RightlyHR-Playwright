@@ -29,6 +29,7 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
   private boundHandleClick!: (event: Event) => void;
   // Swap feature
   layoutIndex = 0;
+  linkedinurl: any;
   layouts = ['right', 'bottom', 'left', 'top'];
   compactFlag = false;
   showCompensation = false;
@@ -44,7 +45,7 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
   department!: string;
   Reportingmanager!: any;
 
-  constructor(private OrgchartService: OrgchartService, private modalService: NgbModal, private http: HttpService, 
+  constructor(private OrgchartService: OrgchartService, private modalService: NgbModal, private http: HttpService,
     private sanitizer: DomSanitizer, private confirmation: OpenModalService,) { }
 
   ngOnInit(): void {
@@ -109,6 +110,7 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
       next: (data: any) => {
         this.empdata = data;
         this.imageUrl = this.empdata.profileUrl;
+        this.linkedinurl = this.empdata.linkedinUrl;
         this.onSelectprofilePicDownload(this.empdata);
       },
       error: (reason: any) => {
@@ -306,9 +308,9 @@ export class OrgChartGridComponent implements OnInit, AfterViewInit, OnChanges, 
         break;
 
       case 'linkedin':
-        const empName = this.selectedEmployeeDetails.name || this.empdata?.firstName + ' ' + this.empdata?.lastName;
+        const empName = this.linkedinurl;
         if (empName) {
-          shareUrl = `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(empName)}`;
+          shareUrl = `https://${empName}`;
         } else {
           console.error('Employee name not available for LinkedIn search.');
           return;

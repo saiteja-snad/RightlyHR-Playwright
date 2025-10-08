@@ -111,13 +111,13 @@
 
 
            <div class="col-md-6 col-lg-4 mb-3">
-          <label for="linkedinurl" class="form-label custom-label mb-2">Linkedin Url
+          <label for="linkedinurl" class="form-label custom-label mb-2">LinkedIn Url
               </label>
           <input type="email" class="form-control custom-input" id="linkedinurl" formControlName="linkedinurl"
-            placeholder="Please enter linkedin Url">
+            placeholder="Please enter linkedIn Url">
           <div class="error-msg"
             *ngIf="contactForm.get('linkedinurl')?.invalid && contactForm.get('linkedinurl')?.touched">
-            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['required']">Linkedin Url is required</div>
+            <div *ngIf="contactForm.get('linkedinurl')?.errors?.['required']">LinkedIn Url is required</div>
             <div *ngIf="contactForm.get('linkedinurl')?.errors?.['pattern']"> Please enter a valid  URL</div>
           </div>
         </div>

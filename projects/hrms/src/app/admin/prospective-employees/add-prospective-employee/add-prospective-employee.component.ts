@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder, NgForm } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -39,13 +39,10 @@ export class AddProspectiveEmployeeComponent {
   emailErrorweb = false;
   initialLocationId: any;
   designation: any;
-  RevokeComments = [] as any;
-  formvalue!: NgForm;
-
   @ViewChild('success') success: any;
-  @ViewChild('Confirmation') Confirmation!: NgbModal;
-  constructor(private router: Router, private authService: AuthService, private conformationPopup: OpenModalService,
-    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, public rbac: RbacService) { }
+
+  constructor(private router: Router, private authService: AuthService, private conformationPopup: OpenModalService, 
+    private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.getJobrole();
@@ -133,7 +130,7 @@ export class AddProspectiveEmployeeComponent {
       if (selectedLocation) {
         this.getSubLocationByid(selectedLocation);
       } else {
-
+        
         console.warn("No matching job location found!");
       }
     }
@@ -173,15 +170,13 @@ export class AddProspectiveEmployeeComponent {
   close() {
     this.modalService.dismissAll();
   }
-  openmodelforConfirm(content: any) {
-    this.modalService.open(this.Confirmation, { centered: true });
-  }
+
   //function to refresh the form
   onclosepopup() {
     location.reload();
   }
 
-  postEmpData(f: NgForm) {
+  postEmpData() {
     let loggedInUser = this.authService.getToken();
     let postdata = {
       firstName: this.employeeForm.get('firstName')?.value,
@@ -191,7 +186,6 @@ export class AddProspectiveEmployeeComponent {
       emailaddress: this.employeeForm.get('personalEmail')?.value,
       createdBy: loggedInUser.employeeId,
       experienceType: this.employeeForm.get('employmentType')?.value,
-      allowEmployee: false,
     };
     this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
       next: (res: any) => {
@@ -219,76 +213,19 @@ export class AddProspectiveEmployeeComponent {
         }
         else if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
-        } else if (res.statusCode == 403) {
-          this.formvalue = f;
-          this.Status = res.message;
-          this.RevokeComments = res.revokedComments;
-          this.openmodelforConfirm(this.Confirmation);
+        } else {
+          this.conformationPopup.openErrorModal(res.message);
+          setTimeout(() => {
+            this.modalService.dismissAll();
+          }, 3000);
+        }
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.Message);
+      },
+    });
+  }
 
-        }
-        else {
-          this.conformationPopup.openErrorModal(res.message);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
-        }
-      },
-      error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error.Message);
-      },
-    });
-  }
-  UpdateEmpData(f: NgForm) {
-    let loggedInUser = this.authService.getToken();
-    let postdata = {
-      firstName: this.employeeForm.get('firstName')?.value,
-      middleName: this.employeeForm.get('middleName')?.value,
-      lastName: this.employeeForm.get('lastName')?.value,
-      employeeStatus: 'Prospective',
-      emailaddress: this.employeeForm.get('personalEmail')?.value,
-      createdBy: loggedInUser.employeeId,
-      experienceType: this.employeeForm.get('employmentType')?.value,
-      allowEmployee: true,
-    };
-    this.subscription = this.http.postdata('Employeedata/createEmployee', postdata).subscribe({
-      next: (res: any) => {
-        //alert('employee created')
-        if (res.statusCode == 201) {
-          this.result = res.employeeData;
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Prospective employee created successfully');
-          this.http.activeTabSubject.next(this.result.employeeId);
-          if (this.result.employeeId != null) {
-            const jobdata = {
-              employeeId: this.result.employeeId,
-              gradeId: this.gradeIdValue.gradeId,
-              locationid: this.postProspectiveEmpDetails.locationid,
-              sublocationid: this.employeeForm.get('subLocation')?.value,
-              jobRole: this.employeeForm.get('designation')?.value?.designationName,
-            };
-            this.subscription = this.http.postdata('JobDetails', jobdata).subscribe({
-              next: (data: any) => {
-                this.select(this.result);
-              },
-              error: (Reason) => console.log(Reason),
-            });
-          }
-        }
-        else if (res.statusCode == 409) {
-          this.conformationPopup.openErrorModal(res.message);
-        } 
-        else {
-          this.conformationPopup.openErrorModal(res.message);
-          setTimeout(() => {
-            this.modalService.dismissAll();
-          }, 3000);
-        }
-      },
-      error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error.Message);
-      },
-    });
-  }
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     this.router.navigate(['/admin/personal']);

@@ -3,7 +3,8 @@
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-       placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation " aria-label="Username" aria-describedby="basic-addon1">
+      placeholder="Search by employee ID / employee name / work email / phone number / location / sub location / Shift Name / designation "
+      aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -12,6 +13,7 @@
       <thead>
         <th>{{'Employee ID'|translate}}</th>
         <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Date of Joining'|translate}}</th>
         <th>{{'Work Email'|translate}}</th>
         <th>{{'Phone Number'|translate}}</th>
         <th>{{'Location'|translate}}</th>
@@ -34,6 +36,18 @@
               -
             </ng-template>
           </td>
+          <!-- Date of joining -->
+          <td>
+            <span *ngIf="act.dateOfJoining; else noDateOfJoining">
+              {{ act.dateOfJoining | date }}
+            </span>
+            <ng-template #noDateOfJoining>-</ng-template>
+          </td>
+          <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
+            <ng-template #workemail>
+              -
+            </ng-template>
+          </td>
           <td><span *ngIf="act.workEmail;else workemail">{{act.workEmail}}</span>
             <ng-template #workemail>
               -
@@ -51,7 +65,7 @@
             </span>
             <ng-template #noLocation>-</ng-template>
           </td>
-         <!-- Sub Location -->
+          <!-- Sub Location -->
           <td>
             <span *ngIf="act.jobDetails?.subLocation; else noSubLocation">
               {{ act.jobDetails?.subLocation }}

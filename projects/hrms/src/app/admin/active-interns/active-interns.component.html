@@ -13,6 +13,7 @@
       <thead>
         <th>{{'Employee ID'|translate}}</th>
         <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Date of Joining'|translate}}</th>
         <th>{{'Work Email'|translate}}</th>
         <th>{{'Phone Number'|translate}}</th>
         <th>{{'Location'|translate}}</th>
@@ -35,6 +36,12 @@
             </span>
             <ng-template #firstname>
               <div>-</div>
+            </ng-template>
+          </td>
+            <!-- Date of Joining -->
+           <td><span *ngIf="act.dateOfJoining;else dateOfJoining">{{act.dateOfJoining | date}} </span>
+            <ng-template #dateOfJoining>
+              -
             </ng-template>
           </td>
           <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>

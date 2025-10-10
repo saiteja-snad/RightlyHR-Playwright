@@ -9,6 +9,18 @@
             
             <!--heading ends-->
             <form autocomplete="off" [formGroup]="offBoardingForm" (ngSubmit)="postOffBoardingDetails()">
+                 <!--Exit Type-->
+                <div class="mb-4">
+                    <label class="form-label custom-label mb-2">Exit Type<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="exitTypeOptions" optionLabel="label" optionValue="value" formControlName="exitType"
+                            placeholder="Please select exit type" class="form-select custom-select">
+                        </p-select>
+                    </div>
+                    <div class="error-msg" *ngIf="offBoardingForm.get('exitType')?.touched && offBoardingForm.get('exitType')?.invalid">
+                        Exit Type is required
+                    </div>
+                </div>
                 <!-- Exit Reason -->
                 <div class="mb-4">
                     <label class="form-label custom-label mb-2">Exit Reason<span class="text-danger">*</span></label>

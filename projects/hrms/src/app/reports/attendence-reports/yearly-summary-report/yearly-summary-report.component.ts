@@ -97,42 +97,63 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
     );
   }
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-      next: (data: any) => {
-        const employeedata = data.map((employee: any) => {
+ 
+
+ getEmployeeId() {
+  const loggedInUser = this.authService.getToken();
+  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+    next: (data: any) => {
+      const employeedata = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            firstName, // trimmed for sorting
+            lastName,  //  trimmed for fallback
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-        this.employeeiddetails = [
-          { fullName: 'All Employees', employeeId: 'all' },
-          ...employeedata
-        ];
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
-  }
+        })
+        .sort((a: any, b: any) => 
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) // Alphabetical by first name
+        );
+
+      this.employeeiddetails = [
+        { fullName: 'All Employees', employeeId: 'all' },
+        ...employeedata
+      ];
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
+
 
   getTeam() {
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
-      next: (data: any) => {
-        this.teamdetails = data.map((employee: any) => {
+  this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+    next: (data: any) => {
+      this.teamdetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            firstName, //  trimmed for sorting
+            lastName,  //  trimmed if needed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
+        })
+        .sort((a: any, b: any) => 
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  alphabetical sort
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
+
 
   getYearlyReports() {
     this.subscription = this.reportsService.getYearlyReports({}).subscribe({

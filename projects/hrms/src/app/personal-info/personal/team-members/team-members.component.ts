@@ -32,11 +32,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     ReactiveFormsModule,
     DateformatPipe,
     DataLoaderContentComponent
-],
+  ],
   templateUrl: './team-members.component.html',
   styleUrl: './team-members.component.scss',
 })
-export class TeamMembersComponent implements OnInit,OnDestroy {
+export class TeamMembersComponent implements OnInit, OnDestroy {
   emp: any;
   empinfo = {} as Ipersonal;
   subscription!: Subscription;
@@ -71,7 +71,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
     public rbac: RbacService,
     public permissionRouteService: AccessForEmployeeinfoService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -99,7 +99,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
         teamControl?.disable();
         teamControl?.reset();
         this.teamManagerDropdownValues = []
-        
+
       } else {
         teamControl?.enable();
       }
@@ -109,7 +109,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
 
   }
 
-  clearData(){
+  clearData() {
     this.modalService.dismissAll();
     this.requestForm.reset();
     this.teamForm.reset();
@@ -203,43 +203,47 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
     return `${year}-${month}-${day}`;
   }
 
-   getAllTeammembersList() {
-    this.loading = true;
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe(
-        (responseData: any) => {
-          console.log(responseData);
-          // const filteredData = (responseData as Iteammembers[]).filter(
-          //   (member) => member['isAccess'] === true
-          // );
-          this.loading = false;
-          // const myTeam = responseData.filter((e: any) => e.isAccess);
-          this.teamMemberArray = responseData.map((employee: any) => ({
-            ...employee,
-            jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
-            fullName: `${
-              employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-            }${employee.firstName ?? ''} ${employee.middleName ?? ''} ${
-              employee.lastName ?? ''
-            }`,
-            selectedAllGroup: 'Group 1',
-          }));
-          this.getTeamMemberArray = [...this.teamMemberArray];
-        },
-        (error) => {
-          console.error(error);
-          this.loading = false;
-        }
-      );
-  }
+ getAllTeammembersList() {
+  this.loading = true;
+  const EmployeeId = this.empinfo.employeeId;
+
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe(
+      (responseData: any) => {
+        this.loading = false;
+
+        this.teamMemberArray = responseData.map((emp: any) => {
+          const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+          const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
+          return {
+            ...emp,
+            jobDetails: emp.jobDetails ?? [], // Default to [] if undefined
+            fullName,
+            selectedAllGroup: 'Group 1'
+          };
+        });
+
+        //  Alphabetical sorting by firstName
+        this.teamMemberArray.sort((a: any, b: any) =>
+          a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+        );
+
+        this.getTeamMemberArray = [...this.teamMemberArray];
+      },
+      (error) => {
+        console.error(error);
+        this.loading = false;
+      }
+    );
+}
 
   select(act: any) {
     const fullPath = this.router.url;
     if (fullPath.startsWith('/myinfo')) {
       this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-      
+
       this.goToAccessibleRoute('/personalinfo');
     }
   }
@@ -263,8 +267,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
       },
     });
   }
-  assigintm(content: any, details: any) 
-  {
+  assigintm(content: any, details: any) {
     this.foremployeeForm.reset();
     console.log(details);
     this.selectedemployeid = details.employeeId;
@@ -329,7 +332,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
 
   onDepartmentChange(selectedDepartment: any): void {
     const selectedDepartmentId = selectedDepartment?.sno;
-  
+
     // Reset team and manager
     this.requestForm.patchValue({
       teamSelectedOptions: null,
@@ -350,7 +353,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.teamDropdownValues = data || [];
-          
+
         },
         error: () => {
           this.teamDropdownValues = [];
@@ -371,7 +374,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
     // Clear team manager initially
     this.requestForm.patchValue({ teamManagerName: '' });
     this.teamManagerDropdownValues = [];
-    
+
 
     this.subscription = this.http
       .getData(`Subdepartments/${selectedSubDepartmentId}`)
@@ -384,6 +387,7 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
                 ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
                 : `${manager.firstName} ${manager.lastName}`,
             }));
+
 
             // Set the first manager as default
             const defaultManager = this.teamManagerDropdownValues[0];
@@ -508,35 +512,31 @@ export class TeamMembersComponent implements OnInit,OnDestroy {
     this.selectedEmployeeDetails = details;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
- getEmployee() {
+getEmployee() {
   this.subscription = this.http
     .getData('JobDetails/getAllReportingManagers')
     .subscribe({
       next: (data: any) => {
-        this.managers = data
-          .map((emp: {
-            fusionEmpId?: string;
-            firstName: string;
-            middleName?: string;
-            lastName: string;
-          }) => {
-            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
-            const name = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+        const list = Array.isArray(data) ? data : [];
 
-            return {
-              ...emp,
-              name
-            };
+        this.managers = list
+          .map((emp: any) => {
+            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+            const name = `${fusionPart}${emp.firstName?.trim() ?? ''} ${emp.middleName ? emp.middleName.trim() + ' ' : ''}${emp.lastName?.trim() ?? ''}`.trim();
+            return { ...emp, name };
+          })
+          .sort((a: any, b: any) => {
+            const nameA = a.firstName?.trim().toLowerCase() || '';
+            const nameB = b.firstName?.trim().toLowerCase() || '';
+            return nameA.localeCompare(nameB);
           });
 
-        //  Alphabetical sorting by firstName
-        this.managers.sort((a: any, b: any) =>
-          a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-        );
+        console.log('Sorted managers:', this.managers);
       },
-      error: (err) => console.log(err),
+      error: (err) => console.error('Error fetching employees:', err),
     });
 }
+
 
   selectedManager: any = null;
   onSelectManager(event: any) {

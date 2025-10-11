@@ -21,7 +21,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-work-from-home',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent, 
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
     TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
@@ -105,7 +105,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
-   onYearChange() {
+  onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.TimeoffYearFilterService.setSelectedYear(selectedYear);
@@ -192,7 +192,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason),
     });
   }
-  
+
   getWFHBalance(employeedId: any) {
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
@@ -210,27 +210,39 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          console.log('getEmployeesByhierarchy', response);
-          if (response && response.length) {
-            // No filter
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+getTeamManagersDetails() {
+  const EmployeeId = this.empinfo.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        console.log('getEmployeesByhierarchy', response);
+
+        if (Array.isArray(response) && response.length) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+
+          this.getEmployeeInfo = myTeam
+            .map((employee: any) => ({
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            }));
-            console.log('getEmployeeInfo', this.getEmployeeInfo);
-          }
-        },
-      });
-  }
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+            }))
+            // Alphabetical sort by firstName (case-insensitive)
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+
+          console.log('getEmployeeInfo', this.getEmployeeInfo);
+        } else {
+          this.getEmployeeInfo = [];
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.getEmployeeInfo = [];
+      },
+    });
+}
+
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
 

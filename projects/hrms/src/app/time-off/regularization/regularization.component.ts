@@ -83,23 +83,34 @@ export class RegularizationComponent {
   }
 
   // function to get the data of employees by hierarchy
-  getTeamManagersDetails() {
-    const EmployeeId = this.emp.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+getTeamManagersDetails() {
+  const EmployeeId = this.emp.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
       next: (response: any) => {
-        if (response && response.length) {
-          // No filter
+        if (Array.isArray(response) && response.length) {
           const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-          }));
+
+          this.getEmployeeInfo = myTeam
+            .map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+            }))
+            //  Alphabetical sorting by firstName
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+        } else {
+          this.getEmployeeInfo = [];
         }
       },
+      error: (err) => {
+        console.error(err);
+        this.getEmployeeInfo = [];
+      },
     });
-  }
+}
 
   onCheckemployee(employeedId: any) {
     this.http.setEmployeeIdRegularization(employeedId);

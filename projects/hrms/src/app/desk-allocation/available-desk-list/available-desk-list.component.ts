@@ -503,9 +503,12 @@ export class AvailableDeskListComponent implements OnInit,OnDestroy {
           // Transform the data to add `employeeName` and a combined property
           this.employeeiddetails = data.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''}- ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
 
-          }));
+          })) .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
+         
         },
         error: (reason: any) => {
           console.error(reason);

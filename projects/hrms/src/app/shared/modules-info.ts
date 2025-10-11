@@ -38,7 +38,10 @@ export const MODULE_INFOS = {
     SETTINGS_DYNAMIC_FORMS_INACTIVE_FORMS: "Design, manage, and reuse custom forms for modules like PMS. Inactive forms to maintain clean workflows without losing past data.",
     SETTINGS_DYNAMIC_FORMS_DRAFT_FORMS: "Design and manage custom forms for any module with ease. Track them by status Draft—to build, pause, or finalize forms at your pace.",
     SETTINGS_DYNAMIC_FORMS_FORM_SETTINGS: "Customize form scoring with flexible rating scales for performance reviews, feedback, or assessments. Define rating types, ranges, and apply them to any section within your dynamic forms.",
-
+    
+    //attendance Configuration Module Info
+    SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
+    
     //Expenses Module Info
     EXPENSES_MODULE_INFO: "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
 

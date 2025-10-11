@@ -1,0 +1,148 @@
+<div class="add-data-content">
+    <form [formGroup]="clientForm" (ngSubmit)="submitClientForm()">
+        <div class="card custom-background-card p-4">
+            <div class="row">
+                <!-- Client Name -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="clientName" [minlength]="2"
+                        placeholder="Please enter the client's name"
+                        (keydown)="formValidation.restrictInitialSpace($event)" maxlength="51">
+                    <div class="error-msg">
+                        <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid">
+                            <div *ngIf="clientForm.get('clientName')?.errors?.['required']">{{ 'Client Name is required'
+                                | translate }}</div>
+                        </div>
+                        <div
+                            *ngIf="clientForm.get('clientName')?.errors?.['maxCharacters'] || clientForm.get('clientName')?.errors?.['maxlength']">
+                            {{ 'Client Name must be in between 2-50 characters' | translate }}
+                        </div>
+                        <div
+                            *ngIf="clientForm.get('clientName')?.errors?.['minCharacters'] || clientForm.get('clientName')?.errors?.['minlength']">
+                            {{ 'Client Name must be in between 2-50 characters' | translate }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Id -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Tax ID<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="taxId" [minlength]="3"
+                        placeholder="Please enter tax id" (keydown)="formValidation.restrictInitialSpace($event) "
+                        maxlength="51">
+                    <div class="error-msg">
+                        <div *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
+                            <div *ngIf="clientForm.get('taxId')?.errors?.['required']">{{ 'Tax ID is required' |
+                                translate }}</div>
+                        </div>
+                        <div
+                            *ngIf="(clientForm.get('taxId')?.errors?.['maxCharacters']||clientForm.get('taxId')?.errors?.['maxlength']) || (clientForm.get('taxId')?.errors?.['minCharacters']||clientForm.get('taxId')?.errors?.['minlength'])">
+                            {{ 'Tax ID must be between 3-50 characters' | translate}}</div>
+                    </div>
+                </div>
+
+                <!-- Website -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Website<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="website" [maxlength]="50"
+                        [minlength]="5" placeholder="Please enter website URL">
+                    <div class="error-msg">
+                        <div
+                            *ngIf="clientForm.get('website')?.touched && clientForm.get('website')?.hasError('required')">
+                            {{ 'Website URL is required ' | translate }}</div>
+                        <div *ngIf="clientForm.get('website')?.touched && !clientForm.get('website')?.hasError('required') 
+                        && clientForm.get('website')?.hasError('pattern')">Please enter a valid website URL</div>
+                    </div>
+                </div>
+
+                <!-- Industry Type -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Industry Type<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="industryTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
+                            optionLabel="value" optionValue="value" formControlName="industryType"
+                            placeholder="Please select industry type" class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="clientForm.get('industryType')?.touched && clientForm.get('industryType')?.invalid">
+                        {{ 'Industry Type is required' | translate }}</div>
+                </div>
+            
+
+
+                <!-- Logo -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Logo<span class="text-danger">*</span></label>
+                    <input type="file" formControlName="logo" accept=".png, .jpg, .jpeg"
+                        (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0">
+                    <div class="error-msg">
+                        <div *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
+                        <div *ngIf="clientForm.get('logo')?.touched && clientForm.get('logo')?.invalid">
+                            {{ 'Client Logo is required' | translate }}</div>
+                    </div>
+                </div>
+
+                <!-- Client Address -->
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Client Company Address <span
+                            class="text-danger">*</span></label>
+                    <textarea type="text" class="form-control custom-input" rows="3" formControlName="clientAddress"
+                        [minlength]="5" maxlength="250" placeholder="Please enter client address"></textarea>
+                    <div class="textarea-count-text">{{ clientForm.get("clientAddress")?.value?.length || 0 }}/250</div>
+                    <div class="error-msg"
+                        *ngIf="clientForm.get('clientAddress')?.touched && clientForm.get('clientAddress')?.invalid">
+                     <div *ngIf="clientForm.get('clientAddress')?.errors?.['required']"> {{ 'Client Address is required' | translate }}</div>  
+                    </div>
+                    <div *ngIf="clientForm.get('clientAddress')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Address must be between 5-250 characters' | translate}}
+                    </div>
+                    <div *ngIf="clientForm.get('clientAddress')?.errors?.['minCharacters']" class="error-msg">
+                        {{ 'Address must be between 5-250 characters' | translate}}
+                    </div>
+                </div>
+            </div>
+                <!-- Switches -->
+                <div class="d-flex gap-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch"
+                            formControlName="overtimeEligibility">
+                        <label class="form-check-label custom-toggle-label">Overtime Eligibility</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" formControlName="billable">
+                        <label class="form-check-label custom-toggle-label">Billable</label>
+                    </div>
+
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch"
+                            formControlName="allowWeekendWork">
+                        <label class="form-check-label custom-toggle-label">Allow Weekend Work</label>
+                    </div>
+                </div>
+            
+        </div>
+
+        <!-- Submit -->
+        <div class="footer-content">
+            <div class="d-flex justify-content-end align-items-center gap-3">
+                <button type="button" class="custom-btn btn-secondary"
+                    (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="clientForm.invalid">Next</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #confirmationpopupfornodue let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>

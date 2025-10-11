@@ -1,0 +1,136 @@
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
+import { HttpService } from '../../../services/http.service';
+import { Subject, takeUntil } from 'rxjs';
+import { Project } from '../../../Interfaces/projects.model';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+@Component({
+  selector: 'app-inacitve-projects',
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, CommonModule,
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent],
+  templateUrl: './inacitve-projects.component.html',
+  styleUrl: './inacitve-projects.component.scss'
+})
+
+export class InacitveProjectsComponent implements OnInit, OnDestroy {
+  selectedProject: any
+  loading: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  projectsData: Project[] = [];
+  empinfo: any = {};
+
+  constructor(private router: Router, private http: HttpService, private conformationPopup: OpenModalService,
+    private modalService: NgbModal, private route: ActivatedRoute) { }
+
+  ngOnInit() {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getdatabaedonRoute();
+  }
+
+  getdatabaedonRoute(): void {
+    const fullPath = this.router.url;
+    if (fullPath.startsWith('/project-management/projects')) {
+      this.getAllInactiveProjects();
+      this.http.projectDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.getAllInactiveProjects();;
+      });
+    } else if (fullPath.startsWith('/project-management/clients')) {
+      this.route.queryParams.subscribe(params => {
+        const clientID = params['id'];
+        if (clientID) {
+          this.getprojectbyid(parseInt(clientID));
+          this.http.projectDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            this.getprojectbyid(parseInt(clientID));
+          });
+        }
+      });
+    }
+  }
+
+  navigateView(projectId: number) {
+    this.router.navigate(
+      ['project-management/projects/details'],
+      { queryParams: { id: projectId } } // using query params
+    );
+  }
+
+  getAllInactiveProjects() {
+    this.loading = true;
+    this.http.getData('Project?status=Inactive').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsData = res?.data ?? []; // Extract "data" array
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.loading = false;
+        this.projectsData = [];
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  getprojectbyid(clientID: any): void {
+    this.loading = true;
+    this.http.getData(`Project?clientId=${clientID}&status=Inactive`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsData = res?.data ?? []; // Extract "data" array
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching clients:', err);
+      }
+    });
+  }
+
+  openModalstatus(modal: any, project: Project) {
+    this.modalService.open(modal, { centered: true, backdrop: 'static' });
+    this.selectedProject = { ...project }; // store project details
+  }
+
+  confirmStatusChange(modal: any) {
+    if (!this.selectedProject) return;
+    const updatedProject = {
+      ...this.selectedProject,
+      status: 'Active',
+      updatedBy: parseInt(this.empinfo.employeeId)
+    };
+    this.http.putData(`Project/${this.selectedProject.projectId}`, updatedProject).subscribe({
+      next: (res) => {
+        this.conformationPopup.openSuccessModal('Project marked as Active successfully');
+        modal.close();   // close modal only after success
+        const fullPath = this.router.url;
+        if (fullPath.startsWith('/project-management/projects')) {
+          this.getAllInactiveProjects();
+        } else if (fullPath.startsWith('/project-management/clients')) {
+          const clientID = this.route.snapshot.queryParams['id'];
+          if (clientID) {
+            this.getprojectbyid(parseInt(clientID));
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error updating project status:', err);
+        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update status');
+      }
+    });
+  }
+
+  isActive(route: string): boolean {
+    return this.router.url.includes(route);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
+}

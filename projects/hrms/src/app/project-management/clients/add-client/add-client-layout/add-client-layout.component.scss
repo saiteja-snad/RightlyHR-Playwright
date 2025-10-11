@@ -1,0 +1,25 @@
+.custom-component-right-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100dvh - 8.5rem);
+}
+
+.add-data-content {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 16rem);
+    overflow-y: auto;
+
+    .footer-content {
+        position: absolute;
+        width: 100%;
+        bottom: 1rem;
+        right: 1rem;
+
+        .custom-btn {
+            width: 120px;
+        }
+    }
+}

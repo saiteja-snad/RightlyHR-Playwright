@@ -59,7 +59,6 @@ export class HttpService {
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
-
   eventAddedSource = new Subject<void>();
   eventAdded$ = this.eventAddedSource.asObservable();
   // Function to notify that an event has been added
@@ -651,5 +650,61 @@ export class HttpService {
 
   getFilterPermissionDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`);
+  }
+
+  // to store clientid in timesheet module project management
+  clientIdSubject = new BehaviorSubject<number>(0);
+  clientId$ = this.clientIdSubject.asObservable();
+  updateClientId(clientId: number) {
+    this.clientIdSubject.next(clientId);
+  }
+
+  // Function to set the communication service data for PRoject info
+  projectadded = new Subject<void>();
+  projectDetailesadded$ = this.projectadded.asObservable();
+  setnewprojectDetails() {
+    this.projectadded.next();
+  }
+
+  //for contactadded  for projects and clients
+  contactadded = new Subject<void>();
+  contactDetailesadded$ = this.contactadded.asObservable();
+  setnewcontactDetails() {
+    this.contactadded.next();
+  }
+
+  requestSource = new BehaviorSubject<any>(null); // holds last submitted request
+  request$ = this.requestSource.asObservable();
+  setRequest(request: any) {
+    this.requestSource.next(request);
+  }
+
+  private requestclienttimesheetdataSubject = new BehaviorSubject<any>(null);// holds last submitted request
+  requestclienttimesheetdata$ = this.requestclienttimesheetdataSubject.asObservable();
+
+  setRequestclienttimesheet(request: any) {
+    this.requestclienttimesheetdataSubject.next(request);
+  }
+
+  clearRequestclienttimesheet() {
+    this.requestclienttimesheetdataSubject.next(null);
+  }
+
+  //for ProjectResource  for projects and clients
+  resourceadded = new Subject<void>();
+  resourceDetailesadded$ = this.resourceadded.asObservable();
+  setnewresourceDetails() {
+    this.resourceadded.next();
+  }
+
+  //for documentsadded  for projects and clients
+  documentsadded = new Subject<void>();
+  documentsDetailesadded$ = this.documentsadded.asObservable();
+  setnewdocumentsDetails() {
+    this.documentsadded.next();
+  }
+
+  DeleteData(url: string, body?: any) {
+    return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
 }

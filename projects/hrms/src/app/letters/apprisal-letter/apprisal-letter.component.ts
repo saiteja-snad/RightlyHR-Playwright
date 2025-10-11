@@ -592,7 +592,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
-        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));  
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -795,7 +795,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
   //   });
   // }
 
-   uploadAppraisalLetter() {
+  uploadAppraisalLetter() {
     const filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.appraisalData.employeeId}`;
 
     this.subscription = this.http
@@ -819,7 +819,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
           );
         },
         complete: () => {
-          
+
         },
       });
   }
@@ -865,7 +865,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
         payload
       )
       .subscribe({
-          next: (response) => {
+        next: (response) => {
           this.conformationPopup.openSuccessModal(
             'Appraisal letter generated successfully'
           );
@@ -876,7 +876,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
         },
       });
   }
-    sendEmail() {
+  sendEmail() {
     const loggedInUser = this.authService.getToken();
     const emaildetails = {
       personEmail: this.appraisalData.workEmail,
@@ -905,7 +905,7 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal(
             'Email has been sent successfully'
           );
-           this.navigateDashboard()
+          this.navigateDashboard()
         },
         error: (error) => {
           this.spinnerLoader = false;
@@ -1071,7 +1071,8 @@ export class ApprisalLetterComponent implements OnInit, OnDestroy {
           compensationamount: this.appraisalData.salary,
           effectiveDate: this.formatDates(this.employeeCompensationData?.compeffectivedate),
           jobRole: this.appraisalData.jobRole,
-          compeffectivedate: this.formatDates(this.employeeCompensationData?.compeffectivedate),          
+          compeffectivedate: this.formatDates(this.employeeCompensationData?.compeffectivedate),
+          letterType: 'Appraisal Letter',
         };
         this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
           next: (data: any) => {

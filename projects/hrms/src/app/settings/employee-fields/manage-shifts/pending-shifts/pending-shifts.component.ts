@@ -103,8 +103,4 @@ export class PendingShiftsComponent {
       this.subscription.unsubscribe()
     }
   }
-
-  nagvition() {
-    this.router.navigate(['/settings/employee-fields/addshifts']);
-  }
 }

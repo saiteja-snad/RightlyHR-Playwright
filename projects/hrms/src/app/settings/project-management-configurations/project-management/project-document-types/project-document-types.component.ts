@@ -9,9 +9,10 @@ import { RbacService } from '../../../../services/rbac.service';
 import { IEAV } from '../../models/project-type.modal';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
-import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+
 import { SettingsLoaderComponent } from '../../../../shared/settings-loader/settings-loader.component';
+import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
+import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
 
 @Component({
   selector: 'app-project-document-types',

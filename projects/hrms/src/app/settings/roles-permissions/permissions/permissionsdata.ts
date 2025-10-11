@@ -805,7 +805,7 @@ export const permissionsData = [
   { fields: 'Contact Info Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Resources Tab', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Project Management client tabs
   { fields: 'Client Information', View: false, Update: false, Create: false, Delete: false },
@@ -814,4 +814,12 @@ export const permissionsData = [
   { fields: 'Client Documents', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Document Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Document Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Configurations', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
+
 ];

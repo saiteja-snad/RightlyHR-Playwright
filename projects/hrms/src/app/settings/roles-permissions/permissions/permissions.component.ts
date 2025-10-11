@@ -1082,7 +1082,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Contact Info Tab',
     'Documents Tab',
     'Resources Tab',
-    'Timesheets Tab',
+    'Project Timesheets Tab',
   ];
   selectAllClientProjectManagementTabs = [
     'Client Information',
@@ -1091,6 +1091,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Client Resources',
     'Client Timesheets',
     'Client Documents',
+  ];
+    settingProjectManagementConfigFields = [
+    'Project Type',
+    'Industry Type',
+    'Project Document Type',
+    'Client Document Type',
+    'Letter Configurations',
+    'Project Management Authority'
   ];
 
   // Generic toggle function for checkboxes
@@ -1490,6 +1498,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // Update, Create, Delete are always disabled
     if (action === 'Update' || action === 'Create' || action === 'Delete') {
       return true;
+    }
+    return false;
+  }
+   isSettingsProjectManagementConfig(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
     }
     return false;
   }

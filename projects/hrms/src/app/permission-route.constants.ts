@@ -319,6 +319,14 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' }
 ]
 
+export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
+  { route: '/settings/project-management-config/project-type', permission: 'Project Type.view' },
+  { route: '/settings/project-management-config/industry-type', permission: 'Industry Type.view' },
+  { route: '/settings/project-management-config/client-document-type', permission: 'Client Document Type.view' },
+  { route: '/settings/project-management-config/project-document-type', permission: 'Project Document Type.view' },
+  { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
+  { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
+]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/jobrole', permission: 'Job Role.view' },

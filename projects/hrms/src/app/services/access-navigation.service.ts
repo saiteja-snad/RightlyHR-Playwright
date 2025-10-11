@@ -54,6 +54,7 @@ import {
   MY_INFO_DOCUMENTS_ROUTES,
   MY_INFO_TEAM_MEMBERS,
   POLICY_REPORTS_TABS,
+    SETTINGS_PROJECT_MANAGEMENT_TABS,
   PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS,
 } from '../permission-route.constants';
 
@@ -115,6 +116,13 @@ export class AccessNavigationService {
             }
             if (this.rbac.allowedToAccess('Job Tab.view')) {
               for (const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+              }
+            }
+               if (this.rbac.allowedToAccess('Project Management Configuration Module.view')) {
+              for (const item of SETTINGS_PROJECT_MANAGEMENT_TABS) {
                 if (this.rbac.allowedToAccess(item.permission)) {
                   return item.route;
                 }
@@ -767,6 +775,7 @@ export class AccessNavigationService {
                 }
               }
             }
+            
 
             if (this.rbac.allowedToAccess('Document Tab.view')) {
               return (route = '/settings/employee-fields/documents');
@@ -1044,6 +1053,16 @@ export class AccessNavigationService {
           }
         }
         break;
+
+           case '/settings/project-management-config':
+        if (this.rbac.allowedToAccess('Project Management Configuration Module.view')) {
+          for (const item of SETTINGS_PROJECT_MANAGEMENT_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
 
       case '/settings/employee-fields/documents':
         if (this.rbac.allowedToAccess('Document Tab.view')) {

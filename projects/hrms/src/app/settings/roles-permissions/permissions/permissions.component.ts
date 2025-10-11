@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-  ViewEncapsulation,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IRoles } from './permission.model';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -23,19 +17,13 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-permissions',
-  imports: [
-    CommonModule,
-    FormsModule,
-    AutoCompleteModule,
-    DataLoaderContentComponent,
-    TranslateModule,
-    NgbPopoverModule,
-    SettingsHeaderComponent,
-  ],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, DataLoaderContentComponent, TranslateModule,
+    NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class PermissionsComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   roleId!: string;
@@ -50,13 +38,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   @ViewChild('resetLoadingModal') resetLoadingModal: any;
   dataLoad: boolean = false;
 
-  constructor(
-    private http: HttpService,
-    private modalService: NgbModal,
-    private modal: OpenModalService,
-    public rbac: RbacService,
-    public readonly router: Router
-  ) {}
+  constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService,
+    public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
     this.dataLoad = true;
@@ -67,27 +50,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       this.getAllroles();
       this.dataLoad = false;
     });
-
     this.updateModuleInfo();
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.updateModuleInfo();
-      });
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   getAllroles(): void {
-    this.http
-      .getData('FusionRole')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.roles = data as IRoles[];
-        },
-        error: (error: any) => {
-          console.log(error);
-        },
-      });
+    this.http.getData('FusionRole').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.roles = data as IRoles[];
+      },
+      error: (error: any) => {
+        console.log(error);
+      },
+    });
   }
 
   filterRoles(event: any) {
@@ -126,21 +103,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   getRolepermission(id: string) {
-    this.http
-      .getData(`FusionRoleClaims/getRoleClaimsbyroleId/${id}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.permissionsReset(data);
-        },
-        error: (error: any) => {
-          this.dataLoad = false;
-          this.permissionsReset([]);
-        },
-        complete: () => {
-          this.dataLoad = false;
-        },
-      });
+    this.http.getData(`FusionRoleClaims/getRoleClaimsbyroleId/${id}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.permissionsReset(data);
+      },
+      error: (error: any) => {
+        this.dataLoad = false;
+        this.permissionsReset([]);
+      },
+      complete: () => {
+        this.dataLoad = false;
+      },
+    });
   }
 
   permissionsReset(data: any) {
@@ -151,7 +125,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       permission.Update = false;
       permission.Delete = false;
     });
-
     if (data?.length > 0) {
       data.forEach((claim: any) => {
         const permission = this.permissions.find(
@@ -159,7 +132,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         );
         if (permission) {
           const value = claim.claimValue.toLowerCase();
-
           if (value.endsWith('.view')) {
             permission.View = true;
           }
@@ -274,7 +246,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
   preparePayload(roleId: string): any[] {
     const claims: any[] = [];
-
     for (const p of this.permissions) {
       if (p.View) {
         claims.push({
@@ -370,36 +341,24 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     if (field === 'Asset Management - Create') {
       return permission !== 'View'; // Only 'View' is enabled
     }
-
-    if (
-      ['Asset Management - All', 'Asset Management - Available'].includes(field)
-    ) {
+    if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
       return permission !== 'View'; // Disable only 'Create'
     }
     //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
     //     return permission === 'Update'; // Disable only 'Create'
     //   }
-    if (
-      [
-        'Asset Management - Under Maintenance',
-        'Asset Management - Inactive',
-        'Asset Management - Allocated',
-      ].includes(field)
-    ) {
+    if (['Asset Management - Under Maintenance','Asset Management - Inactive','Asset Management - Allocated',].includes(field)) {
       return !['View'].includes(permission); // Enable only 'View' and 'Update'
     }
-
     return false; // Default: all enabled
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-
     const routeToInfoMap: { [key: string]: string } = {
       '/settings/roles-permissions/permissions':
         MODULE_INFOS.SETTINGS_ROLES_PERMISSION_MODULE_INFO,
     };
-
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) =>
       url.includes(route)
     );
@@ -524,8 +483,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
   ];
-
-  
   settingsAssetConfigurationFields = [
     'Vendor Details',
     'Asset Catagory',
@@ -584,7 +541,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Organization Hierarchy - TM',
     'Organization Hierarchy - Download PDF',
   ];
-
   deskAllocationModuleFields = [
     'Desk Allocation - Create',
     'Desk Allocation - All',
@@ -648,8 +604,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Team (Time Off)',
     'My Team (Regularization)',
   ];
-
-  // ////////
   WFHModuleSubTabs = [
     'Waiting For Approval (WFH)',
     'Approved (WFH)',
@@ -659,7 +613,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Request WFH Button',
     'My Team (WFH)',
   ];
-
   RemoteLoginModuleSubTabs = [
     'Waiting For Approval (Remote Login)',
     'Approved (Remote Login)',
@@ -848,9 +801,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management - Under Maintenance',
     'Asset Management - Inactive',
   ];
-
-  // allAssetActionsFields = [
-
   assetManagementAllTabActions = [
     'All Allocate Asset',
     'All Inactive Asset',
@@ -863,7 +813,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'All View Asset Details',
     'All Update Asset Details',
   ];
-
   assetManagementAvailableTabActions = [
     'Available Allocate Asset',
     'Available Inactive Asset',
@@ -872,7 +821,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Available View Asset Details',
     'Available Update Asset Details',
   ];
-
   assetManagementAllocatedTabActions = [
     'Allocated Reallocate Asset',
     'Allocated Release Asset',
@@ -884,7 +832,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Under Maintenance View Asset Details',
     'Under Maintenance Update',
   ];
-
   assetManagementInactiveTabActions = [
     'Inactive Mark as Active Asset',
     'Inactive View Asset Details',
@@ -951,7 +898,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Separation Request',
     'No Due Form',
   ];
-
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',
     'Employee Info Desk Details',
@@ -964,7 +910,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'No Due Form',
     'Employee Info Separation Request',
   ];
-
   employeeInfoJobModuleCreateDeleteDisabledFields = [
     'Employee Info Onboarding Details',
     'Employee Info Asset Details',
@@ -987,12 +932,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Submission Of No Due Clearance',
     'Employee Re-request for no due',
   ];
-
   employeeProbationRequestFields = [
     'Employee Request for Probation Confirmation',
     'Employee Re-Request for Probation Confirmation',
   ];
-
   dashboardModuleCardItemsFields = [
     'Dashboard Prospective Employees Card',
     'Dashboard Active Employees Card',
@@ -1134,6 +1077,21 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Visa Details',
     'Employee Info Documents Verification',
   ];
+  selectAllProjectManagementTabs = [
+    'Project Details Tab',
+    'Contact Info Tab',
+    'Documents Tab',
+    'Resources Tab',
+    'Timesheets Tab',
+  ];
+  selectAllClientProjectManagementTabs = [
+    'Client Information',
+    'Contact Information',
+    'Client Projects',
+    'Client Resources',
+    'Client Timesheets',
+    'Client Documents',
+  ];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1145,16 +1103,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     ) => boolean
   ) {
     if (!Array.isArray(this.permissions)) return;
-    this.permissions
-      .filter((per) => fields.includes(per.fields))
-      .forEach((per) => {
-        (['View', 'Update', 'Create', 'Delete'] as const).forEach((action) => {
-          if (!disableFn(per, action)) {
-            per[action] = checked;
-            this.onCheckboxChange(per, action);
-          }
-        });
+    this.permissions.filter((per) => fields.includes(per.fields)).forEach((per) => {
+      (['View', 'Update', 'Create', 'Delete'] as const).forEach((action) => {
+        if (!disableFn(per, action)) {
+          per[action] = checked;
+          this.onCheckboxChange(per, action);
+        }
       });
+    });
   }
 
   // Generic "all selected" function
@@ -1217,29 +1173,26 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-
-isattendenceCheckboxDisabled(
-  per: any,
-  action: 'View' | 'Update' | 'Create' | 'Delete'
-): boolean {
-  if (action === 'View' || action === 'Update') {
-    return !this.roleToFilter?.id;
+  isattendenceCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
+    if (action === 'View' || action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      // Only enable Create/Delete for specific fields
+      const allowedFields = [
+        'Attendance Regularization Tab',
+        'Attendance Eligibility Permissions Tab',
+        'Eligibility Global Permissions Tab'
+      ];
+      // Return true to disable checkbox if field is NOT in allowed list
+      return !allowedFields.includes(per.fields) || !this.roleToFilter?.id;
+    }
+    return false;
   }
 
-  if (action === 'Create' || action === 'Delete') {
-    // Only enable Create/Delete for specific fields
-    const allowedFields = [
-      'Attendance Regularization Tab',
-      'Attendance Eligibility Permissions Tab', 
-      'Eligibility Global Permissions Tab'
-    ];
-    
-    // Return true to disable checkbox if field is NOT in allowed list
-    return !allowedFields.includes(per.fields) || !this.roleToFilter?.id;
-  }
-
-  return false;
-}
   isSettingsEmployeeJobCheckboxDisabled(
     per: any,
     action: 'View' | 'Update' | 'Create' | 'Delete'
@@ -1489,12 +1442,14 @@ isattendenceCheckboxDisabled(
     }
     return false;
   }
+
   isAllSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
     return this.permissions
       .filter((per) => this.settingsDynamicFormsFields.includes(per.fields))
       .every((per) => per.View);
   }
+  
   isSomeSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
     const filtered = this.permissions.filter((per) =>
@@ -1976,6 +1931,51 @@ isattendenceCheckboxDisabled(
     // 'Update', 'Create', 'Delete' are always disabled for asset fields
     if (action === 'Update' || action === 'Create' || action === 'Delete') {
       return true;
+    }
+    return false;
+  }
+
+  isProjectManagementProjectModuleFieldsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Disabled if no role or if your isDisabled helper says so
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isProjectManagementTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isProjectManagementClientsTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
     }
     return false;
   }

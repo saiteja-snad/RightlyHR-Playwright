@@ -174,7 +174,7 @@ export class EmployeOffBoardingComponent {
           lastDateControl.enable();
         }
       const formdata=this.offBoardingForm.value
-
+      this.offBoardingEmp.termtypeoffboard=formdata.exitType
       this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
       this.offBoardingEmp.empstatus=formdata.status.statusname;
       this.offBoardingEmp.lastworkingday=formdata.lastdate;

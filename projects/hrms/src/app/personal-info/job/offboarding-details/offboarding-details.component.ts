@@ -115,7 +115,7 @@ export class OffboardingDetailsComponent {
 
         // Patch the form with the fetched data
         this.offboardingForm.patchValue({         
-          exitType: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
+          exitType: this.empdata.termtypeoffboard || '', // Replace with the correct property if different
           exitReason: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
           eligibleForRehire: this.empdata.eligibleforrehire || '', // Replace with the correct property if different
           relievingType: this.empdata.separationType || '', // Replace with the correct property if different

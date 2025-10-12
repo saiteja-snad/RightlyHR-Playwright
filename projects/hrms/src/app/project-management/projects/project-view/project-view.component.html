@@ -15,19 +15,17 @@
             @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'Inactive'){
 
             <div>
-                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Inactive Documents</u></a>
+                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Documents</u></a>
             </div>
             <div>
-                <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">{{'Add Document'
-                    }}</button>
+                <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">{{'Add Document'}}</button>
             </div>
             }
         </div>
 
-         
         <div *ngIf="isActive('/project-management/projects/details/inactivedocuments')">
             <div>
-                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Active Documents</u></a>
+                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Archieved Documents</u></a>
             </div>
         </div>
         

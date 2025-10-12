@@ -78,7 +78,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Project Type added successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to add Project Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Project Type');
         },
         complete: () => {
           this.getEAV();
@@ -118,7 +118,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Project Type updated successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to update Project Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Project Type');
         },
         complete: () => {
           this.getEAV();
@@ -143,7 +143,7 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Project Type deleted successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to delete Project Type');  
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Project Type');  
         },
         complete: () => {
           this.getEAV();

@@ -221,17 +221,17 @@ export class MsaComponent {
     let loggedInUser = this.authService.getToken();
     const formData = this.clientForm.value;
     const attributesdata = [
-      { key: 'effectiveDate', value: formData?.effectiveDate?.toString() ?? null, dataType: 'string' },
-      { key: 'companyName', value: formData?.companyName?.toString() ?? null, dataType: 'string' },
-      { key: 'companyAddress', value: formData?.companyAddress?.toString() ?? null, dataType: 'string' },
+      //{ key: 'effectiveDate', value: formData?.effectiveDate?.toString() ?? null, dataType: 'string' },
+       { key: 'companyName', value: this.clientForm.get('companyName')?.value?.toString() ?? this.clientDtails.data.clientName, dataType: 'string',},
+      { key: 'companyAddress', value: this.clientForm.get('companyAddress')?.value.toString() ?? null, dataType: 'string' },
       { key: 'companyJurisdiction', value: formData?.companyJurisdiction?.toString() ?? null, dataType: 'string' },
       { key: 'serviceProviderName', value: formData?.serviceProviderName?.toString() ?? null, dataType: 'string' },
       { key: 'serviceProviderNameJurisdiction', value: formData?.serviceProviderNameJurisdiction?.toString() ?? null, dataType: 'string' },
       { key: 'serviceProviderAddress', value: formData?.serviceProviderAddress?.toString() ?? null, dataType: 'string' },
       { key: 'noticePeriodforTermination', value: formData?.noticePeriodforTermination?.toString() ?? null, dataType: 'string' },
-      { key: 'noticePeriodfrequency', value: formData?.noticePeriodfrequency?.toString() ?? null, dataType: 'string' },
+      { key: 'noticePeriodfrequency', value: formData?.noticePeriodfrequency?.frequency1?.toString() ?? null, dataType: 'string' },
       { key: 'paymentTerms', value: formData?.paymentTerms?.toString() ?? null, dataType: 'string' },
-      { key: 'invoicingFrequency', value: formData?.invoicingFrequency?.toString() ?? null, dataType: 'int' },
+      { key: 'invoicingFrequency', value: formData?.invoicingFrequency?.frequency1?.toString() ?? null, dataType: 'int' },
       { key: 'governingLaw', value: formData?.governingLaw?.toString() ?? null, dataType: 'string' },
     ];
     const payLoad = {

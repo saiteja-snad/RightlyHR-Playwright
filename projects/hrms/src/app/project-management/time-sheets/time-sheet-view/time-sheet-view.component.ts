@@ -91,12 +91,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.employeeId = loggedInUser.employeeId;
     const startOfWeek = moment().startOf('isoWeek'); // Sunday by default (you can use .startOf('isoWeek') for Monday)
     const endOfWeek = moment().endOf('isoWeek');
+
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({
       projects: this.fb.array([]),
     });
     // Add one initial row
     // this.addProject();
+        this.getResourceData()
     this.getJobDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(
@@ -128,12 +130,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isLeave = day?.isLeave || false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
+
   const matchedResource = this.resourcesArrayList?.find(
     (r: any) => r?.project?.projectId === projectId
   );
 
-  console.log(matchedResource);
-  
   const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
   console.log('Weekend Work Allowed:', isWeekendAllowedProject);
 
@@ -179,7 +180,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ],
       duration: durationControl,
       description: [
-        { value: isNotEntered ? null: day?.description || null,  },
+        { value: isNotEntered ? null: day?.description || null,  disabled: !shouldEnable },
         Validators.required,
       ],
       approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
@@ -719,6 +720,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ) {
         // If weekend is blocked but project allows weekends
         dayForm.get('duration')?.enable();
+        
       } else {
         dayForm.get('duration')?.disable();
       }

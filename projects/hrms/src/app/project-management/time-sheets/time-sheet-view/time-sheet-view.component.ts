@@ -975,6 +975,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
+        this.timesheetForm.reset();
         this.modalService.dismissAll();
         this.getResourceData();
         this.conformationPopup.openSuccessModal('Task added successfully');
@@ -1007,6 +1008,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   cleardata() {
+    this.timesheetForm.reset()
     this.modalService.dismissAll();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(

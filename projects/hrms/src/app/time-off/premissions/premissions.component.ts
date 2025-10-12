@@ -78,6 +78,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   yearSelectionForm!: FormGroup;
   selectedYear: number = this.currentYear;
   years: number[] = [];
+  activeEmplist = [] as any;
 
   constructor(
     private modalService: NgbModal,
@@ -101,6 +102,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getAllEmployeeDetails();
     // year selection values
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
@@ -116,6 +118,18 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
+   getAllEmployeeDetails() {
+    const satus = ['Active', 'Trainee Active'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
+  }
+
   onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
@@ -125,8 +139,8 @@ export class PremissionsComponent implements OnInit, OnDestroy {
 
   initiateUpdateModuleInfo() {
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-        this.updateModuleInfo();
-      });
+      this.updateModuleInfo();
+    });
   }
 
   updateModuleInfo() {

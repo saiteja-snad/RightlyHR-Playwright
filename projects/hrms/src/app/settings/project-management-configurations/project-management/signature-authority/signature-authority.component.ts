@@ -84,7 +84,7 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.spinnerLoader = false;
-          this.confirmation.openErrorModal(err?.error?.message || 'Something went wrong');
+          this.confirmation.openErrorModal(err?.error?.Message || 'Something went wrong');
         },
         complete: () => {
           this.form.reset();
@@ -129,7 +129,7 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.spinnerLoader = false;
-        this.confirmation.openErrorModal(err?.error?.message || 'Something went wrong');
+        this.confirmation.openErrorModal(err?.error?.Message || 'Something went wrong');
       },
       complete: () => {
         this.getAuthorityList();

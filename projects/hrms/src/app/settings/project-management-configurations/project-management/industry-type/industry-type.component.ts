@@ -83,7 +83,7 @@ export class IndustryTypeComponent implements OnInit, OnDestroy{
           this.conformationPopup.openSuccessModal('Industry Type added successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to add Industry Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Industry Type');
         },
         complete: () => {
           this.getEAV();
@@ -124,7 +124,7 @@ export class IndustryTypeComponent implements OnInit, OnDestroy{
           this.conformationPopup.openSuccessModal('Industry Type updated successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to update Industry Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Industry Type');
         },
         complete: () => {
           this.getEAV();
@@ -149,7 +149,7 @@ export class IndustryTypeComponent implements OnInit, OnDestroy{
           this.conformationPopup.openSuccessModal('Industry Type deleted successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to delete Industry Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to delete Industry Type');
         },
         complete: () => {
           this.getEAV();

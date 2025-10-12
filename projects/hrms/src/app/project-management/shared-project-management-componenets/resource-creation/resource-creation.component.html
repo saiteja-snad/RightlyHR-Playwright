@@ -37,13 +37,17 @@
                     <label for="resourceRole" class="form-label custom-label mb-2">
                         Role<span class="text-danger">*</span></label>
                     <input type="text" formControlName="resourceRole"
-                        (input)="formValidation.checkInputsNoLeadingSpacesAndNumbers(addResourceForm,'resourceRole')"
-                        class="form-control custom-input" placeholder="Please enter role" [maxlength]="51" />
+                        (keypress)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
+                        placeholder="Please enter role" [maxlength]="51" />
                     <div class="error-msg">
-                        <div *ngIf="addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required']">Role is required</div>
-                        <div *ngIf="addResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || addResourceForm.get('resourceRole')?.errors?.['maxlength']">
+                        <div
+                            *ngIf="addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required']">
+                            Role is required</div>
+                        <div
+                            *ngIf="addResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || addResourceForm.get('resourceRole')?.errors?.['maxlength']">
                             {{ 'Role must be between 250 characters' | translate }}</div>
-                        <div *ngIf="addResourceForm.get('resourceRole')?.errors?.['minCharacters'] || addResourceForm.get('resourceRole')?.errors?.['minlength']">
+                        <div
+                            *ngIf="addResourceForm.get('resourceRole')?.errors?.['minCharacters'] || addResourceForm.get('resourceRole')?.errors?.['minlength']">
                             {{ 'Role must be between 250 characters' | translate }}</div>
                     </div>
                 </div>
@@ -53,10 +57,10 @@
                     <label for="projectName" class="form-label custom-label mb-2">
                         Project Name<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true" [resetFilterOnHide]="true"
-                            filterBy="projectName" optionValue="projectId" formControlName="projectName"
-                            placeholder="Please select project name" class="form-select custom-select"
-                            (onChange)="selectproject($event.value)"></p-select>
+                        <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true"
+                            [resetFilterOnHide]="true" filterBy="projectName" optionValue="projectId"
+                            formControlName="projectName" placeholder="Please select project name"
+                            class="form-select custom-select" (onChange)="selectproject($event.value)"></p-select>
                     </div>
                     <div class="error-msg"
                         *ngIf="addResourceForm.get('projectName')?.touched && addResourceForm.get('projectName')?.invalid">
@@ -113,9 +117,10 @@
 
                 <!-- End Date -->
                 <div class="col-md-6 mb-3">
-                    <label for="endDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
-                    <input type="date" id="endDate" formControlName="endDate" [min]="minEffectiveDate" onkeypress="return false"
-                        class="form-control custom-input" />
+                    <label for="endDate" class="form-label custom-label mb-2">End Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="endDate" formControlName="endDate" [min]="minEffectiveDate"
+                        onkeypress="return false" class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('endDate')?.touched && 
                     addResourceForm.get('endDate')?.invalid">End Date is required</div>
                 </div>
@@ -129,9 +134,9 @@
                             class="form-control custom-input w-50" [maxlength]="10"
                             (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
                         <div class="custom-p-select-content w-50">
-                            <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false" [showClear]="false"
-                                placeholder="Please select frequency" formControlName="allocatedFrequencyType"
-                                class="custom-select w-100">
+                            <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false"
+                                [showClear]="false" placeholder="Please select frequency"
+                                formControlName="allocatedFrequencyType" class="custom-select w-100">
                             </p-select>
                         </div>
                     </div>

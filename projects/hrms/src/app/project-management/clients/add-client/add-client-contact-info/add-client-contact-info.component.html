@@ -74,15 +74,20 @@
                                 </div>
                             </div>
                         </td>
+                  
                         <td>
-                            <div class="d-flex align-items-center gap-3">
-                                <div *ngIf="i !== 0">
-                                    <a class="cursor" (click)="removeContact(i)"><app-circular-delete /></a>
-                                </div>
-                                <div>
-                                    <a class="cursor" (click)="addContact()"><app-circular-add /></a>
-                                </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div *ngIf="contacts.length > 1">
+                            <a class="cursor" (click)="removeContact(i)">
+                                <app-circular-delete />
+                            </a>
                             </div>
+                            <div *ngIf="i === contacts.length - 1">
+                            <a class="cursor" (click)="addContact()">
+                                <app-circular-add />
+                            </a>
+                            </div>
+                        </div>
                         </td>
                     </tr>
                 </tbody>

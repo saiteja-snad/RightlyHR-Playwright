@@ -14,17 +14,16 @@
           <input type="text" class="form-control custom-input" formControlName="projectName" minlength="2"
             maxlength="101" placeholder="Please enter project name"
             (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
-          <div class="error-msg" *ngIf="addprojectform.get('projectName')?.touched">
-            <div *ngIf="addprojectform.get('projectName')?.errors as errors">
-              <div *ngIf="errors['required']">Project Name is required</div>
-              <div *ngIf="addprojectform.get('projectName')?.errors?.['maxCharacters']" class="error-msg">
+                 <div class="error-msg" *ngIf="addprojectform.get('projectName')?.touched">
+              <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">Project Name is required
+              </div>
+              <div *ngIf="addprojectform.get('projectName')?.errors?.['maxCharacters']"   class="error-msg">
                 {{ 'Project Name must be between 2–100 characters' | translate }}
               </div>
               <div *ngIf="addprojectform.get('projectName')?.errors?.['minCharacters']" class="error-msg">
                 {{ 'Project Name must be between 2–100 characters' | translate }}
               </div>
             </div>
-          </div>
         </div>
 
         <!-- Client Name -->

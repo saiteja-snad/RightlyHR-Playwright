@@ -4,6 +4,11 @@
     overflow-y: auto;
 }
 
+.custom-p-multi-select-table .p-datatable-table-container {
+    height: max-content !important;
+    max-height: 45vh !important;
+}
+
 .action-img {
     width: 1.5rem;
     height: 1.5rem;

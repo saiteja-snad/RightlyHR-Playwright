@@ -22,6 +22,14 @@ export class FormValidationService {
       event.preventDefault(); // Cancel the paste event if the data is not numeric
     }
   }
+    restrictInitialSpace(event: KeyboardEvent) {
+    const inputElement = event.target as HTMLInputElement;
+
+    // Prevent the first character from being a space
+    if (event.key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+    }
+  }
 
   validatePasteAlphabets(event: ClipboardEvent): void {
     const pastedData = event.clipboardData?.getData('text') ?? '';

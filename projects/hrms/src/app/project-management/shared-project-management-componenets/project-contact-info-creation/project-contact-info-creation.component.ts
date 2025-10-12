@@ -111,6 +111,7 @@ export class ProjectContactInfoCreationComponent implements OnInit, OnDestroy {
   // Remove a row
   removeContact(index: number) {
     this.contacts.removeAt(index);
+    
   }
 
   cancel() {

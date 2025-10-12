@@ -56,7 +56,7 @@
                                             (onCountryChange)="onCountryChange($event, i)">
                                         </lib-country-list>
                                     </div>
-                                    <input type="text" class="form-control custom-input" formControlName="contactPhone"
+                                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)" formControlName="contactPhone"
                                         placeholder="Please enter phone number">
                                 </div>
                                 <div class="error-msg"
@@ -85,14 +85,20 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
-                                    <div *ngIf="i !== 0">
-                                        <a class="cursor" (click)="removeContact(i)"><app-circular-delete /></a>
+                                    <div *ngIf="contacts.length > 1">
+                                        <a class="cursor" (click)="removeContact(i)">
+                                            <app-circular-delete />
+                                        </a>
                                     </div>
+
                                     <div *ngIf="i === contacts.length - 1">
-                                        <a class="cursor" (click)="addContact()"><app-circular-add /></a>
+                                        <a class="cursor" (click)="addContact()">
+                                            <app-circular-add />
+                                        </a>
                                     </div>
                                 </div>
                             </td>
+
                         </tr>
                     </tbody>
                 </table>

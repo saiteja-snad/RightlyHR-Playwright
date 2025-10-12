@@ -33,27 +33,29 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.clientForm = this.fb.group({
-      clientName: ['', [Validators.required, Validators.minLength(2), this.formValidations.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
-      taxId: ['', [Validators.required, Validators.minLength(3), this.formValidations.maxCharactersValidator(51), this.formValidation.noEmojiValidator()]],
-      website: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50), Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/), this.formValidation.noEmojiValidator()]],
-      industryType: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), this.formValidation.noEmojiValidator()]],
+      clientName: ['', [Validators.required, Validators.minLength(2), this.formValidations.maxCharactersValidator(51)]],
+      taxId: ['', [Validators.required, Validators.minLength(3), this.formValidations.maxCharactersValidator(51)]],
+      website: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50), Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/)]],
+      industryType: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       logo: [null, Validators.required],
-      clientAddress: ['', [Validators.required, this.formValidations.minCharactersValidator(5), this.formValidations.maxCharactersValidator(250), this.formValidation.noEmojiValidator()]],
+      clientAddress: ['', [Validators.required, this.formValidations.minCharactersValidator(5), this.formValidations.maxCharactersValidator(250)]],
       overtimeEligibility: [false],
       billable: [false],
       allowWeekendWork: [false]
     });
     this.getEAV();
-    // Clean emojis dynamically as user types or pastes
-    Object.keys(this.clientForm.controls).forEach(controlName => {
-      this.formValidation.cleanEmojiOnChange(this.clientForm.get(controlName)!);
-    });
+    // // Clean emojis dynamically as user types or pastes
+    // Object.keys(this.clientForm.controls).forEach(controlName => {
+    //   this.formValidation.cleanEmojiOnChange(this.clientForm.get(controlName)!);
+    // });
   }
 
   getEAV() {
     this.subscription = this.http.getData('entityAttributeValues?entity=Project&attribute=Industry Type').subscribe({
       next: (data: any) => {
-        this.industryTypes = data;
+        this.industryTypes = data.sort((a: { value: string; }, b: { value: any; }) =>
+          a.value.localeCompare(b.value, undefined, { sensitivity: 'base' })
+        );
       },
       error: (error: any) => {
         this.industryTypes = [];

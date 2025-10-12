@@ -5,6 +5,7 @@ export const permissionsData = [
   { fields: 'Settings Timeoff Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Assets Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Tabs Sections
   { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
@@ -55,7 +56,7 @@ export const permissionsData = [
   { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Signature Authority', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Letter Acknowledgment Configuration', View: false, Update: false, Create: false, Delete: false },
- 
+
   //Manage Shifts tab 
   { fields: 'Shifts Pending Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Shifts Published Tab', View: false, Update: false, Create: false, Delete: false },
@@ -130,7 +131,7 @@ export const permissionsData = [
   { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Expenses)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Expenses)', View: false, Update: false, Create: false, Delete: false },
-  
+
   //Calender Tabs Sections
   { fields: 'My Tickets Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Tickets Tab', View: false, Update: false, Create: false, Delete: false },
@@ -158,6 +159,7 @@ export const permissionsData = [
 
   //Desk Management Tabs Section
   { fields: 'Desk Allocation - Create', View: false, Update: false, Create: false, Delete: false },
+
   // { fields: 'Desk Allocation - All', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Available', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
@@ -218,6 +220,10 @@ export const permissionsData = [
   { fields: 'Blood Bank', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Phone Book', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contacts Directory', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Management', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Clients', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Projects', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -252,7 +258,7 @@ export const permissionsData = [
   { fields: 'All Employees (WFH)', View: false, Update: false, Create: false, Delete: false },
 
   //Remote Login
-  { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },   
+  { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Waiting For Approval (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Processed (Remote Login)', View: false, Update: false, Create: false, Delete: false },
@@ -320,6 +326,7 @@ export const permissionsData = [
   { fields: 'Claims and Expenses Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Requests Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Details Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Time Sheet approval Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Pending Approval Time Off Tabs Section
   { fields: 'For You (Time Off)', View: false, Update: false, Create: false, Delete: false },
@@ -799,4 +806,27 @@ export const permissionsData = [
   { fields: 'My Info Letter Acknowledgement', View: false, Update: false, Create: false, Delete: false },
   //Draft Forms MArk As Active Action
   { fields: 'Mark As Active Action', View: false, Update: false, Create: false, Delete: false },
+
+  // Project Management Project tab
+  { fields: 'Project Details Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Contact Info Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Documents Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Resources Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
+
+  //Project Management client tabs
+  { fields: 'Client Information', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Contact Information', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Projects', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Documents', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Resources', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Timesheets', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'Project Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Industry Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Document Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Client Document Type', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Configurations', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
+
 ];

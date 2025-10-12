@@ -1,0 +1,219 @@
+<div class="custom-main-popup-container" ngbAutofocus>
+  <div class="custom-poup-header-content popup-header-border">
+    <div>
+      <p class="popup-heading mb-0">{{'Add Project' | translate}}</p>
+    </div>
+  </div>
+  <div class="custom-main-popup-content">
+    <form [formGroup]="addprojectform" autocomplete="off" (ngSubmit)="saveProject()">
+      <div class="row">
+        <!-- Project Name -->
+        <div class="col-md-6 mb-3">
+          <label for="projectName" class="form-label custom-label mb-2">Project Name <span
+              class="text-danger">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="projectName" minlength="2"
+            maxlength="101" placeholder="Please enter project name"
+            (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+                 <div class="error-msg" *ngIf="addprojectform.get('projectName')?.touched">
+              <div *ngIf="addprojectform.get('projectName')?.errors?.['required']">Project Name is required
+              </div>
+              <div *ngIf="addprojectform.get('projectName')?.errors?.['maxCharacters']"   class="error-msg">
+                {{ 'Project Name must be between 2–100 characters' | translate }}
+              </div>
+              <div *ngIf="addprojectform.get('projectName')?.errors?.['minCharacters']" class="error-msg">
+                {{ 'Project Name must be between 2–100 characters' | translate }}
+              </div>
+            </div>
+        </div>
+
+        <!-- Client Name -->
+        <div class="col-md-6 mb-3">
+          <label for="clientName" class="form-label custom-label mb-2">Client Name <span
+              class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="clients" optionLabel="clientName" [filter]="true" [resetFilterOnHide]="true"
+              filterBy="clientName" optionValue="clientId" formControlName="clientName"
+              placeholder="Please select client name" class="form-select custom-select"></p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="addprojectform.get('clientName')?.touched && addprojectform.get('clientName')?.invalid">
+            Client Name is required
+          </div>
+        </div>
+
+        <!-- Project Type -->
+        <div class="col-md-6 mb-3">
+          <label for="projectType" class="form-label custom-label mb-2">Project Type <span
+              class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="projecttypes" optionLabel="value" [filter]="true" [resetFilterOnHide]="true"
+              filterBy="value" formControlName="projectType" placeholder="Please select project type"
+              class="form-select custom-select"></p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="addprojectform.get('projectType')?.touched && addprojectform.get('projectType')?.invalid">
+            Project Type is required
+          </div>
+        </div>
+
+        <!-- Project Description -->
+        <div class="col-md-6 mb-3">
+          <label for="projectDescription" class="form-label custom-label mb-2">Project Description</label>
+          <textarea id="projectDescription"
+            (input)="formValidation.validateInput(addprojectform.get('projectDescription'))" maxlength="500"
+            formControlName="projectDescription" class="form-control custom-input"
+            placeholder="Please enter project description"></textarea>
+          <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
+        </div>
+        <!-- Start Date -->
+        <div class="col-md-6 mb-3">
+          <label for="startDate" class="form-label custom-label mb-2">Start Date <span
+              class="text-danger">*</span></label>
+          <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
+            class="form-control custom-input" />
+          <div class="error-msg"
+            *ngIf="addprojectform.get('startDate')?.touched && addprojectform.get('startDate')?.invalid">
+            Start Date is required
+          </div>
+          <div *ngIf="!startndEndDateValid">
+            <div class="error-msg"> Start Date cannot be after End Date</div>
+          </div>
+        </div>
+
+        <!-- End Date -->
+        <div class="col-md-6 mb-3">
+          <label for="endDate" class="form-label custom-label mb-2">End Date <span class="text-danger">*</span></label>
+          <input type="date" id="endDate" formControlName="endDate" onkeypress="return false" [min]="minEffectiveDate"
+            class="form-control custom-input" />
+          <div class="error-msg"
+            *ngIf="addprojectform.get('endDate')?.touched && addprojectform.get('endDate')?.invalid">
+            End Date is required
+          </div>
+          <div *ngIf="!startndEndDateValid">
+            <div class="error-msg"> End Date cannot be before start Date</div>
+          </div>
+        </div>
+
+
+        <!-- Kickoff Date -->
+        <div class="col-md-6 mb-3">
+          <label for="kickoffDate" class="form-label custom-label mb-2">Kickoff Date <span
+              class="text-danger">*</span></label>
+          <input type="date" id="kickoffDate" formControlName="kickoffDate" onkeypress="return false"
+            [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
+          <div class="error-msg"
+            *ngIf="addprojectform.get('kickoffDate')?.touched && addprojectform.get('kickoffDate')?.invalid">
+            Kickoff Date is required
+          </div>
+          <div class="error-msg" *ngIf="!kickoffDateValid">
+            Kickoff Date must be between Start Date and End Date
+          </div>
+          <div class="error-msg" *ngIf="!kickoffBeforeEffectiveValid">
+            Kickoff Date must be on or before the Effective Date
+          </div>
+        </div>
+
+        <!-- Effective Date -->
+        <div class="col-md-6 mb-3">
+          <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date <span
+              class="text-danger">*</span></label>
+          <input type="date" id="effectiveDate" formControlName="effectiveDate" onkeypress="return false"
+            [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
+          <div class="error-msg"
+            *ngIf="addprojectform.get('effectiveDate')?.touched && addprojectform.get('effectiveDate')?.invalid">
+            Effective Date is required
+          </div>
+          <div class="error-msg" *ngIf="!effectiveDateValidRange">
+            Effective Date must be between Start Date and End Date
+          </div>
+          <div class="error-msg" *ngIf="!effectiveAfterKickoffValid">
+            Effective Date must be on or after the Kickoff Date
+          </div>
+        </div>
+
+        <!--Allocated hours-->
+        <div class="col-md-6 mb-3">
+          <label for="projectType" class="form-label custom-label mb-2">Allocated Hours <span
+              class="text-danger">*</span></label>
+          <input type="text" id="projectType" formControlName="allocatedHours" class="form-control custom-input"
+            maxlength="5" (keydown)="formValidation.restrictAlphabets($event)"
+            placeholder="Please enter allocated hours" />
+          <div class="error-msg"
+            *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.invalid">
+            Allocated Hours is required
+          </div>
+          <!-- Error Messages -->
+          <div class="error-msg"
+            *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.errors?.['positiveInteger']">
+            Allocated Hours must be a valid number
+          </div>
+          <!-- <div *ngIf="addprojectform.get('allocatedHours')?.errors?.['minCharacters']" class="error-msg">
+                {{ 'Allocated Hours must be between 2–100 characters' | translate }}
+              </div> -->
+        </div>
+
+        <!--Timesheet Approval Authority-->
+        <div class="col-md-6 mb-3">
+          <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' |
+            translate}}<span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="authorityList" formControlName="approvalidAuthority" [filter]="true"
+              [resetFilterOnHide]="true" filterBy="name" optionLabel="name" optionValue="value"
+              placeholder="Please select timesheet approval authority" class="form-select custom-select"></p-select>
+          </div>
+          <div class="error-msg"
+            *ngIf="addprojectform.get('approvalidAuthority')?.invalid && addprojectform.get('approvalidAuthority')?.touched">
+            Timesheet Approval Authority is required
+          </div>
+        </div>
+
+        <!-- Switches -->
+        <div class="col-md-12 mb-3">
+          <div class="d-flex gap-3 align-items-center">
+            <div class="form-check form-switch">
+              <input id="project-overtime-eligibility"  class="form-check-input" type="checkbox" formControlName="overtimeEligible">
+              <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Overtime Eligibility</label>
+            </div>
+
+            <div class="form-check form-switch">
+              <input id="project-client-billable" class="form-check-input" type="checkbox" formControlName="billable">
+              <label for="project-client-billable" class="form-label custom-toggle-label">Billable</label>
+            </div>
+            <div class="form-check form-switch">
+              <label for="project-allow-weekend-works" class="form-label custom-toggle-label" >Allow Weekend Work</label>
+              <input id="project-allow-weekend-works" class="form-check-input" type="checkbox" formControlName="allowweekendWork">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Buttons -->
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary"
+          (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="addprojectform.invalid || loading">
+          @if (loading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span>{{'Loading' | translate}}...</span>
+          } @else {
+          <span>{{'Add'| translate}}</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!--confirmation Popup-->
+<ng-template #confirmationpopupfornodue let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+    </div>
+  </div>
+</ng-template>

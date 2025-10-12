@@ -6,7 +6,7 @@ import { AbstractControl, FormGroup, ValidationErrors, ValidatorFn } from '@angu
 
 export class FormValidationService {
   constructor() { }
-  
+
   blockLeadingSpace(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     // If space is pressed and cursor is at the start (position 0), block it
@@ -23,12 +23,22 @@ export class FormValidationService {
     }
   }
 
-  validatePasteAlphabets(event: ClipboardEvent): void {
-  const pastedData = event.clipboardData?.getData('text') ?? '';
-  if (!/^[A-Za-z\s]+$/.test(pastedData)) {
-    event.preventDefault(); // Cancel the paste event if the data is not alphabetic
+
+  restrictInitialSpace(event: KeyboardEvent) {
+    const inputElement = event.target as HTMLInputElement;
+
+    // Prevent the first character from being a space
+    if (event.key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+    }
   }
-}
+
+  validatePasteAlphabets(event: ClipboardEvent): void {
+    const pastedData = event.clipboardData?.getData('text') ?? '';
+    if (!/^[A-Za-z\s]+$/.test(pastedData)) {
+      event.preventDefault(); // Cancel the paste event if the data is not alphabetic
+    }
+  }
 
   ///onlynumnbers
   restrictAlphabets(event: KeyboardEvent) {
@@ -37,6 +47,7 @@ export class FormValidationService {
       event.preventDefault();
     }
   }
+
 
   //aplicatives(abc)
   restrictInput(event: KeyboardEvent) {
@@ -79,17 +90,14 @@ export class FormValidationService {
   restrictInputallowspicalcharterswithnumbers(event: KeyboardEvent): void {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
-  
     if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
       return;
     }
-  
     // Prevent the first character from being a space
     if (key === ' ' && inputElement.selectionStart === 0) {
       event.preventDefault();
       return;
     }
-  
     // Allow alphabetic characters, numbers, and special characters
     const isValidCharacter = /^[A-Za-z0-9\s!@#$^&*%''(),.":{}/|-]$/.test(key);
     if (!isValidCharacter) {
@@ -100,26 +108,22 @@ export class FormValidationService {
   restrictInputAllowsAlphaNumericAndHyphen(event: KeyboardEvent): void {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
-  
     // Allow control/navigation keys
     const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
     if (allowedKeys.includes(key)) {
       return;
     }
-  
     // Prevent first character from being a space
     if (key === ' ' && inputElement.selectionStart === 0) {
       event.preventDefault();
       return;
     }
-  
     // Allow only alphanumeric characters and hyphen
     const isValidCharacter = /^[A-Za-z0-9-]$/.test(key);
     if (!isValidCharacter) {
       event.preventDefault();
     }
   }
-  
 
   restrictInputallowspoint(event: KeyboardEvent): void {
     const key = event.key;
@@ -138,79 +142,69 @@ export class FormValidationService {
       event.preventDefault();
     }
   }
+
   // allowed only alphbet,number,-,/
-restrictInputallowhypen(event: KeyboardEvent): void {
-  const key = event.key;
-  const inputElement = event.target as HTMLInputElement;
-
-  // Always allow navigation and control keys
-  if (
-    key === 'Backspace' || key === 'Delete' || 
-    key === 'ArrowLeft' || key === 'ArrowRight' || 
-    key === 'Tab'
-  ) {
-    return;
+  restrictInputallowhypen(event: KeyboardEvent): void {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+    // Always allow navigation and control keys
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' ||
+      key === 'ArrowRight' || key === 'Tab') {
+      return;
+    }
+    // Prevent space as the first character
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+    // Allow only A-Z, a-z, 0-9, hyphen (-), forward slash (/), and space
+    const isValidCharacter = /^[A-Za-z0-9\-\/ ]$/.test(key);
+    if (!isValidCharacter) {
+      event.preventDefault();
+    }
   }
 
-  // Prevent space as the first character
-  if (key === ' ' && inputElement.selectionStart === 0) {
-    event.preventDefault();
-    return;
+  // restrict allowed only few specialcharacter
+  restrictInputAllowAlphaNumericAndCommonSpecialChars(event: KeyboardEvent): void {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+    // Allow navigation/control keys
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+    if (allowedKeys.includes(key)) {
+      return;
+    }
+    // Prevent first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+    // Allow alphabets, numbers, &, -, ., '
+    const isValidCharacter = /^[A-Za-z0-9&\-.'\s]$/.test(key);
+    if (!isValidCharacter) {
+      event.preventDefault();
+    }
   }
 
-  // Allow only A-Z, a-z, 0-9, hyphen (-), forward slash (/), and space
-  const isValidCharacter = /^[A-Za-z0-9\-\/ ]$/.test(key);
-  if (!isValidCharacter) {
-    event.preventDefault();
-  }
-}
-
-
-// restrict allowed only few specialcharacter
-restrictInputAllowAlphaNumericAndCommonSpecialChars(event: KeyboardEvent): void {
-  const key = event.key;
-  const inputElement = event.target as HTMLInputElement;
-
-  // Allow navigation/control keys
-  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-  if (allowedKeys.includes(key)) {
-    return;
-  }
-
-  // Prevent first character from being a space
-  if (key === ' ' && inputElement.selectionStart === 0) {
-    event.preventDefault();
-    return;
+  restrictInputAllowAlphaNumeric(event: KeyboardEvent): void {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+    // Allow navigation/control keys
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+    if (allowedKeys.includes(key)) {
+      return;
+    }
+    // Prevent first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+    // Allow alphabets, numbers, &, -, ., '
+    const isValidCharacter = /^[A-Za-z0-9]$/.test(key);
+    if (!isValidCharacter) {
+      event.preventDefault();
+    }
   }
 
-  // Allow alphabets, numbers, &, -, ., '
-  const isValidCharacter = /^[A-Za-z0-9&\-.'\s]$/.test(key);
-  if (!isValidCharacter) {
-    event.preventDefault();
-  }
-}
-restrictInputAllowAlphaNumeric(event: KeyboardEvent): void {
-  const key = event.key;
-  const inputElement = event.target as HTMLInputElement;
-
-  // Allow navigation/control keys
-  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-  if (allowedKeys.includes(key)) {
-    return;
-  }
-
-  // Prevent first character from being a space
-  if (key === ' ' && inputElement.selectionStart === 0) {
-    event.preventDefault();
-    return;
-  }
-
-  // Allow alphabets, numbers, &, -, ., '
-  const isValidCharacter = /^[A-Za-z0-9]$/.test(key);
-  if (!isValidCharacter) {
-    event.preventDefault();
-  }
-}
   rateGreaterThanZero(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
@@ -273,7 +267,6 @@ restrictInputAllowAlphaNumeric(event: KeyboardEvent): void {
     }
   }
 
-
   checkNoSpaceForEmail(event: KeyboardEvent, formControl: FormGroup, formControlName: string): void {
     const input = event.target as HTMLInputElement;
     // Prevent spacebar from adding spaces
@@ -312,13 +305,12 @@ restrictInputAllowAlphaNumeric(event: KeyboardEvent): void {
     };
     return minLengths[countryCode] || 10; // Default to 10 if not found
   }
-    // replace spaces with underscores and remove special characters expect dot
+
+  // replace spaces with underscores and remove special characters expect dot
   sanitizeFileName(fileName: string): string {
     let filename = fileName.replace(/\s+/g, '_');
     // Remove all special characters except dot and underscore
     filename = filename.replace(/[^\w.-]/g, '');
- 
     return filename;
   }
- 
 }

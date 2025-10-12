@@ -71,6 +71,20 @@
             </li>
             } -->
 
+            <!--Project Management-->
+            @if(this.rbac.allowedToAccess('Project Management.view')){
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveprojectManagement()">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">Project Management
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-project-management-main-tabs />
+                    </ul>
+                </div>
+            </li>
+            }
+
             <!--Selected Item form the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"

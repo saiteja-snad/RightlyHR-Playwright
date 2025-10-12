@@ -54,7 +54,10 @@ import {
   MY_INFO_DOCUMENTS_ROUTES,
   MY_INFO_TEAM_MEMBERS,
   POLICY_REPORTS_TABS,
+  SETTINGS_PROJECT_MANAGEMENT_TABS,
   PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS,
+  CLIENTS_ROUTES,
+  PROJECTS_ROUTES,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -96,7 +99,7 @@ export class AccessNavigationService {
           }
         }
 
-       
+
 
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
           return (route = '/myinfo/onboarding-request');
@@ -115,6 +118,13 @@ export class AccessNavigationService {
             }
             if (this.rbac.allowedToAccess('Job Tab.view')) {
               for (const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess('Project Management Configuration Module.view')) {
+              for (const item of SETTINGS_PROJECT_MANAGEMENT_TABS) {
                 if (this.rbac.allowedToAccess(item.permission)) {
                   return item.route;
                 }
@@ -258,7 +268,7 @@ export class AccessNavigationService {
           return (route = '/policies');
         }
         break;
-        
+
       case '/events':
         if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {
@@ -297,9 +307,9 @@ export class AccessNavigationService {
           return (route = '/reports/monthly-attandance-reports');
         }
 
-        if(this.rbac.allowedToAccess('Policy Reports.view')){
-          for(const item of POLICY_REPORTS_TABS){
-            if(this.rbac.allowedToAccess(item.permission)){
+        if (this.rbac.allowedToAccess('Policy Reports.view')) {
+          for (const item of POLICY_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
@@ -558,6 +568,11 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
+
+          if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+            return (route = '/time-off/pending-approvals/time-sheets');
+          }
+
         }
 
         break;
@@ -642,6 +657,30 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        break;
+      case '/project-management/clients/active':
+        if (this.rbac.allowedToAccess('Clients.view')) {
+          for (const item of CLIENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/project-management/clients/active':
+        if (this.rbac.allowedToAccess('Projects.view')) {
+          for (const item of PROJECTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/project-management/time-sheet':
+        if (this.rbac.allowedToAccess('Time Sheet.view')) {
+          return (route = '/project-management/time-sheet');
         }
         break;
 
@@ -767,6 +806,7 @@ export class AccessNavigationService {
                 }
               }
             }
+
 
             if (this.rbac.allowedToAccess('Document Tab.view')) {
               return (route = '/settings/employee-fields/documents');
@@ -1045,6 +1085,16 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/settings/project-management-config':
+        if (this.rbac.allowedToAccess('Project Management Configuration Module.view')) {
+          for (const item of SETTINGS_PROJECT_MANAGEMENT_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
       case '/settings/employee-fields/documents':
         if (this.rbac.allowedToAccess('Document Tab.view')) {
           return (route = '/settings/employee-fields/documents');
@@ -1238,6 +1288,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/time-off/pending-approvals/time-sheets':
+        if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          return (route = '/time-off/pending-approvals/time-sheets');
+        }
+        break;
+
       case '/time-off/pending-approvals':
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
@@ -1279,18 +1335,18 @@ export class AccessNavigationService {
                 }
               }
             }
-              if (
-                this.rbac.allowedToAccess(item.permission) &&
-                item.permission === 'Remote Login Tab.view'
-              ) {
-                if (item.route === '/time-off/pending-approvals/remote') {
-                  for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
-                    if (this.rbac.allowedToAccess(item.permission)) {
-                      return item.route;
-                    }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Remote Login Tab.view'
+            ) {
+              if (item.route === '/time-off/pending-approvals/remote') {
+                for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
                   }
                 }
               }
+            }
             if (
               this.rbac.allowedToAccess(item.permission) &&
               item.permission === 'Permissions Tab.view'
@@ -1383,6 +1439,10 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
+           if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+            return (route = '/time-off/pending-approvals/time-sheets');
+          }
+
         }
         break;
 
@@ -1406,15 +1466,15 @@ export class AccessNavigationService {
         break;
 
       case '/time-off/pending-approvals/remote':
-         if (
-           this.rbac.allowedToAccess('Remote Login Tab.view') 
-         ) {
-             for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
-               if (this.rbac.allowedToAccess(item.permission)) {
-                 return item.route;
-               }
-             } 
-         }
+        if (
+          this.rbac.allowedToAccess('Remote Login Tab.view')
+        ) {
+          for (const item of PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
       case '/time-off/pending-approvals/comp-off':
         if (this.rbac.allowedToAccess('Comp Off Tab.view')) {

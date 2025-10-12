@@ -1,0 +1,71 @@
+.custom-p-select-content {
+  min-width: 15rem !important;
+}
+
+.custom-table-content {
+  height: calc(100dvh - 8.5rem);
+  border: 1px solid var(--border-color) !important;
+  text-align: center !important;
+}
+
+.attendance-summary-card {
+  position: relative;
+  border: 1px solid var(--border-color);
+  background-color: #fff;
+  border-radius: 0.5rem;
+  width: 25rem;
+  height: max-content;
+  overflow: auto;
+  padding: 1rem;
+
+  .summary-header {
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    color: var(--primary-color);
+  }
+
+  .chart-content {
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    canvas {
+      width: 150px !important;
+      height: 150px !important;
+    }
+  }
+
+  .summart-text {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 100%;
+    color: var(--primary-color);
+  }
+
+  .summary-name {
+    font-weight: 600;
+  }
+
+  li {
+    padding: 0.75rem 0rem;
+    border-bottom: 1px solid var(--ash-color-100);
+  }
+
+  li:last-child {
+    border-bottom: none !important;
+  }
+}
+
+.attendance-log-content {
+  width: 100%;
+}
+
+.max-width {
+  text-wrap: nowrap !important;
+}
+
+@media (min-width: 1280px) and (max-width: 1400px) {
+  .max-width {
+    width: 120px !important;
+  }
+}

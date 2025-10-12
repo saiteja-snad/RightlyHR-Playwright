@@ -1,0 +1,397 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div>
+            <app-project-management-module-info />
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="total-hrs">{{"Total Hours" }}:<span class="total-duration ms-1">{{ totalDuration}} Hrs</span>
+            </div>
+            <div class="d-flex week-picker-content">
+                <div class="custom-date-range-picker me-2">
+                    <p-datepicker [(ngModel)]="date" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                        [minDate]="minDate" [maxDate]="maxDate" [placeholder]="displayLabel">
+                    </p-datepicker>
+                </div>
+                <button class="custom-btn btn-primary week-change-btn-prev" (click)="previousWeek()">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="custom-btn btn-primary week-change-btn-next" (click)="nextWeek()">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+            <div>
+                <button type="button" class="custom-btn btn-primary px-4" (click)="submitTimesheet()"
+                    [disabled]="isSubmitDisabled()">Submit for Approval</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-table-content">
+        <form [formGroup]="timesheetForm">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th *ngFor="let d of weekDates">{{ d | date:"EEE, MMM dd" }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="projects">
+                    <tr *ngFor="let project of projects.controls; let i = index" [formGroupName]="i">
+                        <td>
+                            <div class="dropdown">
+                                <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    <u>{{ project.value.selectedProject?.clientName && project.value.selectedProject?.projectName
+                                        ? project.value.selectedProject.clientName + ' - ' + project.value.selectedProject.projectName
+                                        : 'Select Project or Client' }}</u>
+                                </div>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <input type="search" class="form-control custom-search-input mb-2"
+                                            placeholder="Search Project or Client" formControlName="searchTerm">
+                                    </li>
+                                    <div class="custom-accordian-data-content">
+                                        <p-accordion>
+                                            <ng-container *ngFor="let client of getFilteredClientsForRow(project)">
+                                                <p-accordion-panel [value]="client.clientName"
+                                                    *ngIf="hasUnselectedProjects(client)">
+                                                    <p-accordion-header>
+                                                        {{ client.clientName | titlecase }}
+                                                        <small class="text-muted ms-2">
+                                                            ({{ showprojectlength(client.projects,selectedProjectIds) }}Projects)
+                                                        </small>
+                                                    </p-accordion-header>
+                                                    <p-accordion-content>
+                                                        <ul class="ps-0">
+                                                            <ng-container *ngFor="let p of client.projects">
+                                                                <li class="list-project-name cursor"
+                                                                    (click)="selectProjectForRow(project, client, p)"
+                                                                    *ngIf="!selectedProjectIds.includes(p.projectId)">
+                                                                    {{ p.projectName }}
+                                                                </li>
+                                                            </ng-container>
+                                                        </ul>
+                                                    </p-accordion-content>
+                                                </p-accordion-panel>
+                                            </ng-container>
+                                        </p-accordion>
+                                    </div>
+                                </ul>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'mon'">
+                            <div class="d-flex d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('mon'))">
+                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
+                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'mon', i, 'duration')"
+                                        (keyup.enter)="formatTime($event, 'mon', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask, project.get('mon'),i,'mon')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('mon.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('mon.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'tue'">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('tue'))">
+                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
+                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'tue', i, 'duration')"
+                                        (keyup.enter)="formatTime($event, 'tue', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('tue'),i,'tue')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('tue.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('tue.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'wed'">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('wed'))">
+                                    <input type="text" formControlName="duration" (blur)="formatTime($event, 'wed', i, 'duration')"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)" (keyup.enter)="formatTime($event, 'wed', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('wed'),i,'wed')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('wed.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('wed.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'thu'">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('thu'))">
+                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
+                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'thu', i, 'duration')"
+                                        (keyup.enter)="formatTime($event, 'thu', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('thu'),i,'thu')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('thu.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('thu.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'fri'">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('fri'))">
+                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
+                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'fri', i, 'duration')"
+                                        (keyup.enter)="formatTime($event, 'fri', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('fri'),i,'fri')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('fri.approvalStatus')?.value === 'Rejected'">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('fri.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'sat'">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sat'))">
+                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
+                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'sat', i, 'duration')"
+                                        (keyup.enter)="formatTime($event, 'sat', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('sat'),i,'sat')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('sat.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('sat.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td [formGroupName]="'sun'">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sun'))">
+                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
+                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'sun', i, 'duration')"
+                                        (keyup.enter)="formatTime($event, 'sun', i, 'duration')">
+                                    <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration"
+                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('sun'),i,'sun')">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                </div>
+                                <div *ngIf="project.get('sun.approvalStatus')?.value === 'Rejected'" class="ms-2">
+                                    <a type="button" [ngbPopover]="description">
+                                        <app-info-icon></app-info-icon>
+                                    </a>
+                                    <ng-template #description>
+                                        <p class="mb-0">{{ project.get('sun.rejectReason')?.value}}</p>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span type="button" (click)="openModalfordeletealldata(alldeleteconformation,i)"
+                                *ngIf="canDelete(project,i)">
+                                <img src="icons\delete-icon.png" alt="failure icon" class="delete-icon">
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td>Total Hours</td>
+                        <td>{{ getTotalPerDay('mon') }}</td>
+                        <td>{{ getTotalPerDay('tue') }}</td>
+                        <td>{{ getTotalPerDay('wed') }}</td>
+                        <td>{{ getTotalPerDay('thu') }}</td>
+                        <td>{{ getTotalPerDay('fri') }}</td>
+                        <td>{{ getTotalPerDay('sat') }}</td>
+                        <td>{{ getTotalPerDay('sun') }}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="d-flex justify-content-between align-items-center p-3">
+                <div>
+                    <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-green"></div>
+                        <div class="status-text">Approved</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-red"></div>
+                        <div class="status-text">Rejected</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-yellow"></div>
+                        <div class="status-text">Waiting for Approval</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Add task Popup-->
+<ng-template #addtask let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'Time Entry'}}</p>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content description-content">
+            <form [formGroup]="dayForm" *ngIf="dayForm" (ngSubmit)="saveDayEntry()">
+                <div class="mb-4">
+                    <p class="day mb-2">{{dayForm.get('entryDate')?.value | dateformat}} </p>
+                    <p class="project-name">{{dayForm.get('clientName')?.value || selectedClientname || 'No Client'}}-
+                        {{dayForm.get('projectName')?.value || selectedProjectName || 'No Project' }}</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">Description<span
+                                class="text-danger">*</span></label>
+                        <textarea formControlName="description" [maxlength]="500" class="form-control custom-input"
+                            placeholder="Please enter description" rows="5"></textarea>
+                        <div class="error-msg"
+                            *ngIf="dayForm.get('description')?.touched && dayForm.get('description')?.hasError('required')">
+                            Description is required
+                        </div>
+                        <div class="textarea-count-text">{{ dayForm.get("description")?.value?.length || 0 }}/500</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">Start Time<span class="text-danger">*</span></label>
+                        <input type="time" formControlName="startTime" class="form-control custom-input"
+                            placeholder="HH:MM" (change)="onTimeChange()">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">End Time<span class="text-danger">*</span></label>
+                        <input type="time" formControlName="endTime" class="form-control custom-input"
+                            placeholder="HH:MM" (change)="onTimeChange()">
+                    </div>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <label class="form-label custom-label mb-2">Duration<span class="text-danger">*</span></label>
+                     <div class="input-group custom-input-group">
+                        <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM">
+                        <span class="input-group-text border-none">
+                            <img src="/icons/icon-park-timer.png" alt="Clock" class="clock-icon">
+                        </span>
+                    </div>
+                    
+                    <div class="error-msg"
+                        *ngIf="dayForm.get('duration')?.touched && dayForm.get('duration')?.hasError('required')">
+                        Duration is required
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3 pt-4">
+                    <span type="button" class="text-danger" *ngIf="dayForm.get('approvalStatus')?.value !== 'Not Entered'"
+                        (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
+                    <button type="button" class="custom-btn btn-secondary w-100"
+                        (click)="openModalforconformation(confirmationpopup)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary w-100"
+                        [disabled]="!isDayFormDirtyOrFilled(dayForm)"  >Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!--Delete Popup-->
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deletesingleentry();modal.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--Delete All popup-->
+<ng-template #alldeleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete this row?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="removeProject(rowdelete);modal.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--Confirmation popup-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">{{"Yes"}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--submit confirmation popup-->
+<ng-template #sumbitconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon/>
+            <p class="confirmation-text">{{'Are you sure you want to submit?'}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="saveDayEntry()">{{"Yes"}}</button>
+        </div>
+    </div>
+</ng-template>

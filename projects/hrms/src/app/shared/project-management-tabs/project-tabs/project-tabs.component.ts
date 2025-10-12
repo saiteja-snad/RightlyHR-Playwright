@@ -1,0 +1,54 @@
+import { Component } from '@angular/core';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
+import { RbacService } from '../../../services/rbac.service';
+import { Router, RouterModule } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { TabsModule } from 'primeng/tabs';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-project-tabs',
+  imports: [CommonModule, TabsModule, RouterModule, TranslateModule],
+  templateUrl: './project-tabs.component.html',
+  styleUrl: './project-tabs.component.scss'
+})
+export class ProjectTabsComponent {
+  filteredTabs: any[] = [];
+  columnsPerRow = 3;
+  navTabs: any[] = [];
+
+  constructor(private rbac: RbacService, private router: Router,
+    private accessNav: AccessNavigationService) { }
+
+  ngOnInit(): void {
+    this.navTabs = [
+      { label: 'Project Details', link: '/project-management/projects/details/information', permission: { feature: 'Project Details Tab', action: 'view' } },
+      { label: 'Contact Info', link: '/project-management/projects/details/contact-info', permission: { feature: 'Contact Info Tab', action: 'view' } },
+       { label: 'Documents', link: '/project-management/projects/details/documents', permission: { feature: 'Documents Tab', action: 'view' } },
+      { label: 'Resources', link: '/project-management/projects/details/resources', permission: { feature: 'Resources Tab', action: 'view' } },
+      { label: 'Timesheets', link: '/project-management/projects/details/timesheet', permission: { feature: 'Project Timesheets Tab', action: 'view' } }
+
+    ];
+    this.filterTabsByRbac();
+
+  }
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    });
+  }
+
+  isActiveRoute(link: string): boolean {
+    const currentUrl = this.router.url;
+    // Exact match or starts with followed by `/` to avoid partial matches
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
+
+}
+
+

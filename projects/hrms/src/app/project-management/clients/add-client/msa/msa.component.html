@@ -1,0 +1,551 @@
+<div class="custom-main-component-container">
+    <!--letter content-->
+    <div class="main-letter-content gap-4 d-flex w-100">
+        <div class="card letter-fields-content p-4">
+            <form autocomplete="off" [formGroup]="clientForm" (ngSubmit)="postMSALetterFormSubmit(clientForm)">
+                <div class="row">
+                    <!-- Effective Date -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Effective Date'| translate }}<span class="error-msg">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="effectiveDate" placeholder="Please enter Date"
+                            onkeypress="return false" />
+                        <div *ngIf="clientForm.get('effectiveDate')?.invalid && clientForm.get('effectiveDate')?.touched" class="error-msg">
+                            <div>Effective Date is required</div>
+                        </div>
+                    </div>
+
+                    <!-- Client Name -->
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">{{'Client Name' |translate}}<span class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+                            formControlName="companyName" placeholder="Please select client name">
+                        <div *ngIf="clientForm.get('companyName')?.invalid && clientForm.get('companyName')?.touched" class="error-msg">
+                            <div>Client Name is required</div>
+                        </div>
+                    </div>
+
+                    <!-- Company Jurisdiction -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Company Jurisdiction'| translate }}<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+                            [maxlength]="101" formControlName="companyJurisdiction" placeholder="Please enter company jurisdiction" />
+                        <div *ngIf="clientForm.get('companyJurisdiction')?.errors?.['required'] && clientForm.get('companyJurisdiction')?.touched"
+                            class="error-msg">
+                            <div>Company Jurisdiction is required</div>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('companyJurisdiction')?.touched && clientForm.get('companyJurisdiction')?.errors?.['maxlength']">
+                            Company Jurisdiction must be in between 2-100 characters
+                        </div>
+                    </div>
+
+                    <!-- Service Provider Name -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Service Provider Name'| translate }}<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="serviceProviderName"
+                            placeholder="Please enter service provider name" (keydown)="formValidation.restrictInitialSpace($event)" />
+                        <div *ngIf="clientForm.get('serviceProviderName')?.errors?.['required'] && clientForm.get('serviceProviderName')?.touched"
+                            class="error-msg">
+                            <div>Service Provider Name is required</div>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('serviceProviderName')?.touched && clientForm.get('serviceProviderName')?.errors?.['maxlength']">
+                            Service Provider name must be in between 2-100 characters
+                        </div>
+                    </div>
+
+                    <!-- Service Provider Name Jurisdiction -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Service Provider Jurisdiction'| translate }}<span class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+                            [maxlength]="101" formControlName="serviceProviderNameJurisdiction"
+                            placeholder="Please enter service provider jurisdiction" />
+                        <div *ngIf="clientForm.get('serviceProviderNameJurisdiction')?.errors?.['required'] && clientForm.get('serviceProviderNameJurisdiction')?.touched"
+                            class="error-msg">
+                            <div>Service Provider Jurisdiction is required</div>
+                        </div>
+                        <div *ngIf="clientForm.get('serviceProviderNameJurisdiction')?.touched && clientForm.get('serviceProviderNameJurisdiction')?.errors?.['maxlength']"
+                            class="error-msg">
+                            <div>Service Provider Jurisdiction must be in between 2-100 characters</div>
+                        </div>
+                    </div>
+
+                    <!-- Service Provider Address -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Service Provider Address'| translate }}<span
+                                class="error-msg">*</span></label>
+                        <textarea type="text" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)"
+                            [maxlength]="501" formControlName="serviceProviderAddress" placeholder="Please enter service provider address"
+                            rows="3" [maxlength]="501"></textarea>
+                        <div *ngIf="clientForm.get('serviceProviderAddress')?.errors?.['required'] && clientForm.get('serviceProviderAddress')?.touched"
+                            class="error-msg">
+                            <div>Service Provider Address is required</div>
+                        </div>
+                        <div *ngIf="clientForm.get('serviceProviderAddress')?.touched && clientForm.get('serviceProviderAddress')?.errors?.['maxlength']"
+                            class="error-msg">
+                            <div>Service Provider Address must be in between 2-500 characters</div>
+                        </div>
+                        <div class="textarea-count-text">{{ clientForm.get("serviceProviderAddress")?.value?.length || 0 }}/500</div>
+                    </div>
+
+                    <!-- Notice Period for Termination -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Notice Period for Termination'| translate }}<span
+                                class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)"
+                            (paste)="formValidation.validatePaste($event)" [maxlength]="5" formControlName="noticePeriodforTermination"
+                            placeholder="Please enter notice period for termination" />
+                        <div *ngIf="clientForm.get('noticePeriodforTermination')?.errors?.['required'] && clientForm.get('noticePeriodforTermination')?.touched"
+                            class="error-msg">
+                            <div>Notice Period for Termination is required</div>
+                        </div>
+                        <div *ngIf="clientForm.get('noticePeriodforTermination')?.touched && clientForm.get('noticePeriodforTermination')?.errors?.['maxlength']"
+                            class="error-msg">
+                            <div>Notice Period for Termination must be in between 2-4 characters</div>
+                        </div>
+                    </div>
+
+                    <!-- notice period frequency -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Notice Period Frequency' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="frequencyDetails" optionLabel="frequency1" formControlName="noticePeriodfrequency"
+                                placeholder="Please select term frequency" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('noticePeriodfrequency')?.invalid && clientForm.get('noticePeriodfrequency')?.touched ">
+                            Term Frequency is required
+                        </div>
+                    </div>
+
+                    <!-- Payment Terms -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Payment Terms'| translate }}<span class="error-msg">*</span></label>
+                        <input type="text" class="form-control custom-input" [maxlength]="5"
+                            (keydown)="formValidation.restrictAlphabets($event)" (paste)="formValidation.validatePaste($event)"
+                            formControlName="paymentTerms" placeholder="Please enter payment terms" />
+                        <div *ngIf="clientForm.get('paymentTerms')?.errors?.['required'] && clientForm.get('paymentTerms')?.touched"
+                            class="error-msg">
+                            <div>Payment Terms is required</div>
+                        </div>
+                        <div *ngIf="clientForm.get('paymentTerms')?.errors?.['maxlength'] && clientForm.get('noticePeriodforTermination')?.touched"
+                            class="error-msg">
+                            <div>Payment Terms must be in between 2-4 characters</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Invoicing Frequency -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Invoicing Frequency'| translate }}<span
+                                class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="frequencyDetails" optionLabel="frequency1" formControlName="invoicingFrequency"
+                                placeholder="Please select term frequency" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('invoicingFrequency')?.invalid && clientForm.get('invoicingFrequency')?.touched ">
+                            Invoicing Frequency is required
+                        </div>
+                    </div>
+
+                    <!-- Governing Law -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Governing Law'| translate }}<span class="error-msg">*</span></label>
+                        <textarea type="text" class="form-control custom-input" formControlName="governingLaw"
+                            (keydown)="formValidation.restrictInitialSpace($event)" placeholder="Please enter governing law" rows="3"
+                            [maxlength]="501"></textarea>
+                        <div *ngIf="clientForm.get('governingLaw')?.errors?.['required'] && clientForm.get('governingLaw')?.touched"
+                            class="error-msg">
+                            <div>Governing Law is required</div>
+                        </div>
+                        <div *ngIf="clientForm.get('governingLaw')?.touched && clientForm.get('serviceProviderAddress')?.errors?.['maxlength']"
+                            class="error-msg">
+                            <div>Governing Law must be in between 2-500 characters</div>
+                        </div>
+                        <div class="textarea-count-text">{{ clientForm.get("governingLaw")?.value?.length || 0 }}/500</div>
+                    </div>
+
+                    <!-- Document Type -->
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">{{'Document Type' |translate}}<span class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
+                                formControlName="documentType" class="form-select custom-select">
+                            </p-select>
+                        </div>
+                        <div *ngIf="clientForm.get('documentType')?.invalid && clientForm.get('documentType')?.touched">
+                            <div class="error-msg">Document Type is required</div>
+                        </div>
+                    </div>
+
+                    <!-- Signature Authority -->
+                    <!-- <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                            {{'Signature Authority Name' |translate}}<span class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="signatureAuthorityDetails" optionLabel="fullName"
+                                optionValue="employeeId" placeholder="Please select signature authority"
+                                class="form-select custom-select" formControlName="signatureAuthority"
+                                resetFilterOnHide="true" [filter]="true" filterBy="fullName" resetFilterOnHide="true" />
+                        </div>
+                        <div *ngIf="clientForm.get('signatureAuthority')?.invalid && clientForm.get('signatureAuthority')?.touched"
+                            class="error-msg">
+                            <div>Signature Authority is required</div>
+                        </div>
+                    </div> -->
+                </div>
+
+                <div class="d-flex flex-wrap gap-3 pt-4">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="clientForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card letter-data-content">
+            <div class="letter-sub-data-content">
+                <div>
+                    <div class="letter-page-content my-4" id="pdfContent1" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
+                        <div class="letter-page-sub-content">
+                            <div class="text-center letter-header mb-3"><u>MASTER SERVICES AGREEMENT (MSA) </u></div>
+                            <p>This Master Services Agreement (“Agreement”) is made and entered into as of the
+                                {{((this.clientForm.get('effectiveDate')?.value)|dateformat) ||'__________'}}, by and
+                                between: {{clientForm.get('companyName')?.value ||'__________'}}, a corporation
+                                organized and existing under the laws of {{clientForm.get('companyJurisdiction')?.value ||'__________'}}, with its
+                                principal place of business located at {{ clientForm.get('companyAddress')?.value ||'__________'}}
+                                (hereinafterreferred to as “Company”),and {{clientForm.get('serviceProviderName')?.value ||'__________'}}, a
+                                corporation organized and existing under the laws of {{clientForm.get('serviceProviderNameJurisdiction')?.value
+                                ||'__________'}}, with its principal place of business located at 
+                                {{clientForm.get('serviceProviderAddress')?.value ||'__________'}} (hereinafter referred to as “Service Provider”).
+                            </p>
+                            <p>Company and Service Provider may be referred to individually as a “Party” or collectively as the “Parties.” </p>
+                            <ul>
+                                <li>
+                                    <p class="letter-sub-header "><u>1. PURPOSE AND SCOPE</u></p>
+                                    <ul>
+                                        <li>
+                                            1.1 Purpose: This Agreement establishes the terms and conditions under which
+                                            Service Provider shall perform certain professional, technical, and
+                                            consulting services ("Services") for Company. The intent is to define a long-term working
+                                            relationship that governs all projects, engagements, or assignments entered into between the Parties
+                                            from time to time.
+                                        </li>
+                                        <li>
+                                            1.2 Statements of Work (SOWs): The specific details of each engagement,
+                                            including deliverables, timelines, payment terms, milestones, and acceptance
+                                            criteria, will be defined in separate Statements of Work (“SOWs”) mutually
+                                            executed by both Parties. Each SOW shall be subject to and governed by the
+                                            terms of this Agreement.
+                                        </li>
+                                        <li>
+                                            1.3 Independent Contractor Relationship: The Parties acknowledge that
+                                            Service Provider is an independent contractor and not an employee, partner,
+                                            or agent of Company. Service Provider shall have sole control over the
+                                            manner and means of performing the Services and shall be responsible for all
+                                            taxes, benefits, and insurance for its personnel.
+                                        </li>
+                                        <li>
+                                            1.4 Subcontracting: Service Provider shall not subcontract
+                                            or delegate any
+                                            portion of the Services without prior written consent from Company.
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <p class="letter-sub-header "><u>2. TERM AND TERMINATION</u></p>
+                                    <ul>
+                                        <li>
+                                            2.1 Term: This Agreement shall commence on the Effective
+                                            Date and continue
+                                            in full force and effect until terminated in accordance with this Section.
+                                        </li>
+                                        <li>
+                                            2.2 Termination for Convenience: Either Party may terminate
+                                            this Agreement
+                                            or any individual SOW without cause upon
+                                            ({{clientForm.get('noticePeriodforTermination')?.value || 0}})
+                                            {{clientForm.get('noticePeriodfrequency')?.value?.frequency1 ||
+                                            '__________'}}’ written
+                                            notice to
+                                            the other Party.
+                                        </li>
+                                        <li>
+                                            2.3 Termination for Cause: Either Party may terminate this
+                                            Agreement or any
+                                            SOW immediately upon written notice if the other Party materially breaches
+                                            this Agreement
+                                            and fails to cure such breach within fifteen (15) days after written notice,
+                                            becomes insolvent,
+                                            ceases business operations, or makes an assignment for the benefit of
+                                            creditors.
+                                        </li>
+                                        <li>
+                                            2.4 Effect of Termination: Upon termination, Service
+                                            Provider shall
+                                            immediately stop work, deliver all completed or partially completed work and
+                                            materials to
+                                            Company, and submit afinal invoice for Services rendered up to the date of
+                                            termination.
+                                        </li>
+                                        <li>
+                                            2.5 Survival. Sections concerning Confidentiality, Intellectual Property,
+                                            Indemnification, Limitation of Liability, and Governing Law shall survive
+                                            termination of this Agreement.
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <p class="letter-sub-header "><u>3. PERFORMANCE OF SERVICES </u></p>
+                                    <ul>
+                                        <li>
+                                            3.1 Standard of Care: Service Provider represents and
+                                            warrants that all
+                                            Services shall be performed in a professional and workmanlike manner, in
+                                            accordance with
+                                            applicable industry standards and all applicable laws.
+                                        </li>
+                                        <li>
+                                            3.2 Personnel and Supervision: Service Provider shall
+                                            assign qualified personnel with relevant experience to perform the Services and remain
+                                            responsible for their conduct and performance.
+                                        </li>
+                                        <li>
+                                            3.3 Compliance with Policies: While on Company or Client premises, Service
+                                            Provider personnel shall comply with all security, safety, and conduct
+                                            policies of Company and its Clients.
+                                        </li>
+                                        <li>
+                                            3.4 Non-Exclusivity: This Agreement does not create an
+                                            exclusive relationship between the Parties. Company may engage other providers, and
+                                            Service Provider may perform services for others provided there is no conflict of interest.
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
+                        <div class="letter-page-sub-content">
+                            
+                            <ul>
+                                 <li>
+                                    <p class="letter-sub-header "><u>4. COMPENSATION AND PAYMENT </u></p>
+                                    <ul>
+                                        <li>
+                                            4.1 Fees. Company shall pay Service Provider the fees specified in each SOW for Services rendered.
+                                        </li>
+                                        <li>
+                                            4.2 Invoicing and Payment. Service Provider shall submit invoices
+                                            monthly with supporting documentation. Company shall remit payment within
+                                            ({{clientForm.get('paymentTerms')?.value ||0}})
+                                            {{clientForm.get('invoicingFrequency')?.value?.frequency1 ||'__________'}}
+                                            of receipt of a valid and undisputed invoice.
+                                        </li>
+                                        <li>
+                                            4.3 Reimbursable Expenses. Company shall reimburse Service Provider for
+                                            reasonable, pre-approved expenses incurred in the performance of
+                                            Services with receipts.
+                                        </li>
+                                        <li>
+                                            4.4 Taxes. Service Provider is solely responsible for all taxes arising
+                                            out of compensation received under this Agreement.
+                                        </li>
+                                        <li>
+                                            4.5 Audit Rights. Company reserves the right, upon reasonable notice, to
+                                            audit Service Provider’s records relevant to billing for up to one (1)
+                                            year following completion of Services.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header "><u>5. CONFIDENTIALITY</u></p>
+                                    <ul>
+                                        <li>
+                                            5.1 Definition. “Confidential Information” means all non-public,
+                                            proprietary, or confidential data, materials, or information disclosed
+                                            by one Party to the other, in any form.
+                                        </li>
+                                        <li>
+                                            5.2 Obligations. The Receiving Party shall use Confidential Information
+                                            only for performance of this Agreement and protect it using reasonable care.
+                                        </li>
+                                        <li>
+                                            5.3 Exceptions. Confidentiality obligations shall not apply to
+                                            information that is public, independently developed, or lawfully obtained
+                                            from a
+                                            third party.
+                                        </li>
+                                        <li>
+                                            5.4 Return or Destruction. Upon termination, each Party shall return or
+                                            destroy all Confidential Information.
+                                        </li>
+                                        <li>
+                                            5.5 Equitable Relief. Unauthorized disclosure may cause irreparable
+                                            harm; the Disclosing Party shall be entitled to injunctive relief.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header "><u>6.INTELLECTUAL PROPERTY RIGHTS</u> </p>
+                                    <ul>
+                                        <li>
+                                            6.1 Ownership of Work Product. All deliverables and materials created
+                                            under this Agreement shall be the sole property of Company.
+                                        </li>
+                                        <li>
+                                            6.2 License to Pre-Existing Materials. Service Provider grants Company a
+                                            perpetual, royalty-free license to use pre-existing intellectual
+                                            property incorporated into deliverables.
+                                        </li>
+                                        <li>
+                                            6.3 Proprietary Rights Protection. Service Provider shall not use
+                                            Company’s name or trademarks without written consent.
+                                        </li>
+                                        <li>
+                                            6.4 No Infringement. Service Provider represents and warrants that
+                                            deliverables do not infringe any third-party rights.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header"><u>7. INSURANCE</u> </p>
+                                    <ul>
+                                        <li>
+                                            Service Provider shall maintain at its expense: Commercial General Liability
+                                            of $1,000,000 per occurrence, Professional Liability (Errors & Omissions) of
+                                            $1,000,000 per claim, Workers’ Compensation as required by law, and
+                                            Automobile Liability of $500,000 (if applicable). Certificates of insurance
+                                            shall be provided upon request.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header "><u>8. NON-SOLICITATION AND NON-COMPETE</u> </p>
+                                    <ul>
+                                        <li>
+                                            8.1 Non-Solicitation. During the term and for one (1) year thereafter,
+                                            neither Party shall solicit or hire employees of the other without prior
+                                            consent.
+                                        </li>
+                                        <li>
+                                            8.2 Non-Compete. Service Provider shall not directly engage with Company
+                                            clients introduced through this Agreement for one (1) year post-termination
+                                            without written approval.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header "><u>9. LIMITATION OF LIABILITY</u> </p>
+                                    <ul>
+                                        <li>
+                                            Each Party’s total liability shall not exceed the total fees paid under the
+                                            applicable SOW in the twelve (12) months preceding the claim. Neither Party
+                                            shall be liable for indirect or consequential damages.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header "><u>10. INDEMNIFICATION</u> </p>
+                                    <ul>
+                                        <li>
+                                            Service Provider shall indemnify, defend, and hold harmless Company from any
+                                            claims or damages arising from its breach, negligence, or violation of law.
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="letter-page-content my-4" id="pdfContent3" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
+                        <div class="letter-page-sub-content">
+                            <ul>
+                                <li>
+                                    <p class="letter-sub-header ">
+                                        <u> 11. DISPUTE RESOLUTION AND GOVERNING LAW </u>
+                                    </p>
+                                    <ul>
+                                        <li>
+                                            11.1 Governing Law. This Agreement shall be governed by the laws of the
+                                            State of {{clientForm.get('governingLaw')?.value|| '__________'}}.
+                                        </li>
+                                        <li>
+                                            11.2 Negotiation. The Parties shall attempt to resolve disputes in good
+                                            faith before proceeding to arbitration.
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <p class="letter-sub-header "><u>12. GENERAL PROVISIONS</u> </p>
+                                    <ul>
+                                        <li>
+                                            12.1 Assignment. Neither Party may assign this Agreement without prior
+                                            written consent, except to a successor in interest.
+                                        </li>
+                                        <li>
+                                            12.2 Force Majeure. Neither Party shall be liable for delays caused by
+                                            events beyond its control.
+                                        </li>
+                                        <li>
+                                            12.3 Amendments. Any modification must be in writing and signed by both
+                                            Parties.
+                                        </li>
+                                        <li>
+                                            12.4 Notices. All notices shall be in writing and delivered to the addresses
+                                            above.
+                                        </li>
+                                        <li>
+                                            12.5 Severability. Invalid provisions shall not affect the remainder of this
+                                            Agreement.
+                                        </li>
+                                        <li>
+                                            12.6 Entire Agreement. This Agreement and its SOWs constitute the entire
+                                            understanding between the Parties.
+                                        </li>
+                                        <li>
+                                            12.7 Counterparts. This Agreement may be executed in counterparts, each
+                                            deemed an original.
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <p class="text-center mb-5">IN WITNESS WHEREOF, the Parties have executed this Master
+                                Services Agreement as of the
+                                <b>{{((this.clientForm.get('effectiveDate')?.value)|dateformat)||'__________'}}</b>.
+                            </p>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="letter-sub-header mb-2">Client</p>
+                                    <p>By: ___________________________________</p>
+                                    <p>Print: ________________________________</p>
+                                    <p>Title: ________________________________</p>
+                                    <p>Date: _________________________________</p>
+                                </div>
+                                <div>
+                                    <p class="letter-sub-header mb-2">Service Provider</p>
+                                    <p>By: ___________________________________</p>
+                                    <p>Print: ________________________________</p>
+                                    <p>Title: ________________________________</p>
+                                    <p>Date: _________________________________</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,8 +17,8 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsHeaderComponent } from "../../../shared/settings-tabs/settings-header/settings-header.component";
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, FormsModule, AutoCompleteModule, DataLoaderContentComponent,
-    TranslateModule, NgbPopoverModule, SettingsHeaderComponent],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, DataLoaderContentComponent, TranslateModule,
+    NgbPopoverModule, SettingsHeaderComponent],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -39,7 +39,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   dataLoad: boolean = false;
 
   constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService,
-    public rbac: RbacService, public readonly router: Router) {}
+    public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
     this.dataLoad = true;
@@ -50,7 +50,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       this.getAllroles();
       this.dataLoad = false;
     });
-
     this.updateModuleInfo();
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
@@ -126,7 +125,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       permission.Update = false;
       permission.Delete = false;
     });
-
     if (data?.length > 0) {
       data.forEach((claim: any) => {
         const permission = this.permissions.find(
@@ -346,10 +344,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
     //     return permission === 'Update'; // Disable only 'Create'
     //   }
-    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Allocated',].includes(field)) {
+    if (['Asset Management - Under Maintenance','Asset Management - Inactive','Asset Management - Allocated',].includes(field)) {
       return !['View'].includes(permission); // Enable only 'View' and 'Update'
     }
-
     return false; // Default: all enabled
   }
 
@@ -800,7 +797,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Asset Management - Under Maintenance',
     'Asset Management - Inactive',
   ];
-  // allAssetActionsFields = [
   assetManagementAllTabActions = [
     'All Allocate Asset',
     'All Inactive Asset',
@@ -1077,6 +1073,29 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Visa Details',
     'Employee Info Documents Verification',
   ];
+  selectAllProjectManagementTabs = [
+    'Project Details Tab',
+    'Contact Info Tab',
+    'Documents Tab',
+    'Resources Tab',
+    'Project Timesheets Tab',
+  ];
+  selectAllClientProjectManagementTabs = [
+    'Client Information',
+    'Contact Information',
+    'Client Projects',
+    'Client Resources',
+    'Client Timesheets',
+    'Client Documents',
+  ];
+    settingProjectManagementConfigFields = [
+    'Project Type',
+    'Industry Type',
+    'Project Document Type',
+    'Client Document Type',
+    'Letter Configurations',
+    'Project Management Authority'
+  ];
 
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1139,7 +1158,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isattendenceCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isattendenceCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View' || action === 'Update') {
       return !this.roleToFilter?.id;
     }
@@ -1156,7 +1178,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsEmployeeJobCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSettingsEmployeeJobCheckboxDisabled(
+    per: any,
+    action: 'View' | 'Update' | 'Create' | 'Delete'
+  ): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1371,7 +1396,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     if (!Array.isArray(this.permissions)) return false;
     return this.permissions.filter((per) => this.settingsDynamicFormsFields.includes(per.fields)).every((per) => per.View);
   }
-
+  
   isSomeSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
     const filtered = this.permissions.filter((per) =>
@@ -1406,6 +1431,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // Update, Create, Delete are always disabled
     if (action === 'Update' || action === 'Create' || action === 'Delete') {
       return true;
+    }
+    return false;
+  }
+   isSettingsProjectManagementConfig(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
     }
     return false;
   }
@@ -1784,6 +1821,51 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     // 'Update', 'Create', 'Delete' are always disabled for asset fields
     if (action === 'Update' || action === 'Create' || action === 'Delete') {
       return true;
+    }
+    return false;
+  }
+
+  isProjectManagementProjectModuleFieldsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Disabled if no role or if your isDisabled helper says so
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isProjectManagementTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isProjectManagementClientsTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
     }
     return false;
   }

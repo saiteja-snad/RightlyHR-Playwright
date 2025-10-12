@@ -1,3 +1,4 @@
+
 export interface Iorgcategoryleaves {
   id: any;
   applicableYear: any;
@@ -412,4 +413,31 @@ export interface ApprovalStatusCount {
   forYou: number;
   forYourRole: number;
   totalCount: number;
+}
+export interface TimesheetEntry {
+  selected: any;
+  employeeName: string;
+  clientName: string;
+  projectName: string;
+  totalHours: string;
+  description: string;
+  timesheetEntryId: number;
+  approvalStatus: string;
+  entryDate: string;
+  status: string;
+  timesheetId: number;
+  pendingItemId: number;
+  comments: any[];
+  id: number;
+  approvalHeader: number;
+
+}
+
+export interface TimesheetDay {
+  date: string;
+  approvalHeader: ApprovalHeader;
+  module: Module;
+  currentApprover: string;
+  entries: TimesheetEntry[];
+  selectedEntries: TimesheetEntry[];
 }

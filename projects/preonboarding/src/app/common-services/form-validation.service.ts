@@ -22,7 +22,9 @@ export class FormValidationService {
       event.preventDefault(); // Cancel the paste event if the data is not numeric
     }
   }
-    restrictInitialSpace(event: KeyboardEvent) {
+
+
+  restrictInitialSpace(event: KeyboardEvent) {
     const inputElement = event.target as HTMLInputElement;
 
     // Prevent the first character from being a space
@@ -45,6 +47,7 @@ export class FormValidationService {
       event.preventDefault();
     }
   }
+
 
   //aplicatives(abc)
   restrictInput(event: KeyboardEvent) {
@@ -143,7 +146,7 @@ export class FormValidationService {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;
     // Always allow navigation and control keys
-    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || 
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' ||
       key === 'ArrowRight' || key === 'Tab') {
       return;
     }

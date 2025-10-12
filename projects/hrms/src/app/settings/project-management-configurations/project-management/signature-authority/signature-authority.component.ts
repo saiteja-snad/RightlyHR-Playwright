@@ -80,7 +80,7 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
       this.http.postdata('ProjectManagementAuthority', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.spinnerLoader = false;
-          this.confirmation.openSuccessModal('Signature authority added successfully');
+          this.confirmation.openSuccessModal('Project Management Authority added successfully');
         },
         error: (err) => {
           this.spinnerLoader = false;
@@ -125,7 +125,7 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.spinnerLoader = false;
         this.modalService.dismissAll();
-        this.confirmation.openSuccessModal('Signature authority deleted successfully');
+        this.confirmation.openSuccessModal('Project Management Authority deleted successfully');
       },
       error: (err) => {
         this.spinnerLoader = false;

@@ -1,30 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TimesheetDay } from '../../../Interfaces/timoff-model';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
-import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { Table, TableModule } from "primeng/table";
-import { Select } from "primeng/select";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule } from 'primeng/paginator';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, TableModule, Select, DataLoaderContentComponent, NoDataFoundComponent],
+    ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './time-sheet-approvals.component.html',
-  styleUrl: './time-sheet-approvals.component.scss'
+  styleUrl: './time-sheet-approvals.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
 
 export class TimeSheetApprovalsComponent implements OnInit {
@@ -76,19 +76,16 @@ export class TimeSheetApprovalsComponent implements OnInit {
   ];
   startdate:any;
   enddate:any;
+
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router,private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeid = parseInt(this.empinfo.employeeId);
-     this.loadClientsAndProjects(this.page, this.pageSize);
-     this.http.selectedEmployeeIdTimesheet$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(data => {
-        if (data) {
-          console.log('Received in another component:', data);
-
+    this.loadClientsAndProjects(this.page, this.pageSize);
+    this.http.selectedEmployeeIdTimesheet$.pipe(takeUntil(this.destroy$)).subscribe(data => {
+      if (data) {
         // Example: store locally
         this.employeeresource = data.request.resourceId;
         this.projectId = data.request.projectId;
@@ -96,12 +93,12 @@ export class TimeSheetApprovalsComponent implements OnInit {
           this.startdate = data.request.dateRange.startDate;
           this.enddate = data.request.dateRange.endDate;
         }
-         this.loadClientsAndProjects(this.page, this.pageSize);
+        this.loadClientsAndProjects(this.page, this.pageSize);
       }
       // else{
-        // this.loadClientsAndProjects(this.page, this.pageSize); 
-        this.startdate = null;
-        this.enddate = null;
+      // this.loadClientsAndProjects(this.page, this.pageSize); 
+      this.startdate = null;
+      this.enddate = null;
       // }
     });
     this.intializeApproveForm();
@@ -140,6 +137,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.first = 0;
     this.loadClientsAndProjects(this.page, this.pageSize);
   }
+
   // bulk data approve method
   bulkApprove(popup: any) {
     this.selectedLeavesItems = this.selectedEntries;

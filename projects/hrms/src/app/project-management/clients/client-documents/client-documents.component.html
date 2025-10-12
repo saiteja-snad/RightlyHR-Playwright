@@ -10,8 +10,7 @@
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
                 @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
-                &&
-                this.inactiveClientStatus !== 'Inactive'){
+                && this.inactiveClientStatus !== 'Inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
@@ -55,7 +54,7 @@
                                     @if(rbac.allowedToAccess('Client Documents.delete')){
                                     <li (click)="openModal(deleteconformation, data, 'm')">
                                         <a class="dropdown-item">
-                                         <i class="bi bi-slash-circle me-2"></i>Inactive
+                                            <i class="bi bi-slash-circle me-2"></i>Archive
                                         </a>
                                     </li>
                                     }
@@ -166,13 +165,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Inactive this Documents?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to archive this Documents?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
-                translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

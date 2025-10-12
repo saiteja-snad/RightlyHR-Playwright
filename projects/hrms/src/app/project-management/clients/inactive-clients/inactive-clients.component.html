@@ -46,7 +46,7 @@
                         <ng-container *ngIf="(clients?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let client of clients; let i = index">
                                 <td>
-                                    <img [src]="client.logoPath" alt="Logo" width="32" height="32" />
+                                    <img [src]="getImageUrl(client.logoPath)" alt="Logo" width="32" height="32" />
                                 </td>
                                 <td>
                                     <a class="project-name cursor" (click)="navigateView(client.clientId)">{{ client.clientName }}</a>

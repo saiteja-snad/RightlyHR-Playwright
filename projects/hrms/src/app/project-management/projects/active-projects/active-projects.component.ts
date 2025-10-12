@@ -15,11 +15,10 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ProjcetCreationComponent } from '../../shared-project-management-componenets/projcet-creation/projcet-creation.component';
 import { RbacService } from '../../../services/rbac.service';
-import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent, CommonModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
+  imports: [NoDataFoundComponent, CommonModule, DataLoaderContentComponent, TranslateModule, RouterModule,
     ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
@@ -60,7 +59,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.getClientsData();
     this.getprojecttypesData();
     this.getProjectsBasedOnRoute();
-    this.getapprovalsAuthority();
     this.getAuthorityList();
     this.updateprojectform.get('updatestartDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -68,9 +66,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
     });
-     this.updateprojectform.valueChanges.subscribe(() => {
-    this.validateUpdateDateRange();
-  });
+    this.updateprojectform.valueChanges.subscribe(() => {
+      this.validateUpdateDateRange();
+    });
   }
 
   getProjectsBasedOnRoute(): void {
@@ -306,23 +304,6 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getapprovalsAuthority() {
-    this.subscription = this.http.getData('FusionRole/getbyNormalizedName?Nname=TIMESHEET APPROVAL AUTHORITY&includeAssignee=true').subscribe({
-      next: (data: any) => {
-        // Assuming IWfh is your interface/model for the Manager data
-        this.manager = data.getUserWithRoleNames.map((user: { firstName: any; middleName: any; lastName: any; employeeId: any; fusionEmpId: any }) => ({
-          ...user,
-          name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${user.middleName ?? ''} ${user.lastName ?? ''}`.trim(),
-          value: user.employeeId
-        }));
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-
-      }
-    });
-  }
-
   navigateView(projectId: number) {
     this.router.navigate(
       ['project-management/projects/details'],
@@ -346,46 +327,46 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
- validateUpdateDateRange(): void {
-  const startDate = this.updateprojectform.get('updatestartDate')?.value;
-  const endDate = this.updateprojectform.get('updateendDate')?.value;
-  const kickoffDate = this.updateprojectform.get('updatekickoffDate')?.value;
-  const effectiveDate = this.updateprojectform.get('updateeffectiveDate')?.value;
+  validateUpdateDateRange(): void {
+    const startDate = this.updateprojectform.get('updatestartDate')?.value;
+    const endDate = this.updateprojectform.get('updateendDate')?.value;
+    const kickoffDate = this.updateprojectform.get('updatekickoffDate')?.value;
+    const effectiveDate = this.updateprojectform.get('updateeffectiveDate')?.value;
 
-  this.kickoffDateValid = true;
-  this.kickoffBeforeEffectiveValid = true;
-  this.effectiveDateValidRange = true;
-  this.effectiveAfterKickoffValid = true;
+    this.kickoffDateValid = true;
+    this.kickoffBeforeEffectiveValid = true;
+    this.effectiveDateValidRange = true;
+    this.effectiveAfterKickoffValid = true;
 
-  if (startDate && endDate) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (kickoffDate) {
-      const kickoff = new Date(kickoffDate);
-      // ✅ Kickoff must be within Start and End
-      this.kickoffDateValid = kickoff >= start && kickoff <= end;
-
-      if (effectiveDate) {
-        const effective = new Date(effectiveDate);
-        // ✅ Kickoff must be <= Effective
-        this.kickoffBeforeEffectiveValid = kickoff <= effective;
-      }
-    }
-
-    if (effectiveDate) {
-      const effective = new Date(effectiveDate);
-      // ✅ Effective must be within Start and End
-      this.effectiveDateValidRange = effective >= start && effective <= end;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
 
       if (kickoffDate) {
         const kickoff = new Date(kickoffDate);
-        // ✅ Effective must be >= Kickoff
-        this.effectiveAfterKickoffValid = effective >= kickoff;
+        // ✅ Kickoff must be within Start and End
+        this.kickoffDateValid = kickoff >= start && kickoff <= end;
+
+        if (effectiveDate) {
+          const effective = new Date(effectiveDate);
+          // ✅ Kickoff must be <= Effective
+          this.kickoffBeforeEffectiveValid = kickoff <= effective;
+        }
+      }
+
+      if (effectiveDate) {
+        const effective = new Date(effectiveDate);
+        // ✅ Effective must be within Start and End
+        this.effectiveDateValidRange = effective >= start && effective <= end;
+
+        if (kickoffDate) {
+          const kickoff = new Date(kickoffDate);
+          // ✅ Effective must be >= Kickoff
+          this.effectiveAfterKickoffValid = effective >= kickoff;
+        }
       }
     }
   }
-}
 
 
   closepopup(content: any) {

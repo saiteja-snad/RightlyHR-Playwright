@@ -6,8 +6,7 @@
             </div>
             <div class="component-header">Pending Approvals</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
@@ -21,20 +20,18 @@
             </div>
             <div class="component-header">Assessment Form</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
             <ng-template #popContent>
                 <app-module-information [moduleInfo]="moduleinfo" />
             </ng-template>
         </div>
         }
-          @if (router.url == '/time-off/pending-approvals/time-sheets') {
+        @if (router.url == '/time-off/pending-approvals/time-sheets') {
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
             <div class="d-flex gap-3 align-items-center">
-                <button type="button" class="clear-all-btn" (click)="resetForm()">
-                    {{'Clear All' | translate}}
-                </button>
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+
                 <div class="custom-date-range-picker">
                     <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'" selectionMode="range"
                         [showIcon]="true" [readonlyInput]="true">
@@ -48,6 +45,7 @@
                         (onChange)="onProjectChange($event)">
                     </p-select>
                 </div>
+
                 <!-- Resource MultiSelect Dropdown -->
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
@@ -59,7 +57,6 @@
                 </div>
             </div>
         </form>
-
         }
     </div>
 

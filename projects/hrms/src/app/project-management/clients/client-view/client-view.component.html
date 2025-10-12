@@ -12,8 +12,9 @@
 
         <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/documents')">
             <div>
-                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Inactive Documents</u></a>
+                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
             </div>
+
             @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'Inactive'){
             <div *ngIf="isActive('/project-management/clients/details/documents')">
                 <button type="button" class="custom-btn btn-primary" (click)="openModal(addDocumentmodal)">
@@ -25,7 +26,7 @@
         @if(rbac.allowedToAccess('Client Documents.delete')){
         <div *ngIf="isActive('/project-management/clients/details/inactivedocuments')">
             <div>
-                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Active Documents</u></a>
+                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Documents</u></a>
             </div>
         </div>
         }
@@ -127,7 +128,6 @@
         <div class="custom-main-popup-content">
             <form [formGroup]="addDocumentForm" autocomplete="off" (ngSubmit)="addDocuments()">
                 <div class="row">
-                    
                     <!-- Document Type -->
                     <div class="col-md-6 mb-3">
                         <label for="documentType" class="form-label custom-label mb-2">Document Type<span
@@ -143,6 +143,7 @@
                             Document Type is required
                         </div>
                     </div>
+
                     <!-- File Name -->
                     <div class="col-md-6 mb-3">
                         <label for="documentName" class="form-label custom-label mb-2">File Name<span
@@ -154,7 +155,6 @@
                             File Name is required
                         </div>
                     </div>
-
 
                     <!-- Document Attachment -->
                     <div class="col-md-12 mb-3">

@@ -43,7 +43,7 @@
                                     @if(rbac.allowedToAccess('Documents Tab.delete')){
                                     <li (click)="openModal(deleteconformation, data,'m')">
                                         <a class="dropdown-item">
-                                            <i class="bi bi-slash-circle me-2"></i>Inactive
+                                            <i class="bi bi-slash-circle me-2"></i>Archive
                                         </a>
                                     </li>
                                     }
@@ -155,13 +155,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete this Document?' | translate}}</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to archive this Document?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
-                translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

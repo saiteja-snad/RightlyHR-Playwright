@@ -13,15 +13,15 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
-
 @Component({
   selector: 'app-inactive-project-documents',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, DateformatPipe, TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent],
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, DateformatPipe, 
+    TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent],
   templateUrl: './inactive-project-documents.component.html',
   styleUrl: './inactive-project-documents.component.scss'
 })
-export class InactiveProjectDocumentsComponent {
 
+export class InactiveProjectDocumentsComponent {
   subscription!: Subscription;
   documentdata = [] as any;
   entitytype = 'client';
@@ -36,8 +36,9 @@ export class InactiveProjectDocumentsComponent {
   displayClientAttachment: string = '';
   inactiveClientStatus: any;
   selecteddata: any;
-  constructor(private router: Router, private route: ActivatedRoute,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService) { }
+
+  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal, 
+    private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService) { }
 
   ngOnInit() {
     const now = new Date();
@@ -49,12 +50,9 @@ export class InactiveProjectDocumentsComponent {
       if (clientID) {
         this.clientID = clientID;
         this.getDocumentDetails(clientID);
-
       }
     });
-
   }
-
 
   // Document data fetch function
   getDocumentDetails(entityId: string) {
@@ -77,6 +75,7 @@ export class InactiveProjectDocumentsComponent {
     this.selecteddata = data
 
   }
+
   // File rename function
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
@@ -85,10 +84,8 @@ export class InactiveProjectDocumentsComponent {
     });
   }
 
-
   // Delete document function
   DeleteDocument() {
-
     const formValue = this.selecteddata;
     let loggedInUser = this.authService.getToken();
     const payload = {
@@ -108,7 +105,7 @@ export class InactiveProjectDocumentsComponent {
       next: (res) => {
         this.getDocumentDetails(projectId);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document inactived successfully');
+        this.conformationPopup.openSuccessModal('Document restored successfully');
       },
       error: (err) => {
         console.error('Error updating document:', err);
@@ -116,6 +113,7 @@ export class InactiveProjectDocumentsComponent {
       }
     });
   }
+
   onAttachmentDownload(file: any) {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.documentUrl).subscribe({
       next: (res: any) => {
@@ -131,7 +129,6 @@ export class InactiveProjectDocumentsComponent {
     });
   }
 
-
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -139,6 +136,7 @@ export class InactiveProjectDocumentsComponent {
   close() {
     this.modalService.dismissAll();
   }
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -143,7 +143,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="contactrole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
                         <input type="text" id="contactrole" formControlName="contactrole" minlength="2" maxlength="50"
-                            placeholder="Please enter Role" class="form-control custom-input">
+                            placeholder="Please enter role" class="form-control custom-input">
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
                             <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required</div>
                             <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2

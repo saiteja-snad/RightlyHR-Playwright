@@ -14,10 +14,11 @@ import dayjs, { Dayjs } from 'dayjs';
 import { HttpService } from '../../services/http.service';
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule,Select, ModuleInformationComponent,NgbPopoverModule,MultiSelectModule,ReactiveFormsModule,DatePicker,TranslateModule],
+  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent, 
+    NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class PendingApprovalsComponent implements OnInit {
@@ -32,10 +33,11 @@ export class PendingApprovalsComponent implements OnInit {
   employeeid: any;
   isSubmitEnabled = false;
   isDistinct = true;
-  constructor(public router: Router,private fb: FormBuilder, private http: HttpService) { }
+
+  constructor(public router: Router, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllActiveProjects();
     this.createDatepickerForm();
     this.updateModuleInfo();
@@ -44,26 +46,22 @@ export class PendingApprovalsComponent implements OnInit {
     this.initiateUpdateModuleInfo();
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/pending-approvals': MODULE_INFOS.TIME_OFF_PENDING_APPROVAL_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  navigate(){
+  navigate() {
     this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
 
@@ -75,6 +73,7 @@ export class PendingApprovalsComponent implements OnInit {
       resourceId: [{ value: [], disabled: true }, Validators.required]
     });
   }
+
   /** Get all projects for the current employee */
   getAllActiveProjects() {
     this.http
@@ -100,7 +99,6 @@ export class PendingApprovalsComponent implements OnInit {
     this.employeeData = [];
     this.datepickerForm.get('resourceId')?.setValue([]);
     this.datepickerForm.get('resourceId')?.disable();
-
     if (selectedProjectId) {
       this.projectId = selectedProjectId;
       this.getAllActiveEmployees();
@@ -117,6 +115,7 @@ export class PendingApprovalsComponent implements OnInit {
       }
     });
   }
+
   /** Get all active employees for selected project */
   getAllActiveEmployees() {
     this.http
@@ -126,7 +125,7 @@ export class PendingApprovalsComponent implements OnInit {
         next: (res: any) => {
           this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
           // if (this.employeeData.length > 0) {
-            this.datepickerForm.get('resourceId')?.enable();
+          this.datepickerForm.get('resourceId')?.enable();
           // }
         },
         error: (err) => {
@@ -141,13 +140,11 @@ export class PendingApprovalsComponent implements OnInit {
     const dateRange = this.datepickerForm.value.dateRange;
     const projectId = this.datepickerForm.value.projectId || 0;
     const resourceIds = this.datepickerForm.value.resourceId || [];
-
     // Build request dynamically
     const request: any = {
       projectId,
       resourceId: resourceIds.length > 0 ? resourceIds : null,
     };
-
     // Add dateRange only if selected
     if (dateRange && dateRange.length === 2) {
       request.dateRange = {
@@ -155,10 +152,9 @@ export class PendingApprovalsComponent implements OnInit {
         endDate: dayjs(dateRange[1]).format('YYYY-MM-DDTHH:mm:ss'),
       };
     }
-
-    console.log('Final request sent:', request);
     this.http.setEmployeeIdTimesheet(this.employeeid, projectId, request);
   }
+
   /** Reset dependent fields */
   resetDependentFields() {
     this.datepickerForm.get('projectId')?.reset();
@@ -169,17 +165,16 @@ export class PendingApprovalsComponent implements OnInit {
     this.employeeData = [];
     this.isSubmitEnabled = false;
   }
-    /** Clear everything */
+
+  /** Clear everything */
   resetForm() {
     this.datepickerForm.reset();
     this.datepickerForm.get('resourceId')?.disable();
-     this.datepickerForm.reset({
-    dateRange: null,
-    projectId: null,
-    resourceId: []
-  });
-
-    // this.projectsData = [];
+    this.datepickerForm.reset({
+      dateRange: null,
+      projectId: null,
+      resourceId: []
+    });
     this.employeeData = [];
     this.projectId = 0;
     this.employeeid = null;
@@ -192,4 +187,3 @@ export class PendingApprovalsComponent implements OnInit {
     this.destroy$.complete();
   }
 }
-

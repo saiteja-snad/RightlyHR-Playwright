@@ -21,7 +21,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-work-from-home',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent, 
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
     TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
@@ -62,6 +62,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
   years: number[] = [];
+  activeEmplist = [] as any;
 
   constructor(
     private modalService: NgbModal,
@@ -90,6 +91,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getAllEmployeeDetails();
     // year selection values
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
@@ -105,7 +107,19 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
-   onYearChange() {
+  getAllEmployeeDetails() {
+    const satus = ['Active', 'Trainee Active'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
+  }
+
+  onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.TimeoffYearFilterService.setSelectedYear(selectedYear);
@@ -192,53 +206,43 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason),
     });
   }
-  
+
   getWFHBalance(employeedId: any) {
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
-    this.subscription = this.http
-      .getData(
-        `WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`
-      )
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.wfhBalance = response;
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
+      next: (response: any) => {
+        this.wfhBalance = response;
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
+
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
   getTeamManagersDetails() {
     const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          console.log('getEmployeesByhierarchy', response);
-          if (response && response.length) {
-            // No filter
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            }));
-            console.log('getEmployeeInfo', this.getEmployeeInfo);
-          }
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          // No filter
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+              ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          }));
+        }
+      },
+    });
   }
+
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
-
     if (isNaN(days)) {
       console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     futureDate.setDate(currentDate.getDate() + days);
@@ -270,16 +274,9 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   updateDuration() {
-    if (
-      this.workFromHomedata.startTimeProp &&
-      this.workFromHomedata.endTimeProp
-    ) {
-      const formattedStartTime = moment(
-        this.workFromHomedata.startTimeProp
-      ).format('HH:mm');
-      const formattedEndTime = moment(this.workFromHomedata.endTimeProp).format(
-        'HH:mm'
-      );
+    if (this.workFromHomedata.startTimeProp && this.workFromHomedata.endTimeProp) {
+      const formattedStartTime = moment(this.workFromHomedata.startTimeProp).format('HH:mm');
+      const formattedEndTime = moment(this.workFromHomedata.endTimeProp).format('HH:mm');
       const startTime = moment(formattedStartTime, 'hh:mm A');
       const endTime = moment(formattedEndTime, 'hh:mm A');
       // Calculate the duration in minutes
@@ -301,8 +298,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       const orgHalfDayWFHCritera = parseFloat(this.halfDayValue?.value);
       if (this.workFromHomedata.duration < orgHalfDayWFHCritera) {
         this.workFromHomedata.duration = null;
-        this.wfhValidations.DurationErrorMessage =
-          'Provided duration is not eligible for Comp Off';
+        this.wfhValidations.DurationErrorMessage = 'Provided duration is not eligible for Comp Off';
         this.wfhValidations.isdurationValidated = true;
       } else {
         this.duration = this.workFromHomedata.duration;
@@ -324,21 +320,15 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   getWFHBal(currentDate?: any) {
     const empId = this.empinfo.employeeId;
     const date = currentDate ?? new Date().toISOString().split('T')[0];
-
-    this.http
-      .getData(
-        `WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${date}`
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.totalbalance = response.totalBalance;
-            this.availablebalance = response.availableBalance;
-          }
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${date}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.totalbalance = response.totalBalance;
+          this.availablebalance = response.availableBalance;
+        }
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
 
   getDataByLPID(emp: any) {
@@ -351,28 +341,14 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   getWorkfromhomeCriteria() {
-    this.http
-      .getData(`WorkFromHomeEligibilityCriteria`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.Workfromhome = response;
-          this.futureDatesAllowed = parseInt(
-            this.Workfromhome?.find(
-              (item: any) => item.name === 'futureDatesAllowed'
-            )?.value ?? '0',
-            10
-          );
-
-          this.pastDatesAllowed = parseInt(
-            this.Workfromhome?.find(
-              (item: any) => item.name === 'pastDatesAllowed'
-            )?.value ?? '0',
-            10
-          );
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.http.getData(`WorkFromHomeEligibilityCriteria`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.Workfromhome = response;
+        this.futureDatesAllowed = parseInt(this.Workfromhome?.find((item: any) => item.name === 'futureDatesAllowed')?.value ?? '0', 10);
+        this.pastDatesAllowed = parseInt(this.Workfromhome?.find((item: any) => item.name === 'pastDatesAllowed')?.value ?? '0', 10);
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
 
   //max value of the time in compoff
@@ -386,31 +362,18 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   dateTimeValidations() {
-    const formattedStartTime = moment(
-      this.workFromHomedata.startTimeProp
-    ).format('HH:mm');
-    const formattedEndTime = moment(this.workFromHomedata.endTimeProp).format(
-      'HH:mm'
-    );
+    const formattedStartTime = moment(this.workFromHomedata.startTimeProp).format('HH:mm');
+    const formattedEndTime = moment(this.workFromHomedata.endTimeProp).format('HH:mm');
     // Split start and end time strings into hours and minutes
-    const [startHours, startMinutes] = formattedStartTime
-      .split(':')
-      .map(Number);
+    const [startHours, startMinutes] = formattedStartTime.split(':').map(Number);
     const [endHours, endMinutes] = formattedEndTime.split(':').map(Number);
-    let startDate = moment(this.workFromHomedata.startTimeProp).format(
-      'YYYY-MM-DD'
-    );
-    let endDate = moment(this.workFromHomedata.endTimeProp).format(
-      'YYYY-MM-DD'
-    );
+    let startDate = moment(this.workFromHomedata.startTimeProp).format('YYYY-MM-DD');
+    let endDate = moment(this.workFromHomedata.endTimeProp).format('YYYY-MM-DD');
     // Convert start and end times to total minutes
     const startTimeMinutes = startHours * 60 + startMinutes;
     const endTimeMinutes = endHours * 60 + endMinutes;
     // Check if start time is greater than end time
-    if (
-      startDate > endDate ||
-      (startDate === endDate && startTimeMinutes > endTimeMinutes)
-    ) {
+    if ( startDate > endDate || (startDate === endDate && startTimeMinutes > endTimeMinutes)) {
       this.timeValudationError = true;
     } else {
       this.timeValudationError = false;
@@ -441,9 +404,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request submitted successfully'
-          );
+          this.sharedModalService.openSuccessModal('Request submitted successfully');
           this.getWFHBal();
           this.http.tirggerCountSignal.update((status) => ({
             ...status,

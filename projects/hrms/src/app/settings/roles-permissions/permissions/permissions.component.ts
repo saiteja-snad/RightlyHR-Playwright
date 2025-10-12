@@ -159,9 +159,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       Create: boolean;
       Update: boolean;
       Delete: boolean;
-    },
-    action: string
-  ) {
+    }, action: string) {
     if (action === 'View' && !permission.View) {
       permission.Update = false;
       permission.Create = false;
@@ -209,7 +207,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Change RM Button',
       'Employee Info Change TM Button',
     ];
-
     return (
       disabledOptions.includes(field) &&
       (action === 'delete' || action === 'create')
@@ -373,7 +370,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
     this.modalService.open(this.resetLoadingModal, { centered: true });
     this.isSaveButtonEnabled = false;
-
     setTimeout(() => {
       this.permissions = JSON.parse(JSON.stringify(permissionsData));
       this.roleToFilter = null;
@@ -1105,11 +1101,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   toggleSelectAll(
     fields: string[],
     checked: any,
-    disableFn: (
-      per: any,
-      action: 'View' | 'Update' | 'Create' | 'Delete'
-    ) => boolean
-  ) {
+    disableFn: (per: any, action: 'View' | 'Update' | 'Create' | 'Delete') => boolean) {
     if (!Array.isArray(this.permissions)) return;
     this.permissions.filter((per) => fields.includes(per.fields)).forEach((per) => {
       (['View', 'Update', 'Create', 'Delete'] as const).forEach((action) => {
@@ -1124,9 +1116,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   // Generic "all selected" function
   isAllSelected(fields: string[]): boolean {
     if (!Array.isArray(this.permissions)) return false;
-    return this.permissions
-      .filter((per) => fields.includes(per.fields))
-      .every((per) => per.View);
+    return this.permissions.filter((per) => fields.includes(per.fields)).every((per) => per.View);
   }
 
   // Generic "some selected" function
@@ -1138,10 +1128,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return filtered.some((per) => per.View) && !this.isAllSelected(fields);
   }
 
-  isSidebarCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSidebarCheckboxDisabled(per: any,action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1149,9 +1136,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       return true;
     }
     if (action === 'Create') {
-      return (
-        !this.isActionEnabled(per.fields, 'Create') || !this.roleToFilter?.id
-      );
+      return (!this.isActionEnabled(per.fields, 'Create') || !this.roleToFilter?.id);
     }
     if (action === 'Delete') {
       return true;
@@ -1159,24 +1144,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isemployeeCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isemployeeCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
       // Only enabled for 'NoDue Clearance Tab'
-      return (
-        !this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields)
-      );
+      return (!this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields));
     }
     if (action === 'Create' || action === 'Delete') {
-      return (
-        !this.roleToFilter?.id ||
-        !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields)
-      );
+      return (!this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields));
     }
     return false;
   }
@@ -1217,10 +1194,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsEmployeePersonalCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsEmployeePersonalCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1233,10 +1207,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsManageShiftsCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsManageShiftsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1253,10 +1224,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsManagePoliciesCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsManagePoliciesCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1272,10 +1240,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsManageHolidaysCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsManageHolidaysCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1291,10 +1256,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsManageWeekendsCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsManageWeekendsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1310,10 +1272,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsManageExpensesCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsManageExpensesCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1329,10 +1288,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsManageDSTCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsManageDSTCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1348,10 +1304,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  istimeoffSettingsCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  istimeoffSettingsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1369,10 +1322,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isleaveCategoryCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isleaveCategoryCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1388,10 +1338,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isattendanceEligibilityCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isattendanceEligibilityCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1407,10 +1354,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isSettingsAssetConfigurationCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isSettingsAssetConfigurationCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // View is only enabled if a role is selected
       return !this.roleToFilter?.id;
@@ -1429,10 +1373,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isDynamicFormsCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isDynamicFormsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1453,9 +1394,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
   isAllSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
-    return this.permissions
-      .filter((per) => this.settingsDynamicFormsFields.includes(per.fields))
-      .every((per) => per.View);
+    return this.permissions.filter((per) => this.settingsDynamicFormsFields.includes(per.fields)).every((per) => per.View);
   }
   
   isSomeSelectedDynamicForms(): boolean {
@@ -1468,10 +1407,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  isExpensesTypeCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isExpensesTypeCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1487,10 +1423,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  issideCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  issideCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // View is only enabled if a role is selected
       return !this.roleToFilter?.id;
@@ -1514,18 +1447,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isexpensesdActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isexpensesdActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     // Example logic, adjust as needed for your requirements
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-      return (
-        !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id
-      );
+      return (!this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id);
     }
     if (action === 'Create' || action === 'Delete') {
       return true; // Always disabled in your current example
@@ -1533,10 +1461,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isItSupportActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isItSupportActionDisabled(per: any,action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1550,36 +1475,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isHolidaysActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-
-    return false;
-  }
-
-  isOrgHierarchyActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    return false;
-  }
-  isdekActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isHolidaysActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1589,10 +1485,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isdeskallActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isOrgHierarchyActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1602,10 +1495,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isdeskavilableActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isdekActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1615,22 +1505,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isdeskallocationActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
-    }
-    return false;
-  }
-  isdeskundermaintanceDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isdeskallActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1640,10 +1515,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isdeskinactiveDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isdeskavilableActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1653,10 +1525,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlyviewfunction(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isdeskallocationActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1666,10 +1535,37 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isonlycreatfunction(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isdeskundermaintanceDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isdeskinactiveDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isonlyviewfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'Create') {
       return true;
     }
@@ -1677,13 +1573,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       return !this.roleToFilter?.id;
     }
     return false;
-    return false;
   }
 
-  isEmployeeInfoJobActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isEmployeeInfoJobActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1767,10 +1659,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isItSupportteamActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isItSupportteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1785,10 +1674,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  isEmployeeInfoPersonalActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+
+  isEmployeeInfoPersonalActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View' || action === 'Update') {
       return !this.roleToFilter?.id;
     }
@@ -1820,10 +1707,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isMyInfoPersonalActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isMyInfoPersonalActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View' || action === 'Update') {
       return !this.roleToFilter?.id;
     }
@@ -1853,10 +1737,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  isMyInfoJobActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+
+  isMyInfoJobActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1883,10 +1765,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isemployeeinfoteamActionDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isemployeeinfoteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1905,17 +1784,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  isemployeeInfoCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+
+  isemployeeInfoCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {
-      return (
-        !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id
-      );
+      return (!this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id);
     }
     if (action === 'Create') {
       return true;
@@ -1925,10 +1800,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  isPmsConfigurationCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+
+  isPmsConfigurationCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
       return !this.roleToFilter?.id;
@@ -1940,10 +1813,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  isAssetCheckboxDisabled(
-    per: any,
-    action: 'View' | 'Update' | 'Create' | 'Delete'
-  ): boolean {
+  isAssetCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
       return !this.roleToFilter?.id;

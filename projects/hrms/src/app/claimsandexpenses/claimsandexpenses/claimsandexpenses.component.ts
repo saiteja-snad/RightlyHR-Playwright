@@ -1,4 +1,4 @@
-import { Component, OnInit , ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ExpenesHeaderTabsComponent } from "../../shared/claimsandexpenses-tabs/expenes-header-tabs/expenes-header-tabs.component";
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../services/rbac.service';
@@ -12,17 +12,18 @@ import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { Select } from 'primeng/select';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-claimsandexpenses',
-  imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent,NgbPopoverModule, TranslateModule, ReactiveFormsModule, Select],
+  imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent, NgbPopoverModule, TranslateModule, ReactiveFormsModule, Select, CommonModule],
   templateUrl: './claimsandexpenses.component.html',
   styleUrl: './claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class ClaimsandexpensesComponent implements OnInit {
-   moduleinfo: string = '';
-   activeEmplist = [] as any;
+  moduleinfo: string = '';
+  activeEmplist = [] as any;
   yearSelectionForm!: FormGroup;
   subscription!: Subscription;
   currentYear: number = new Date().getFullYear();
@@ -30,14 +31,15 @@ export class ClaimsandexpensesComponent implements OnInit {
   years: number[] = [];
   empdata = {} as any;
   loggedinuser = {} as any;
-  constructor(public router: Router,private authService: AuthService, public rbac: RbacService, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
+  employeeSelected = false
+  constructor(public router: Router, private authService: AuthService, public rbac: RbacService, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
-     this.loggedinuser = this.authService.getToken();
+    this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo();
     this.getTeamManagersDetails();
-      this.getAllEmployeeDetails();
+    this.getAllEmployeeDetails();
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -61,7 +63,7 @@ export class ClaimsandexpensesComponent implements OnInit {
     this.router.navigate(['/claimsandexpenses/addexpense'])
   }
 
- onYearChange() {
+  onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
     this.SelectedyeartimeOffService.setSelectedYear(selectedYear);
@@ -70,17 +72,16 @@ export class ClaimsandexpensesComponent implements OnInit {
   }
 
 
-  onCheckemployee(employeedId: any) {  
-  
-   
+  onCheckemployee(employeedId: any) {
+    this.employeeSelected = !!employeedId;
     if (employeedId) {
-     this.http.setEmployeeIdExpenses(employeedId);
+      this.http.setEmployeeIdExpenses(employeedId);
     } else {
-     this.http.setEmployeeIdExpenses(null);
+      this.http.setEmployeeIdExpenses(null);
     }
   }
 
-   getAllEmployeeDetails() {
+  getAllEmployeeDetails() {
     const satus = ['Active', 'Trainee Active'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
       next: (res: any) => {

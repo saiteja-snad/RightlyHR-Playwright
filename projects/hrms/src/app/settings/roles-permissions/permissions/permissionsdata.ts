@@ -245,7 +245,8 @@ export const permissionsData = [
   { fields: 'Request Leave Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Time Off)', View: false, Update: false, Create: false, Delete: false },
-
+  { fields: 'All Employees (Time Off)', View: false, Update: false, Create: false, Delete: false },
+ 
   //Work From Home Sub Tabs Section
   { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (WFH)', View: false, Update: false, Create: false, Delete: false },
@@ -254,6 +255,7 @@ export const permissionsData = [
   { fields: 'Request WFH Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancel (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (WFH)', View: false, Update: false, Create: false, Delete: false },
 
   //Remote Login
   { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
@@ -262,7 +264,8 @@ export const permissionsData = [
   { fields: 'Processed (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Remote Login)', View: false, Update: false, Create: false, Delete: false },
-
+  { fields: 'All Employees (Remote Login)', View: false, Update: false, Create: false, Delete: false },
+  
   //Comp Off Sub Tabs Section    
   { fields: 'Waiting For Approval (Comp Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (Comp Off)', View: false, Update: false, Create: false, Delete: false },
@@ -270,6 +273,7 @@ export const permissionsData = [
   { fields: 'Rejected (Comp Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Comp Off Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Comp Off)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Comp Off)', View: false, Update: false, Create: false, Delete: false },
 
   //Permissions Sub Tabs Section
   { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
@@ -278,6 +282,7 @@ export const permissionsData = [
   { fields: 'Cancel (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Permissions)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Permissions)', View: false, Update: false, Create: false, Delete: false },
 
   //Regularization Sub Tabs Section
   { fields: 'Waiting For Approval (Regularization)', View: false, Update: false, Create: false, Delete: false },
@@ -285,6 +290,7 @@ export const permissionsData = [
   { fields: 'Processed (Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Regularization)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Regularization)', View: false, Update: false, Create: false, Delete: false },
 
   //On Behalf Of Sub Tabs Section
   { fields: 'Waiting For Approval (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },

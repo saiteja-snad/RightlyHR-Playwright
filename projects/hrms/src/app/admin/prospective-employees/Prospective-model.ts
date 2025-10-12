@@ -5,7 +5,8 @@ export interface Iprospective{
     lastName:string,
     middleName:string,
     emailaddress: string,
-    workEmail?:string
+    workEmail?:string,
+    dateOfJoining?:string,    
     effectivedate: any,
     contactnumber:any
     dob:any,

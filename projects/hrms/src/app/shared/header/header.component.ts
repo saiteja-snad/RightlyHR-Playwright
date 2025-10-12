@@ -12,9 +12,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.component";
+import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent, ItSupportIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

@@ -61,8 +61,10 @@ export class FormValidationService {
       event.preventDefault();
       return;
     }
-    const isAlphabetic = /^[A-Za-z\s]$/.test(key);
-    if (!isAlphabetic) {
+
+    //Removed restrict of allowing only Alphabets and Block only digits
+    const isDigit = /^[0-9]$/.test(key);
+    if (isDigit) {
       event.preventDefault();
     }
   }

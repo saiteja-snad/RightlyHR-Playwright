@@ -10,4 +10,5 @@ export interface ISeparation {
     requestType: string;
     status: string;
     id: number;
+    noticePeriodTypeDays:string;
 }

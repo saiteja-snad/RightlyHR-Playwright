@@ -17,44 +17,36 @@
                             optionLabel="value" optionValue="value" formControlName="documentType"
                             placeholder="Please select document type" class="form-select custom-select"></p-select>
                     </div>
-                    <div class="error-msg"
-                        *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
-                        Document Type is required
-                    </div>
+                    <div class="error-msg" *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
+                        Document Type is required</div>
                 </div>
+
                 <!-- File Name -->
                 <div class="col-md-6 mb-3">
                     <label for="documentName" class="form-label custom-label mb-2">File Name
                         <span class="text-danger">*</span></label>
-                    <input type="text" id="documentName" formControlName="documentName" [minlength]="2"
-                        [maxlength]="100" class="form-control custom-input" placeholder="Please enter file name" />
+                    <input type="text" id="documentName" formControlName="documentName" [minlength]="2" [maxlength]="101"
+                        class="form-control custom-input" placeholder="Please enter file name" />
                     <div class="error-msg">
-                        <div
-                            *ngIf="addDocumentForm.get('documentName')?.touched && addDocumentForm.get('documentName')?.errors?.['required']">
+                        <div *ngIf="addDocumentForm.get('documentName')?.touched && addDocumentForm.get('documentName')?.errors?.['required']">
                             File Name is required</div>
-                        <div
-                            *ngIf="addDocumentForm.get('documentName')?.errors?.['maxCharacters'] || addDocumentForm.get('documentName')?.errors?.['maxlength']">
+                        <div *ngIf="addDocumentForm.get('documentName')?.errors?.['maxCharacters'] || addDocumentForm.get('documentName')?.errors?.['maxlength']">
                             {{ 'File Name must be less than or equal to 100 characters' | translate }}</div>
-                        <div
-                            *ngIf="addDocumentForm.get('documentName')?.errors?.['minCharacters'] || addDocumentForm.get('documentName')?.errors?.['minlength']">
+                        <div *ngIf="addDocumentForm.get('documentName')?.errors?.['minCharacters'] || addDocumentForm.get('documentName')?.errors?.['minlength']">
                             {{ 'File Name must be at least 2 characters' | translate }}</div>
                     </div>
                 </div>
-
-
 
                 <!-- Document Attachment -->
                 <div class="col-md-12 mb-3">
                     <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
                         <span class="text-danger">*</span></label>
                     <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
-                        (change)="onChangeClientAttachment($event)" id="documentAttachment"
-                        formControlName="documentUrl" class="form-control custom-input px-0" />
+                        (change)="onChangeClientAttachment($event)" id="documentAttachment" formControlName="documentUrl"
+                        class="form-control custom-input px-0" />
                     <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
-                    <div class="error-msg"
-                        *ngIf="addDocumentForm.get('documentUrl')?.touched && addDocumentForm.get('documentUrl')?.invalid &&!fileErrorMessage">
-                        Attachment is required
-                    </div>
+                    <div class="error-msg" *ngIf="addDocumentForm.get('documentUrl')?.touched && 
+                    addDocumentForm.get('documentUrl')?.invalid &&!fileErrorMessage">Attachment is required</div>
                 </div>
             </div>
 

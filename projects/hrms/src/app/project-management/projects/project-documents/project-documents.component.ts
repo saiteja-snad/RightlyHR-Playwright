@@ -41,7 +41,8 @@ export class ProjectDocumentsComponent implements OnInit {
   documentTypes: IEAV[] = [];
   fileErrorMessage: string = '';
   inactiveStatus: any;
-  selecteddata: any
+  selecteddata: any;
+
   constructor(private fb: FormBuilder, private authService: AuthService, private route: ActivatedRoute, public formValidations: FormValidationsService,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
@@ -304,7 +305,6 @@ export class ProjectDocumentsComponent implements OnInit {
 
   // Delete document function
   DeleteDocument() {
-
     const formValue = this.selecteddata;
     let loggedInUser = this.authService.getToken();
     const payload = {
@@ -324,7 +324,7 @@ export class ProjectDocumentsComponent implements OnInit {
       next: (res) => {
         this.getDocumentDetails(projectId);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document inactived successfully');
+        this.conformationPopup.openSuccessModal('Document Archived successfully');
       },
       error: (err) => {
         console.error('Error updating document:', err);

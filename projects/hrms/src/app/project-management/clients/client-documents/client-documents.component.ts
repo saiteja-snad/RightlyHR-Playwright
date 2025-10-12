@@ -13,13 +13,12 @@ import { AuthService } from '../../../services/auth.service';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { IEAV } from '../../../settings/project-management-configurations/models/project-type.modal';
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
 @Component({
   selector: 'app-client-documents',
   imports: [Select, TranslateModule, CommonModule, ReactiveFormsModule, DateformatPipe, DataLoaderContentComponent,
-    NoDataFoundComponent, ConfirmationIconComponent, DownloadIconComponent],
+    NoDataFoundComponent, DownloadIconComponent],
   templateUrl: './client-documents.component.html',
   styleUrl: './client-documents.component.scss'
 })
@@ -300,7 +299,6 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
 
   // Delete document function
   DeleteDocument() {
-  
     const formValue = this.updateDocumentForm.value;
     let loggedInUser = this.authService.getToken();
     const payload = {
@@ -327,7 +325,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.getDocumentDetails(clientID);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document inactived successfully');
+        this.conformationPopup.openSuccessModal('Document archived successfully');
       },
       error: (err) => {
         console.error('Error updating document:', err);
@@ -351,7 +349,6 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
     });
   }
 
-
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -359,6 +356,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
   close() {
     this.modalService.dismissAll();
   }
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

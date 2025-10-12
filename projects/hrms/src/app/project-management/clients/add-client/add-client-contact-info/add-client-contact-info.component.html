@@ -15,14 +15,12 @@
                     <tr *ngFor="let contact of contacts.controls; let i = index" [formGroupName]="i">
                         <td>
                             <input type="text" class="form-control custom-input" placeholder="Please enter contact name"
-                                formControlName="contactName"
-                                (input)="formValidation.validateInput(contact.get('contactName'))"
+                                formControlName="contactName" (input)="formValidation.validateInput(contact.get('contactName'))"
                                 (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51">
-                            <div *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid"
-                                class="error-msg">
+                            <div *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid" class="error-msg">
                                 <div *ngIf="contact.get('contactName')?.errors?.['required']">{{'Contact Name is required' | translate }}</div>
-                                <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters']">{{ 'Contact Name must be between 3–50 characters' | translate }}</div>
-                                <div *ngIf="contact.get('contactName')?.errors?.['minCharacters']">{{ 'Contact Name must be between 3–50 characters' | translate }}</div>
+                                <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || contact.get('contactName')?.errors?.['minCharacters']">
+                                    {{ 'Contact Name must be between 3–50 characters' | translate }}</div>
                             </div>
                         </td>
                         <td>

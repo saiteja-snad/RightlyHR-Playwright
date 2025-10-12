@@ -6,20 +6,16 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="clientName" [minlength]="2"
-                        placeholder="Please enter the client's name"
-                        (keydown)="formValidation.restrictInitialSpace($event)" maxlength="51">
+                        placeholder="Please enter the client's name" (input)="formValidation.validateInput(clientForm.get('clientName'))"
+                        maxlength="51">
                     <div class="error-msg">
                         <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid">
-                            <div *ngIf="clientForm.get('clientName')?.errors?.['required']">{{ 'Client Name is required'
-                                | translate }}</div>
+                            <div *ngIf="clientForm.get('clientName')?.errors?.['required']">{{ 'Client Name is required' | translate }}
+                            </div>
                         </div>
-                        <div
-                            *ngIf="clientForm.get('clientName')?.errors?.['maxCharacters'] || clientForm.get('clientName')?.errors?.['maxlength']">
-                            {{ 'Client Name must be in between 2-50 characters' | translate }}
-                        </div>
-                        <div
-                            *ngIf="clientForm.get('clientName')?.errors?.['minCharacters'] || clientForm.get('clientName')?.errors?.['minlength']">
-                            {{ 'Client Name must be in between 2-50 characters' | translate }}
+                        <div *ngIf="clientForm.get('clientName')?.errors?.['minlength'] || clientForm.get('clientName')?.errors?.['maxlength'] ||
+                           clientForm.get('clientName')?.errors?.['minCharacters'] || clientForm.get('clientName')?.errors?.['maxCharacters']">
+                            {{ 'Client Name must be between 2–50 characters' | translate }}
                         </div>
                     </div>
                 </div>

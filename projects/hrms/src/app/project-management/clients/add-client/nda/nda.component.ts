@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IEmployeeSignatures } from '../../../../letters/letters.modal';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { HttpService } from '../../../../services/http.service';
 import { AuthService } from '../../../../services/auth.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
@@ -123,7 +122,7 @@ export class NdaComponent {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2','pdfContent3']; // IDs of the content elements to be converted to PDF
+    const pdfContents = ['pdfContent1', 'pdfContent2']; // IDs of the content elements to be converted to PDF
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;

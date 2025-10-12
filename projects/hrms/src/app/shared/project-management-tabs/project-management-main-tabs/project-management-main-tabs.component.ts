@@ -5,7 +5,6 @@ import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-project-management-main-tabs',
   imports: [CommonModule, RouterModule, TabsModule, TranslateModule],
@@ -29,7 +28,7 @@ export class ProjectManagementMainTabsComponent implements OnInit {
     this.navTabs = [
       { label: 'Clients', link: '/project-management/clients', icon: 'main-menu-icons/project-management-client.png', permission: { feature: 'Clients', action: 'view' } },
       { label: 'Projects', link: '/project-management/projects', icon: 'main-menu-icons/project-management-project.png', permission: { feature: 'Projects', action: 'view' } },
-      { label: 'Time Sheets', link: '/project-management/time-sheet', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Time Sheet', action: 'view' } },
+      { label: 'Timesheets', link: '/project-management/time-sheet', icon: 'main-menu-icons/project-management-timesheet.png', permission: { feature: 'Time Sheet', action: 'view' } },
     ];
     this.filterTabsByRbac();
   }

@@ -34,6 +34,11 @@ export class EmployeOffBoardingComponent {
   Statusdetails = [] as IStatus[]
   joiningDate: any;
   dateOfJoining: any
+  exitTypeOptions = [
+  { label: 'Resignation', value: 'Resignation' },
+  { label: 'Termination', value: 'Termination' },
+  { label: 'Abscond', value: 'Abscond' }
+];
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private router: Router) { }
 
@@ -68,6 +73,7 @@ export class EmployeOffBoardingComponent {
 
   initializeForm() {
     this.offBoardingForm = this.fb.group({
+      exitType: [null, Validators.required],
       exit: [null, Validators.required],
       eligiblefor: [null, Validators.required],
       status: [null, Validators.required],
@@ -168,7 +174,7 @@ export class EmployeOffBoardingComponent {
           lastDateControl.enable();
         }
       const formdata=this.offBoardingForm.value
-
+      this.offBoardingEmp.termtypeoffboard=formdata.exitType
       this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
       this.offBoardingEmp.empstatus=formdata.status.statusname;
       this.offBoardingEmp.lastworkingday=formdata.lastdate;

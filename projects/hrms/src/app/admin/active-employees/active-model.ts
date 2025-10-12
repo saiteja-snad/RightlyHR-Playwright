@@ -21,6 +21,7 @@ export interface Iactive {
   location?: string;
   jobDetails?: IJobdetails[];
   shiftName?: string;
+  dateOfJoining?:string;
 }
 export interface IJobdetails {
   subdeptId: any;

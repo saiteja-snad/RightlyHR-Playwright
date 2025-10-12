@@ -30,7 +30,8 @@ export class OffboardingDetailsComponent {
   terminationDetails: ITermination[] = [];
   showButtons() {
     this.buttons = !this.buttons
-  }
+  } 
+
 
   constructor(private modalService: NgbModal, private router: Router, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
   ngOnInit() {
@@ -54,6 +55,7 @@ export class OffboardingDetailsComponent {
   }
   initializeForm(): void {
     this.offboardingForm = this.fb.group({
+      exitType: [{ value: '', disabled: true }],
       exitReason: [{ value: '', disabled: true }],
       eligibleForRehire: [{ value: '', disabled: true }],
       relievingType: [{ value: '', disabled: true }],
@@ -112,7 +114,8 @@ export class OffboardingDetailsComponent {
         console.log(this.empdata);
 
         // Patch the form with the fetched data
-        this.offboardingForm.patchValue({
+        this.offboardingForm.patchValue({         
+          exitType: this.empdata.termtypeoffboard || '', // Replace with the correct property if different
           exitReason: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
           eligibleForRehire: this.empdata.eligibleforrehire || '', // Replace with the correct property if different
           relievingType: this.empdata.separationType || '', // Replace with the correct property if different

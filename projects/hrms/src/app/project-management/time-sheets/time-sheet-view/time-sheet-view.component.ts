@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit,  } from '@angular/core';
+import { Component, OnDestroy, OnInit, } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import {
   AbstractControl,
@@ -44,7 +44,7 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
-export class TimeSheetViewComponent implements OnInit,OnDestroy {
+export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetForm!: FormGroup;
   dayForm!: FormGroup;
   jobdetails: any;
@@ -77,7 +77,7 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
   timesheetdata!: TimesheetResponse;
   resourcesArrayList: any[] = [];
   totalDuration: any;
- 
+
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -118,24 +118,31 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
   createDayEntry(
     day?: any,
     entryDate?: any,
-    isWeekendAllowedProject: boolean = false,
-    isProjectSelected: boolean = false
+    isProjectSelected: boolean = false,
+    // Pass the selected resource object
   ): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
-    const entryDateObj = dateValue ? new Date(dateValue) : null;
     const blockReason = day?.blockReason || '';
-    // Check if day is blocked
     const isBlocked = day?.isBlocked || false;
     const isLeave = day?.isLeave || false;
-    // Enable weekends only if allowed, and only if not blocked
     const isWeekend = blockReason === 'Weekend';
+    const projectId = day?.projectId;
+  const matchedResource = this.resourcesArrayList?.find(
+    (r: any) => r?.project?.projectId === projectId
+  );
+  const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
+  console.log('Weekend Work Allowed:', isWeekendAllowedProject);
+
+    // ✅ Logic to enable/disable fields
     const shouldEnable =
-      isProjectSelected && !isLeave && !isBlocked
-        ? isWeekend
-          ? isWeekendAllowedProject
+      isProjectSelected && !isLeave
+        ? isBlocked
+          ? isWeekend && isWeekendAllowedProject
           : true
         : false;
+
+    // Duration control setup
     const durationControl = this.fb.control(
       isNotEntered
         ? ''
@@ -144,10 +151,13 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
           : '',
       Validators.required
     );
-    // Initially disabled until project is selected or if blocked/leave
+
+    // Disable duration if not editable
     if (!shouldEnable) {
       durationControl.disable({ emitEvent: false });
     }
+
+    // Return full FormGroup
     return this.fb.group({
       entryId: [{ value: day?.entryId || null, disabled: !shouldEnable }],
       approverId: [{ value: day?.approverId || null, disabled: !shouldEnable }],
@@ -157,48 +167,33 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
       projectName: [{ value: day?.projectName || '', disabled: !shouldEnable }],
       entryDate: [{ value: dateValue || '', disabled: !shouldEnable }],
       startTime: [
-        {
-          value: isNotEntered ? '' : day?.startTime || '',
-          disabled: !shouldEnable,
-        },
+        { value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable },
         Validators.required,
       ],
       endTime: [
-        {
-          value: isNotEntered ? '' : day?.endTime || '',
-          disabled: !shouldEnable,
-        },
+        { value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable },
         Validators.required,
       ],
       duration: durationControl,
       description: [
-        {
-          value: isNotEntered ? '' : day?.description || '',
-          disabled: !shouldEnable,
-        },
+        { value: isNotEntered ? '' : day?.description || '', disabled: !shouldEnable },
         Validators.required,
       ],
-      approvalStatus: [
-        { value: day?.approvalStatus || '', disabled: !shouldEnable },
-      ],
+      approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
-      blockReason: [day?.blockReason || ''],
+      blockReason: [blockReason],
     });
   }
+
 
   // --- Add new project row ---
   addProject(project?: any, isProjectSelected: boolean = false) {
     const days = project?.days || [];
-    // If not explicitly passed, determine based on project data
-    if (!isProjectSelected && project) {
-      const hasProjectData = project.projectId && project.projectName;
-      // const hasTimeEntries = days.some((day: any) => day.entryId || day.durationSeconds > 0 || day.startTime);
-      isProjectSelected = hasProjectData;
-    }
-    const isWeekendAllowedProject = project?.isWeekendAllowedProject ?? false;
-    // If the project has "no client / no project", patch it here
+
+
+    // Patch "No Client / No Project" info
     let selectedProject = null;
     if (project?.isNoClientProject) {
       selectedProject = {
@@ -215,6 +210,8 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
         projectName: project.projectName ?? '',
       };
     }
+
+    // Create the project FormGroup
     const projectForm = this.fb.group({
       projectId: [project?.projectId || null],
       projectName: [project?.projectName || ''],
@@ -223,50 +220,15 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
       selectedProject: [selectedProject],
       isNoClientProject: [!!project?.isNoClientProject],
       searchTerm: [''],
-      // Create day entries for Mon-Sun
-      mon: this.createDayEntry(
-        days[0] || {},
-        this.weekDates[0],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
-      tue: this.createDayEntry(
-        days[1] || {},
-        this.weekDates[1],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
-      wed: this.createDayEntry(
-        days[2] || {},
-        this.weekDates[2],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
-      thu: this.createDayEntry(
-        days[3] || {},
-        this.weekDates[3],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
-      fri: this.createDayEntry(
-        days[4] || {},
-        this.weekDates[4],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
-      sat: this.createDayEntry(
-        days[5] || {},
-        this.weekDates[5],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
-      sun: this.createDayEntry(
-        days[6] || {},
-        this.weekDates[6],
-        isWeekendAllowedProject,
-        isProjectSelected
-      ),
+      mon: this.createDayEntry(days[0] || {}, this.weekDates[0], isProjectSelected,),
+      tue: this.createDayEntry(days[1] || {}, this.weekDates[1], isProjectSelected,),
+      wed: this.createDayEntry(days[2] || {}, this.weekDates[2], isProjectSelected,),
+      thu: this.createDayEntry(days[3] || {}, this.weekDates[3], isProjectSelected,),
+      fri: this.createDayEntry(days[4] || {}, this.weekDates[4], isProjectSelected,),
+      sat: this.createDayEntry(days[5] || {}, this.weekDates[5], isProjectSelected,),
+      sun: this.createDayEntry(days[6] || {}, this.weekDates[6], isProjectSelected,),
     });
+
     const newIndex = this.projects.length;
     this.projects.push(projectForm);
     this.showDots[newIndex] = {
@@ -802,7 +764,7 @@ export class TimeSheetViewComponent implements OnInit,OnDestroy {
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference
-  
+
 
 
       const shiftData = this.resourcesArrayList.find(

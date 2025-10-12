@@ -43,7 +43,7 @@ export const environment = {
     ProbationExtensionId: 2,
     ProbationExtendPeriodTimes: 3,
     PMSrequestmoduleId:24,
-     timesheetModuleId:25,
+     timesheetModuleId:30,
     deskAllocationModuleId:23,
     expensesModuleId:19,  
     remoteLoginModuleId:11,

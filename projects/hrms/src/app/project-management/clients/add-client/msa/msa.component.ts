@@ -52,7 +52,7 @@ export class MsaComponent {
       this.clientId = clientId;
       this.getclientDetailsbyid(parseInt(clientId));
     }
-    this.getAuthorityDetails();
+    // this.getAuthorityDetails();
     this.getFrequency();
   }
 

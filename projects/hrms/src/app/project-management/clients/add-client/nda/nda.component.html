@@ -213,16 +213,10 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content my-4" id="pdfContent1">
+                    <div class="letter-page-content my-4" id="pdfContent1" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
 
                         <div class="letter-page-sub-content">
-                            <div *ngIf="clientForm.get('documentType')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-letterheaderonly></app-letterheaderonly>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                      
 
                             <div class="text-center letter-header mb-3"><u>NON-DISCLOSURE AGREEMENT (NDA)</u></div>
 
@@ -334,22 +328,12 @@
 
                         </div>
 
-                        <div *ngIf="clientForm.get('documentType')?.value?.value ===true;else doc"
-                            class="soft-copy-letter" class="letter-footer">
-                            <app-letter-footer />
-                        </div>
 
                     </div>
 
-                    <div class="letter-page-content my-4" id="pdfContent2">
+                    <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="clientForm.get('documentType')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-letterheaderonly></app-letterheaderonly>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                        
                             <div class="mb-3">
                                 <p class="letter-sub-header mb-0"> 5. Return or Destruction of Materials </p>
                                 <p class="mb-0">Upon written request of the Disclosing Party, the Receiving Party
@@ -442,21 +426,12 @@
                             </div>
 
                         </div>
-                        <div *ngIf="clientForm.get('documentType')?.value?.value ===true;else doc"
-                            class="soft-copy-letter" class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                      
                     </div>
 
-                    <div class="letter-page-content my-4" id="pdfContent3">
+                    <div class="letter-page-content my-4" id="pdfContent3"  [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="clientForm.get('documentType')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-letterheaderonly></app-letterheaderonly>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                           
                             <div class="mb-3">
                                 <p class="letter-sub-header mb-0">15. Counterparts</p>
                                 <p class="mb-0">This Agreement may be executed in one or more counterparts
@@ -509,10 +484,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div *ngIf="clientForm.get('documentType')?.value?.value === true;else doc"
-                            class="soft-copy-letter" class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                        
                     </div>
                 </div>
             </div>

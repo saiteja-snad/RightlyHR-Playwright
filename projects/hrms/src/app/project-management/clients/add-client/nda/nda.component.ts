@@ -60,7 +60,7 @@ export class NdaComponent {
       this.clientId = clientId;
       this.getclientDetailsbyid(parseInt(clientId));
     }
-    this.getAuthorityDetails();
+    // this.getAuthorityDetails();
     this.getFrequency();
   }
 
@@ -238,7 +238,7 @@ export class NdaComponent {
     const formData = this.clientForm?.value;
     
     const attributesdata = [
-      { key: 'effectiveDate', value: formData?.effectiveDate?.toString() ?? null, dataType: 'string',},
+      // { key: 'effectiveDate', value: formData?.effectiveDate?.toString() ?? null, dataType: 'string',},
       { key: 'companyName', value: formData?.companyName?.toString() ?? this.clientDtails.data.clientName, dataType: 'string',},
       { key: 'companyAddress', value: formData?.companyAddress?.toString() ?? this.clientDtails.data.address, dataType: 'string',},
       { key: 'serviceProviderName', value: formData?.serviceProviderName?.toString() ?? null, dataType: 'string',},

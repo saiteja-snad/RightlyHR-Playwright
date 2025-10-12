@@ -233,15 +233,9 @@
         <div class="card letter-data-content">
             <div class="letter-sub-data-content">
                 <div>
-                    <div class="letter-page-content my-4" id="pdfContent1">
+                    <div class="letter-page-content my-4" id="pdfContent1" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="clientForm.get('documentType')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-letterheaderonly></app-letterheaderonly>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                   
                             <div class="text-center letter-header mb-3"><u>MASTER SERVICES AGREEMENT (MSA) </u></div>
 
                             <p>This Master Services Agreement (“Agreement”) is made and entered into as of the
@@ -366,22 +360,13 @@
                                 </li>
                             </ul>
                         </div>
-                        <div *ngIf="clientForm.get('documentType')?.value?.value ===true;else doc"
-                            class="soft-copy-letter" class="letter-footer">
-                            <app-letter-footer />
-                        </div>
+                  
 
                     </div>
 
-                    <div class="letter-page-content my-4" id="pdfContent2">
+                    <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="clientForm.get('documentType')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-letterheaderonly></app-letterheaderonly>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                       
 
                             <ul>
                                 <li>
@@ -503,23 +488,13 @@
                             </ul>
 
                         </div>
-                        <div *ngIf="clientForm.get('documentType')?.value?.value ===true;else doc"
-                            class="soft-copy-letter" class="letter-footer">
-                            <app-letter-footer />
-                        </div>
-
+                      
                     </div>
 
-                    <div class="letter-page-content my-4" id="pdfContent3">
+                    <div class="letter-page-content my-4" id="pdfContent3" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
 
                         <div class="letter-page-sub-content">
-                            <div *ngIf="clientForm.get('documentType')?.value?.value === true; else doc"
-                                class="soft-copy-letter">
-                                <app-letterheaderonly></app-letterheaderonly>
-                            </div>
-                            <ng-template #doc>
-                                <div class="hard-copy-letter"></div>
-                            </ng-template>
+                       
                             <ul>
                                 <p class="letter-sub-header "><u>8. NON-SOLICITATION AND NON-COMPETE</u> </p>
                                 <ul>
@@ -630,10 +605,6 @@
                             </div>
                         </div>
 
-                        <div *ngIf="clientForm.get('documentType')?.value?.value ===true;else doc"
-                            class="soft-copy-letter" class="letter-footer">
-                            <app-letter-footer />
-                        </div>
                     </div>
                 </div>
             </div>

@@ -79,7 +79,7 @@ export class ClientDocumentTypesComponent {
           this.conformationPopup.openSuccessModal('Document Type added successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to add Document Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to add Document Type');
         },
         complete: () => {
           this.getEAV();
@@ -119,7 +119,7 @@ export class ClientDocumentTypesComponent {
           this.conformationPopup.openSuccessModal('Document Type updated successfully');
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to update Document Type');
+          this.conformationPopup.openErrorModal(error?.error?.Message || 'Failed to update Document Type');
         },
         complete: () => {
           this.getEAV();

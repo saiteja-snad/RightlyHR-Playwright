@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../../../../letters/letters.modal';
+import { IEmployeeSignatures } from '../../../../letters/letters.modal';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { HttpService } from '../../../../services/http.service';
@@ -12,19 +12,17 @@ import jsPDF from 'jspdf';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
-import { LetterFooterComponent } from '../../../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
-import { LetterheaderonlyComponent } from "../../../../shared/letters-shared-content/letterheaderonly/letterheaderonly.component";
 import moment from 'moment';
 import { IFrequency } from '../../../../Interfaces/job-model';
-
 @Component({
   selector: 'app-nda',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule, LetterFooterComponent, LetterheaderonlyComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule],
   templateUrl: './nda.component.html',
   styleUrl: './nda.component.scss'
 })
+
 export class NdaComponent {
   subscription!: Subscription;
   clientDtails = [] as any;
@@ -41,26 +39,17 @@ export class NdaComponent {
   result = {} as any;
   clientId: any;
 
-  constructor(
-    private router: Router,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private httpclient: HttpClient,
-    private conformationPopup: OpenModalService,
-    private authService: AuthService,
-    public formValidation: FormValidationsService,
-  ) { }
+  constructor(private router: Router, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService, 
+    private authService: AuthService, public formValidation: FormValidationsService,) { }
 
   ngOnInit() {
     this.initializeForm();
     localStorage.getItem('newlyAddedClientId');
     const clientId = localStorage.getItem('newlyAddedClientId');
-    console.log("clientId", clientId)
     if (clientId) {
       this.clientId = clientId;
       this.getclientDetailsbyid(parseInt(clientId));
     }
-    // this.getAuthorityDetails();
     this.getFrequency();
   }
 
@@ -97,15 +86,11 @@ export class NdaComponent {
           companyAddress: this.clientDtails.data.address,
           companyName: this.clientDtails.data.clientName || '',
         });
-        console.log("clientDtails", this.clientDtails)
-        // this.spinnerLoader = false;
-        //this.filterAllExpenses();
       }, error(err) {
         console.log("expensesheadererror", err)
       },
     });
   }
-
 
   getAuthorityDetails() {
     let offertype = 'NDA Letter';
@@ -121,6 +106,7 @@ export class NdaComponent {
       }
     });
   }
+
   getFrequency() {
     this.subscription = this.http.getData('Frequency').subscribe({
       next: (data: any) => {
@@ -128,7 +114,6 @@ export class NdaComponent {
       },
     });
   }
-
 
   async postNDALetterFormSubmit(form: FormGroup) {
     const data = form.value;
@@ -165,7 +150,6 @@ export class NdaComponent {
       const lastImageData = imagesData[imagesData.length - 1];
       pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
     }
-
     pdf.save(fileName);
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
@@ -173,6 +157,7 @@ export class NdaComponent {
     this.ndaLetterFile = new File([blob], fileName, { type: 'application/pdf', });
     this.uploadNDALetter();
   }
+
   uploadNDALetter() {
     const timestamp = new Date().getTime();
     // Extract filename and extension
@@ -180,10 +165,8 @@ export class NdaComponent {
     const dotIndex = originalName.lastIndexOf('.');
     const fileNameWithoutExt = dotIndex !== -1 ? originalName.substring(0, dotIndex) : originalName;
     const fileExt = dotIndex !== -1 ? originalName.substring(dotIndex + 1) : '';
-
     // Construct final path
     const filePath = `/ProjectManagement/Clients/${this.clientId}/Letters/NDA/${fileNameWithoutExt}_${timestamp}.${fileExt}`;
-    console.log(filePath);
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.ndaLetterFile).subscribe({
       next: (data: any) => {
         if (data) {
@@ -200,10 +183,10 @@ export class NdaComponent {
       }
     });
   }
+
   //function to upload the NDA letter to documents
   documentsUpload() {
     let loggedInUser = this.authService.getToken();
-
     const payLoad = {
       entityType: 'client',
       entityId: parseInt(this.clientId),
@@ -232,11 +215,11 @@ export class NdaComponent {
       }
     });
   }
+
   //function to post the NDA details to NDA management
   postNDAmanagementletter(unsignedDocRefId: any) {
     let loggedInUser = this.authService?.getToken();
     const formData = this.clientForm?.value;
-    
     const attributesdata = [
       // { key: 'effectiveDate', value: formData?.effectiveDate?.toString() ?? null, dataType: 'string',},
       { key: 'companyName', value: formData?.companyName?.toString() ?? this.clientDtails.data.clientName, dataType: 'string',},
@@ -249,10 +232,6 @@ export class NdaComponent {
       { key: 'postTermConfidentialityDuration', value: formData?.posttermconfidentialityduration?.toString() ?? null, dataType: 'string',},
       { key: 'postTermConfidentialityFrequency', value: formData?.posttermconfidentialityfrequency?.frequency1?.toString() ?? null, dataType: 'string',},
     ];
-
-
-    console.log("attributesdata", attributesdata);
-
     const payLoad = {
       letterType: 'NDA Letter',   // since you already capture Document Type
       effectiveDate: this.clientForm.get('effectiveDate')?.value,
@@ -264,7 +243,6 @@ export class NdaComponent {
       createdAt: moment(),
       attributes: attributesdata,
     };
-
     this.subscription = this.http.postdata('ProjectManagementLetter/postLetter', payLoad).subscribe({
       next: (data: any) => {
         if (data) {
@@ -284,17 +262,9 @@ export class NdaComponent {
     });
   }
 
-
-
-
-
-
-
-
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
   }
-
 }

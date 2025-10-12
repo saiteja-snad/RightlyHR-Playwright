@@ -714,13 +714,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       // Enable duration
       if (!isBlocked && !isLeave) {
         dayForm.get('duration')?.enable();
+        dayForm.get('description')?.enable();
+        dayForm.get('startTime')?.enable();
+        dayForm.get('endTime')?.enable()
       } else if (
         blockReason === 'Weekend' &&
         this.selectedProjectResource?.weekendWorkAllowed
       ) {
         // If weekend is blocked but project allows weekends
         dayForm.get('duration')?.enable();
-        
+        dayForm.get('description')?.enable();
+        dayForm.get('startTime')?.enable();
+        dayForm.get('endTime')?.enable()
       } else {
         dayForm.get('duration')?.disable();
       }

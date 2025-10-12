@@ -252,10 +252,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal('Project updated successfully');
       },
       error: (err) => {
+        this.loading = false;
+        this.spinnerLoader = false;
         console.error('Error updating project:', err);
         this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to update project');
-        this.loading = false;
-        this.spinnerLoader = true
+
       }
     });
   }

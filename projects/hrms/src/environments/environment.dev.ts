@@ -25,6 +25,7 @@ export const environment = {
   claimsModuleId:4,
   nodueModuleId:16,
   permissionsModuleId:18,
+   timesheetModuleId:25,
   attendanceRegularizationModuleId:17,
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,

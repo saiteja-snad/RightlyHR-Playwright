@@ -127,6 +127,13 @@ export class PendingApprovalsTabsComponent {
       permission: { feature: 'Claims and Expenses Tab', action: 'view' },
       icon: '/main-menu-icons/expenses-icon.png',
     },
+       {
+      label: 'Time Sheets',
+      route: '/time-off/pending-approvals/time-sheets',
+      moduleId: environment.timesheetModuleId, permission: { feature: 'Time Sheet approval Tab', action: 'view' },
+      icon: '/time-off-icon/calender-activity.png',
+    },
+ 
   ];
 
   constructor(

@@ -320,6 +320,7 @@ export const permissionsData = [
   { fields: 'Claims and Expenses Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Requests Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Probation Details Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Time Sheet approval Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Pending Approval Time Off Tabs Section
   { fields: 'For You (Time Off)', View: false, Update: false, Create: false, Delete: false },

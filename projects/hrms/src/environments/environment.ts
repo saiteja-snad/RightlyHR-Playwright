@@ -46,6 +46,7 @@ export const environment = {
   attendanceRegularizationModuleId:17,
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,
+   timesheetModuleId:25,
   RecallrequestmoduleId: 14,
   ProbationrequestmoduleId: 20,
   ProbationNoticePeriodId: 0,

@@ -108,6 +108,15 @@ export class HttpService {
     this.separationDetailes.next();
   }
 
+
+  // function for employeid timesheet
+  private selectedEmployeeIdTimesheet = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdTimesheet$ = this.selectedEmployeeIdTimesheet.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdTimesheet(id: any, projectId: number,request:any): void {
+    this.selectedEmployeeIdTimesheet.next({ id, projectId ,request});
+  }
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
   selectedYear$ = this.selectedYearSubject.asObservable();

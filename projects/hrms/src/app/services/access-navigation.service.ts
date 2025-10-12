@@ -568,6 +568,11 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
+
+          if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+            return (route = '/time-off/pending-approvals/time-sheets');
+          }
+
         }
 
         break;
@@ -1283,6 +1288,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/time-off/pending-approvals/time-sheets':
+        if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          return (route = '/time-off/pending-approvals/time-sheets');
+        }
+        break;
+
       case '/time-off/pending-approvals':
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
@@ -1428,6 +1439,10 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
+           if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+            return (route = '/time-off/pending-approvals/time-sheets');
+          }
+
         }
         break;
 

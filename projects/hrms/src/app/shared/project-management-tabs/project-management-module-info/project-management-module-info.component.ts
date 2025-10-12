@@ -7,9 +7,10 @@ import { ModuleInformationComponent } from "../../module-information/module-info
 import { CommonModule } from '@angular/common';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
+import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 @Component({
   selector: 'app-project-management-module-info',
-  imports: [CommonModule, ModuleInformationComponent, NgbPopoverModule],
+  imports: [CommonModule, ModuleInformationComponent, NgbPopoverModule, ModuleInfoIconComponent],
   templateUrl: './project-management-module-info.component.html',
   styleUrl: './project-management-module-info.component.scss'
 })

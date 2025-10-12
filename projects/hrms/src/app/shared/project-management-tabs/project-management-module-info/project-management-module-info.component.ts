@@ -50,7 +50,6 @@ export class ProjectManagementModuleInfoComponent {
       },
       error: (err) => {
         this.clients = {};
-
         console.error('Error fetching clients:', err);
       }
     });
@@ -116,7 +115,7 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Resources';
     }
     else if (currentUrl === '/project-management/clients/details/timesheet') {
-      this.componentname = 'Time sheets';
+      this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/clients/details/documents') {
       this.componentname = 'Documents';
@@ -134,13 +133,13 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Resources';
     }
     else if (currentUrl === '/project-management/projects/details/timesheet') {
-      this.componentname = 'Time sheets';
+      this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/projects/details/documents') {
       this.componentname = 'Documents';
     }
     else if (currentUrl === '/project-management/time-sheet') {
-      this.componentname = 'Time Sheets';
+      this.componentname = 'Timesheets';
     }
   }
 

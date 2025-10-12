@@ -31,7 +31,7 @@ export class ClientTabsComponent {
       permission: { feature: 'Client Resources', action: 'view' }
     },
     {
-      label: 'Time sheets', link: '/project-management/clients/details/timesheet', icon: 'main-menu-icons/project-management-timesheet.png',
+      label: 'Timesheets', link: '/project-management/clients/details/timesheet', icon: 'main-menu-icons/project-management-timesheet.png',
       permission: { feature: 'Client Timesheets', action: 'view' }
     },
     {

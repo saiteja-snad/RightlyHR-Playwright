@@ -131,6 +131,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   const matchedResource = this.resourcesArrayList?.find(
     (r: any) => r?.project?.projectId === projectId
   );
+
+  console.log(matchedResource);
+  
   const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
   console.log('Weekend Work Allowed:', isWeekendAllowedProject);
 
@@ -176,7 +179,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ],
       duration: durationControl,
       description: [
-        { value: isNotEntered ? '' : day?.description || '', disabled: !shouldEnable },
+        { value: isNotEntered ? null: day?.description || null,  },
         Validators.required,
       ],
       approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],

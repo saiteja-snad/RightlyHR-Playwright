@@ -171,17 +171,17 @@
         <div class="col-md-12 mb-3">
           <div class="d-flex gap-3 align-items-center">
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" formControlName="overtimeEligible">
-              <label class="form-label custom-toggle-label">Overtime Eligibility</label>
+              <input id="project-overtime-eligibility"  class="form-check-input" type="checkbox" formControlName="overtimeEligible">
+              <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Overtime Eligibility</label>
             </div>
 
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" formControlName="billable">
-              <label class="form-label custom-toggle-label">Billable</label>
+              <input id="project-client-billable" class="form-check-input" type="checkbox" formControlName="billable">
+              <label for="project-client-billable" class="form-label custom-toggle-label">Billable</label>
             </div>
             <div class="form-check form-switch">
-              <label class="form-label custom-toggle-label">Allow Weekend Work</label>
-              <input class="form-check-input" type="checkbox" formControlName="allowweekendWork">
+              <label id="project-allow-weekend-work" class="form-label custom-toggle-label" >Allow Weekend Work</label>
+              <input for="client-allow-weekend-work" class="form-check-input" type="checkbox" formControlName="allowweekendWork">
             </div>
           </div>
         </div>

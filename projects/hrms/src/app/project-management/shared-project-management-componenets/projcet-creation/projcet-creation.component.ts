@@ -45,7 +45,6 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createProjectForm();
     this.getclientbaedonRoute();
-    this.getapprovalsAuthority()
     this.getprojecttypesData();
     this.getAuthorityList();
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
@@ -196,21 +195,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     });
   }
 
-  getapprovalsAuthority() {
-    this.subscription = this.http.getData('FusionRole/getbyNormalizedName?Nname=TIMESHEET APPROVAL AUTHORITY&includeAssignee=true').subscribe({
-      next: (data: any) => {
-        // Assuming IWfh is your interface/model for the Manager data
-        this.manager = data.getUserWithRoleNames.map((user: { firstName: any; middleName: any; lastName: any; employeeId: any; fusionEmpId: any }) => ({
-          ...user,
-          name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${user.middleName ?? ''} ${user.lastName ?? ''}`.trim(),
-          value: user.employeeId
-        }));
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-      }
-    });
-  }
+
 
   close() {
     this.modalService.dismissAll();

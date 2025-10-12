@@ -25,19 +25,16 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="clientName" [minlength]="2"
-                        (input)="formValidation.validateInput(clientForm.get('clientName'))" [maxlength]="50"
+                        (input)="formValidation.validateInput(clientForm.get('clientName'))" [maxlength]="52"
                         placeholder="Please enter client name">
-                    <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid"
-                        class="error-msg">
+                    <div *ngIf="clientForm.get('clientName')?.touched && clientForm.get('clientName')?.invalid" class="error-msg">
                         <div *ngIf="clientForm.get('clientName')?.errors?.['required']">
                             {{ 'Client Name is required' | translate }}
                         </div>
                     </div>
-                    <div *ngIf="clientForm.get('clientName')?.errors?.['maxCharacters']" class="error-msg">
-                        {{ 'Client Name must be between 2–50 characters' | translate }}
-                    </div>
-                    <div *ngIf="clientForm.get('clientName')?.errors?.['minCharacters']" class="error-msg">
-                        {{ 'Client Name must be between 2–50 characters' | translate }}
+                    <div *ngIf="clientForm.get('clientName')?.errors?.['maxCharacters'] || 
+                    clientForm.get('clientName')?.errors?.['minCharacters']" class="error-msg">
+                        {{ 'Client Name must be between 2-50 characters' | translate }}
                     </div>
                 </div>
 
@@ -103,14 +100,14 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Client Company Address <span class="text-danger">*</span></label>
                     <textarea type="text"  class="form-control custom-input" formControlName="clientAddress"
-                        placeholder="Please enter client address"  (keydown)="formValidation.restrictInitialSpace($event)"   rows="3" [maxlength]="500"></textarea> 
+                        placeholder="Please enter client address" (keydown)="formValidation.restrictInitialSpace($event)" rows="3" [maxlength]="500"></textarea> 
                     <div class="error-msg" *ngIf="clientForm.get('clientAddress')?.touched && clientForm.get('clientAddress')?.invalid">
                         {{ 'Client Address is required' | translate }}</div>
                     <div *ngIf="clientForm.get('clientAddress')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Address must be between 5-250 characters' | translate}}</div>
                     <div *ngIf="clientForm.get('clientAddress')?.errors?.['minCharacters']" class="error-msg">
                         {{ 'Address must be between 5-250 characters' | translate}}</div>
-                         <div class="textarea-count-text">{{ clientForm.get("clientAddress")?.value?.length || 0 }}/500</div>
+                    <div class="textarea-count-text">{{ clientForm.get("clientAddress")?.value?.length || 0 }}/500</div>
                 </div>
                 
                 <!-- Switches -->

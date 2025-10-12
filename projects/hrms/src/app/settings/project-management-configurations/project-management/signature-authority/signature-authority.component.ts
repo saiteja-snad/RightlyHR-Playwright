@@ -13,13 +13,13 @@ import { IProjectAuthority } from '../../models/project-authority.modal';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
-
 @Component({
   selector: 'app-signature-authority',
   imports: [CommonModule, Select, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, Skeleton],
   templateUrl: './signature-authority.component.html',
   styleUrl: './signature-authority.component.scss'
 })
+
 export class SignatureAuthorityComponent implements OnInit, OnDestroy {
   usersList: IActiveEmployee[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -49,9 +49,8 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
         this.usersList = res.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
       },
@@ -66,7 +65,6 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
       selected_user: [null, [Validators.required]],
     });
   }
-
 
   onSubmit(form: FormGroup) {
     if (form.valid) {
@@ -148,5 +146,4 @@ export class SignatureAuthorityComponent implements OnInit, OnDestroy {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

@@ -4,10 +4,10 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter document type"
                     formControlName="documentType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
-                                    formValidations.blockNonAlphabets($event)" maxlength="51">
+                    formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="stat">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="addForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
             <div *ngIf="addForm.get('documentType')?.touched && addForm.get('documentType')?.invalid" class="error-msg">
                 <div *ngIf="addForm.get('documentType')?.errors?.['required']">
@@ -26,9 +26,8 @@
         </div>
     </form>
 
-
     <!--Data Content-->
-    <div class="custom-settings-data-table">
+    <div class="custom-settings-data-table position-relative">
         @if (!loading) {
         <table class="w-100">
             <thead>
@@ -67,7 +66,6 @@
     </div>
 </div>
 
-
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form autocomplete="off" [formGroup]="updateForm" (ngSubmit)="updateEAV(updateForm)">
@@ -83,8 +81,7 @@
 
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Document
-                        Type'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Document Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="documentType"
                         placeholder="Please enter document"
@@ -107,10 +104,8 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="close()">{{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>

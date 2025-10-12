@@ -12,13 +12,13 @@ import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-i
 import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 import { IEAV } from '../../models/project-type.modal';
-
 @Component({
   selector: 'app-project-type',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsUpdateIconComponent, SettingsDeleteIconComponent, SettingsLoaderComponent],
   templateUrl: './project-type.component.html',
   styleUrl: './project-type.component.scss'
 })
+
 export class ProjectTypeComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   addForm!: FormGroup;
@@ -62,7 +62,6 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
       complete: () => {
         this.loading = false;
       }
-
     });
   }
 
@@ -159,5 +158,4 @@ export class ProjectTypeComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
 }

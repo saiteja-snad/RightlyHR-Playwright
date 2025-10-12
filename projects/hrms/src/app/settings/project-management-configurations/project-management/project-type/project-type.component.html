@@ -4,10 +4,10 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter project type"
                     formControlName="projectType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
-                                    formValidations.blockNonAlphabets($event)" minlength="2" maxlength="51">
+                    formValidations.blockNonAlphabets($event)" minlength="2" maxlength="51">
                 <span class="input-group-text" id="stat">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="addForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
             <div *ngIf="addForm.get('projectType')?.touched && addForm.get('projectType')?.invalid" class="error-msg">
                 <div *ngIf="addForm.get('projectType')?.errors?.['required']">
@@ -26,9 +26,8 @@
         </div>
     </form>
 
-
     <!--Data Content-->
-    <div class="custom-settings-data-table">
+    <div class="custom-settings-data-table position-relative">
         @if (!loading) {
         <table class="w-100">
             <thead>
@@ -66,7 +65,6 @@
         }
     </div>
 </div>
-
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
@@ -106,10 +104,8 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="close()">{{'Cancel'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -125,8 +121,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary"
-                (click)="deleteProjectType()">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="deleteProjectType()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

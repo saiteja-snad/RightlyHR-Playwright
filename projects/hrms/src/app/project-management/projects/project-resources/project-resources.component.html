@@ -35,8 +35,7 @@
                                 '' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources
-                            Tab.delete'))
+                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'Inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
@@ -210,18 +209,18 @@
                     <div class="col-md-12 mb-3">
                         <div class="d-flex gap-3 align-items-center">
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" formControlName="overtimeEligible">
-                                <label class="form-label custom-toggle-label">Overtime Eligibility</label>
+                                <input id="clients-overtime-eligibility"  class="form-check-input" type="checkbox" formControlName="overtimeEligible">
+                                <label for="clients-overtime-eligibility" class="form-label custom-toggle-label">Overtime Eligibility</label>
                             </div>
 
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" formControlName="billable">
-                                <label class="form-label custom-toggle-label">Billable</label>
+                                <input id="client-billable"  class="form-check-input" type="checkbox" formControlName="billable">
+                                <label for="client-billable"  class="form-label custom-toggle-label">Billable</label>
                             </div>
 
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" formControlName="allowweekendWork">
-                                <label class="form-label custom-toggle-label">Allow Weekend Work</label>
+                                <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" formControlName="allowweekendWork">
+                                <label for="client-allow-weekend-work" class="form-label custom-toggle-label">Allow Weekend Work</label>
                             </div>
                         </div>
                     </div>

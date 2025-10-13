@@ -42,6 +42,10 @@ export class UpdateLeavecategoryComponent {
     { label: 'Yes', value: true },
     { label: 'No', value: false },
   ];
+  leaveTypeOptions = [
+    { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
+    { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
+  ];
   shiftsArray = [] as any[];
   updateLeaveCategoryData = {} as Iorgcategoryleaves;
 
@@ -128,6 +132,7 @@ export class UpdateLeavecategoryComponent {
         { value: null, disabled: true },
         [this.dependentRequiredValidator('isProbationAllowed')],
       ],
+      probationFrequencyType: [null, Validators.required],
     });
   }
 
@@ -413,6 +418,7 @@ private setupDependentFieldListenerS() {
       noticePeriodAllowedValue: data.noticePeriodAllowedValue,
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
+      probationFrequencyType:data.probationFrequencyType,
     });
     // Manually trigger value changes for dependent fields
     // Manually trigger the initial state for dependent fields
@@ -545,6 +551,7 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
         this.leavePolicyForm.value.isProbationAllowed ??
         this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      probationFrequencyType:this.leavePolicyForm.value.probationFrequencyType,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: this.updateLeaveCategoryData.status,
@@ -651,6 +658,7 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
         this.leavePolicyForm.value.isProbationAllowed ??
         this.updateLeaveCategoryData.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      probationFrequencyType:this.leavePolicyForm.value.probationFrequencyType,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: 'Published',

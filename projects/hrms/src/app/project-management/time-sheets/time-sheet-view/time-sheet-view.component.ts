@@ -26,6 +26,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [
@@ -40,6 +41,7 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
     AccordionModule,
     InfoIconComponent,
     ConfirmationIconComponent,
+    TranslateModule
   ],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
@@ -77,7 +79,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetdata!: TimesheetResponse;
   resourcesArrayList: any[] = [];
   totalDuration: any;
-
+  spinnerLoader = false
+   spinnerLoaderforallrecoders = false
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -940,6 +943,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //single recoder
   saveDayEntry() {
+     this.spinnerLoader = true
     // Prepare payload
     const formValue = this.dayForm.value;
     const toTimeSpan = (time: string | null | undefined): string => {
@@ -978,6 +982,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
+         this.spinnerLoader = false
         this.timesheetForm.reset();
         this.modalService.dismissAll();
         this.getResourceData();
@@ -993,6 +998,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
+         this.spinnerLoader = false
         this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error saving entry', err);
       },
@@ -1057,9 +1063,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   // Call this on Submit button click
   submitTimesheet(): void {
+    this.spinnerLoaderforallrecoders=true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
       next: (res) => {
+        this.spinnerLoaderforallrecoders=false
         this.conformationPopup.openSuccessModal(
           'Timesheet submitted successfully'
         );
@@ -1074,6 +1082,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
+        this.spinnerLoaderforallrecoders=false
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);
       },

@@ -80,7 +80,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   resourcesArrayList: any[] = [];
   totalDuration: any;
   spinnerLoader = false
-   spinnerLoaderforallrecoders = false
+  spinnerLoaderforallrecoders = false
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -132,6 +132,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const blockReason = day?.blockReason || '';
     const isBlocked = day?.isBlocked || false;
     const isLeave = day?.isLeave || false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize today’s date
+    const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
 
@@ -141,16 +144,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // normalize today’s date
-    const isFutureDate = entryDateObj ? entryDateObj > today : false;
+
     //enable/disable
     const shouldEnable =
-      isProjectSelected && !isLeave
-        ? isBlocked && !isFutureDate
-          ? isWeekend && isWeekendAllowedProject
-          : true
-        : false;
+      isProjectSelected &&
+      !isLeave &&
+      !isBlocked &&
+      !isFutureDate &&
+      (isWeekend ? isWeekendAllowedProject : true);
 
     // Duration control setup
     const durationControl = this.fb.control(
@@ -943,7 +944,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //single recoder
   saveDayEntry() {
-     this.spinnerLoader = true
+    this.spinnerLoader = true
     // Prepare payload
     const formValue = this.dayForm.value;
     const toTimeSpan = (time: string | null | undefined): string => {
@@ -982,7 +983,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
-         this.spinnerLoader = false
+        this.spinnerLoader = false
         this.timesheetForm.reset();
         this.modalService.dismissAll();
         this.getResourceData();
@@ -998,7 +999,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
-         this.spinnerLoader = false
+        this.spinnerLoader = false
         this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error saving entry', err);
       },
@@ -1063,11 +1064,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   // Call this on Submit button click
   submitTimesheet(): void {
-    this.spinnerLoaderforallrecoders=true
+    this.spinnerLoaderforallrecoders = true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
       next: (res) => {
-        this.spinnerLoaderforallrecoders=false
+        this.spinnerLoaderforallrecoders = false
         this.conformationPopup.openSuccessModal(
           'Timesheet submitted successfully'
         );
@@ -1082,7 +1083,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
-        this.spinnerLoaderforallrecoders=false
+        this.spinnerLoaderforallrecoders = false
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);
       },

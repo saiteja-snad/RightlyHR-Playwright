@@ -24,7 +24,8 @@ export const MY_INFO_JOB_ROUTES = [
   { permission: 'My Info Compensation Details.view', route: '/myinfo/job/compensation-details' },
   { permission: 'My Info Desk Details.view', route: '/myinfo/job/desk-details' },
   { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' },
-   { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' }
+  { permission: 'My Info Team Members Tab.view', route: '/myinfo/job/team-members' },
+  { permission: 'My Info Contract Details.view', route: '/myinfo/job/contactor-info' },
 ];
 
 
@@ -237,6 +238,7 @@ export const PENDING_APPROVALS_TABS = [
   { route: '/time-off/pending-approvals/claimsandexpenses-request', permission: 'Claims and Expenses Tab.view' },
   { route: '/time-off/pending-approvals/desk-approval', permission: 'Desk Requests Tab.view' },
   { route: '/time-off/pending-approvals/probation-request', permission: 'Probation Details Tab.view' },
+  { route: '/time-off/pending-approvals/contract-conversion', permission: 'Contract-Conversion Tab.view' },
 ]
 
 export const PENDING_APPROVALS_TIME_OFF_SUB_TABS = [
@@ -293,6 +295,16 @@ export const EXPENSES_REQUEST_SUB_TABS = [
 export const DESK_REQUEST_SUB_TABS = [
   { route: '/time-off/pending-approvals/desk-approval/for-you', permission: 'For You (Desk Requests).view' },
   { route: '/time-off/pending-approvals/desk-approval/for-your-role', permission: 'For Role (Desk Requests).view' },
+]
+
+export const CONTRACT_REQUEST_SUB_TABS = [
+  { route: '/time-off/pending-approvals/contractors-request/for-you', permission: 'For You (Contractors).view' },
+  { route: '/time-off/pending-approvals/contractors-request/for-your-role', permission: 'For Role (Contractors).view' },
+]
+
+export const CONTRACT_CONVERSION_REQUEST_SUB_TABS = [
+  { route: '/time-off/pending-approvals/contract-conversion/for-you', permission: 'For You (Contract-Conversion).view' },
+  { route: '/time-off/pending-approvals/contract-conversion/for-your-role', permission: 'For Role (Contract-Conversion).view' },
 ]
 
 export const SETTINGS_MAIN_HEADER_TABS = [

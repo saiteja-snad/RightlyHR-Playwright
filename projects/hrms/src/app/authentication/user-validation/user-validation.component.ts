@@ -54,7 +54,6 @@ export class UserValidationComponent {
     const tokens = await this.auth.getTokenResponse(); // Microsoft tokens
     const storedRes = localStorage.getItem('currentUser');
 
-    // ✅ Case 1: Microsoft tokens exist but no stored response → first time login
     if (tokens && !storedRes) {
       const deviceName = this.auth.getDeviceName();
       const ipAddress = await this.auth.getIpAddress();
@@ -68,14 +67,11 @@ export class UserValidationComponent {
 
       this.auth.postData('v2/Auth/social', payload).subscribe({
         next: (res: any) => {
-          this.auth.storeAuthResponse(res);  // Save access/refresh tokens + user info
-          localStorage.setItem('loginType', 'Microsoft Login');
-          console.log('MS Backend login success:', res);
+          this.auth.storeAuthResponse(res);  
           this.getUserDetails(res.email);
         },  
         error: (err) => {
-          console.error('MS Backend login failed:', err);
-          this.router.navigate(['/login']); // fallback
+          this.router.navigate(['/login']); 
         }
       });
 
@@ -84,12 +80,10 @@ export class UserValidationComponent {
 
     if (storedRes) {
       const parsedRes = JSON.parse(storedRes);
-      console.log('Using cached login data:', parsedRes.email);
       this.getUserDetails(parsedRes.email);
       return;
     }
 
-    console.warn('No auth data found. Redirecting to login.');
     this.router.navigate(['/login']);
   }
 

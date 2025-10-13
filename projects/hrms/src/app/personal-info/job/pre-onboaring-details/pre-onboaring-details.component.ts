@@ -18,6 +18,8 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   empinfo: any;
   preOnboardingForm!: FormGroup;
+  contractForm!: FormGroup;
+
   buttons: boolean = false;
   loading: boolean = false;
   empdata: Ipersonal = {} as Ipersonal;
@@ -32,7 +34,10 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
     this.initializeForm();
+    this.initializeContractForm();
     this.preOnboardingForm.disable(); // Disable the form initially
+    this.contractForm.disable(); // Disable the form initially
+
   }
 
   getEmpInfoFromRoute(): void {
@@ -45,12 +50,14 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
        
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();
+    this.getContractOfferLetterByEmployeeId();
     this.getTraineeOfferLetterEmployeebyId();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();
+    this.getContractOfferLetterByEmployeeId();
     this.getTraineeOfferLetterEmployeebyId();
     }
   }
@@ -58,7 +65,6 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.preOnboardingForm = this.fb.group({
       offerSentDate: [{ value: '', disabled: true }],
-
       offerSentBy: [{ value: '', disabled: true }],
       offerSentStatus: [{ value: '', disabled: true }],
       appointmentSentDate: [{ value: '', disabled: true }],
@@ -72,15 +78,35 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+    initializeContractForm(): void {
+    this.contractForm = this.fb.group({
+      offerSentDate: [{ value: '', disabled: true }],
+      offerSentBy: [{ value: '', disabled: true }],
+      offerSentStatus: [{ value: '', disabled: true }]
+      // appointmentSentDate: [{ value: '', disabled: true }],
+      // appointmentSentBy: [{ value: '', disabled: true }],
+      // appointmentSentStatus: [{ value: '', disabled: true }],
+      // traineeOfferSentDate: [{ value: '', disabled: true }],
+      // traineeOfferSentBy: [{ value: '', disabled: true }],
+      // traineeOfferSentStatus: [{ value: '', disabled: true }],
+      // traineeAppointmentSentBy: [{ value: '', disabled: true }],
+      // traineeAppointmentSentStatus: [{ value: '', disabled: true }]
+    });
+  }
+
   enableForm(): void {
     this.buttons = true;
     this.preOnboardingForm.enable();
+    this.contractForm.enable();
+
   }
 
   disableForm(): void {
     this.buttons = false;
     this.preOnboardingForm.reset();
     this.preOnboardingForm.disable();
+    this.contractForm.reset();
+    this.contractForm.disable();
   }
 
   saveForm(): void {
@@ -197,6 +223,29 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
 
         // Patch the form with offer letter details
         this.preOnboardingForm.patchValue({
+          offerSentDate: this.formatDate(this.offerDetails.offerSentDate) || '',
+          offerSentBy: this.offerDetails.offerSentByName || '',
+          offerSentStatus: this.offerDetails.offerSentStatus || ''
+        });
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    });
+  }
+
+  //function to get offer letter data using getbyemployeeid
+  getContractOfferLetterByEmployeeId(): void {
+    const EmpId = parseInt(this.empinfo.employeeId);
+    console.log(EmpId);
+
+    this.subscription = this.http.getData(`OfferLetter/getContractOfferLetterByEmpId/${EmpId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.offerDetails = data;
+
+        // Patch the form with offer letter details
+        this.contractForm.patchValue({
           offerSentDate: this.formatDate(this.offerDetails.offerSentDate) || '',
           offerSentBy: this.offerDetails.offerSentByName || '',
           offerSentStatus: this.offerDetails.offerSentStatus || ''

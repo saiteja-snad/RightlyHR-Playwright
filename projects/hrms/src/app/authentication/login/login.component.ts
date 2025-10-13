@@ -145,11 +145,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   async onSubmit(loginForm: FormGroup) {
-    console.log('Submit clicked, spinnerLoader:', this.spinnerLoader);
 
     if (loginForm.valid) {
       this.spinnerLoader = true;
-      console.log('Form valid, calling API...');
 
       const loginData = loginForm.value;
       const deviceName = this.http.getDeviceName();
@@ -162,17 +160,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         ipAddress
       };
 
-      this.subscription = this.http.login(`v2/Auth/login`, payload)
-        .pipe(finalize(() => {
-          console.log('Finalize triggered, resetting loader');
-          this.spinnerLoader = false;
-        }))
-        .subscribe({
+      this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
           next: (res: any) => {
             console.log('API success:', res);
             if (res) {
               this.http.storeAuthResponse(res);
-              localStorage.setItem('loginType', 'Classic Login');
               setTimeout(() => {
                 console.log('Navigating to /uservalidation');
                 this.router.navigate(['/uservalidation']);
@@ -182,7 +174,6 @@ export class LoginComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
-            console.error('API error:', err);
             this.Status = 'Invalid Email ID or Password';
           }
         });

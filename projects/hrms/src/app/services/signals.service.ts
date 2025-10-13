@@ -60,6 +60,12 @@ export class SignalsService {
   traineeDetailsTriggerSignal = signal<boolean>(false);
   // probation deatils
   probationDetailsTriggerSignal = signal<boolean>(false);
+
+  contractForyouTriggerSignal = signal<boolean>(false);
+
+  contractConversionForYouTriggerSignal = signal<boolean>(false);
+  contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
+
   
   constructor(
     private sharedModalService: OpenModalService,

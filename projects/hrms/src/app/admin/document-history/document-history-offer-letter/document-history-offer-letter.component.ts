@@ -183,6 +183,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
       note: Values.note,
+      rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
+      documentType: Values.documentType,
+      letterType : Values.letterType,
+      currencyType : Values.currencyType
     };
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
@@ -245,6 +249,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
       note: Values.note,
+      rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
+      documentType: Values.documentType,
+      letterType : Values.letterType,
+      currencyType : Values.currencyType
     };
     console.log(updateOfferLetterDetails);
     this.subscription = this.http
@@ -365,6 +373,11 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: this.selectedValuesOfOffer.authoritySignature,
       addressType: this.selectedValuesOfOffer.addressType,
       note: this.selectedValuesOfOffer.note,
+      rolesAndResponsibilitesId:
+        this.selectedValuesOfOffer.rolesAndResponsibilitesId,
+      documentType: this.selectedValuesOfOffer.documentType,
+      letterType : this.selectedValuesOfOffer.letterType,
+      currencyType : this.selectedValuesOfOffer.currencyType
     };
     console.log(updateOfferLetterDetails);
     this.subscription = this.http

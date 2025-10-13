@@ -93,6 +93,20 @@ export class PendingApprovalsTabsComponent {
       permission: { feature: 'Trainee Details Tab', action: 'view' },
       icon: '/time-off-icon/trainee-icon.png',
     },
+     {
+      label: 'Contractors',
+      route: '/time-off/pending-approvals/contractors-request',
+      moduleId: environment.contractorModuleId,
+      permission: { feature: 'Contractor Details Tab', action: 'view' },
+      icon: '/time-off-icon/trainee-icon.png',
+    },
+    {
+      label: 'Contract-Conversion',
+      route: '/time-off/pending-approvals/contract-conversion',
+      moduleId: environment.contractEmployeeConversionModuleId,
+      permission: { feature: 'Contract-Conversion Tab', action: 'view' },
+      icon: '/time-off-icon/trainee-icon.png',
+    },
     {
       label: 'Separations',
       route: '/time-off/pending-approvals/separation-request',

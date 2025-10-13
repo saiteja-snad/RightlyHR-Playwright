@@ -7,15 +7,44 @@ import { ProbationEmployeesComponent } from "./probation-employees/probation-emp
 import { ActiveInternsComponent } from "./active-interns/active-interns.component";
 import { InactiveInternsComponent } from "./inactive-interns/inactive-interns.component";
 import { AllemployeesComponent } from "./allemployees/allemployees.component";
+import { InactiveContractEmployeesComponent } from "./inactive-contract-employees/inactive-contract-employees.component";
+import { ContractEmployeeComponent } from "./contract-employee/contract-employee.component";
+import { ActiveContractEmployeesComponent } from "./active-contract-employees/active-contract-employees.component";
 
 export default [
-    { path: '', redirectTo: '/employee-management/all-employees', pathMatch: 'full' },
-    { path: 'prospective-employees', component: ProspectiveEmployeesComponent,},
-    { path: 'active-employees', component: ActiveEmployeesComponent,  },
-    { path: 'inactive-employees', component: InactiveEmployeesComponent, },
-    { path: 'prospective-interns', component: ProspectiveInternsComponent , },
-    { path: 'active-interns', component: ActiveInternsComponent, },
-    { path: 'inactive-interns', component: InactiveInternsComponent, },
-    { path: 'probation-employees', component: ProbationEmployeesComponent,},
-    { path: 'all-employees', component: AllemployeesComponent,},
+    { path: '', redirectTo: '/employee-management/active', pathMatch: 'full' },
+    {
+        path: 'active',
+        children: [
+            { path: '', redirectTo: 'employees', pathMatch: 'full' },
+            { path: 'employees', component: ActiveEmployeesComponent, },
+            { path: 'contract', component: ActiveContractEmployeesComponent },
+            { path: 'interns', component: ActiveInternsComponent, },
+        ],
+    },
+    {
+        path: 'prospective',
+        children: [
+            { path: '', redirectTo: 'employees', pathMatch: 'full' },
+            { path: 'employees', component: ProspectiveEmployeesComponent, },
+            { path: 'contract', component: ContractEmployeeComponent },
+            { path: 'interns', component: ProspectiveInternsComponent, },
+        ],
+    },
+    {
+        path: 'inactive',
+        children: [
+            { path: '', redirectTo: 'employees', pathMatch: 'full' },
+            { path: 'employees', component: InactiveEmployeesComponent, },
+            { path: 'contract', component: InactiveContractEmployeesComponent },
+            { path: 'interns', component: InactiveInternsComponent, },
+        ],
+    },
+    {
+        path: 'probation',
+        children: [
+            { path: '', redirectTo: 'employees', pathMatch: 'full' },
+            { path: 'employees', component: ProbationEmployeesComponent, },
+        ],
+    },
 ] as Route[];

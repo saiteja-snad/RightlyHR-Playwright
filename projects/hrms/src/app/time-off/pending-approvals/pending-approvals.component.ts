@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { PendingApprovalsTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { filter, Subject, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePicker } from 'primeng/datepicker';
@@ -26,6 +26,7 @@ export class PendingApprovalsComponent implements OnInit {
   projectsData: any[] = [];
   employeeData: any[] = [];
   dataload = false;
+  subscription!: Subscription;
   datepickerForm!: FormGroup;
   destroy$ = new Subject<boolean>();
   empinfo: any;
@@ -123,19 +124,37 @@ export class PendingApprovalsComponent implements OnInit {
 
   /** When project selected */
   onProjectChange(event: any) {
-    console.log(event);
-    
-    const selectedProjectId = event.value;
+    console.log('Project change event:', event);
+
+    const selectedProjectId = event?.value ?? 0;
+
+    // Reset employee data
     this.employeeData = [];
     this.datepickerForm.get('resourceId')?.setValue([]);
-    this.datepickerForm.get('resourceId')?.disable();
-    if (selectedProjectId) {
-      this.projectId = selectedProjectId;
+
+
+    this.projectId = selectedProjectId;
+
+    if (selectedProjectId && selectedProjectId !== 0) {
+      // 🟢 Regular project selected → load employees for project
       this.getAllActiveEmployees();
     } else {
-      this.projectId = 0;
+      // 🟡 "No Client - No Project" selected → load team manager employees
+      this.getTeamManagersDetails();
+
+      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+      setTimeout(() => {
+        if (this.getEmployeeInfo?.length) {
+          this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+            id: emp.employeeId,
+            name: emp.fullName
+          }));
+          this.datepickerForm.get('resourceId')?.enable();
+        }
+      }, 300);
     }
   }
+
 
   /** Reset form when navigating to another component */
   setupNavigationReset() {
@@ -164,6 +183,31 @@ export class PendingApprovalsComponent implements OnInit {
         }
       });
   }
+
+  getEmployeeInfo = [] as any;
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              employeeId: employee.employeeId,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
+            }));
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching team manager details:', err);
+          this.getEmployeeInfo = [];
+        }
+      });
+  }
+
 
 
 

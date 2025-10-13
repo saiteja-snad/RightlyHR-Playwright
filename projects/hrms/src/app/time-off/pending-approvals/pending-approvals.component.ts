@@ -14,7 +14,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { HttpService } from '../../services/http.service';
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent, 
+  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent,
     NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
@@ -45,9 +45,9 @@ export class PendingApprovalsComponent implements OnInit {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
 
-      this.datepickerForm.valueChanges.subscribe(() => {
-    this.isSubmitEnabled = this.isAnyFieldSelected();
-  });
+    this.datepickerForm.valueChanges.subscribe(() => {
+      this.isSubmitEnabled = this.isAnyFieldSelected();
+    });
   }
 
   initiateUpdateModuleInfo() {
@@ -80,35 +80,51 @@ export class PendingApprovalsComponent implements OnInit {
 
 
   isAnyFieldSelected(): boolean {
-  const formValue = this.datepickerForm.value;
-  return (
-    (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
-    !!formValue.projectId ||                                   // project selected
-    (formValue.resourceId && formValue.resourceId.length > 0)  // at least one resource selected
-  );
-}
+    const formValue = this.datepickerForm.value;
+    return (
+      (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
+      !!formValue.projectId ||                                   // project selected
+      (formValue.resourceId && formValue.resourceId.length > 0)  // at least one resource selected
+    );
+  }
 
   /** Get all projects for the current employee */
+
   getAllActiveProjects() {
     this.http
       .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.projectsData = res.data.map((p: any) => ({
+          const projects = res?.data || [];
+
+          this.projectsData = projects.map((p: any) => ({
             ...p,
-            displayName: `${p.client.clientName} - ${p.projectName}`
+            displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
           }));
+
+          this.projectsData.unshift({
+            projectId: null,
+            displayName: 'No Client - No Project'
+          });
         },
         error: (err) => {
           console.error('Error fetching projects:', err);
-          this.projectsData = [];
-        }
+
+          this.projectsData = [
+            {
+              projectId: null,
+              displayName: 'No Client - No Project'
+            }
+          ];
+        },
       });
   }
 
   /** When project selected */
   onProjectChange(event: any) {
+    console.log(event);
+    
     const selectedProjectId = event.value;
     this.employeeData = [];
     this.datepickerForm.get('resourceId')?.setValue([]);
@@ -148,6 +164,8 @@ export class PendingApprovalsComponent implements OnInit {
         }
       });
   }
+
+
 
   /** On form submit */
   onSubmit() {

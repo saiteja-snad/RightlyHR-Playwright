@@ -19,7 +19,6 @@
             <input type="search" #search="ngModel" [(ngModel)]="searchValue"  class="form-control custom-search-input" placeholder="Search" aria-label="Search"
                 aria-describedby="basic-addon1">
         </div>
-
         <ng-container *ngIf="loading; else maincontent">
             <ng-template #loadingSpinner>
                 <div>

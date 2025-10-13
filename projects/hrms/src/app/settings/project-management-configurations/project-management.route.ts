@@ -19,5 +19,8 @@ export default [
     },
     {
         path: 'signature-authority', loadComponent: () => import('./project-management/signature-authority/signature-authority.component').then(m => m.SignatureAuthorityComponent), canActivate: [PermissionsGuard], data: { permission: 'Project Management Authority.view'},
+    },
+     {
+        path: 'letter-frequency', loadComponent: () => import('./project-management/letter-frequency/letter-frequency.component').then(m => m.LetterFrequencyComponent), canActivate: [PermissionsGuard], data: { permission: 'Project Management Authority.view'},
     }
 ]

@@ -72,26 +72,41 @@
         </div>
 
         <!-- utilization summery chats -->
-        <div class="attendance-summary-card">
-            <div>
-                <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
+<div class="attendance-summary-card">
+  <div>
+    <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
+  </div>
+
+  <ng-container *ngIf="(utilizationcount$.value?.length ?? 0) > 0; else nolistTemplateUtilization">
+    <div class="chart-content">
+      <p-chart
+        type="doughnut"
+        [data]="timesheetutilizeSummaryChartData"
+        [options]="timesheetSummaryOptions"
+      ></p-chart>
+    </div>
+
+    <ul class="list-style-none ps-0 pt-3 mb-0">
+      @if (utilizationcount$ | async; as utilizationList) {
+        @for (item of utilizationList; track $index) {
+          <li>
+            <div class="d-flex justify-content-between summart-text">
+              <div class="summary-name">{{ item.label }}</div>
+              <div>{{ item.value }}</div>
             </div>
-            <div class="chart-content">
-                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData" [options]="timesheetSummaryOptions" />
-            </div>
-            <ul class="list-style-none ps-0 pt-3">
-                @if (utilizationcount$ | async; as utilizationList) {
-                @for (item of utilizationList; track $index) {
-                <li>
-                    <div class="d-flex justify-content-between summart-text">
-                        <div class="summary-name">{{ item.label }}</div>
-                        <div>{{ item.value }}</div>
-                    </div>
-                </li>
-                }
-                }
-            </ul>
-        </div>
+          </li>
+        }
+      }
+    </ul>
+  </ng-container>
+
+  <ng-template #nolistTemplateUtilization>
+    <div class="custom-placeholder-content">
+      <app-no-data-found></app-no-data-found>
+    </div>
+  </ng-template>
+</div>
+
     </div>
 </div>
 

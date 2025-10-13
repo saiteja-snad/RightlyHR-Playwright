@@ -20,7 +20,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="university" class="form-label custom-label mb-2">University<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="university" formControlName="university">
+                    <input type="text" class="form-control custom-input" id="university" formControlName="university" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="educationForm.get('university')?.hasError('required') && educationForm.get('university')?.touched" class="error-msg">
                         University is required
                     </div>
@@ -34,7 +34,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="specialization" class="form-label custom-label mb-2">Specialization<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization">
+                    <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="educationForm.get('specialization')?.hasError('required') && educationForm.get('specialization')?.touched" class="error-msg">
                         Specialization is required
                     </div>

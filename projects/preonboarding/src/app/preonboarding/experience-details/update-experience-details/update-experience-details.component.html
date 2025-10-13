@@ -20,7 +20,8 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Company Name<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="companyName">
+                    <input type="text" class="form-control custom-input" formControlName="companyName"
+                    (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched"
                         class="error-msg">
                         Company Name is required
@@ -65,7 +66,8 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="jobTitle">
+                    <input type="text" class="form-control custom-input" formControlName="jobTitle"
+                    (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched"
                         class="error-msg">
                         Job Role is required
@@ -99,9 +101,9 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                        <!-- <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                             [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
-                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list>
+                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list> -->
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                             placeholder="Please enter your mobile number" id="phonenumbers"
                             aria-describedby="phonenumbers"

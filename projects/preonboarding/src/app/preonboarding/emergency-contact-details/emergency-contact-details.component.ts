@@ -13,6 +13,7 @@ import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { FormValidationService } from '../../common-services/form-validation.service';
 @Component({
   selector: 'app-emergency-contact-details',
   imports: [CommonModule, ReactiveFormsModule, Select, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
@@ -47,7 +48,7 @@ export class EmergencyContactDetailsComponent {
   };
   mobileNumberData: IphoneNumberData | null = null;
 
-  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private fb: FormBuilder,
+  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private fb: FormBuilder,public formValidation: FormValidationService,
     private openPopup: PopupService) { 
       effect(() => {
         this.selectedCountryCode?.set(this.selectedDialCode);
@@ -101,14 +102,14 @@ export class EmergencyContactDetailsComponent {
   initializeForm() {
     this.contactForm = this.fb.group({
       contact1: this.fb.group({
-        name: ['', [Validators.required,Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+        name: ['', [Validators.required,Validators.pattern(/^(?! )[A-Za-z0-9\s\S]{1,255}$/)]],
         email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
         // countyCode1:[null, [Validators.required]],
       }),
       contact2: this.fb.group({
-        name: ['', [Validators.required,Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+        name: ['', [Validators.required,Validators.pattern(/^(?! )[A-Za-z0-9\s\S]{1,255}$/)]],
         email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],

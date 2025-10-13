@@ -22,7 +22,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Company Name<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="companyName"
-                        placeholder="Company Name" autocomplete="off">
+                        placeholder="Company Name" autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched"
                         class="error-msg">
                         Company Name is required
@@ -68,7 +68,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Job Role<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobTitle" placeholder="Job Role"
-                        autocomplete="off">
+                        autocomplete="off" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched"
                         class="error-msg">
                         Job Role is required
@@ -101,9 +101,9 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                        <!-- <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                             [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
-                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list>
+                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list> -->
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                             placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
                             [value]="experienceForm.get('previousContactNumber')?.value" autocomplete="off">
@@ -122,6 +122,8 @@
                     <label class="form-label custom-label mb-2">Work Email</label>
                     <input type="email" class="form-control custom-input" formControlName="previousContactEmail"
                         placeholder="Please enter work email">
+                    <div class="error-msg my-1" *ngIf="experienceForm.get('previousContactEmail')?.hasError('email')">Please enter a valid email
+                                ID</div>
                 </div>
     
                 <div class="col-md-12 mb-3">

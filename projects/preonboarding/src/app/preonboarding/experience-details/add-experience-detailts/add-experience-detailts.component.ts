@@ -51,7 +51,8 @@ export class AddExperienceDetailtsComponent {
   startDatevalidate:any;
   submissionInProgress = false;
 
-  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { }
+  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, 
+    private getData:DataService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -62,14 +63,14 @@ export class AddExperienceDetailtsComponent {
   initializeExperienceForm() {
     this.experienceForm = this.fb.group({
       isPresent: [false],
-      companyName: [null, [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      companyName: [null, [Validators.required, Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: [null, Validators.required],
       toDate: [null],
-      jobTitle: [null, [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      jobTitle: [null, [Validators.required, Validators.maxLength(100)]],
       description: [null,[Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
       previousContactName: [null],
-      previousContactNumber: [null, [this.phoneNumberValidator()]],
+      previousContactNumber: [null],
       previousContactEmail: [null, [Validators.email]],
       attachment: [null, Validators.required]
     }, { validators: [this.DateValidator()] });

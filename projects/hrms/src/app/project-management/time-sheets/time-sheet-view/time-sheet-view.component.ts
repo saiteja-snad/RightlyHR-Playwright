@@ -147,8 +147,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
 
     //enable/disable
-      const shouldEnable =
-      isProjectSelected && !isLeave  && !isFutureDate
+    const shouldEnable =
+      isProjectSelected && !isLeave && !isFutureDate
         ? isBlocked
           ? isWeekend && isWeekendAllowedProject
           : true
@@ -662,7 +662,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
-
+    console.log(client, project);
 
     const form = row as FormGroup;
     // Patch project details
@@ -699,50 +699,50 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     days.forEach((dayKey) => {
       const dayForm = form.get(dayKey) as FormGroup;
       if (!dayForm) return;
-
       const isBlocked = dayForm.get('isBlocked')?.value;
-      const isLeave = dayForm.get('isLeave')?.value;
       const blockReason = dayForm.get('blockReason')?.value;
+      const isLeave = dayForm.get('isLeave')?.value;
       const dateValue = dayForm.get('entryDate')?.value;
-      console.log(dateValue);
       
-
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const entryDate = dateValue ? new Date(dateValue) : null;
       const isFutureDate = entryDate ? entryDate > today : false;
-
-
-      const isWeekend = blockReason === 'Weekend';
-      const isWeekendAllowed = this.selectedProjectResource?.weekendWorkAllowed;
-
-      // ✅ final condition: disable if blocked, leave, or future date
-      const shouldEnable =
-        !isBlocked &&
-        !isLeave &&
-        !isFutureDate &&
-        (isWeekend ? isWeekendAllowed : true);
-
-      const editableFields = [
-        'duration',
-        'description',
-        'startTime',
-        'endTime',
+      // Enable basic fields if not blocked or leave
+      [
         'clientName',
         'clientId',
         'projectName',
-        'projectId'
-      ];
-
-      editableFields.forEach((ctrl) => {
-        if (shouldEnable) {
-          dayForm.get(ctrl)?.enable({ emitEvent: false });
+        'projectId',
+        'startTime',
+        'endTime',
+        'description',
+      ].forEach((ctrl) => {
+        if (!isBlocked && !isLeave) {
+          dayForm.get(ctrl)?.enable();
         } else {
-          dayForm.get(ctrl)?.disable({ emitEvent: false });
+          dayForm.get(ctrl)?.disable();
         }
       });
+      // Enable duration
+      if (!isBlocked && !isLeave && !isFutureDate ) {
+        dayForm.get('duration')?.enable();
+        dayForm.get('description')?.enable();
+        dayForm.get('startTime')?.enable();
+        dayForm.get('endTime')?.enable()
+      } else if (
+        blockReason === 'Weekend' &&
+        this.selectedProjectResource?.weekendWorkAllowed
+      ) {
+        // If weekend is blocked but project allows weekends
+        dayForm.get('duration')?.enable();
+        dayForm.get('description')?.enable();
+        dayForm.get('startTime')?.enable();
+        dayForm.get('endTime')?.enable()
+      } else {
+        dayForm.get('duration')?.disable();
+      }
     });
-
     // Close dropdown safely
     const dropdownMenu = document.querySelector('.dropdown-menu.show');
     if (dropdownMenu) dropdownMenu.classList.remove('show');
@@ -784,7 +784,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     index: number,
     dayKey: string
   ) {
-  
+
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference

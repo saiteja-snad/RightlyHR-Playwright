@@ -16,7 +16,7 @@
         <!-- <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search" aria-label="Search"
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue"  class="form-control custom-search-input" placeholder="Search" aria-label="Search"
                 aria-describedby="basic-addon1">
         </div> -->
 
@@ -44,7 +44,7 @@
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(clients?.length ?? 0) > 0; else noDataTemplate">
-                            <tr *ngFor="let client of clients; let i = index">
+                            <tr *ngFor="let client of clients | inactiveclient : searchValue; let i = index">
                                 <td>
                                     <img [src]="getImageUrl(client.logoPath)" alt="Logo" width="32" height="32" />
                                 </td>

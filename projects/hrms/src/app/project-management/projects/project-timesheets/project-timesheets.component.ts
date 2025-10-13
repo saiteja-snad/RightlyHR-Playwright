@@ -3,16 +3,15 @@ import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
-import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
-import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse, UtilizationSummary } from '../../../Interfaces/timesheetsummary';
+import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 @Component({
   selector: 'app-project-timesheets',
-  imports: [CommonModule, TranslateModule, ChartModule, InfoIconComponent,DataLoaderContentComponent,NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, ChartModule, DataLoaderContentComponent,NoDataFoundComponent],
   templateUrl: './project-timesheets.component.html',
   styleUrl: './project-timesheets.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -28,7 +27,8 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
   statusCounts$ = new BehaviorSubject<MonthlySummaryItem[]>([]);
   utilizationcount$ = new BehaviorSubject<any>(null);
   totalEntries = 0;
-  loading = false
+  loading = false;
+
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService) { }
 
   ngOnInit() {
@@ -109,6 +109,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
     this.totalEntries = 0;
     this.timesheetSummaryChartData = { labels: [], datasets: [] };
   }
+
   openModal(entries: TimesheetEntry[], content?: any) {
     // Calculate overtime if needed (example: loggedHours - allocatedHours if > 0)
     this.selectedEntries = entries.map(e => ({
@@ -119,7 +120,6 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-
     this.destroy$.next(true);
     this.destroy$.complete();
     this.http.setRequest(null);

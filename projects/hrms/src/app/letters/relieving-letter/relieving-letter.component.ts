@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -12,15 +12,12 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../letters.modal';
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss',
-
 })
 
 export class RelievingLetterComponent implements OnInit, OnDestroy {
@@ -154,11 +151,9 @@ export class RelievingLetterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`JobDetails/${employeeId}`).subscribe({
       next: (data: any) => {
         const today = new Date(this.selectedEmployee.lastworkingday);
-
         const latestJob = data
           ?.filter((job: { effectiveDate: any; }) => new Date(job.effectiveDate) <= today)
           .sort((a: { effectiveDate: any; }, b: { effectiveDate: any; }) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime())[0];
-
         if (latestJob) {
           this.selectedEmployeeJobDetails = latestJob;
           this.jobErrorMessage = '';
@@ -180,6 +175,7 @@ export class RelievingLetterComponent implements OnInit, OnDestroy {
        ${this.selectedAuthority.lastName}` : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
     }
   }
+  
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');

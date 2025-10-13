@@ -17,6 +17,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 @Component({
   selector: 'app-nodue-approval-details',
   imports: [
@@ -30,6 +31,7 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     NodueDetailsPipe,
     DateformatPipe,
     DataLoaderContentComponent,
+    InfoIconComponent
   ],
   templateUrl: './nodue-approval-details.component.html',
   styleUrl: './nodue-approval-details.component.scss',

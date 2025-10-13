@@ -36,6 +36,7 @@ export class RegularizationComponent {
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
   years: number[] = [];
+  activeEmplist = [] as any;
 
   constructor(private http: HttpService, public rbac: RbacService, public formsValidation: FormValidationsService,
     public readonly router: Router, private TimeoffYearFilterService: TimeoffYearFilterService) { }
@@ -45,6 +46,7 @@ export class RegularizationComponent {
     this.getTeamManagersDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getAllEmployeeDetails();
     // year selection values
     this.currentYear = new Date().getFullYear();
     this.selectedYear = this.currentYear; // Move this up
@@ -58,6 +60,18 @@ export class RegularizationComponent {
     });
     // Send initial year to the service so other component can pick it up
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
+  }
+
+  getAllEmployeeDetails() {
+    const satus = ['Active', 'Trainee Active'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
   }
 
   onYearChange() {
@@ -92,9 +106,8 @@ export class RegularizationComponent {
           const myTeam = response.filter((e: any) => e.isAccess);
           this.getEmployeeInfo = myTeam.map((employee: any) => ({
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           }));
         }
       },
@@ -117,26 +130,24 @@ export class RegularizationComponent {
   }
 
   getPermission(employeedId?: any) {
-    // let empId = this.empinfo.employeeId
-    // console.log(empId);
+    // let empId = this.empinfo.employeeId;
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({
     let empId = employeedId
     this.subscription =  this.http.getFilterRegularizationDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
-        this.regularize = response
-        //  console.log(this.regularize[0].startTime)
+        this.regularize = response;
         this.regularize.forEach((element: { status: string }) => {
           if (element.status === 'Waiting for Approval') {
             this.pendingCount++;
           }
           if (element.status === 'Approved') {
-            this.ApprovedCount++
+            this.ApprovedCount++;
           }
           if (element.status === 'Rejected') {
-            this.rejectedCount++
+            this.rejectedCount++;
           }
           if (element.status === 'Processed') {
-            this.ProcessedCount++
+            this.ProcessedCount++;
           }
         });
       },

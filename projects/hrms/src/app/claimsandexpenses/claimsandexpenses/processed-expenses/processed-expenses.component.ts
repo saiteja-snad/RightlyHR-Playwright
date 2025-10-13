@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-processed-expenses',
@@ -27,16 +28,35 @@ export class ProcessedExpensesComponent implements OnInit,OnDestroy {
   commentsrecivced = [] as any
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
-  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
-  constructor(
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
-    searchTerm: any = ''
+      searchTerm: any = ''
     expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;
   loading=false
+  selectemp: any;
+ selectedYear: any;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  constructor(
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
+
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid();
+
+
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    });
+
   }
   opencommentsModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -47,20 +67,22 @@ export class ProcessedExpensesComponent implements OnInit,OnDestroy {
   openimgaeModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
-  getexpensesheaderbyemployeeid(): void {
-    this.loading=true
+   getexpensesheaderbyemployeeid(): void {
+    let empId = this.selectemp ?? this.empinfo.employeeId;
+    this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Processed&searchQuery=${cleanSearchQuery}`, ).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Processed&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.loading=false
-          this.expenesEmplyeedata.next(data) 
+          this.loading = false
+          this.expenesEmplyeedata.next(data)
 
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
+
 
   comments_Function(comments: any) {
     this.commentsrecivced = comments

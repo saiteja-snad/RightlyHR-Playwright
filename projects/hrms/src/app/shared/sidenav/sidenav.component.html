@@ -56,20 +56,20 @@
             }
 
             <!--It Support-->
-            @if(this.rbac.allowedToAccess('IT Support.view')){
+            <!-- @if(this.rbac.allowedToAccess('IT Support.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/it-support');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/it-support')">
                 <img src="main-menu-icons/it-support.png" alt="Icon" class="main-menu-icon">IT Support
             </li>
-            }
+            } -->
 
             <!--Calendar-->
-            @if(this.rbac.allowedToAccess('Calendar.view')){
+            <!-- @if(this.rbac.allowedToAccess('Calendar.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar-view');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/calendar-view')">
                 <img src="main-menu-icons/calendar.png" alt="Icon" class="main-menu-icon">Calendar
             </li>
-            }
+            } -->
 
             <!--Project Management-->
             @if(this.rbac.allowedToAccess('Project Management.view')){

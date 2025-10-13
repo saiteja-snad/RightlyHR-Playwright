@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 @Component({
   selector: 'app-pending-expenses',
   imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
@@ -36,11 +37,26 @@ export class PendingExpensesComponent implements OnInit,OnDestroy {
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   draftsCount: number = 0;
  expensesAttachment: any;
-  constructor(private http: HttpService,public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer) { }
+  constructor(private http: HttpService,public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
+ selectedYear: any;
+  selectemp: any;
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid();
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    });
   }
 
   openModal(content: any) {
@@ -52,13 +68,15 @@ export class PendingExpensesComponent implements OnInit,OnDestroy {
   }
 
   getexpensesheaderbyemployeeid(): void {
+    let empId = this.selectemp ?? this.empinfo.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Waiting for Approval&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Waiting for Approval&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loading = false
           this.expenesEmplyeedata.next(data)
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },

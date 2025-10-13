@@ -15,8 +15,33 @@
                 <th>{{'Employee Name'|translate}}</th>
                 <th>{{'Work Email'|translate}}</th>
                 <th>{{'Phone Number'|translate}}</th>
-                <th>{{'Probation Start Date'|translate}}</th>
-                <th>{{'Probation End Date'|translate}}</th>
+                <th>
+                     <div class="d-flex align-items-center">
+                            <span>{{'Probation Start Date'|translate}}</span>
+                            <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('dateOfJoining','asc')" [ngClass]="{
+                            'text-primary': isSorted('dateOfJoining','asc'),
+                            'text-muted': !isSorted('dateOfJoining','asc')
+                        }"></i>
+                            <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('dateOfJoining','desc')" [ngClass]="{
+                            'text-primary': isSorted('dateOfJoining','desc'),
+                            'text-muted': !isSorted('dateOfJoining','desc')
+                        }"></i>
+                        </div>
+
+                </th>
+                <th>
+                    <div class="d-flex align-items-center">
+                            <span>{{'Probation End Date'|translate}}</span>
+                            <i class="bi bi-arrow-up cursor-pointer" (click)="sortData('probationEndDate','asc')" [ngClass]="{
+                            'text-primary': isSorted('probationEndDate','asc'),
+                            'text-muted': !isSorted('probationEndDate','asc')
+                        }"></i>
+                            <i class="bi bi-arrow-down cursor-pointer" (click)="sortData('probationEndDate','desc')" [ngClass]="{
+                            'text-primary': isSorted('probationEndDate','desc'),
+                            'text-muted': !isSorted('probationEndDate','desc')
+                        }"></i>
+                        </div>
+                </th>
                 <th>{{'Probation Extended Date'|translate}}</th>
                 <th>{{'Designation'|translate}}</th>
             </thead>

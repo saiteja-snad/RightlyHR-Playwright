@@ -51,6 +51,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   saveasDraftloder = false;
   expensesAttachment: any;
   filehidedonload = true;
+  selectedData={} as any;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
@@ -610,7 +611,10 @@ fileuploadhide :any;
     // this.modalService.dismissAll()
     this.conformationPopup.openSuccessModal("Expense item deleted successfully")
   }
-
+  openpopupforDownload(content: any, expenseDetails: any) {
+     this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

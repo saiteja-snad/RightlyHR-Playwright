@@ -10,46 +10,46 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { environment } from '../../../environments/environment.dev';
 import { CurrencyPipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
+import { OpenModalService } from '../../services/open-modal.service';
 @Component({
   selector: 'app-download-expense',
-  imports: [DateformatPipe,CommonModule, CurrencyPipe],
+  imports: [DateformatPipe, CommonModule, CurrencyPipe],
   templateUrl: './download-expense.component.html',
   styleUrl: './download-expense.component.scss',
 })
-export class DownloadExpenseComponent implements OnInit ,OnDestroy{
+export class DownloadExpenseComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription;
   @Input() downloadData: any;
-selectedItems={} as any;
-empdata={} as any;
-isLoading=false;
-Status!:string
-currencyCode = environment.currencyCode;
-Approverdata={} as any;
-@ViewChild('successhide') private readonly successhide!: NgbModal;
-constructor(
-    public router:Router,
+  selectedItems = {} as any;
+  empdata = {} as any;
+  isLoading = false;
+  Status!: string
+  currencyCode = environment.currencyCode;
+  Approverdata = {} as any;
+  @ViewChild('successhide') private readonly successhide!: NgbModal;
+  constructor(
+    public router: Router,
     private http: HttpService,
     config: NgbModalConfig, private modalService: NgbModal,
-
-  
+    private conformationPopup: OpenModalService,
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
   }
-ngOnInit(): void {
-  console.log(this.downloadData);
-  if (this.downloadData) {
-     this.Approverdata=this.downloadData.expenseApproverComments?.find((item: any) => item?.action === 'Approved');
-    console.log(this.Approverdata);
+  ngOnInit(): void {
+    console.log(this.downloadData);
+    if (this.downloadData) {
+      this.Approverdata = this.downloadData.expenseApproverComments?.find((item: any) => item?.action === 'Approved');
+      console.log(this.Approverdata);
 
-    this.getItem(this.downloadData.expenses_ID);
-  } else {
-    this.getItem(0); // Default to 0 if no data is provided
+      this.getItem(this.downloadData.expenses_ID);
+    } else {
+      this.getItem(0); // Default to 0 if no data is provided
+    }
   }
-}
-//function to get the expense item by id
-getItem(expid: number) {
+  //function to get the expense item by id
+  getItem(expid: number) {
     this.subscription = this.http
       .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
         next: (data: any) => {
@@ -65,17 +65,17 @@ getItem(expid: number) {
   //function to get the employee details by id
   getEmployeeDetails(employeeId: number) {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.empdata = data;
-          this.getJobdetails(this.empdata);
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+      next: (data: any) => {
+        console.log(data);
+        this.empdata = data;
+        this.getJobdetails(this.empdata);
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
-    //get Job Details by empployeeid
+  //get Job Details by empployeeid
   getJobdetails(Employee: any) {
     this.subscription = this.http
       .getData(`JobDetails/Empname/${Employee.employeeId}`)
@@ -83,10 +83,10 @@ getItem(expid: number) {
         next: (data: any) => {
           console.log(data);
           const today = new Date();
-          const pastEffectiveJobs = data.filter((job : any) =>
+          const pastEffectiveJobs = data.filter((job: any) =>
             new Date(job.effectiveDate) <= today
           );
-          pastEffectiveJobs.sort((a : any, b : any) =>
+          pastEffectiveJobs.sort((a: any, b: any) =>
             new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime()
           );
           const res = pastEffectiveJobs[0];
@@ -103,7 +103,7 @@ getItem(expid: number) {
       });
   }
   //function to download the file
- async downloadfile(){
+  async downloadfile() {
     this.isLoading = true;
 
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -161,25 +161,25 @@ getItem(expid: number) {
     }
 
     const fileName = `${this.selectedItems.expenses_Title}_${new Date().getTime()}_Expense.pdf`;
-     pdf.save(fileName);
-     this.isLoading = false;
+    pdf.save(fileName);
+    this.isLoading = false;
     const blob = pdf.output('blob');
-    this.dataSuccessMsg('Expense Downloaded Successfully');
+       this.conformationPopup.openSuccessModal(' Expense Downloaded Successfully ');
   }
-    openmodel(content: any) {
+  openmodel(content: any) {
     this.modalService.open(content, { centered: true });
   }
-   dataSuccessMsg(msg: string) {
+  dataSuccessMsg(msg: string) {
     this.Status = msg;
     this.openmodel(this.successhide);
     setTimeout(() => {
       this.modalService.dismissAll();
     }, 2000);
   }
-ngOnDestroy(): void {
-   if (this.subscription) {
+  ngOnDestroy(): void {
+    if (this.subscription) {
       this.subscription.unsubscribe()
     }
-}
+  }
 
 }

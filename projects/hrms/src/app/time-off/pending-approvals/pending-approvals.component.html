@@ -53,7 +53,7 @@
                         class="form-select custom-select"></p-multiSelect>
                 </div>
                 <div>
-                    <button class="custom-btn btn-primary" type="submit">Submit</button>
+                    <button class="custom-btn btn-primary" type="submit"   [disabled]="!isAnyFieldSelected()">Submit</button>
                 </div>
             </div>
         </form>

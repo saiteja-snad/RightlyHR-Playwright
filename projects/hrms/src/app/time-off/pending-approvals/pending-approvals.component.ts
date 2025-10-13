@@ -44,6 +44,10 @@ export class PendingApprovalsComponent implements OnInit {
     this.setupNavigationReset();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+
+      this.datepickerForm.valueChanges.subscribe(() => {
+    this.isSubmitEnabled = this.isAnyFieldSelected();
+  });
   }
 
   initiateUpdateModuleInfo() {
@@ -70,9 +74,19 @@ export class PendingApprovalsComponent implements OnInit {
     this.datepickerForm = this.fb.group({
       dateRange: [null],
       projectId: [null],
-      resourceId: [{ value: [], disabled: true }, Validators.required]
+      resourceId: [{ value: [], disabled: true },]
     });
   }
+
+
+  isAnyFieldSelected(): boolean {
+  const formValue = this.datepickerForm.value;
+  return (
+    (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
+    !!formValue.projectId ||                                   // project selected
+    (formValue.resourceId && formValue.resourceId.length > 0)  // at least one resource selected
+  );
+}
 
   /** Get all projects for the current employee */
   getAllActiveProjects() {

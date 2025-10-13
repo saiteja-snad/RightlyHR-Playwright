@@ -17,6 +17,7 @@ import moment from 'moment';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { LetterheaderonlyComponent } from "../../../../shared/letters-shared-content/letterheaderonly/letterheaderonly.component";
 import { IFrequency } from '../../../../Interfaces/job-model';
+import { IEAV } from '../../../../Interfaces/timoff-model';
 
 @Component({
   selector: 'app-msa',
@@ -39,8 +40,7 @@ export class MsaComponent {
   ];
   spinnerLoader = false;
   clientId: any;
-  frequencyDetails: IFrequency[] = [];
-
+ letterFrequencies: IEAV[] = [];
   constructor(private router: Router, private fb: FormBuilder, private http: HttpService,
     private authService: AuthService, private conformationPopup: OpenModalService, public formValidation: FormValidationsService) { }
 
@@ -53,15 +53,24 @@ export class MsaComponent {
       this.getclientDetailsbyid(parseInt(clientId));
     }
     // this.getAuthorityDetails();
-    this.getFrequency();
+    this.getLetterFrequencies();
   }
 
-  getFrequency() {
-    this.subscription = this.http.getData('Frequency').subscribe({
-      next: (data: any) => {
-        this.frequencyDetails = data as IFrequency[];
-      },
-    });
+  getLetterFrequencies() {
+    this.subscription = this.http
+      .getData('entityAttributeValues?entity=ProjectManagementLetterConfiguration&attribute=frequency')
+      .subscribe({
+        next: (data: any) => {
+          this.letterFrequencies = data
+        },
+        error: (error: any) => {
+          this.letterFrequencies = [];
+          console.error('Error fetching letter frequencies', error);
+        },
+        complete: () => {
+         
+        },
+      });
   }
 
   //function to get the client details
@@ -229,9 +238,9 @@ export class MsaComponent {
       { key: 'serviceProviderNameJurisdiction', value: formData?.serviceProviderNameJurisdiction?.toString() ?? null, dataType: 'string' },
       { key: 'serviceProviderAddress', value: formData?.serviceProviderAddress?.toString() ?? null, dataType: 'string' },
       { key: 'noticePeriodforTermination', value: formData?.noticePeriodforTermination?.toString() ?? null, dataType: 'string' },
-      { key: 'noticePeriodfrequency', value: formData?.noticePeriodfrequency?.frequency1?.toString() ?? null, dataType: 'string' },
+      { key: 'noticePeriodfrequency', value: formData?.noticePeriodfrequency?.value?.toString() ?? null, dataType: 'string' },
       { key: 'paymentTerms', value: formData?.paymentTerms?.toString() ?? null, dataType: 'string' },
-      { key: 'invoicingFrequency', value: formData?.invoicingFrequency?.frequency1?.toString() ?? null, dataType: 'int' },
+      { key: 'invoicingFrequency', value: formData?.invoicingFrequency?.value?.toString() ?? null, dataType: 'int' },
       { key: 'governingLaw', value: formData?.governingLaw?.toString() ?? null, dataType: 'string' },
     ];
     const payLoad = {

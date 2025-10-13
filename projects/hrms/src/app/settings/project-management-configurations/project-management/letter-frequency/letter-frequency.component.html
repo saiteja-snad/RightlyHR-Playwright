@@ -1,1 +1,56 @@
+<div class="custom-main-component-container">
+    <!-- <form autocomplete="off" [formGroup]="addForm" (ngSubmit)="onAddSubmit(addForm)" *ngIf="rbac.allowedToAccess('Client Document Type.create')">
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter document type"
+                    formControlName="documentType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                    formValidations.blockNonAlphabets($event)" maxlength="51">
+                <span class="input-group-text" id="stat">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
+                </span>
+            </div>
+            <div *ngIf="addForm.get('documentType')?.touched && addForm.get('documentType')?.invalid" class="error-msg">
+                <div *ngIf="addForm.get('documentType')?.errors?.['required']">
+                    {{ 'Client Document is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="addForm.get('documentType')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
+            </div>
+            <div *ngIf="addForm.get('documentType')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Client Document Type must be between 2–50 characters' | translate }}
+            </div>
+               <div *ngIf="addForm.get('documentType')?.errors?.['minCharacters']" class="error-msg">
+                {{ 'Client Document Type must be between 2–50 characters' | translate }}
+            </div>
+        </div>
+    </form> -->
 
+    <!--Data Content-->
+    <div class="custom-table-content position-relative w-50">
+        @if (!loading) {
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Letter Frequency</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="letterFrequencies.length > 0; else noDataTemplate">
+                    @for (item of letterFrequencies; track $index) {
+                    <tr>
+                        <td class="w-75">{{item.value}}</td>
+                    </tr>
+                    }
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <app-no-data-found />
+                </ng-template>
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
+    </div>
+</div>

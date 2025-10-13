@@ -1094,7 +1094,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Project Document Type',
     'Client Document Type',
     'Letter Configurations',
-    'Project Management Authority'
+    'Project Management Authority',
+    'Letter Frequency Configurations'
   ];
 
   // Generic toggle function for checkboxes

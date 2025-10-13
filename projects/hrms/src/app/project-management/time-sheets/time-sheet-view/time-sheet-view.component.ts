@@ -98,7 +98,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
     // Add one initial row
     // this.addProject();
-        this.getResourceData()
+    this.getResourceData()
     this.getJobDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(
@@ -125,23 +125,26 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   ): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
+    const entryDateObj = dateValue ? new Date(dateValue) : null;
     const blockReason = day?.blockReason || '';
     const isBlocked = day?.isBlocked || false;
     const isLeave = day?.isLeave || false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
 
-  const matchedResource = this.resourcesArrayList?.find(
-    (r: any) => r?.project?.projectId === projectId
-  );
+    const matchedResource = this.resourcesArrayList?.find(
+      (r: any) => r?.project?.projectId === projectId
+    );
 
-  const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
-  // console.log('Weekend Work Allowed:', isWeekendAllowedProject);
+    const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
 
-    // ✅ Logic to enable/disable fields
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize today’s date
+    const isFutureDate = entryDateObj ? entryDateObj > today : false;
+    //enable/disable
     const shouldEnable =
       isProjectSelected && !isLeave
-        ? isBlocked
+        ? isBlocked && !isFutureDate
           ? isWeekend && isWeekendAllowedProject
           : true
         : false;
@@ -180,7 +183,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ],
       duration: durationControl,
       description: [
-        { value: isNotEntered ? null: day?.description || null,  disabled: !shouldEnable },
+        { value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable },
         Validators.required,
       ],
       approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],

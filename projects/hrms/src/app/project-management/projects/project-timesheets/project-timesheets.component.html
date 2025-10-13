@@ -11,12 +11,12 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
-                <tr *ngFor="let row of attendanceSummaryData">
-                    <td>{{row.resourceName}}</td>
-                    <td>{{ row.date }}</td>
-                    <td>{{ row.dailySummary.totalLoggedHours | number:'1.2-2'}}</td>
-                    <td>{{ row.dailySummary.status }}</td>
-                    <!-- <td>
+                    <tr *ngFor="let row of attendanceSummaryData">
+                        <td>{{row.resourceName}}</td>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.dailySummary.totalLoggedHours | number:'1.2-2'}}</td>
+                        <td>{{ row.dailySummary.status }}</td>
+                        <!-- <td>
                         <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
                             <a (click)="openModal(row.entries, summaryforlogs)">
                                 <app-info-icon />
@@ -26,7 +26,7 @@
                             -
                         </ng-template>
                     </td> -->
-                </tr>
+                    </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
@@ -35,7 +35,6 @@
                 </ng-template>
             </tbody>
         </table>
-
         }
         @else {
         <app-data-loader-content />
@@ -72,41 +71,37 @@
         </div>
 
         <!-- utilization summery chats -->
-<div class="attendance-summary-card">
-  <div>
-    <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
-  </div>
-
-  <ng-container *ngIf="(utilizationcount$.value?.length ?? 0) > 0; else nolistTemplateUtilization">
-    <div class="chart-content">
-      <p-chart
-        type="doughnut"
-        [data]="timesheetutilizeSummaryChartData"
-        [options]="timesheetSummaryOptions"
-      ></p-chart>
-    </div>
-
-    <ul class="list-style-none ps-0 pt-3 mb-0">
-      @if (utilizationcount$ | async; as utilizationList) {
-        @for (item of utilizationList; track $index) {
-          <li>
-            <div class="d-flex justify-content-between summart-text">
-              <div class="summary-name">{{ item.label }}</div>
-              <div>{{ item.value }}</div>
+        <div class="attendance-summary-card">
+            <div>
+                <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
             </div>
-          </li>
-        }
-      }
-    </ul>
-  </ng-container>
 
-  <ng-template #nolistTemplateUtilization>
-    <div class="custom-placeholder-content">
-      <app-no-data-found></app-no-data-found>
-    </div>
-  </ng-template>
-</div>
+            <ng-container *ngIf="(utilizationcount$.value?.length ?? 0) > 0; else nolistTemplateUtilization">
+                <div class="chart-content">
+                    <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
+                        [options]="timesheetSummaryOptions"></p-chart>
+                </div>
 
+                <ul class="list-style-none ps-0 pt-3 mb-0">
+                    @if (utilizationcount$ | async; as utilizationList) {
+                    @for (item of utilizationList; track $index) {
+                    <li>
+                        <div class="d-flex justify-content-between summart-text">
+                            <div class="summary-name">{{ item.label }}</div>
+                            <div>{{ item.value }}</div>
+                        </div>
+                    </li>
+                    }
+                    }
+                </ul>
+            </ng-container>
+
+            <ng-template #nolistTemplateUtilization>
+                <div class="custom-placeholder-content">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-template>
+        </div>
     </div>
 </div>
 

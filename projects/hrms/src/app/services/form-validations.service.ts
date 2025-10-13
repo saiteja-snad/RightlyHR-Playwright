@@ -210,7 +210,6 @@ export class FormValidationsService {
     });
   }
 
-  
   restrictInputallowspicalcharterswithnumbers(event: KeyboardEvent): void {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;

@@ -113,7 +113,7 @@
                         <label for="resourceRole" class="form-label custom-label mb-2">
                             Role<span class="text-danger">*</span></label>
                         <input type="text" formControlName="resourceRole" class="form-control custom-input"
-                            placeholder="Please enter role" />
+                            placeholder="Please enter role" (keydown)="formValidation.restrictInitialSpace($event)" />
                         <div class="error-msg">
                             <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>

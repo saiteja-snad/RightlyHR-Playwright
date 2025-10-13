@@ -110,17 +110,14 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="resourceRole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
-                        <input type="text" formControlName="resourceRole" class="form-control custom-input" placeholder="Please enter role" />
+                        <input type="text" formControlName="resourceRole" (keydown)="formValidation.restrictInitialSpace($event)" 
+                        class="form-control custom-input" placeholder="Please enter role" />
                         <div class="error-msg">
-                            <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
-                            <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']">
-                                {{ 'Role must be between 2–50 characters characters' | translate }}</div>
-                            <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
-                                {{ 'Role must be between 2–50 characters characters' | translate }}</div>
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']
+                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
+                                {{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
                     </div>
 

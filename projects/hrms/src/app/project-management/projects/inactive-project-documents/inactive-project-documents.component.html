@@ -65,13 +65,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <app-confirmation-icon />
-            <p class="confirmation-text">{{'Are you sure you want to Active this Documents?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to restore this document?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
-                translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

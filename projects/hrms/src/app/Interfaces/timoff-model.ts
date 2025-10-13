@@ -50,6 +50,7 @@ export interface ICategoryDetails {
   duration: number;
   probationLeaves: number;
   noticePeriodLeaves: number;
+  expiryDaysLeaves: number
 }
 export interface Ileavesdatas {
   requestedBy: any;
@@ -148,7 +149,7 @@ export interface RegularizationRequest {
   processedComment: string;
   notes: string;
   approverHeaderId: number;
-  cancelledReason:string;
+  cancelledReason: string;
   regularizationApproverComments: RegularizationApproverComment[];
 }
 export interface LeaveType {

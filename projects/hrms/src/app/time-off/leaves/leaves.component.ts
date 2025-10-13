@@ -463,9 +463,9 @@ export class LeavesComponent {
 
   getAvailableLeaves(item: any): number {
     if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked;
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked;
+      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
 
@@ -598,7 +598,8 @@ export class LeavesComponent {
     const maxDays = this.selectedleave?.allowedDays;
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
-    this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
+    const expired = this.selectedleave.expiryDaysLeaves;
+    this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
       const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {

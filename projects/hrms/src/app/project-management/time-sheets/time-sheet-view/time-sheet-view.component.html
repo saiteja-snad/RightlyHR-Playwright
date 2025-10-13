@@ -97,7 +97,6 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                        (blur)="formatTime($event, 'mon', i, 'duration')"
                                         (keyup.enter)="formatTime($event, 'mon', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration"
                                         class="input-group-text border-none cursor"
@@ -122,7 +121,6 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                        (blur)="formatTime($event, 'tue', i, 'duration')"
                                         (keyup.enter)="formatTime($event, 'tue', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration"
                                         class="input-group-text border-none cursor"
@@ -145,7 +143,6 @@
                                 <div class="input-group custom-input-group"
                                     [ngClass]="getApprovalClass(project.get('wed'))">
                                     <input type="text" formControlName="duration"
-                                        (blur)="formatTime($event, 'wed', i, 'duration')"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'wed', i, 'duration')">
@@ -172,7 +169,6 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                        (blur)="formatTime($event, 'thu', i, 'duration')"
                                         (keyup.enter)="formatTime($event, 'thu', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration"
                                         class="input-group-text border-none cursor"
@@ -197,7 +193,6 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                        (blur)="formatTime($event, 'fri', i, 'duration')"
                                         (keyup.enter)="formatTime($event, 'fri', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration"
                                         class="input-group-text border-none cursor"
@@ -222,7 +217,6 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                        (blur)="formatTime($event, 'sat', i, 'duration')"
                                         (keyup.enter)="formatTime($event, 'sat', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration"
                                         class="input-group-text border-none cursor"
@@ -247,7 +241,6 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                        (blur)="formatTime($event, 'sun', i, 'duration')"
                                         (keyup.enter)="formatTime($event, 'sun', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration"
                                         class="input-group-text border-none cursor"

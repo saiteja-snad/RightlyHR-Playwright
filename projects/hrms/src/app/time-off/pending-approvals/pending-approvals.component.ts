@@ -105,7 +105,7 @@ export class PendingApprovalsComponent implements OnInit {
           }));
 
           this.projectsData.unshift({
-            projectId: null,
+            projectId: 0,
             displayName: 'No Client - No Project'
           });
         },
@@ -114,7 +114,7 @@ export class PendingApprovalsComponent implements OnInit {
 
           this.projectsData = [
             {
-              projectId: null,
+              projectId: 0,
               displayName: 'No Client - No Project'
             }
           ];
@@ -125,21 +125,18 @@ export class PendingApprovalsComponent implements OnInit {
   /** When project selected */
   onProjectChange(event: any) {
     console.log('Project change event:', event);
-
     const selectedProjectId = event?.value ?? 0;
-
-    // Reset employee data
+   
+    // Resetemployee data
     this.employeeData = [];
     this.datepickerForm.get('resourceId')?.setValue([]);
-
-
+     this.datepickerForm.get('resourceId')?.enable()
     this.projectId = selectedProjectId;
-
     if (selectedProjectId && selectedProjectId !== 0) {
-      // 🟢 Regular project selected → load employees for project
+
       this.getAllActiveEmployees();
     } else {
-      // 🟡 "No Client - No Project" selected → load team manager employees
+
       this.getTeamManagersDetails();
 
       // Wait briefly to ensure getTeamManagersDetails() completes (optional)
@@ -244,6 +241,7 @@ export class PendingApprovalsComponent implements OnInit {
 
   /** Clear everything */
   resetForm() {
+   
     this.datepickerForm.reset();
     this.datepickerForm.get('resourceId')?.disable();
     this.datepickerForm.reset({

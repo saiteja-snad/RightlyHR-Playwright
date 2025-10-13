@@ -5,21 +5,21 @@ import { IEAV } from '../../models/project-type.modal';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-
 @Component({
   selector: 'app-letter-frequency',
-  imports: [NoDataFoundComponent, SettingsLoaderComponent,CommonModule],
+  imports: [NoDataFoundComponent, SettingsLoaderComponent, CommonModule],
   templateUrl: './letter-frequency.component.html',
   styleUrl: './letter-frequency.component.scss'
 })
+
 export class LetterFrequencyComponent {
   loading = false;
   letterFrequencies: IEAV[] = [];
   subscription!: Subscription;
 
   constructor(private http: HttpService) { }
-  ngOnInit(): void {
 
+  ngOnInit(): void {
     this.getLetterFrequencies();
   }
 
@@ -31,7 +31,6 @@ export class LetterFrequencyComponent {
         next: (data: any) => {
           this.loading = false;
           this.letterFrequencies = data;
-
         },
         error: (error: any) => {
           this.loading = false;
@@ -43,5 +42,4 @@ export class LetterFrequencyComponent {
         },
       });
   }
-
 }

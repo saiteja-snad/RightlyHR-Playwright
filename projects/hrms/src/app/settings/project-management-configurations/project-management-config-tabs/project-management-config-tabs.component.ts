@@ -32,7 +32,6 @@ export class ProjectManagementConfigTabsComponent {
   filterTabsByRbac(): void {
     this.filteredTabs = this.allNavLinks.filter(tab => {
       if (!tab.permission) return true;
-
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);

@@ -17,6 +17,7 @@ export const environment = {
 
 
   dateformat: 'MMM d, y',
+  currencyCode: 'INR',
   paidLeaveCategoryId: 172,
   wfhModuleId:2,
   compoffModuleId:3,
@@ -25,6 +26,7 @@ export const environment = {
   claimsModuleId:4,
   nodueModuleId:16,
   permissionsModuleId:18,
+   timesheetModuleId:30,
   attendanceRegularizationModuleId:17,
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,

@@ -80,6 +80,7 @@ import { PermissionsCancellationComponent } from './premissions/permissions-canc
 import { RemoteLoginRequestComponent } from './pending-approvals/remote-login-request/remote-login-request.component';
 import { RemoteLoginForYouRequestComponent } from './pending-approvals/remote-login-request/remote-login-for-you-request/remote-login-for-you-request.component';
 import { RemoteLoginForRoleRequestComponent } from './pending-approvals/remote-login-request/remote-login-for-role-request/remote-login-for-role-request.component';
+import { TimeSheetApprovalsComponent } from './pending-approvals/time-sheet-approvals/time-sheet-approvals.component';
 
 
 export default [
@@ -474,6 +475,9 @@ export default [
         component: TraineeApprovalsComponent,
         data: { permission: 'Trainee Details.view' },
       },
+      
+      { path: 'time-sheets', component: TimeSheetApprovalsComponent, data: { permission: 'Time Sheet approval Tab.view' } },
+
     ],
   },
   // on be half of approvals

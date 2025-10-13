@@ -1,0 +1,53 @@
+.custom-accordian-conatiner {
+    width: 100%;
+    height: calc(100dvh - 8rem);
+    overflow-y: auto;
+}
+
+.custom-p-multi-select-table .p-datatable-table-container {
+    height: max-content !important;
+    max-height: 45vh !important;
+}
+
+.action-img {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.custom-accordian-table {
+    width: 100%;
+    height: max-content !important;
+    min-height: max-content !important;
+
+    .custom-accordian-table {
+        th:first-child {
+            border-top-left-radius: 0rem !important;
+        }
+
+        th:last-child {
+            border-top-right-radius: 0rem !important;
+        }
+    }
+
+    th {
+        background-color: var(--body-bg-color) !important;
+    }
+
+    th, td {
+        text-align: center !important;
+    }
+}
+
+.popup-table-wrapper .popup-table-scroll-container {
+    max-height: 30vh;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    border: 2px solid var(--accordian-table-border-color);
+    border-bottom: 2px solid var(--accordian-table-border-color) !important;
+}
+
+// ::ng-deep .custom-p-multi-select-table {
+//     .p-checkbox-box {
+//         transform: rotate(180deg) !important;
+//     }
+// }

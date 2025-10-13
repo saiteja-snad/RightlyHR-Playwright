@@ -3,47 +3,187 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { PendingApprovalsTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { filter } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { DatePicker } from 'primeng/datepicker';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { Select } from 'primeng/select';
+import dayjs, { Dayjs } from 'dayjs';
+import { HttpService } from '../../services/http.service';
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent, 
+    NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class PendingApprovalsComponent implements OnInit {
-  moduleinfo : string = '';
-  constructor(public router: Router) { }
+  moduleinfo = '';
+  projectsData: any[] = [];
+  employeeData: any[] = [];
+  dataload = false;
+  datepickerForm!: FormGroup;
+  destroy$ = new Subject<boolean>();
+  empinfo: any;
+  projectId = 0;
+  employeeid: any;
+  isSubmitEnabled = false;
+  isDistinct = true;
+
+  constructor(public router: Router, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getAllActiveProjects();
+    this.createDatepickerForm();
+    this.updateModuleInfo();
+    this.setupNavigationReset();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/pending-approvals': MODULE_INFOS.TIME_OFF_PENDING_APPROVAL_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  navigate(){
+  navigate() {
     this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
 
+  /** Create form and keep Project & Resource disabled initially */
+  createDatepickerForm() {
+    this.datepickerForm = this.fb.group({
+      dateRange: [null],
+      projectId: [null],
+      resourceId: [{ value: [], disabled: true }, Validators.required]
+    });
+  }
+
+  /** Get all projects for the current employee */
+  getAllActiveProjects() {
+    this.http
+      .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.projectsData = res.data.map((p: any) => ({
+            ...p,
+            displayName: `${p.client.clientName} - ${p.projectName}`
+          }));
+        },
+        error: (err) => {
+          console.error('Error fetching projects:', err);
+          this.projectsData = [];
+        }
+      });
+  }
+
+  /** When project selected */
+  onProjectChange(event: any) {
+    const selectedProjectId = event.value;
+    this.employeeData = [];
+    this.datepickerForm.get('resourceId')?.setValue([]);
+    this.datepickerForm.get('resourceId')?.disable();
+    if (selectedProjectId) {
+      this.projectId = selectedProjectId;
+      this.getAllActiveEmployees();
+    } else {
+      this.projectId = 0;
+    }
+  }
+
+  /** Reset form when navigating to another component */
+  setupNavigationReset() {
+    this.router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
+      if (!this.router.url.includes('time-off/pending-approvals/time-sheets')) {
+        this.resetForm();
+      }
+    });
+  }
+
+  /** Get all active employees for selected project */
+  getAllActiveEmployees() {
+    this.http
+      .getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
+          // if (this.employeeData.length > 0) {
+          this.datepickerForm.get('resourceId')?.enable();
+          // }
+        },
+        error: (err) => {
+          console.error('Error fetching employees:', err);
+          this.employeeData = [];
+        }
+      });
+  }
+
+  /** On form submit */
+  onSubmit() {
+    const dateRange = this.datepickerForm.value.dateRange;
+    const projectId = this.datepickerForm.value.projectId || 0;
+    const resourceIds = this.datepickerForm.value.resourceId || [];
+    // Build request dynamically
+    const request: any = {
+      projectId,
+      resourceId: resourceIds.length > 0 ? resourceIds : null,
+    };
+    // Add dateRange only if selected
+    if (dateRange && dateRange.length === 2) {
+      request.dateRange = {
+        startDate: dayjs(dateRange[0]).format('YYYY-MM-DDTHH:mm:ss'),
+        endDate: dayjs(dateRange[1]).format('YYYY-MM-DDTHH:mm:ss'),
+      };
+    }
+    this.http.setEmployeeIdTimesheet(this.employeeid, projectId, request);
+  }
+
+  /** Reset dependent fields */
+  resetDependentFields() {
+    this.datepickerForm.get('projectId')?.reset();
+    this.datepickerForm.get('projectId')?.disable();
+    this.datepickerForm.get('resourceId')?.reset();
+    this.datepickerForm.get('resourceId')?.disable();
+    this.projectsData = [];
+    this.employeeData = [];
+    this.isSubmitEnabled = false;
+  }
+
+  /** Clear everything */
+  resetForm() {
+    this.datepickerForm.reset();
+    this.datepickerForm.get('resourceId')?.disable();
+    this.datepickerForm.reset({
+      dateRange: null,
+      projectId: null,
+      resourceId: []
+    });
+    this.employeeData = [];
+    this.projectId = 0;
+    this.employeeid = null;
+    this.isSubmitEnabled = true;
+    this.http.setEmployeeIdTimesheet(null, 0, 0);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
 }

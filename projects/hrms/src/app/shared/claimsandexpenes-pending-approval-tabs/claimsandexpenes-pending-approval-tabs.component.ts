@@ -15,6 +15,7 @@ import { ApprovalStatusCount } from '../../Interfaces/timoff-model';
 import { HttpService } from '../../services/http.service';
 import { SignalsService } from '../../services/signals.service';
 import { RbacService } from '../../services/rbac.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-claimsandexpenes-pending-approval-tabs',
@@ -31,7 +32,7 @@ export class ClaimsandexpenesPendingApprovalTabsComponent
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   navTabs = computed(() => {
-  const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
+  const data = this.pendingApprovalCount().find(item => item.moduleId === environment.expensesModuleId);
   const allTabs = [
     { label: 'For You', link: 'for-you', count: data?.forYou ?? 0, permission: { feature: 'For You (Claims and Expenses)', action: 'view' } },
     { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0, permission: { feature: 'For Role (Claims and Expenses)', action: 'view' } }

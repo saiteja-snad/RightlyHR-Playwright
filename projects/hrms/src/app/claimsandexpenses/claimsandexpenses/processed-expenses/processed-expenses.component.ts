@@ -12,10 +12,11 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DownloadExpenseComponent } from '../../download-expense/download-expense.component';
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent,DownloadExpenseComponent],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })
@@ -24,9 +25,11 @@ export class ProcessedExpensesComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
+  selectedData={} as any;
   commentsrecivced = [] as any
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   constructor(
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
@@ -41,12 +44,18 @@ export class ProcessedExpensesComponent implements OnInit,OnDestroy {
   opencommentsModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+   //download expenses popup open function
+  openpopupforDownload(content: any, expenseDetails: any) {
+     this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
+  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
   openimgaeModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
+  
   getexpensesheaderbyemployeeid(): void {
     this.loading=true
     const cleanSearchQuery = this.searchTerm || ''

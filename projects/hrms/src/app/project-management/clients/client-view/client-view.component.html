@@ -1,0 +1,204 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div class="heading-content">
+            <app-project-management-module-info />
+        </div>
+
+        @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'Inactive'){
+        <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
+            <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
+        </div>
+        }
+
+        <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/documents')">
+            <div>
+                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
+            </div>
+
+            @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'Inactive'){
+            <div *ngIf="isActive('/project-management/clients/details/documents')">
+                <button type="button" class="custom-btn btn-primary" (click)="openModal(addDocumentmodal)">
+                    {{'Add Document'}}</button>
+            </div>
+            }
+        </div>
+
+        @if(rbac.allowedToAccess('Client Documents.delete')){
+        <div *ngIf="isActive('/project-management/clients/details/inactivedocuments')">
+            <div>
+                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Documents</u></a>
+            </div>
+        </div>
+        }
+
+        @if(rbac.allowedToAccess('Client Projects.create')){
+        <div *ngIf="isActive('/project-management/clients/details/inactiveprojects')">
+            <a class="primary-link" (click)="navigationactive()"><u>Active Projects</u></a>
+        </div>
+        }
+
+        <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')">
+            @if(rbac.allowedToAccess('Client Projects.delete')){
+            <div>
+                <a (click)="navigationtoinactive()" class="primary-link">
+                    <u>Inactive Projects</u>
+                </a>
+            </div>
+            }
+
+            @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'Inactive'){
+            <div>
+                <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
+                    {{'Add Project' | translate }}
+                </button>
+            </div>
+            }
+        </div>
+
+        @if(rbac.allowedToAccess('Contact Information.create') && this.inactiveClientStatus !== 'Inactive'){
+        <div *ngIf="isActive('/project-management/clients/details/contact-info')">
+            <button type="button" class="custom-btn btn-primary" (click)="opencontactModal(addContactmodal)">
+                {{'Add Contact' | translate }}
+            </button>
+        </div>
+        }
+
+        @if(isActive('/project-management/clients/details/timesheet')){
+        <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="custom-date-range-picker">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'" selectionMode="range"
+                        [showIcon]="true" [readonlyInput]="true">
+                    </p-datepicker>
+                </div>
+
+                <div class="custom-p-select-content">
+                    <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
+                        placeholder="Please select project" class="form-select custom-select"
+                        (onChange)="onProjectChange($event)">
+                    </p-select>
+                </div>
+
+                <div class="custom-p-select-content">
+                    <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId"
+                        [resetFilterOnHide]="true" filterBy="name" optionLabel="name" optionValue="id"
+                        placeholder="Please select resource name" class="form-select custom-select">
+                    </p-select>
+                </div>
+
+                <div>
+                    <button class="custom-btn btn-primary" type="submit" [disabled]="datepickerForm.invalid">Submit</button>
+                </div>
+            </div>
+        </form>
+        }
+    </div>
+
+    <div class="main-content d-flex w-100 gap-3">
+        <div class="component-left-tabs-container">
+            <app-client-tabs />
+        </div>
+
+        <div class="w-100">
+            <router-outlet />
+        </div>
+    </div>
+</div>
+
+<ng-template #addProjectmodal let-modal>
+    <app-projcet-creation />
+</ng-template>
+
+<ng-template #addContactmodal let-modal>
+    <app-project-contact-info-creation />
+</ng-template>
+
+<ng-template #addResourcemodal let-modal>
+    <app-resource-creation />
+</ng-template>
+
+<ng-template #addDocumentmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Add Documents' | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form [formGroup]="addDocumentForm" autocomplete="off" (ngSubmit)="addDocuments()">
+                <div class="row">
+                    <!-- Document Type -->
+                    <div class="col-md-6 mb-3">
+                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
+                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
+                                formControlName="documentType" placeholder="Please select document type"
+                                class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
+                            Document Type is required
+                        </div>
+                    </div>
+
+                    <!-- File Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="documentName" class="form-label custom-label mb-2">File Name<span
+                                class="text-danger">*</span></label>
+                        <input type="text" id="documentName" formControlName="documentName"
+                            class="form-control custom-input" placeholder="Enter file name" />
+                        <div class="error-msg"
+                            *ngIf="addDocumentForm.get('documentName')?.touched && addDocumentForm.get('documentName')?.invalid">
+                            File Name is required
+                        </div>
+                    </div>
+
+                    <!-- Document Attachment -->
+                    <div class="col-md-12 mb-3">
+                        <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
+                            <span class="text-danger">*</span></label>
+                        <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
+                            (change)="onChangeClientAttachment($event)" id="documentAttachment"
+                            formControlName="documentUrl" class="form-control custom-input px-0" />
+                        <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
+                        <div class="error-msg" *ngIf="addDocumentForm.get('documentUrl')?.touched && 
+                        addDocumentForm.get('documentUrl')?.invalid">Document Attachment is required</div>
+                    </div>
+
+                    <!-- Signed Copy -->
+                    <div class="col-md-12 mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" formControlName="signedCopy">
+                            <label class="form-check-label custom-toggle-label">Signed Copy</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="addDocumentForm.invalid">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!--confirmation-->
+<ng-template #confirmationpopupfornodue let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>

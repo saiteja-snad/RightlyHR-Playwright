@@ -14,9 +14,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })
@@ -30,15 +32,32 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   loading = false
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  selectedData={} as any;
   searchTerm: any = ''
+     selectemp: any;
+ selectedYear: any;
   expenesEmplyeedata = new BehaviorSubject<ExpenseEntity[]>([])
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
 
-  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
+ 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getexpensesheaderbyemployeeid();
+     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    });
   }
 
   openModal(content: any) {
@@ -52,15 +71,22 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   comments_Function(comments: any) {
     this.commentsrecivced = comments
   }
+ //download expenses popup open function
+  openpopupforDownload(content: any, expenseDetails: any) {
+     this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
+  }
 
   getexpensesheaderbyemployeeid(): void {
+    let empId = this.selectemp ?? this.empinfo.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Approved&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Approved&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loading = false
           this.expenesEmplyeedata.next(data)
+
         }, error(err) {
           console.log("expensesheadererror", err)
         },

@@ -308,6 +308,8 @@ export const SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS = [
   { route: '/settings/timeoff-configurations/leave-categoery/publishedleavecategory', permission: 'Leave Category Published Tab.view' }
 ]
 
+
+
 export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/comp-off', permission: 'Comp Off Entitlement Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/wfh', permission: 'WFH Entitlement Tab.view' },
@@ -320,6 +322,14 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
     { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view'}
 ]
 
+export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
+  { route: '/settings/project-management-config/project-type', permission: 'Project Type.view' },
+  { route: '/settings/project-management-config/industry-type', permission: 'Industry Type.view' },
+  { route: '/settings/project-management-config/client-document-type', permission: 'Client Document Type.view' },
+  { route: '/settings/project-management-config/project-document-type', permission: 'Project Document Type.view' },
+  { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
+  { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
+]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/jobrole', permission: 'Job Role.view' },
@@ -456,3 +466,100 @@ export const INVITE_NEW_USER_TABS = [
   { route: '/admin/prospective-new-user', permission: 'Dashboard Trainee Active Invite New User.view' },
 ];
 
+export const CLIENTS_ROUTES = [
+  {
+    route: '/project-management/clients/active',
+    permission: 'Client Information.view'
+  },
+  {
+    route: '/project-management/clients/inactive',
+    permission: 'Client Information.view'
+  },
+  {
+    route: '/project-management/clients/details/info',
+    permission: 'Client Information.view'
+  },
+  {
+    route: '/project-management/clients/details/contact-info',
+    permission: 'Contact Information.view'
+  },
+  {
+    route: '/project-management/clients/details/projects',
+    permission: 'Client Projects.view'
+  },
+  {
+    route: '/project-management/clients/details/inactiveprojects',
+    permission: 'Client Projects.view'
+  },
+  {
+    route: '/project-management/clients/details/resources',
+    permission: 'Client Resources.view'
+  },
+  {
+    route: '/project-management/clients/details/timesheet',
+    permission: 'Client Timesheets.view'
+  },
+  {
+    route: '/project-management/clients/details/documents',
+    permission: 'Client Documents.view'
+  },
+  {
+    route: '/project-management/clients/details/inactivedocuments',
+    permission: 'Client Documents.view'
+  },
+  {
+    route: '/project-management/clients/add/info',
+    permission: 'Client Information.create'
+  },
+  {
+    route: '/project-management/clients/add/contact-info',
+    permission: 'Contact Information.create'
+  },
+  {
+    route: '/project-management/clients/add/documents',
+    permission: 'Client Documents.create'
+  },
+  {
+    route: '/project-management/clients/add/nda',
+    permission: 'Client Documents.create'
+  },
+  {
+    route: '/project-management/clients/add/msa',
+    permission: 'Client Documents.create'
+  },
+];
+
+export const PROJECTS_ROUTES = [
+  {
+    route: '/project-management/projects/active',
+    permission: 'Project Details Tab.view'
+  },
+  {
+    route: '/project-management/projects/inactive',
+    permission: 'Project Details Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/information',
+    permission: 'Project Details Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/contact-info',
+    permission: 'Contact Info Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/resources',
+    permission: 'Resources Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/timesheet',
+    permission: 'Project Timesheets Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/documents',
+    permission: 'Documents Tab.view'
+  },
+  {
+    route: '/project-management/projects/details/inactivedocuments',
+    permission: 'Documents Tab.view'
+  }
+];

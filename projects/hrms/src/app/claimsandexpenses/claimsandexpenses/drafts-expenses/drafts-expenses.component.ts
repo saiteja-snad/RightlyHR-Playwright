@@ -11,14 +11,17 @@ import { environment } from '../../../../environments/environment';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule,NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe],
@@ -48,23 +51,40 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   saveasDraftloder = false;
   expensesAttachment: any;
   filehidedonload = true;
+  selectedData={} as any;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   searchTerm: any = '';
+    selectedYear: any;
   loader=false
+    selectemp: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   expense = new BehaviorSubject<IExpenses[]>([]);
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
-    public formValidation: FormValidationService, public rbac: RbacService) { }
+   private SelectedyeartimeOffService: TimeoffYearFilterService, public formValidation: FormValidationService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.initiateForm();
     this.getEmployeeId();
-    this.getdatabyentriy();
-    this.getexpensesheaderbyemployeeid();
+    this.getdatabyentriy(); 
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+      if (year !== null) {
+        this.selectedYear = year;
+        this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
+          if (id) {
+            this.selectemp = id;
+            this.getexpensesheaderbyemployeeid();
+          } else {
+            this.selectemp = null;
+            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+            this.getexpensesheaderbyemployeeid();
+          }
+        });
+      }
+    }); this.getexpensesheaderbyemployeeid();
     this.getExpensestypestopatch();
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
@@ -459,15 +479,16 @@ fileuploadhide :any;
   }
 
   getexpensesheaderbyemployeeid(): void {
-    this.loader=true
+    let empId = this.selectemp ?? this.empinfo.employeeId;
+    this.loader = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Draft&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Draft&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.loader=false
+          this.loader = false
           this.expenesEmplyeedata.next(data)
-        }, error:(err)=> {
-          this.loader=false
+
+        }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
@@ -590,7 +611,10 @@ fileuploadhide :any;
     // this.modalService.dismissAll()
     this.conformationPopup.openSuccessModal("Expense item deleted successfully")
   }
-
+  openpopupforDownload(content: any, expenseDetails: any) {
+     this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
+  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

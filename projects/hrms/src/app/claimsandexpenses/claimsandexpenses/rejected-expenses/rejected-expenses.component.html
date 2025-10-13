@@ -38,6 +38,11 @@
                   <li><a class="dropdown-item" (click)="openModal(viewDetailsModal);viewItem(exp.expenses_ID)">
                       <i class="bi bi-eye-fill me-2"></i>View</a>
                   </li>
+                   <li>
+                      <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
+                        <i class="bi bi-download me-1"></i>Download
+                      </a>
+                    </li>
                 </ul>
               </div>
             </td>
@@ -165,3 +170,14 @@
     </div>
   </div>
 </ng-template>
+ <ng-template #openpopupForDownload let-modal>
+        <div class="popup-container" ngbAutofocus>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Expense</h4>
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+            </div>
+            <div class="popup-content">
+                <app-download-expense [downloadData]="selectedData" />
+            </div>
+        </div>
+    </ng-template>

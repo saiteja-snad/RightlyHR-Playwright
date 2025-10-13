@@ -9,13 +9,15 @@ import { SettingDynamicFormsTabsComponent } from "../../shared/settings-tabs/set
 import { RbacService } from '../../services/rbac.service';
 import { PmsSettingsTabsComponent } from "../../shared/pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { AccordionModule } from 'primeng/accordion';
+import { Router } from '@angular/router';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-settings-overview',
   imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
     SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent, AccordionModule],
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class SettingsOverviewComponent {
@@ -25,6 +27,20 @@ export class SettingsOverviewComponent {
   settingAssetsConfigurationModule = MODULE_INFOS.SETTINGS_ASSET_CONFIGURATION_MODULE_INFO;
   settingsPMSConfigurations = MODULE_INFOS.PMS_CONFIGURATION_MODULE_INFO;
   settingDynamicFormsModule = MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO;
+  settingAttendanceConfigurationModule = MODULE_INFOS.SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO;
 
-  constructor(public rbac: RbacService) { }
+  constructor(
+    public rbac: RbacService,
+    private router: Router,
+    private accessNav: AccessNavigationService
+  ) { }
+
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
 }

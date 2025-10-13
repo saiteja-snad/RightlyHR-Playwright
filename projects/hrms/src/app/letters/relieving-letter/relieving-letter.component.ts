@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit,ViewEncapsulation} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -20,12 +20,12 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../l
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss',
-  
+
 })
 
-export class RelievingLetterComponent implements OnInit,OnDestroy {
+export class RelievingLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
-  relievingTemplate: any | string | ArrayBuffer | null = null; 
+  relievingTemplate: any | string | ArrayBuffer | null = null;
   result = {} as any;
   RelievingFile!: File;
   gender: any;
@@ -44,11 +44,11 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false }
   ];
-  spinnerLoader= false;
+  spinnerLoader = false;
 
   constructor(
-    private router: Router, 
-    private fb: FormBuilder, 
+    private router: Router,
+    private fb: FormBuilder,
     private http: HttpService,
     private httpclient: HttpClient,
     private authService: AuthService,
@@ -83,14 +83,14 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
       this.jobErrorMessage = 'Relieving issued date must be after the employee joining date.';
       this.employeeForm.get('jobValid')?.setValue(false);
     } else {
-      this.jobErrorMessage = '';  
+      this.jobErrorMessage = '';
       this.employeeForm.get('jobValid')?.setValue(true);
     }
   }
 
   preventTyping(event: KeyboardEvent) {
     event.preventDefault();
-  }  
+  }
 
   async getRelievingTemplate() {
     this.relievingTemplate = await this.httpclient
@@ -109,7 +109,7 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
-        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
+        }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -123,8 +123,8 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.signatureAuthorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` 
-        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
       },
       error: (error: any) => {
         console.error(error);
@@ -153,28 +153,32 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
   getJobdetails(employeeId: any) {
     this.subscription = this.http.getData(`JobDetails/${employeeId}`).subscribe({
       next: (data: any) => {
-        if (!data || data.length === 0) {
-          this.jobErrorMessage = 'No job details found for this employee.';
-          this.employeeForm.get('jobValid')?.setValue(false);
-        } else {
-          let res = data[0];  
-          this.selectedEmployeeJobDetails = res;
+        const today = new Date(this.selectedEmployee.lastworkingday);
+
+        const latestJob = data
+          ?.filter((job: { effectiveDate: any; }) => new Date(job.effectiveDate) <= today)
+          .sort((a: { effectiveDate: any; }, b: { effectiveDate: any; }) => new Date(b.effectiveDate).getTime() - new Date(a.effectiveDate).getTime())[0];
+
+        if (latestJob) {
+          this.selectedEmployeeJobDetails = latestJob;
           this.jobErrorMessage = '';
           this.employeeForm.get('jobValid')?.setValue(true);
+          console.log("Selected Job Role:", latestJob.jobRole);
+        } else {
+          this.jobErrorMessage = 'No active job role found for today or earlier.';
+          this.employeeForm.get('jobValid')?.setValue(false);
         }
       },
-      error: (reason: any) => {
-        console.log(reason);
-      },
+      error: (reason: any) => console.error(reason),
     });
   }
 
   onclickDesignation(event: any) {
-    this.selectedAuthority= event.value;
+    this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName}
        ${this.selectedAuthority.lastName}` : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
-    } 
+    }
   }
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);
@@ -187,12 +191,12 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
   async postRelievingLetterFormSubmit(f: FormGroup) {
     const data = f.value;
     let fileName = '';
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
       fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_RelievingLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
-      return; 
+      return;
     }
     data.dateofRelieving = this.formatDate(data.dateofRelieving);
     data.dateOfJoining = this.formatDate(new Date(this.selectedEmployee.dateOfJoining));
@@ -209,7 +213,7 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
         const blob = pdf.output('blob');
         //creating form file to upload into AZure
         let d: Date = new Date()
-        this.RelievingFile = new File([blob], fileName,{type: 'application/pdf',});
+        this.RelievingFile = new File([blob], fileName, { type: 'application/pdf', });
         this.uploadRelievingLetter();
       });
     }
@@ -256,14 +260,14 @@ export class RelievingLetterComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/relievingLetter`, emaildetails).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Email has been sent successfully')
-        setTimeout(()=>{
+        setTimeout(() => {
           this.navigateDashboard();
         }, 2000)
       },
       error: (err: any) => {
-        this.spinnerLoader= false;
-      },complete: ()=>{
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
+      }, complete: () => {
+        this.spinnerLoader = false;
       }
     })
   }

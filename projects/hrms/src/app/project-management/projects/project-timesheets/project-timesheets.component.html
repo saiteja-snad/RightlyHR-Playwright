@@ -42,26 +42,33 @@
         }
     </div>
 
-    <div >
+    <div>
         <div class="attendance-summary-card mb-3">
             <div>
                 <p class="summary-header mb-2">{{'Summary' | translate}}</p>
             </div>
-            <div class="chart-content">
-                <p-chart type="doughnut" [data]="timesheetSummaryChartData" [options]="timesheetSummaryOptions" />
-            </div>
-            <ul class="list-style-none ps-0 pt-3 mb-0">
-                @if(statusCounts$.value){
-                @for (status of statusCounts$ |async ; track $index) {
-                <li>
-                    <div class="d-flex justify-content-between summart-text">
-                        <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}</div>
-                        <div>{{ status.value }}</div>
-                    </div>
-                </li>
-                }
-                }
-            </ul>
+            <ng-container *ngIf="(statusCounts$.value.length ?? 0) > 0; else nolistTemplate">
+                <div class="chart-content">
+                    <p-chart type="doughnut" [data]="timesheetSummaryChartData" [options]="timesheetSummaryOptions" />
+                </div>
+                <ul class="list-style-none ps-0 pt-3 mb-0">
+                    @if(statusCounts$.value){
+                    @for (status of statusCounts$ |async ; track $index) {
+                    <li>
+                        <div class="d-flex justify-content-between summart-text">
+                            <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}</div>
+                            <div>{{ status.value }}</div>
+                        </div>
+                    </li>
+                    }
+                    }
+                </ul>
+            </ng-container>
+            <ng-template #nolistTemplate>
+                <div class="custom-placeholder-content">
+                    <app-no-data-found />
+                </div>
+            </ng-template>
         </div>
 
         <!-- utilization summery chats -->
@@ -70,8 +77,7 @@
                 <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
             </div>
             <div class="chart-content">
-                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
-                    [options]="timesheetSummaryOptions" />
+                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData" [options]="timesheetSummaryOptions" />
             </div>
             <ul class="list-style-none ps-0 pt-3">
                 @if (utilizationcount$ | async; as utilizationList) {

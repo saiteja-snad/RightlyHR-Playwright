@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
@@ -16,16 +16,19 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { ProjcetCreationComponent } from '../../shared-project-management-componenets/projcet-creation/projcet-creation.component';
 import { RbacService } from '../../../services/rbac.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
+import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
+import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 @Component({
   selector: 'app-active-projects',
-  imports: [NoDataFoundComponent, CommonModule, DataLoaderContentComponent, TranslateModule, RouterModule,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
+    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })
 
 export class ActiveProjectsComponent implements OnInit, OnDestroy {
   selectedProject: any;
+  searchValue: any;
   projecttypes: any[] = [];
   loading: boolean = false;
   selectedProjectId: number | null = null;

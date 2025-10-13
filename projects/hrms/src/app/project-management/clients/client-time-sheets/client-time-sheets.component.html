@@ -1,5 +1,6 @@
 <div class="d-flex gap-3">
     <div class="custom-table-content attendance-log-content">
+        @if (!loading) {
         <table class="w-100">
             <thead>
                 <th class="max-width">{{'Name' | translate}}</th>
@@ -9,6 +10,7 @@
                 <!-- <th class="max-width">{{'Summary' | translate}}</th> -->
             </thead>
             <tbody>
+                <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                 <tr *ngFor="let row of attendanceSummaryData">
                     <td>{{row.resourceName}}</td>
                     <td>{{ row.date }}</td>
@@ -20,14 +22,27 @@
                                 <app-info-icon />
                             </a>
                         </ng-container>
-                        <ng-template #noEntries>-</ng-template>
+                        <ng-template #noEntries>
+                            -
+                        </ng-template>
                     </td> -->
                 </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
             </tbody>
         </table>
+
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 
-    <div>
+    <div >
         <div class="attendance-summary-card mb-3">
             <div>
                 <p class="summary-header mb-2">{{'Summary' | translate}}</p>
@@ -36,7 +51,7 @@
                 <p-chart type="doughnut" [data]="timesheetSummaryChartData" [options]="timesheetSummaryOptions" />
             </div>
             <ul class="list-style-none ps-0 pt-3 mb-0">
-                @if (statusCounts$.value) {
+                @if(statusCounts$.value){
                 @for (status of statusCounts$ |async ; track $index) {
                 <li>
                     <div class="d-flex justify-content-between summart-text">
@@ -48,14 +63,15 @@
                 }
             </ul>
         </div>
-    
+
         <!-- utilization summery chats -->
         <div class="attendance-summary-card">
             <div>
                 <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
             </div>
             <div class="chart-content">
-                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData" [options]="timesheetSummaryOptions" />
+                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
+                    [options]="timesheetSummaryOptions" />
             </div>
             <ul class="list-style-none ps-0 pt-3">
                 @if (utilizationcount$ | async; as utilizationList) {

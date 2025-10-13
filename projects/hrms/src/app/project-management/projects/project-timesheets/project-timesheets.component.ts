@@ -8,9 +8,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse, UtilizationSummary } from '../../../Interfaces/timesheetsummary';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 @Component({
   selector: 'app-project-timesheets',
-  imports: [CommonModule, TranslateModule, ChartModule, InfoIconComponent],
+  imports: [CommonModule, TranslateModule, ChartModule, InfoIconComponent,DataLoaderContentComponent,NoDataFoundComponent],
   templateUrl: './project-timesheets.component.html',
   styleUrl: './project-timesheets.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -26,7 +28,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
   statusCounts$ = new BehaviorSubject<MonthlySummaryItem[]>([]);
   utilizationcount$ = new BehaviorSubject<any>(null);
   totalEntries = 0;
-
+  loading = false
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService) { }
 
   ngOnInit() {
@@ -39,11 +41,13 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
   }
 
   getProjectSummary(request: any) {
+    this.loading = true
     this.http.getData(`Timesheet/summary?clientId=${request.clientId}&projectId=${request.projectId}&resourceId=${request.resourceId}&startDate=${request.dateRange.startDate}&endDate=${request.dateRange.endDate}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        this.loading = false
         const data: TimesheetSummaryResponse = res?.data;
         // this.attendanceSummaryData = data?.dailyData ?? [];
-         const resourceName = data?.resource?.name ?? '';
+        const resourceName = data?.resource?.name ?? '';
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
           resourceName,
@@ -88,6 +92,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
         };
       },
       error: err => {
+        this.loading = false
         console.error('Error fetching attendance summary:', err);
         this.attendanceSummaryData = [];
         this.statusCounts$.next([]);
@@ -117,6 +122,6 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
 
     this.destroy$.next(true);
     this.destroy$.complete();
-          this.http.setRequest(null);
+    this.http.setRequest(null);
   }
 }

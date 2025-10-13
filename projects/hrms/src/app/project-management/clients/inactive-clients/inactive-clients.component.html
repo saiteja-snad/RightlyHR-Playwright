@@ -16,8 +16,8 @@
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue"  class="form-control custom-search-input" placeholder="Search" aria-label="Search"
-                aria-describedby="basic-addon1">
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
         </div>
         <ng-container *ngIf="loading; else maincontent">
             <ng-template #loadingSpinner>
@@ -42,40 +42,46 @@
                         <th class="text-center">{{"Action" | translate}}</th>
                     </thead>
                     <tbody>
-                        <ng-container *ngIf="(clients?.length ?? 0) > 0; else noDataTemplate">
-                            <tr *ngFor="let client of clients | inactiveclient : searchValue; let i = index">
-                                <td>
-                                    <img [src]="getImageUrl(client.logoPath)" alt="Logo" width="32" height="32" />
-                                </td>
-                                <td>
-                                    <a class="project-name cursor" (click)="navigateView(client.clientId)">{{ client.clientName }}</a>
-                                </td>
-                                <td>{{ client.createdBy?.name }}</td>
-                                <td>{{ client.websiteUrl }}</td>
-                                <td>{{ client.taxId }}</td>
-                                <td>{{ client.industryType }}</td>
-                                <td>{{ client.status }}</td>
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <a data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="bi bi-three-dots-vertical"></i>
+                        <ng-container *ngIf="(clients | inactiveclient : searchValue) as filteredClients">
+                            <ng-container *ngIf="filteredClients.length > 0; else noDataTemplate">
+                                <tr *ngFor="let client of filteredClients; let i = index">
+                                    <td>
+                                        <img [src]="getImageUrl(client.logoPath)" alt="Logo" width="32" height="32" />
+                                    </td>
+                                    <td>
+                                        <a class="project-name cursor" (click)="navigateView(client.clientId)">
+                                            {{ client.clientName }}
                                         </a>
-                                        <ul class="dropdown-menu custom-dropdown-menu">
-                                            <li (click)="openModalstatus(statuschanges, client)">
-                                                <a class="dropdown-item">
-                                                    <i class="bi bi-check-circle me-2"></i> Active
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td>{{ client.createdBy?.name }}</td>
+                                    <td>{{ client.websiteUrl }}</td>
+                                    <td>{{ client.taxId }}</td>
+                                    <td>{{ client.industryType }}</td>
+                                    <td>{{ client.status }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </a>
+                                            <ul class="dropdown-menu custom-dropdown-menu">
+                                                <li (click)="openModalstatus(statuschanges, client)">
+                                                    <a class="dropdown-item">
+                                                        <i class="bi bi-check-circle me-2"></i> Active
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
                         </ng-container>
+
                         <ng-template #noDataTemplate>
                             <tr>
-                                <app-no-data-found />
+                                <app-no-data-found></app-no-data-found>
                             </tr>
                         </ng-template>
+
                     </tbody>
                 </table>
             </div>

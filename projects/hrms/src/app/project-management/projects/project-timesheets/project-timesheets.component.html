@@ -1,5 +1,6 @@
 <div class="d-flex gap-3">
     <div class="custom-table-content attendance-log-content">
+        @if (!loading) {
         <table class="w-100">
             <thead>
                 <th class="max-width">{{'Name' | translate}}</th>
@@ -9,9 +10,9 @@
                 <!-- <th class="max-width">{{'Summary' | translate}}</th> -->
             </thead>
             <tbody>
-                <tr>
+                <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                 <tr *ngFor="let row of attendanceSummaryData">
-                     <td>{{row.resourceName}}</td>
+                    <td>{{row.resourceName}}</td>
                     <td>{{ row.date }}</td>
                     <td>{{ row.dailySummary.totalLoggedHours | number:'1.2-2'}}</td>
                     <td>{{ row.dailySummary.status }}</td>
@@ -26,11 +27,22 @@
                         </ng-template>
                     </td> -->
                 </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
             </tbody>
         </table>
+
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 
-    <div>
+    <div >
         <div class="attendance-summary-card mb-3">
             <div>
                 <p class="summary-header mb-2">{{'Summary' | translate}}</p>
@@ -58,7 +70,8 @@
                 <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
             </div>
             <div class="chart-content">
-                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData" [options]="timesheetSummaryOptions" />
+                <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
+                    [options]="timesheetSummaryOptions" />
             </div>
             <ul class="list-style-none ps-0 pt-3">
                 @if (utilizationcount$ | async; as utilizationList) {

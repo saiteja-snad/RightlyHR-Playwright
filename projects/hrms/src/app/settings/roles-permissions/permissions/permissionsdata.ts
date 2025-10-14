@@ -628,7 +628,7 @@ export const permissionsData = [
   { fields: 'Employee Info Documents Acknowledgment', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Contract Conversion Request
-  { fields: 'Employee Info Contract Conversion Request', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Employee Info Contract Conversion Request', View: false, Update: false, Create: false, Delete: false },
   
   //Employee Info Team Members Sub Tabs Section
   { fields: 'Employee Info Reporting Manager Tab', View: false, Update: false, Create: false, Delete: false },

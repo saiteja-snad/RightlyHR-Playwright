@@ -126,7 +126,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         });
         this.ContractExtensionDuration = ContractExtensionDays?.duration;
         console.log(this.ContractExtensionDuration);
-        this.conversionStartDate = new Date(this.contractConversionForm.get('contractstartdate')?.value);
+        this.conversionStartDate = new Date(this.contractConversionForm?.get('contractstartdate')?.value);
     const endDate = new Date(this.conversionStartDate);
     endDate.setDate(endDate.getDate() + this.ContractExtensionDuration);
     this.contractConversionForm.patchValue({

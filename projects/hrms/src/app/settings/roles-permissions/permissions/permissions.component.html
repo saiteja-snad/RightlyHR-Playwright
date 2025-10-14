@@ -2736,7 +2736,7 @@
                                 per.fields === 'Employee Info Compensation Details' || per.fields === 'Employee Info Desk Details' ||
                                 per.fields === 'Employee Info Asset Details' || per.fields === 'Employee Info Contract Conversion Request' || per.fields === 'Employee Info Separation Request' || 
                                 per.fields === 'No Due Form' || per.fields === 'Employee Info Documents Verification' || 
-                                per.fields === 'Employee Info Contract Details' ">
+                                per.fields === 'Employee Info Contract Details'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2755,14 +2755,14 @@
                                         (change)="onCheckboxChange(per, 'Create')" [disabled]="!roleToFilter?.id || [
                                 'Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
                                 'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request',
-                                'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details', 'Employee Info Documents Verification','Employee Info Contract Conversion Request'
+                                'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details', 'Employee Info Documents Verification'
                             ].includes(per.fields)">
                                 </td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
                                         (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id || [
                             'Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
-                            'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request',
+                            'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request', 'Employee Info Contract Conversion Request',
                             'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details','Employee Info Job Details'].includes(per.fields)">
                                 </td>
                             </tr>

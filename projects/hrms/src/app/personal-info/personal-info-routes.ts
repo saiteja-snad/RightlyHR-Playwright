@@ -37,7 +37,7 @@ export default [
             { path: 'trainee-onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent), data: { permission: 'Employee Info Onboarding Request Details.view' } },
             { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent), },
             { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
-            { path: 'contactor-info', loadComponent: () => import('./job/contactor-info/contactor-info.component').then(m => m.ContactorInfoComponent), },
+            { path: 'contactor-info', loadComponent: () => import('./job/contactor-info/contactor-info.component').then(m => m.ContactorInfoComponent), data: { permission: 'Employee Info Contract Details.view' }},
         ]
     },
     {

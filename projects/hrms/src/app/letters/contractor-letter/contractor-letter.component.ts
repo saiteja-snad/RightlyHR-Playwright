@@ -196,7 +196,7 @@ export class ContractorLetterComponent {
       address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null],
+      Copys: [null,  Validators.required],
       offerExpiryDate: ['', Validators.required],
       authorityid: [null, Validators.required],
       frequency: [null, Validators.required],

@@ -69,7 +69,15 @@ export class PendingApprovalsComponent implements OnInit {
   navigate() {
     this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
-
+ isFilterApplied(): boolean {
+    const formValue = this.datepickerForm.value;
+    // Check if any field has value
+    return (
+      (formValue.dateRange && formValue.dateRange.length > 0) ||
+      !!formValue.projectId ||
+      (formValue.resourceId && formValue.resourceId.length > 0)
+    );
+  }
   /** Create form and keep Project & Resource disabled initially */
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({

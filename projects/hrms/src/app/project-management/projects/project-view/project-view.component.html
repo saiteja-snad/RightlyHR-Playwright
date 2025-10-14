@@ -58,7 +58,7 @@
 
                 <div>
                     <button class="custom-btn btn-primary" type="submit"
-                        [disabled]="datepickerForm.invalid">Apply</button>
+                       [disabled]="!isFormCompletelyValid()">Apply</button>
                 </div>
             </div>
         </form>

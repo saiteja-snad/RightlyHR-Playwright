@@ -121,12 +121,16 @@ export class ProjectViewComponent implements OnInit {
     this.modalService.open(ResourceCreationComponent, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-  
+  isFormCompletelyValid(): boolean {
+    const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+    return !!formValue.dateRange && !!formValue.resourceId;
+  }
+
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
 
-     isFilterApplied(): boolean {
+  isFilterApplied(): boolean {
     const formValue = this.datepickerForm.value;
     // Check if any field has value
     return (
@@ -245,8 +249,8 @@ export class ProjectViewComponent implements OnInit {
     );
   }
 
-  navigationtoactivedocuments(){
-        this.router.navigate(
+  navigationtoactivedocuments() {
+    this.router.navigate(
       ['/project-management/projects/details/documents'],
       { queryParams: { id: this.projectId } } // using query params
     );

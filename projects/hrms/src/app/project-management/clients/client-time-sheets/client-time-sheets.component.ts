@@ -50,10 +50,12 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
         this.loading = false
         const data: TimesheetSummaryResponse = res?.data;
         // this.attendanceSummaryData = data?.dailyData ?? [];
-        const resourceName = data?.resource?.name ?? '';
+        const resourceName = data?.resource;
+
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
-          resourceName,
+          fusionEmployeeId: resourceName.fusionEmployeeId,
+          resourceName: resourceName.name
         }));
         console.log(this.attendanceSummaryData);
         const monthlySummary = data?.monthlySummary;

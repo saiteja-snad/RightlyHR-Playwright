@@ -29,6 +29,7 @@ export interface Resource {
 }
 
 export interface DailyData {
+fusionEmployeeId: any;
     date: string;              // "2025-10-06"
     entries: TimesheetEntry[]; // one or more entries
     dailySummary: DailySummary;

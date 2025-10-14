@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { finalize, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Carousel } from 'primeng/carousel';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-login',
   imports: [FormsModule, CommonModule, Carousel, ReactiveFormsModule],
@@ -25,7 +26,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   Login = {} as any;
   subscription!: Subscription;
   returnUrl!: string | null;
-  Status: any;
   spinnerLoader = false;
   carouselItems = [
     { subject: 'From onboarding to offboarding, manage every step of the employee journey with ease. RightlyHR streamlines your workflows and puts people first.' },
@@ -33,14 +33,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     { subject: 'Get clarity with detailed reports, visual dashboards, and smart filters. Track what matters most — all in one clean, modern interface.' },
   ];
 
-
   constructor(
     private http: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     config: NgbModalConfig, private modalService: NgbModal,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    public signal: SignalsService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -60,55 +60,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   goToUserValidate() {
+    if (this.signal.authSignal() !== '') {
+      this.signal.authSignal.set('');
+    }
     this.http.loginWithMicrosoft();
-  }
-
-
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
   }
 
   viewpassword() {
     this.visible = !this.visible;
     this.changetype = !this.changetype;
-  }
-
-  login(f: NgForm) {
-    this.subscription = this.http.login("User/login", this.signIn).subscribe({
-      next: (res: any) => {
-        if (res != null) {
-          // this.toaster.success({detail:'Login Success',summary:'Logged in successfully',duration:3000})
-          this.dataSuccessMsg('Loggin in successfully')
-          this.http.storeToken(res)
-          if (this.returnUrl) {
-            this.router.navigate([this.returnUrl]);
-          }
-          else {
-            this.router.navigate(["/admin"])
-          }
-        }
-        else {
-          //this.toaster.error({detail:'Login Failed',summary:'Invalid Email or Password',duration:3000})
-          this.dataFailureMsg('Invalid Email or Password')
-        }
-      },
-      error: (err: any) => {
-        // this.toaster.error({detail:'Login Failed',summary:'Invalid Email or Password',duration:3000})
-        this.dataFailureMsg('Invalid Email or Password')
-      }
-    })
   }
 
   // Classic Login
@@ -126,18 +86,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
 
     this.loginForm.valueChanges.subscribe(() => {
-      this.Status = '';
-      // this.disableerrormsg= false;
+      this.signal.authSignal.set('');
     });
-  }
-
-  disableerrormsg: boolean = true;
-  wrongCredentials: any;
-  errorCheck(Value: any) {
-    if (Value == '' || Value == null) {
-      this.disableerrormsg = true;
-      this.wrongCredentials = '';
-    }
   }
 
   async onSubmit(loginForm: FormGroup) {
@@ -157,21 +107,17 @@ export class LoginComponent implements OnInit, OnDestroy {
       };
 
       this.subscription = this.http.login(`v2/Auth/login`, payload).subscribe({
-          next: (res: any) => {
-            if (res) {
-              this.http.storeAuthResponse(res);
-              setTimeout(() => {
-                this.router.navigate(['/uservalidation']);
-              }, 2000);
-            } else {
-              this.disableerrormsg = false;
-            }
-          },
-          error: (err: any) => {
-            this.spinnerLoader= false;
-            this.Status = 'Invalid Email ID or Password';
-          }
-        });
+        next: (res: any) => {
+          this.http.storeAuthResponse(res);
+          setTimeout(() => {
+            this.router.navigate(['/uservalidation']);
+          }, 2000);
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.signal.authSignal.set(err.error?.message || 'Login failed. Please try again');
+        }
+      });
     } else {
       console.log('Form invalid');
     }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -9,8 +9,8 @@ import { RbacService } from '../../services/rbac.service';
 import { MY_INFO_DOCUMENTS_ROUTES, MY_INFO_JOB_ROUTES, MY_INFO_ONBOARD_REQUEST, MY_INFO_PERSONAL_ROUTES, MY_INFO_TEAM_MEMBERS } from '../../permission-route.constants';
 import { environment } from '../../../environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { WelcomePopupComponent } from '../../shared/welcome-popup/welcome-popup.component';
 import { AuthService } from '../../services/auth.service';
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-user-validation',
   imports: [
@@ -21,7 +21,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './user-validation.component.scss'
 })
 
-export class UserValidationComponent {
+export class UserValidationComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
   name!: string;
   loginReposne: any
@@ -39,7 +39,8 @@ export class UserValidationComponent {
     private accessNav: AccessNavigationService,
     private rbac: RbacService,
     private modalService: NgbModal,
-    private auth: AuthService
+    private auth: AuthService,
+    public signal: SignalsService
   ) { }
 
   async ngOnInit() {
@@ -70,7 +71,8 @@ export class UserValidationComponent {
           this.getUserDetails(res.email);
         },  
         error: (err) => {
-          this.router.navigate(['/login']);
+          this.signal.authSignal.set(err.error?.message || 'Social login failed. Please try again');
+          this.router.navigate(['/unauthorized']);
         }
       });
 

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
@@ -21,6 +21,8 @@ export class AuthService {
   ) { }
 
   ApiUrl = environment.ApiUrl;
+
+
   login(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }

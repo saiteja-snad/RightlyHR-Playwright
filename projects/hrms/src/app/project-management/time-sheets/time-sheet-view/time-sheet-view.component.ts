@@ -401,8 +401,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getResourceData() {
     this.http
       .getDataIncludeParams(
-        `ProjectResource?status=Active&employeeId=${this.employeeId}&isProjectRequired=true`
-      )
+        `ProjectResource?status=active&employeeId=${this.employeeId}&isProjectRequired=true`)
       .pipe(takeUntil(this.destroy$))
       .subscribe((res: any) => {
         if (res.success) {

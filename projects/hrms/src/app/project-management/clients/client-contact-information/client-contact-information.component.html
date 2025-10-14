@@ -104,7 +104,7 @@
                         <label for="contactname" class="form-label custom-label mb-2">Contact Name
                             <span class="text-danger">*</span></label>
                         <input type="text" id="contactname" formControlName="contactname" maxlength="50" minlength="2"
-                            placeholder="Please enter contact name" class="form-control custom-input" (keydown)="formValidation.restrictSpecialCharacters($event)">
+                            placeholder="Please enter contact name" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)">
                         <div class="error-msg"
                             *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
                             <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is required</div>
@@ -143,7 +143,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="contactrole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
                         <input type="text" id="contactrole" formControlName="contactrole" minlength="2" maxlength="50"
-                            placeholder="Please enter role" class="form-control custom-input">
+                            placeholder="Please enter role" class="form-control custom-input"(keypress)="formValidation.restrictInitialSpace($event)">
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
                             <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required</div>
                             <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2

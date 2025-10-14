@@ -406,7 +406,7 @@ getTeamManagersDetails() {
         if (response.success) {
           this.loadingGraph = false;
           this.categoryDetails = response.data as ICategoryDetails[];
-          this.calculateProbationLeavs(this.categoryDetails);
+          // this.calculateProbationLeavs(this.categoryDetails);
           this.logOptionalLeaveDays(this.categoryDetails);
           this.initChart(this.categoryDetails);
         }
@@ -427,7 +427,7 @@ getTeamManagersDetails() {
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];
-          this.calculateProbationLeavs(this.categoryDetails);
+          // this.calculateProbationLeavs(this.categoryDetails);
           this.logOptionalLeaveDays(this.categoryDetails);
           this.initChart(this.categoryDetails);
         }
@@ -476,7 +476,7 @@ getTeamManagersDetails() {
 
   getAvailableLeaves(item: any): number {
     if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0); 
     } else {
       return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
@@ -506,7 +506,7 @@ getTeamManagersDetails() {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
-        this.calculateProbationLeavs(this.categoryDetails);
+        // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
   }
@@ -1329,9 +1329,9 @@ getTeamManagersDetails() {
         }
       }
       const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
-      if (category) {
-        category.booked += this.leaveFormData.duration;
-      }
+      // if (category) {
+      //   category.booked += this.leaveFormData.duration;
+      // }
       if (category?.category.isOptionalHoliday) {
         const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
         if (this.mustUseOptLevs) {

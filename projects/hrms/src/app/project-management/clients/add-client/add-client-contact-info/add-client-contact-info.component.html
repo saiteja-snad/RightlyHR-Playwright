@@ -15,7 +15,7 @@
                     <tr *ngFor="let contact of contacts.controls; let i = index" [formGroupName]="i">
                         <td>
                             <input type="text" class="form-control custom-input" placeholder="Please enter contact name"
-                                formControlName="contactName" (input)="formValidation.validateInput(contact.get('contactName'))"
+                                formControlName="contactName" [autocomplete]="false" autocomplete="off" (input)="formValidation.validateInput(contact.get('contactName'))"
                                 (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51" autocomplete="off">
                             <div *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid" class="error-msg">
                                 <div *ngIf="contact.get('contactName')?.errors?.['required']">{{'Contact Name is required' | translate }}</div>
@@ -24,7 +24,7 @@
                             </div>
                         </td>
                         <td>
-                            <input type="email" class="form-control custom-input" formControlName="contactEmail"
+                            <input type="email" class="form-control custom-input" autocomplete="off" formControlName="contactEmail"
                                 placeholder="Please enter email">
                             <div class="error-msg"
                                 *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">

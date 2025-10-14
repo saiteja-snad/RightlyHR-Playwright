@@ -51,8 +51,7 @@
             <th>Kickoff Date</th>
             <th>Project Type</th>
             <th>Status</th>
-            @if(rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-            Tab.delete')){
+            @if(rbac.allowedToAccess('Project Details Tab.update') ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
           </thead>
@@ -70,15 +69,14 @@
                   <td>{{ project.kickoffDate | date: 'dd-MMM-yyyy' }}</td>
                   <td>{{ project.projectType }}</td>
                   <td>{{ project.status }}</td>
-                  @if(rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-                  Tab.delete')){
+                  @if(rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')){
                   <td class="text-center">
                     <div class="dropdown">
                       <a data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-three-dots-vertical"></i>
                       </a>
                       <ul class="dropdown-menu custom-dropdown-menu">
-                        @if(rbac.allowedToAccess('Project Details Tab.update') && project.client.status !== 'Inactive'){
+                        @if(rbac.allowedToAccess('Project Details Tab.update') ){
                         <li (click)="openUpdateModal(updateProjectmodal, project)">
                           <a class="dropdown-item">
                             <i class="bi bi-pencil me-2"></i>Update

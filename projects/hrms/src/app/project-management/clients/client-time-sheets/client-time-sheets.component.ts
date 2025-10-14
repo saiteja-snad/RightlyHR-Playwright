@@ -10,9 +10,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-client-time-sheets',
-  imports: [CommonModule, TranslateModule, ChartModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, TranslateModule, ChartModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe],
   templateUrl: './client-time-sheets.component.html',
   styleUrl: './client-time-sheets.component.scss',
   encapsulation: ViewEncapsulation.None

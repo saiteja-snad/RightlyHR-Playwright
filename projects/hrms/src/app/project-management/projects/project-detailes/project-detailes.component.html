@@ -1,6 +1,7 @@
  @if(rbac.allowedToAccess('Project Details Tab.view')){
 <div class="custom-main-component-container">
     @if(!loading){
+        <div class="backgroup-colour ">
     <div class="card custom-background-card p-4">
         <form [formGroup]="addprojectform">
             <div class="row">
@@ -92,6 +93,7 @@
                 </div>
             </div>
         </form>
+    </div>
     </div>
     }
      @else {

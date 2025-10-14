@@ -88,15 +88,14 @@ export class PendingApprovalsComponent implements OnInit {
   }
 
 
-  isAnyFieldSelected(): boolean {
-    const formValue = this.datepickerForm.value;
-    return (
-      (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
-      !!formValue.projectId ||                                   // project selected
-      (formValue.resourceId && formValue.resourceId.length > 0)  // at least one resource selected
-    );
-  }
-
+isAnyFieldSelected(): boolean {
+  const formValue = this.datepickerForm.value;
+  return (
+    (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
+    formValue.projectId !== null && formValue.projectId !== undefined || // project selected (including 0)
+    (formValue.resourceId && formValue.resourceId.length > 0) // at least one resource selected
+  );
+}
   /** Get all projects for the current employee */
 
   getAllActiveProjects() {

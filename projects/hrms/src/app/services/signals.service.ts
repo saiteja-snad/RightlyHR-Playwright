@@ -5,6 +5,8 @@ import { OpenModalService } from './open-modal.service';
   providedIn: 'root',
 })
 export class SignalsService {
+  authSignal = signal<string>('');
+
   // WFH PendingApprovals Signals
   wfhForYouTriggerSignal = signal<boolean>(false);
   wfhForRoleTriggerSignal = signal<boolean>(false);

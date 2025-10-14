@@ -753,41 +753,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
-  // resetPassword() {
-  //   this.spinnerLoader = true;
-  //   this.subscription = this.http.postdata(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null).subscribe({
-  //     next: (data: any) => {
-  //       this.spinnerLoader = false;
-  //       this.modalService.dismissAll();
-  //       this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email')
-  //     },
-  //     error: (err: any) => {
-  //       this.spinnerLoader = false;
-  //       console.log(err);
-  //       this.modalService.dismissAll();
-  //       this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
-  //     },
-  //   });
-  // }
-
-  // generateCredentials(){
-  //   this.spinnerLoader = true;
-  //   this.subscription = this.http.postdata(`Employeedata/generate-credentials/${this.empinfo.employeeId}`,null).subscribe({
-  //     next: (data: any) => {
-  //       this.spinnerLoader = false;
-  //       this.modalService.dismissAll();
-  //       this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email');
-  //       this.getEmployeeId();
-  //     },
-  //     error: (err: any) => {
-  //       this.spinnerLoader = false;
-  //       console.log(err);
-  //       this.modalService.dismissAll();
-  //       this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
-  //     },
-  //   });
-  // }
-
   resetPassword() {
     this.spinnerLoader = true;
     this.subscription = this.http.postData(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' })

@@ -102,6 +102,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.datepickerForm.reset();
     this.datepickerForm.get('projectId')?.disable();
     this.datepickerForm.get('resourceId')?.disable();
+   this.http.clearRequestclienttimesheet();
   }
 
   // initialization of form

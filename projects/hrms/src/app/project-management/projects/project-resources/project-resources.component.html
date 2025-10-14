@@ -158,6 +158,8 @@
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="startDate" formControlName="startDate"
+                         [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
                             class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
@@ -172,7 +174,8 @@
                         <label for="endDate" class="form-label custom-label mb-2">End Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
-                            [min]="startDatevalidate" />
+                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg"
                             *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
                             End Date is required

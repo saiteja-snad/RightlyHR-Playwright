@@ -94,6 +94,14 @@
         this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
         <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Offer Letter</button>
         }
+         @if((this.empinfo.empstatus.toLowerCase() == 'prospective contract') && (this.empinfo.substatus.toLowerCase() == 'offer
+        letter generated' ||
+        this.empinfo.substatus.toLowerCase() == 'offer letter released' || this.empinfo.substatus.toLowerCase() ==
+        'offer letter regenerated' || this.empinfo.substatus.toLowerCase() == 'nda letter released'||this.empinfo.substatus.toLowerCase() == 'nda letter accepted'||
+        this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
+        <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePreviousContract()">Offer Letter</button>
+        }
+        
         @if((this.empinfo.empstatus.toLowerCase() == 'trainee prospective') && (this.empinfo.empType.toLowerCase() ==
         'trainee') &&
         (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||this.empinfo.substatus.toLowerCase() ==

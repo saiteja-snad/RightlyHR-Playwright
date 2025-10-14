@@ -42,8 +42,7 @@
               <div class="input-group">
                 <input [type]="changetype ? 'password' : 'text'"
                   class="form-control custom-input login-input border-right-none" placeholder="Please enter password"
-                  formControlName="password" (ngModelChange)="errorCheck(loginForm.get('password')?.value)"
-                  (input)="formsValidation.validateInput(loginForm.get('password'))">
+                  formControlName="password" (input)="formsValidation.validateInput(loginForm.get('password'))">
                 <span class="input-group-text border-left-none" (click)="viewpassword()">
                   <i [ngClass]="visible ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
                 </span>
@@ -51,16 +50,15 @@
               <div class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
                 Password is required
               </div>
-              <div *ngIf="Status" class="text-danger error-msg">{{Status}}</div>
             </div>
             <div class="d-flex justify-content-end my-4">
                     <a class="forget-text" (click)="openmodel(confirmationpopup)">Forgot Password?</a>
             </div>
 
-            <!-- <div>
-              <p class="error-msg mb-0">{{Status}}</p>
-            </div> -->
-            <div class="error-msg">{{wrongCredentials}}</div>
+            @if(signal.authSignal() !== '') {
+                <div class="text-danger error-msg">{{signal.authSignal()}}</div>
+            }
+
             <div class="login-button-content pt-2">
               <button type="submit" class="custom-btn btn-primary w-100" [disabled]="loginForm.invalid || spinnerLoader">
                 @if(spinnerLoader){
@@ -92,20 +90,6 @@
     </div>
   </div>
 </div>
-
-<ng-template #successhide let-model>
-  <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-    <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-  </div>
-</ng-template>
-
-<ng-template #errorhide let-model>
-  <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-    <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-  </div>
-</ng-template>
 
 <ng-template #confirmationpopup let-modal>
   <div class="result-popup-content p-4" ngbAutofocus>

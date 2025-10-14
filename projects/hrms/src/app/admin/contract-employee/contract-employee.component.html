@@ -1,0 +1,80 @@
+<div class="custom-main-component-container">
+  <!--Input search-->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+     placeholder="Search by employee ID / employee name / personal email / phone number / location / sub location / designation / sub status "
+     aria-label="Username" aria-describedby="basic-addon1">
+  </div>
+
+  <div class="custom-table-content">
+    @if (!loader) {
+    <table class="w-100">
+      <thead>
+        <th>{{'Employee ID'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Personal Email'|translate}}</th>
+        <th>{{'Phone Number'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Designation'|translate}}</th>
+        <th>{{'Sub Status'|translate}}</th>
+      </thead>
+      <tbody>
+        @if( ((contract | async) ?? []).length > 0){
+        @for (act of ((contract | async) ?? []) | prospective : searchValue; track act.id) {
+        <tr>
+          <td>{{act.employeeId}}</td>
+          <td>
+            <span *ngIf="act.firstName ; else firstname">
+              <a class="select-item cursor" (click)="select(act)">
+                {{act.firstName?act.firstName:''}} {{act.middleName ?act.middleName:''}} {{act.lastName ?
+                act.lastName:''}}
+              </a>
+            </span>
+            <ng-template #firstname>-</ng-template>
+          </td>
+          <td>{{act.emailaddress?act.emailaddress:'-'}}</td>
+          <td>{{act.mobilePhoneCountryCode?act.mobilePhoneCountryCode:''}} {{act.contactnumber?act.contactnumber:'-'}}
+          </td>
+          <td>
+            @if(act.jobDetails!.length > 0){
+            @for(jobDetail of act?.jobDetails;track jobDetail.id){
+            {{ jobDetail?.lopcation?jobDetail?.lopcation:'-' }}
+            }
+          }@else {
+            <span>-</span>
+          }
+          </td>
+          <td>
+            @if(act.jobDetails!.length > 0){
+            @for(jobDetail of act?.jobDetails;track jobDetail.id){
+            {{ jobDetail?.subLocation?jobDetail?.subLocation:'-'}}
+            }}@else {
+            <span>-</span>
+          }
+          </td>
+          <td>
+            @if(act.jobDetails!.length > 0){
+            @for(jobDetail of act?.jobDetails; track jobDetail.id){
+            {{ jobDetail?.jobRole?jobDetail?.jobRole:'-'}}
+            }}@else {
+            <span>-</span>
+          }
+          </td>
+          <td>{{act.substatus?act.substatus:'-'}}</td>
+        </tr>
+        }
+        }
+        @if ((((contract | async) ?? []) | prospective : searchValue).length === 0){
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+      </tbody>
+    </table>
+    } @else {
+    <app-data-loader-content />
+    }
+  </div>
+</div>

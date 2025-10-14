@@ -4,7 +4,9 @@ experienceType: string;
 employeeId: any;
 emailaddress: string,
 substatus : any;
-isCredentialExpired : any
+isCredentialExpired : any;
+empType:any
+fusionEmpId : any;
 }
 export interface Iteammembers{
     [x: string]: any;

@@ -20,12 +20,12 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem("accessToken");
 
-    // ✅ Skip token handling for login or refresh endpoints
+    //  Skip token handling for login or refresh endpoints
     if (request.url.includes('/api/v2/Auth/login') || request.url.includes('/api/v2/Auth/refresh') || request.url.includes('v2/Auth/social')) {
       return next.handle(request);
     }
     
-    // ✅ Check if token exists and is expired
+    //  Check if token exists and is expired
     // if (token && this.jwtService.isTokenExpired(token)) {
     //   if (!this.isRefreshing) {
     //     this.isRefreshing = true;
@@ -59,7 +59,7 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
     //   }
     // }
 
-    // ✅ If token is valid, just attach and continue
+    //  If token is valid, just attach and continue
     if (token) {
       request = this.addToken(request, token);
     }
@@ -93,7 +93,7 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
         switchMap((res: any) => {
           this.isRefreshing = false;
 
-          // ✅ Update localStorage (storeAuthResponse already handles all keys)
+          //  Update localStorage (storeAuthResponse already handles all keys)
           this.http.storeAuthResponse(res);
 
           const newAccessToken = res.accessToken;
@@ -102,8 +102,11 @@ export class TokeninterceptorsInterceptor implements HttpInterceptor {
           return next.handle(this.addToken(request, newAccessToken));
         }),
         catchError(err => {
+          // debugger
           this.isRefreshing = false;
           // this.http.logout();
+          // this.http.onLogout();
+          // this.router.navigate(['/login']);
           return throwError(() => err);
         })
       );

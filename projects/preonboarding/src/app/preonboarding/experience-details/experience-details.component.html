@@ -99,17 +99,26 @@
                 
             <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length > 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button>
-
+            @if (this.empDetails.experienceType == 'Fresher' && getempexpdata.length <= 0 && this.empDetails.empstatus.toLowerCase() == 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+                <button 
+                class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
+            }
+            @else{
             <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length <= 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
-
-            <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0"
-                class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button>
-
-            <button *ngIf="this.empDetails.experienceType == 'Experienced'" 
-                class="custom-btn btn-primary px-5" (click)="navigateNext()" [disabled]="getempexpdata.length <= 0" >Next</button>
-                <!-- <button *ngIf="this.empDetails.experienceType == 'Experienced' && (getempexpdata.length <= 0)" 
-                class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button> -->
+            }
+             @if (this.empDetails.experienceType == 'Experienced' && getempexpdata.length > 0 && this.empDetails.empstatus.toLowerCase() == 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
+                <button 
+                class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Next</button>
+            }
+            @else{
+            <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0 "
+                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+            }
+        <button *ngIf="empDetails.experienceType === 'Experienced' &&
+          !(getempexpdata.length > 0 && empDetails.empstatus?.toLowerCase() === 'prospective contract' &&
+            ['nda letter released','nda letter regenerated','nda letter accepted'].includes(prosempdata.substatus?.toLowerCase()))" class="custom-btn btn-primary px-5" (click)="navigateNext()"
+            [disabled]="getempexpdata.length <= 0">Next</button>
         </div>
     </div>
 </div>

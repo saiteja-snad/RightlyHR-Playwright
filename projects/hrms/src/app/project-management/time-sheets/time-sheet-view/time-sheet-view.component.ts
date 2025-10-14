@@ -143,8 +143,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     );
 
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
-
-
+    console.log(isWeekendAllowedProject);
+    
 
     //enable/disable
     const shouldEnable =

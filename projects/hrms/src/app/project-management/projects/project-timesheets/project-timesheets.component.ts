@@ -9,9 +9,10 @@ import { HttpService } from '../../../services/http.service';
 import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-project-timesheets',
-  imports: [CommonModule, TranslateModule, ChartModule, DataLoaderContentComponent,NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, ChartModule, DataLoaderContentComponent, NoDataFoundComponent, DateformatPipe],
   templateUrl: './project-timesheets.component.html',
   styleUrl: './project-timesheets.component.scss',
   encapsulation: ViewEncapsulation.None

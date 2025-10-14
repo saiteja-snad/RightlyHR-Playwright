@@ -25,7 +25,7 @@ import { Skeleton } from "primeng/skeleton";
     ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, Skeleton],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
-  encapsulation: ViewEncapsulation.None,
+  // encapsulation: ViewEncapsulation.None,
 })
 
 export class TimeSheetApprovalsComponent implements OnInit {

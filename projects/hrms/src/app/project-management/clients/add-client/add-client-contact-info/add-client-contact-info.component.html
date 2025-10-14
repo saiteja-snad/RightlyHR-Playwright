@@ -1,5 +1,5 @@
 <div class="add-data-content">
-    <form [formGroup]="addContactForm" (ngSubmit)="submitContacts()">
+    <form autocomplete="off" [formGroup]="addContactForm" (ngSubmit)="submitContacts()">
         <div class="custom-table-content mb-2">
             <table class="w-100">
                 <thead>
@@ -16,7 +16,7 @@
                         <td>
                             <input type="text" class="form-control custom-input" placeholder="Please enter contact name"
                                 formControlName="contactName" (input)="formValidation.validateInput(contact.get('contactName'))"
-                                (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51">
+                                (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51" autocomplete="off">
                             <div *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid" class="error-msg">
                                 <div *ngIf="contact.get('contactName')?.errors?.['required']">{{'Contact Name is required' | translate }}</div>
                                 <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || contact.get('contactName')?.errors?.['minCharacters']">

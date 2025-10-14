@@ -18,10 +18,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
+import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
+    ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, Skeleton],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -154,7 +155,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   }
   // load timesheet data based on project and employee
   loadClientsAndProjects(page: number, pageSize: number): void {
-    // this.dataload = true;
+     this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
 
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
@@ -165,6 +166,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
 
     this.http.getData(url).subscribe({
       next: (res: any) => {
+          this.dataload = false;
         this.collectionSize = res.data.totalCount;
         if (res.success) {
           // flatten all day entities into one array of entries (optional for counts)

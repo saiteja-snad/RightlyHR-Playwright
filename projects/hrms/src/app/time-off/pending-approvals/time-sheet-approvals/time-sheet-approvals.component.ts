@@ -77,7 +77,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   ];
   startdate: any;
   enddate: any;
-
+  globalSelectedEntries: any[] = [];
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
 
@@ -190,6 +190,17 @@ export class TimeSheetApprovalsComponent implements OnInit {
               });
             }
           });
+          // Restore selection from globalSelectedEntries
+          this.selectedMap = {};
+          this.timesheetData.forEach((day, i) => {
+            const selectedForDay = day.entries.filter(entry =>
+              this.globalSelectedEntries.some(sel => sel.id === entry.id)
+            );
+            this.selectedMap[i] = selectedForDay;
+          });
+
+          //Sync overall selection state
+          this.syncGlobalSelectedEntries();
         }
       },
       error: (err) => {
@@ -216,7 +227,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     });
   }
 
-  // called by p-table (row select)
+// called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {
     this.showhideaction = false;
     const row = event.data;

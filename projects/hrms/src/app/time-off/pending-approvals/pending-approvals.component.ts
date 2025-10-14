@@ -218,7 +218,7 @@ isAnyFieldSelected(): boolean {
   /** On form submit */
   onSubmit() {
     const dateRange = this.datepickerForm.value.dateRange;
-    const projectId = this.datepickerForm.value.projectId || 0;
+    const projectId = this.datepickerForm.value.projectId ;
     const resourceIds = this.datepickerForm.value.resourceId || [];
     // Build request dynamically
     const request: any = {

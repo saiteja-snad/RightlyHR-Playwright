@@ -18,7 +18,7 @@
                             {{ row.dailySummary.totalLoggedHours === 0 ? '-' : (row.dailySummary.totalLoggedHours |
                             number:'1.2-2') + ' Hrs' }}
                         </td>
-                        <td [style.color]="row.dailySummary.colour"><b>● {{row.dailySummary.status }}</b></td>
+                        <td [style.color]="row.dailySummary.colour"><b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b></td>
                         <!-- <td>
                         <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
                             <a (click)="openModal(row.entries, summaryforlogs)">

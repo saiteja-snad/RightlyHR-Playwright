@@ -74,7 +74,7 @@ export class PendingApprovalsComponent implements OnInit {
     // Check if any field has value
     return (
       (formValue.dateRange && formValue.dateRange.length > 0) ||
-      !!formValue.projectId ||
+      formValue.projectId !== null && formValue.projectId !== undefined  ||
       (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }

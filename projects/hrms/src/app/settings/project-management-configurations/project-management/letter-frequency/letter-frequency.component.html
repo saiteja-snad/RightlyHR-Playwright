@@ -3,8 +3,8 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter letter frequency"
-                    formControlName="letterfrequency" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
-                    formValidations.blockNonAlphabets($event)" maxlength="51">
+                    formControlName="letterfrequency"  (keydown)="formValidations.restrictInputallowspoint($event)"
+                 maxlength="51">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
                 </span>
@@ -91,22 +91,22 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="letterfrequencyupdate"
                         placeholder="Please enter letter frequency"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                      (keydown)="formValidations.restrictInputallowspoint($event)"
                         maxlength="51">
                     <div *ngIf="updateForm.get('letterfrequencyupdate')?.touched && updateForm.get('letterfrequencyupdate')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('letterfrequencyupdate')?.errors?.['required']">
-                            {{ 'letter frequency is required' | translate }}
+                            {{ 'Client Document Type is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('letterfrequencyupdate')?.errors?.['pattern']" class="error-msg">
                         {{ 'Field cannot start with a space' | translate }}
                     </div>
                     <div *ngIf="updateForm.get('letterfrequencyupdate')?.errors?.['maxCharacters']" class="error-msg">
-                        {{ 'letter frequency must be between 2–50 characters' | translate }}
+                        {{ 'Client Document Type must be between 2–50 characters' | translate }}
                     </div>
                     <div *ngIf="updateForm.get('letterfrequencyupdate')?.errors?.['minCharacters']" class="error-msg">
-                        {{ 'letter frequency must be between 2–50 characters' | translate }}
+                        {{ 'Client Document Type must be between 2–50 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">

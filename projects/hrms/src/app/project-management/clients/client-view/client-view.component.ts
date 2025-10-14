@@ -193,6 +193,15 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
+   isFilterApplied(): boolean {
+    const formValue = this.datepickerForm.value;
+    // Check if any field has value
+    return (
+      (formValue.dateRange && formValue.dateRange.length > 0) ||
+      formValue.projectId !== null && formValue.projectId !== undefined  ||
+      (formValue.resourceId && formValue.resourceId.length > 0)
+    );
+  }
   opencontactModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }

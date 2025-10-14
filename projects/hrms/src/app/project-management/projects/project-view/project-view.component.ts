@@ -126,6 +126,14 @@ export class ProjectViewComponent implements OnInit {
     return this.router.url.includes(route);
   }
 
+     isFilterApplied(): boolean {
+    const formValue = this.datepickerForm.value;
+    // Check if any field has value
+    return (
+      (formValue.dateRange && formValue.dateRange.length > 0) ||
+      (formValue.resourceId && formValue.resourceId.length > 0)
+    );
+  }
   getAllresourcesData() {
     this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

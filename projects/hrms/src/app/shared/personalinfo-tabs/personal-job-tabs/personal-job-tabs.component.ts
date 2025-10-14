@@ -59,6 +59,9 @@ filterTabs(): void {
   ];
   
   this.navTabs = allTabs;
+   this.navTabs = ((this.empinfo?.empstatus === 'Active Contract' || this.empinfo?.empstatus === 'Inactive Contract') && this.empinfo.empType === 'Contract')
+    ? allTabs
+    : allTabs.filter(tab => tab.label !== 'Contract Info'); 
 }
 
   navigateToAccessedRoute(link: string): void {

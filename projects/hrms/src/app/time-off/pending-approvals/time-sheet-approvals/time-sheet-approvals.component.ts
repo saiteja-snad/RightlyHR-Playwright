@@ -190,6 +190,17 @@ export class TimeSheetApprovalsComponent implements OnInit {
               });
             }
           });
+          // Restore selection from globalSelectedEntries
+          this.selectedMap = {};
+          this.timesheetData.forEach((day, i) => {
+            const selectedForDay = day.entries.filter(entry =>
+              this.globalSelectedEntries.some(sel => sel.id === entry.id)
+            );
+            this.selectedMap[i] = selectedForDay;
+          });
+
+          //Sync overall selection state
+          this.syncGlobalSelectedEntries();
         }
       },
       error: (err) => {
@@ -215,6 +226,81 @@ export class TimeSheetApprovalsComponent implements OnInit {
       }
     });
   }
+globalSelectedEntries: any[] = []; // ✅ keep this in your class top
+
+// loadClientsAndProjects(page: number, pageSize: number): void {
+//   this.dataload = true;
+//   let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
+
+//   if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
+//   if (this.projectId !== undefined && this.projectId !== null) {
+//     url += `&projectId=${this.projectId}`;
+//   }
+//   if (this.startdate && this.enddate) url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
+
+//   this.http.getData(url).subscribe({
+//     next: (res: any) => {
+//       this.dataload = false;
+//       this.collectionSize = res.data.totalCount;
+
+//       if (res.success) {
+//         // ✅ Step 1: Flatten entries
+//         const allEntries = res.data.items
+//           .flatMap((item: any) => item.entity)
+//           .flatMap((entity: any) => entity.entries);
+//         this.totalRecordCountitem = allEntries.length;
+
+//         // ✅ Step 2: Assign timesheet data for current page
+//         this.timesheetData = res.data.items.flatMap((item: any) => item.entity) as TimesheetDay[];
+//         this.timesheetrecord = res.data.items;
+
+//         // ✅ Step 3: Ensure each entry has a unique `id`
+//         this.timesheetData.forEach(day => {
+//           if (Array.isArray(day.entries)) {
+//             day.entries.forEach((entry: any) => {
+//               if (entry && typeof entry === 'object') {
+//                 entry.id = entry.approvalHeader?.id || crypto.randomUUID();
+//               }
+//             });
+//           }
+//         });
+
+//         // ✅ Step 4: Restore selection from globalSelectedEntries
+//         this.selectedMap = {};
+//         this.timesheetData.forEach((day, i) => {
+//           const selectedForDay = day.entries.filter(entry =>
+//             this.globalSelectedEntries.some(sel => sel.id === entry.id)
+//           );
+//           this.selectedMap[i] = selectedForDay;
+//         });
+
+//         // ✅ Step 5: Sync overall selection state
+//         this.syncGlobalSelectedEntries();
+//       }
+//     },
+//     error: (err) => {
+//       this.dataload = false;
+//       if (this.employeeresource != null && this.projectId != 0) {
+//         this.conformationPopup.openErrorModal(err.error.message);
+//         this.collectionSize = 0;
+//       }
+//       if (this.employeeresource == null && this.projectId != 0) {
+//         this.collectionSize = 0;
+//       }
+//       if (this.enddate == "Invalid Date") {
+//         this.conformationPopup.openErrorModal(err.error.errors.endDate[0]);
+//         this.collectionSize = 0;
+//       }
+//       console.log(err);
+//       this.timesheetData = [];
+//       this.timesheetrecord = [];
+//       this.totalRecordCountitem = 0;
+//     },
+//     complete: () => {
+//       this.dataload = false;
+//     }
+//   });
+// }
 
   // called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {

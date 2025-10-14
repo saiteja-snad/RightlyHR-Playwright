@@ -463,6 +463,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       });
     }
   }
+  
+  isFormCompletelyValid(): boolean {
+  const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+  return !!formValue.dateRange && !!formValue.projectId && !!formValue.resourceId;
+}
 
   onSubmit() {
     const dateRangeArray = this.datepickerForm.value.dateRange || [];

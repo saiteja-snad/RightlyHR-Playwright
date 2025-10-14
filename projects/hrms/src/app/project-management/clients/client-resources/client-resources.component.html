@@ -12,6 +12,7 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
+                    <th>Resource Employee ID</th>
                     <th>Resource Name</th>
                     <th>Designation</th>
                     <th>Role</th>
@@ -27,6 +28,7 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
+                            <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>

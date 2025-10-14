@@ -987,9 +987,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   documentsHistoryFields = [
     'Documents History Offer Letter',
+    'Documents History Contract Offer Letter',
     'Documents History Appointment Letter',
     'Documents History Trainee Offer Letter',
     'Documents History Trainee Appointment Letter',
+    'Documents History Non-Disclosure Agreement Letter',
+
   ];
   dashboardGenerateDocumentsFields = [
     'Dashboard Generate Documents Offer Letter',

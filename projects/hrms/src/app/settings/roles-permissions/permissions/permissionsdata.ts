@@ -680,10 +680,11 @@ export const permissionsData = [
 
   //Dashboard Documents History
   { fields: 'Documents History Offer Letter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Documents History Contract Offer Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents History Appointment Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents History Trainee Offer Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents History Trainee Appointment Letter', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Documents History Contract Offer Letter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Documents History Non-Disclosure Agreement Letter', View: false, Update: false, Create: false, Delete: false },
 
   //Dashboard Documents History Offer Letter Actions 
   { fields: 'Offer Letter Download', View: false, Update: false, Create: false, Delete: false },

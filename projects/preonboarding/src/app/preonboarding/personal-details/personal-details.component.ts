@@ -84,6 +84,8 @@ export class PersonalDetailsComponent implements OnInit {
     this.getprospectivempdata()
     this.getGender();
     this.getTitle();
+    const storedstep = 1;
+    localStorage.setItem('currentStep',storedstep.toString());
   }
 
   // Prospective Employee Data

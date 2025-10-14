@@ -18,7 +18,7 @@ import { HttpService } from '../../services/http.service';
     NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
-  encapsulation: ViewEncapsulation.None,
+   encapsulation: ViewEncapsulation.None,
 })
 
 export class PendingApprovalsComponent implements OnInit {

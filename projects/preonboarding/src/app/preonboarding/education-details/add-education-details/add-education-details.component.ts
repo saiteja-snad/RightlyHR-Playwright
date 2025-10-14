@@ -33,7 +33,8 @@ export class AddEducationDetailsComponent {
   showErrorr: boolean = false;
   startDatevalidate:any
   submissionInProgress = false;
-
+  today = new Date().toISOString().split('T')[0];
+  
   constructor(private modalService: NgbModal,private formValidationService:FormValidationService, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData: DataService,
     public formValidation: FormValidationService
   ) { }

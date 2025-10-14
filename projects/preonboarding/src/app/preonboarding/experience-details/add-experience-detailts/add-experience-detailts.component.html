@@ -105,7 +105,7 @@
                             [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
                             class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list> -->
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
-                            placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                            placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers" (keypress)="formValidation.restrictAlphabets($event)"
                             [value]="experienceForm.get('previousContactNumber')?.value" autocomplete="off">
                     </div>
                     <!-- <div class="error-msg my-1"

@@ -44,7 +44,7 @@ export class LetterFrequencyComponent {
 
   initialiseForm() {
     this.addForm = this.fb.group({
-      letterfrequency: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      letterfrequency: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51)]]
     });
 
 
@@ -53,7 +53,7 @@ export class LetterFrequencyComponent {
   intialistonUpdate() {
     this.updateForm = this.fb.group({
       letterfrequencyupdate: [null, [Validators.required, this.formValidations.minCharactersValidator(2),
-      this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      this.formValidations.maxCharactersValidator(51)]]
     });
   }
 

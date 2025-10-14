@@ -26,6 +26,37 @@ export class FormValidationsService {
     return null;
   }
 
+  
+ restrictInputallowspoint(event: KeyboardEvent): void {
+  const key = event.key;
+  const inputElement = event.target as HTMLInputElement;
+
+  // ✅ Allow navigation & control keys
+  if (
+    key === 'Backspace' ||
+    key === 'Delete' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight' ||
+    key === 'Tab' ||
+    key === 'Enter' ||
+    key === 'Shift'
+  ) {
+    return;
+  }
+
+  // ✅ Prevent first character from being a space
+  if (key === ' ' && inputElement.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // ✅ Allow only specific printable characters
+  const isValidCharacter = /^[A-Za-z\s!':]$/.test(key);
+  if (!isValidCharacter) {
+    event.preventDefault();
+  }
+}
+
   //zero
   noAlphabetsOrZeroValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

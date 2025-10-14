@@ -24,7 +24,7 @@ import { Router } from '@angular/router';
     ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
-  encapsulation: ViewEncapsulation.None,
+  // encapsulation: ViewEncapsulation.None,
 })
 
 export class TimeSheetApprovalsComponent implements OnInit {
@@ -154,7 +154,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   }
   // load timesheet data based on project and employee
   loadClientsAndProjects(page: number, pageSize: number): void {
-    // this.dataload = true;
+     this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
 
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;

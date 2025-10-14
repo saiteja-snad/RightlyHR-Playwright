@@ -59,7 +59,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedMap: { [key: number]: any[] } = {};
   //projectsData:any[]=[];
   //employeeData:any[]=[];
-  projectId: number = 0;
+  projectId!: number;
   dataload = false;
   //employeeflag:any;
   employeeresource: any;

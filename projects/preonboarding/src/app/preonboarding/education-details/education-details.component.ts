@@ -75,6 +75,12 @@ export class EducationDetailsComponent {
     // this.router.navigate(['offer-letter']);
     this.router.navigate(['/offer-letter']);
   }
+  navigatePreviousContract() {
+    // const storedstep = 1;
+    // localStorage.setItem('currentStep', storedstep.toString());
+    // this.router.navigate(['offer-letter']);
+    this.router.navigate(['/contractor-offer-letter']);
+  }
 
   navigatePrevioustoTranineeofferletter() {
     // const storedstep = 1;

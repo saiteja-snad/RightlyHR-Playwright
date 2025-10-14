@@ -1,0 +1,129 @@
+<div class="custom-main-component-container">
+    <form autocomplete="off" [formGroup]="addForm" (ngSubmit)="onAddSubmit(addForm)"
+        *ngIf="rbac.allowedToAccess('Industry Type.create')">
+        <div class="mb-4">
+            <div class="custom-settings-add-input input-group">
+                <input type="text" class="form-control custom-input" placeholder="Please enter industry type"
+                    formControlName="industryType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                    formValidations.blockNonAlphabets($event)"  maxlength="51">
+                <span class="input-group-text" id="stat">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
+                </span>
+            </div>
+            <div *ngIf="addForm.get('industryType')?.touched && addForm.get('industryType')?.invalid" class="error-msg">
+                <div *ngIf="addForm.get('industryType')?.errors?.['required']">
+                    {{ 'Industry Type is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="addForm.get('industryType')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
+            </div>
+            <div *ngIf="addForm.get('industryType')?.errors?.['maxCharacters'] || 
+                        addForm.get('industryType')?.errors?.['minCharacters']" class="error-msg">
+                {{ 'Industry Type must be between 2-50 characters' | translate }}
+            </div>
+        </div>
+    </form>
+
+    <!--Data Content-->
+    <div class="custom-settings-data-table position-relative">
+        @if (!loading) {
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th class="col-span-2"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="industryTypes.length > 0; else noDataTemplate">
+                    @for (item of industryTypes; track $index) {
+                    <tr>
+                        <td class="w-75">{{item.value}}</td>
+                        <td class="w-25">
+                            <div class="d-flex gap-4">
+                                <!--Update-->
+                                <div (click)="openupdate(item, updatepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Industry Type.update')">
+                                        <app-settings-update-icon />
+                                    </a>
+                                </div>
+                                <!--Delete-->
+                                <div (click)="opendelete(item, deletepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Industry Type.delete')">
+                                        <app-settings-delete-icon />
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <app-no-data-found />
+                </ng-template>
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
+    </div>
+</div>
+
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form autocomplete="off" [formGroup]="updateForm" (ngSubmit)="updateEAV(updateForm)">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{'Update Industry Type'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Industry Type'|translate}}
+                        <span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="industryType"
+                        placeholder="Please enter industry" (keydown)="formValidations.restrictInput($event); 
+                        formValidations.blockNonAlphabets($event)" maxlength="51">
+                    <div class="error-msg">
+                        <div *ngIf="updateForm.get('industryType')?.touched && updateForm.get('industryType')?.invalid">
+                            <div *ngIf="updateForm.get('industryType')?.errors?.['required']">
+                                {{ 'Industry Type is required' | translate }}
+                            </div>
+                        </div>
+                        <div *ngIf="updateForm.get('industryType')?.errors?.['pattern']">
+                            {{ 'Field cannot start with a space' | translate }}
+                        </div>
+                        <div *ngIf="updateForm.get('industryType')?.errors?.['maxCharacters'] || 
+                            updateForm.get('industryType')?.errors?.['minCharacters']">
+                            {{ 'Industry Type must be between 2-50 characters' | translate }}
+                        </div>
+                    </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="deleteEAV()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

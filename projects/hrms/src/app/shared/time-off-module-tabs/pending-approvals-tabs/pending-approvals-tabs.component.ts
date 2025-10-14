@@ -24,6 +24,7 @@ interface NavLink {
   templateUrl: './pending-approvals-tabs.component.html',
   styleUrl: './pending-approvals-tabs.component.scss',
 })
+
 export class PendingApprovalsTabsComponent {
   LOGIN: any;
   subscription!: Subscription;
@@ -92,6 +93,20 @@ export class PendingApprovalsTabsComponent {
       permission: { feature: 'Trainee Details Tab', action: 'view' },
       icon: '/time-off-icon/trainee-icon.png',
     },
+     {
+      label: 'Contractors',
+      route: '/time-off/pending-approvals/contractors-request',
+      moduleId: environment.contractorModuleId,
+      permission: { feature: 'Contractor Details Tab', action: 'view' },
+      icon: '/time-off-icon/trainee-icon.png',
+    },
+    {
+      label: 'Contract-Conversion',
+      route: '/time-off/pending-approvals/contract-conversion',
+      moduleId: environment.contractEmployeeConversionModuleId,
+      permission: { feature: 'Contract-Conversion Tab', action: 'view' },
+      icon: '/time-off-icon/trainee-icon.png',
+    },
     {
       label: 'Separations',
       route: '/time-off/pending-approvals/separation-request',
@@ -127,6 +142,12 @@ export class PendingApprovalsTabsComponent {
       permission: { feature: 'Claims and Expenses Tab', action: 'view' },
       icon: '/main-menu-icons/expenses-icon.png',
     },
+    {
+      label: 'Timesheets',
+      route: '/time-off/pending-approvals/time-sheets',
+      moduleId: environment.timesheetModuleId, permission: { feature: 'Time Sheet approval Tab', action: 'view' },
+      icon: '/time-off-icon/calender-activity.png',
+    }
   ];
 
   constructor(
@@ -199,23 +220,17 @@ export class PendingApprovalsTabsComponent {
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
   }
 
   getAllPendingApprovalsNoDue() {
     const EmployeeId = this.LOGIN.employeeId;
-    this.subscription = this.http
-      .getData(
-        `NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`
-      )
-      .subscribe({
-        next: (data: any) => {
-          this.nodue_Request_data = data;
-        },
-      });
+    this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.nodue_Request_data = data;
+      },
+    });
   }
 
   getAllPendingApprovalsCount() {

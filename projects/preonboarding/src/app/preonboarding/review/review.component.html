@@ -102,7 +102,7 @@
                                             <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
-                                                <a class="view-btn" *ngIf="ed.attachment.endsWith('jpg') || ed.attachment.toLowerCase().endsWith('jpeg') || 
+                                                <a class="view-btn" *ngIf="ed.attachment.toLowerCase().endsWith('jpg') || ed.attachment.toLowerCase().endsWith('jpeg') || 
                                                 ed.attachment.toLowerCase().endsWith('png') ;else eddownloadView" (click)="onViewClick(ed.attachment);openModal(myModall)">
                                                     <i class="bi bi-eye-fill me-2"></i>View</a>
                                                 <ng-template #eddownloadView>
@@ -173,13 +173,24 @@
 
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
-                    [(ngModel)]="isCheckedoffer">
+                    [(ngModel)]="isCheckedoffer" [disabled]="true">
                 <label class="form-check-label custom-label" for="flexCheckDefau">Offer Letter Accepted</label>
+            </div>
+            <div class="form-check" *ngIf="this.empDetails.empstatus.toLowerCase() === 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"
+                    [(ngModel)]="isCheckedndcletter" disabled>
+                <label class="form-check-label custom-label" for="flexCheckDefau">Non-Disclosure Agreement Letter Accepted</label>
             </div>
         </div>
 
         <div class="footer-btn-content d-flex justify-content-between pt-4">
-            @if(this.empDetails.substatus !== 'Offer Letter Accepted'){
+            
+            @if(this.empDetails.substatus !== 'Offer Letter Accepted' && this.empDetails.empstatus.toLowerCase() === 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')){
+                <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePreviousndcletter()">
+                    Non-Disclosure Agreement Letter
+                </button>
+            }
+            @else{
                 <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
                     Employment History
                 </button>

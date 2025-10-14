@@ -12,9 +12,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Skeleton } from 'primeng/skeleton';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CalenderIconComponent } from "../../icons/calender-icon/calender-icon.component";
+import { ItSupportIconComponent } from "../../icons/it-support-icon/it-support-icon.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, TranslateModule, Skeleton, ReactiveFormsModule, CalenderIconComponent, ItSupportIconComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -294,7 +296,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       form.markAllAsTouched();
       return;
     }
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const formData = form.value;
     const payload = {
       employeeId: this.empinfo.employeeId,
@@ -309,13 +311,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Password changed successfully');
           this.resetPasswordIcons();
           setTimeout(() => {
-            this.spinnerLoader= false;
+            this.spinnerLoader = false;
             this.modalservie.dismissAll()
             this.onLogout();
           }, 2000)
         },
         error: (error: any) => {
-          this.spinnerLoader= false;
+          this.spinnerLoader = false;
           if (error?.error?.message) {
             this.backendError = error.error.message;
           } else if (typeof error?.error === 'string') {

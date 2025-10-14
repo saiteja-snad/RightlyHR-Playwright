@@ -110,9 +110,9 @@
                                         *ngIf="!selectedEmployeeJobDetails?.jobRole;else role">_______________________</span>
                                     <ng-template #role><b> {{selectedEmployeeJobDetails.jobRole}} </b></ng-template>
                                     since <span
-                                        *ngIf="!selectedEmployee?.dateOfJoining;else joining">_______________________.</span>
+                                        *ngIf="!selectedEmployeeJobDetails?.effectiveDate;else joining">_______________________.</span>
                                     <ng-template
-                                        #joining><b>{{selectedEmployee.dateOfJoining|dateformat}}.</b></ng-template>
+                                        #joining><b>{{selectedEmployeeJobDetails.effectiveDate|dateformat}}.</b></ng-template>
                                 </span>
                             </p>
                             <p>

@@ -84,6 +84,8 @@ export class PersonalDetailsComponent implements OnInit {
     this.getprospectivempdata()
     this.getGender();
     this.getTitle();
+    const storedstep = 1;
+    localStorage.setItem('currentStep',storedstep.toString());
   }
 
   // Prospective Employee Data
@@ -261,7 +263,7 @@ export class PersonalDetailsComponent implements OnInit {
           zipCode: currentAddress?.zipCode || null,
         }
       });
-      this.personalDetailsForm?.get('permanentAddress.zipCode')?.markAsTouched();
+      //this.personalDetailsForm?.get('permanentAddress.zipCode')?.markAsTouched();
     }
     if(this.personalDetailsForm?.get('sameAsPermanent')?.value === false){
       this.personalDetailsForm?.patchValue({

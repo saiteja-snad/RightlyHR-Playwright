@@ -46,12 +46,15 @@ export const environment = {
   ProbationNoticePeriodId: 0,
   ProbationbuttonbeforeId: 1,
   ProbationExtensionId: 2,
+  timesheetModuleId:30,
   ProbationExtendPeriodTimes: 3,
   PMSrequestmoduleId:24,
   deskAllocationModuleId:23,
   expensesModuleId:19,
   remoteLoginModuleId:11,
   globalPermissionsModuleID:21,
+  contractorModuleId:25,
+  contractEmployeeConversionModuleId:26,
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
 
 };

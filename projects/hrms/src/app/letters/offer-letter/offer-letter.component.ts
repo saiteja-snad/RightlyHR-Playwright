@@ -186,7 +186,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5','pdfContent6']; // IDs of the content elements to be converted to PDF
+    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6']; // IDs of the content elements to be converted to PDF
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -279,10 +279,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.employeeaddress = data as IAddress[];
         if (this.employeeaddress?.employeeAddresses.length > 0) {
-          if(this.employeeaddress.offerIssueddate){
+          if (this.employeeaddress.offerIssueddate) {
             this.employeeForm.get('offerIssuedDate')?.setValue(this.formatDateForOfferIssedandExpiry(new Date(this.employeeaddress.offerIssueddate)));
           }
-          if(this.employeeaddress.offerExpiryDate){
+          if (this.employeeaddress.offerExpiryDate) {
             this.employeeForm.get('offerExpiryDate')?.setValue(this.formatDateForOfferIssedandExpiry(new Date(this.employeeaddress.offerExpiryDate)));
           }
         }
@@ -421,7 +421,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //function to reset the feilds
   resetInputFields() {
-    
+
     this.employeeForm?.reset();
     this.prospectiveEmpData.personalEmail = '';
     this.prospectiveEmpData = {};
@@ -488,7 +488,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
               }
               this.prospectiveEmpData.jobLocationName = data.checkofferletter.workLocation;
               this.prospectiveEmpData.jobSubLocationName = data.checkofferletter.subLocation;
-              this.prospectiveEmpData.address= data.checkofferletter.address;
+              this.prospectiveEmpData.address = data.checkofferletter.address;
               this.getSubLocationByid(this.prospectiveEmpData?.locationId);
               if (this.prospectiveEmpData.amount) {
                 this.ctcCalculation();
@@ -816,6 +816,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: this.employeeForm.get('authorityid')?.value,
       addressType: this.addressType.toUpperCase(),
       note: this.employeeForm.get('note')?.value,
+      letterType: 'Offer Letter',
     };
     this.subscription = this.http.postdata('OfferLetter', postOfferLetterDetails).subscribe({
       next: (data: any) => {
@@ -829,7 +830,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
 
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
-    
+
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
@@ -848,10 +849,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-    this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
-    this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
-    this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
+      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+      this.prospectiveEmpData.note = this.employeeForm?.get('note')?.value ? this.employeeForm?.get('note')?.value : null;
+      this.prospectiveEmpData.offerIssuedDate = this.employeeForm?.get('offerIssuedDate')?.value ? this.employeeForm?.get('offerIssuedDate')?.value : null;
+      this.prospectiveEmpData.offerExpiryDate = this.employeeForm?.get('offerExpiryDate')?.value ? this.employeeForm?.get('offerExpiryDate')?.value : null;
+      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -1084,7 +1086,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     this.ApprovalLoader = true;
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
-      personName: [this.prospectiveEmpData.firstName, this.prospectiveEmpData.middleName, this.prospectiveEmpData.lastName].filter(Boolean)   .join(" "),
+      personName: [this.prospectiveEmpData.firstName, this.prospectiveEmpData.middleName, this.prospectiveEmpData.lastName].filter(Boolean).join(" "),
       personEmail: this.prospectiveEmpData.personalEmail,
       personRole: this.prospectiveEmpData?.jobRole,
       employeeId: loggedInUser.employeeId,

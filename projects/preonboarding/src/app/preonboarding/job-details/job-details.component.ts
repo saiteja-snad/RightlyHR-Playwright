@@ -18,6 +18,7 @@ export class JobDetailsComponent implements OnInit {
   empdata = {} as any;
   substatus: any;
   offerstatus: any;
+  ndastatus:any;
   documentRequestStatus: any;
   documentReviewStatus: any;
   offerletterrejected: any;
@@ -31,7 +32,7 @@ export class JobDetailsComponent implements OnInit {
   documentsRequested = '/images/right-arrow.png';
   documentsReview = '/images/right-arrow.png';
   offerLetter = '/images/right-arrow.png';
-
+  ndaletter = '/images/right-arrow.png';
   constructor(private router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -50,9 +51,13 @@ export class JobDetailsComponent implements OnInit {
         this.substatus = this.empdata.substatus?.toLowerCase()
         const OfferLetter = ['offer letter generated', 'offer letter released', 'offer letter regenerated', 'offer letter accepted'];
         const DocumentsInReview = ['documents submitted', 'document in review' ,'documents verified'];
+        const ndaletter=['nda letter generated', 'nda letter released', 'nda letter regenerated', 'nda letter accepted']
         const DocumentsRequeste = ['requested documents'];
         const offerRejectetd = ['offer letter rejected'];
         const documentsrejected = ['documents rejected']
+        this.ndastatus = ndaletter.some((value) =>
+          this.substatus.includes(value)
+        );
         this.offerstatus = OfferLetter.some((value) =>
           this.substatus.includes(value)
         );
@@ -94,7 +99,14 @@ export class JobDetailsComponent implements OnInit {
   }
 
   checkStatus() {
-    if (this.offerstatus) {
+    if(this.ndastatus){
+     this.onboarding = this.onboarding;
+      this.ndaletter = this.Inprogress;
+      this.offerLetter = this.completed;
+      this.documentsRequested = this.completed;
+      this.documentsReview = this.completed;
+    }
+   else if (this.offerstatus) {
       this.onboarding = this.onboarding;
       this.offerLetter = this.Inprogress;
       this.documentsRequested = this.completed;

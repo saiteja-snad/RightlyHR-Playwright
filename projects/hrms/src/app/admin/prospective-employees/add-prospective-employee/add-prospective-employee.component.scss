@@ -4,3 +4,12 @@ input:focus{
     border: 1px solid #DEE8F3 !important;
     background-color: #F8FBFF !important;
 }
+.comments-area {
+  word-break: break-word;        /* prefer this over break-all */
+  white-space: pre-wrap;         /* preserves spaces and wraps text */
+  overflow-wrap: break-word;     /* ensures long words wrap */
+  text-align: left;              /* aligns all text to the left */
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

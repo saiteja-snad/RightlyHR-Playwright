@@ -171,9 +171,9 @@ export class OfferLetterComponent implements OnInit {
       },
       error: (err: any) => {
         console.log(err);
-        if (err.status = 401) {
-          this.http.logOut();
-        }
+        // if (err.status = 401) {
+        //   this.http.logOut();
+        // }
       }
     })
   }

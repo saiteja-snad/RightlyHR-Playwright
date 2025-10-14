@@ -1,0 +1,101 @@
+<div class="custom-main-component-container">
+    <form autocomplete="off" [formGroup]="form" autocomplete="off" (ngSubmit)="onSubmit(form)" class="mb-4"
+        *ngIf="rbac.allowedToAccess('Project Management Authority.create')">
+        <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+                <p-select formControlName="selected_user" [options]="usersList" name="user" id="user" optionLabel="fullName"
+                    placeholder="Please select employee" class="w-100" [filter]="true" filterBy="fullName" [showClear]="true"
+                    filterPlaceholder="Search employee" class="form-select custom-select w-100" resetFilterOnHide="true">
+                </p-select>
+            </div>
+            <div>
+                <button type="submit" class="custom-btn btn-primary py-2 px-4"
+                    [disabled]="form.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <span>{{'Loading'}}...</span>
+                    </div>
+                    }@else {
+                    <span>{{'Add' |translate}}</span>
+                    }
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="custom-table-content position-relative w-50">
+        @if(!dataLoad){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Name' |translate}}</th>
+                    @if(rbac.allowedToAccess('Project Management Authority.delete')){
+                    <th class="text-center">{{'Action' |translate}}</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if(authrityList.length > 0){
+                <tr *ngFor="let user of authrityList">
+                    <td>{{user.authority.name}}</td>
+                    @if(rbac.allowedToAccess('Project Management Authority.delete')){
+                    <td class="text-center" (click)="openDeleteModal(confirmationModal, user)">
+                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                    </td>
+                    }
+                </tr>
+                }@else {
+                <tr>
+                    <td colspan="2">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+        @else {
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th><p-skeleton width="6rem" height="1.5rem" /></th>
+                    <th class="text-center"><p-skeleton width="6rem" height="1.5rem" /></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let skel of [1,2,3,4]">
+                    <td>
+                        <p-skeleton width="150px" height="18px"></p-skeleton>
+                    </td>
+                    <td class="text-center">
+                        <p-skeleton width="24px" height="24px" shape="circle"></p-skeleton>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        }
+    </div>
+</div>
+
+<ng-template #confirmationModal let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" [disabled]="spinnerLoader" (click)="deleteAuthority()">
+                @if(spinnerLoader){
+                <div class="button-loader-content">
+                    <div class="spinner-border button-spinner text-light" role="status"></div>
+                    <span>{{'Loading'}}...</span>
+                </div>
+                }@else {
+                <span>{{'Yes'|translate}}</span>
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>

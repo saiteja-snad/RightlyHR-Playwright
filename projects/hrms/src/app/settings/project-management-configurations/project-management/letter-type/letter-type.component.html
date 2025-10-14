@@ -1,0 +1,32 @@
+<div [formGroup]="form" class="letter-container">
+  <!-- Update button appears only if something changed -->
+  @if(rbac.allowedToAccess('Letter Configurations.update')) {
+  <div class="mb-3">
+    <button *ngIf="showUpdate" type="button" class="custom-btn btn-primary" (click)="onUpdate()"
+      [disabled]="form.invalid">Update</button>
+  </div>
+  }
+
+  <div class="custom-table-content position-relative w-50">
+    <table class="w-100" formArrayName="letters">
+      <thead>
+        <tr>
+          <th>Letter Type</th>
+          <th class="text-center">Required</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let letter of lettersArray.controls; let i = index" [formGroupName]="i">
+          <!-- Static letter type label -->
+          <td class="align-middle">{{ letter.get('type')?.value }}</td>
+          <!-- Toggle switch bound to 'required' -->
+          <td class="d-flex justify-content-center">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" formControlName="required" (onChange)="onClickedAck($event, i)">
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

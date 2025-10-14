@@ -1,0 +1,423 @@
+<div class="custom-main-component-container">
+    <!--letter content-->
+    <div class="main-letter-content gap-4 d-flex w-100">
+        <div class="card letter-fields-content p-4">
+            <form autocomplete="off" [formGroup]="clientForm" (ngSubmit)="postNDALetterFormSubmit(clientForm)">
+                <div class="row">
+                    <!-- Effective Date -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Effective Date'| translate }}<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" onkeypress="return false" formControlName="effectiveDate"
+                            placeholder="Please enter Date" />
+                        <div *ngIf="clientForm.get('effectiveDate')?.invalid && clientForm.get('effectiveDate')?.touched" class="error-msg">
+                            <div>Effective Date is required</div>
+                        </div>
+                    </div>
+
+                    <!-- Client Name -->
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">{{'Client Name' |translate}}<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="companyName"
+                            placeholder="Please enter client name" (keydown)="formValidation.restrictInitialSpace($event)">
+                        <div *ngIf="clientForm.get('companyName')?.invalid && clientForm.get('companyName')?.touched" class="error-msg">
+                            <div>Client Name is required</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Client Address'| translate }}<span class="text-danger">*</span></label>
+                        <textarea type="text" class="form-control custom-input" formControlName="companyAddress"
+                            placeholder="Please enter client address" [maxlength]="500"
+                            (keydown)="formValidation.restrictInitialSpace($event)" rows="3"></textarea>
+                        <div *ngIf="clientForm.get('companyAddress')?.invalid && clientForm.get('companyAddress')?.touched" class="error-msg">
+                            <div>Client Address is required</div>
+                        </div>
+                        <div class="textarea-count-text">{{ clientForm.get("companyAddress")?.value?.length || 0 }}/500</div>
+                    </div>
+
+                    <!-- Service Provider Name -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Contractor Name'| translate }}<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="serviceProviderName"
+                            placeholder="Please enter contractor name" (keydown)="formValidation.restrictInitialSpace($event)"
+                            [maxlength]="101" />
+                        <div *ngIf="clientForm.get('serviceProviderName')?.errors?.['required'] && clientForm.get('serviceProviderName')?.touched"
+                            class="error-msg">
+                            <div>Contractor name is required</div>
+                        </div>
+                        <div class="error-msg" *ngIf="clientForm.get('serviceProviderName')?.invalid && clientForm.get('serviceProviderName')?.errors?.['maxlength']">
+                            Contractor name must be in between 2-100 characters
+                        </div>
+                    </div>
+
+                    <!-- Contractor Address -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Contractor Address'| translate }}<span class="text-danger">*</span></label>
+                        <textarea type="text" class="form-control custom-input" formControlName="serviceProviderAddress"
+                            placeholder="Please enter contractor address" [maxlength]="501"
+                            (keydown)="formValidation.restrictInitialSpace($event)" rows="3"></textarea>
+                        <div *ngIf="clientForm.get('serviceProviderAddress')?.errors?.['required'] && clientForm.get('serviceProviderAddress')?.touched"
+                            class="error-msg">
+                            <div>Contractor Address is required</div>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('serviceProviderAddress')?.invalid && clientForm.get('serviceProviderAddress')?.errors?.['maxlength']">
+                            Contractor Address must be in between 2-500 characters
+                        </div>
+                        <div class="textarea-count-text">{{ clientForm.get("serviceProviderAddress")?.value?.length || 0 }}/500</div>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Term Duration'| translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="termduration"
+                            placeholder="Please enter term duration" (keypress)="formValidation.restrictAlphabets($event)"
+                            (paste)="formValidation.validatePaste($event)" [maxlength]="5" />
+                        <div *ngIf="clientForm.get('termduration')?.errors?.['required'] && clientForm.get('termduration')?.touched"
+                            class="error-msg">
+                            <div>Term Duration is required</div>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('termduration')?.touched && clientForm.get('termduration')?.errors?.['maxlength']">
+                            Term Duration must be in between 1-4 characters
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Term Frequency' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="letterFrequencies" optionLabel="value" formControlName="termfrequency"
+                                placeholder="Please select term frequency" class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="clientForm.get('termfrequency')?.invalid && clientForm.get('termfrequency')?.touched ">
+                            Term Frequency is required
+                        </div>
+                    </div>
+
+                    <!-- Payment Terms -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Post-Term Confidentiality Duration'| translate}}
+                            <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="posttermconfidentialityduration"
+                            placeholder="Please enter post-term confidentiality duration"
+                            (keypress)="formValidation.restrictAlphabets($event)" (paste)="formValidation.validatePaste($event)"
+                            [maxlength]="5" />
+                        <div *ngIf="clientForm.get('posttermconfidentialityduration')?.errors?.['required'] && 
+                        clientForm.get('posttermconfidentialityduration')?.touched" class="error-msg">
+                            <div>Post-Term Confidentiality Duration is required</div>
+                        </div>
+                        <div class="error-msg" *ngIf="clientForm.get('posttermconfidentialityduration')?.touched && 
+                        clientForm.get('posttermconfidentialityduration')?.errors?.['maxlength']">
+                            Post-Term Confidentiality Duration must be in between 1-4 characters
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Post-Term Confidentiality Frequency' | translate}}
+                            <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="letterFrequencies" optionLabel="value"
+                                formControlName="posttermconfidentialityfrequency"
+                                placeholder="Please select post-term confidentiality frequency"
+                                class="form-select custom-select"></p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="clientForm.get('posttermconfidentialityfrequency')?.invalid && 
+                        clientForm.get('posttermconfidentialityfrequency')?.touched ">
+                            Post-Term Confidentiality Frequency is required
+                        </div>
+                    </div>
+                    <!-- Governing Law -->
+
+                    <!-- Invoicing Frequency -->
+                    <div class="col-md-12 mb-4">
+                        <label class="form-label custom-label mb-2">{{'Governing Law'| translate }}<span
+                                class="text-danger">*</span></label>
+                        <textarea type="text" class="form-control custom-input" formControlName="governingLaw"
+                            placeholder="Please enter governing law" rows="3" [maxlength]="501"
+                            (keydown)="formValidation.restrictInitialSpace($event)"></textarea>
+                        <div *ngIf="clientForm.get('governingLaw')?.errors?.['required'] && clientForm.get('governingLaw')?.touched"
+                            class="error-msg">
+                            <div>Governing Law is required</div>
+                        </div>
+                          <div class="error-msg" *ngIf="clientForm.get('governingLaw')?.invalid && clientForm.get('governingLaw')?.errors?.['maxlength']">
+                              Governing Law must be in between 2-500 characters
+                            </div>
+                        <div class="textarea-count-text">{{ clientForm.get("governingLaw")?.value?.length || 0 }}/500</div>
+                    </div>
+
+                    <!-- Document Type -->
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">{{'Document Type' |translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="employeementType" optionLabel="name"
+                                placeholder="Please select document type" formControlName="documentType"
+                                class="form-select custom-select">
+                            </p-select>
+                        </div>
+                        <div *ngIf="clientForm.get('documentType')?.invalid && clientForm.get('documentType')?.touched">
+                            <div class="error-msg">Document Type is required</div>
+                        </div>
+                    </div>
+
+                    <!-- Signature Authority -->
+                    <!-- <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+                            {{'Signature Authority Name' |translate}}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="signatureAuthorityDetails" optionLabel="fullName"  optionValue="employeeId" 
+                                placeholder="Please select signature authority" class="form-select custom-select"
+                                formControlName="signatureAuthority" resetFilterOnHide="true" [filter]="true"
+                                filterBy="fullName" resetFilterOnHide="true" />
+                        </div>
+                        <div *ngIf="clientForm.get('signatureAuthority')?.invalid && clientForm.get('signatureAuthority')?.touched"
+                            class="error-msg">
+                            <div>Signature Authority is required</div>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="d-flex flex-wrap gap-3 pt-4">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="clientForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card letter-data-content">
+            <div class="letter-sub-data-content">
+                <div>
+                    <div class="letter-page-content my-4" id="pdfContent1" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
+                        <div class="letter-page-sub-content">
+                            <div class="text-center letter-header mb-3"><u>NON-DISCLOSURE AGREEMENT (NDA)</u></div>
+
+                            <p><b>This Non-Disclosure Agreement (“Agreement”)</b> is made and entered into as of the
+                                <b>{{((this.clientForm.get('effectiveDate')?.value)|dateformat) ||'__________'}}</b>
+                                by and between: <b>{{clientForm.get('companyName')?.value ||'__________'}}</b>, having an
+                                address at <b>{{clientForm.get("companyAddress")?.value || '______________'}}</b>,
+                                and <b> {{clientForm.get('serviceProviderName')?.value ||'__________'}}</b>., having
+                                an address at <b>{{clientForm.get('serviceProviderAddress')?.value ||'__________'}}</b>.Company and
+                                Contractor are each referred to herein individually as a <b>“Party”</b>, and
+                                collectively as the <b>“Parties.”</b> For purposes of this Agreement, the Party
+                                disclosing Confidential Information (as defined below) shall be referred to as the <b> “Disclosing Party”</b>
+                                or <b> “Transmitting Party,”</b> and the Party receiving such information shall be
+                                referred to as the <b>“Receiving Party.”</b>
+                                This Agreement is made to allow the Parties to exchange certain confidential
+                                information for the sole purpose of evaluating and discussing a potential business transaction
+                                or relationship between them (the <b>“Purpose”</b> ).
+                            </p>
+
+                            <p class="letter-sub-header mb-0"> 1. Definition of Confidential Information</p>
+                            <p class="mb-0">
+                                “Confidential Information” means any and all non-public, proprietary, or
+                                confidential information disclosed or furnished by the Disclosing Party to the Receiving Party,
+                                in any form or medium (oral, written, electronic, or otherwise), including but not
+                                limited to: business operations, customer or client lists, pricing, product designs,
+                                financial data, trade secrets, technical data, inventions, ideas, software (source or object
+                                code), algorithms, business plans, employee information, or other data whether
+                                tangible or intangible.
+                                Confidential Information also includes third-party information that the Disclosing
+                                Party is obligated to keep confidential.
+                            </p>
+                            <ul class="list-style-none">
+                                <li>
+                                    <p class="mb-0">Confidential Information does <b>not</b> include information that:
+                                    </p>
+                                    <ol class="list-style-numbers">
+                                        <li>
+                                            was already known by the Receiving Party prior to disclosure and can be
+                                            evidenced by documentation;
+                                        </li>
+                                        <li>
+                                            becomes publicly available without breach of this Agreement;
+                                        </li>
+                                        <li>
+                                            is received by the Receiving Party from a third party without breach of
+                                            any obligation of confidentiality; or
+                                        </li>
+                                        <li>
+                                            is independently developed by the Receiving Party without use of or
+                                            reference to the Confidential Information of the Disclosing Party.
+                                        </li>
+                                    </ol>
+                                </li>
+                            </ul>
+                            <p class="letter-sub-header mb-0">2. Obligations of Confidentiality</p>
+                            <p class="mb-0">2.1 The Receiving Party shall:</p>
+                            <ul class="list-style-disc mb-0">
+                                <li>
+                                    Keep the Confidential Information strictly confidential and not disclose it
+                                    to any third party without the prior written consent of the Disclosing
+                                    Party;
+                                </li>
+                                <li>
+                                    Use the Confidential Information solely for the Purpose described above and
+                                    not for any other purpose; and
+                                </li>
+                                <li>
+                                    Disclose the Confidential Information only to its employees, officers,
+                                    directors, advisors, or contractors (“Representatives”) who have a need to
+                                    know for the Purpose and are bound by confidentiality obligations at least
+                                    as restrictive as those herein.
+                                </li>
+                            </ul>
+                            <p class="mb-2">2.2 The Receiving Party shall be responsible for any breach of this
+                                Agreement by its Representatives.</p>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0"> 3. Non-Disclosure of Discussions </p>
+                                <p class="mb-0">Without prior written consent of the other Party, neither Party
+                                    shall
+                                    disclose to any third person:</p>
+                                <p class="mb-0">(a) that Confidential Information has been provided;</p>
+                                <p class="mb-0">(b) that discussions or negotiations are taking place between the
+                                    Parties; or</p>
+                                <p class="mb-0">(c) any terms, conditions, or other facts regarding a possible
+                                    transaction or relationship between the Parties.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0"> 4. No License or Ownership Rights </p>
+                                <p class="mb-0">Nothing in this Agreement shall be construed as granting any
+                                    license, ownership right, or other interest under any patent, trademark, copyright, trade
+                                    secret, or other intellectual property right of the Disclosing Party.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0"> 5. Return or Destruction of Materials </p>
+                                <p class="mb-0">Upon written request of the Disclosing Party, the Receiving Party
+                                    shall promptly return or destroy all Confidential Information and all copies, notes,
+                                    or summaries containing such information. Upon completion of such return or
+                                    destruction, the Receiving Party shall certify in writing that all materials
+                                    have been returned or destroyed.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">6. Compelled Disclosure</p>
+                                <p class="mb-0">If the Receiving Party is legally required to disclose any
+                                    Confidential Information, it shall, to the extent legally permissible, promptly notify the
+                                    Disclosing Party to allow it to seek a protective order or other remedy. If
+                                    disclosure is required, the Receiving Party shall disclose only that portion of
+                                    the information legally compelled and use reasonable efforts to obtain confidential
+                                    treatment of such information.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">7. Injunctive Relief</p>
+                                <p class="mb-0">The Receiving Party acknowledges that any unauthorized disclosure or
+                                    use of the Confidential Information would cause irreparable harm to the Disclosing
+                                    Party. The Disclosing Party shall therefore be entitled to seek equitable
+                                    relief, including injunctions and specific performance, in addition to any other
+                                    remedies available at law or in equity, without the necessity of posting a bond.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="letter-page-content my-4" id="pdfContent2" [ngClass]="{'soft-copy-letter': clientForm.get('documentType')?.value?.value === true}">
+                        <div class="letter-page-sub-content">
+                           
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">8. No Obligation to Proceed</p>
+                                <p class="mb-0">Except for the obligations expressly stated herein, nothing in this
+                                    Agreement obligates either Party to proceed with any proposed business
+                                    transaction
+                                    or relationship. All Confidential Information remains the exclusive property of
+                                    the
+                                    Disclosing Party.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">9. No Waiver</p>
+                                <p class="mb-0">No failure or delay by either Party in exercising any right, power,
+                                    or
+                                    privilege hereunder shall operate as a waiver thereof. Any single or partial
+                                    exercise of any such right shall not preclude any other or further exercise.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">10. Disclaimer of Warranties</p>
+                                <p class="mb-0">All Confidential Information is provided “AS IS.” The Disclosing
+                                    Party makes no representations or warranties, express or implied, regarding accuracy,
+                                    completeness, merchantability, fitness for a particular purpose, or
+                                    non-infringement of the Confidential Information.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">11. Governing Law</p>
+                                <p class="mb-0">This Agreement shall be governed by, and construed in accordance
+                                    with, the laws of the State of <b>{{clientForm.get("governingLaw")?.value ??'_________________'}}</b>,
+                                    without regard to its conflict-of-law principles.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">12. Severability</p>
+                                <p class="mb-0">If any provision of this Agreement is held invalid or unenforceable,
+                                    the remaining provisions shall remain in full force and effect.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">13. Entire Agreement</p>
+                                <p class="mb-0">This Agreement constitutes the entire understanding between the
+                                    Parties concerning the subject matter hereof and supersedes all prior discussions,
+                                    agreements, or understandings, whether written or oral. No amendment or
+                                    modification shall be effective unless in writing and signed by authorized representatives of
+                                    both Parties.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">14. Assignment</p>
+                                <p class="mb-0">Neither Party may assign or transfer this Agreement, in whole or in
+                                    part, without the prior written consent of the other Party. This Agreement shall
+                                    bind and inure to the benefit of the Parties and their respective successors and
+                                    permitted assigns.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">15. Counterparts</p>
+                                <p class="mb-0">This Agreement may be executed in one or more counterparts
+                                    (including electronic or PDF signatures), each of which shall be deemed an original, but
+                                    all of which together constitute one and the same instrument.</p>
+                            </div>
+                            <div class="mb-3">
+                                <p class="letter-sub-header mb-0">16. Term and Survival</p>
+                                <p class="mb-0">This Agreement shall commence on the
+                                    {{clientForm.get('effectiveDate')?.value |dateformat}} and shall remain
+                                    in effect until the later of:</p>
+                                <p class="mb-0">(a) (<b>{{clientForm.get('termduration')?.value}}</b>)
+                                    {{ clientForm.get('termfrequency')?.value?.value}} after the {{clientForm.get('effectiveDate')?.value
+                                    |dateformat}}, or</p>
+                                <p class="mb-0">(b) (<b>{{clientForm.get('termduration')?.value}}</b>) {{
+                                    clientForm.get('termfrequency')?.value?.value}} after the termination of any
+                                    business relationship entered into between the Parties.</p>
+                                <p class="mb-0">All confidentiality obligations shall survive termination of this
+                                    Agreement for ( <b>{{clientForm.get('posttermconfidentialityduration')?.value}}</b>)
+                                    {{clientForm.get('posttermconfidentialityfrequency')?.value?.value}}
+                                    thereafter.</p>
+                            </div>
+                            <div class="mb-5">
+                                <p class="letter-sub-header mb-0">17. Authority</p>
+                                <p class="mb-0">Each signatory represents and warrants that they are duly authorized
+                                    to execute and deliver this Agreement on behalf of their respective Party and that
+                                    this Agreement constitutes a binding and enforceable obligation of such Party.</p>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="letter-sub-header mb-2">Client</p>
+                                    <p>By: ___________________________________</p>
+                                    <p>Print: ________________________________</p>
+                                    <p>Title: ________________________________</p>
+                                    <p>Date: _________________________________</p>
+                                </div>
+                                <div>
+                                    <p class="letter-sub-header mb-2">Service Provider</p>
+                                    <p>By: ___________________________________</p>
+                                    <p>Print: ________________________________</p>
+                                    <p>Title: ________________________________</p>
+                                    <p>Date: _________________________________</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

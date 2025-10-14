@@ -1,0 +1,75 @@
+<div class="custom-main-component-container">
+    <div class="custom-table-content">
+        @if (!loading) {
+        <table class="w-100">
+            <thead>
+                <th>File Name</th>
+                <th>Created Date</th>
+                <th>Document Type</th>
+                <th>Attachment</th>
+                <th class="text-center">Download</th>
+                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))){
+                <th class="text-center">{{"Action" | translate}}</th>
+                }
+            </thead>
+            <tbody>
+                <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
+                    <tr *ngFor="let data of documentdata">
+                        <td>{{data.documentName}}</td>
+                        <td>{{data.createdAt | dateformat}}</td>
+                        <td>{{data.documentType}}</td>
+                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
+                         <td class="text-center">
+                            <span *ngIf="data.documentUrl;else noData"
+                                (click)="onAttachmentDownload(data)">
+                                <app-download-icon />
+                            </span>
+                            <ng-template #noData>-</ng-template>
+                        </td>
+                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) ){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Documents Tab.delete')){
+                                    <li (click)="openModal(deleteconformation, data,'m')">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-check-circle me-2"></i>Restore
+                                        </a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>
+
+<!--Delete-->
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <app-confirmation-icon />
+            <p class="confirmation-text">{{'Are you sure you want to restore this document?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
+        </div>
+    </div>
+</ng-template>

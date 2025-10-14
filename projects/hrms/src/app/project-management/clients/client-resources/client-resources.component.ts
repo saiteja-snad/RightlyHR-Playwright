@@ -109,11 +109,19 @@ export class ClientResourcesComponent {
       }
     });
   }
-
+  projectStartDate!: Date;
+  projectEndDate!: Date;
   getclientProjects(clientId: any) {
     this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = res?.data ?? []; // Extract "data" array
+             const project = this.projectsData[0];
+            if (project) {
+          this.projectStartDate = new Date(project.startDate);
+          this.projectEndDate = new Date(project.endDate);
+          // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
+          // this.updateResourceForm.updateValueAndValidity();
+        }
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);

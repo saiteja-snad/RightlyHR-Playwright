@@ -87,7 +87,7 @@
                         <label class="form-label custom-label mb-2">{{'Term Frequency' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="frequencyDetails" optionLabel="frequency1" formControlName="termfrequency"
+                            <p-select [options]="letterFrequencies" optionLabel="value" formControlName="termfrequency"
                                 placeholder="Please select term frequency" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -118,7 +118,7 @@
                         <label class="form-label custom-label mb-2">{{'Post-Term Confidentiality Frequency' | translate}}
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="frequencyDetails" optionLabel="frequency1"
+                            <p-select [options]="letterFrequencies" optionLabel="value"
                                 formControlName="posttermconfidentialityfrequency"
                                 placeholder="Please select post-term confidentiality frequency"
                                 class="form-select custom-select"></p-select>
@@ -382,14 +382,14 @@
                                     {{clientForm.get('effectiveDate')?.value |dateformat}} and shall remain
                                     in effect until the later of:</p>
                                 <p class="mb-0">(a) (<b>{{clientForm.get('termduration')?.value}}</b>)
-                                    {{ clientForm.get('termfrequency')?.value?.frequency1}} after the {{clientForm.get('effectiveDate')?.value
+                                    {{ clientForm.get('termfrequency')?.value?.value}} after the {{clientForm.get('effectiveDate')?.value
                                     |dateformat}}, or</p>
                                 <p class="mb-0">(b) (<b>{{clientForm.get('termduration')?.value}}</b>) {{
-                                    clientForm.get('termfrequency')?.value?.frequency1}} after the termination of any
+                                    clientForm.get('termfrequency')?.value?.value}} after the termination of any
                                     business relationship entered into between the Parties.</p>
                                 <p class="mb-0">All confidentiality obligations shall survive termination of this
                                     Agreement for ( <b>{{clientForm.get('posttermconfidentialityduration')?.value}}</b>)
-                                    {{clientForm.get('posttermconfidentialityfrequency')?.value?.frequency1}}
+                                    {{clientForm.get('posttermconfidentialityfrequency')?.value?.value}}
                                     thereafter.</p>
                             </div>
                             <div class="mb-5">

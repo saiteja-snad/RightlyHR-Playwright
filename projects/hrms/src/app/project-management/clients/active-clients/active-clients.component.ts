@@ -14,9 +14,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { Client } from '../../../clients.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent],
+  imports: [CommonModule,FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
 })
@@ -24,6 +26,7 @@ import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/conf
 export class ActiveClientsComponent implements OnInit {
   loading: boolean = true;
   clients: Client[] = [];
+  searchValue: any;
   empinfo: any = {};
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();

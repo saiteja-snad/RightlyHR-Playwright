@@ -10,18 +10,11 @@
                 </span>
             </div>
             <div *ngIf="addForm.get('projectType')?.touched && addForm.get('projectType')?.invalid" class="error-msg">
-                <div *ngIf="addForm.get('projectType')?.errors?.['required']">
-                    {{ 'Project Type is required' | translate }}
-                </div>
+                <div *ngIf="addForm.get('projectType')?.errors?.['required']">{{ 'Project Type is required' | translate }}</div>
             </div>
-            <div *ngIf="addForm.get('projectType')?.errors?.['pattern']" class="error-msg">
-                {{ 'Field cannot start with a space' | translate }}
-            </div>
-            <div *ngIf="addForm.get('projectType')?.errors?.['maxCharacters']" class="error-msg">
-                {{ 'Project Type must be between 2–50 characters' | translate }}
-            </div>
-             <div *ngIf="addForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
-                {{ 'Project Type must be between 2–50 characters' | translate }}
+            <div *ngIf="addForm.get('projectType')?.errors?.['pattern']" class="error-msg">{{ 'Field cannot start with a space' | translate }}</div>
+            <div *ngIf="addForm.get('projectType')?.errors?.['maxCharacters'] ||  addForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
+                {{ 'Project Type must be between 2-50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -36,27 +29,32 @@
                 </tr>
             </thead>
             <tbody>
-                @for (project of projectTypes; track $index) {
-                <tr>
-                    <td class="w-75">{{project.value}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div (click)="openupdate(project, updatepopup)">
-                                <a *ngIf="rbac.allowedToAccess('Project Type.update')">
-                                    <app-settings-update-icon />
-                                </a>
+                <ng-container *ngIf="projectTypes.length > 0; else noDataTemplate">
+                    @for (project of projectTypes; track $index) {
+                    <tr>
+                        <td class="w-75">{{project.value}}</td>
+                        <td class="w-25">
+                            <div class="d-flex gap-4">
+                                <!--Update-->
+                                <div (click)="openupdate(project, updatepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Project Type.update')">
+                                        <app-settings-update-icon />
+                                    </a>
+                                </div>
+                                <!--Delete-->
+                                <div (click)="opendelete(project, deletepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Project Type.delete')">
+                                        <app-settings-delete-icon />
+                                    </a>
+                                </div>
                             </div>
-                            <!--Delete-->
-                            <div (click)="opendelete(project, deletepopup)">
-                                <a *ngIf="rbac.allowedToAccess('Project Type.delete')">
-                                    <app-settings-delete-icon />
-                                </a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                }
+                        </td>
+                    </tr>
+                    }
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <app-no-data-found />
+                </ng-template>
             </tbody>
         </table>
         }
@@ -85,10 +83,9 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="projectType"
                         placeholder="Please enter project"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-                        minlength="2" maxlength="51">
-                    <div *ngIf="updateForm.get('projectType')?.touched && updateForm.get('projectType')?.invalid"
-                        class="error-msg">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" minlength="2"
+                        maxlength="51">
+                    <div *ngIf="updateForm.get('projectType')?.touched && updateForm.get('projectType')?.invalid" class="error-msg">
                         <div *ngIf="updateForm.get('projectType')?.errors?.['required']">
                             {{ 'Project Type is required' | translate }}
                         </div>
@@ -96,11 +93,9 @@
                     <div *ngIf="updateForm.get('projectType')?.errors?.['pattern']" class="error-msg">
                         {{ 'Field cannot start with a space' | translate }}
                     </div>
-                    <div *ngIf="updateForm.get('projectType')?.errors?.['maxCharacters']" class="error-msg">
-                        {{ 'Project Type must be between 2–50 characters' | translate }}
-                    </div>
-                    <div *ngIf="updateForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
-                        {{ 'Project Type must be between 2–50 characters' | translate }}
+                    <div *ngIf="updateForm.get('projectType')?.errors?.['maxCharacters'] || 
+                                updateForm.get('projectType')?.errors?.['minCharacters']" class="error-msg">
+                        {{ 'Project Type must be between 2-50 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">

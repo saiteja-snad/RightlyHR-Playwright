@@ -21,7 +21,14 @@
             </div>
             <div>
                 <button type="button" class="custom-btn btn-primary px-4" (click)="submitTimesheet()"
-                    [disabled]="isSubmitDisabled()">Submit for Approval</button>
+                    [disabled]="isSubmitDisabled()">
+                    @if (spinnerLoaderforallrecoders) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading' | translate}}...</span>
+                    } @else {
+                    <span>{{'Submit for Approval'| translate}}</span>
+                    }
+                </button>
             </div>
         </div>
     </div>
@@ -42,8 +49,10 @@
                             <div class="dropdown">
                                 <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton"
                                     data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                                    <u>{{ project.value.selectedProject?.clientName && project.value.selectedProject?.projectName
-                                        ? project.value.selectedProject.clientName + ' - ' + project.value.selectedProject.projectName
+                                    <u>{{ project.value.selectedProject?.clientName &&
+                                        project.value.selectedProject?.projectName
+                                        ? project.value.selectedProject.clientName + ' - ' +
+                                        project.value.selectedProject.projectName
                                         : 'Select Project or Client' }}</u>
                                 </div>
                                 <ul class="dropdown-menu custom-dropdown-menu">
@@ -59,7 +68,8 @@
                                                     <p-accordion-header>
                                                         {{ client.clientName | titlecase }}
                                                         <small class="text-muted ms-2">
-                                                            ({{ showprojectlength(client.projects,selectedProjectIds) }}Projects)
+                                                            ({{ showprojectlength(client.projects,selectedProjectIds)
+                                                            }}Projects)
                                                         </small>
                                                     </p-accordion-header>
                                                     <p-accordion-content>
@@ -82,12 +92,15 @@
                         </td>
                         <td [formGroupName]="'mon'">
                             <div class="d-flex d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('mon'))">
-                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
-                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'mon', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('mon'))">
+                                    <input type="text" formControlName="duration"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'mon', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask, project.get('mon'),i,'mon')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask, project.get('mon'),i,'mon')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -103,12 +116,15 @@
                         </td>
                         <td [formGroupName]="'tue'">
                             <div class="d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('tue'))">
-                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
-                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'tue', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('tue'))">
+                                    <input type="text" formControlName="duration"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'tue', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('tue'),i,'tue')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask,project.get('tue'),i,'tue')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -124,12 +140,15 @@
                         </td>
                         <td [formGroupName]="'wed'">
                             <div class="d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('wed'))">
-                                    <input type="text" formControlName="duration" (blur)="formatTime($event, 'wed', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('wed'))">
+                                    <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                        (keypress)="allowNumbersOnly($event)" (keyup.enter)="formatTime($event, 'wed', i, 'duration')">
+                                        (keypress)="allowNumbersOnly($event)"
+                                        (keyup.enter)="formatTime($event, 'wed', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('wed'),i,'wed')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask,project.get('wed'),i,'wed')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -145,12 +164,15 @@
                         </td>
                         <td [formGroupName]="'thu'">
                             <div class="d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('thu'))">
-                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
-                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'thu', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('thu'))">
+                                    <input type="text" formControlName="duration"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'thu', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('thu'),i,'thu')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask,project.get('thu'),i,'thu')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -166,12 +188,15 @@
                         </td>
                         <td [formGroupName]="'fri'">
                             <div class="d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('fri'))">
-                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
-                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'fri', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('fri'))">
+                                    <input type="text" formControlName="duration"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'fri', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('fri'),i,'fri')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask,project.get('fri'),i,'fri')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -187,12 +212,15 @@
                         </td>
                         <td [formGroupName]="'sat'">
                             <div class="d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sat'))">
-                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
-                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'sat', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('sat'))">
+                                    <input type="text" formControlName="duration"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'sat', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('sat'),i,'sat')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask,project.get('sat'),i,'sat')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -208,12 +236,15 @@
                         </td>
                         <td [formGroupName]="'sun'">
                             <div class="d-flex align-items-center">
-                                <div class="input-group custom-input-group" [ngClass]="getApprovalClass(project.get('sun'))">
-                                    <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM"
-                                        maxlength="4" (keypress)="allowNumbersOnly($event)" (blur)="formatTime($event, 'sun', i, 'duration')"
+                                <div class="input-group custom-input-group"
+                                    [ngClass]="getApprovalClass(project.get('sun'))">
+                                    <input type="text" formControlName="duration"
+                                        class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
+                                        (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'sun', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration"
-                                        class="input-group-text border-none cursor" (click)="openModal(addtask,project.get('sun'),i,'sun')">
+                                        class="input-group-text border-none cursor"
+                                        (click)="openModal(addtask,project.get('sun'),i,'sun')">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                 </div>
@@ -314,25 +345,34 @@
                 </div>
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Duration<span class="text-danger">*</span></label>
-                     <div class="input-group custom-input-group">
-                        <input type="text" formControlName="duration" class="form-control custom-input border-none" placeholder="HH:MM">
+                    <div class="input-group custom-input-group">
+                        <input type="text" formControlName="duration" class="form-control custom-input border-none"
+                            placeholder="HH:MM">
                         <span class="input-group-text border-none">
                             <img src="/icons/icon-park-timer.png" alt="Clock" class="clock-icon">
                         </span>
                     </div>
-                    
+
                     <div class="error-msg"
                         *ngIf="dayForm.get('duration')?.touched && dayForm.get('duration')?.hasError('required')">
                         Duration is required
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-3 pt-4">
-                    <span type="button" class="text-danger" *ngIf="dayForm.get('approvalStatus')?.value !== 'Not Entered'"
+                    <span type="button" class="text-danger"
+                        *ngIf="dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
                     <button type="button" class="custom-btn btn-secondary w-100"
                         (click)="openModalforconformation(confirmationpopup)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary w-100"
-                        [disabled]="!isDayFormDirtyOrFilled(dayForm)"  >Save</button>
+                        [disabled]="!isDayFormDirtyOrFilled(dayForm) || spinnerLoader">
+                        @if (spinnerLoader) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}..</span>
+                        } @else {
+                        <span>{{'Save'| translate}}</span>
+                        }
+                    </button>
                 </div>
             </form>
         </div>
@@ -348,7 +388,8 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deletesingleentry();modal.dismiss()">{{'Yes'}}</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="deletesingleentry();modal.dismiss()">{{'Yes'}}</button>
         </div>
     </div>
 </ng-template>
@@ -386,7 +427,7 @@
 <ng-template #sumbitconfirmationpopup let-model>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <app-confirmation-icon/>
+            <app-confirmation-icon />
             <p class="confirmation-text">{{'Are you sure you want to submit?'}}</p>
         </div>
         <div class="custom-modal-footer">

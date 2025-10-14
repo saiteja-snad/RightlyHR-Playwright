@@ -828,5 +828,6 @@ export const permissionsData = [
   { fields: 'Client Document Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Letter Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
 
 ];

@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { PendingApprovalsTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { filter, Subject, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePicker } from 'primeng/datepicker';
@@ -14,11 +14,11 @@ import dayjs, { Dayjs } from 'dayjs';
 import { HttpService } from '../../services/http.service';
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent, 
+  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, Select, ModuleInformationComponent,
     NgbPopoverModule, MultiSelectModule, ReactiveFormsModule, DatePicker, TranslateModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
-  encapsulation: ViewEncapsulation.None,
+   encapsulation: ViewEncapsulation.None,
 })
 
 export class PendingApprovalsComponent implements OnInit {
@@ -26,6 +26,7 @@ export class PendingApprovalsComponent implements OnInit {
   projectsData: any[] = [];
   employeeData: any[] = [];
   dataload = false;
+  subscription!: Subscription;
   datepickerForm!: FormGroup;
   destroy$ = new Subject<boolean>();
   empinfo: any;
@@ -44,6 +45,10 @@ export class PendingApprovalsComponent implements OnInit {
     this.setupNavigationReset();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+
+    this.datepickerForm.valueChanges.subscribe(() => {
+      this.isSubmitEnabled = this.isAnyFieldSelected();
+    });
   }
 
   initiateUpdateModuleInfo() {
@@ -64,48 +69,96 @@ export class PendingApprovalsComponent implements OnInit {
   navigate() {
     this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
-
+ isFilterApplied(): boolean {
+    const formValue = this.datepickerForm.value;
+    // Check if any field has value
+    return (
+      (formValue.dateRange && formValue.dateRange.length > 0) ||
+      formValue.projectId !== null && formValue.projectId !== undefined  ||
+      (formValue.resourceId && formValue.resourceId.length > 0)
+    );
+  }
   /** Create form and keep Project & Resource disabled initially */
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null],
       projectId: [null],
-      resourceId: [{ value: [], disabled: true }, Validators.required]
+      resourceId: [{ value: [], disabled: true },]
     });
   }
 
+
+isAnyFieldSelected(): boolean {
+  const formValue = this.datepickerForm.value;
+  return (
+    (formValue.dateRange && formValue.dateRange.length > 0) || // date selected
+    formValue.projectId !== null && formValue.projectId !== undefined || // project selected (including 0)
+    (formValue.resourceId && formValue.resourceId.length > 0) // at least one resource selected
+  );
+}
   /** Get all projects for the current employee */
+
   getAllActiveProjects() {
     this.http
       .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.projectsData = res.data.map((p: any) => ({
+          const projects = res?.data || [];
+
+          this.projectsData = projects.map((p: any) => ({
             ...p,
-            displayName: `${p.client.clientName} - ${p.projectName}`
+            displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
           }));
+
+          this.projectsData.unshift({
+            projectId: 0,
+            displayName: 'No Client - No Project'
+          });
         },
         error: (err) => {
           console.error('Error fetching projects:', err);
-          this.projectsData = [];
-        }
+
+          this.projectsData = [
+            {
+              projectId: 0,
+              displayName: 'No Client - No Project'
+            }
+          ];
+        },
       });
   }
 
   /** When project selected */
   onProjectChange(event: any) {
-    const selectedProjectId = event.value;
+    console.log('Project change event:', event);
+    const selectedProjectId = event?.value ?? 0;
+   
+    // Resetemployee data
     this.employeeData = [];
     this.datepickerForm.get('resourceId')?.setValue([]);
-    this.datepickerForm.get('resourceId')?.disable();
-    if (selectedProjectId) {
-      this.projectId = selectedProjectId;
+     this.datepickerForm.get('resourceId')?.enable()
+    this.projectId = selectedProjectId;
+    if (selectedProjectId && selectedProjectId !== 0) {
+
       this.getAllActiveEmployees();
     } else {
-      this.projectId = 0;
+
+      this.getTeamManagersDetails();
+
+      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+      setTimeout(() => {
+        if (this.getEmployeeInfo?.length) {
+          this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+            id: emp.employeeId,
+            name: emp.fullName
+          }));
+          this.datepickerForm.get('resourceId')?.enable();
+        }
+      }, 300);
     }
   }
+
 
   /** Reset form when navigating to another component */
   setupNavigationReset() {
@@ -135,10 +188,37 @@ export class PendingApprovalsComponent implements OnInit {
       });
   }
 
+  getEmployeeInfo = [] as any;
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              employeeId: employee.employeeId,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
+            }));
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching team manager details:', err);
+          this.getEmployeeInfo = [];
+        }
+      });
+  }
+
+
+
+
   /** On form submit */
   onSubmit() {
     const dateRange = this.datepickerForm.value.dateRange;
-    const projectId = this.datepickerForm.value.projectId || 0;
+    const projectId = this.datepickerForm.value.projectId ;
     const resourceIds = this.datepickerForm.value.resourceId || [];
     // Build request dynamically
     const request: any = {
@@ -168,6 +248,7 @@ export class PendingApprovalsComponent implements OnInit {
 
   /** Clear everything */
   resetForm() {
+   
     this.datepickerForm.reset();
     this.datepickerForm.get('resourceId')?.disable();
     this.datepickerForm.reset({

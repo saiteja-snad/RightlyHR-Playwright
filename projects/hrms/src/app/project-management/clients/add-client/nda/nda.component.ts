@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import moment from 'moment';
 import { IFrequency } from '../../../../Interfaces/job-model';
+import { IEAV } from '../../../../Interfaces/timoff-model';
 @Component({
   selector: 'app-nda',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule],
@@ -37,6 +38,7 @@ export class NdaComponent {
   ];
   result = {} as any;
   clientId: any;
+  letterFrequencies: IEAV[] = [];
 
   constructor(private router: Router, private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService, 
     private authService: AuthService, public formValidation: FormValidationsService,) { }
@@ -49,7 +51,7 @@ export class NdaComponent {
       this.clientId = clientId;
       this.getclientDetailsbyid(parseInt(clientId));
     }
-    this.getFrequency();
+    this.getLetterFrequencies();
   }
 
   //form initialization
@@ -106,12 +108,21 @@ export class NdaComponent {
     });
   }
 
-  getFrequency() {
-    this.subscription = this.http.getData('Frequency').subscribe({
-      next: (data: any) => {
-        this.frequencyDetails = data as IFrequency[];
-      },
-    });
+  getLetterFrequencies() {
+    this.subscription = this.http
+      .getData('entityAttributeValues?entity=ProjectManagementLetterConfiguration&attribute=frequency')
+      .subscribe({
+        next: (data: any) => {
+          this.letterFrequencies = data
+        },
+        error: (error: any) => {
+          this.letterFrequencies = [];
+          console.error('Error fetching letter frequencies', error);
+        },
+        complete: () => {
+         
+        },
+      });
   }
 
   async postNDALetterFormSubmit(form: FormGroup) {
@@ -227,9 +238,9 @@ export class NdaComponent {
       { key: 'serviceProviderAddress', value: formData?.serviceProviderAddress?.toString() ?? null, dataType: 'string',},
       { key: 'termDuration', value: formData?.termduration?.toString() ?? null, dataType: 'string',},
       { key: 'governingLaw', value: formData?.governingLaw?.toString() ?? null, dataType: 'string',},
-      { key: 'termFrequency', value: formData?.termfrequency?.frequency1?.toString() ?? null, dataType: 'string',},
+      { key: 'termFrequency', value: formData?.termfrequency?.value?.toString() ?? null, dataType: 'string',},
       { key: 'postTermConfidentialityDuration', value: formData?.posttermconfidentialityduration?.toString() ?? null, dataType: 'string',},
-      { key: 'postTermConfidentialityFrequency', value: formData?.posttermconfidentialityfrequency?.frequency1?.toString() ?? null, dataType: 'string',},
+      { key: 'postTermConfidentialityFrequency', value: formData?.posttermconfidentialityfrequency?.value?.toString() ?? null, dataType: 'string',},
     ];
     const payLoad = {
       letterType: 'NDA Letter',   // since you already capture Document Type

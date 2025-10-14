@@ -26,6 +26,7 @@ import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [
@@ -40,6 +41,7 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
     AccordionModule,
     InfoIconComponent,
     ConfirmationIconComponent,
+    TranslateModule
   ],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
@@ -77,7 +79,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetdata!: TimesheetResponse;
   resourcesArrayList: any[] = [];
   totalDuration: any;
-
+  spinnerLoader = false
+  spinnerLoaderforallrecoders = false
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -98,7 +101,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
     // Add one initial row
     // this.addProject();
-        this.getResourceData()
+    this.getResourceData()
     this.getJobDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
     this.getTimeSheetEntriesbyEmployeeId(
@@ -125,27 +128,31 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   ): FormGroup {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
+    const entryDateObj = dateValue ? new Date(dateValue) : null;
     const blockReason = day?.blockReason || '';
     const isBlocked = day?.isBlocked || false;
     const isLeave = day?.isLeave || false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // normalize today’s date
+    const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
 
-  const matchedResource = this.resourcesArrayList?.find(
-    (r: any) => r?.project?.projectId === projectId
-  );
+    const matchedResource = this.resourcesArrayList?.find(
+      (r: any) => r?.project?.projectId === projectId
+    );
 
-  const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
-  // console.log('Weekend Work Allowed:', isWeekendAllowedProject);
+    const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
+    console.log(isWeekendAllowedProject);
+    
 
-    // ✅ Logic to enable/disable fields
+    //enable/disable
     const shouldEnable =
-      isProjectSelected && !isLeave
+      isProjectSelected && !isLeave && !isFutureDate
         ? isBlocked
           ? isWeekend && isWeekendAllowedProject
           : true
         : false;
-
     // Duration control setup
     const durationControl = this.fb.control(
       isNotEntered
@@ -180,7 +187,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ],
       duration: durationControl,
       description: [
-        { value: isNotEntered ? null: day?.description || null,  disabled: !shouldEnable },
+        { value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable },
         Validators.required,
       ],
       approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
@@ -394,8 +401,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getResourceData() {
     this.http
       .getDataIncludeParams(
-        `ProjectResource?status=Active&employeeId=${this.employeeId}&isProjectRequired=true`
-      )
+        `ProjectResource?status=active&employeeId=${this.employeeId}&isProjectRequired=true`)
       .pipe(takeUntil(this.destroy$))
       .subscribe((res: any) => {
         if (res.success) {
@@ -695,6 +701,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const isBlocked = dayForm.get('isBlocked')?.value;
       const blockReason = dayForm.get('blockReason')?.value;
       const isLeave = dayForm.get('isLeave')?.value;
+      const dateValue = dayForm.get('entryDate')?.value;
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const entryDate = dateValue ? new Date(dateValue) : null;
+      const isFutureDate = entryDate ? entryDate > today : false;
       // Enable basic fields if not blocked or leave
       [
         'clientName',
@@ -712,7 +724,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         }
       });
       // Enable duration
-      if (!isBlocked && !isLeave) {
+      if (!isBlocked && !isLeave && !isFutureDate ) {
         dayForm.get('duration')?.enable();
         dayForm.get('description')?.enable();
         dayForm.get('startTime')?.enable();
@@ -771,6 +783,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     index: number,
     dayKey: string
   ) {
+
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference
@@ -937,6 +950,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //single recoder
   saveDayEntry() {
+    this.spinnerLoader = true
     // Prepare payload
     const formValue = this.dayForm.value;
     const toTimeSpan = (time: string | null | undefined): string => {
@@ -975,6 +989,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
+        this.spinnerLoader = false
         this.timesheetForm.reset();
         this.modalService.dismissAll();
         this.getResourceData();
@@ -990,6 +1005,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
+        this.spinnerLoader = false
         this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error saving entry', err);
       },
@@ -1054,9 +1070,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   // Call this on Submit button click
   submitTimesheet(): void {
+    this.spinnerLoaderforallrecoders = true
     const payload = this.buildPayload();
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
       next: (res) => {
+        this.spinnerLoaderforallrecoders = false
         this.conformationPopup.openSuccessModal(
           'Timesheet submitted successfully'
         );
@@ -1071,6 +1089,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         );
       },
       error: (err) => {
+        this.spinnerLoaderforallrecoders = false
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);
       },

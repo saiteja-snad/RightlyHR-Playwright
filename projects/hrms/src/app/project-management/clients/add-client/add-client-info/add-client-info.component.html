@@ -1,11 +1,11 @@
 <div class="add-data-content">
-    <form [formGroup]="clientForm" (ngSubmit)="submitClientForm()">
+    <form  autocomplete="off" [formGroup]="clientForm" (ngSubmit)="submitClientForm()">
         <div class="card custom-background-card p-4">
             <div class="row">
                 <!-- Client Name -->
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Client Name<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="clientName" [minlength]="2"
+                    <input type="text"  class="form-control custom-input" formControlName="clientName" [minlength]="2"
                         placeholder="Please enter the client's name" (input)="formValidation.validateInput(clientForm.get('clientName'))"
                         maxlength="51">
                     <div class="error-msg">
@@ -24,7 +24,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Tax ID<span class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="taxId" [minlength]="3"
-                        placeholder="Please enter tax id" (keydown)="formValidation.restrictInitialSpace($event) "
+                        placeholder="Please enter tax id" (keydown)="formValidation.restrictInitialSpace($event)"
                         maxlength="51">
                     <div class="error-msg">
                         <div *ngIf="clientForm.get('taxId')?.touched && clientForm.get('taxId')?.invalid">
@@ -32,7 +32,8 @@
                                 translate }}</div>
                         </div>
                         <div
-                            *ngIf="(clientForm.get('taxId')?.errors?.['maxCharacters']||clientForm.get('taxId')?.errors?.['maxlength']) || (clientForm.get('taxId')?.errors?.['minCharacters']||clientForm.get('taxId')?.errors?.['minlength'])">
+                            *ngIf="(clientForm.get('taxId')?.errors?.['maxCharacters']||clientForm.get('taxId')?.errors?.['maxlength']) 
+                            || (clientForm.get('taxId')?.errors?.['minCharacters']||clientForm.get('taxId')?.errors?.['minlength'])">
                             {{ 'Tax ID must be between 3-50 characters' | translate}}</div>
                     </div>
                 </div>
@@ -80,8 +81,7 @@
 
                 <!-- Client Address -->
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label custom-label mb-2">Client Company Address <span
-                            class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Client Company Address<span class="text-danger">*</span></label>
                     <textarea type="text" class="form-control custom-input" rows="3" formControlName="clientAddress"
                         [minlength]="5" maxlength="250" placeholder="Please enter client address"></textarea>
                     <div class="textarea-count-text">{{ clientForm.get("clientAddress")?.value?.length || 0 }}/250</div>

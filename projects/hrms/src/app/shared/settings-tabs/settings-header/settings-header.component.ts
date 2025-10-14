@@ -148,7 +148,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.componentName = 'Form Settings';
     }
 
-     //Project Management
+    //Project Management
     else if (url.startsWith('/settings/project-management-config/project-type')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Type';
@@ -173,11 +173,11 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Management Authority';
     }
+    else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = ' Letter Configurations Frequency';
+    }
   }
-  
-  
-
-  
 
   navigateToSettings() {
     this.router.navigate(['/settings'])

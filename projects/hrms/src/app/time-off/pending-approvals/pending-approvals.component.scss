@@ -37,3 +37,9 @@
 .clear-all-btn:focus {
     outline: none;
 }
+
+.custom-p-multiSelect-content {
+    .p-multiselect {
+        width: 300px !important;
+    }
+}

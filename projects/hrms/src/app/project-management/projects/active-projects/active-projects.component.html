@@ -51,7 +51,7 @@
             <th>Kickoff Date</th>
             <th>Project Type</th>
             <th>Status</th>
-            @if(rbac.allowedToAccess('Project Details Tab.update') ){
+            @if(rbac.allowedToAccess('Project Details Tab.update')  || rbac.allowedToAccess('Project Details Tab.delete')){
             <th class="text-center">{{"Action" | translate}}</th>
             }
           </thead>

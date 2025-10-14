@@ -53,10 +53,10 @@
                                             {{ client.clientName }}
                                         </a>
                                     </td>
-                                    <td>{{ client.createdBy?.name }}</td>
-                                    <td>{{ client.websiteUrl }}</td>
-                                    <td>{{ client.taxId }}</td>
-                                    <td>{{ client.industryType }}</td>
+                                    <td>{{client?.contact?.name || '-'}}</td>
+                                    <td>{{client?.contact?.email || '-'}}</td>
+                                    <td>{{client?.contact?.phoneDialCode || '-'}}  {{client?.contact?.phoneNumber || '-'}}</td>
+                                    <td>{{client?.contact?.role || '-'}}</td>
                                     <td>{{ client.status }}</td>
                                     <td class="text-center">
                                         <div class="dropdown">

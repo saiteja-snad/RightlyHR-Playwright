@@ -10,17 +10,31 @@ export interface Client {
   overtimeEligibile: boolean;
   billable: boolean;
   weekendWorkAllowed: boolean;
+
   createdBy: {
     id: number;
     name: string;
   };
-  createdAt: string;
-  updatedAt: string;
-}
+  updatedBy: {
+    id: number;
+    name: string;
+  };
 
-export interface ClientsApiResponse {
-  success: boolean;
-  statusCode: number;
-  message: string;
-  data: Client[];
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+
+  contact: {
+    contactId: number;
+    entityRefId: number;
+    name: string;
+    email: string;
+    phoneNumber: string;
+    phoneCountryCode: string;
+    phoneDialCode: string;
+    role: string;
+    primaryContact: boolean;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
 }

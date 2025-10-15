@@ -78,9 +78,11 @@ export class ClientInformationComponent {
       logo: [{ value: '', disabled: true }, attachmentValidators]
     });
     // Clean emojis dynamically as user types or pastes
+
     // Object.keys(this.clientForm.controls).forEach(controlName => {
     //   this.formValidation.cleanEmojiOnChange(this.clientForm.get(controlName)!);
     // });
+
   }
 
   getClientsData(clientID: any): void {

@@ -4,7 +4,7 @@
             <app-project-management-module-info />
         </div>
 
-        @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Contact Info Tab.create')){
         <div *ngIf="isActive('/project-management/projects/details/contact-info')">
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addContactmodal)">
                 {{'Add Contacts' }}
@@ -12,7 +12,7 @@
         </div>
         }
         <div class="d-flex gap-3 align-items-center"  *ngIf="isActive('project-management/projects/details/documents')">
-            @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'Inactive'){
+            @if(rbac.allowedToAccess('Documents Tab.create')){
 
             <div>
                 <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
@@ -29,7 +29,7 @@
             </div>
         </div>
         
-        @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Resources Tab.create')){
         <div *ngIf="isActive('project-management/projects/details/resources')" (click)="openResourceModal()">
             <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
         </div>

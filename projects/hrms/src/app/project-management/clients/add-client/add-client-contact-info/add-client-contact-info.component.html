@@ -1,5 +1,5 @@
 <div class="add-data-content">
-    <form [formGroup]="addContactForm" (ngSubmit)="submitContacts()">
+    <form autocomplete="off" [formGroup]="addContactForm" (ngSubmit)="submitContacts()">
         <div class="custom-table-content mb-2">
             <table class="w-100">
                 <thead>
@@ -15,8 +15,8 @@
                     <tr *ngFor="let contact of contacts.controls; let i = index" [formGroupName]="i">
                         <td>
                             <input type="text" class="form-control custom-input" placeholder="Please enter contact name"
-                                formControlName="contactName" (input)="formValidation.validateInput(contact.get('contactName'))"
-                                (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51">
+                                formControlName="contactName" [autocomplete]="false" autocomplete="off" (input)="formValidation.validateInput(contact.get('contactName'))"
+                                (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51" autocomplete="off">
                             <div *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid" class="error-msg">
                                 <div *ngIf="contact.get('contactName')?.errors?.['required']">{{'Contact Name is required' | translate }}</div>
                                 <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || contact.get('contactName')?.errors?.['minCharacters']">
@@ -24,7 +24,7 @@
                             </div>
                         </td>
                         <td>
-                            <input type="email" class="form-control custom-input" formControlName="contactEmail"
+                            <input type="email" class="form-control custom-input" autocomplete="off" formControlName="contactEmail"
                                 placeholder="Please enter email">
                             <div class="error-msg"
                                 *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">

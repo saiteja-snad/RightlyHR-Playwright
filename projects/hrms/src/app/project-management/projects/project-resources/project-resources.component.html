@@ -12,7 +12,8 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <th>Resource Name</th>
+                     <th> Employee ID</th>
+                    <th> Name</th>
                     <th>Designation</th>
                     <th>Role</th>
                     <th>Email</th>
@@ -27,6 +28,7 @@
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
+                               <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
@@ -110,17 +112,14 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="resourceRole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
-                        <input type="text" formControlName="resourceRole" class="form-control custom-input" placeholder="Please enter role" />
+                        <input type="text" formControlName="resourceRole" (keydown)="formValidation.restrictInitialSpace($event)" 
+                        class="form-control custom-input" placeholder="Please enter role" />
                         <div class="error-msg">
-                            <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
-                            <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']">
-                                {{ 'Role must be between 2–50 characters characters' | translate }}</div>
-                            <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
-                                {{ 'Role must be between 2–50 characters characters' | translate }}</div>
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength']
+                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
+                                {{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
                     </div>
 
@@ -161,6 +160,8 @@
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="startDate" formControlName="startDate"
+                         [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
                             (change)="oncheckdates(updateResourceForm.get('startDate')?.value)"
                             class="form-control custom-input" />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
@@ -175,7 +176,8 @@
                         <label for="endDate" class="form-label custom-label mb-2">End Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
-                            [min]="startDatevalidate" />
+                             [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg"
                             *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
                             End Date is required

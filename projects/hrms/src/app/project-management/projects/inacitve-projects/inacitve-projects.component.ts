@@ -11,10 +11,12 @@ import { Project } from '../../../Interfaces/projects.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
+import { FormsModule } from '@angular/forms';
+import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 @Component({
   selector: 'app-inacitve-projects',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent],
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
 })
@@ -25,7 +27,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   projectsData: Project[] = [];
   empinfo: any = {};
-
+  searchValue: any;
   constructor(private router: Router, private http: HttpService, private conformationPopup: OpenModalService,
     private modalService: NgbModal, private route: ActivatedRoute) { }
 

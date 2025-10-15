@@ -65,7 +65,7 @@
                 </div>
     
                 <!-- Add New Fields -->
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                     <label for="probationEndDate" class="form-label custom-label mb-2">Probation End Date</label>
                     <input type="date" class="form-control custom-input" id="probationEndDate"
                         formControlName="probationEndDate" placeholder="Please enter probation end date">
@@ -75,7 +75,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                     <label for="probationStatus" class="form-label custom-label mb-2">Probation Status</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="probation" optionLabel="probationstatus1" formControlName="probationStatus"
@@ -131,7 +131,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                     <label for="pf" class="form-label custom-label mb-2">PF</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="pfdata" optionLabel="name" formControlName="pf"
@@ -143,7 +143,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                     <label for="esic" class="form-label custom-label mb-2">ESIC</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="esicdata" optionLabel="name" formControlName="esic"
@@ -156,7 +156,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-6 col-lg-4 mb-3">
+                <div class="col-md-6 col-lg-4 mb-3" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                     <label for="pt" class="form-label custom-label mb-2">PT</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="ptdata" optionLabel="name" formControlName="pt"
@@ -169,8 +169,7 @@
                 </div>
     
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years
-                        Experience</label>
+                    <label for="totalExperience" class="form-label custom-label mb-2">Total Previous Years Experience</label>
                     <input type="text" class="form-control custom-input" id="totalExperience"
                         formControlName="totalExperience" placeholder="Please enter total experience">
                     <div class="error-msg"
@@ -179,7 +178,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                 <div class="mb-2">
                     <span class="component-sub-header">Work From Home</span>
                 </div>
@@ -230,9 +229,9 @@
                     </div>
                 </div>
                 }
-                </div>
+            </div>
 
-            <div class="row">
+            <div class="row" *ngIf="!((empdata?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || empdata?.empstatus === 'Prospective Contract') && empdata?.empType === 'Contract')">
                 <div class="mb-2">
                     <span class="component-sub-header">Remote Login</span>
                 </div>
@@ -351,5 +350,51 @@
             </div>
         </form>
     </div>
-    
+    <div class="card custom-background-card p-4" *ngIf="(this.empinfo?.empstatus === 'Active Contract' || empdata?.empstatus === 'Inactive Contract' || this.empinfo?.empstatus === 'Prospective Contract') && this.empinfo?.empType === 'Contract'">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span class="component-sub-header">Contract Details</span>
+            </div>
+        </div>
+        <form autocomplete="off" [formGroup]="contractForm">
+            <div class="row">
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Employment Type Status</label>
+                    <input type="text" class="form-control custom-input" formControlName="empType"
+                        placeholder="Employment type status" />
+                </div>
+
+                @if((empdata.empstatus === 'Prospective Contract' || empdata.empstatus === 'Inactive Contract' || empdata.empstatus === 'Active Contract') && isEditing){
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Contract Start Date</label>
+                    <input type="date" class="form-control custom-input" formControlName="dateOfJoining" />
+                </div>
+                }
+
+                @if((empdata.empstatus === 'Prospective Contract' || empdata.empstatus === 'Inactive Contract' || empdata.empstatus === 'Active Contract') && !isEditing){
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Contract Start Date</label>
+                    <input type="date" class="form-control custom-input" id="dateOfJoining"
+                        formControlName="dateOfJoining" placeholder="Please enter contract start date"
+                        onkeydown="return false;">
+                </div>
+                }
+
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Duration of Contract</label>
+                    <input type="text" class="form-control custom-input" formControlName="durationofContracts"
+                        placeholder="Duration of Contract" (keypress)="letters($event)" />
+                </div>
+
+                @if(!isEditing ){
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <label class="form-label custom-label mb-2">Contract End Date</label>
+                    <input type="date" class="form-control custom-input" id="contractEndDate"
+                        formControlName="contractEndDate" placeholder="Please enter contract end Date"
+                        onkeydown="return false;">
+                </div>
+                }
+            </div>
+        </form>
+    </div>
 </div>

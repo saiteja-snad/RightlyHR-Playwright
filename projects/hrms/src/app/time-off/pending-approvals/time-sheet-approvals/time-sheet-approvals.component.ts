@@ -18,13 +18,14 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
+import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
+    ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, Skeleton],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  // encapsulation: ViewEncapsulation.None,
 })
 
 export class TimeSheetApprovalsComponent implements OnInit {
@@ -38,19 +39,19 @@ export class TimeSheetApprovalsComponent implements OnInit {
   destroy$: Subject<boolean> = new Subject<boolean>();
   requestBody = {} as any;
   responseSummary!: any;
- // approveReason: string = '';
+  // approveReason: string = '';
   spinnerLoader = false;
   conformationstatus: any;
   timeSheetApproveForm!: FormGroup;
   timeSheetRejectForm!: FormGroup;
   // multiSelect = false;
- // hasSelectedAllOnce = false;
+  // hasSelectedAllOnce = false;
   totalRecordCount: number = 0;
   successRecordsCount: number = 0;
   failureRecordsCount: number = 0;
   @ViewChild('leaveSummary') leaveSummary: any;
   @ViewChild('dt') table!: Table;
- // searchValue: any;
+  // searchValue: any;
   employeeid: any;
   totalRecordCountitem: any;
   showhideaction = true;
@@ -58,10 +59,10 @@ export class TimeSheetApprovalsComponent implements OnInit {
   selectedMap: { [key: number]: any[] } = {};
   //projectsData:any[]=[];
   //employeeData:any[]=[];
-  projectId:number=0;
+  projectId!: number;
   dataload = false;
   //employeeflag:any;
-  employeeresource:any;
+  employeeresource: any;
   timesheetrecord: any;
   page = 1;
   pageSize = 10;
@@ -74,11 +75,11 @@ export class TimeSheetApprovalsComponent implements OnInit {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-  startdate:any;
-  enddate:any;
-
+  startdate: any;
+  enddate: any;
+  globalSelectedEntries: any[] = [];
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
-    private conformationPopup: OpenModalService, public router: Router,private fb: FormBuilder) { }
+    private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -86,6 +87,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.loadClientsAndProjects(this.page, this.pageSize);
     this.http.selectedEmployeeIdTimesheet$.pipe(takeUntil(this.destroy$)).subscribe(data => {
       if (data) {
+        console.log(data);
+
         // Example: store locally
         this.employeeresource = data.request.resourceId;
         this.projectId = data.request.projectId;
@@ -115,7 +118,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
       ],
     });
   }
-    // called for pagination 
+  // called for pagination 
   onRowsChange() {
     this.page = 1;
     this.first = 0;
@@ -150,17 +153,20 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.conformationstatus = 'Rejected';
     this.openModal(popup, null, this.conformationstatus);
   }
-// load timesheet data based on project and employee
+  // load timesheet data based on project and employee
   loadClientsAndProjects(page: number, pageSize: number): void {
-    // this.dataload = true;
+     this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
 
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
-    if (this.projectId) url += `&projectId=${this.projectId}`;
+    if (this.projectId !== undefined && this.projectId !== null) {
+      url += `&projectId=${this.projectId}`;
+    }
     if (this.startdate && this.enddate) url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
 
     this.http.getData(url).subscribe({
       next: (res: any) => {
+          this.dataload = false;
         this.collectionSize = res.data.totalCount;
         if (res.success) {
           // flatten all day entities into one array of entries (optional for counts)
@@ -184,13 +190,24 @@ export class TimeSheetApprovalsComponent implements OnInit {
               });
             }
           });
+          // Restore selection from globalSelectedEntries
+          this.selectedMap = {};
+          this.timesheetData.forEach((day, i) => {
+            const selectedForDay = day.entries.filter(entry =>
+              this.globalSelectedEntries.some(sel => sel.id === entry.id)
+            );
+            this.selectedMap[i] = selectedForDay;
+          });
+
+          //Sync overall selection state
+          this.syncGlobalSelectedEntries();
         }
       },
       error: (err) => {
-         if(this.employeeresource != null && this.projectId != 0){
-        this.conformationPopup.openErrorModal(err.error.message);
-        this.collectionSize = 0;
-         }
+        if (this.employeeresource != null && this.projectId != 0) {
+          this.conformationPopup.openErrorModal(err.error.message);
+          this.collectionSize = 0;
+        }
         if (this.employeeresource == null && this.projectId != 0) {
           this.collectionSize = 0;
         }
@@ -210,7 +227,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     });
   }
 
-  // called by p-table (row select)
+// called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {
     this.showhideaction = false;
     const row = event.data;
@@ -221,7 +238,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     }
     this.syncGlobalSelectedEntries();
   }
-// checkbox unselectedselected
+  // checkbox unselectedselected
   onRowUnselect(dayIndex: number, event: any) {
     this.showhideaction = false;
     const row = event.data;
@@ -233,8 +250,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.selectedEntries = Object.values(this.selectedMap)
       .filter(arr => Array.isArray(arr))
       .flat();
-      // used for checkbox uncheck show approve,reject button indivisually
-        this.showhideaction = this.selectedEntries.length === 0;
+    // used for checkbox uncheck show approve,reject button indivisually
+    this.showhideaction = this.selectedEntries.length === 0;
   }
 
   // HEADER checkbox helpers (per-day)
@@ -244,14 +261,14 @@ export class TimeSheetApprovalsComponent implements OnInit {
     if (!day || !day.entries) return false;
     return day.entries.every(e => sel.some(s => s.id === e.id));
   }
-// used for check box show indeterminate state
+  // used for check box show indeterminate state
   isIndeterminate(dayIndex: number): boolean {
     const day = this.timesheetData?.[dayIndex];
     const sel = this.selectedMap[dayIndex] || [];
     if (!day || !day.entries) return false;
     return sel.length > 0 && sel.length < day.entries.length;
   }
-// checkbox select,unselect all
+  // checkbox select,unselect all
   toggleSelectAll(dayIndex: number, isChecked: boolean) {
 
     const day = this.timesheetData[dayIndex];
@@ -280,7 +297,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
   }
-// approve submit post method
+  // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;
     if (timeSheetApproveForm.valid) {
@@ -359,8 +376,8 @@ export class TimeSheetApprovalsComponent implements OnInit {
             this.loadClientsAndProjects(this.page, this.pageSize);
             this.selectedLeavesItems = [];
             this.selectedEntries = [];
-            this.selectedMap = {};  
-            this.showhideaction = true; 
+            this.selectedMap = {};
+            this.showhideaction = true;
             this.timeSheetApproveForm.reset();
             this.timeSheetRejectForm.reset();
             this.http.triggerActionSignal();
@@ -444,11 +461,11 @@ export class TimeSheetApprovalsComponent implements OnInit {
           },
           complete: () => {
             this.spinnerLoader = false;
-            this.loadClientsAndProjects(this.page, this.pageSize);    
+            this.loadClientsAndProjects(this.page, this.pageSize);
             this.selectedLeavesItems = [];
             this.selectedEntries = [];
-            this.selectedMap = {};  
-            this.showhideaction = true; 
+            this.selectedMap = {};
+            this.showhideaction = true;
             this.timeSheetApproveForm.reset();
             this.timeSheetRejectForm.reset();
             this.http.triggerActionSignal();
@@ -459,54 +476,54 @@ export class TimeSheetApprovalsComponent implements OnInit {
 
 
   // select all Check if ALL entries in ALL days are selected
-areAllDaysSelected(): boolean {
-  if (!this.timesheetData || this.timesheetData.length === 0) return false;
-  return this.timesheetData.every(
-    (day, i) =>
-      day.entries &&
-      this.selectedMap[i] &&
-      day.entries.length === this.selectedMap[i].length
-  );
-}
-
-//select all Show indeterminate when partial selection exists
-isGlobalIndeterminate(): boolean {
-  if (!this.timesheetData || this.timesheetData.length === 0) return false;
-
-  const totalEntries = this.timesheetData.reduce(
-    (acc, day) => acc + (day.entries?.length || 0),
-    0
-  );
-
-  const selectedCount = Object.values(this.selectedMap)
-    .filter(Array.isArray)
-    .reduce((acc, arr) => acc + arr.length, 0);
-
-  return selectedCount > 0 && selectedCount < totalEntries;
-}
-
-//select all Toggle all entries across all days
-toggleSelectAllDays(isChecked: boolean): void {
-  if (!this.timesheetData || this.timesheetData.length === 0) return;
-
-  if (isChecked) {
-    this.showhideaction = false;
-    this.timesheetData.forEach((day, i) => {
-      this.selectedMap[i] = [...day.entries];
-    });
-  } else {
-    this.showhideaction = true;
-    this.selectedMap = {};
+  areAllDaysSelected(): boolean {
+    if (!this.timesheetData || this.timesheetData.length === 0) return false;
+    return this.timesheetData.every(
+      (day, i) =>
+        day.entries &&
+        this.selectedMap[i] &&
+        day.entries.length === this.selectedMap[i].length
+    );
   }
 
-  this.syncGlobalSelectedEntries();
-}
+  //select all Show indeterminate when partial selection exists
+  isGlobalIndeterminate(): boolean {
+    if (!this.timesheetData || this.timesheetData.length === 0) return false;
+
+    const totalEntries = this.timesheetData.reduce(
+      (acc, day) => acc + (day.entries?.length || 0),
+      0
+    );
+
+    const selectedCount = Object.values(this.selectedMap)
+      .filter(Array.isArray)
+      .reduce((acc, arr) => acc + arr.length, 0);
+
+    return selectedCount > 0 && selectedCount < totalEntries;
+  }
+
+  //select all Toggle all entries across all days
+  toggleSelectAllDays(isChecked: boolean): void {
+    if (!this.timesheetData || this.timesheetData.length === 0) return;
+
+    if (isChecked) {
+      this.showhideaction = false;
+      this.timesheetData.forEach((day, i) => {
+        this.selectedMap[i] = [...day.entries];
+      });
+    } else {
+      this.showhideaction = true;
+      this.selectedMap = {};
+    }
+
+    this.syncGlobalSelectedEntries();
+  }
 
   // destroy the component
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
     this.subscription?.unsubscribe();
-    this.http.setEmployeeIdTimesheet({},0,0);
+    this.http.setEmployeeIdTimesheet({}, 0, 0);
   }
 }

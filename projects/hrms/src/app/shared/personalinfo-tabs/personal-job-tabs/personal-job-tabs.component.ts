@@ -55,9 +55,13 @@ filterTabs(): void {
     { label: 'Onboarding Documents', link: '/personalinfo/job/onboarding-verification', icon: '/my-info-icons/onboarding-icon.png', permission: { feature: 'Employee Info Documents Verification', action: 'view' } },
     { label: 'Trainee Onboard Request', link: '/personalinfo/job/trainee-onboarding-requests', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' } },
     { label: 'Offboarding Info', link: '/personalinfo/job/employmentType', icon: '/images/offboarding.png', permission: { feature: 'Employee Info Offboarding Details', action: 'view' } },
+    { label: 'Contract Info', link: '/personalinfo/job/contactor-info', icon: '/my-info-icons/contractor.png', permission: { feature: 'Employee Info Contract Details', action: 'view' } },
   ];
   
   this.navTabs = allTabs;
+   this.navTabs = ((this.empinfo?.empstatus === 'Active Contract' || this.empinfo?.empstatus === 'Inactive Contract') && this.empinfo.empType === 'Contract')
+    ? allTabs
+    : allTabs.filter(tab => tab.label !== 'Contract Info'); 
 }
 
   navigateToAccessedRoute(link: string): void {

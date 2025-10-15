@@ -35,4 +35,5 @@ export interface Client {
 export interface Authority {
   id: number;
   name: string;
+  fusionEmpId:string
 }

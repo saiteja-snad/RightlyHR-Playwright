@@ -5,10 +5,10 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter industry type"
                     formControlName="industryType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
-                                    formValidations.blockNonAlphabets($event)"  maxlength="51">
+                    formValidations.blockNonAlphabets($event)"  maxlength="51">
                 <span class="input-group-text" id="stat">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="addForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
             <div *ngIf="addForm.get('industryType')?.touched && addForm.get('industryType')?.invalid" class="error-msg">
                 <div *ngIf="addForm.get('industryType')?.errors?.['required']">
@@ -18,11 +18,9 @@
             <div *ngIf="addForm.get('industryType')?.errors?.['pattern']" class="error-msg">
                 {{ 'Field cannot start with a space' | translate }}
             </div>
-            <div *ngIf="addForm.get('industryType')?.errors?.['maxCharacters']" class="error-msg">
-                {{ 'Industry Type must be between 2–50 characters' | translate }}
-            </div>
-            <div *ngIf="addForm.get('industryType')?.errors?.['minCharacters']" class="error-msg">
-                {{ 'Industry Type must be between 2–50 characters' | translate }}
+            <div *ngIf="addForm.get('industryType')?.errors?.['maxCharacters'] || 
+                        addForm.get('industryType')?.errors?.['minCharacters']" class="error-msg">
+                {{ 'Industry Type must be between 2-50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -37,27 +35,32 @@
                 </tr>
             </thead>
             <tbody>
-                @for (item of industryTypes; track $index) {
-                <tr>
-                    <td class="w-75">{{item.value}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div (click)="openupdate(item, updatepopup)">
-                                <a *ngIf="rbac.allowedToAccess('Industry Type.update')">
-                                    <app-settings-update-icon />
-                                </a>
+                <ng-container *ngIf="industryTypes.length > 0; else noDataTemplate">
+                    @for (item of industryTypes; track $index) {
+                    <tr>
+                        <td class="w-75">{{item.value}}</td>
+                        <td class="w-25">
+                            <div class="d-flex gap-4">
+                                <!--Update-->
+                                <div (click)="openupdate(item, updatepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Industry Type.update')">
+                                        <app-settings-update-icon />
+                                    </a>
+                                </div>
+                                <!--Delete-->
+                                <div (click)="opendelete(item, deletepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Industry Type.delete')">
+                                        <app-settings-delete-icon />
+                                    </a>
+                                </div>
                             </div>
-                            <!--Delete-->
-                            <div (click)="opendelete(item, deletepopup)">
-                                <a *ngIf="rbac.allowedToAccess('Industry Type.delete')">
-                                    <app-settings-delete-icon />
-                                </a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                }
+                        </td>
+                    </tr>
+                    }
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <app-no-data-found />
+                </ng-template>
             </tbody>
         </table>
         }
@@ -85,23 +88,21 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Industry Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="industryType"
-                        placeholder="Please enter industry"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-                        maxlength="51">
-                    <div *ngIf="updateForm.get('industryType')?.touched && updateForm.get('industryType')?.invalid"
-                        class="error-msg">
-                        <div *ngIf="updateForm.get('industryType')?.errors?.['required']">
-                            {{ 'Industry Type is required' | translate }}
+                        placeholder="Please enter industry" (keydown)="formValidations.restrictInput($event); 
+                        formValidations.blockNonAlphabets($event)" maxlength="51">
+                    <div class="error-msg">
+                        <div *ngIf="updateForm.get('industryType')?.touched && updateForm.get('industryType')?.invalid">
+                            <div *ngIf="updateForm.get('industryType')?.errors?.['required']">
+                                {{ 'Industry Type is required' | translate }}
+                            </div>
                         </div>
-                    </div>
-                    <div *ngIf="updateForm.get('industryType')?.errors?.['pattern']" class="error-msg">
-                        {{ 'Field cannot start with a space' | translate }}
-                    </div>
-                    <div *ngIf="updateForm.get('industryType')?.errors?.['maxCharacters']" class="error-msg">
-                        {{ 'Industry Type must be between 2–50 characters' | translate }}
-                    </div>
-                    <div *ngIf="updateForm.get('industryType')?.errors?.['minCharacters']" class="error-msg">
-                        {{ 'Industry Type must be between 2–50 characters' | translate }}
+                        <div *ngIf="updateForm.get('industryType')?.errors?.['pattern']">
+                            {{ 'Field cannot start with a space' | translate }}
+                        </div>
+                        <div *ngIf="updateForm.get('industryType')?.errors?.['maxCharacters'] || 
+                            updateForm.get('industryType')?.errors?.['minCharacters']">
+                            {{ 'Industry Type must be between 2-50 characters' | translate }}
+                        </div>
                     </div>
                 </div>
                 <div class="custom-modal-footer">

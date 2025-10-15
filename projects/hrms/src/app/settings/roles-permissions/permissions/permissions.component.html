@@ -1474,7 +1474,7 @@
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Time Off Tab' || per.fields === 'WFH Tab' || per.fields === 'Comp Off Tab' || 
                                 per.fields === 'Permissions Tab' || per.fields === 'Regularization Tab' || per.fields === 'Separation Request Tab' || 
-                                per.fields === 'Recall Request Tab' || per.fields === 'Trainee Details Tab' || per.fields === 'No Due Clearence Requests Tab' 
+                                per.fields === 'Recall Request Tab' || per.fields === 'Trainee Details Tab' || per.fields === 'Contractor Details Tab'|| per.fields === 'Contract-Conversion Tab'|| per.fields === 'No Due Clearence Requests Tab' 
                                 || per.fields === 'Claims and Expenses Tab'  || per.fields === 'Desk Requests Tab' || per.fields === 'Probation Details Tab' 
                                 || per.fields === 'Remote Login Tab' || per.fields === 'Time Sheet approval Tab' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
@@ -1598,6 +1598,80 @@
                                 </td>
                             </tr>
                         </ng-container>
+
+                         <!-- contractor Pending Approvals Module Tabs -->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectallpremissionsforContract
+                                        (change)="toggleSelectAll(pendingApprovalContractSubTabs, selectallpremissionsforContract?.checked, isonlycreatfunction.bind(this))"
+                                        [checked]="isAllSelected(pendingApprovalContractSubTabs)"
+                                        [indeterminate]="isSomeSelected(pendingApprovalContractSubTabs)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div> Pending Approval Contractors</div>
+                                </div>
+
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'For You (Contractors)' || per.fields === 'For Role (Contractors)' ">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id">
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <!-- Contract-Conversion Pending Approvals Module Tabs -->
+                        <tr>
+                            <th colspan="5" class="custom-header">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <input type="checkbox" #selectallpremissionsforContractConversion
+                                        (change)="toggleSelectAll(pendingApprovalContractConversionSubTabs, selectallpremissionsforContractConversion?.checked, isonlycreatfunction.bind(this))"
+                                        [checked]="isAllSelected(pendingApprovalContractConversionSubTabs)"
+                                        [indeterminate]="isSomeSelected(pendingApprovalContractConversionSubTabs)"
+                                        [disabled]="!roleToFilter?.id">
+                                    <div> Pending Approval Contract-Conversion</div>
+                                </div>
+                            </th>
+                        </tr>
+                        <ng-container *ngFor="let per of permissions">
+                            <tr class="text-align-center"
+                                *ngIf="per.fields === 'For You (Contract-Conversion)' || per.fields === 'For Role (Contract-Conversion)' ">
+                                <td class="text-align-center">{{ per.fields }}</td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                        (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                        [disabled]="true">
+                                </td>
+                                <td scope="row">
+                                    <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                        (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id">
+                                </td>
+                            </tr>
+                        </ng-container>
+
                         <!-- CompOff Pending Approvals Module Tabs -->
                         <tr>
                             <th colspan="5" class="custom-header">
@@ -2520,7 +2594,7 @@
                             per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Offboarding Details' || 
                             per.fields === 'My Info Job Details' || per.fields === 'My Info Separation Request Details' || 
                             per.fields === 'My Info No Due Clearance Details' || per.fields === 'My Info Probation Details' || 
-                            per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details' || 
+                            per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details' || per.fields === 'My Info Contract Details' || 
                             per.fields === 'My Info Compensation Details' || per.fields === 'My Info Desk Details' || 
                             per.fields === 'My Info Asset Details' || per.fields === 'My Info Separation Request Button'">
                                 <td class="text-align-center">{{ per.fields }}</td>
@@ -2660,8 +2734,9 @@
                                 per.fields === 'Employee Info Probation Details' || per.fields === 'Employee Info Previous Experience Details' ||
                                 per.fields === 'Employee Info Certification Details' || per.fields === 'Employee Info Onboarding Request Details' ||
                                 per.fields === 'Employee Info Compensation Details' || per.fields === 'Employee Info Desk Details' ||
-                                per.fields === 'Employee Info Asset Details' || per.fields === 'Employee Info Separation Request' || 
-                                per.fields === 'No Due Form' || per.fields === 'Employee Info Documents Verification' ">
+                                per.fields === 'Employee Info Asset Details' || per.fields === 'Employee Info Contract Conversion Request' || per.fields === 'Employee Info Separation Request' || 
+                                per.fields === 'No Due Form' || per.fields === 'Employee Info Documents Verification' || 
+                                per.fields === 'Employee Info Contract Details'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2672,7 +2747,7 @@
                                         (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id || [
                                 'Employee Info Asset Details','Employee Info Desk Details',
                                 'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details',
-                                'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details','No Due Form','Employee Info Separation Request'
+                                'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details','No Due Form','Employee Info Separation Request', 'Employee Info Contract Conversion Request'
                             ].includes(per.fields)">
                                 </td>
                                 <td>
@@ -2687,7 +2762,7 @@
                                     <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
                                         (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id || [
                             'Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
-                            'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request',
+                            'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details','No Due Form','Employee Info Separation Request', 'Employee Info Contract Conversion Request',
                             'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details','Employee Info Job Details'].includes(per.fields)">
                                 </td>
                             </tr>
@@ -2734,7 +2809,8 @@
                             <th colspan="5" class="custom-header">Employee Info Onbaord Request Details</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
-                            <tr class="text-align-center" *ngIf="per.fields === 'Request for Onboard Button' || per.fields ==='Inactive Button'">
+                            <tr class="text-align-center" *ngIf="per.fields === 'Request for Onboard Button' || 
+                            per.fields==='Request for Contract Extension Button' || per.fields ==='Inactive Button'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2876,12 +2952,12 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Dashboard Prospective Employees Card' ||  per.fields === 'Dashboard Active Employees Card' || 
+                                *ngIf="per.fields === 'Dashboard Prospective Employees Card' ||  per.fields === 'Dashboard Active Employees Card' || per.fields === 'Dashboard Contract Employees Card'||
                             per.fields === 'Dashboard Inactive Employees Card' || per.fields === 'Dashboard Prospective Trainee Card'
-                            ||  per.fields === 'Dashboard Active Trainees Card' || per.fields === 'Dashboard Inactive Trainees Card' || 
-                            per.fields === 'Dashboard Current Openings Card' ||  per.fields === 'Dashboard Probation Employees Card'|| 
+                            ||  per.fields === 'Dashboard Active Trainees Card' ||  per.fields === 'Dashboard Active Contract employees Card' || per.fields === 'Dashboard Inactive Trainees Card' || 
+                            per.fields === 'Dashboard Current Openings Card' ||  per.fields === 'Dashboard Probation Employees Card' || per.fields === 'Add Contract Employee' || 
                             per.fields === 'Add Prospective Employee'||  per.fields === 'Add Prospective Trainee' || per.fields === 'Dashboard Active Invite New User' 
-                            || per.fields === 'Invite New User' || per.fields === 'Dashboard Trainee Active Invite New User'">
+                            || per.fields === 'Invite New User' || per.fields === 'Dashboard Trainee Active Invite New User' || per.fields === 'Dashboard Active Contract Invite New User'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2914,8 +2990,8 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
-                                *ngIf="per.fields === 'Documents History Offer Letter' ||  per.fields === 'Documents History Appointment Letter' || 
-                            per.fields === 'Documents History Trainee Offer Letter' || per.fields === 'Documents History Trainee Appointment Letter'">
+                                *ngIf="per.fields === 'Documents History Offer Letter' ||  per.fields === 'Documents History Contract Offer Letter' ||  per.fields === 'Documents History Appointment Letter' || 
+                            per.fields === 'Documents History Trainee Offer Letter' || per.fields === 'Documents History Trainee Appointment Letter' || per.fields === 'Documents History Non-Disclosure Agreement Letter'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2948,7 +3024,7 @@
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Address Proof Letter' || per.fields === 'Bank Loan Letter' ||  per.fields === 'Apprisal Letter' || 
-                            per.fields === 'Salary Revision Letter' || per.fields === 'Promotion Letter'">
+                            per.fields === 'Contract Offer Letter' || per.fields === 'NDA Letter' || per.fields === 'Salary Revision Letter' || per.fields === 'Promotion Letter'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -3648,7 +3724,7 @@
                           <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Project Type' || per.fields === 'Industry Type' || 
                             per.fields === 'Project Document Type' || per.fields === 'Client Document Type' || 
-                            per.fields === 'Letter Configurations' || per.fields === 'Project Management Authority'">
+                            per.fields === 'Letter Configurations' || per.fields === 'Project Management Authority' || per.fields === 'Letter Frequency Configurations'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

@@ -139,6 +139,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       },
     });
   }
+  
   selectproject(projectId: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -300,6 +301,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       return null;
     };
   }
+
   get minEffectiveDate(): string | null {
     const startDate = this.addResourceForm.get('startDate')?.value;
     if (startDate) {

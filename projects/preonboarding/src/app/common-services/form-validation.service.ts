@@ -137,7 +137,7 @@ export class FormValidationService {
       return;
     }
     // Allow only alphabetic characters and the period (.)
-    const isValidCharacter = /^[A-Za-z\s.]$/.test(key);
+    const isValidCharacter = /^[A-Za-z\s.']$/.test(key);
     if (!isValidCharacter) {
       event.preventDefault();
     }

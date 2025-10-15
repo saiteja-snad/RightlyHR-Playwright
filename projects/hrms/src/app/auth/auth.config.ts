@@ -5,6 +5,7 @@ export const microsoftAuthConfig: AuthConfig = {
   issuer: `${environment.auth.microsoft.authority}/${environment.auth.microsoft.tenant}/v2.0`,
   clientId: environment.auth.microsoft.clientId,
   redirectUri: environment.auth.microsoft.redirectUri,
+  postLogoutRedirectUri: environment.auth.microsoft.postLogoutRedirectUri,
   responseType: 'code',
   scope: environment.auth.microsoft.scope,
   showDebugInformation: true,

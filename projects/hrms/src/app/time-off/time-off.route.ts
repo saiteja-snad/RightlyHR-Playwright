@@ -81,6 +81,12 @@ import { RemoteLoginRequestComponent } from './pending-approvals/remote-login-re
 import { RemoteLoginForYouRequestComponent } from './pending-approvals/remote-login-request/remote-login-for-you-request/remote-login-for-you-request.component';
 import { RemoteLoginForRoleRequestComponent } from './pending-approvals/remote-login-request/remote-login-for-role-request/remote-login-for-role-request.component';
 import { TimeSheetApprovalsComponent } from './pending-approvals/time-sheet-approvals/time-sheet-approvals.component';
+import { ContractConversionForYourRoleComponent } from './pending-approvals/contract-conversion/contract-conversion-for-your-role/contract-conversion-for-your-role.component';
+import { ContractConversionForYouComponent } from './pending-approvals/contract-conversion/contract-conversion-for-you/contract-conversion-for-you.component';
+import { ContractConversionComponent } from './pending-approvals/contract-conversion/contract-conversion.component';
+import { ContractorsComponent } from './pending-approvals/contractors/contractors.component';
+import { ContractForYouComponent } from './pending-approvals/contractors/contract-for-you/contract-for-you.component';
+import { ContractForYourRoleComponent } from './pending-approvals/contractors/contract-for-your-role/contract-for-your-role.component';
 
 
 export default [
@@ -414,6 +420,40 @@ export default [
           },
 
           // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+        ],
+      },
+      {
+        path: 'contractors-request',
+        component: ContractorsComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: ContractForYouComponent,
+            data: { permission: 'For You (Contractors).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: ContractForYourRoleComponent,
+            data: { permission: 'For Role (Contractors).view' },
+          },
+
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+        ],
+      },
+      {
+        path: 'contract-conversion',
+        component: ContractConversionComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: ContractConversionForYouComponent,
+            data: { permission: 'For You (Contract-Conversion).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: ContractConversionForYourRoleComponent,
+            data: { permission: 'For Role (Contract-Conversion).view' },
+          },
         ],
       },
       {

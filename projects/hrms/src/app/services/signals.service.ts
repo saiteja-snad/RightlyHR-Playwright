@@ -5,6 +5,8 @@ import { OpenModalService } from './open-modal.service';
   providedIn: 'root',
 })
 export class SignalsService {
+  authSignal = signal<string>('');
+
   // WFH PendingApprovals Signals
   wfhForYouTriggerSignal = signal<boolean>(false);
   wfhForRoleTriggerSignal = signal<boolean>(false);
@@ -60,6 +62,12 @@ export class SignalsService {
   traineeDetailsTriggerSignal = signal<boolean>(false);
   // probation deatils
   probationDetailsTriggerSignal = signal<boolean>(false);
+
+  contractForyouTriggerSignal = signal<boolean>(false);
+
+  contractConversionForYouTriggerSignal = signal<boolean>(false);
+  contractConversionForYouRoleTriggerSignal = signal<boolean>(false);
+
   
   constructor(
     private sharedModalService: OpenModalService,

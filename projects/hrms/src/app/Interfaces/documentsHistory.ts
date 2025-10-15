@@ -34,3 +34,12 @@ export interface IAppointmentLetterDetails {
     appointmentSentDate : any,
 
 }
+export interface INDALetterDetails {
+    id: number;
+    documentUrl: string;
+    employeeId: number,
+    fusionEmpId:string,
+    employeeName : string,
+    ndaSentDate : any,
+
+}

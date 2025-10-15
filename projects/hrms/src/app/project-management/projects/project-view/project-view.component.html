@@ -25,7 +25,7 @@
 
         <div *ngIf="isActive('/project-management/projects/details/inactivedocuments')">
             <div>
-                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Archieved Documents</u></a>
+                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Archived Documents</u></a>
             </div>
         </div>
         
@@ -39,8 +39,12 @@
         @if(isActive('/project-management/projects/details/timesheet')){
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
             <div class="d-flex gap-3 align-items-center">
+                    @if(isFilterApplied()) {
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                }
+
                 <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Select Date Range'" selectionMode="range"
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date rang'" selectionMode="range"
                         [showIcon]="true" [readonlyInput]="true">
                     </p-datepicker>
                 </div>
@@ -54,7 +58,7 @@
 
                 <div>
                     <button class="custom-btn btn-primary" type="submit"
-                        [disabled]="datepickerForm.invalid">Submit</button>
+                       [disabled]="!isFormCompletelyValid()">Apply</button>
                 </div>
             </div>
         </form>

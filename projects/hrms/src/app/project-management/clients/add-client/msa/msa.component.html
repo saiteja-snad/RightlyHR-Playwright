@@ -112,7 +112,7 @@
                         <label class="form-label custom-label mb-2">{{'Notice Period Frequency' | translate}}<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="frequencyDetails" optionLabel="frequency1" formControlName="noticePeriodfrequency"
+                            <p-select [options]="letterFrequencies" optionLabel="value" formControlName="noticePeriodfrequency"
                                 placeholder="Please select term frequency" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -142,7 +142,7 @@
                         <label class="form-label custom-label mb-2">{{'Invoicing Frequency'| translate }}<span
                                 class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="frequencyDetails" optionLabel="frequency1" formControlName="invoicingFrequency"
+                            <p-select [options]="letterFrequencies" optionLabel="value" formControlName="invoicingFrequency"
                                 placeholder="Please select term frequency" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -275,7 +275,7 @@
                                             this Agreement
                                             or any individual SOW without cause upon
                                             ({{clientForm.get('noticePeriodforTermination')?.value || 0}})
-                                            {{clientForm.get('noticePeriodfrequency')?.value?.frequency1 ||
+                                            {{clientForm.get('noticePeriodfrequency')?.value?.value ||
                                             '__________'}}’ written
                                             notice to
                                             the other Party.
@@ -351,7 +351,7 @@
                                             4.2 Invoicing and Payment. Service Provider shall submit invoices
                                             monthly with supporting documentation. Company shall remit payment within
                                             ({{clientForm.get('paymentTerms')?.value ||0}})
-                                            {{clientForm.get('invoicingFrequency')?.value?.frequency1 ||'__________'}}
+                                            {{clientForm.get('invoicingFrequency')?.value?.value ||'__________'}}
                                             of receipt of a valid and undisputed invoice.
                                         </li>
                                         <li>

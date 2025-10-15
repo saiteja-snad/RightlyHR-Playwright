@@ -34,7 +34,7 @@ export class PendingApprovalsComponent implements OnInit {
   employeeid: any;
   isSubmitEnabled = false;
   isDistinct = true;
-
+  today: Date = new Date();
   constructor(public router: Router, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {

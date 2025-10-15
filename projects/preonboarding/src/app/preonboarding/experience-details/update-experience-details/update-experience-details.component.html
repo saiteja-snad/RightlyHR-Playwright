@@ -20,7 +20,8 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Company Name<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="companyName">
+                    <input type="text" class="form-control custom-input" formControlName="companyName"
+                        (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched"
                         class="error-msg">
                         Company Name is required
@@ -44,8 +45,9 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">From Date<span class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" onkeydown="return false;"
-                        formControlName="fromDate" (change)="oncheckdates(experienceForm.get('fromDate')?.value)">
+                    <input type="date" class="form-control custom-input" formControlName="fromDate" [max]="today"
+                        (change)="oncheckdates(experienceForm.get('fromDate')?.value)" placeholder="From Date"
+                        autocomplete="off" onkeydown="return false;" />
                     <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched"
                         class="error-msg">
                         From Date is required
@@ -55,8 +57,9 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">To Date<span class="text-danger"
                             *ngIf="!isDisabletoDate">*</span></label>
-                    <input type="date" class="form-control custom-input" onkeydown="return false;"
-                        formControlName="toDate" [min]="startDatevalidate" [disabled]="isDisabletoDate">
+                    <input type="date" class="form-control custom-input" formControlName="toDate"
+                        [min]="startDatevalidate" [max]="today" [disabled]="isDisabletoDate" autocomplete="off"
+                        onkeydown="return false;" />
                     <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched"
                         class="error-msg">
                         To Date is required
@@ -65,7 +68,8 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Job Role<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="jobTitle">
+                    <input type="text" class="form-control custom-input" formControlName="jobTitle"
+                        (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched"
                         class="error-msg">
                         Job Role is required
@@ -74,7 +78,7 @@
 
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Roles & Responsibilities</label>
-                    <textarea class="form-control custom-input" formControlName="description"
+                    <textarea class="form-control custom-input" formControlName="description" (keypress)="formValidation.restrictInitialSpace($event)"
                         placeholder="Please enter roles & responsibilities"></textarea>
                     <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched"
                         class="error-msg">
@@ -88,7 +92,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Name</label>
-                    <input type="text" class="form-control custom-input" formControlName="previousContactName"
+                    <input type="text" class="form-control custom-input" formControlName="previousContactName" (keypress)="formValidation.restrictInitialSpace($event)"
                         placeholder="Please enter contact name">
                     <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched"
                         class="error-msg">
@@ -99,10 +103,11 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                        <!-- <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                             [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
-                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list>
+                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list> -->
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
+                           [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
                             placeholder="Please enter your mobile number" id="phonenumbers"
                             aria-describedby="phonenumbers"
                             [value]="experienceForm.get('previousContactNumber')?.value ? formatPhoneNumber(experienceForm.get('previousContactNumber')?.value) : ''"
@@ -122,7 +127,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Work Email</label>
-                    <input type="email" class="form-control custom-input" formControlName="previousContactEmail"
+                    <input type="email" class="form-control custom-input" formControlName="previousContactEmail" (keypress)="formValidation.restrictInitialSpace($event)"
                         placeholder="Please enter work email">
                     <div *ngIf="experienceForm.get('previousContactEmail')?.invalid && experienceForm.get('previousContactEmail')?.touched"
                         class="error-msg">
@@ -131,18 +136,22 @@
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input px-0" (change)="onChangeexperience($event);onChange($event)">
+                    <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span
+                            class="text-danger">*</span></label>
+                    <input type="file" class="form-control custom-input px-0"
+                        (change)="onChangeexperience($event);onChange($event)">
                     <div *ngIf="this.experienceData.attachment" class="custom-label file-name my-1">
                         File Name: {{getFileName(this.experienceData.attachment)}}
                     </div>
-                    <div class="error-msg" *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">Please choose a file</div>
+                    <div class="error-msg"
+                        *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
+                        Please choose a file</div>
                     <div class="error-msg" *ngIf="showErrorforpdf">Only Pdf/Image files are allowed.</div>
                     <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB.</div>
                 </div>
             </div>
         </div>
-        
+
         <div class="d-flex justify-content-end gap-3 px-4 py-3">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="close()">Close</button>
             <button type="submit" class="custom-btn btn-primary px-5"

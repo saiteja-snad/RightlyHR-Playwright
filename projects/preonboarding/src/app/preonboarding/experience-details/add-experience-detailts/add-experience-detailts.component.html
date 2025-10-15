@@ -18,17 +18,18 @@
                         <label class="form-check-label custom-label" for="checkDefault">Currently Working</label>
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Company Name<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="companyName"
-                        placeholder="Company Name" autocomplete="off">
+                        placeholder="Company Name" autocomplete="off"
+                        (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('companyName')?.invalid && experienceForm.get('companyName')?.touched"
                         class="error-msg">
                         Company Name is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Employment Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
@@ -42,8 +43,8 @@
                         Employment Type is required
                     </div>
                 </div>
-    
-                <div class="col-md-6 mb-3">
+
+                <!-- <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">From Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" onkeydown="return false;"
                         (change)="oncheckdates(experienceForm.get('fromDate')?.value)" formControlName="fromDate"
@@ -63,50 +64,84 @@
                         class="error-msg">
                         To Date is required
                     </div>
+                </div> -->
+
+                <!--  FROM DATE -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label custom-label mb-2">
+                        From Date<span class="error-msg">*</span>
+                    </label>
+                    <input type="date" class="form-control custom-input" formControlName="fromDate" [max]="today" 
+                    (change)="oncheckdates(experienceForm.get('fromDate')?.value)"
+                    placeholder="From Date"
+                    autocomplete="off"
+                    onkeydown="return false;"
+                    />
+                    <div *ngIf="experienceForm.get('fromDate')?.invalid && experienceForm.get('fromDate')?.touched"
+                        class="error-msg">
+                        From Date is required
+                    </div>
                 </div>
-    
+
+                <!--  TO DATE -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label custom-label mb-2">
+                        To Date<span class="error-msg" *ngIf="required">*</span>
+                    </label>
+                    <input type="date" class="form-control custom-input" formControlName="toDate"
+                    [min]="startDatevalidate"  [max]="today"  [disabled]="isDisabletoDate" autocomplete="off"
+                    onkeydown="return false;"
+                    />
+                    <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched"
+                        class="error-msg">
+                        To Date is required
+                    </div>
+                </div>
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Job Role<span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="jobTitle" placeholder="Job Role"
-                        autocomplete="off">
+                    <input type="text" class="form-control custom-input" formControlName="jobTitle"
+                        placeholder="Job Role" autocomplete="off"
+                        (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="experienceForm.get('jobTitle')?.invalid && experienceForm.get('jobTitle')?.touched"
                         class="error-msg">
                         Job Role is required
                     </div>
                 </div>
-    
+
                 <div class="col-md-12 mb-3">
                     <label class="form-label custom-label mb-2">Roles & Responsibilities<span
                             class="error-msg"></span></label>
                     <textarea class="form-control custom-input" formControlName="description"
+                        (keypress)="formValidation.restrictInitialSpace($event)"
                         placeholder="Please enter roles & responsibilities"></textarea>
                     <!-- <div *ngIf="experienceForm.get('description')?.invalid && experienceForm.get('description')?.touched" class="error-msg">
                             Roles & Responsibilities is required
                         </div> -->
                 </div>
-    
+
                 <div class="mb-3">
                     <p class="popup-heading mb-0">Previous Employer Details</p>
                 </div>
-    
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Name</label>
-                    <input type="text" class="form-control custom-input" formControlName="previousContactName"
+                    <input type="text" class="form-control custom-input" formControlName="previousContactName" (keypress)="formValidation.restrictInitialSpace($event)"
                         placeholder="Contact name">
                     <!-- <div *ngIf="experienceForm.get('previousContactName')?.invalid && experienceForm.get('previousContactName')?.touched" class="error-msg">
                             Contact Name is required
                         </div> -->
                 </div>
-    
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Contact Number</label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-                        <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                        <!-- <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
                             [selectedCountryCode]="selectedCountryCode" [countryListConfig]="countryListConfig"
-                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list>
+                            class="country-input" (onCountryChange)="onCountryChange($event)"></lib-country-list> -->
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
-                            placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
-                            [value]="experienceForm.get('previousContactNumber')?.value" autocomplete="off">
+                            placeholder="Please enter your mobile number" id="phonenumbers" [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
+                            aria-describedby="phonenumbers" [value]="experienceForm.get('previousContactNumber')?.value" autocomplete="off">
                     </div>
                     <!-- <div class="error-msg my-1"
                             *ngIf="experienceForm.get('previousContactNumber')?.invalid &&  (experienceForm.get('previousContactNumber')?.touched || experienceForm.get('previousContactNumber')?.dirty)">
@@ -117,17 +152,23 @@
                             </div>
                         </div> -->
                 </div>
-    
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">Work Email</label>
                     <input type="email" class="form-control custom-input" formControlName="previousContactEmail"
-                        placeholder="Please enter work email">
+                        placeholder="Please enter work email" (keypress)="formValidation.restrictInitialSpace($event)">
+                    <div class="error-msg my-1" *ngIf="experienceForm.get('previousContactEmail')?.hasError('email')">
+                        Please enter a valid email
+                        ID</div>
                 </div>
-    
+
                 <div class="col-md-12 mb-3">
-                    <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span class="error-msg">*</span></label>
-                    <input type="file" class="form-control custom-input px-0" (change)="onChangeexperience($event);onChange($event)">
-                    <div class="error-msg" *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
+                    <label class="form-label custom-label mb-2">Attachment (Upload the Image and PDF)<span
+                            class="error-msg">*</span></label>
+                    <input type="file" class="form-control custom-input px-0"
+                        (change)="onChangeexperience($event);onChange($event)">
+                    <div class="error-msg"
+                        *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
                         Please choose a file
                     </div>
                     <div class="error-msg" *ngIf="showErrorforpdf">Only Pdf/Image files are allowed</div>

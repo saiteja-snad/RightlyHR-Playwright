@@ -46,8 +46,11 @@ export class UpdateExperienceDetailsComponent {
   };
   mobileNumberData: IphoneNumberData | null = null;
   @Input() experienceData: any;
+  today = new Date().toISOString().split('T')[0];
+
 startDatevalidate:any;
-  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) { }
+  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup: PopupService, 
+    private getData: DataService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -58,12 +61,12 @@ startDatevalidate:any;
   initializeExperienceForm() {
     this.experienceForm = this.fb.group({
       isPresent: [this.experienceData?.isPresent || false],
-      companyName: [this.experienceData?.companyName || null, [Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      companyName: [this.experienceData?.companyName || null, [Validators.maxLength(100)]],
       employmentType: [this.experienceData?.employmentType || null, Validators.required],
       fromDate: [this.formatDate(this.experienceData?.fromDate) || null, Validators.required],
       toDate: [this.formatDate(this.experienceData?.toDate) || null],
-      jobTitle: [this.experienceData?.jobTitle || null, [ Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
-      description: [this.experienceData?.description || null,[Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+      jobTitle: [this.experienceData?.jobTitle || null, [Validators.maxLength(100)]],
+      description: [this.experienceData?.description || null],
       previousContactName: [this.experienceData?.previousContactName || null],
       previousContactNumber: [this.experienceData?.previousContactNumber ||null, [this.phoneNumberValidator()]],
       previousContactEmail: [this.experienceData?.previousContactEmail || null, [Validators.email]],
@@ -201,7 +204,8 @@ DateValidator(): ValidatorFn {
 
   updateExpDetails() {
     const formData = this.experienceForm.value;
-    const payload = {
+
+    let payload = {
       id: this.experienceData?.id,
       empId: this.experienceData.empId,
       companyName: formData.companyName ?? this.experienceData?.companyName,
@@ -217,6 +221,8 @@ DateValidator(): ValidatorFn {
       isDeleted: this.experienceData?.isDeleted,
       attachment: formData.attachment ?? this.experienceData?.attachment,
     };
+
+    payload = this.cleanPayload(payload);
 
     if (this.file) {
       const filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
@@ -271,6 +277,54 @@ DateValidator(): ValidatorFn {
     }
   }
 
+  private cleanPayload(payload: any): any {
+  const cleaned: any = {};
+
+  Object.keys(payload).forEach(key => {
+    let value = payload[key];
+
+    // Convert empty strings to null
+    if (value === '' || value === undefined) {
+      cleaned[key] = null;
+      return;
+    }
+
+    // Convert contact number to a number if it's not null/empty
+    if (key === 'previousContactNumber' && value !== null) {
+      const parsedValue = Number(value);
+      cleaned[key] = isNaN(parsedValue) ? null : parsedValue;
+      return;
+    }
+
+    // Keep other values as they are
+    cleaned[key] = value;
+  });
+
+  return cleaned;
+}
+
+  restrictInputaccteponlynumber(event: KeyboardEvent) {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+
+    // Allow navigation keys and backspace/delete
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
+    }
+
+    // Prevent the first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    // Allow only numeric characters
+    const isNumeric = /^[0-9]$/.test(key);
+    if (!isNumeric) {
+      event.preventDefault();
+    }
+  }
+  
   // mobile number functions
   onCountryChange(country: any) {
     this.selectedCountryCode = country.dialling_code;

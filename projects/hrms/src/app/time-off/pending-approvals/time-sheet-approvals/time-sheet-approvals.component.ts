@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
@@ -14,7 +14,6 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { Table, TableModule } from "primeng/table";
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
@@ -22,7 +21,7 @@ import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-time-sheet-approvals',
   imports: [AccordionModule, CommonModule, PaginatorModule, ReactiveFormsModule, TableModule, TranslateModule, InfoIconComponent, NgbPopover,
-    ConfirmationIconComponent, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, Skeleton],
+    ConfirmationIconComponent, FormsModule, NoDataFoundComponent, Skeleton],
   templateUrl: './time-sheet-approvals.component.html',
   styleUrl: './time-sheet-approvals.component.scss',
   // encapsulation: ViewEncapsulation.None,
@@ -78,6 +77,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   startdate: any;
   enddate: any;
   globalSelectedEntries: any[] = [];
+
   constructor(private http: HttpService, public formsValidation: FormValidationsService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public router: Router, private fb: FormBuilder) { }
 
@@ -87,8 +87,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.loadClientsAndProjects(this.page, this.pageSize);
     this.http.selectedEmployeeIdTimesheet$.pipe(takeUntil(this.destroy$)).subscribe(data => {
       if (data) {
-        console.log(data);
-
         // Example: store locally
         this.employeeresource = data.request.resourceId;
         this.projectId = data.request.projectId;
@@ -118,6 +116,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
       ],
     });
   }
+
   // called for pagination 
   onRowsChange() {
     this.page = 1;
@@ -147,26 +146,26 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.conformationstatus = 'Processed';
     this.openModal(popup, null, this.conformationstatus);
   }
+
   // bulk data reject method
   bulkReject(popup: any) {
     this.selectedLeavesItems = this.selectedEntries;  // collect selected
     this.conformationstatus = 'Rejected';
     this.openModal(popup, null, this.conformationstatus);
   }
+
   // load timesheet data based on project and employee
   loadClientsAndProjects(page: number, pageSize: number): void {
-     this.dataload = true;
+    this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
-
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
     if (this.projectId !== undefined && this.projectId !== null) {
       url += `&projectId=${this.projectId}`;
     }
     if (this.startdate && this.enddate) url += `&startDate=${this.startdate}&endDate=${this.enddate}`;
-
     this.http.getData(url).subscribe({
       next: (res: any) => {
-          this.dataload = false;
+        this.dataload = false;
         this.collectionSize = res.data.totalCount;
         if (res.success) {
           // flatten all day entities into one array of entries (optional for counts)
@@ -174,12 +173,9 @@ export class TimeSheetApprovalsComponent implements OnInit {
             .flatMap((item: any) => item.entity)
             .flatMap((entity: any) => entity.entries);
           this.totalRecordCountitem = allEntries.length;
-
           // assign timesheetData for UI
           this.timesheetData = res.data.items.flatMap((item: any) => item.entity) as TimesheetDay[];
           this.timesheetrecord = res.data.items;
-          console.log('Timesheet Data:', this.timesheetrecord);
-
           // Add unique `id` for each entry (important for PrimeNG selection)
           this.timesheetData.forEach(day => {
             if (Array.isArray(day.entries)) {
@@ -198,7 +194,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
             );
             this.selectedMap[i] = selectedForDay;
           });
-
           //Sync overall selection state
           this.syncGlobalSelectedEntries();
         }
@@ -215,7 +210,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
           this.conformationPopup.openErrorModal(err.error.errors.endDate[0]);
           this.collectionSize = 0;
         }
-        console.log(err);
         this.timesheetData = [];
         this.timesheetrecord = [];
         this.totalRecordCountitem = 0;
@@ -227,7 +221,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     });
   }
 
-// called by p-table (row select)
+  // called by p-table (row select)
   onRowSelect(dayIndex: number, event: any) {
     this.showhideaction = false;
     const row = event.data;
@@ -238,6 +232,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     }
     this.syncGlobalSelectedEntries();
   }
+
   // checkbox unselectedselected
   onRowUnselect(dayIndex: number, event: any) {
     this.showhideaction = false;
@@ -247,9 +242,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   }
 
   syncGlobalSelectedEntries() {
-    this.selectedEntries = Object.values(this.selectedMap)
-      .filter(arr => Array.isArray(arr))
-      .flat();
+    this.selectedEntries = Object.values(this.selectedMap).filter(arr => Array.isArray(arr)).flat();
     // used for checkbox uncheck show approve,reject button indivisually
     this.showhideaction = this.selectedEntries.length === 0;
   }
@@ -261,6 +254,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     if (!day || !day.entries) return false;
     return day.entries.every(e => sel.some(s => s.id === e.id));
   }
+
   // used for check box show indeterminate state
   isIndeterminate(dayIndex: number): boolean {
     const day = this.timesheetData?.[dayIndex];
@@ -268,9 +262,9 @@ export class TimeSheetApprovalsComponent implements OnInit {
     if (!day || !day.entries) return false;
     return sel.length > 0 && sel.length < day.entries.length;
   }
+
   // checkbox select,unselect all
   toggleSelectAll(dayIndex: number, isChecked: boolean) {
-
     const day = this.timesheetData[dayIndex];
     if (!day) return;
     if (isChecked) {
@@ -284,6 +278,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     }
     this.syncGlobalSelectedEntries();
   }
+
   // open approva and reject popup
   openModal(modal: any, request: any, conformationstatus: string) {
     this.modalService.open(modal, { centered: true, backdrop: 'static' });
@@ -292,11 +287,11 @@ export class TimeSheetApprovalsComponent implements OnInit {
       this.selectedLeaveData = request;
       this.selectedLeavesItems = [];
     }
-
     this.conformationstatus = conformationstatus;
     this.timeSheetApproveForm.get('comments')?.reset();
     this.timeSheetRejectForm.get('comments')?.reset();
   }
+
   // approve submit post method
   handleAccept(timeSheetApproveForm: FormGroup): void {
     this.spinnerLoader = true;
@@ -304,7 +299,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
       const formData = timeSheetApproveForm.value;
       const approvedBy = this.empinfo.employeeId.toString();
       const comments = formData.comments;
-
       if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
         // Bulk selection
         this.requestBody = {
@@ -336,55 +330,51 @@ export class TimeSheetApprovalsComponent implements OnInit {
       }
 
       // Same API call
-      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.responseSummary = response.data;
-            this.totalRecordCount = this.responseSummary.totalRecordCount;
-            this.successRecordsCount = this.responseSummary.successRecordsCount;
-            this.failureRecordsCount = this.responseSummary.failureRecordsCount;
-
-            if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
-              // Single
-              this.conformationPopup.openSuccessModal(
-                this.conformationstatus === 'Processed'
-                  ? 'Timesheet request approved successfully'
-                  : 'Timesheet request rejected successfully'
-              );
-            } else {
-              // this.openModal(this.leaveSummary, null, this.conformationstatus);
-              const modalRef = this.modalService.open(this.leaveSummary, {
-                centered: true, size: 'lg',
-                beforeDismiss: () => false // prevents manual close by ESC/backdrop
-              });
-              setTimeout(() => modalRef.close(), 3000);
-            }
-          },
-          error: (reason: any) => {
-            this.spinnerLoader = false;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.modalService.dismissAll();
-            this.conformationPopup.openErrorModal(reason.error.message);
-
-
-          },
-          complete: () => {
-            this.spinnerLoader = false;
-            this.loadClientsAndProjects(this.page, this.pageSize);
-            this.selectedLeavesItems = [];
-            this.selectedEntries = [];
-            this.selectedMap = {};
-            this.showhideaction = true;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.http.triggerActionSignal();
-          },
-        });
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.responseSummary = response.data;
+          this.totalRecordCount = this.responseSummary.totalRecordCount;
+          this.successRecordsCount = this.responseSummary.successRecordsCount;
+          this.failureRecordsCount = this.responseSummary.failureRecordsCount;
+          if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+            // Single
+            this.conformationPopup.openSuccessModal(
+              this.conformationstatus === 'Processed'
+                ? 'Timesheet request approved successfully'
+                : 'Timesheet request rejected successfully'
+            );
+          } else {
+            // this.openModal(this.leaveSummary, null, this.conformationstatus);
+            const modalRef = this.modalService.open(this.leaveSummary, {
+              centered: true, size: 'lg',
+              beforeDismiss: () => false // prevents manual close by ESC/backdrop
+            });
+            setTimeout(() => modalRef.close(), 3000);
+          }
+        },
+        error: (reason: any) => {
+          this.spinnerLoader = false;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+          this.loadClientsAndProjects(this.page, this.pageSize);
+          this.selectedLeavesItems = [];
+          this.selectedEntries = [];
+          this.selectedMap = {};
+          this.showhideaction = true;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.http.triggerActionSignal();
+        },
+      });
     }
   }
+
   // reject submit post method
   handlereject(timeSheetRejectForm: FormGroup): void {
     this.spinnerLoader = true;
@@ -392,7 +382,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
       const formData = timeSheetRejectForm.value;
       const approvedBy = this.empinfo.employeeId.toString();
       const comments = formData.comments;
-
       if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
         // Bulk selection
         this.requestBody = {
@@ -424,56 +413,50 @@ export class TimeSheetApprovalsComponent implements OnInit {
       }
 
       // Same API call
-      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.responseSummary = response.data;
-            this.totalRecordCount = this.responseSummary.totalRecordCount;
-            this.successRecordsCount = this.responseSummary.successRecordsCount;
-            this.failureRecordsCount = this.responseSummary.failureRecordsCount;
-
-            if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
-              // Single
-              this.conformationPopup.openSuccessModal(
-                this.conformationstatus === 'Processed'
-                  ? 'Timesheet request approved successfully'
-                  : 'Timesheet request rejected successfully'
-              );
-            } else {
-              // this.openModal(this.leaveSummary, null, this.conformationstatus);
-              const modalRef = this.modalService.open(this.leaveSummary, {
-                centered: true, size: 'lg',
-                beforeDismiss: () => false // prevents manual close by ESC/backdrop
-              });
-              setTimeout(() => modalRef.close(), 3000);
-            }
-          },
-          error: (reason: any) => {
-            this.spinnerLoader = false;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.modalService.dismissAll();
-            this.conformationPopup.openErrorModal(reason.error.message);
-
-
-          },
-          complete: () => {
-            this.spinnerLoader = false;
-            this.loadClientsAndProjects(this.page, this.pageSize);
-            this.selectedLeavesItems = [];
-            this.selectedEntries = [];
-            this.selectedMap = {};
-            this.showhideaction = true;
-            this.timeSheetApproveForm.reset();
-            this.timeSheetRejectForm.reset();
-            this.http.triggerActionSignal();
-          },
-        });
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.responseSummary = response.data;
+          this.totalRecordCount = this.responseSummary.totalRecordCount;
+          this.successRecordsCount = this.responseSummary.successRecordsCount;
+          this.failureRecordsCount = this.responseSummary.failureRecordsCount;
+          if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+            // Single
+            this.conformationPopup.openSuccessModal(
+              this.conformationstatus === 'Processed'
+                ? 'Timesheet request approved successfully'
+                : 'Timesheet request rejected successfully'
+            );
+          } else {
+            // this.openModal(this.leaveSummary, null, this.conformationstatus);
+            const modalRef = this.modalService.open(this.leaveSummary, {
+              centered: true, size: 'lg',
+              beforeDismiss: () => false // prevents manual close by ESC/backdrop
+            });
+            setTimeout(() => modalRef.close(), 3000);
+          }
+        },
+        error: (reason: any) => {
+          this.spinnerLoader = false;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.spinnerLoader = false;
+          this.loadClientsAndProjects(this.page, this.pageSize);
+          this.selectedLeavesItems = [];
+          this.selectedEntries = [];
+          this.selectedMap = {};
+          this.showhideaction = true;
+          this.timeSheetApproveForm.reset();
+          this.timeSheetRejectForm.reset();
+          this.http.triggerActionSignal();
+        },
+      });
     }
   }
-
 
   // select all Check if ALL entries in ALL days are selected
   areAllDaysSelected(): boolean {
@@ -489,12 +472,10 @@ export class TimeSheetApprovalsComponent implements OnInit {
   //select all Show indeterminate when partial selection exists
   isGlobalIndeterminate(): boolean {
     if (!this.timesheetData || this.timesheetData.length === 0) return false;
-
     const totalEntries = this.timesheetData.reduce(
       (acc, day) => acc + (day.entries?.length || 0),
       0
     );
-
     const selectedCount = Object.values(this.selectedMap)
       .filter(Array.isArray)
       .reduce((acc, arr) => acc + arr.length, 0);
@@ -505,7 +486,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
   //select all Toggle all entries across all days
   toggleSelectAllDays(isChecked: boolean): void {
     if (!this.timesheetData || this.timesheetData.length === 0) return;
-
     if (isChecked) {
       this.showhideaction = false;
       this.timesheetData.forEach((day, i) => {
@@ -515,7 +495,6 @@ export class TimeSheetApprovalsComponent implements OnInit {
       this.showhideaction = true;
       this.selectedMap = {};
     }
-
     this.syncGlobalSelectedEntries();
   }
 

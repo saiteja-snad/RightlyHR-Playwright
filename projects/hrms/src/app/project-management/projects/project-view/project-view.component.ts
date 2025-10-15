@@ -67,6 +67,7 @@ export class ProjectViewComponent implements OnInit {
   resetForm() {
     this.datepickerForm.reset();
     this.datepickerForm.get('resourceId')?.disable();
+    this.http.setRequest(null);
   }
 
   createContactForm() {

@@ -62,15 +62,26 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
         this.statusCounts$.next(summaryItems);
         this.totalEntries = monthlySummary?.totalEntries ?? 0;
         // utiliztionsummery charts
-        const utilizationSummary = data?.utilizationSummary;
-        const overall = utilizationSummary?.overall;
-        const utilizationArray = Object.entries(overall || {}).filter(([key, value]) => (value ?? 0) > 0).map(([key, value]) => ({
-          key,
-          label: key
-            .replace(/([A-Z])/g, ' $1') // add spaces before capital letters
-            .replace(/^./, str => str.toUpperCase()), // capitalize first letter
-          value
-        }));
+      const utilizationSummary = data?.utilizationSummary;
+      const overall = utilizationSummary?.overall;
+      const utilizationArray = (() => {
+        if (!overall) return [];
+        const logged = overall.loggedHours ?? 0;
+        if (logged <= 0) return [];
+        return [{
+          key: 'loggedHours',
+          label: 'Logged Hours',
+          value: logged,
+           display: (() => {
+    const h = Math.floor(overall.loggedHours);
+    const m = Math.round((overall.loggedHours - h) * 60);
+    return `${h}h ${m}m`;
+  })(),
+          loggedHHMM: overall.loggedHHMM,         // access the ISO/HHMM for display
+          loggedISO: overall.loggedISO
+        }];
+      })();
+
         this.utilizationcount$.next(utilizationArray);
         // time sheet summary charts data
         this.timesheetSummaryChartData = {
@@ -107,6 +118,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
       }
     });
   }
+  
 
   resetSummary() {
     this.attendanceSummaryData = [];

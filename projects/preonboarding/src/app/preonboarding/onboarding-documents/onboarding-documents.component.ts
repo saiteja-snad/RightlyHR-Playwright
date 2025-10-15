@@ -214,7 +214,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
     }
     
-    if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
+    if (this.documentSelectFields.documentType?.toLowerCase() === "aadhar" || this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
       this.isMandatory = this.documentSelectFields.isMandatory;
 
       // Set value false or clear the value if needed

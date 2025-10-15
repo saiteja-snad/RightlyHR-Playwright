@@ -1,0 +1,64 @@
+* {
+
+    font-family: 'VERDANA', sans-serif !important;
+}
+
+.letter-data-content {
+    width: 100%;
+
+    .letter-page-content {
+        height: 380mm;
+        width: 270mm;
+        padding-top: 12rem;
+        position: relative;
+         background-image: url('/images/snad-letter-bg.jpg') !important;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        overflow: hidden;
+
+        .letter-page-sub-content {
+            padding: 20px 110px;
+            font-size: 16px;
+            color: #000000;
+            line-height: 18px;
+            text-align: justify;
+        }
+
+
+    }
+}
+
+.list-style-none {
+    list-style: none;
+}
+
+.list-style-disc {
+    list-style: disc;
+}
+.letter-sub-header {
+    font-size: var(--fontsize16) !important;
+    font-weight: 700;
+    color: #000;
+}
+.letter-header{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
+}
+
+.signature {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.name {
+    font-size: 18px;
+   
+}

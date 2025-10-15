@@ -1,1 +1,203 @@
-<p>roles-and-responsibilities works!</p>
+<div class="custom-main-component-container">
+    <div class="mb-3">
+        <button type="button" (click)="openModal(addRolesAndRes)" class="custom-btn btn-primary">{{'Add' | translate}}</button>
+    </div>
+
+    <div class="custom-main-component-container">
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Job Role Name</th>
+                        <th>Roles and Responsiblites</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        @if(RoleAndResDetails.length > 0){
+                            @for (data of RoleAndResDetails; track $index) {
+                                <tr>
+                                    <td>{{data.jobRoleName}}</td>
+                                    <td [innerHTML]= data.rolesAndResponsibilitesData></td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <span type="button" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </span>
+                                            <ul class="dropdown-menu custom-dropdown-menu">
+                                                <li (click)="openUpdate(updateRolesAndResModal, data)">
+                                                    <a class="dropdown-item">
+                                                        <i class="bi bi-pencil me-2"></i>Update
+                                                    </a>
+                                                </li>
+                                                <li (click)="openDelete(deletepopup, data)">
+                                                    <a class="dropdown-item">
+                                                        <i class="bi bi-trash3 me-2"></i>Delete
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }@else {
+                            <app-no-data-found />
+                        }
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add -->
+<ng-template #addRolesAndRes let-modal>
+    <form autocomplete="off" [formGroup]="addRolesResForm" (ngSubmit)="postRolesAndRes(addRolesResForm)">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div>
+                    <p class="popup-heading mb-0">{{ 'Add Roles And Responsibilities' | translate }}</p>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="designationName" class="form-label">Job Role <span class="error-msg">*</span></label>
+                    <!-- <input id="designationName" class="form-control custom-input" type="text" formControlName="designationName" maxlength="51"
+                        placeholder="Please enter job role" autocomplete="off" (keypress)="formValidations.restrictInput($event)" /> -->
+                        <div class="custom-p-select-content">
+                        <p-select [options]="jobRoleDetails" optionLabel="designationName" formControlName="designationName"
+                            [filter]="true" filterBy="designationName" (onChange)="selectgradId($event.value)" resetFilterOnHide="true"
+                            placeholder="Please select designation" class="custom-select w-100">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="addRolesResForm.get('designationName')?.touched && addRolesResForm.get('designationName')?.invalid">
+                        <span *ngIf="addRolesResForm.get('designationName')?.errors?.['required']">Job Role is required</span>
+                        <span *ngIf="addRolesResForm.get('designationName')?.errors?.['pattern']">Enter valid data</span>
+                    </div>
+                    <div *ngIf="addRolesResForm.get('designationName')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
+                    </div>
+                    
+                </div>
+
+                <div class="mb-3">
+                    <label for="editor" class="form-label">Roles and Responsibilities <span
+                            class="error-msg">*</span></label>
+                   <p-editor formControlName="rolesAndResponsibilities" [style]="{ height: '320px' }" />
+                    <div class="error-msg" *ngIf="addRolesResForm.get('rolesAndResponsibilities')?.touched && addRolesResForm.get('rolesAndResponsibilities')?.invalid">
+                        Roles and responsibilities is required
+                    </div>
+                </div>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openModal(addConfirmationpopup)">
+                        {{ 'Cancel' | translate }}
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addRolesResForm.invalid">
+                        {{ 'Add' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!-- Update -->
+<ng-template #updateRolesAndResModal let-modal>
+    <form autocomplete="off" [formGroup]="updateRolesResForm" (ngSubmit)="updateRolesAndRes(updateRolesResForm)">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div>
+                    <p class="popup-heading mb-0">{{ 'Update Roles And Responsibilities' | translate }}</p>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content">
+                <div class="mb-3">
+                    <label for="designationName" class="form-label">Job Role <span class="error-msg">*</span></label>
+                    <!-- <input id="designationName" class="form-control custom-input" type="text" formControlName="designationName" maxlength="51"
+                        placeholder="Enter Job Role" autocomplete="off" (keypress)="formValidations.restrictInput($event)" /> -->
+                        <div class="custom-p-select-content">
+                        <p-select [options]="jobRoleDetails" optionLabel="designationName"  
+                            [filter]="true" filterBy="designationName" (onChange)="selectgradId($event)" resetFilterOnHide="true"
+                            placeholder="Please select designation" formControlName="designationName" class="custom-select w-100">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="updateRolesResForm.get('designationName')?.touched && updateRolesResForm.get('designationName')?.invalid">
+                        <span *ngIf="updateRolesResForm.get('designationName')?.errors?.['required']">Job Role is required</span>
+                        <!-- <span *ngIf="updateRolesResForm.get('designationName')?.errors?.['pattern']">Enter valid data</span> -->
+                    </div>
+                    <!-- <div *ngIf="updateRolesResForm.get('designationName')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
+                    </div> -->
+                </div>
+
+                <div class="mb-3">
+                    <label for="editor" class="form-label">Roles and Responsibilities <span
+                            class="error-msg">*</span></label>
+                   <p-editor formControlName="rolesAndResponsibilities" [style]="{ height: '320px' }" />
+                    <div class="error-msg" *ngIf="updateRolesResForm.get('rolesAndResponsibilities')?.touched && updateRolesResForm.get('rolesAndResponsibilities')?.invalid">
+                        Roles and responsibilities is required
+                    </div>
+                </div>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openModal(updateConfirmationpopup)">
+                        {{ 'Cancel' | translate }}
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateRolesResForm.invalid">
+                        {{ 'Update' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="deleteRoleAndResdata()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #addConfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="resetAddForm()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #updateConfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="resetUpdateForm()">Yes</button>
+        </div>
+    </div>
+</ng-template>

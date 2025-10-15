@@ -17,8 +17,7 @@
                         <td>{{row.resourceName}}</td>
                         <td>{{ row.date | dateformat }}</td>
                         <td>
-                            {{ row.dailySummary.totalLoggedHours === 0 ? '-' : (row.dailySummary.totalLoggedHours |
-                            number:'1.2-2') + ' Hrs' }}
+                            {{ row.dailySummary.totalLoggedHours === 0 ? '-' : row.dailySummary.loggedHHMM + ' Hrs' }}
                         </td>
                         <td [style.color]="row.dailySummary.colour"><b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b></td>
                         <!-- <td>

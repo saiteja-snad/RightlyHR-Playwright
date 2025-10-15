@@ -21,8 +21,8 @@ import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
 import { OfferletterdashboardpipePipe } from '../../../Pipes/offerletterdashboardpipe.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { RbacService } from '../../../services/rbac.service';
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import moment from 'moment';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { DatePicker } from 'primeng/datepicker';
@@ -37,7 +37,8 @@ import { DatePicker } from 'primeng/datepicker';
     DateformatPipe,
     OfferletterdashboardpipePipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent, DatePicker,
+    DataLoaderContentComponent,
+    DatePicker,
   ],
   templateUrl: './document-history-offer-letter.component.html',
   styleUrl: './document-history-offer-letter.component.scss',
@@ -65,7 +66,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private http: HttpService,
     private authService: AuthService,
-    private conformationPopup: OpenModalService, public rbac: RbacService
+    private conformationPopup: OpenModalService,
+    public rbac: RbacService
   ) {
     this.initializeForm();
   }
@@ -91,7 +93,14 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //functio to inialize the form
   initializeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), this.blockLeadingSpace()]],
+      comments: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(250),
+          this.blockLeadingSpace(),
+        ],
+      ],
     });
   }
   blockLeadingSpace(): ValidatorFn {
@@ -107,7 +116,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //to get all offer Letters
   getOfferLetters() {
     this.isloading = true;
-    this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames')
+    this.subscription = this.http
+      .getData('OfferLetter/getAllNames/approverNames')
       .subscribe({
         next: (data: any) => {
           this.isloading = false;
@@ -117,14 +127,17 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
           this.isloading = false;
           console.error(reason);
-        }
+        },
       });
   }
   filterByMonth() {
     if (this.selectedMonth && this.selectedYear) {
-      this.offerLetters = this.allOfferLetters.filter(item => {
+      this.offerLetters = this.allOfferLetters.filter((item) => {
         const date = moment(item.offerSentDate);
-        return date.month() + 1 === this.selectedMonth && date.year() === this.selectedYear;
+        return (
+          date.month() + 1 === this.selectedMonth &&
+          date.year() === this.selectedYear
+        );
       });
     } else {
       this.offerLetters = this.allOfferLetters; // show all if no filter
@@ -183,6 +196,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
       note: Values.note,
+      rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
+      documentType: Values.documentType,
+      letterType : Values.letterType,
+      currencyType : Values.currencyType
     };
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
@@ -200,8 +217,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
     let emaildetails = {
       personEmail: Values.emailaddress,
       senderEmail: loggedInUser.workEmail,
-      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''
-        } ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
       personName: Values.employeeName,
       personRole: Values.jobRole,
       employeeId: Values.empId,
@@ -245,6 +261,10 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
       note: Values.note,
+      rolesAndResponsibilitesId: Values.rolesAndResponsibilitesId,
+      documentType: Values.documentType,
+      letterType : Values.letterType,
+      currencyType : Values.currencyType
     };
     console.log(updateOfferLetterDetails);
     this.subscription = this.http
@@ -273,12 +293,12 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''
-        }  ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName}${
+        loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''
+      } ${loggedInUser.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''
-        } ${loggedInUser.lastName ?? ''}`,
+      approvedByName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
       firstName: datas.employeeName,
     };
     console.log(emailData);
@@ -304,8 +324,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''
-        } ${loggedInUser?.lastName} Approved 
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}
+                         Approved 
          ${personname.employeeName} Offer Letter`,
       empId: personname.offerSentBy,
     };
@@ -365,6 +385,11 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       authoritySignature: this.selectedValuesOfOffer.authoritySignature,
       addressType: this.selectedValuesOfOffer.addressType,
       note: this.selectedValuesOfOffer.note,
+      rolesAndResponsibilitesId:
+        this.selectedValuesOfOffer.rolesAndResponsibilitesId,
+      documentType: this.selectedValuesOfOffer.documentType,
+      letterType : this.selectedValuesOfOffer.letterType,
+      currencyType : this.selectedValuesOfOffer.currencyType
     };
     console.log(updateOfferLetterDetails);
     this.subscription = this.http
@@ -376,7 +401,6 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
           this.rejectEmail();
           this.Rejectnotification();
           this.getOfferLetters();
-
         },
         error: (reason: any) => {
           console.log(reason);
@@ -409,8 +433,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''
-        } ${loggedInUser?.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approvedByName: this.selectedValuesOfOffer.approvedByName,
@@ -425,7 +448,9 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
           if (data) {
             this.rejectDocument.reset();
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Offer letter rejected successfully ');
+            this.conformationPopup.openSuccessModal(
+              'Offer letter rejected successfully '
+            );
           }
         },
         error: (err: any) => {
@@ -444,8 +469,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''
-        } ${loggedInUser?.lastName} Rejected 
+      notificationType: `${loggedInUser.firstName}${loggedInUser.middleName ? ' ' + loggedInUser.middleName : ''}${loggedInUser.lastName ? ' ' + loggedInUser.lastName : ''} Rejected 
            ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
       empId: this.selectedValuesOfOffer.offerSentBy,
     };

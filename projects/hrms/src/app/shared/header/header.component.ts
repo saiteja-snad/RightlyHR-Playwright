@@ -296,7 +296,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       form.markAllAsTouched();
       return;
     }
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     const formData = form.value;
     const payload = {
       employeeId: this.empinfo.employeeId,
@@ -311,13 +311,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Password changed successfully');
           this.resetPasswordIcons();
           setTimeout(() => {
-            this.spinnerLoader= false;
+            this.spinnerLoader = false;
             this.modalservie.dismissAll()
             this.onLogout();
           }, 2000)
         },
         error: (error: any) => {
-          this.spinnerLoader= false;
+          this.spinnerLoader = false;
           if (error?.error?.message) {
             this.backendError = error.error.message;
           } else if (typeof error?.error === 'string') {

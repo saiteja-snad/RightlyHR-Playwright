@@ -104,6 +104,20 @@ export class LettersTabComponent {
       subject: MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO,
       permission: { feature: 'Dashboard Generate Documents Trainee Offer Letter', action: 'view' }
     },
+     {
+      label: 'Contract Offer Letter',
+      link: '/letters/contractor-offer-letter',
+      icon: '/letters-icon/probation-extension-letter.png',
+      subject: MODULE_INFOS.CONTRACT_OFFER_LETTER_MODULE_INFO,
+      permission: { feature: 'Contract Offer Letter', action: 'view' }
+    },
+      {
+      label: 'NDA Letter',
+      link: '/letters/nda-contractor-letter',
+      icon: '/letters-icon/probation-extension-letter.png',
+      subject: MODULE_INFOS.NDA_LETTER_MODULE_INFO,
+      permission: { feature: 'NDA Letter', action: 'view' }
+    },
   ];
 
   constructor(private rbac: RbacService) { }

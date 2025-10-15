@@ -58,6 +58,8 @@ import {
   PENDING_APPROVALS_REMOTE_LOGIN_SUB_TABS,
   CLIENTS_ROUTES,
   PROJECTS_ROUTES,
+  CONTRACT_CONVERSION_REQUEST_SUB_TABS,
+  CONTRACT_REQUEST_SUB_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -550,6 +552,30 @@ export class AccessNavigationService {
             ) {
               if (item.route === '/time-off/pending-approvals/desk-approval') {
                 for (const item of DESK_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Contractor Details Tab.view'
+            ) {
+              if (item.route === '/time-off/pending-approvals/contractors-request') {
+                for (const item of CONTRACT_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Contract-Conversion Tab.view'
+            ) {
+              if (item.route === '/time-off/pending-approvals/contract-conversion') {
+                for (const item of CONTRACT_CONVERSION_REQUEST_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -1427,6 +1453,31 @@ export class AccessNavigationService {
                 }
               }
             }
+
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Contractor Details Tab.view'
+            ) {
+              if (item.route === '/time-off/pending-approvals/contractors-request') {
+                for (const item of CONTRACT_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Contract-Conversion Tab.view'
+            ) {
+              if (item.route === '/time-off/pending-approvals/contract-conversion') {
+                for (const item of CONTRACT_CONVERSION_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
           }
           if (this.rbac.allowedToAccess('Trainee Details Tab.view')) {
             return (route = '/time-off/pending-approvals/trainee-approvals');
@@ -1534,7 +1585,24 @@ export class AccessNavigationService {
           }
         }
         break;
-
+        case '/time-off/pending-approvals/contractors-request':
+        if (this.rbac.allowedToAccess('Contractor Details Tab.view')) {
+          for (const item of CONTRACT_REQUEST_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/time-off/pending-approvals/claimsandexpenses-request':
+        if (this.rbac.allowedToAccess('Claims and Expenses Tab.view')) {
+          for (const item of EXPENSES_REQUEST_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/time-off/pending-approvals/claimsandexpenses-request':
         if (this.rbac.allowedToAccess('Claims and Expenses Tab.view')) {
           for (const item of EXPENSES_REQUEST_SUB_TABS) {
@@ -1559,7 +1627,15 @@ export class AccessNavigationService {
           return (route = '/time-off/pending-approvals/probation-request');
         }
         break;
-
+      case '/time-off/pending-approvals/contract-conversion':
+        if (this.rbac.allowedToAccess('Contract-Conversion Tab.view')) {
+          for (const item of CONTRACT_CONVERSION_REQUEST_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/personalinfo/personal':
         if (
           this.rbac.allowedToAccess('Employee Info Personal Tab.view ') ||

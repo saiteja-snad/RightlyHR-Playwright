@@ -58,7 +58,7 @@
                         <td>
                             <input type="text" class="form-control custom-input"
                                 (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="51"
-                                formControlName="contactRole" (input)="onRoleChange(contact.get('contactRole'))" placeholder="Please enter role">
+                                formControlName="contactRole" placeholder="Please enter role">
                             <div class="error-msg"
                                 *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
                                 <div *ngIf="contact.get('contactRole')?.errors?.['required']">

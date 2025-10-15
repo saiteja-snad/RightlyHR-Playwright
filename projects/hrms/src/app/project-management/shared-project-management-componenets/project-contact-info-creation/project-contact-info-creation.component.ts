@@ -84,17 +84,14 @@ export class ProjectContactInfoCreationComponent implements OnInit, OnDestroy {
   // Create a single contact form group
   createContactGroup(): FormGroup {
     const group = this.fb.group({
-      contactName: [null, [Validators.required,this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/), ]],
+      contactName: [null, [Validators.required,this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51) ]],
       contactPhone: [null,[ Validators.required, ]],
-      contactRole: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/), ]],
+      contactRole: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51) ]],
       contactEmail: [null, [Validators.required, Validators.email, ]],
       countryCode: [null, [Validators.required]],
       dialling_code: [null, [Validators.required]]
     });
-    // Clean emojis dynamically as user types or pastes
-    // Object.keys(group.controls).forEach(controlName => {
-    //   this.formValidation.cleanEmojiOnChange(group.get(controlName)!);
-    // });
+ 
     return group
   }
 

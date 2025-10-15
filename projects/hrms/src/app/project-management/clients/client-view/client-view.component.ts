@@ -364,7 +364,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-        this.conformationPopup.openErrorModal('Failed to add document. Please try again.');
+         this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

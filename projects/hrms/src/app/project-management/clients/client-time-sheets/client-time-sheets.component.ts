@@ -35,10 +35,13 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
   constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService) { }
 
   ngOnInit() {
-    this.resetSummary();
+    //this.resetSummary();
     this.http.requestclienttimesheetdata$.pipe(takeUntil(this.destroy$)).subscribe(request => {
       if (request) {
         this.getProjectSummary(request);
+      }
+      else{
+        this.resetSummary(); 
       }
     });
   }
@@ -132,7 +135,9 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
     this.attendanceSummaryData = [];
     this.statusCounts$.next([]);
     this.totalEntries = 0;
+     this.utilizationcount$.next([]);
     this.timesheetSummaryChartData = { labels: [], datasets: [] };
+    this.timesheetutilizeSummaryChartData = { labels: [], datasets: [] };
   }
 
   ngOnDestroy() {

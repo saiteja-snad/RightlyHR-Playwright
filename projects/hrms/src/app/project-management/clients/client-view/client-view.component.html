@@ -4,7 +4,7 @@
             <app-project-management-module-info />
         </div>
 
-        @if(rbac.allowedToAccess('Client Resources.create') && this.inactiveClientStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Client Resources.create')){
         <div *ngIf="isActive('/project-management/clients/details/resources')" (click)="openModal(addResourcemodal)">
             <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
         </div>
@@ -15,7 +15,7 @@
                 <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
             </div>
 
-            @if(rbac.allowedToAccess('Client Documents.create') && this.inactiveClientStatus !== 'Inactive'){
+            @if(rbac.allowedToAccess('Client Documents.create') ){
             <div *ngIf="isActive('/project-management/clients/details/documents')">
                 <button type="button" class="custom-btn btn-primary" (click)="openModal(addDocumentmodal)">
                     {{'Add Document'}}</button>
@@ -46,7 +46,7 @@
             </div>
             }
 
-            @if(rbac.allowedToAccess('Client Projects.create') && this.inactiveClientStatus !== 'Inactive'){
+            @if(rbac.allowedToAccess('Client Projects.create')){
             <div>
                 <button type="button" class="custom-btn btn-primary" (click)="openModal(addProjectmodal)">
                     {{'Add Project' | translate }}
@@ -55,7 +55,7 @@
             }
         </div>
 
-        @if(rbac.allowedToAccess('Contact Information.create') && this.inactiveClientStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Contact Information.create')){
         <div *ngIf="isActive('/project-management/clients/details/contact-info')">
             <button type="button" class="custom-btn btn-primary" (click)="opencontactModal(addContactmodal)">
                 {{'Add Contact' | translate }}
@@ -71,7 +71,7 @@
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 }
                 <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date rang'" selectionMode="range"
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
                         [showIcon]="true" [readonlyInput]="true">
                     </p-datepicker>
                 </div>

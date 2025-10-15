@@ -64,6 +64,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   rowdelete: any;
   private start!: Date;
   private end!: Date;
+  effectiveDate: any
   minDate!: Date;
   maxDate!: Date;
   maxMonth: Date = moment().add(1, 'months').endOf('month').toDate();
@@ -134,6 +135,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isLeave = day?.isLeave || false;
     const today = new Date();
     today.setHours(0, 0, 0, 0); // normalize today’s date
+
     const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
@@ -141,14 +143,28 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
     );
+    // const resourcestartdate = matchedResource?.startDate
+    //   ? new Date(matchedResource.startDate)
+    //   : null;
+    // if (resourcestartdate) {
+    //   resourcestartdate.setHours(0, 0, 0, 0);
+    // }
+    // if (entryDateObj) {
+    //   entryDateObj.setHours(0, 0, 0, 0);
+    // }
 
+    // const isEffective =
+    //   resourcestartdate && entryDateObj
+    //     ? entryDateObj.getTime() >= resourcestartdate.getTime() // ✅ allows same day
+    //     : false;
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
     console.log(isWeekendAllowedProject);
-    
+    ;
+
 
     //enable/disable
     const shouldEnable =
-      isProjectSelected && !isLeave && !isFutureDate
+      isProjectSelected && !isLeave && !isFutureDate 
         ? isBlocked
           ? isWeekend && isWeekendAllowedProject
           : true
@@ -509,6 +525,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.jobdetails = data[0];
+          console.log(this.jobdetails);
+          this.effectiveDate = new Date(this.jobdetails.effectiveDate);
         },
         error: (data: any) => {
           console.log(data);
@@ -662,7 +680,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
     console.log(client, project);
-
+    const apidata=this.availableProjects[0].days
+    console.log(apidata);
+    
     const form = row as FormGroup;
     // Patch project details
     form.patchValue({
@@ -702,11 +722,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const blockReason = dayForm.get('blockReason')?.value;
       const isLeave = dayForm.get('isLeave')?.value;
       const dateValue = dayForm.get('entryDate')?.value;
-      
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const entryDate = dateValue ? new Date(dateValue) : null;
       const isFutureDate = entryDate ? entryDate > today : false;
+      // const resourcestartdate = new Date(this.selectedProjectResource.startDate)
+      // const isEffective =
+      //   resourcestartdate && entryDate
+      //     ? entryDate >= resourcestartdate
+      //     : false;
       // Enable basic fields if not blocked or leave
       [
         'clientName',

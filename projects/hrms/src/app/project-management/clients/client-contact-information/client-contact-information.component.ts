@@ -176,7 +176,7 @@ export class ClientContactInformationComponent {
       error: (err) => {
         this.spinnerLoader = false;
         console.error("Update failed:", err);
-        this.conformationPopup.openErrorModal('Failed to update contact');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

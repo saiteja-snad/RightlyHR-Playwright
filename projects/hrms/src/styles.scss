@@ -1566,7 +1566,7 @@ input[type="file"] {
         font-weight: 400;
         font-size: 12px;
         vertical-align: middle;
-        border-radius: 0.25rem;
+        border-radius: 0.5rem;
         height: 35px;
         line-height: 35px;
         border: none !important;
@@ -1584,6 +1584,8 @@ input[type="file"] {
 
     input.ipv_search_box {
         border: none !important;
+        border-top-left-radius: 0.5rem !important;
+        border-bottom-left-radius: 0.5rem !important;
 
         &.filtered {
             border: none !important;
@@ -1603,7 +1605,6 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
-
 // custom phone number input with country code stylings
 
 // ERROR MESSAGE

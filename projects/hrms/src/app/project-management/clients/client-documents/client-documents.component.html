@@ -9,8 +9,7 @@
                 <th>Signed Copy</th>
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
-                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
-                && this.inactiveClientStatus !== 'Inactive'){
+                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
@@ -22,8 +21,9 @@
                         <td>{{data.documentType}}</td>
                         <td>
                             @if(data.attributes?.length > 0){
-                            <span *ngFor="let attr of data.attributes; let last = last">
-                                <span class="text-capitalize">{{attr.attributeValue?attr.attributeValue:'-'}}</span> {{!last ? ', ' : ''}}</span>
+                            <span *ngFor="let attr of data.attributes">
+                                <span class="text-capitalize"> {{attr.attributeValue === true ? 'Yes' : 'No' }}</span>
+                            </span>
                             }
                            @else {
                             <span>-</span>
@@ -36,8 +36,7 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete')) &&
-                        this.inactiveClientStatus !== 'Inactive'){
+                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">

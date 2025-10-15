@@ -216,7 +216,7 @@ export class ProjectContactInfoCreationComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.spinnerLoader = false;
-        this.conformationPopup.openErrorModal('Failed to add contact Info');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

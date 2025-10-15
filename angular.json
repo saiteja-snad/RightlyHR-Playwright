@@ -51,7 +51,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/preonboarding/environments/environment.ts",
+                  "with": "projects/preonboarding/environments/environment.prod.ts"
+                }
+              ]
             },
             "qa": {
               "budgets": [

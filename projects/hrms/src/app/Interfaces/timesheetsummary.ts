@@ -51,7 +51,7 @@ export interface TimesheetEntry {
 }
 
 export interface DailySummary {
-    totalLoggedHours: number;
+    totalLoggedHours: string;
     status: string;
     colour:string
     loggedISO: string;

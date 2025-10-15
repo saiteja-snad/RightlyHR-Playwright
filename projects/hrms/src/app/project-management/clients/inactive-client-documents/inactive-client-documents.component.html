@@ -20,9 +20,16 @@
                         <td>{{data.createdAt | dateformat}}</td>
                         <td>{{data.documentType}}</td>
                         <td>
-                            <span *ngFor="let attr of data.attributes; let last = last">
-                                {{attr.attributeValue}}{{!last ? ', ' : ''}}</span>
+                            @if(data.attributes?.length > 0){
+                            <span *ngFor="let attr of data.attributes">
+                                <span class="text-capitalize"> {{attr.attributeValue === true ? 'Yes' : 'No' }}</span>
+                            </span>
+                            }
+                           @else {
+                            <span>-</span>
+                           }
                         </td>
+                        
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
                             <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">

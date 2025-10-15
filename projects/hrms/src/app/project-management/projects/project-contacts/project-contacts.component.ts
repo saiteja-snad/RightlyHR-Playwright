@@ -248,7 +248,7 @@ export class ProjectContactsComponent implements OnInit {
       error: (err) => {
         this.spinnerLoader = false;
         console.error("Update failed:", err);
-        this.conformationPopup.openErrorModal('Failed to update contact Info');
+          this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

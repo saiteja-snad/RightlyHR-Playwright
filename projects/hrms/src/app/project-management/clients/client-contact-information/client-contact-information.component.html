@@ -17,8 +17,7 @@
                     <th>Phone Number</th>
                     <th>Role</th>
                     <th class="text-center" style="text-transform: none;">Set as Primary Contact</th>
-                    @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
-                    && this.inactiveClientStatus !== 'Inactive'){
+                    @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>
@@ -36,7 +35,7 @@
                                 </span>
                             </td>
                             @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
-                            && this.inactiveClientStatus !== 'Inactive'){
+                           ){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">

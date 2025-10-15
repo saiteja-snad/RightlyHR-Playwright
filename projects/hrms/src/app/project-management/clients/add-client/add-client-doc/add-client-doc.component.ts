@@ -25,24 +25,7 @@ export class AddClientDocComponent {
     { type: 'MSA', required: false },
     { type: 'NDA', required: false }
   ];
-  navTabs = [
-    {
-      label: 'NDA ',
-      link: '/project-management/clients/add/nda',
-      icon: '/letters-icon/offer-letter-icon.png',
-      subject: MODULE_INFOS.NDA_Letter,
-      permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' },
-      mandatory: false
-    },
-    {
-      label: 'MSA ',
-      link: '/project-management/clients/add/msa',
-      icon: '/letters-icon/appointment-letter-icon.png',
-      subject: MODULE_INFOS.MSA_Letter,
-      permission: { feature: 'Dashboard Generate Documents Appointment Letter', action: 'view' },
-      mandatory: false
-    },
-  ];
+  navTabs: any[] = [];
   lettersgeneratedlist = [] as any;
 
   constructor(private rbac: RbacService, private http: HttpService, private router: Router, private conformationPopup: OpenModalService) { }
@@ -50,13 +33,26 @@ export class AddClientDocComponent {
   ngOnInit(): void {
     this.getEAV();
     this.getlettergenerateddata();
-    this.navTabs = this.navTabs.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
+  
+   this.navTabs = [
+    {
+      label: 'NDA ',
+      link: '/project-management/clients/add/nda',
+      icon: '/letters-icon/offer-letter-icon.png',
+      subject: MODULE_INFOS.NDA_Letter,
+      mandatory: false
+    },
+    {
+      label: 'MSA ',
+      link: '/project-management/clients/add/msa',
+      icon: '/letters-icon/appointment-letter-icon.png',
+      subject: MODULE_INFOS.MSA_Letter,
+      mandatory: false
+    },
+  ];;
+    
+ 
+    
   }
 
   getEAV() {

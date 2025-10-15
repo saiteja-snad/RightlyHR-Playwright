@@ -623,6 +623,7 @@ getEmployeeId(EmployeeId:number): void {
     }
     let requestBody = {
       status: 'Approved',
+      approvedBy: this.loggedindata.employeeId.toString(),
       comments: this.selected_approve.comments,
       probationExtendedDate: this.selected_approve.extenddate,
       meta: this.jsonData,

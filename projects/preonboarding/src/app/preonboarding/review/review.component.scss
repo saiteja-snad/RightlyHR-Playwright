@@ -39,3 +39,7 @@
     }
   }
 }
+.form-check-input:disabled ~ .form-check-label {
+  opacity: 1 !important;
+  color: #000 !important; /* or your desired color */
+}

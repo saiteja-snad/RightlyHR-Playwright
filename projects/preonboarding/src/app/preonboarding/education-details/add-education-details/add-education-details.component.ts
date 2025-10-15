@@ -33,8 +33,11 @@ export class AddEducationDetailsComponent {
   showErrorr: boolean = false;
   startDatevalidate:any
   submissionInProgress = false;
-
-  constructor(private modalService: NgbModal,private formValidationService:FormValidationService, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData: DataService) { }
+  today = new Date().toISOString().split('T')[0];
+  
+  constructor(private modalService: NgbModal,private formValidationService:FormValidationService, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService, private getData: DataService,
+    public formValidation: FormValidationService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -53,8 +56,8 @@ export class AddEducationDetailsComponent {
   initializeEducationForm() {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
-      university: ['', [Validators.required, Validators.pattern(/^[^\d]+$/),Validators.maxLength(100)]],
-      specialization: ['', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
+      university: ['', [Validators.required,Validators.maxLength(100)]],
+      specialization: ['', [Validators.required,Validators.maxLength(100)]],
       // specialization: ['', Validators.required,Validators.pattern('^[A-Za-z,.\-_\s]+$')],
       gpa: ['', [
         Validators.required,

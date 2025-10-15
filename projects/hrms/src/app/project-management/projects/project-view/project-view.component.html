@@ -4,7 +4,7 @@
             <app-project-management-module-info />
         </div>
 
-        @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Contact Info Tab.create')){
         <div *ngIf="isActive('/project-management/projects/details/contact-info')">
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addContactmodal)">
                 {{'Add Contacts' }}
@@ -12,10 +12,10 @@
         </div>
         }
         <div class="d-flex gap-3 align-items-center"  *ngIf="isActive('project-management/projects/details/documents')">
-            @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'Inactive'){
+            @if(rbac.allowedToAccess('Documents Tab.create')){
 
             <div>
-                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Documents</u></a>
+                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
             </div>
             <div>
                 <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">{{'Add Document'}}</button>
@@ -25,40 +25,37 @@
 
         <div *ngIf="isActive('/project-management/projects/details/inactivedocuments')">
             <div>
-                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Archived Documents</u></a>
+                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Documents</u></a>
             </div>
         </div>
         
-
-        @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Resources Tab.create')){
         <div *ngIf="isActive('project-management/projects/details/resources')" (click)="openResourceModal()">
-            <button type="button" class="custom-btn btn-primary">{{'Add Resources' }}</button>
+            <button type="button" class="custom-btn btn-primary">{{'Add Resources'}}</button>
         </div>
         }
 
         @if(isActive('/project-management/projects/details/timesheet')){
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
             <div class="d-flex gap-3 align-items-center">
-                    @if(isFilterApplied()) {
+                @if(isFilterApplied()) {
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 }
-
+            
                 <div class="custom-date-range-picker">
                     <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
                         [showIcon]="true" [readonlyInput]="true">
                     </p-datepicker>
                 </div>
-
+            
                 <div class="custom-p-select-content">
-                    <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId"
-                        [resetFilterOnHide]="true" filterBy="name" optionLabel="name" optionValue="id"
-                        placeholder="Please select resource name" class="form-select custom-select">
-                    </p-select>
+                    <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
+                        filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
+                        class="form-select custom-select"></p-select>
                 </div>
-
+            
                 <div>
-                    <button class="custom-btn btn-primary" type="submit"
-                       [disabled]="!isFormCompletelyValid()">Apply</button>
+                    <button class="custom-btn btn-primary" type="submit" [disabled]="!isFormCompletelyValid()">Apply</button>
                 </div>
             </div>
         </form>

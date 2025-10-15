@@ -71,9 +71,11 @@ export interface IemployeeDetails {
   zipCode: number
   offerExpiryDate: Date
   fullName?: string;
+  substatus?:string;
 }
 export interface IJob {
   firstName: string,
+  trainingEndDate:string,
   middleName: string,
   lastName: string,
   maritalStatus: string,
@@ -156,7 +158,7 @@ export interface IJob {
   emergencyNumber1: any,
   emergencyEmail1: string,
   emergencyName1: string,
-    isPasswordChanged:boolean,
+  isPasswordChanged:boolean,
   isUserRegistred:boolean
   loginType: string;
   name: string
@@ -399,6 +401,8 @@ export interface IProbationEmployees {
   trainingEndDate: any;
   probationExtendedDate: any;
   jobDetails?: IJobdetails;
+  fullName?:IemployeeDetails;
+  
 }
 export interface IJobdetails {
   subdeptId: any;

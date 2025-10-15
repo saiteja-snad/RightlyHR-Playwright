@@ -65,7 +65,7 @@ export class PersonalDetailsComponent implements OnInit {
   ];
 
   constructor(private router: Router, private modalService: NgbModal, private openPopup: PopupService, private readonly fb: FormBuilder,
-    private http: HttpService, private bnIdle: BnNgIdleService,private formvalidator:FormValidationService) {
+    private http: HttpService, private bnIdle: BnNgIdleService,public formValidation: FormValidationService) {
     this.initializePersonalForm();
     effect(() => {
       this.selectedCountryCode.set(this.selectedDialCode);
@@ -84,6 +84,8 @@ export class PersonalDetailsComponent implements OnInit {
     this.getprospectivempdata()
     this.getGender();
     this.getTitle();
+    const storedstep = 1;
+    localStorage.setItem('currentStep',storedstep.toString());
   }
 
   // Prospective Employee Data
@@ -145,9 +147,9 @@ export class PersonalDetailsComponent implements OnInit {
   initializePersonalForm() {
     let loggedInUser = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}')
     this.personalDetailsForm = this.fb.group({
-      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(50)]],
-      middleName: [null,[Validators.maxLength(50)]],
-      lastName: [{ value: null, disabled: true }, [Validators.required,Validators.maxLength(50)]],
+      firstName: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9\s\S]{1,255}$/)]],
+      middleName: [null,[Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9\s\S]{1,255}$/)]],
+      lastName: [{ value: null, disabled: true }, [Validators.required,Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9\s\S]{1,255}$/)]],
       gender: [null, Validators.required],
       salutation: [null, Validators.required],
       countyCode:[null, [Validators.required]],
@@ -162,21 +164,21 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: [null, [Validators.required,Validators.maxLength(100),Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
-        addressLine2: [null, [Validators.required,Validators.maxLength(150), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
-        city: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
-        state: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
-        country: [null, [Validators.required ,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+        addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(150)]],
+        city: [null, [Validators.required,Validators.maxLength(50)]],
+        state: [null, [Validators.required,Validators.maxLength(50)]],
+        country: [null, [Validators.required ,Validators.maxLength(50)]],
         zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern(/^(?!0+$)[0-9]{1,6}$/)]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, [Validators.required,Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
-        addressLine2: [null, [Validators.required,Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
-        city: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
-        state: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
-        country: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+        addressLine1: [null, [Validators.required,Validators.maxLength(100)]],
+        addressLine2: [null, [Validators.required,Validators.maxLength(100)]],
+        city: [null, [Validators.required,Validators.maxLength(50)]],
+        state: [null, [Validators.required,Validators.maxLength(50)]],
+        country: [null, [Validators.required,Validators.maxLength(50)]],
         zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern(/^(?!0+$)[0-9]{1,6}$/)]],
       }),
     });
@@ -261,7 +263,7 @@ export class PersonalDetailsComponent implements OnInit {
           zipCode: currentAddress?.zipCode || null,
         }
       });
-      this.personalDetailsForm?.get('permanentAddress.zipCode')?.markAsTouched();
+      //this.personalDetailsForm?.get('permanentAddress.zipCode')?.markAsTouched();
     }
     if(this.personalDetailsForm?.get('sameAsPermanent')?.value === false){
       this.personalDetailsForm?.patchValue({

@@ -22,8 +22,9 @@
                         <td>{{data.documentType}}</td>
                         <td>
                             @if(data.attributes?.length > 0){
-                            <span *ngFor="let attr of data.attributes; let last = last">
-                                <span class="text-capitalize">{{attr.attributeValue?attr.attributeValue:'-'}}</span> {{!last ? ', ' : ''}}</span>
+                            <span *ngFor="let attr of data.attributes">
+                                <span class="text-capitalize"> {{attr.attributeValue === true ? 'Yes' : 'No' }}</span>
+                            </span>
                             }
                            @else {
                             <span>-</span>

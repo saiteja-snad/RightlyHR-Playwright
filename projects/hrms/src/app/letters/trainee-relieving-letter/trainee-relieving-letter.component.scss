@@ -1,0 +1,26 @@
+* {
+
+    font-family: 'VERDANA', sans-serif !important;
+    
+}
+
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: 1px solid #DEE8F3 !important;
+    background-color: #F8FBFF !important;
+   
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.letter-signature {
+    font-size: var(--fontsize32) !important;
+    font-family: "autographsignatureFont" !important;
+}
+.font-content{
+    font-size: 18px;
+}

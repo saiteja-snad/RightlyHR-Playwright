@@ -13,7 +13,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
   imports: [CommonModule, Select, ReactiveFormsModule],
   templateUrl: './clone-leavecategory.component.html',
   styleUrl: './clone-leavecategory.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class CloneLeavecategoryComponent {
@@ -43,11 +43,15 @@ export class CloneLeavecategoryComponent {
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
+  leaveTypeOptions = [
+    { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
+    { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
+  ];
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
 
-  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,private router: Router, private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router, private modalService: NgbModal) { }
 
 
   ngOnInit(): void {
@@ -74,7 +78,7 @@ export class CloneLeavecategoryComponent {
       type: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
       categoryCode: ['', [Validators.required, this.restrictInputLeavecodeValidator]],
-      validity: ['', [Validators.required, this.restrictInputNumbersValidator,Validators.max(366)]],
+      validity: ['', [Validators.required, this.restrictInputNumbersValidator, Validators.max(366)]],
       categoryColor: ['#000000', Validators.required],
       parentId: [undefined],
       // Additional Information
@@ -102,7 +106,8 @@ export class CloneLeavecategoryComponent {
       noticePeriodAllowedValue: [null, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]],
+      probationFrequencyType: [null, Validators.required],
     });
     this.validateAllowedDays()
   }
@@ -110,37 +115,37 @@ export class CloneLeavecategoryComponent {
 
 
 
-  validateAllowedDays(){
-   this.setupMaxValidation('futureDatesAllowedDays', 'validity');
-   this.setupMaxValidation('pastDatesAllowedDays', 'validity');
-   this.setupMaxValidation('carryForwardAllowedValue', 'validity');
-   this.setupMaxValidation('encashAllowedValue', 'validity');
-   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
-   this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
-   this.setupMaxValidation('probationDays', 'validity');
-}
+  validateAllowedDays() {
+    this.setupMaxValidation('futureDatesAllowedDays', 'validity');
+    this.setupMaxValidation('pastDatesAllowedDays', 'validity');
+    this.setupMaxValidation('carryForwardAllowedValue', 'validity');
+    this.setupMaxValidation('encashAllowedValue', 'validity');
+    this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+    this.setupMaxValidation('noticePeriodAllowedValue', 'validity');
+    this.setupMaxValidation('probationDays', 'validity');
+  }
 
 
-setupMaxValidation(controlName: string, maxControlName: string): void {
-  const control = this.leavePolicyForm.get(controlName);
-  const maxControl = this.leavePolicyForm.get(maxControlName);
+  setupMaxValidation(controlName: string, maxControlName: string): void {
+    const control = this.leavePolicyForm.get(controlName);
+    const maxControl = this.leavePolicyForm.get(maxControlName);
 
-  if (!control || !maxControl) return;
+    if (!control || !maxControl) return;
 
-  control.valueChanges.subscribe(value => {
-    const max = maxControl.value;
+    control.valueChanges.subscribe(value => {
+      const max = maxControl.value;
 
-    if (value && +value > max) {
-      control.setErrors({ ...control.errors, maxExceeded: true });
-    } else {
-      if (control.hasError('maxExceeded')) {
-        const errors = { ...control.errors };
-        delete errors['maxExceeded'];
-        control.setErrors(Object.keys(errors).length ? errors : null);
+      if (value && +value > max) {
+        control.setErrors({ ...control.errors, maxExceeded: true });
+      } else {
+        if (control.hasError('maxExceeded')) {
+          const errors = { ...control.errors };
+          delete errors['maxExceeded'];
+          control.setErrors(Object.keys(errors).length ? errors : null);
+        }
       }
-    }
-  });
-}
+    });
+  }
 
 
   jobLocationList() {
@@ -357,7 +362,8 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
       noticeperiodAllowedType: data.noticeperiodAllowedType,
       noticePeriodAllowedValue: data.noticePeriodAllowedValue,
       isProbationAllowed: data.isProbationAllowed,
-      probationDays: data.probationDays
+      probationDays: data.probationDays,
+      probationFrequencyType: data.probationFrequencyType
     });
     this.setupDependentFieldListeners();
     // Manually trigger value changes for dependent fields
@@ -367,6 +373,7 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
     this.leavePolicyForm?.get('encashAllowedType')?.updateValueAndValidity();
     this.leavePolicyForm?.get('noticeperiodAllowedType')?.updateValueAndValidity();
     this.leavePolicyForm?.get('isProbationAllowed')?.updateValueAndValidity();
+    this.leavePolicyForm?.get('probationFrequencyType')?.updateValueAndValidity();
   }
 
   // Form submission
@@ -402,11 +409,12 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
       noticePeriodAllowedValue: this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
       isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      probationFrequencyType: this.leavePolicyForm.value.probationFrequencyType ?? 0,
       addedBy: 3356,
       lastModifiedBy: 3356,
-      status :"Pending for submission",
-      addedDate : new Date(),
-      lastModifiedDate : new Date()
+      status: "Pending for submission",
+      addedDate: new Date(),
+      lastModifiedDate: new Date()
     };
     this.http.postdata('OrgLeavesCategories', payload).subscribe({
       next: (data: any) => {
@@ -423,7 +431,7 @@ setupMaxValidation(controlName: string, maxControlName: string): void {
 
   resetForm(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
-    
+
   }
 
   cancel() {

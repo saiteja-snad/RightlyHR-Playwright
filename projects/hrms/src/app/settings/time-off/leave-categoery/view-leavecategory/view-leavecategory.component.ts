@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component,ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -43,6 +43,10 @@ export class ViewLeavecategoryComponent {
   global: any[] = [
     { label: 'Yes', value: true },
     { label: 'No', value: false },
+  ];
+  leaveTypeOptions = [
+    { label: 'Fixed Number of Leaves', value: 'Fixed Number of Leaves' },
+    { label: 'Monthly Incremental Leaves', value: 'Monthly Incremental Leaves' }
   ];
   shiftsArray = [] as any[];
   updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
@@ -166,6 +170,7 @@ export class ViewLeavecategoryComponent {
         { value: undefined, disabled: true },
         [this.dependentRequiredValidator('isProbationAllowed')],
       ],
+      probationFrequencyType: [{ value: undefined, disabled: true }, Validators.required],
     });
   }
 
@@ -432,6 +437,7 @@ export class ViewLeavecategoryComponent {
       noticePeriodAllowedValue: data.noticePeriodAllowedValue,
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays,
+      probationFrequencyType: data.probationFrequencyType,
     });
 
     // Manually trigger value changes for dependent fields
@@ -485,6 +491,7 @@ export class ViewLeavecategoryComponent {
         this.leavePolicyForm.value.noticePeriodAllowedValue ?? 0,
       isProbationAllowed: this.leavePolicyForm.value.isProbationAllowed,
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
+      probationFrequencyType: this.leavePolicyForm.value.leavePolicyForm,
       addedBy: 3356,
       lastModifiedBy: 3356,
       status: 'Pending for submission',
@@ -506,8 +513,8 @@ export class ViewLeavecategoryComponent {
     });
   }
 
-  cloneCategory(leavePolicyForm:FormGroup){
- 
+  cloneCategory(leavePolicyForm: FormGroup) {
+
     localStorage.setItem(
       'cloneleavecategory',
       JSON.stringify(this.updatecloneLeaveCategoryData)
@@ -515,18 +522,18 @@ export class ViewLeavecategoryComponent {
     this.router.navigate([
       '/settings/timeoff-configurations/cloneleavecategory',
     ]);
-  
+
   }
 
   resetForm(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  resteAndNavigateToPublished(){
+  resteAndNavigateToPublished() {
     this.modalService.dismissAll();
     this.leavePolicyForm.reset();
     this.router.navigate([
-          '/settings/timeoff-configurations/leave-categoery/publishedleavecategory',
-        ]);
+      '/settings/timeoff-configurations/leave-categoery/publishedleavecategory',
+    ]);
   }
 }

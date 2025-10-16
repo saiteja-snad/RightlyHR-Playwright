@@ -340,8 +340,8 @@ export class TraineeAppointmentLetterComponent {
         this.employeeiddetails = data as IemployeeDetails[];
         this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
           ...emp,
-          fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
-        }));
+          fullName: `${emp.fusionEmpId ? emp.fusionEmpId +'-' : ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`,
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
         //  this.EmployeeName=this.employeeiddetails.firstName+" "+this.employeeiddetails.lastName
       },
       error: (reason: any) => {

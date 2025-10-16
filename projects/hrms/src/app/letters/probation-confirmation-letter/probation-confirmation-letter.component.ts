@@ -135,8 +135,8 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
         console.log(data)
         this.probationemp = data.map((employee: any) => ({
           ...employee,
-          fullName: `${employee.fusionEmpId} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
-        }));
+          fullName: `${employee.fusionEmpId ? employee.fusionEmpId + '-': ''}  ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (reason: any) => {
         console.log(reason);
@@ -180,8 +180,8 @@ export class ProbationConfirmationLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.authorityDetails = data.map((authoruty: any) => ({
           ...authoruty,
-          fullName:  `${authoruty.fusionEmpId  ?? ''}  ${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
-        }));
+          fullName:  `${authoruty.fusionEmpId  ? authoruty.fusionEmpId + '-' :''}  ${authoruty.firstName} ${authoruty.middleName ? authoruty.middleName + ' ' : ''}${authoruty.lastName}`
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       }
     })
   }

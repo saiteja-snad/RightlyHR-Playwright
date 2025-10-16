@@ -27,6 +27,8 @@ export default [
             { path: 'attendance-regularization-types', loadComponent: () => import('./attendance-eligibility-criteria/attendance-regularization-types/attendance-regularization-types.component').then((m) => m.AttendanceRegularizationTypesComponent)},
             { path: 'attendance-regularization-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/attendance-regularization-eligibility-criteria/attendance-regularization-eligibility-criteria.component').then((m) => m.AttendanceRegularizationEligibilityCriteriaComponent)},
             { path: 'remote-login-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/remote-login-eligibility-criteria/remote-login-eligibility-criteria.component').then((m) => m.RemoteLoginEligibilityCriteriaComponent)},
+            { path: 'late-login-alert-configuration', loadComponent: () => import('./attendance-eligibility-criteria/late-login-alert-configuration/late-login-alert-configuration.component').then((m) => m.LateLoginAlertConfigurationComponent)},
+        
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },

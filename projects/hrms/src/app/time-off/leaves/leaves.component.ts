@@ -315,23 +315,36 @@ export class LeavesComponent {
 
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
-  getTeamManagersDetails() {
+getTeamManagersDetails() {
     const EmployeeId = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (response: any) => {
-        if (response && response.length) {
-          // No filter
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-          }));
-        }
-      },
-    });
+
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+
+            this.getEmployeeInfo = myTeam.map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
+              return {
+                ...emp,
+                fullName
+              };
+            });
+
+            //  Alphabetical sorting by firstName
+            this.getEmployeeInfo.sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+          }
+        },
+        error: (err) => console.error(err)
+      });
   }
+
 
   navigateOrLeavebalance() {
     this.router.navigate(['/time-off/leaves/org-leave-balance'])
@@ -393,7 +406,7 @@ export class LeavesComponent {
         if (response.success) {
           this.loadingGraph = false;
           this.categoryDetails = response.data as ICategoryDetails[];
-          this.calculateProbationLeavs(this.categoryDetails);
+          // this.calculateProbationLeavs(this.categoryDetails);
           this.logOptionalLeaveDays(this.categoryDetails);
           this.initChart(this.categoryDetails);
         }
@@ -414,7 +427,7 @@ export class LeavesComponent {
       next: (response: any) => {
         if (response.success) {
           this.categoryDetails = response.data as ICategoryDetails[];
-          this.calculateProbationLeavs(this.categoryDetails);
+          // this.calculateProbationLeavs(this.categoryDetails);
           this.logOptionalLeaveDays(this.categoryDetails);
           this.initChart(this.categoryDetails);
         }
@@ -463,9 +476,9 @@ export class LeavesComponent {
 
   getAvailableLeaves(item: any): number {
     if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
-      return item.probationLeaves - item.utilizedDays - item.booked;
+      return item.probationLeaves - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0); 
     } else {
-      return item.allowedDays - item.utilizedDays - item.booked;
+      return item.allowedDays - item.utilizedDays - item.booked - (item.expiryDaysLeaves ? item.expiryDaysLeaves : 0);
     }
   }
 
@@ -493,7 +506,7 @@ export class LeavesComponent {
     this.subscription = this.http.getData(`Employeedata/${this.empdata.employeeId}`).subscribe({
       next: (data: any) => {
         this.employeeiddetails = data;
-        this.calculateProbationLeavs(this.categoryDetails);
+        // this.calculateProbationLeavs(this.categoryDetails);
       },
     });
   }
@@ -598,7 +611,8 @@ export class LeavesComponent {
     const maxDays = this.selectedleave?.allowedDays;
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
-    this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
+    const expired = this.selectedleave.expiryDaysLeaves;
+    this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked - expired;
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
       const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
       if (probationLeavesTaken >= 0) {
@@ -1315,9 +1329,9 @@ export class LeavesComponent {
         }
       }
       const category = this.categoryDetails.find(c => c.category.id === this.selectedleave?.category.id);
-      if (category) {
-        category.booked += this.leaveFormData.duration;
-      }
+      // if (category) {
+      //   category.booked += this.leaveFormData.duration;
+      // }
       if (category?.category.isOptionalHoliday) {
         const isOptHoliday = this.isOptionalHoliday(this.leaveFormData);
         if (this.mustUseOptLevs) {

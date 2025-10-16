@@ -302,6 +302,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Inactive',
       'Desk Allocation - Create',
       'Team Tickets Tab',
+      'Late Login Alert Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&
@@ -997,6 +998,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   dashboardGenerateDocumentsFields = [
     'Dashboard Generate Documents Offer Letter',
     'Dashboard Generate Documents Appointment Letter',
+    'Dashboard Generate Documents Trainee Relieving Letter',
     'Dashboard Generate Documents Trainee Offer Letter',
     'Dashboard Generate Documents Trainee Appointment Letter',
     'Dashboard Generate Documents Welcome Letter',

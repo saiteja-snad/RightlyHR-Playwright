@@ -17,7 +17,7 @@ import { ICompoffDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-header/reports-header.component";
 import { DatePicker } from 'primeng/datepicker';
 @Component({
@@ -32,13 +32,13 @@ import { DatePicker } from 'primeng/datepicker';
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
     ReportsHeaderComponent
-],
+  ],
   templateUrl: './compoff-report.component.html',
   styleUrl: './compoff-report.component.scss'
 })
 
 export class CompoffReportComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -72,7 +72,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
- 
+
   localeOptions: any;
 
   constructor(
@@ -121,44 +121,60 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-            };
-          });
-          this.employeeiddetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+ getEmployeeId() {
+  const loggedInUser = this.authService.getToken();
+  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+    next: (data: any) => {
+      const employeedata = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-  getTeam() {
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
-      next: (data: any) => {
-        this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
+        })
+        .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+
+      this.employeeiddetails = [
+        { fullName: 'All Employees', employeeId: 'all' },
+        ...employeedata
+      ];
+    },
+    error: (reason: any) => {
+      console.log(reason);
+    },
+  });
+}
+
+ getTeam() {
+  this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+    next: (data: any) => {
+      this.teamdetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
+          return {
+            ...employee,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
 
   formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -179,7 +195,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-     //filter condition
+    //filter condition
     const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
 
     if (noFilterProvided) {
@@ -195,7 +211,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       const ids = this.selectLeaveEmployeeIds?.join(',');
       request.employeeId = ids;  // The selected employee IDs are set here
     }
-    
+
     // if (formValue.employee?.employeeId) {
     //   request.employeeId = formValue.employee.employeeId;
     // }
@@ -214,7 +230,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }
-    
+
     // Single API call
     this.reportsService.getcompOffReports(request).subscribe({
       next: (response: any) => {
@@ -236,7 +252,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
   exportToExcelYearly(): void {
     // Define header mappings
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -264,8 +280,8 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       'DURATION'
     ];
 
-     // Function to format date in dd-MMM-yyyy format
-     const formatDate = (dateString: string): string => {
+    // Function to format date in dd-MMM-yyyy format
+    const formatDate = (dateString: string): string => {
       const date = new Date(dateString);
       const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
       return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
@@ -333,7 +349,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'CompOff Report');
     XLSX.writeFile(wb, 'Compoff_Report.xlsx');
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
   }
 
   getColumnWidth(data: any[], columnName: string): number {
@@ -346,15 +362,15 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
-  
-   onClick(employeeIds: any) {
+
+  onClick(employeeIds: any) {
     if (employeeIds.value) {
       console.log(employeeIds);
       this.filteredleaveRecords = true;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
-      if (employeeIds.value.employeeId== this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
+      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
         this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
@@ -390,7 +406,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
         },
       });
   }
-   navigation(){
+  navigation() {
     this.router.navigate(['/reports']);
   }
 

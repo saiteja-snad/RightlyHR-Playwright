@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
   <div class="mb-3">
     <button type="button" (click)="openDialog()" class="custom-btn btn-primary me-2"
-    *ngIf="rbac.allowedToAccess('Team.create')">{{'Add' | translate}}</button>
+      *ngIf="rbac.allowedToAccess('Team.create')">{{'Add' | translate}}</button>
   </div>
-  
+
   <div class="custom-main-component-container">
     <div class="custom-table-content">
-         @if(!loader){
+      @if(!loader){
       <table class="w-100">
         <thead>
           <tr>
@@ -23,7 +23,8 @@
               <td>{{teams.departmentName}}</td>
               <td>{{teams.subdepartmentName}}</td>
               <td>{{teams.firstName}} {{teams.middleName}} {{teams.lastName}}</td>
-              <td class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">
+              <td class="text-center"
+                *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -46,10 +47,10 @@
           </ng-container>
         </tbody>
       </table>
-        }
-        @else {
-        <app-data-loader-content />
-        }
+      }
+      @else {
+      <app-data-loader-content />
+      }
     </div>
   </div>
 </div>
@@ -85,14 +86,15 @@
             {{ 'Department Name is required' | translate }}
           </div>
         </div>
-      
+
         <!-- Team Name field -->
         <div class="mb-3">
           <label for="teamName1" class="form-label custom-label mb-2">
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
-          <input type="text" class="form-control custom-input" formControlName="teamName" placeholder="Please enter team name"
-            maxlength="101" (keydown)="formValidations.restrictInputAllowSpecialChars($event)"/>
+          <input type="text" class="form-control custom-input" formControlName="teamName"
+            placeholder="Please enter team name" maxlength="101"
+            (keydown)="formValidations.restrictInputAllowSpecialChars($event)" />
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg">
             <div *ngIf="AddForm.get('teamName')?.errors?.['required']">
               {{ 'Team Name is required' | translate }}
@@ -102,10 +104,10 @@
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
           <div *ngIf="AddForm.get('teamName')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-            </div>
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
-      
+
         <!-- Team Manager dropdown -->
         <div class="mb-3">
           <label for="teammangar" class="form-label custom-label mb-2">
@@ -117,13 +119,13 @@
               filterBy="firstName,middleName,lastName">
               <!-- Template to show selected value -->
               <ng-template pTemplate="selectedItem" let-manager>
-                <span *ngIf="manager">{{ manager.firstName }} {{ manager.middleName }}
-                  {{ manager.lastName }}</span>
+                <span *ngIf="manager">
+                 {{ manager.fullName }}
+                </span>
               </ng-template>
-        
               <!-- Template to show items in dropdown -->
               <ng-template pTemplate="item" let-manager>
-                {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                 {{ manager.fullName }}
               </ng-template>
             </p-select>
           </div>
@@ -131,7 +133,7 @@
             {{ 'Team Manager is required' | translate }}
           </div>
         </div>
-      
+
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
@@ -185,19 +187,20 @@
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
-            placeholder="Please enter team name" maxlength="101" (keydown)="formValidations.restrictInputAllowSpecialChars($event)"
-             />
-             <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid" class="error-msg">
-              <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['required']">
-                {{ 'Team Name is required' | translate }}
-              </div>
+            placeholder="Please enter team name" maxlength="101"
+            (keydown)="formValidations.restrictInputAllowSpecialChars($event)" />
+          <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid"
+            class="error-msg">
+            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['required']">
+              {{ 'Team Name is required' | translate }}
             </div>
-            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['maxCharacters']" class="error-msg">
-              {{ 'Please limit your input to 100 characters' | translate }}
-            </div>
-            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['pattern']" class="error-msg">
-                    {{ 'Field cannot start with a space' | translate }}
-            </div>
+          </div>
+          <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
+          </div>
+          <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
 
         <!-- Team Manager dropdown -->
@@ -207,17 +210,15 @@
           </label>
           <div class="custom-p-select-content">
             <p-select formControlName="updatedteamManager" optionValue="employeeId" [options]="teamdetails"
-              placeholder="Select team manager" class="custom-select w-100" [filter]="true" filterBy="firstName,middleName,lastName"
-              [styleClass]="'white-dropdown'">
+              placeholder="Select team manager" class="custom-select w-100" [filter]="true"
+              filterBy="firstName,middleName,lastName" [styleClass]="'white-dropdown'">
               <!-- Template to show selected value -->
               <ng-template pTemplate="selectedItem" let-manager>
-                <span *ngIf="manager">
-                  {{manager.fusionEmpId}} - {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
-                </span>
+                <span *ngIf="manager">{{ manager.fullName }}</span>
               </ng-template>
-              <!-- Template to show items in dropdown -->
+
               <ng-template pTemplate="item" let-manager>
-                {{manager.fusionEmpId}} - {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                {{ manager.fullName }}
               </ng-template>
             </p-select>
           </div>
@@ -232,7 +233,8 @@
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();updateForm.reset()">
             {{ 'Cancel' | translate }}
           </button>
-          <button type="button" class="custom-btn btn-primary" (click)="updateTeam(modal)" [disabled]="updateForm.invalid ">
+          <button type="button" class="custom-btn btn-primary" (click)="updateTeam(modal)"
+            [disabled]="updateForm.invalid ">
             {{ 'Update' | translate }}
           </button>
         </div>

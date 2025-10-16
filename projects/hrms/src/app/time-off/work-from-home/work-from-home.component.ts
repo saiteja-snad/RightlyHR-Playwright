@@ -107,6 +107,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.TimeoffYearFilterService.setSelectedYear(this.selectedYear);
   }
 
+
   getAllEmployeeDetails() {
     const satus = ['Active', 'Trainee Active'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
@@ -118,7 +119,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       },
     });
   }
-
   onYearChange() {
     const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
     this.selectedYear = selectedYear;  // Update the local variable so template sees the change
@@ -220,22 +220,39 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+
+getTeamManagersDetails() {
+  const EmployeeId = this.empinfo.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
       next: (response: any) => {
-        if (response && response.length) {
-          // No filter
+        console.log('getEmployeesByhierarchy', response);
+
+        if (Array.isArray(response) && response.length) {
           const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
-              ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-          }));
+
+          this.getEmployeeInfo = myTeam
+            .map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+            }))
+            // Alphabetical sort by firstName (case-insensitive)
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+
+          console.log('getEmployeeInfo', this.getEmployeeInfo);
+        } else {
+          this.getEmployeeInfo = [];
         }
       },
+      error: (err) => {
+        console.error(err);
+        this.getEmployeeInfo = [];
+      },
     });
-  }
+}
 
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);

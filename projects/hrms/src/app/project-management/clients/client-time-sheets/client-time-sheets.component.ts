@@ -68,44 +68,48 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
         // utiliztionsummery charts
         const utilizationSummary = data?.utilizationSummary;
        const overall = utilizationSummary?.overall;
-const utilizationArray = (() => {
-  if (!overall || !overall.loggedHHMM) return [];
+       const utilizationArray = (() => {
+         if (!overall || !overall.loggedHHMM) return [];
 
-  const hhmm = overall.loggedHHMM as string;
+         const hhmm = overall.loggedHHMM as string;
 
-  // If exactly "0:00" or "00:00", return empty array
-  if (hhmm === '0:00' || hhmm === '00:00') return [];
+         // If exactly "0:00" or "00:00", return empty array
+         if (hhmm === '0:00' || hhmm === '00:00') return [];
 
-  // Split by ":" and convert to numbers
-  const parts = hhmm.split(':').map(Number);
+         // Split by ":" and convert to numbers
+         const parts = hhmm.split(':').map(Number);
 
-  // If parsing fails or less than 2 parts, return empty array
-  if (parts.length < 2 || parts.some(isNaN)) return [];
+         // If parsing fails or less than 2 parts, return empty array
+         if (parts.length < 2 || parts.some(isNaN)) return [];
 
-  const h = parts[0];
-  const m = parts[1];
+         const h = parts[0];
+         const m = parts[1];
 
-  return [{
-    key: 'loggedHours',
-    label: 'Logged Hours',
-    value: h + m / 60,           // numeric value for chart
-    loggedHHMM: `${h}h ${m}m`,  // display format
-    loggedISO: overall.loggedISO
-  }];
-})();
+         // 🧠 Format display string: omit minutes if 00
+         const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
 
+         return [
+           {
+             key: 'loggedHours',
+             label: 'Logged Hours',
+             value: h + m / 60, // numeric value for chart
+             loggedHHMM, // formatted display value
+             loggedISO: overall.loggedISO,
+           },
+         ];
+       })();
 
-        this.utilizationcount$.next(utilizationArray);
-        // time sheet summary charts data
-        this.timesheetSummaryChartData = {
-          datasets: [
-            {
-              data: summaryItems.map(i => i.value),
-              backgroundColor: summaryItems.map(i => i.colour),
-              borderWidth: 0
-            }
-          ]
-        };
+       this.utilizationcount$.next(utilizationArray);
+       // time sheet summary charts data
+       this.timesheetSummaryChartData = {
+         datasets: [
+           {
+             data: summaryItems.map((i) => i.value),
+             backgroundColor: summaryItems.map((i) => i.colour),
+             borderWidth: 0,
+           },
+         ],
+       };
         // utiliztion summery charts data
         this.timesheetutilizeSummaryChartData = {
           datasets: [

@@ -58,7 +58,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   weekDates: Date[] = []; //
   employeeId: any;
-  subscription!: Subscription;
+  subscription!: Subscription;   
   showDots: { [rowIndex: number]: { [day: string]: boolean } } = {};
   date!: Date[];
   selectedentryid: any;
@@ -135,9 +135,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
     const entryDateObj = dateValue ? new Date(dateValue) : null;
-    const blockReason = day?.blockReason || '';
-    const isBlocked = day?.isBlocked || false;
-    const isLeave = day?.isLeave || false;
+    // Use existing day data or determine from date
+    let blockReason = day?.blockReason || '';
+    let isBlocked = day?.isBlocked || false;
+    let isLeave = day?.isLeave || false;
+    
+    // If no existing data, determine from date
+    if (!day && entryDateObj) {
+      const dayStatus = this.getDayStatus(entryDateObj);
+      blockReason = dayStatus.blockReason;
+      isBlocked = dayStatus.isBlocked;
+      isLeave = dayStatus.isLeave;
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0); // normalize today’s date
 
@@ -730,14 +739,36 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       .filter((c: any) => c && c.projects.length > 0);
   }
 
+  // Helper method to determine if a date is weekend/holiday/leave
+  getDayStatus(date: Date): { isBlocked: boolean; blockReason: string; isLeave: boolean } {
+    // Check if it's a holiday or leave from existing data first
+    const existingDayData = this.availableProjects[0]?.days?.find((day: any) => {
+      const dayDate = new Date(day.entryDate);
+      return dayDate.toDateString() === date.toDateString();
+    });
+    
+    // If existing data has blockReason as 'Weekend', use it
+    if (existingDayData?.blockReason === 'Weekend') {
+      return {
+        isBlocked: true,
+        blockReason: 'Weekend',
+        isLeave: existingDayData?.isLeave || false
+      };
+    }
+    
+    // Otherwise return existing data or default values
+    return {
+      isBlocked: existingDayData?.isBlocked || false,
+      blockReason: existingDayData?.blockReason || '',
+      isLeave: existingDayData?.isLeave || false
+    };
+  }
+
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
-    console.log(client, project);
-    this.selectedProjectResource = null
-    const apidata = this.availableProjects[0].days
-    console.log(apidata);
-
+   this.selectedProjectResource=null
     const form = row as FormGroup;
+    
     // Patch project details
     form.patchValue({
       clientId: client.clientId,
@@ -751,6 +782,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         projectName: project.projectName,
       },
     });
+    
     const selectedResource = this.resourcesArrayList.find(
       (res: any) =>
         res.project?.projectId === project.projectId &&
@@ -758,70 +790,62 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     );
 
     if (selectedResource) {
-      console.log('Full project object:', selectedResource.weekendWorkAllowed);
-      // Example: store it in a weekendWorkAllowed for form binding
       this.selectedProjectResource = selectedResource;
     }
+    
     this.selectedclientid = client.clientId;
     this.selectedprojectid = project.projectId;
     this.selectedProjectName = project.projectName;
     this.selectedClientname = client.clientName;
     this.selectedShiftDetails = client.shift;
+    
     // Days array
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    days.forEach((dayKey) => {
-      const dayForm = form.get(dayKey) as FormGroup ?? apidata;
-      console.log(dayForm);
-
-      const isBlocked = dayForm.get('isBlocked')?.value ?? apidata.isBlocked
-      const blockReason = dayForm.get('blockReason')?.value ?? apidata?.blockReason;
-      const isLeave = dayForm.get('isLeave')?.value;
-      const dateValue = dayForm.get('entryDate')?.value;
-      console.log(isBlocked, blockReason);
+    days.forEach((dayKey, index) => {
+      const dayForm = form.get(dayKey) as FormGroup;
+      const entryDate = this.weekDates[index];
+      
+      // Get day status (weekend/holiday/leave)
+      const dayStatus = this.getDayStatus(entryDate);
+      const { isBlocked, blockReason, isLeave } = dayStatus;
+      
+      // Update form controls with day status
+      dayForm.patchValue({
+        isBlocked,
+        blockReason,
+        isLeave
+      });
 
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const entryDate = dateValue ? new Date(dateValue) : null;
-      const isFutureDate = entryDate ? entryDate > today : false;
+      const isFutureDate = entryDate > today;
 
-      // By default, effective is true for No Project / No Client
+      // Check if project is effective for this date
       let isEffective = true;
-
-      // Only check real projects
       if (
         this.selectedProjectResource &&
-        this.selectedProjectResource.projectId !== 0 &&
-        this.selectedProjectResource.startDate &&
-        entryDate
+        this.selectedProjectResource.project?.projectId !== 0 &&
+        this.selectedProjectResource.startDate
       ) {
-        const resourcestartdate = new Date(this.selectedProjectResource.startDate);
-        isEffective = entryDate >= resourcestartdate;
-        console.log('Resource Start Date:', resourcestartdate);
+        const resourceStartDate = new Date(this.selectedProjectResource.startDate);
+        resourceStartDate.setHours(0, 0, 0, 0);
+        isEffective = entryDate >= resourceStartDate;
       }
 
-      // Enable basic fields if not blocked or leave
-      ['clientName', 'clientId', 'projectName', 'projectId', 'startTime', 'endTime', 'description']
-        .forEach((ctrl) => {
-          if (!isBlocked && !isLeave) {
-            dayForm.get(ctrl)?.enable();
-          } else {
-            dayForm.get(ctrl)?.disable();
-          }
-        });
+      // Enable/disable fields based on conditions
+      const shouldEnable = !isLeave && !isFutureDate && isEffective && 
+        (!isBlocked || (blockReason === 'Weekend' && this.selectedProjectResource?.weekendWorkAllowed));
 
-      // Enable duration fields
-      if ((!isBlocked && !isLeave && !isFutureDate && isEffective) ||
-        (blockReason === 'Weekend' && isEffective && this.selectedProjectResource?.weekendWorkAllowed)
-      ) {
-        dayForm.get('duration')?.enable();
-        dayForm.get('description')?.enable();
-        dayForm.get('startTime')?.enable();
-        dayForm.get('endTime')?.enable();
-      } else {
-        dayForm.get('duration')?.disable();
-      }
+      ['duration', 'description', 'startTime', 'endTime'].forEach((ctrl) => {
+        if (shouldEnable) {
+          dayForm.get(ctrl)?.enable();
+        } else {
+          dayForm.get(ctrl)?.disable();
+        }
+      });
     });
-    // Close dropdown safely
+    
+    // Close dropdown
     const dropdownMenu = document.querySelector('.dropdown-menu.show');
     if (dropdownMenu) dropdownMenu.classList.remove('show');
     const dropdownBtn = document.getElementById('dropdownMenuButton');

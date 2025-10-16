@@ -200,7 +200,7 @@ export class NdaComponent {
     const payLoad = {
       entityType: 'client',
       entityId: parseInt(this.clientId),
-      documentName: 'NDA Letter',
+      // documentName: 'NDA Letter',
       type: 'Unsigned',
       documentType: 'NDA Letter',
       documentUrl: this.result.documentUrl,

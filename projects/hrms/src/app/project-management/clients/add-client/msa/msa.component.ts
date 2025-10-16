@@ -200,7 +200,7 @@ export class MsaComponent {
     const payLoad = {
       entityType: 'client',
       entityId: parseInt(this.clientId),
-      documentName: 'MSA Letter',
+      // documentName: 'MSA Letter',
       type: 'Unsigned',
       documentType: 'MSA Letter',
       documentUrl: this.result.documentUrl,

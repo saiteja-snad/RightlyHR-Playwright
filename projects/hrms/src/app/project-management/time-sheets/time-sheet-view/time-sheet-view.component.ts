@@ -230,17 +230,17 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.start = monday.toDate();
     this.end = sunday.toDate();
 
-    // ✅ Update min/max for datepicker to highlight current week
+    //  Update min/max for datepicker to highlight current week
     this.weakstartdate = this.start;
     this.weakenddate = this.end;
 
-    // ✅ Assign the date range to the picker model
+    // Assign the date range to the picker model
     this.date = [this.start, this.end];
 
-    // ✅ Update the week range visually / in state
+    //  Update the week range visually / in state
     this.setWeekRange(monday, sunday);
 
-    // ✅ Format start date for API call
+    //Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
 
     // ✅ Hit your API

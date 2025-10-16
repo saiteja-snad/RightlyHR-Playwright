@@ -110,7 +110,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   // initialization of form
   createDocumentForm() {
     this.addDocumentForm = this.fb.group({
-      documentName: [null, Validators.required],
+      // documentName: [null, Validators.required],
       documentType: [null, Validators.required],
       documentUrl: [null, Validators.required],
       signedCopy: [null],
@@ -318,7 +318,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+      // documentName: formValue.documentName,
       documentType: formValue.documentType,
       documentUrl: logoPath,
       type: '',
@@ -364,7 +364,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-        this.conformationPopup.openErrorModal('Failed to add document. Please try again.');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

@@ -89,7 +89,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
   // initialization of form
   createDocumentForm() {
     this.updateDocumentForm = this.fb.group({
-      documentName: [null, Validators.required],
+      // documentName: [null, Validators.required],
       documentType: [null, Validators.required],
       documentUrl: [null, Validators.required],
       signedCopy: [null],
@@ -116,7 +116,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
   openModal(content: any, data: any, size: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     this.updateDocumentForm.patchValue({
-      documentName: data?.documentName,
+      // documentName: data?.documentName,
       documentType: data?.documentType,
       documentUrl: data?.documentUrl,
       documentId: data?.documentId,
@@ -244,7 +244,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+      // documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: documentUrlValue,
@@ -304,7 +304,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+      // documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,

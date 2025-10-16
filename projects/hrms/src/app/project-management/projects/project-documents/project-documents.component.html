@@ -3,9 +3,9 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                <th>File Name</th>
+                <th>Document Type</th>             
                 <th>Created Date</th>
-                <th>Document Type</th>
+                <!-- <th>File Name</th> -->
                 <th>Attachment</th>
                 <th class="text-center">Download</th>
                 @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
@@ -16,9 +16,9 @@
             <tbody>
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
-                        <td>{{data.documentName}}</td>
+                         <td>{{data.documentType}}</td>                      
                         <td>{{data.createdAt | dateformat}}</td>
-                        <td>{{data.documentType}}</td>
+                         <!-- <td>{{data.documentName}}</td> -->
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
                             <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
@@ -79,7 +79,7 @@
             <form [formGroup]="updateDocumentForm" autocomplete="off" (ngSubmit)="UpdateDocumentdata()">
                 <div class="row">
                     <!-- File Name -->
-                    <div class="col-md-6 mb-3">
+                    <!-- <div class="col-md-6 mb-3">
                         <label for="documentName" class="form-label custom-label mb-2">File Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" id="documentName" formControlName="documentName"
@@ -96,7 +96,7 @@
                             class="error-msg">
                             {{ 'File Name must be at least 2 characters' | translate }}
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Document Type -->
                     <div class="col-md-6 mb-3">

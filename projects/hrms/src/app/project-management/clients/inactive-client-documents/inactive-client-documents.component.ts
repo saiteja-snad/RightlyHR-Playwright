@@ -89,7 +89,7 @@ export class InactiveClientDocumentsComponent {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+    //  documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,
@@ -100,8 +100,8 @@ export class InactiveClientDocumentsComponent {
       attributes: [
         {
           attributeKey: "signedCopy",
-          attributeValue: formValue.signedCopy ? "true" : "false",
-          dataType: "boolean"
+          attributeValue: formValue.signedCopy ? "yes" : "no",
+          dataType: "string"
         }
       ]
     };

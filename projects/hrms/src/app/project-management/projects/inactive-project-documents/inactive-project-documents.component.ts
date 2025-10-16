@@ -91,7 +91,7 @@ export class InactiveProjectDocumentsComponent {
     const payload = {
       entityType: "project",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+     // documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,

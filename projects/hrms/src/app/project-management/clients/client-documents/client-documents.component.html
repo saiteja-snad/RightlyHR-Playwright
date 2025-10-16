@@ -4,9 +4,8 @@
         <table class="w-100">
             <thead>
                 <th>Document Type</th>
-                <th>File Name</th>
                 <th>Created Date</th>
-
+                <!-- <th>File Name</th> -->
                 <th>Signed Copy</th>
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
@@ -18,9 +17,8 @@
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
                         <td>{{data.documentType}}</td>
-                        <td>{{data.documentName}}</td>
                         <td>{{data.createdAt | dateformat}}</td>
-
+                        <!-- <td>{{data.documentName}}</td> -->
                         <td>
                             <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
                                 <ng-container *ngFor="let attr of data.attributes">
@@ -110,7 +108,7 @@
                         </div>
                     </div>
                     <!-- File Name -->
-                    <div class="col-md-6 mb-3">
+                    <!-- <div class="col-md-6 mb-3">
                         <label for="documentName" class="form-label custom-label mb-2">File Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" id="documentName" formControlName="documentName"
@@ -119,12 +117,12 @@
                             *ngIf="updateDocumentForm.get('documentName')?.touched && updateDocumentForm.get('documentName')?.invalid">
                             File Name is required
                         </div>
-                    </div>
+                    </div> -->
 
 
 
                     <!-- Document Attachment -->
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
                                 class="text-danger">*</span></label>
                         <input type="file" id="documentAttachment"

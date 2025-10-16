@@ -22,7 +22,7 @@
                         <td>
                             @if(data.attributes?.length > 0){
                             <span *ngFor="let attr of data.attributes">
-                                <span class="text-capitalize"> {{attr.attributeValue === true ? 'Yes' : 'No' }}</span>
+                                <span class="text-capitalize"> {{attr.attributeValue === 'yes' ? 'Yes' : 'No' }}</span>
                             </span>
                             }
                            @else {

@@ -57,10 +57,7 @@ export class AddClientDocComponent {
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
-    console.log(this.navTabs);
-    
- 
-    
+  
   }
 
   getEAV() {

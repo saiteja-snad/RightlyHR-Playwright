@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import {
   AbstractControl,
@@ -62,11 +62,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   displayLabel = 'Please Select Date';
   formattedweakendStart: any;
   rowdelete: any;
+
   private start!: Date;
   private end!: Date;
   effectiveDate: any
-  minDate!: Date;
-  maxDate!: Date;
+  weakstartdate!: Date;
+  weakenddate!: Date;
   maxMonth: Date = moment().add(1, 'months').endOf('month').toDate();
   selectedclientid: any;
   selectedprojectid: any;
@@ -80,8 +81,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetdata!: TimesheetResponse;
   resourcesArrayList: any[] = [];
   totalDuration: any;
-  spinnerLoader = false
-  spinnerLoaderforallrecoders = false
+  spinnerLoader = false;
+  spinnerLoaderforallrecoders = false;
+  datesSelected = false;
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -220,6 +222,30 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  onDateSelect(selectedDate: Date) {
+    if (!selectedDate) return;
+    const selected = moment(selectedDate);
+    const monday = selected.clone().startOf('isoWeek');  // Monday
+    const sunday = selected.clone().endOf('isoWeek');    // Sunday
+    this.start = monday.toDate();
+    this.end = sunday.toDate();
+
+    // ✅ Update min/max for datepicker to highlight current week
+    this.weakstartdate = this.start;
+    this.weakenddate = this.end;
+
+    // ✅ Assign the date range to the picker model
+    this.date = [this.start, this.end];
+
+    // ✅ Update the week range visually / in state
+    this.setWeekRange(monday, sunday);
+
+    // ✅ Format start date for API call
+    const formattedStart = monday.format('YYYY-MM-DD');
+
+    // ✅ Hit your API
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+  }
 
   // --- Add new project row ---
   addProject(project?: any, isProjectSelected: boolean = false) {
@@ -341,8 +367,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.displayLabel = `${start.format('DD MMM YYYY')} - ${end.format(
       'DD MMM YYYY'
     )}`;
-    this.minDate = start.toDate();
-    this.maxDate = end.toDate();
+    this.weakstartdate = start.toDate();
+    this.weakenddate = end.toDate();
   }
 
   // previous week
@@ -352,6 +378,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const prevEnd = moment(this.end).subtract(7, 'days').endOf('day');
       this.start = prevStart.toDate();
       this.end = prevEnd.toDate();
+      this.weakstartdate = this.start;
+      this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
@@ -365,6 +393,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const nextEnd = moment(this.end).add(7, 'days').endOf('day');
       this.start = nextStart.toDate();
       this.end = nextEnd.toDate();
+      this.weakstartdate = this.start;
+      this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
@@ -686,7 +716,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
     console.log(client, project);
-    this.selectedProjectResource=null
+    this.selectedProjectResource = null
     const apidata = this.availableProjects[0].days
     console.log(apidata);
 

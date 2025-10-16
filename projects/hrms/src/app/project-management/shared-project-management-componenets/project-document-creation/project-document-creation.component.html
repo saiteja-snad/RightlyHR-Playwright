@@ -22,7 +22,7 @@
                 </div>
 
                 <!-- File Name -->
-                <div class="col-md-6 mb-3">
+                <!-- <div class="col-md-6 mb-3">
                     <label for="documentName" class="form-label custom-label mb-2">File Name
                         <span class="text-danger">*</span></label>
                     <input type="text" id="documentName" formControlName="documentName" [minlength]="2" [maxlength]="101"
@@ -35,10 +35,10 @@
                         <div *ngIf="addDocumentForm.get('documentName')?.errors?.['minCharacters'] || addDocumentForm.get('documentName')?.errors?.['minlength']">
                             {{ 'File Name must be at least 2 characters' | translate }}</div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Document Attachment -->
-                <div class="col-md-12 mb-3">
+                <div class="col-md-6 mb-3">
                     <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
                         <span class="text-danger">*</span></label>
                     <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"

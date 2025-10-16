@@ -88,7 +88,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
           {
             key: 'loggedHours',
             label: 'Logged Hours',
-            value: parseFloat(`${h}.${m}`), // hours.minutes format for chart
+          value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`),
             loggedHHMM, // formatted display value
             loggedISO: overall.loggedISO,
           },
@@ -118,18 +118,6 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
       };
         this.timesheetSummaryOptions = {
           cutout: '70%',
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (context: any) => {
-                  const value = context.parsed;
-                  const hours = Math.floor(value);
-                  const minutes = Math.round((value - hours) * 60);
-                  return `${hours}h ${minutes}m`;
-                }
-              }
-            }
-          }
         };
       },
       error: err => {
@@ -137,6 +125,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
         console.error('Error fetching attendance summary:', err);
         this.attendanceSummaryData = [];
         this.statusCounts$.next([]);
+        this.utilizationcount$.next([]);
         this.totalEntries = 0;
         this.timesheetSummaryChartData = { labels: [], datasets: [] };
         this.timesheetutilizeSummaryChartData = { labels: [], datasets: [] };

@@ -92,7 +92,7 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
            {
              key: 'loggedHours',
              label: 'Logged Hours',
-             value: parseFloat(`${h}.${m}`), // hours.minutes format for chart
+             value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`), // hours.minutes format for chart
              loggedHHMM, // formatted display value
              loggedISO: overall.loggedISO,
            },
@@ -129,6 +129,7 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
         console.error('Error fetching attendance summary:', err);
         this.attendanceSummaryData = [];
         this.statusCounts$.next([]);
+        this.utilizationcount$.next([]);
         this.totalEntries = 0;
         this.timesheetSummaryChartData = { labels: [], datasets: [] };
         this.timesheetutilizeSummaryChartData = { labels: [], datasets: [] };

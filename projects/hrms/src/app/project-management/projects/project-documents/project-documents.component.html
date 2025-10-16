@@ -9,8 +9,7 @@
               
                 <th>Attachment</th>
                 <th class="text-center">Download</th>
-                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
-                ){
+                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) ){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>

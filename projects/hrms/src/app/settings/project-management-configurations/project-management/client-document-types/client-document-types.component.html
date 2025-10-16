@@ -36,27 +36,32 @@
                 </tr>
             </thead>
             <tbody>
-                @for (item of documentTypes; track $index) {
-                <tr>
-                    <td class="w-75">{{item.value}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div (click)="openupdate(item, updatepopup)">
-                                <a *ngIf="rbac.allowedToAccess('Project Document Type.update')">
-                                    <app-settings-update-icon />
-                                </a>
+                <ng-container *ngIf="documentTypes.length > 0; else noDataTemplate">
+                    @for (item of documentTypes; track $index) {
+                    <tr>
+                        <td class="w-75">{{item.value}}</td>
+                        <td class="w-25">
+                            <div class="d-flex gap-4">
+                                <!--Update-->
+                                <div (click)="openupdate(item, updatepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Project Document Type.update')">
+                                        <app-settings-update-icon />
+                                    </a>
+                                </div>
+                                <!--Delete-->
+                                <div (click)="opendelete(item, deletepopup)">
+                                    <a *ngIf="rbac.allowedToAccess('Project Document Type.delete')">
+                                        <app-settings-delete-icon />
+                                    </a>
+                                </div>
                             </div>
-                            <!--Delete-->
-                            <div (click)="opendelete(item, deletepopup)">
-                                <a *ngIf="rbac.allowedToAccess('Project Document Type.delete')">
-                                    <app-settings-delete-icon />
-                                </a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                }
+                        </td>
+                    </tr>
+                    }
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <app-no-data-found />
+                </ng-template>
             </tbody>
         </table>
         }

@@ -15,8 +15,20 @@
           </ng-template>
         </li>}
 
-        @if(rbac.allowedToAccess('Documents History Appointment Letter.view')) {
+        @if(rbac.allowedToAccess('Documents History Contract Offer Letter.view')) {
         <li [ngbNavItem]="'appointment'" class="nav-item">
+          <button class="nav-link" ngbNavLink>
+            <img src="/letters-icon/appointment-letter-icon.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">Contract Offer Letter</div>
+          </button>
+          <div class="tabs-border-bottom"></div>
+          <ng-template ngbNavContent>
+            <app-document-history-contract-offer-letter />
+          </ng-template>
+        </li>}
+
+        @if(rbac.allowedToAccess('Documents History Appointment Letter.view')) {
+        <li [ngbNavItem]="'contract-offer'" class="nav-item">
           <button class="nav-link" ngbNavLink>
             <img src="/letters-icon/appointment-letter-icon.png" alt="Icon" class="icon mb-2">
             <div class="d-flex">Appointment Letter</div>
@@ -39,16 +51,16 @@
           </ng-template>
         </li>}
 
-        <!-- @if(rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
-        <li [ngbNavItem]="'trainee-appointment'" class="nav-item">
+        @if(rbac.allowedToAccess('Documents History Non-Disclosure Agreement Letter.view')) {
+        <li [ngbNavItem]="'nda-letter'" class="nav-item">
           <button class="nav-link" ngbNavLink>
-            <img src="/letters-icon/trainee-appointment-letter.png" alt="Icon" class="icon mb-2">
-            <div class="d-flex">Trainee Appointment Letter</div>
+            <img src="/my-info-icons/contractor.png" alt="Icon" class="icon mb-2">
+            <div class="d-flex">Non-Disclosure Agreement Letter</div>
           </button>
           <ng-template ngbNavContent>
-            <app-document-history-intern-appointment />
+            <app-document-history-nda-letter />
           </ng-template>
-        </li>} -->
+        </li>}
       </ul>
     </div>
   </div>

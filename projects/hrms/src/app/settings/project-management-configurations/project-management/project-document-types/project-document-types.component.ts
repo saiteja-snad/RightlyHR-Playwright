@@ -13,10 +13,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SettingsLoaderComponent } from '../../../../shared/settings-loader/settings-loader.component';
 import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 import { SettingsDeleteIconComponent } from '../../../../icons/settings-delete-icon/settings-delete-icon.component';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-project-document-types',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent, SettingsUpdateIconComponent, SettingsDeleteIconComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent, SettingsUpdateIconComponent, SettingsDeleteIconComponent, NoDataFoundComponent],
   templateUrl: './project-document-types.component.html',
   styleUrl: './project-document-types.component.scss'
 })

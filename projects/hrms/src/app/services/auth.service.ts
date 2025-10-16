@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Inject } from '@angular/core';
+import { Injectable,Inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
 import { Router } from '@angular/router';
-import { catchError, map, throwError } from 'rxjs';
+import { catchError, map, throwError } from'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,8 @@ export class AuthService {
   ) { }
 
   ApiUrl = environment.ApiUrl;
+
+
   login(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
@@ -99,8 +101,6 @@ export class AuthService {
       if (loggedIn) {
         const accessToken = this.oauthService.getAccessToken();
         const idToken = this.oauthService.getIdToken();
-        console.log(accessToken);
-        console.log(idToken)
         this.router.navigate(['/uservalidation']);
         return { accessToken, idToken };
       } else {
@@ -255,8 +255,6 @@ export class AuthService {
         return res;
       }),
       catchError((error) => {
-        console.log(error);
-
         this.logout();
         this.router.navigate(['/login']);
         return throwError(() => error);

@@ -106,6 +106,7 @@
                             class="text-danger">*</span></label>
                     <input type="date" id="startDate" formControlName="startDate"
                         [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
                         onkeypress="return false" (change)="oncheckdates(addResourceForm.get('startDate')?.value)"
                         class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('startDate')?.touched && 
@@ -119,7 +120,9 @@
                 <div class="col-md-6 mb-3">
                     <label for="endDate" class="form-label custom-label mb-2">End Date<span
                             class="text-danger">*</span></label>
-                    <input type="date" id="endDate" formControlName="endDate" [min]="minEffectiveDate"
+                    <input type="date" id="endDate" formControlName="endDate"
+                          [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                       [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null "
                         onkeypress="return false" class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('endDate')?.touched && 
                     addResourceForm.get('endDate')?.invalid">End Date is required</div>
@@ -170,21 +173,21 @@
                 <div class="col-md-12 mb-3">
                     <div class="d-flex gap-4 align-itmes-center">
                         <div class="form-check form-switch">
-                            <input id="project-overtime-eligibility" class="form-check-input" type="checkbox" role="switch" 
-                                formControlName="overtimeEligible">
+                            <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
+                                role="switch" formControlName="overtimeEligible">
                             <label for="project-overtime-eligibility" class="form-check-label custom-toggle-label">
                                 Overtime Eligibility</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input id="client-billable" class="form-check-input" type="checkbox" role="switch" 
+                            <input id="client-billable" class="form-check-input" type="checkbox" role="switch"
                                 formControlName="billable">
-                            <label class="form-check-label custom-toggle-label"
-                               for="client-billable">Billable</label>
+                            <label class="form-check-label custom-toggle-label" for="client-billable">Billable</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input id="client-allow-weekend-work"  class="form-check-input" type="checkbox" role="switch"
+                            <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" role="switch"
                                 formControlName="allowweekendWork">
-                            <label for="client-allow-weekend-work"  class="form-check-label custom-toggle-label" >Allow Weekend
+                            <label for="client-allow-weekend-work" class="form-check-label custom-toggle-label">Allow
+                                Weekend
                                 Work</label>
                         </div>
                     </div>

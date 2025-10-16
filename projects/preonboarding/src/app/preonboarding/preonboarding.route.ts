@@ -9,6 +9,8 @@ import { ExperienceDetailsComponent } from "./experience-details/experience-deta
 import { ReviewComponent } from "./review/review.component";
 import { TraineeOfferletterComponent } from "./trainee-offerletter/trainee-offerletter.component";
 import { ApplicationSubmitComponent } from "./application-submit/application-submit.component";
+import { ContractorLetterComponent } from "./contractor-letter/contractor-letter.component";
+import { NdaContractorLetterComponent } from "./nda-contractor-letter/nda-contractor-letter.component";
 
 export default [
     { path: '', redirectTo: '/job-details', pathMatch: 'full' },
@@ -21,5 +23,9 @@ export default [
     { path: 'emergency-details', component: EmergencyContactDetailsComponent },
     { path: 'experience-details', component: ExperienceDetailsComponent },
     { path: 'review', component: ReviewComponent },
-    { path: 'application-submited', component: ApplicationSubmitComponent }
+    { path: 'application-submited', component: ApplicationSubmitComponent },
+    { path: 'contractor-offer-letter', component: ContractorLetterComponent },
+    { path: 'nda-contractor-letter', component: NdaContractorLetterComponent },
+
+
 ] as Route[];

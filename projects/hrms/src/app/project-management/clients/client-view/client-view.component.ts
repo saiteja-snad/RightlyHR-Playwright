@@ -102,6 +102,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.datepickerForm.reset();
     this.datepickerForm.get('projectId')?.disable();
     this.datepickerForm.get('resourceId')?.disable();
+   this.http.clearRequestclienttimesheet();
+    this.http.setRequestclienttimesheet(null);
+
   }
 
   // initialization of form
@@ -193,6 +196,15 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
+   isFilterApplied(): boolean {
+    const formValue = this.datepickerForm.value;
+    // Check if any field has value
+    return (
+      (formValue.dateRange && formValue.dateRange.length > 0) ||
+      formValue.projectId !== null && formValue.projectId !== undefined  ||
+      (formValue.resourceId && formValue.resourceId.length > 0)
+    );
+  }
   opencontactModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
@@ -454,6 +466,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       });
     }
   }
+  
+  isFormCompletelyValid(): boolean {
+  const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+  return !!formValue.dateRange && !!formValue.projectId && !!formValue.resourceId;
+}
 
   onSubmit() {
     const dateRangeArray = this.datepickerForm.value.dateRange || [];

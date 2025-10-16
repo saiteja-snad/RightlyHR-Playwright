@@ -12,9 +12,10 @@ import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-i
 import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 import { IEAV } from '../../models/project-type.modal';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-project-type',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsUpdateIconComponent, SettingsDeleteIconComponent, SettingsLoaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsUpdateIconComponent, SettingsDeleteIconComponent, SettingsLoaderComponent, NoDataFoundComponent],
   templateUrl: './project-type.component.html',
   styleUrl: './project-type.component.scss'
 })

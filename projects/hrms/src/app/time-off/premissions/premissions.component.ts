@@ -374,7 +374,7 @@ getTeamManagersDetails() {
         next: (res: any) => {
           // this.getCompOffRequest();
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Premissions request submitted successfully');
+          this.sharedModalService.openSuccessModal('Permission request submitted successfully');
           this.http.tirggerCountSignal.update((status) => ({
             ...status,
             permission: true,

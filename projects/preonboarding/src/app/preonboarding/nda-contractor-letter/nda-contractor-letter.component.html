@@ -1,0 +1,601 @@
+<div class="custom-main-component-container">
+    <div class="my-3">
+        <app-detailed-step-progressbar />
+    </div>
+
+    <div class="component-data-content">
+        <div class="component-header mb-4">NDA Letter</div>
+        <!--Letter content-->
+        <div class="card custom-main-sub-content p-4">
+            <div class="letter-data-content p-4">
+                <div class="d-flex justify-content-center">
+
+                   <div class="letter-sub-data-content">
+                <div>
+                    <!--page-1-->
+                    <div class="letter-page-content" id="pdfContent1"
+                        [ngClass]="{'soft-copy-letter':ndaLetterData.documentType}">
+                        <div class="letter-page-sub-content">
+                            <!-- <div *ngIf="ndaLetterData.documentType; else doc" class="soft-copy-letter">
+                <app-lettersheader />
+              </div>
+              <ng-template #doc>
+                <div class="hard-copy-letter"></div>
+              </ng-template> -->
+                       
+                                <div class="text-center mb-5">
+                                    <p class="letter-header text-center"><u>Non-Disclosure Agreement and Invention
+                                            Assignment Agreement </u></p>
+                                </div>
+
+                        
+
+
+                            <p class="mb-3">This Non-Disclosure Agreement and Invention Assignment Agreement
+                                (hereinafter “Agreement”) is effective as of by and between </p>
+
+                            <p class="mb-3"><b>Snad Developers India Private Limited</b>, with its office at [Vijaya
+                                Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD - 500032] (hereinafter
+                                referred to as the “Company”)
+                            </p>
+
+                            <p class="mb-3"><b>And </b></p>
+                            <p class="mb-4">{{employeeFullname}} PAN No:  <span *ngFor="let p of panDetails">{{p.identityNumber }}</span> residing at <span class="mb-3" *ngIf="ndaLetterData.addressLine1">
+                  {{ ndaLetterData.addressLine1 }},
+                  <span *ngIf="ndaLetterData.addressLine2"> {{ ndaLetterData.addressLine2 }},</span>
+                  {{ ndaLetterData.city }},
+                  {{ ndaLetterData.state }},
+                  {{ ndaLetterData.country }} -
+                  {{ ndaLetterData.zipCode }} (Hereinafter referred to as “Receiving Party”).
+                            </span></p>
+
+                            <p class="mb-4">The Company and the Receiving Party shall collectively be referred to as
+                                “Parties” and individually as a “Party”. </p>
+<!-- 
+                            <p class="mb-4">
+                                Your respective <b>Cost to Company</b> as applicable has been detailed in Annexure 2 of
+                                this letter. On your joining, you are expected to enter into an agreement, which
+                                specifies the details
+                                of the scope, terms, and conditions of your employment.
+                            </p> -->
+                            <p class="m-0 p-0"><b>RECITALS: </b></p>
+                            <p class="mb-3">A.As per the Appointment Letter dated {{ndaLetterData.issueddate |
+                dateformat }}, the Receiving Party is
+                                working with the Snad Developers Private Limited, During the course of Engagement, the
+                                Receiving Party may be exposed to the Confidential Information (as defined below) of the
+                                Company and/or the Company’s affiliates, clients, customers, consultants, vendors,
+                                partners, agents or suppliers etc. The Receiving Party may also generate, create or
+                                receive, possess, oversee information that is confidential in nature. </p>
+                            <p class="mb-3">B.Whereas the Receiving Party undertakes to protect all such information
+                                from any unauthorized use or disclosure and undertakes to handover all intellectual
+                                property rights in the Developments (as defined below), on the terms agreed between the
+                                Parties. </p>
+                            <p><b>The Parties agree as follows: </b></p>
+                            <ol>
+                                <li class="mb-4">
+                                    <b>Confidential Information and Exclusion :</b> Confidential information, includes
+                                    but is not limited to, any and all technical and non- technical information
+                                    including patent, copyright, trade secret, and proprietary information, technique,
+                                    sketches, drawings, models, inventions, Innovations, know-how, processes, apparatus,
+                                    equipment, algorithms, software programs, software source documents, and formulae
+                                    related to the current, future and proposed services and products of the Company or
+                                    its clients, details of the Company and its clients suppliers and customers, and
+                                    includes, without limitation, the Company or its clients Innovations, property and
+                                    information concerning research, experimental work, development,
+                                    design details and specifications, engineering, financial information, procurement
+                                    requirements, purchasing, manufacturing, business forecasts, sales and merchandising
+                                    and marketing plans and information which according to the Company or its clients
+                                    are necessarily confidential and form valuable property of the Company or its
+                                    clients. If any information is disclosed orally, it shall at the time of disclosure
+                                    be identified as confidential or shall be summarized and designated in writing by
+                                    the Company and delivered within 30 days of disclosure to the Receiving Party to
+                                    qualify it as Confidential Information. Confidential Information shall however
+                                    exclude any information which
+
+                                    (a) is in the public domain; (b) was known to the Receiving Party of such disclosure
+                                    or becomes known to the Receiving Party without breach of any confidentiality
+                                    agreement.
+                                </li>
+
+
+                            </ol>
+                        </div>
+
+                    </div>
+
+                    <!--page-2-->
+                    <div class="letter-page-content my-4" id="pdfContent2"
+                        [ngClass]="{'soft-copy-letter':ndaLetterData.documentType}">
+                        <div class="letter-page-sub-content">
+                            <div class="pt-2">
+                                <ol start="2" class="mb-0">
+                                    <li class="mb-3">
+                                        <b>Definition of Developments:</b> “Development(s)” shall mean and include all
+                                        inventions, improvements, discoveries, methods, developments, software, and
+                                        works of authorship, whether patentable or not, any new or useful research,
+                                        experiment, new contribution, finding, creativity (including without limitation
+                                        any designs, drawings, plans, technology, computer programs, software, test,
+                                        concept, idea, mechanism, equipment, machinery, process, formula, or technique,
+                                        algorithm), whether or not granted protection under intellectual property laws,
+                                        which are created, made, conceived or reduced to practice by the Receiving Party
+                                        or under the Receiving Party’s direction or jointly with others during the
+                                        Engagement, whether or not during normal working hours or on the premises of the
+                                        Company.
+                                    </li>
+                                    <li class="mb-0">
+                                        <b class="mb-0">Non-disclosure and Non-Use of Confidential Information:</b>
+
+                                    </li>
+
+                                    <ol class="mb-3" type="a">
+                                        <li class="mb-1">The Receiving Party acknowledges that the Confidential
+                                            Information
+                                            is the exclusive property of the Company or its client and the Receiving
+                                            Party
+                                            shall make use of the Confidential Information only for the purpose of
+                                            carrying
+                                            out obligations of the Engagement and for no other purpose. During the
+                                            Engagement and thereafter, the Receiving Party unconditionally and
+                                            unequivocally
+                                            agrees and undertakes for self to take onerous responsibility not to
+                                            disclose
+                                            any of the Confidential Information or any related information obtained from
+                                            discussions or meetings or tale-conference or video-conference or any other
+                                            source to any third parties and shall restrict disclosure of Confidential
+                                            Information only to the Company’s concerned officers, employees, attorneys,
+                                            subcontractors or professional advisors who need to have access to the
+                                            Confidential Information and each ofwhom shall be informed by Receiving
+                                            Party of
+                                            the confidential nature of Confidential Information and agree to observe the
+                                            same terms and conditions </li>
+
+
+                                        <li class="mb-1">set forth herein as if specifically named a party hereto. </li>
+
+                                        <li class="mb-1">The Receiving Party shall not make copies of Confidential
+                                            Information unless the same are reasonably necessary. </li>
+
+                                        <li class="mb-1">The Receiving Party shall immediately notify the Company in the
+                                            event of any unauthorized use or disclosure of the Confidential Information
+                                            and
+                                            reasonably support the Company in taking necessary remedial action. </li>
+
+                                        <li class="mb-1">The Receiving Party shall protect the Confidential Information
+                                            by
+                                            using the same degree of care to prevent unauthorized use, dissemination, or
+                                            publication of the Confidential Information as the Receiving Party would use
+                                            to
+                                            protect his/her own confidential information of a like nature, but no less
+                                            than
+                                            a reasonable degree of care. </li>
+
+                                        <li class="mb-1">The Receiving Party shall not use, modify, reverse engineer,
+                                            decompile, create other works from or disassemble anything in the Company’s
+                                            Confidential Information unless permitted in writing by the Company. </li>
+
+                                        <li class="mb-1">The Receiving Party agrees and undertakes to not make copies or
+                                            duplicates of the Confidential Information, without prior written consent
+                                            for
+                                            the same from the Company. </li>
+
+                                        <li class="mb-1">The Receiving Party further agrees to notify the Company in
+                                            writing of any
+                                            actual or suspected misuse, misappropriation or unauthorized disclosure of
+                                            the
+                                            Company’s Confidential Information, which may come to the Receiving Party’s
+                                            attention. </li>
+                                        <li class="mb-1">
+                                            The Receiving Party shall not interact with the press or any third party
+                                            with
+                                            respect to the Company’s business, customers, competitors or anything
+                                            related to
+                                            the Company without the Company’s prior written approval. The Receiving
+                                            Party
+                                            shall not publicize or disclose the presence of this Agreement nor use in
+                                            any
+                                            manner the name or logos of the Company without the prior written permission
+                                            of
+                                            the Company.
+                                        </li>
+
+                                    </ol>
+
+                                </ol>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--page-3-->
+                    <div class="letter-page-content my-4" id="pdfContent3"
+                        [ngClass]="{'soft-copy-letter':ndaLetterData.documentType}">
+                        <div class="letter-page-sub-content">
+                            <div class="pt-2">
+
+
+                                <ol type="a" start="10">
+                                    <li class="mb-1">
+                                        During the tenure of the Engagement, the Receiving Party shall not bring any
+                                        media storage devices such as external hard drives, USB drives, external
+                                        hard
+                                        discs, or any other devices that can store data, to the Company office
+                                        premises
+                                        without prior written permission of the Company.
+                                    </li>
+                                    <li class="mb-1">
+                                        The Receiving Party shall not, during his/her Engagement with the Company or
+                                        otherwise, use or disclose to the Company any confidential, trade secret, or
+                                        other proprietary information or material of any previous employer or other
+                                        person and will not bring into the Company's premises any unpublished
+                                        document
+                                        or any other property belonging to any former employer without the written
+                                        consent of that former employer.
+                                    </li>
+                                    <li class="mb-1">
+                                        The Receiving Party hereby undertakes not to, under any circumstances
+                                        disclose,
+                                        destroy, delete, alter, steal, or cause to disclose, destroy, delete, alter,
+                                        steal the Confidential Information.
+                                    </li>
+                                </ol>
+                                <p class="mb-3"> <b>The Company’s Property</b>: All works, programs, papers, records,
+                                    data,
+                                    notes,
+                                    drawings, files, documents, samples, devices, opinions, research material,
+                                    checklists, dockets, processes and other materials, including copies in whatever
+                                    form and translations into any other language and intellectual property,
+                                    relating to the business of the Company that the Receiving Party possesses or
+                                    creates during the term of the engagement with the Company, whether or not
+                                    confidential, are and shall remain the sole and exclusive property of the
+                                    Company. </p>
+                                <ol start="4">
+                                    <li class="mb-0">
+                                        <b class="mb-0">Disclosure and Assignment of Developments : </b>
+
+                                    </li>
+
+                                    <ol class="mb-3" type="a">
+                                        <li class="mb-1">The Receiving Party agrees to promptly disclose to the Company
+                                            in writing, all the Developments which are conceived, made, discovered,
+                                            written or created whether alone or jointly with someone else during the
+                                            Engagement. </li>
+                                        <li class="mb-1">
+                                            The Receiving Party understands and acknowledges that no license is granted
+                                            to the Receiving Party in and to the Confidential Information and/or the
+                                            Developments, nor is any intellectual property right implied to be granted
+                                            by this Agreement. The Receiving Party understands and acknowledges that the
+                                            Company shall be the exclusive owner of all rights pertaining to the
+                                            Developments created or developed by him/her. The Receiving Party agrees to
+                                            assign and does hereby assign to the Company all his/her right, title and
+                                            interest in and to all Developments and all related patents, patent
+                                            applications, copyrights and copyright applications. The Receiving Party
+                                            understands and acknowledges that all Developments shall be the property of
+                                            the Company and, to the greatest extent permitted by law, shall be ‘works
+                                            made for hire’.
+                                        </li>
+                                        <li class="mb-1">
+                                            The Receiving Party shall give the Company all assistance it reasonably
+                                            requires to perfect, protect, and use its rights to the Developments. In
+                                            particular, the Receiving Party shall sign all documents, do all things, and
+                                            supply all information that the Company considers necessary or desirable to
+                                            transfer or record the transfer of entire rights, title and interest in the
+                                            Developments; and to enable the Company to obtain patent, copyright, or
+                                            other legal protection to the Developments.
+                                        </li>
+                                        <li class="mb-1">
+                                            Receiving Party acknowledges and agrees that the assignment set forth herein
+                                            is worldwide and perpetual, and that he/she will have no rights to reversion
+                                            of the Developments, even if the Company does not exploit them.
+                                        </li>
+                                        <li class="mb-1">
+                                            Receiving Party hereby permanently waives all paternity, integrity, special,
+                                            moral or similar rights, if any, that vest or may vest in Receiving Party as
+                                            of the date in any Developments. Receiving Party further acknowledges and
+                                            agrees that through the complete and permanent waiver contained herein
+                                            neither do Receiving Party's legal heirs retain any paternity, integrity,
+                                            moral, special or similar rights in and to any Developments. Receiving Party
+                                            hereby agrees, at the request and expense of the Company, to provide any
+                                            assistance as may be necessary to confirm Receiving Party's waiver of any
+                                            paternity, integrity, special, moral or similar rights associated with the
+                                            Developments that may vest in the Receiving Party.
+                                        </li>
+
+                                    </ol>
+                                </ol>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--page-4-->
+                    <div class="letter-page-content my-4" id="pdfContent4"
+                        [ngClass]="{'soft-copy-letter':ndaLetterData.documentType}">
+                        <div class="letter-page-sub-content">
+                            <div class="pt-2">
+
+
+                                <ol type="a" start="6">
+                                    <li class="mb-1">
+                                        Inventions, if any, patented or unpatented, made by the Receiving Party prior to
+                                        the commencement of his/her Engagement with the Company are excluded from the
+                                        scope of this Agreement. To preclude any possible uncertainty, the Receiving
+                                        Party sets forth on Exhibit A (Previous Inventions) attached hereto a complete
+                                        list of all inventions that the Receiving Party has, alone or jointly with
+                                        others, conceived, developed or reduced to practice or caused to be conceived,
+                                        developed or reduced to practice prior to the commencement of his/her
+                                        Engagement, that the Receiving Party considers to be his/her property or the
+                                        property of third parties and that the Receiving Party wishes to have excluded
+                                        from the scope of this Agreement (collectively referred to as "Prior
+                                        Inventions"). If, the Receiving Party incorporates a Prior Invention into the
+                                        Company product, process or machine, the Company is hereby granted and shall
+                                        have a nonexclusive, royalty-free, irrevocable, perpetual, worldwide license
+                                        (with rights to sub license through multiple tiers of sub-licensees) to make,
+                                        have made, modify, use and sell such Prior Invention. Notwithstanding the
+                                        foregoing, the Receiving Party agrees that the Receiving Party will not
+                                        incorporate, or permit to be incorporated, Prior Inventions in any the Company’s
+                                        products without the Company's prior written consent.
+                                    </li>
+                                    <li class="mb-1">
+                                        In the event the Company is unable for any reason, after reasonable effort, to
+                                        secure the Receiving Party’s signature on any document needed in connection with
+                                        the actions specified in the preceding paragraphs, the Receiving Party hereby
+                                        irrevocably designate and appoint the Company and its duly authorized officers
+                                        and agents as the Receiving Party’s agent and attorney in fact, which
+                                        appointment is coupled with an interest, to act for and in the Receiving Party’s
+                                        behalf to execute, verify and file any such documents and to do all other
+                                        lawfully permitted acts to further the purposes of the preceding paragraphs with
+                                        the same legal force and effect as if executed by the Receiving Party.
+                                    </li>
+                                    <li class="mb-1">
+                                        The Receiving Party further represents that he/she has no other employment(s),
+                                        consultancies or undertakings which would restrict and impair his/her
+                                        performance of this Agreement.
+                                    </li>
+                                </ol>
+
+                                <ol start="5">
+                                    <li class="mb-3">
+                                        <p class="mb-0"> <b>Return : </b></p>
+                                        In the event of termination of Engagement, or upon request by the Company, the
+                                        Receiving Party agrees to promptly return or destroy, at the Company’s
+                                        discretion, all Confidential Information provided by the Company, and any
+                                        computer files and other materials incorporating any such Confidential
+                                        Information and all copies thereof.
+                                    </li>
+
+                                    <li class="mb-3">
+                                        <p class="mb-0"> <b>Indemnity : </b></p>
+                                        The Receiving Party agrees to indemnify and save harmless the Company and its
+                                        employees, successors and assigns against all losses, damages (including
+                                        reasonable attorney fees) incurred by the Company and its employees, successors
+                                        and assigns due to any breach of the terms of this Agreement.
+                                    </li>
+
+                                    <li class="mb-3">
+                                        <p class="mb-0"> <b>Survival : </b></p>
+                                        The Receiving Party agrees to indemnify and save harmless the Company and its
+                                        employees, successors and assigns against all losses, damages (including
+                                        reasonable attorney fees) incurred by the Company and its employees, successors
+                                        and assigns due to any breach of the terms of this Agreement.
+                                    </li>
+                                    <li class="mb-0">
+                                        <p class="mb-0"> <b>Warranty : </b></p>
+                                        The Receiving Party understands and acknowledges that the Company is not
+                                        obligated to supply any Confidential Information under this Agreement. Further,
+                                        no representation or warranty is made or given about the accuracy or
+                                        completeness of any Confidential Information or any other information supplied
+                                        pursuant to this Agreement.
+                                    </li>
+
+                                </ol>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--page-5-->
+                    <div class="letter-page-content my-4" id="pdfContent5"
+                        [ngClass]="{'soft-copy-letter':ndaLetterData.documentType}">
+                        <div class="letter-page-sub-content">
+                            <div class="pt-2">
+                                <ol start="9">
+                                    <li class="mb-3">
+                                        <p class="mb-0"> <b>Remedies: </b></p>
+                                        The Receiving Party agrees that any violation of this Agreement will cause
+                                        irreparable injury to the Company, the Company will be entitled to seek
+                                        equitable relief in court, including but not limited to temporary restraining
+                                        orders, preliminary injunctions and permanent injunctions without the necessity
+                                        of posting a bond or other security and in addition to and without prejudice to
+                                        any other right and remedies that the Company may have under the applicable law
+                                        for a breach of this Agreement.
+                                    </li>
+
+                                    <li class="mb-3">
+                                        <p class="mb-0"> <b>Governing Law and Jurisdiction : </b></p>
+                                        "This Agreement shall be governed by and construed in accordance with the laws
+                                        of India and shall be subject to jurisdiction of courts at Hyderabad, Telangana"
+                                    </li>
+
+                                    <li class="mb-3">
+                                        <p class="mb-0"> <b>Miscellaneous: </b></p>
+                                        <ol type="a" class="mb-5">
+                                            <li class="mb-2">
+                                                <u>Enforcement</u>
+                                                If any provision of this Agreement shall be determined to be invalid or
+                                                unenforceable for any reason, it shall be adjusted rather than voided,
+                                                if possible, in order to achieve the intent of the parties to the extent
+                                                possible. In any event, all other provisions of this Agreement shall be
+                                                deemed valid and enforceable to the full extent possible.
+                                            </li>
+
+                                            <li class="mb-2">
+                                                <u>Waiver.</u>
+                                                The waiver by the Company of a breach of any provision of this Agreement
+                                                shall not operate or be construed as a waiver of any subsequent breach
+                                                of the same or any other provision hereof.
+                                            </li>
+                                            <li class="mb-2">
+                                                <u>Attorneys’ Fees.</u>
+                                                If either party seeks to enforce its rights under this Agreement by
+                                                legal proceedings or otherwise, the non-prevailing party shall pay all
+                                                costs and expenses of the prevailing Party.
+                                            </li>
+                                            <li class="mb-2">
+                                                <u>Entire Agreement. </u>
+                                                This Agreement contains the entire understanding between the Company and
+                                                the Receiving Party concerning the subject matter hereof and is in
+                                                addition to any and all prior and contemporaneous negotiations,
+                                                correspondence, understandings and agreements, whether oral or written,
+                                                respecting that subject matter.
+                                            </li>
+                                        </ol>
+
+
+
+                                        <div class="d-flex justify-content-between">
+                                            
+                                            <div class="d-flex justify-content-end">
+                                                <p class="me-5 pe-5"><b>Date</b> {{ ndaLetterData.issueddate | dateformat }}</p>
+                                            </div>
+                                        </div>
+                                        <div >
+                                                <p><b><u>ACCEPTANCE</u></b></p>
+                                            </div>
+
+                                        <p>I accept this offer letter and will complete all the necessary documents as
+                                            required.
+                                        </p>
+
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <b>SNAD DEVELOPERS INDIA PVT. LTD</b>
+                                                <p class="mt-4 "><span class="signature">Signature: </span><span class="letter-signature">{{ndaLetterData.authorityName}}</span> </p>
+                                                <p ><span class="signature">Name:</span> {{ndaLetterData.authorityName}}</p>
+                                                <p ><span class="signature">Date:</span>  {{ ndaLetterData.issueddate | dateformat }}</p>
+                                            </div>
+                                            <div>
+                                                <b>CONSULTANT </b>
+                                                <p class="mt-4"><span class="signature">Signature: </span> <span class="letter-signature">{{employeeFullname}}</span> </p>
+                                                <p><span class="signature">Name:</span> {{employeeFullname}} </p>
+                                                <p><span class="signature">Date:</span> {{currentDate|dateFormat}} </p>
+                                            </div>
+
+                                        </div>
+
+
+                                </ol>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
+
+               <div class="footer-btn-content d-flex justify-content-between gap-3 pt-3">
+                <div>
+                     <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
+                    Employment History
+                </button>
+                </div>
+
+                <div class="d-flex gap-3">
+
+                     @if(this.updatedndaLetterDetails.candidateStatus=='NDA Letter Accepted'){
+                    <button class="custom-btn btn-secondary px-5" (click)="downloadoffer()">Download</button>
+                    }
+                    @if(this.updatedndaLetterDetails.candidateStatus==null||this.updatedndaLetterDetails.candidateStatus==''){
+                    <button class="custom-btn accepted-btn px-5" (click)="openAccept()">Accept</button>
+                    }
+                    @if (this.updatedndaLetterDetails.candidateStatus=='NDA Letter Accepted') {
+                    <button class="custom-btn accepted-btn px-5">Accepted</button>
+                    }
+                    @if(this.updatedndaLetterDetails.candidateStatus=='NDA Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
+                    }
+                    @if(this.updatedndaLetterDetails.candidateStatus=='NDA Letter Rejected'){
+                    <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
+                    }
+                    @if(this.updatedndaLetterDetails.candidateStatus!=='NDA Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                    }
+
+                    @if (this.updatedndaLetterDetails.candidateStatus=='NDA Letter Accepted') {
+                    <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--Offer letter accept popup-->
+<ng-template #acceptpopup let-modal>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <div class="custom-main-popup-content text-center">
+            <div class="mb-5">
+                <img src="images\conformation.png" alt="Confirmation icon" class="confirmation-icon mb-3">
+                <p class="confirmation-text">Are you sure you want to accept NDA letter?</p>
+            </div>
+            <div class="d-flex gap-5 w-100">
+                <button class="custom-btn btn-secondary w-50" (click)="closeModal()">Close</button>
+                <button class="custom-btn btn-primary w-50" (click)="acceptoffer()" [disabled]="loadingcircle">
+                    @if(!loadingcircle){ Yes }
+                    @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="loadingcircle" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div> Submitting</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!--Reject popup-->
+<ng-template #rejectpopup let-modal>
+    <div class="custom-main-popup-container p-5" ngbAutofocus>
+        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="submitRejectReason()">
+            <div class="custom-main-popup-content">
+                <div class="text-center mb-3">
+                    <img src="images\reject.png" alt="reject Icon" class="confirmation-icon mb-3">
+                    <p class="confirmation-text">Are you sure you want to reject NDA letter?</p>
+                </div>
+                <div class="mb-3">
+                    <label for="documentType" class="form-label custom-label mb-2">Enter reason<span
+                            class="error-msg">*</span></label>
+                    <textarea type="note" name="rejectReason" class="form-control custom-input"
+                        formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
+                        id="rejectReason" autocomplete="off" required></textarea>
+                    <div class="error-msg py-1"
+                        *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is
+                            required</ng-container>
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not
+                            allowed</ng-container>
+
+                    </div>
+                    <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['required']"> {{'Reject Reason is required'| translate}}</ng-container>
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
+                    </div> -->
+                    <div class="count-text text-end w-100 py-1"><span>{{
+                            rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
+                </div>
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="closeModal()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary px-4"
+                        [disabled]="rejectForm.invalid">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>

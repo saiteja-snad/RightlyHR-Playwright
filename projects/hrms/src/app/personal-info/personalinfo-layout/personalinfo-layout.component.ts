@@ -110,7 +110,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
       senderEmail: loggedInUser.workEmail,
       status: this.postIsApplicable,
+      empType: ''
     };
+    if (this.emppersonalinfo.empType === 'Contract') {
+      pdata.empType = 'Contract';
+    }
     if (loggedInUser.middleName) {
       pdata.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
     } else {
@@ -519,38 +523,47 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
     if (routestatus.empType === 'Probation') {
-      this.router.navigate(['/employee-management/probation-employees']);
+      this.router.navigate(['/employee-management/probation/employees']);
     } else {
       switch (routestatus.empstatus) {
         case 'Prospective':
-          this.router.navigate(['/employee-management/prospective-employees'])
+          this.router.navigate(['/employee-management/prospective/employees'])
+          break;
+        case 'Prospective Contract':
+          this.router.navigate(['/employee-management/prospective/contract'])
+          break;
+        case 'Active Contract':
+          this.router.navigate(['/employee-management/active/contract'])
           break;
         case 'Active':
-          this.router.navigate(['/employee-management/active-employees'])
+          this.router.navigate(['/employee-management/active/employees'])
           break;
         case 'Probation':
           this.router.navigate(['/employee-management/probation-employees'])
           break;
         case 'Inactive':
-          this.router.navigate(['/employee-management/inactive-employees'])
+          this.router.navigate(['/employee-management/inactive/employees'])
+          break;
+        case 'Inactive Contract':
+          this.router.navigate(['/employee-management/inactive/contract'])
           break;
         case 'Trainee Prospective':
-          this.router.navigate(['/employee-management/prospective-interns'])
+          this.router.navigate(['/employee-management/prospective/interns'])
           break;
         case 'Trainee Active':
-          this.router.navigate(['/employee-management/active-interns'])
+          this.router.navigate(['/employee-management/active/interns'])
           break;
         case 'Trainee Inactive':
-          this.router.navigate(['/employee-management/inactive-interns'])
+          this.router.navigate(['/employee-management/inactive/interns'])
           break;
         case 'External Prospective':
-          this.router.navigate(['/admin/externalprospective-employee'])
+          this.router.navigate(['/admin/externalprospective/employee'])
           break;
         case 'External Active':
-          this.router.navigate(['/admin/externalactive-employee'])
+          this.router.navigate(['/admin/externalactive/employee'])
           break;
         case 'External Inactive':
-          this.router.navigate(['/admin/externalinactive-employee'])
+          this.router.navigate(['/admin/externalinactive/employee'])
           break;
         default:
           this.router.navigate(['/admin'])
@@ -576,6 +589,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           case 'Prospective':
             this.headerName = "Prospective Employee";
             break;
+          case 'Prospective Contract':
+            this.headerName = "Prospective Contractor";
+            break;
+          case 'Active Contract':
+            this.headerName = "Active Contractor";
+            break;
           case 'Active':
             this.headerName = "Active Employee";
             break;
@@ -584,6 +603,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             break;
           case 'Inactive':
             this.headerName = "Inactive Employee";
+            break;
+          case 'Inactive Contract':
+            this.headerName = "Inactive Contractor";
             break;
           case 'Trainee Prospective':
             this.headerName = "Prospective Trainee";
@@ -639,6 +661,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'separation-details': 'Separation Request',
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
+    'contactor-info': "Contractor Info",
     // Documents
     'general-documents': 'Documents',
     'letter-acknowledge-documents': 'Letter Acknowledgement',
@@ -722,6 +745,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/trainee-onboarding-requests': MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
       '/personalinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
     };
@@ -731,36 +755,131 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   resetPassword() {
     this.spinnerLoader = true;
-    this.subscription = this.http.postdata(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null).subscribe({
-      next: (data: any) => {
-        this.spinnerLoader = false;
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email')
-      },
-      error: (err: any) => {
-        this.spinnerLoader = false;
-        console.log(err);
-        this.modalService.dismissAll();
-        this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
-      },
-    });
+    this.subscription = this.http.postData(`Employeedata/internal-reset-password/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' })
+      .subscribe({
+        next: (res: any) => {
+          this.spinnerLoader = false;
+          this.modalService.dismissAll();
+
+          const contentType = res.body.type;
+
+          if (contentType.includes('application/json')) {
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result as string);
+                const errorMsg = json.message || 'Something went wrong while resetting password';
+                this.conformationPopup.openErrorModal(errorMsg);
+              } catch {
+                this.conformationPopup.openErrorModal('Invalid response from server');
+              }
+            };
+            reader.readAsText(res.body);
+          } else {
+            const fileURL = window.URL.createObjectURL(res.body);
+            const a = document.createElement('a');
+            a.href = fileURL;
+            a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId
+              }.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(fileURL);
+
+            this.conformationPopup.openSuccessModal(
+              'Login credentials generated successfully and shared with the employee via email'
+            );
+            this.getEmployeeId();
+          }
+        },
+        error: (err: any) => {
+          this.spinnerLoader = false;
+          this.modalService.dismissAll();
+
+          if (err.error instanceof Blob) {
+            // Backend might have returned JSON error wrapped in Blob
+            const reader = new FileReader();
+            reader.onload = () => {
+              try {
+                const json = JSON.parse(reader.result as string);
+                const errorMsg = json.message || 'Something went wrong';
+                this.conformationPopup.openErrorModal(errorMsg);
+              } catch {
+                this.conformationPopup.openErrorModal('Unexpected error response');
+              }
+            };
+            reader.readAsText(err.error);
+          } else {
+            // Regular JSON error
+            const errorMsg = err.error?.message || 'Something went wrong';
+            this.conformationPopup.openErrorModal(errorMsg);
+          }
+        }
+      });
   }
 
-  generateCredentials(){
+  generateCredentials() {
     this.spinnerLoader = true;
-    this.subscription = this.http.postdata(`Employeedata/generate-credentials/${this.empinfo.employeeId}`,null).subscribe({
-      next: (data: any) => {
+    this.subscription = this.http.postData(`Employeedata/generate-credentials/${this.empinfo.employeeId}`, null, { responseType: 'blob', observe: 'response' }).subscribe({
+      next: (res: any) => {
         this.spinnerLoader = false;
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Login credentials generated successfully and shared with the employee via email');
-        this.getEmployeeId();
+
+        const contentType = res.body.type;
+
+        if (contentType.includes('application/json')) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const json = JSON.parse(reader.result as string);
+              const errorMsg = json.message || 'Something went wrong while resetting password';
+              this.conformationPopup.openErrorModal(errorMsg);
+            } catch {
+              this.conformationPopup.openErrorModal('Invalid response from server');
+            }
+          };
+          reader.readAsText(res.body);
+        } else {
+          const fileURL = window.URL.createObjectURL(res.body);
+          const a = document.createElement('a');
+          a.href = fileURL;
+          a.download = `EmployeeCredentials_${this.empinfo.fusionEmpId ? this.empinfo.fusionEmpId : this.empinfo.employeeId
+            }.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(fileURL);
+
+          this.conformationPopup.openSuccessModal(
+            'Login credentials generated successfully and shared with the employee via email'
+          );
+          this.getEmployeeId();
+        }
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-        console.log(err);
         this.modalService.dismissAll();
-        this.conformationPopup.openErrorModal(err.error.message || 'Something went wrong');
-      },
+
+        if (err.error instanceof Blob) {
+          // Backend might have returned JSON error wrapped in Blob
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const json = JSON.parse(reader.result as string);
+              const errorMsg = json.message || 'Something went wrong';
+              this.conformationPopup.openErrorModal(errorMsg);
+            } catch {
+              this.conformationPopup.openErrorModal('Unexpected error response');
+            }
+          };
+          reader.readAsText(err.error);
+        } else {
+          // Regular JSON error
+          const errorMsg = err.error?.message || 'Something went wrong';
+          this.conformationPopup.openErrorModal(errorMsg);
+        }
+      }
+
     });
   }
 

@@ -12,13 +12,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SettingsLoaderComponent } from "../../../../shared/settings-loader/settings-loader.component";
 import { SettingsUpdateIconComponent } from "../../../../icons/settings-update-icon/settings-update-icon.component";
 import { SettingsDeleteIconComponent } from "../../../../icons/settings-delete-icon/settings-delete-icon.component";
-
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-client-document-types',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent, SettingsUpdateIconComponent, SettingsDeleteIconComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsLoaderComponent, 
+    SettingsUpdateIconComponent, SettingsDeleteIconComponent, NoDataFoundComponent],
   templateUrl: './client-document-types.component.html',
   styleUrl: './client-document-types.component.scss'
 })
+
 export class ClientDocumentTypesComponent {
   subscription!: Subscription;
   addForm!: FormGroup;
@@ -27,13 +29,8 @@ export class ClientDocumentTypesComponent {
   loading = false;
   selectedEAV!: IEAV;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    private http: HttpService,
-    private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService,
-    public rbac: RbacService) { }
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
+    private conformationPopup: OpenModalService, public formValidations: FormValidationsService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.initialiseForm();
@@ -42,10 +39,12 @@ export class ClientDocumentTypesComponent {
 
   initialiseForm() {
     this.addForm = this.fb.group({
-      documentType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      documentType: [null, [Validators.required, this.formValidations.minCharactersValidator(2),
+      this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      documentType: [null, [Validators.required, this.formValidations.minCharactersValidator(2), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
+      documentType: [null, [Validators.required, this.formValidations.minCharactersValidator(2),
+      this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
   }
 
@@ -94,7 +93,7 @@ export class ClientDocumentTypesComponent {
   }
 
   openupdate(item: IEAV, content: any): void {
-      this.addForm.reset()
+    this.addForm.reset();
     this.selectedEAV = item;
     this.updateForm?.patchValue({
       documentType: this.selectedEAV.value
@@ -131,7 +130,7 @@ export class ClientDocumentTypesComponent {
   }
 
   opendelete(project: IEAV, content: any): void {
-      this.addForm.reset()
+    this.addForm.reset();
     this.selectedEAV = project;
     this.openModal(content);
   }

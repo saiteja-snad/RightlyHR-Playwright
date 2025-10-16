@@ -50,8 +50,10 @@ export class AddExperienceDetailtsComponent {
   required=true;
   startDatevalidate:any;
   submissionInProgress = false;
+  today = new Date().toISOString().split('T')[0];
 
-  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { }
+  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, 
+    private getData:DataService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -62,14 +64,14 @@ export class AddExperienceDetailtsComponent {
   initializeExperienceForm() {
     this.experienceForm = this.fb.group({
       isPresent: [false],
-      companyName: [null, [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      companyName: [null, [Validators.required, Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: [null, Validators.required],
       toDate: [null],
-      jobTitle: [null, [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
-      description: [null,[Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+      jobTitle: [null, [Validators.required, Validators.maxLength(100)]],
+      description: [null],
       previousContactName: [null],
-      previousContactNumber: [null, [this.phoneNumberValidator()]],
+      previousContactNumber: [null],
       previousContactEmail: [null, [Validators.email]],
       attachment: [null, Validators.required]
     }, { validators: [this.DateValidator()] });
@@ -106,6 +108,29 @@ DateValidator(): ValidatorFn {
     return null; // valid
   };
 }
+
+  restrictInputaccteponlynumber(event: KeyboardEvent) {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+
+    // Allow navigation keys and backspace/delete
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
+    }
+
+    // Prevent the first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    // Allow only numeric characters
+    const isNumeric = /^[0-9]$/.test(key);
+    if (!isNumeric) {
+      event.preventDefault();
+    }
+  }
+  
   checkboxCondition(event: any) {
     if (event.target.checked) {
       this.required=false;
@@ -187,14 +212,15 @@ DateValidator(): ValidatorFn {
   this.submissionInProgress = true;
 
   const formData = this.experienceForm.value;
-  const payload = {
+
+  let payload = {
     ...formData,
     empId: parseInt(this.prosempdata.employeeId),
     isDeleted: false,
     attachment: '',
     countryCode: this.selectedCountryCode,
   };
-
+  payload = this.cleanPayload(payload);
   const submitData = (finalPayload: any) => {
     this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
       next: (data: any) => {
@@ -236,6 +262,31 @@ DateValidator(): ValidatorFn {
   }
 }
 
+private cleanPayload(payload: any): any {
+  const cleaned: any = {};
+
+  Object.keys(payload).forEach(key => {
+    let value = payload[key];
+
+    // Convert empty strings to null
+    if (value === '' || value === undefined) {
+      cleaned[key] = null;
+      return;
+    }
+
+    // Convert contact number to a number if it's not null/empty
+    if (key === 'previousContactNumber' && value !== null) {
+      const parsedValue = Number(value);
+      cleaned[key] = isNaN(parsedValue) ? null : parsedValue;
+      return;
+    }
+
+    // Keep other values as they are
+    cleaned[key] = value;
+  });
+
+  return cleaned;
+}
 
   // mobile number functions
   onCountryChange(country: any) {

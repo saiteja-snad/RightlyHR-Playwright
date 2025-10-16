@@ -3,21 +3,24 @@
         @if(!dataload){
         @if(timesheetData.length > 0){
         <p-accordion>
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 ms-4">
                 <div class="d-flex align-items-center gap-2">
                     <input #globalCheckbox type="checkbox" [checked]="areAllDaysSelected()"
-                        [indeterminate]="isGlobalIndeterminate()" (change)="toggleSelectAllDays(globalCheckbox.checked)" />
+                        [indeterminate]="isGlobalIndeterminate()"
+                        (change)="toggleSelectAllDays(globalCheckbox.checked)" />
                     <label class="form-label custom-label m-0"><b>Select All</b></label>
                 </div>
                 <div *ngIf="(selectedEntries?.length ?? 0) > 0 && !showhideaction">
-                    <button class="custom-btn btn-primary-approve me-2" (click)="bulkApprove(approverPopup)">Approve</button>
+                    <button class="custom-btn btn-primary-approve me-2"
+                        (click)="bulkApprove(approverPopup)">Approve</button>
                     <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
                 </div>
             </div>
             <p-accordion-panel *ngFor="let day of timesheetData; let i = index" [value]="i">
                 <p-accordion-header>
                     <div class="d-flex align-items-center gap-3">
-                        <input #headerCheckbox type="checkbox" [checked]="areAllSelected(i)" [indeterminate]="isIndeterminate(i)"
+                        <input #headerCheckbox type="checkbox" [checked]="areAllSelected(i)"
+                            [indeterminate]="isIndeterminate(i)"
                             (change)="toggleSelectAll(i, headerCheckbox.checked)" />
                         <span>{{ day.date | date:'EEEE dd, MMMM' }}</span>
                     </div>
@@ -63,7 +66,8 @@
                                     <td>
                                         <div class="d-flex justify-content-center gap-3">
                                             <a (click)="openModal(approverPopup, entry, 'Processed')">
-                                                <img src="/icons/check-approve-icon.png" class="action-img" alt="Approve" />
+                                                <img src="/icons/check-approve-icon.png" class="action-img"
+                                                    alt="Approve" />
                                             </a>
                                             <a (click)="openModal(rejectPopup, entry, 'Rejected')">
                                                 <img src="/icons/cancel-circle.png" class="action-img" alt="Reject" />
@@ -82,29 +86,44 @@
         <app-no-data-found />
         }
         }@else{
-        <app-data-loader-content />
+        <p-table [value]="[1,2,3,4,5,6,7]" [tableStyle]="{'min-width':'50rem'}">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngFor="let h of [1]">
+                        <p-skeleton width="100%"  height="1rem" styleClass="mb-2" ></p-skeleton>
+                    </th>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td *ngFor="let col of [1]">
+                        <p-skeleton width="100%" styleClass="mb-2"  height="1.2rem"></p-skeleton>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
         }
     </div>
-    
-    @if(collectionSize >= 0){
-    <div class="pagination-content">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-            <div class="d-flex align-items-center gap-3 p-2">
-                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                    (ngModelChange)="onPageSizeChange($event)">
-                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
-                </select>
-                <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-                    of {{collectionSize }}
-                </span>
-            </div>
-            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)"></p-paginator>
-        </div>
-    </div>
-    }
 </div>
-
+@if(collectionSize > 0){
+<div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                (ngModelChange)="onPageSizeChange($event)">
+                <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+            </select>
+            <span class="pagination-label text-nowrap">
+                Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+                of {{collectionSize }}
+            </span>
+        </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+            (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+</div>
+}
 <!-- Approverpopup -->
 <ng-template #approverPopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
@@ -126,8 +145,10 @@
                         (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ timeSheetApproveForm.get('comments')?.value?.length || 0 }}/250
                     </div>
-                    <div class="error-msg" *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
-                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
+                    <div class="error-msg"
+                        *ngIf="timeSheetApproveForm.get('comments')?.touched && timeSheetApproveForm.get('comments')?.invalid">
+                        <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['required']">Approver Comments is
+                            required</div>
                         <div *ngIf="timeSheetApproveForm.get('comments')?.errors?.['maxlength']">
                             Approver Comments exceed 250 characters
                         </div>
@@ -135,12 +156,15 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">
+                <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]="spinnerLoader">
                     {{'Cancel' | translate }}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="timeSheetApproveForm.invalid || spinnerLoader">
                     <ng-container *ngIf="spinnerLoader; else approveText">
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
                             <span>{{ 'Loading...' }}</span>
                         </div>
                     </ng-container>

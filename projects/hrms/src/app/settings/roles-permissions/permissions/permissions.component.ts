@@ -206,6 +206,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Separation Request',
       'Employee Info Change RM Button',
       'Employee Info Change TM Button',
+      'Request for Contract Extension Button',
+      'Employee Info Contract Conversion Request',
     ];
     return (
       disabledOptions.includes(field) &&
@@ -676,10 +678,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Claims and Expenses Tab',
     'Desk Requests Tab',
     'Probation Details Tab',
+    'Contractor Details Tab',
+    'Contract-Conversion Tab',
   ];
   pendingApprovalTimeOffSubTabs = ['For You (Time Off)', 'For Role (Time Off)'];
   pendingApprovalWFHSubTabs = ['For You (WFH)', 'For Role (WFH)'];
   pendingApprovalRemoteLoginSubTabs = ['For You (Remote Login)', 'For Role (Remote Login)'];
+  pendingApprovalContractSubTabs = ['For You (Contractors)', 'For Role (Contractors)'];
+  pendingApprovalContractConversionSubTabs = ['For You (Contract-Conversion)', 'For Role (Contract-Conversion)'];
   pendingApprovalCompOffSubTabs = ['For You (Comp Off)', 'For Role (Comp Off)'];
   pendingApprovalPermissionSubTabs = [
     'For You (Permission)',
@@ -894,6 +900,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Asset Details',
     'Employee Info Separation Request',
     'No Due Form',
+    'Employee Info Contract Conversion Request',
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',
@@ -906,6 +913,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Onboarding Request Details',
     'No Due Form',
     'Employee Info Separation Request',
+    'Employee Info Contract Conversion Request',
   ];
   employeeInfoJobModuleCreateDeleteDisabledFields = [
     'Employee Info Onboarding Details',
@@ -924,6 +932,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Raise No Due',
     'Employee Recall',
     'Employee Early relieving',
+  ];
+    employeeContractConversionFields = [
+    'Employee Info Contract Conversion Request'
   ];
   employeeNoDueClearanceFields = [
     'Employee Submission Of No Due Clearance',
@@ -947,6 +958,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Dashboard Active Invite New User',
     'Invite New User',
     'Dashboard Trainee Active Invite New User',
+    'Dashboard Contract Employees Card',
+    'Dashboard Active Contract employees Card',
+    'Add Contract Employee',
+    'Dashboard Active Contract Invite New User',
   ];
   activeLettersFields = [
     'Address Proof Letter',
@@ -973,9 +988,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   documentsHistoryFields = [
     'Documents History Offer Letter',
+    'Documents History Contract Offer Letter',
     'Documents History Appointment Letter',
     'Documents History Trainee Offer Letter',
     'Documents History Trainee Appointment Letter',
+    'Documents History Non-Disclosure Agreement Letter',
+
   ];
   dashboardGenerateDocumentsFields = [
     'Dashboard Generate Documents Offer Letter',
@@ -1096,7 +1114,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Project Document Type',
     'Client Document Type',
     'Letter Configurations',
-    'Project Management Authority'
+    'Project Management Authority',
+    'Letter Frequency Configurations'
   ];
 
   // Generic toggle function for checkboxes
@@ -1596,6 +1615,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           'Employee Info Onboarding Request Details',
           'No Due Form',
           'Employee Info Separation Request',
+          'Employee Info Contract Conversion Request'
         ].includes(per.fields)
       );
     }
@@ -1616,6 +1636,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           'Employee Info Probation Details',
           'Employee Info Onboarding Request Details',
           'Employee Info Job Details',
+          'Employee Info Contract Conversion Request',
         ].includes(per.fields)
       );
     }
@@ -1635,6 +1656,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           'Employee Info No Due Clearance Details',
           'Employee Info Probation Details',
           'Employee Info Onboarding Request Details',
+          'Employee Info Contract Conversion Request',
         ].includes(per.fields)
       );
     }
@@ -1654,6 +1676,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           'Employee Info No Due Clearance Details',
           'Employee Info Probation Details',
           'Employee Info Onboarding Request Details',
+          'Employee Info Contract Conversion Request',
           'Employee Info Job Details',
         ].includes(per.fields)
       );

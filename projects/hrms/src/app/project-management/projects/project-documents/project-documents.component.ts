@@ -324,7 +324,7 @@ export class ProjectDocumentsComponent implements OnInit {
       next: (res) => {
         this.getDocumentDetails(projectId);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Document Archived successfully');
+        this.conformationPopup.openSuccessModal('Document archived successfully');
       },
       error: (err) => {
         console.error('Error updating document:', err);

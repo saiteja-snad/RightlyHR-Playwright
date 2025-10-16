@@ -9,7 +9,7 @@
             </div>
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
-                    <p-datepicker [(ngModel)]="date" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+                    <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
                         [placeholder]="displayLabel"  
                         (onSelect)="onDateSelect($event)">
                     </p-datepicker>
@@ -36,6 +36,7 @@
     </div>
 
     <div class="custom-table-content">
+         @if (!loading) {
         <form [formGroup]="timesheetForm">
             <table class="w-100">
                 <thead>
@@ -303,6 +304,10 @@
                 </div>
             </div>
         </form>
+         }
+    @else {
+    <app-data-loader-content />
+    }
     </div>
 </div>
 

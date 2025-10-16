@@ -199,8 +199,9 @@ export class TimeSheetApprovalsComponent implements OnInit {
         }
       },
       error: (err) => {
+         this.collectionSize = 0;
         if (this.employeeresource != null && this.projectId != 0) {
-          this.conformationPopup.openErrorModal(err.error.message);
+          // this.conformationPopup.openErrorModal(err.error.message);
           this.collectionSize = 0;
         }
         if (this.employeeresource == null && this.projectId != 0) {

@@ -27,6 +27,7 @@ import { TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-time-sheet-view',
   imports: [
@@ -41,13 +42,15 @@ import { TranslateModule } from '@ngx-translate/core';
     AccordionModule,
     InfoIconComponent,
     ConfirmationIconComponent,
-    TranslateModule
-  ],
+    TranslateModule,
+    DataLoaderContentComponent
+],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetForm!: FormGroup;
+   loading = false;
   dayForm!: FormGroup;
   jobdetails: any;
   weekStartDate: Date | null = null;
@@ -222,6 +225,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  @ViewChild('datePicker') datePicker: any;
+
   onDateSelect(selectedDate: Date) {
     if (!selectedDate) return;
     const selected = moment(selectedDate);
@@ -245,6 +250,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     // ✅ Hit your API
     this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+    
+    // Close the datepicker
+    setTimeout(() => {
+      if (this.datePicker) {
+        this.datePicker.hideOverlay();
+      }
+    }, 100);
   }
 
   // --- Add new project row ---
@@ -403,11 +415,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //GET DATA to show in table
   getTimeSheetEntriesbyEmployeeId(employeeId: number, start: any) {
+    this.loading = true;
     this.http
       .getData(`Timesheet/week/employee/${employeeId}?weekStartDate=${start}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+           this.loading = false;
           const data = res.data;
           this.timesheetdata = res.data;
           this.totalDuration = this.secondsToHHMM(
@@ -445,6 +459,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
             // No projects at all, add blank row
             this.addProject();
           }
+        },
+        error:(err) => {
+            this.loading = false;
         },
       });
   }

@@ -92,7 +92,7 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
            {
              key: 'loggedHours',
              label: 'Logged Hours',
-             value: h + m / 60, // numeric value for chart
+             value: parseFloat(`${h}.${m}`), // hours.minutes format for chart
              loggedHHMM, // formatted display value
              loggedISO: overall.loggedISO,
            },

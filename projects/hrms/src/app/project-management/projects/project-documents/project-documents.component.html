@@ -3,9 +3,10 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
+                  <th>Document Type</th>
                 <th>File Name</th>
                 <th>Created Date</th>
-                <th>Document Type</th>
+              
                 <th>Attachment</th>
                 <th class="text-center">Download</th>
                 @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
@@ -16,9 +17,9 @@
             <tbody>
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
+                              <td>{{data.documentType}}</td>
                         <td>{{data.documentName}}</td>
                         <td>{{data.createdAt | dateformat}}</td>
-                        <td>{{data.documentType}}</td>
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
                             <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">

@@ -163,7 +163,7 @@ onRoleChange(control: AbstractControl|null) {
         // this.conformationPopup.openSuccessModal('Contacts added successfully');
       },
       error: (err) => {
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to add contacts');
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to add contacts');
         // handle error 
       }
     });

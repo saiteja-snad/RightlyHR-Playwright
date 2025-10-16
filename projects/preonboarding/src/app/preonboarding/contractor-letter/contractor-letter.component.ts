@@ -160,7 +160,8 @@ export class ContractorLetterComponent {
         this.offerLetterData.city = this.address.city
         this.offerLetterData.state = this.address.state
         this.offerLetterData.country = this.address.country
-        this.offerLetterData.zipCode = this.address.zipCode
+        this.offerLetterData.zipCode = this.address.zipCode;
+        this.offerLetterData.rolesAndResponsibilitesData = this.getofferdata.rolesAndResponsibilitesData;
         let signatureAuthorityDetails = this.authorityDetails.find(
           (c: any) => (c.employeeId == this.getofferdata.authoritySignature)
         );
@@ -181,9 +182,6 @@ export class ContractorLetterComponent {
       },
       error: (err: any) => {
         console.log(err);
-        if (err.status = 401) {
-          this.http.logOut();
-        }
       }
     })
   }

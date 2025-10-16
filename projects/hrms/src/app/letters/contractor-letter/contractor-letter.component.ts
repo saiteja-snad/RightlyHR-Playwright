@@ -6,7 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
@@ -20,9 +20,10 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IRoleAndResponsibility } from '../../settings/employee-fields/job/roles-and-responsibilities/roles-and-responsiblities';
 import { IFrequency } from '../../Interfaces/job-model';
+import { Editor } from 'primeng/editor';
 @Component({
   selector: 'app-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule,Editor],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss',
   encapsulation:ViewEncapsulation.None,
@@ -189,7 +190,7 @@ export class ContractorLetterComponent {
       pinCode: [{ value: null, disabled: true }],
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
-      rolesAndResponsibilitiesId: [null, Validators.required],
+      rolesAndResponsibilitiesId: ['', [this.editorRequiredValidator]],
       amount: [{ value: '', disabled: true }, [Validators.required, Validators.min(0), Validators.maxLength(10), Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
@@ -209,6 +210,12 @@ export class ContractorLetterComponent {
   onclickCTC(Value: any) {
     this.prospectiveEmpData.amount = Value;
   }
+
+editorRequiredValidator(control: FormControl) {
+  const value = control.value || '';
+  const text = value.replace(/<[^>]*>/g, '').trim();
+  return text ? null : { required: true };
+}
 
   //function to generate the offer letter
   async generateOfferLetter() {
@@ -843,6 +850,7 @@ export class ContractorLetterComponent {
       addressType: this.addressType.toUpperCase(),
       documentType: this.employeeForm.get('Copys')?.value,
       rolesAndResponsibilitesId: this.prospectiveEmpData.rolesAndResponsibilitiesId,
+      rolesAndResponsibilitesData: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
       letterType: this.prospectiveEmpData.empType === 'Contract'
       ? 'Contract Offer Letter'
       : 'Offer Letter',

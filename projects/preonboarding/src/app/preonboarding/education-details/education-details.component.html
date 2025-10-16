@@ -87,15 +87,13 @@
     }
 
     <div class="footer-btn-content d-flex justify-content-between gap-2 pt-3">
-        @if((this.empinfo.empstatus.toLowerCase() == 'prospective') && (this.empinfo.substatus.toLowerCase() == 'offer
-        letter generated' ||
+        @if((this.empinfo.empstatus.toLowerCase() == 'prospective') && (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||
         this.empinfo.substatus.toLowerCase() == 'offer letter released' || this.empinfo.substatus.toLowerCase() ==
         'offer letter regenerated' ||
         this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
         <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Offer Letter</button>
         }
-         @if((this.empinfo.empstatus.toLowerCase() == 'prospective contract') && (this.empinfo.substatus.toLowerCase() == 'offer
-        letter generated' ||
+        @if((this.empinfo.empstatus.toLowerCase() == 'prospective contract') && (this.empinfo.substatus.toLowerCase() == 'offer letter generated' ||
         this.empinfo.substatus.toLowerCase() == 'offer letter released' || this.empinfo.substatus.toLowerCase() ==
         'offer letter regenerated' || this.empinfo.substatus.toLowerCase() == 'nda letter released'||this.empinfo.substatus.toLowerCase() == 'nda letter accepted'||
         this.empinfo.substatus.toLowerCase() == 'offer letter accepted')){
@@ -111,7 +109,11 @@
         <button class="custom-btn btn-secondary rounded-pill px-5"
             (click)="navigatePrevioustoTranineeofferletter()">Offer Letter</button>
         }
-        <button class="custom-btn btn-primary px-5" [disabled]="disablebutton" (click)="navigateNext()">Next</button>
+        @if(this.empinfo?.empstatus?.toLowerCase() == 'prospective contract'){
+            <button type="button" class="custom-btn btn-primary py-2 px-5" (click)="navigateNext()">Skip & continue</button>
+        }@else{
+            <button class="custom-btn btn-primary px-5" [disabled]="disablebutton" (click)="navigateNext()">Next</button>
+        }
     </div>
 </div>
 </div>

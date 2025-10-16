@@ -109,7 +109,7 @@
             }
              @if (this.empDetails.experienceType == 'Experienced' && getempexpdata.length > 0 && this.empDetails.empstatus.toLowerCase() == 'prospective contract'&& (this.prosempdata.substatus.toLowerCase() == 'nda letter released'||this.prosempdata.substatus.toLowerCase() == 'nda letter regenerated'||this.prosempdata.substatus.toLowerCase() == 'nda letter accepted')) {
                 <button 
-                class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Next</button>
+                class="custom-btn btn-primary px-5" (click)="navigateNexttondaletter()">Skip & continue</button>
             }
             @else{
             <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0 "

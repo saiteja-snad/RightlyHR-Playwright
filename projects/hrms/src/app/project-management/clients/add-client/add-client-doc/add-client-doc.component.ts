@@ -31,7 +31,7 @@ export class AddClientDocComponent {
       link: '/project-management/clients/add/nda',
       icon: '/letters-icon/offer-letter-icon.png',
       subject: MODULE_INFOS.NDA_Letter,
-      permission: { feature: 'Dashboard Generate Documents Offer Letter', action: 'view' },
+      permission: { feature: 'NDA Document', action: 'view' },
       mandatory: false
     },
     {
@@ -39,7 +39,7 @@ export class AddClientDocComponent {
       link: '/project-management/clients/add/msa',
       icon: '/letters-icon/appointment-letter-icon.png',
       subject: MODULE_INFOS.MSA_Letter,
-      permission: { feature: 'Dashboard Generate Documents Appointment Letter', action: 'view' },
+      permission: { feature: 'MSA Document', action: 'view' },
       mandatory: false
     },
   ];
@@ -57,6 +57,7 @@ export class AddClientDocComponent {
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+  
   }
 
   getEAV() {

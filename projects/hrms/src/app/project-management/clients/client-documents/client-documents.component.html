@@ -20,14 +20,18 @@
                         <td>{{data.createdAt | dateformat}}</td>
                         <!-- <td>{{data.documentName}}</td> -->
                         <td>
-                            @if(data.attributes?.length > 0){
-                            <span *ngFor="let attr of data.attributes">
-                                <span class="text-capitalize"> {{attr.attributeValue === true ? 'Yes' : 'No' }}</span>
-                            </span>
-                            }
-                           @else {
-                            <span>-</span>
-                           }
+                            <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
+                                <ng-container *ngFor="let attr of data.attributes">
+                                    <span class="text-capitalize">
+
+                                        {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' : 'No'
+                                        }}
+                                    </span>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #noAttributes>
+                                <span>-</span>
+                            </ng-template>
                         </td>
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
@@ -167,8 +171,10 @@
             <p class="confirmation-text">{{'Are you sure you want to archive this Documents?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
+                translate}}</button>
         </div>
     </div>
 </ng-template>

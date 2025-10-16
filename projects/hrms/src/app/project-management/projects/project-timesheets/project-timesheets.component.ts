@@ -65,44 +65,57 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
       const utilizationSummary = data?.utilizationSummary;
       const overall = utilizationSummary?.overall;
       const utilizationArray = (() => {
-        if (!overall) return [];
-        const logged = overall.loggedHours ?? 0;
-        if (logged <= 0) return [];
-        return [{
-          key: 'loggedHours',
-          label: 'Logged Hours',
-          value: logged,
-           display: (() => {
-    const h = Math.floor(overall.loggedHours);
-    const m = Math.round((overall.loggedHours - h) * 60);
-    return `${h}h ${m}m`;
-  })(),
-          loggedHHMM: overall.loggedHHMM,         // access the ISO/HHMM for display
-          loggedISO: overall.loggedISO
-        }];
+        if (!overall || !overall.loggedHHMM) return [];
+
+        const hhmm = overall.loggedHHMM as string;
+
+        // If exactly "0:00" or "00:00", return empty array
+        if (hhmm === '0:00' || hhmm === '00:00') return [];
+
+        // Split by ":" and convert to numbers
+        const parts = hhmm.split(':').map(Number);
+
+        // If parsing fails or less than 2 parts, return empty array
+        if (parts.length < 2 || parts.some(isNaN)) return [];
+
+        const h = parts[0];
+        const m = parts[1];
+
+        // 🧠 Format display string: omit minutes if 00
+        const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
+
+        return [
+          {
+            key: 'loggedHours',
+            label: 'Logged Hours',
+            value: h + m / 60, // numeric value for chart
+            loggedHHMM, // formatted display value
+            loggedISO: overall.loggedISO,
+          },
+        ];
       })();
 
-        this.utilizationcount$.next(utilizationArray);
-        // time sheet summary charts data
-        this.timesheetSummaryChartData = {
-          datasets: [
-            {
-              data: summaryItems.map(i => i.value),
-              backgroundColor: summaryItems.map(i => i.colour),
-              borderWidth: 0
-            }
-          ]
-        };
-        // utiliztionsummery charts data
-        this.timesheetutilizeSummaryChartData = {
-          datasets: [
-            {
-              data: utilizationArray.map(i => i.value),
-              backgroundColor: ['#4CAF50', '#FF9800'],
-              borderWidth: 0
-            }
-          ]
-        };
+      this.utilizationcount$.next(utilizationArray);
+      // time sheet summary charts data
+      this.timesheetSummaryChartData = {
+        datasets: [
+          {
+            data: summaryItems.map((i) => i.value),
+            backgroundColor: summaryItems.map((i) => i.colour),
+            borderWidth: 0,
+          },
+        ],
+      };
+      // utiliztionsummery charts data
+      this.timesheetutilizeSummaryChartData = {
+        datasets: [
+          {
+            data: utilizationArray.map((i) => i.value),
+            backgroundColor: ['#4CAF50', '#FF9800'],
+            borderWidth: 0,
+          },
+        ],
+      };
         this.timesheetSummaryOptions = {
           cutout: '70%',
         };

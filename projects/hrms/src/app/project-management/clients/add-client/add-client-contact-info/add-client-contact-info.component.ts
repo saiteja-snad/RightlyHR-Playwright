@@ -58,17 +58,14 @@ export class AddClientContactInfoComponent {
   // Create a single contact form group
   createContactGroup(): FormGroup {
     const group = this.fb.group({
-      contactName: [null, [Validators.required, this.formValidations.minCharactersValidator(3), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/), this.formValidation.noEmojiValidator()]],
-      contactEmail: [null, [Validators.required, Validators.email, this.formValidation.noEmojiValidator()]],
-      contactPhone: [null, [Validators.required, this.formValidation.noEmojiValidator()]],
+      contactName: [null, [Validators.required, this.formValidations.minCharactersValidator(3), this.formValidations.maxCharactersValidator(51), ]],
+      contactEmail: [null, [Validators.required, Validators.email,]],
+      contactPhone: [null, [Validators.required,]],
       contactRole: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50), ]],
-      countryCode: [null, Validators.required],      // <-- Add this
-      dialling_code: [null, Validators.required]
+      countryCode: [null, [Validators.required]],      // <-- Add this
+      dialling_code: [null, [Validators.required]]
     });
-    // // Clean emojis dynamically as user types or pastes
-    // Object.keys(group.controls).forEach(controlName => {
-    //   this.formValidation.cleanEmojiOnChange(group.get(controlName)!);
-    // });
+ 
     return group;
   }
 onRoleChange(control: AbstractControl|null) {
@@ -166,7 +163,7 @@ onRoleChange(control: AbstractControl|null) {
         // this.conformationPopup.openSuccessModal('Contacts added successfully');
       },
       error: (err) => {
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to add contacts');
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to add contacts');
         // handle error 
       }
     });

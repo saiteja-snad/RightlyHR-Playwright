@@ -126,9 +126,9 @@ export class ClientContactInformationComponent {
         this.getContactData(this.clientId);
       },
       error: (err) => {
-        this.conformationPopup.openErrorModal('Error deleting contact.');
+        this.conformationPopup.openErrorModal(err.error.message)
         console.error('Error deleting contact:', err);
-        this.modalService.dismissAll();
+      
       }
     });
   }
@@ -249,9 +249,10 @@ export class ClientContactInformationComponent {
           this.getContactData(this.clientId);
         },
         error: (err) => {
-          this.conformationPopup.openErrorModal('Error deleting contact.');
+          this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-          this.modalService.dismissAll();
+              this.getContactData(this.clientId);
+        
         }
       });
   }

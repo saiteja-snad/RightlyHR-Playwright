@@ -17,6 +17,7 @@ export const environment = {
 
 
   dateformat: 'MMM d, y',
+  currencyCode: 'INR',
   paidLeaveCategoryId: 172,
   wfhModuleId:2,
   compoffModuleId:3,

@@ -143,8 +143,8 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
         this.allEmployees = data;
         this.allEmployees = this.allEmployees.map(a => ({
           ...a,
-          fullName: `${a.fusionEmpId} - ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
-        }));
+              fullName: `${a.fusionEmpId ? a.fusionEmpId + ' -' :''} ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
       },
       error: (reason: any) => {
         console.log(reason);
@@ -158,8 +158,8 @@ export class MyTicketsComponent implements OnInit,OnDestroy {
         this.allEmployeesself = data;
         this.allEmployeesself = this.allEmployeesself.map(a => ({
           ...a,
-          fullName: `${a.fusionEmpId} - ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
-        }));
+          fullName: `${a.fusionEmpId ? a.fusionEmpId + ' -' :''} ${a.firstName} ${a.middleName ?? ''} ${a.lastName}`.trim()
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
         this.onTicketRaisedForChange("Self");
       },
       error: (reason: any) => {

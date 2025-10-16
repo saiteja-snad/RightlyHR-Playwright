@@ -94,18 +94,30 @@
                         Salary in Personal and Job Tabs Before Generating the Document.</p>
                 </div>
 
+              
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeForm.invalid || spinnerLoader || !isdateofpromotion">
+                        [disabled]="employeeForm.invalid || spinnerLoader || !isdateofpromotion || documentGenerated">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status"
-                                    aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
                         <ng-template #addText>
                             <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
+                    <button type="button" class="custom-btn btn-primary" [disabled]="!documentGenerated || releaseLoader"
+                        (click)="releaseToEmployee()">
+                        <ng-container *ngIf="releaseLoader; else releaseText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #releaseText>
+                            <span>{{'Release to Employee' | translate}}</span>
                         </ng-template>
                     </button>
                 </div>
@@ -116,7 +128,8 @@
             <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
-                    <div class="letter-page-content" id="pdfContent1"  [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
+                    <div class="letter-page-content" id="pdfContent1"
+                        [ngClass]="{'soft-copy-letter': employeeForm.get('Documenttype')?.value.value === true}">
                         <div class="letter-page-sub-content">
                             <!-- <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc"
                                 class="soft-copy-letter">

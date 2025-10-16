@@ -1,23 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { Injectable,Inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
 import { Router } from '@angular/router';
-import { catchError, map, throwError } from 'rxjs';
+import { catchError, map, throwError } from'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private oauthService: OAuthService,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    @Inject(OAuthService) private oauthService: OAuthService,
   ) { }
 
   ApiUrl = environment.ApiUrl;
@@ -37,7 +36,6 @@ export class AuthService {
   }
   postData(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
-
   }
 
   storeToken(tokenValue: any) {
@@ -263,6 +261,4 @@ export class AuthService {
       })
     );
   }
-
-
 }

@@ -67,7 +67,9 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
       status.status === 'Pending for submission'
     ).reverse();
   }
- Dstddata:any
+
+  Dstddata: any;
+
   DeleteDstDailog(content: any, dst: any) {
     this.Dstddata = dst;
     this.deleteModalRef = this.modalService.open(content, { centered: true });

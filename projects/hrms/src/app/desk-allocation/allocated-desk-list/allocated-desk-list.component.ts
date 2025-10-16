@@ -531,32 +531,46 @@ export class AllocatedDeskListComponent implements OnInit,OnDestroy {
         }
       });
   }
-
-  getEmployeedata() {
-    if (!this.loactionid || !this.sublocation || !this.shift) {
-      console.error("Location ID or Sub-location ID is missing.");
-      return;
-    }
-
-    this.http
-      .getData(`JobDetails/getAllJobdetails?locationId=${this.loactionid}&sublocationId=${this.sublocation}&shiftId=${this.shift}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          // Transform the data to add `employeeName` and a combined property
-          this.employeeiddetails = data.map((employee: any) => ({
-            ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''}- ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-
-          }));
-          console.log(this.employeeiddetails);
-        },
-        error: (reason: any) => {
-          console.error(reason);
-        }
-      });
+getEmployeedata() {
+  if (!this.loactionid || !this.sublocation || !this.shift) {
+    console.error("Location ID, Sub-location ID or Shift is missing.");
+    return;
   }
+
+  this.http
+    .getData(
+      `JobDetails/getAllJobdetails?locationId=${this.loactionid}&sublocationId=${this.sublocation}&shiftId=${this.shift}`
+    )
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        console.log(data);
+
+        this.employeeiddetails = data
+          .map((employee: any) => {
+            const fullName = `${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim();
+            return {
+              ...employee,
+              // display format for dropdown
+             
+              employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${fullName}`,
+              // keep pure full name for sorting
+              _sortName: fullName
+            };
+          })
+          .sort((a: any, b: any) =>
+            (a._sortName ?? '').localeCompare(b._sortName ?? '', undefined, {
+              sensitivity: 'base'
+            })
+          );
+
+        console.log(this.employeeiddetails);
+      },
+      error: (reason: any) => {
+        console.error(reason);
+      }
+    });
+}
 
   selectedEmployee: any
   onEmployeeSelect(event: any) {
@@ -576,8 +590,10 @@ export class AllocatedDeskListComponent implements OnInit,OnDestroy {
           // Transform data to include `employeeName`
           this.approvalname = res.map((employee: any) => ({
             ...employee,
-            employeeName: `${employee.fusionEmpId ?? ''} - ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-          }));
+            employeeName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''} ${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          })) .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
         },
         error: (errormessage) => {
           console.log(errormessage);

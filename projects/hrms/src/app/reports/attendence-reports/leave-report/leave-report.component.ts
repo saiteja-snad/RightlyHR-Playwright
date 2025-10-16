@@ -22,7 +22,7 @@ import { ReportsHeaderComponent } from "../../../shared/reports-tabs/reports-hea
 import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-leave-report',
-  imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, 
+  imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss'
@@ -109,42 +109,62 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.filteredleaveRecord = [];
   }
 
-  getEmployeeId() {
-    const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-      next: (data: any) => {
-        const employeedata = data.map((employee: any) => {
-          return {
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
-            ${employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
-          };
-        });
-        this.employeeiddetails = [
-          { fullName: 'All Employees', employeeId: 'all' },
-          ...employeedata
-        ];
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
-  }
+getEmployeeId() {
+  const loggedInUser = this.authService.getToken();
+  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+    next: (data: any) => {
+      const employeedata = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-  getTeam() {
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
-      next: (data: any) => {
-        this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
-            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            firstName, // trimmed
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
+        })
+        .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+
+      this.employeeiddetails = [
+        { fullName: 'All Employees', employeeId: 'all' },
+        ...employeedata
+      ];
+    },
+    error: (reason: any) => {
+      console.log(reason);
+    },
+  });
+}
+
+
+getTeam() {
+  this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+    next: (data: any) => {
+      this.teamdetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
+          return {
+            ...employee,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+          };
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
+
 
   getAttendanceReports() {
     this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
@@ -367,9 +387,9 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
       if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => 
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) =>
           employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => 
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) =>
           employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
@@ -378,27 +398,41 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     }
   }
 
-  getMyTeam() {
-    const EmployeeId = this.loggedInUser?.employeeId;
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (response: any) => {
-        if (response) {
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam.map((employee: any) => ({
-            ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-          }));
-          this.getEmployeeInfo.unshift({
-            fullName: 'All Employees',
-            fusionEmpId: this.loggedInUser.fusionEmpId,
-            employeeId: this.loggedInUser.employeeId,
-          });
-        }
-      },
-    });
-  }
+ getMyTeam() {
+  const EmployeeId = this.loggedInUser?.employeeId;
+  this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+    next: (response: any) => {
+      if (response) {
+        const myTeam = response.filter((e: any) => e.isAccess);
+
+        this.getEmployeeInfo = myTeam
+          .map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
+
+            return {
+              ...employee,
+              firstName, //  trimmed
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          })
+          .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+          );
+
+        // Insert "All Employees" at the top
+        this.getEmployeeInfo.unshift({
+          fullName: 'All Employees',
+          fusionEmpId: this.loggedInUser.fusionEmpId,
+          employeeId: this.loggedInUser.employeeId,
+        });
+      }
+    },
+    error: (err) => console.log(err),
+  });
+}
+
 
   // isAnyFilterApplied(): boolean {
   //   const form = this.LeaveReportForm.value;

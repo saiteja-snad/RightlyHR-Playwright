@@ -105,8 +105,8 @@ export class AppointmentLetterComponent implements OnInit,OnDestroy {
         this.employeeiddetails = data as IemployeeDetails[];
         this.employeeiddetails = this.employeeiddetails.map((emp: IemployeeDetails) => ({
           ...emp,
-          fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
-        }));
+          fullName: `${emp.fusionEmpId ? emp.fusionEmpId + ' -' :''} ${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (reason: any) => {
         console.log(reason);

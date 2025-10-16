@@ -330,7 +330,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         {
           attributeKey: "signedCopy",
           attributeValue: formValue.signedCopy ? "yes" : "no",
-          dataType: "boolean"
+          dataType: "string"
         }
       ]
     };

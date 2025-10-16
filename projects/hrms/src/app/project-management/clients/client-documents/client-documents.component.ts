@@ -256,7 +256,7 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
         {
           attributeKey: "signedCopy",
           attributeValue: formValue.signedCopy ? "yes" : "no",
-          dataType: "boolean"
+          dataType: "string"
         }
       ]
     };
@@ -315,8 +315,8 @@ export class ClientDocumentsComponent implements OnInit, OnDestroy {
       attributes: [
         {
           attributeKey: "signedCopy",
-          attributeValue: formValue.signedCopy ? "true" : "false",
-          dataType: "boolean"
+          attributeValue: formValue.signedCopy ? "yes" : "no",
+          dataType: "string"
         }
       ]
     };

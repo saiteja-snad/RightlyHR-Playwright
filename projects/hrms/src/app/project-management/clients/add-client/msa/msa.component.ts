@@ -208,6 +208,13 @@ export class MsaComponent {
       date: this.clientForm.get('effectiveDate')?.value,
       createdBy: loggedInUser.employeeId,
       updatedBy: loggedInUser.employeeId,
+        attributes: [
+        {
+          attributeKey: "signedCopy",
+          attributeValue:'no',
+          dataType: "string"
+        }
+      ]
     };
     this.subscription = this.http.postdata('Documents', payLoad).subscribe({
       next: (data: any) => {

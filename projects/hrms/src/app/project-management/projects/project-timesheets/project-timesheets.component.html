@@ -83,7 +83,7 @@
             <ng-container *ngIf="(utilizationcount$.value?.length ?? 0) > 0; else nolistTemplateUtilization">
                 <div class="chart-content">
                     <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
-                        [options]="timesheetSummaryOptions"></p-chart>
+                        [options]="timesheetUtilizeSummaryOptions"></p-chart>
                 </div>
 
                 <ul class="list-style-none ps-0 pt-3 mb-0">

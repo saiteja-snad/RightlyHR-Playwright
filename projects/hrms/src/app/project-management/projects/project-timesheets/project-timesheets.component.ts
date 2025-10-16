@@ -25,6 +25,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
   timesheetSummaryChartData: any;
   timesheetutilizeSummaryChartData: any;
   timesheetSummaryOptions: any;
+   timesheetUtilizeSummaryOptions: any;
   statusCounts$ = new BehaviorSubject<MonthlySummaryItem[]>([]);
   utilizationcount$ = new BehaviorSubject<any>(null);
   totalEntries = 0;
@@ -116,8 +117,22 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
           },
         ],
       };
-        this.timesheetSummaryOptions = {
+      this.timesheetSummaryOptions = {
           cutout: '70%',
+        };
+        this.timesheetUtilizeSummaryOptions = {
+          cutout: '70%',
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (context: any) => {
+                  const dataIndex = context.dataIndex;
+                  const utilizationData = this.utilizationcount$.value;
+                  return utilizationData[dataIndex]?.loggedHHMM || '';
+                }
+              }
+            }
+          }
         };
       },
       error: err => {

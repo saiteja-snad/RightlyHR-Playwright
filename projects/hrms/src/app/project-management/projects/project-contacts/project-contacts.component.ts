@@ -200,7 +200,7 @@ export class ProjectContactsComponent implements OnInit {
         error: (err) => {
          this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-       
+           this.getContactData(this.projectId);
         }
       });
   }

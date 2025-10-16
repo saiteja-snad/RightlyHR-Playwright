@@ -16,15 +16,15 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Category Type</th>
-                        <th>From Date</th>
-                        <th>To Date</th>
-                        <th>Effective Date</th>
-                        <th>Status </th>
-                        <th>Published By</th>
-                        <th>Published On</th>
+                        <th>{{'Category Type'|translate}}</th>
+                        <th>{{'From Date'|translate}}</th>
+                        <th>{{'To Date'|translate}}</th>
+                        <th>{{'Effective Date'|translate}}</th>
+                        <th>{{'Status' |translate}}</th>
+                        <th>{{'Published By'|translate}}</th>
+                        <th>{{'Published On'|translate}}</th>
                         <th class="text-center" style="text-transform: none;"
-                            *ngIf="rbac.allowedToAccess('Attendance Published Tab.update')">Action</th>
+                            *ngIf="rbac.allowedToAccess('Attendance Published Tab.update')">{{'Action'| translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,9 +102,7 @@
                 <div class="row">
                     <!-- Category Name -->
                     <div class="col-md-12 mb-3">
-                        <label for="categoryType" class="form-label custom-label custom-label mb-2">{{ 'Category
-                            Type' |
-                            translate }}<span class="text-danger">*</span></label>
+                        <label for="categoryType" class="form-label custom-label custom-label mb-2">{{ 'Category Type' |translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content w-100">
                             <p-select class="custom-select w-100" [options]="categoriesList" optionLabel="moduleName"
                                 [filter]="true" filterBy="moduleName" [showClear]="false" formControlName="categoryType"

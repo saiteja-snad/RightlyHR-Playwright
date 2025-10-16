@@ -21,17 +21,17 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Category Type</th>
-                        <th>From Date</th>
-                        <th>To Date</th>
-                        <th>Effective Date</th>
-                        <th>Status </th>
-                        <th>Created By</th>
-                        <th>Created On</th>
+                        <th>{{'Category Type'|translate}}</th>
+                        <th>{{'From Date'|translate}}</th>
+                        <th>{{'To Date'|translate}}</th>
+                        <th>{{'Effective Date'|translate}}</th>
+                        <th>{{'Status' |translate}}</th>
+                        <th>{{'Created By'|translate}}</th>
+                        <th>{{'Created On'|translate}}</th>
                         <th class="text-center" style="text-transform: none;" *ngIf="
                             rbac.allowedToAccess('Attendance Pending Tab.create') ||
                             rbac.allowedToAccess('Attendance Pending Tab.update') ||
-                            rbac.allowedToAccess('Attendance Pending Tab.delete')">Action</th>
+                            rbac.allowedToAccess('Attendance Pending Tab.delete')">{{'Action'|translate}}</th>
                     </tr>
                 </thead>
                 <tbody>

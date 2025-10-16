@@ -12,31 +12,30 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                     <th> Employee ID</th>
-                    <th> Name</th>
+                    <th>Employee ID</th>
+                    <th>Name</th>
                     <th>Designation</th>
                     <th>Role</th>
                     <th>Email</th>
                     <th>Phone Number</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))){
+                    @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete')) && inactiveStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
-                               <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
+                            <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber ||
-                                '' }}</td>
+                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber ||'' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))){
+                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete')) && inactiveStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">

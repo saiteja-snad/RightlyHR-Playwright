@@ -9,7 +9,8 @@
                 <th>Signed Copy</th>
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
-                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
+                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                && this.inactiveClientStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
@@ -23,9 +24,7 @@
                             <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
                                 <ng-container *ngFor="let attr of data.attributes">
                                     <span class="text-capitalize">
-
-                                        {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' : 'No'
-                                        }}
+                                        {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' : 'No'}}
                                     </span>
                                 </ng-container>
                             </ng-container>
@@ -40,7 +39,8 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
+                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -48,12 +48,12 @@
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <!-- @if(rbac.allowedToAccess('Client Documents.update')){
-                                    <li>
-                                        <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
-                                            <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
-                                    } -->
+                                                            <li>
+                                                                <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
+                                                                    <i class="bi bi-pencil me-2"></i>Update
+                                                                </a>
+                                                            </li>
+                                                            } -->
                                     @if(rbac.allowedToAccess('Client Documents.delete')){
                                     <li (click)="openModal(deleteconformation, data, 'm')">
                                         <a class="dropdown-item">

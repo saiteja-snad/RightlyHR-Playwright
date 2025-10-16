@@ -8,7 +8,7 @@
                  <!-- <th>File Name</th> -->
                 <th>Attachment</th>
                 <th class="text-center">Download</th>
-                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))){
+                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) && inactiveStatus !== 'inactive' ){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
@@ -26,7 +26,7 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) ){
+                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) && inactiveStatus !== 'inactive' ){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">

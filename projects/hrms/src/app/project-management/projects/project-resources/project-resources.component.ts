@@ -108,7 +108,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy{
           // this.updateResourceForm.updateValueAndValidity();
         }
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
-          p.status === 'Inactive' || p.client.status === 'Inactive') ? 'Inactive' : 'Active';
+          p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
+        ) ? 'inactive' : 'active';
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);

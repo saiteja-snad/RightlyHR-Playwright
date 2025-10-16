@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,7 +26,7 @@ export class InactiveProjectDocumentsComponent {
   documentdata = [] as any;
   entitytype = 'client';
   loading = false;
-  clientID: any;
+  projectId: any;
   empinfo: any;
   currentDate: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -34,7 +34,7 @@ export class InactiveProjectDocumentsComponent {
   clientAttachment: File | null = null;
   spinnerLoader: boolean = false;
   displayClientAttachment: string = '';
-  inactiveClientStatus: any;
+  inactiveStatus: any;
   selecteddata: any;
 
   constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal, 
@@ -46,11 +46,25 @@ export class InactiveProjectDocumentsComponent {
     this.currentDate = now.toISOString().split('T')[0];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.route.queryParams.subscribe(params => {
-      const clientID = params['id'];
-      if (clientID) {
-        this.clientID = clientID;
-        this.getDocumentDetails(clientID);
+    const projectId = params['id'];
+      if (projectId) {
+        this.projectId = projectId;
+        this.getDocumentDetails(projectId);
+        this.getProject(projectId);
       }
+    });
+  }
+
+  getProject(projectId: string) {
+    this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.inactiveStatus = (res?.data ?? []).some((p: any) =>
+          p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
+        ) ? 'inactive' : 'active';
+      },
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+      },
     });
   }
 
@@ -72,8 +86,7 @@ export class InactiveProjectDocumentsComponent {
   // Edit Modal open function
   openModal(content: any, data: any, size: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
-    this.selecteddata = data
-
+    this.selecteddata = data;
   }
 
   // File rename function

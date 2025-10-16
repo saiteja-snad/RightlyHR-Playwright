@@ -5,11 +5,12 @@
             <thead>
                 <th>Document Type</th>            
                 <th>Created Date</th>
-                  <!-- <th>File Name</th> -->
+                <!-- <th>File Name</th> -->
                 <th>Signed Copy</th>
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
-                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
+                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
@@ -29,7 +30,6 @@
                             <span>-</span>
                            }
                         </td>
-                        
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
                             <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
@@ -37,7 +37,8 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
+                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">

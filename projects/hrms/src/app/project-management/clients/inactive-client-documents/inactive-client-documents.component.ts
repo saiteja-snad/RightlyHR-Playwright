@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -49,6 +49,18 @@ export class InactiveClientDocumentsComponent {
       if (clientID) {
         this.clientID = clientID;
         this.getDocumentDetails(clientID);
+        this.getClientsData(clientID);
+      }
+    });
+  }
+
+  getClientsData(clientID: any): void {
+    this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.inactiveClientStatus = res.data.status.toLowerCase();
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
       }
     });
   }

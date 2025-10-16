@@ -98,7 +98,7 @@ export class ClientInformationComponent {
             this.onSelectprofilePicDownload(res.data.logoPath);
           }
         }
-        this.inactiveClientStatus = res.data.status;
+        this.inactiveClientStatus = res.data.status.toLowerCase();
       },
       error: (err) => {
         this.clients = [];

@@ -64,7 +64,7 @@ export class ClientContactInformationComponent {
   getClientsData(clientID: any): void {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.inactiveClientStatus = res.data.status;
+        this.inactiveClientStatus = res.data.status.toLowerCase();
       },
       error: (err) => {
         console.error('Error fetching clients:', err);

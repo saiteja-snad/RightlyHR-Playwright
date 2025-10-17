@@ -14,7 +14,6 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { AuthService } from '../../../services/auth.service';
 import { ResourceCreationComponent } from "../../shared-project-management-componenets/resource-creation/resource-creation.component";
-import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { RbacService } from '../../../services/rbac.service';
 import { IEAV } from '../../../settings/project-management-configurations/models/project-type.modal';
 import dayjs, { Dayjs } from 'dayjs';
@@ -23,7 +22,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { Project } from '../../../Interfaces/projects.model';
 @Component({
   selector: 'app-client-view',
-  imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ConfirmationIconComponent, ClientTabsComponent,
+  imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ClientTabsComponent,
     RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent,
     ResourceCreationComponent, Select],
   templateUrl: './client-view.component.html',
@@ -89,7 +88,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   getClientsData(clientID: any): void {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.inactiveClientStatus = res.data.status;
+        this.inactiveClientStatus = res.data.status.toLowerCase();
       },
       error: (err) => {
         console.error('Error fetching clients:', err);
@@ -102,15 +101,14 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.datepickerForm.reset();
     this.datepickerForm.get('projectId')?.disable();
     this.datepickerForm.get('resourceId')?.disable();
-   this.http.clearRequestclienttimesheet();
+    this.http.clearRequestclienttimesheet();
     this.http.setRequestclienttimesheet(null);
-
   }
 
   // initialization of form
   createDocumentForm() {
     this.addDocumentForm = this.fb.group({
-      documentName: [null, Validators.required],
+      // documentName: [null, Validators.required],
       documentType: [null, Validators.required],
       documentUrl: [null, Validators.required],
       signedCopy: [null],
@@ -196,12 +194,12 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
-   isFilterApplied(): boolean {
+  isFilterApplied(): boolean {
     const formValue = this.datepickerForm.value;
     // Check if any field has value
     return (
       (formValue.dateRange && formValue.dateRange.length > 0) ||
-      formValue.projectId !== null && formValue.projectId !== undefined  ||
+      formValue.projectId !== null && formValue.projectId !== undefined ||
       (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
@@ -318,7 +316,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+      // documentName: formValue.documentName,
       documentType: formValue.documentType,
       documentUrl: logoPath,
       type: '',
@@ -330,7 +328,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         {
           attributeKey: "signedCopy",
           attributeValue: formValue.signedCopy ? "yes" : "no",
-          dataType: "boolean"
+          dataType: "string"
         }
       ]
     };
@@ -364,7 +362,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-        this.conformationPopup.openErrorModal('Failed to add document. Please try again.');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }
@@ -404,8 +402,8 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  navigationtoactivedocuments(){
-        this.router.navigate(
+  navigationtoactivedocuments() {
+    this.router.navigate(
       ['/project-management/clients/details/documents'],
       { queryParams: { id: this.clientid } } // using query params
     );
@@ -466,11 +464,11 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       });
     }
   }
-  
+
   isFormCompletelyValid(): boolean {
-  const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
-  return !!formValue.dateRange && !!formValue.projectId && !!formValue.resourceId;
-}
+    const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+    return !!formValue.dateRange && !!formValue.projectId && !!formValue.resourceId;
+  }
 
   onSubmit() {
     const dateRangeArray = this.datepickerForm.value.dateRange || [];

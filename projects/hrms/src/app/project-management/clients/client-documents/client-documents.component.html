@@ -3,31 +3,34 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                <th>File Name</th>
-                <th>Created Date</th>
                 <th>Document Type</th>
+                <th>Created Date</th>
+                <!-- <th>File Name</th> -->
                 <th>Signed Copy</th>
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
                 @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
-                && this.inactiveClientStatus !== 'Inactive'){
+                && this.inactiveClientStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
             <tbody>
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
-                        <td>{{data.documentName}}</td>
-                        <td>{{data.createdAt | dateformat}}</td>
                         <td>{{data.documentType}}</td>
+                        <td>{{data.createdAt | dateformat}}</td>
+                        <!-- <td>{{data.documentName}}</td> -->
                         <td>
-                            @if(data.attributes?.length > 0){
-                            <span *ngFor="let attr of data.attributes; let last = last">
-                                <span class="text-capitalize">{{attr.attributeValue?attr.attributeValue:'-'}}</span> {{!last ? ', ' : ''}}</span>
-                            }
-                           @else {
-                            <span>-</span>
-                           }
+                            <ng-container *ngIf="data.attributes?.length > 0; else noAttributes">
+                                <ng-container *ngFor="let attr of data.attributes">
+                                    <span class="text-capitalize">
+                                        {{ attr.attributeValue === true || attr.attributeValue === 'yes' ? 'Yes' : 'No'}}
+                                    </span>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #noAttributes>
+                                <span>-</span>
+                            </ng-template>
                         </td>
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
@@ -36,8 +39,8 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete')) &&
-                        this.inactiveClientStatus !== 'Inactive'){
+                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -45,11 +48,11 @@
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <!-- @if(rbac.allowedToAccess('Client Documents.update')){
-                                    <li>
-                                        <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
+                                        <li>
+                                            <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
                                             <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
+                                            </a>
+                                        </li>
                                     } -->
                                     @if(rbac.allowedToAccess('Client Documents.delete')){
                                     <li (click)="openModal(deleteconformation, data, 'm')">
@@ -94,18 +97,16 @@
                         <label for="documentType" class="form-label custom-label mb-2">Document Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
-                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
-                                formControlName="documentType" placeholder="Please select document type"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
+                                optionLabel="value" optionValue="value" formControlName="documentType"
+                                placeholder="Please select document type" class="form-select custom-select"></p-select>
                         </div>
-                        <div class="error-msg"
-                            *ngIf="updateDocumentForm.get('documentType')?.touched && updateDocumentForm.get('documentType')?.invalid">
-                            Document Type is required
-                        </div>
+                        <div class="error-msg" *ngIf="updateDocumentForm.get('documentType')?.touched && 
+                        updateDocumentForm.get('documentType')?.invalid">Document Type is required</div>
                     </div>
+
                     <!-- File Name -->
-                    <div class="col-md-6 mb-3">
+                    <!-- <div class="col-md-6 mb-3">
                         <label for="documentName" class="form-label custom-label mb-2">File Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" id="documentName" formControlName="documentName"
@@ -114,31 +115,21 @@
                             *ngIf="updateDocumentForm.get('documentName')?.touched && updateDocumentForm.get('documentName')?.invalid">
                             File Name is required
                         </div>
-                    </div>
-
-
+                    </div> -->
 
                     <!-- Document Attachment -->
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
                                 class="text-danger">*</span></label>
                         <input type="file" id="documentAttachment"
                             accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                             (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
                         <span class="custom-file-name text-wrap">
-                            {{
-                            (updateDocumentForm.get('documentUrl')?.value?.name
-                            ? updateDocumentForm.get('documentUrl')?.value?.name.split('/').pop()
-                            : (updateDocumentForm.get('documentUrl')?.value
-                            ? updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_')
-                            )
-                            }}
+                            {{(updateDocumentForm.get('documentUrl')?.value?.name ?  updateDocumentForm.get('documentUrl')?.value?.name.split('/').pop()
+                            : (updateDocumentForm.get('documentUrl')?.value ? updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_'))}}
                         </span>
-
-                        <div class="error-msg"
-                            *ngIf="updateDocumentForm.get('documentAttachment')?.touched && updateDocumentForm.get('documentAttachment')?.invalid">
-                            Attachment is required
-                        </div>
+                        <div class="error-msg" *ngIf="updateDocumentForm.get('documentAttachment')?.touched && 
+                        updateDocumentForm.get('documentAttachment')?.invalid">Attachment is required</div>
                     </div>
 
                     <!-- Signed Copy -->
@@ -150,10 +141,8 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateDocumentForm.invalid">Update</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid">Update</button>
                 </div>
             </form>
         </div>

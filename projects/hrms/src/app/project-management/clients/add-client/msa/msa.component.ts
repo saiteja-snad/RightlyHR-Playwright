@@ -200,7 +200,7 @@ export class MsaComponent {
     const payLoad = {
       entityType: 'client',
       entityId: parseInt(this.clientId),
-      documentName: 'MSA Letter',
+      // documentName: 'MSA Letter',
       type: 'Unsigned',
       documentType: 'MSA Letter',
       documentUrl: this.result.documentUrl,
@@ -208,6 +208,13 @@ export class MsaComponent {
       date: this.clientForm.get('effectiveDate')?.value,
       createdBy: loggedInUser.employeeId,
       updatedBy: loggedInUser.employeeId,
+        attributes: [
+        {
+          attributeKey: "signedCopy",
+          attributeValue:'no',
+          dataType: "string"
+        }
+      ]
     };
     this.subscription = this.http.postdata('Documents', payLoad).subscribe({
       next: (data: any) => {

@@ -1,12 +1,5 @@
-.custom-accordian-conatiner {
-    width: 100%;
-    height: calc(100dvh - 8rem);
-    overflow-y: auto;
-}
-
-.custom-p-multi-select-table .p-datatable-table-container {
-    height: max-content !important;
-    max-height: 45vh !important;
+.custom-accordian-table {
+    height: 40vh !important;
 }
 
 .action-img {
@@ -16,8 +9,6 @@
 
 .custom-accordian-table {
     width: 100%;
-    height: max-content !important;
-    min-height: max-content !important;
 
     .custom-accordian-table {
         th:first-child {
@@ -52,6 +43,9 @@
     }
 }
 
+::ng-deep .popover {
+    max-width: 500px !important;
+}
 
 .pagination-content {
     width: 100%;

@@ -4,19 +4,17 @@
             <app-project-management-module-info />
         </div>
 
-        @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Contact Info Tab.create') && inactiveStatus !== 'inactive'){
         <div *ngIf="isActive('/project-management/projects/details/contact-info')">
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addContactmodal)">
-                {{'Add Contacts' }}
-            </button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addContactmodal)">{{'Add Contacts' }}</button>
         </div>
         }
-        <div class="d-flex gap-3 align-items-center"  *ngIf="isActive('project-management/projects/details/documents')">
-            @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'Inactive'){
 
+        <div class="d-flex gap-3 align-items-center" *ngIf="isActive('project-management/projects/details/documents')">
             <div>
-                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Documents</u></a>
+                <a class="primary-link" (click)="navigationtoinactivedocuments()"><u>Archived Documents</u></a>
             </div>
+            @if(rbac.allowedToAccess('Documents Tab.create') && inactiveStatus !== 'inactive'){
             <div>
                 <button type="button" class="custom-btn btn-primary" (click)="openDocumentModal()">{{'Add Document'}}</button>
             </div>
@@ -25,12 +23,11 @@
 
         <div *ngIf="isActive('/project-management/projects/details/inactivedocuments')">
             <div>
-                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Archived Documents</u></a>
+                <a class="primary-link" (click)="navigationtoactivedocuments()"><u>Documents</u></a>
             </div>
         </div>
-        
 
-        @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'Inactive'){
+        @if(rbac.allowedToAccess('Resources Tab.create') && inactiveStatus !== 'inactive'){
         <div *ngIf="isActive('project-management/projects/details/resources')" (click)="openResourceModal()">
             <button type="button" class="custom-btn btn-primary">{{'Add Resources' }}</button>
         </div>
@@ -39,13 +36,13 @@
         @if(isActive('/project-management/projects/details/timesheet')){
         <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
             <div class="d-flex gap-3 align-items-center">
-                    @if(isFilterApplied()) {
+                @if(isFilterApplied()) {
                 <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
                 }
-
+                
                 <div class="custom-date-range-picker">
-                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date rang'" selectionMode="range"
-                        [showIcon]="true" [readonlyInput]="true">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date rang'"
+                        selectionMode="range" [showIcon]="true" [readonlyInput]="true">
                     </p-datepicker>
                 </div>
 
@@ -58,7 +55,7 @@
 
                 <div>
                     <button class="custom-btn btn-primary" type="submit"
-                       [disabled]="!isFormCompletelyValid()">Apply</button>
+                        [disabled]="!isFormCompletelyValid()">Apply</button>
                 </div>
             </div>
         </form>

@@ -3,25 +3,32 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                <th>File Name</th>
+                <th>Document Type</th>            
                 <th>Created Date</th>
-                <th>Document Type</th>
+                <!-- <th>File Name</th> -->
                 <th>Signed Copy</th>
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
-                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
+                @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                && this.inactiveClientStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
             <tbody>
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
-                        <td>{{data.documentName}}</td>
+                        <td>{{data.documentType}}</td>                       
                         <td>{{data.createdAt | dateformat}}</td>
-                        <td>{{data.documentType}}</td>
+                        <!-- <td>{{data.documentName}}</td> -->
                         <td>
-                            <span *ngFor="let attr of data.attributes; let last = last">
-                                {{attr.attributeValue}}{{!last ? ', ' : ''}}</span>
+                            @if(data.attributes?.length > 0){
+                            <span *ngFor="let attr of data.attributes">
+                                <span class="text-capitalize"> {{attr.attributeValue === 'yes' ? 'Yes' : 'No' }}</span>
+                            </span>
+                            }
+                           @else {
+                            <span>-</span>
+                           }
                         </td>
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
@@ -30,7 +37,8 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))){
+                        @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
+                        && this.inactiveClientStatus !== 'inactive'){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">

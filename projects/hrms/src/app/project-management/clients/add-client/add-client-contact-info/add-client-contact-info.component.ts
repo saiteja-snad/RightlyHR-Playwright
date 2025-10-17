@@ -10,13 +10,12 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
-import { ConfirmationIconComponent } from "../../../../icons/confirmation-icon/confirmation-icon.component";
 import { CircularAddComponent } from "../../../../icons/circular-add/circular-add.component";
 import { CircularDeleteComponent } from "../../../../icons/circular-delete/circular-delete.component";
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-add-client-contact-info',
-  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, TranslateModule, ConfirmationIconComponent, CircularAddComponent, CircularDeleteComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule, TranslateModule, CircularAddComponent, CircularDeleteComponent],
   templateUrl: './add-client-contact-info.component.html',
   styleUrl: './add-client-contact-info.component.scss'
 })
@@ -38,15 +37,16 @@ export class AddClientContactInfoComponent {
     hideCode: true,
   };
 
-  constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal, public formValidation: FormValidationsService,
-    private route: Router, private http: HttpService, private conformationPopup: OpenModalService) { }
+  constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal,
+    public formValidation: FormValidationsService, private route: Router, private http: HttpService,
+    private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    this.getClientsData()
+    this.getClientsData();
     this.createContactForm();
-     localStorage.getItem('newlyAddedClientId');
-  this.latestClientId = localStorage.getItem('newlyAddedClientId');
+    localStorage.getItem('newlyAddedClientId');
+    this.latestClientId = localStorage.getItem('newlyAddedClientId');
   }
 
   createContactForm() {
@@ -58,24 +58,22 @@ export class AddClientContactInfoComponent {
   // Create a single contact form group
   createContactGroup(): FormGroup {
     const group = this.fb.group({
-      contactName: [null, [Validators.required, this.formValidations.minCharactersValidator(3), this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/), this.formValidation.noEmojiValidator()]],
-      contactEmail: [null, [Validators.required, Validators.email, this.formValidation.noEmojiValidator()]],
-      contactPhone: [null, [Validators.required, this.formValidation.noEmojiValidator()]],
-      contactRole: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50), ]],
-      countryCode: [null, Validators.required],      // <-- Add this
-      dialling_code: [null, Validators.required]
+      contactName: [null, [Validators.required, this.formValidations.minCharactersValidator(3), this.formValidations.maxCharactersValidator(51),]],
+      contactEmail: [null, [Validators.required, Validators.email,]],
+      contactPhone: [null, [Validators.required,]],
+      contactRole: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50),]],
+      countryCode: [null, [Validators.required]],      // <-- Add this
+      dialling_code: [null, [Validators.required]]
     });
-    // // Clean emojis dynamically as user types or pastes
-    // Object.keys(group.controls).forEach(controlName => {
-    //   this.formValidation.cleanEmojiOnChange(group.get(controlName)!);
-    // });
     return group;
   }
-onRoleChange(control: AbstractControl|null) {
-   if (!control) return;
-  control.markAsTouched();
-  control.updateValueAndValidity();
-}
+
+  onRoleChange(control: AbstractControl | null) {
+    if (!control) return;
+    control.markAsTouched();
+    control.updateValueAndValidity();
+  }
+
   // Getter for easy access
   get contacts(): FormArray {
     return this.addContactForm.get('contacts') as FormArray;
@@ -126,11 +124,8 @@ onRoleChange(control: AbstractControl|null) {
         if (Array.isArray(res?.data) && res.data.length > 0) {
           const latestClient = res.data[0];
           this.clients = [latestClient];
-          // Store only clientId
-          // this.latestClientId = latestClient.clientId;
         } else {
           this.clients = [];
-          // this.latestClientId = null;
         }
       },
       error: (err) => {
@@ -163,10 +158,9 @@ onRoleChange(control: AbstractControl|null) {
         this.addContactForm.reset();
         this.contacts.clear();
         this.route.navigate(['/project-management/clients/add/documents']);
-        // this.conformationPopup.openSuccessModal('Contacts added successfully');
       },
       error: (err) => {
-        this.conformationPopup.openErrorModal(err.error?.message || 'Failed to add contacts');
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to add contacts');
         // handle error 
       }
     });

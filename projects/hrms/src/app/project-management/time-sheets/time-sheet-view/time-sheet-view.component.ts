@@ -1,20 +1,8 @@
-import { Component, OnDestroy, OnInit, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {
-  NgbDatepickerModule,
-  NgbModal,
-  NgbPopover,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepickerModule, NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { DatePicker } from 'primeng/datepicker';
 import { AuthService } from '../../../services/auth.service';
@@ -27,27 +15,19 @@ import { TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-time-sheet-view',
-  imports: [
-    ProjectManagementModuleInfoComponent,
-    NgbDatepickerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    NgbPopover,
-    CommonModule,
-    DatePicker,
-    DateformatPipe,
-    AccordionModule,
-    InfoIconComponent,
-    ConfirmationIconComponent,
-    TranslateModule
-  ],
+  imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
+    NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
+    TranslateModule, DataLoaderContentComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
 })
+
 export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetForm!: FormGroup;
+  loading = false;
   dayForm!: FormGroup;
   jobdetails: any;
   weekStartDate: Date | null = null;
@@ -64,8 +44,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   rowdelete: any;
   private start!: Date;
   private end!: Date;
-  minDate!: Date;
-  maxDate!: Date;
+  effectiveDate: any
+  weakstartdate!: Date;
+  weakenddate!: Date;
   maxMonth: Date = moment().add(1, 'months').endOf('month').toDate();
   selectedclientid: any;
   selectedprojectid: any;
@@ -79,22 +60,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   timesheetdata!: TimesheetResponse;
   resourcesArrayList: any[] = [];
   totalDuration: any;
-  spinnerLoader = false
-  spinnerLoaderforallrecoders = false
-  constructor(
-    private fb: FormBuilder,
-    private modalService: NgbModal,
-    private http: HttpService,
-    public authService: AuthService,
-    private conformationPopup: OpenModalService
-  ) { }
+  spinnerLoader = false;
+  spinnerLoaderforallrecoders = false;
+  datesSelected = false;
+
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, 
+    public authService: AuthService, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     const loggedInUser = this.authService.getToken();
     this.employeeId = loggedInUser.employeeId;
     const startOfWeek = moment().startOf('isoWeek'); // Sunday by default (you can use .startOf('isoWeek') for Monday)
     const endOfWeek = moment().endOf('isoWeek');
-
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({
       projects: this.fb.array([]),
@@ -129,11 +106,21 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isNotEntered = day?.approvalStatus === 'Not Entered';
     const dateValue = day?.entryDate || entryDate;
     const entryDateObj = dateValue ? new Date(dateValue) : null;
-    const blockReason = day?.blockReason || '';
-    const isBlocked = day?.isBlocked || false;
-    const isLeave = day?.isLeave || false;
+    // Use existing day data or determine from date
+    let blockReason = day?.blockReason || '';
+    let isBlocked = day?.isBlocked || false;
+    let isLeave = day?.isLeave || false;
+
+    // If no existing data, determine from date
+    if (!day && entryDateObj) {
+      const dayStatus = this.getDayStatus(entryDateObj);
+      blockReason = dayStatus.blockReason;
+      isBlocked = dayStatus.isBlocked;
+      isLeave = dayStatus.isLeave;
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0); // normalize today’s date
+
     const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
@@ -141,25 +128,35 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
     );
+    const resourcestartdate = matchedResource?.startDate
+      ? new Date(matchedResource.startDate)
+      : null;
+    if (resourcestartdate) {
+      resourcestartdate.setHours(0, 0, 0, 0);
+    }
+    if (entryDateObj) {
+      entryDateObj.setHours(0, 0, 0, 0);
+    }
 
-    const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed
-    console.log(isWeekendAllowedProject);
-    
+    let isEffective = false;
+    if (matchedResource && !matchedResource?.isNoClientProject) {
+      isEffective =
+        resourcestartdate && entryDateObj
+          ? entryDateObj.getTime() >= resourcestartdate.getTime()
+          : false;
+    } else {
+      // No-client/no-project → always effective
+      isEffective = true;
+    }
+
+    const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
 
     //enable/disable
-    const shouldEnable =
-      isProjectSelected && !isLeave && !isFutureDate
-        ? isBlocked
-          ? isWeekend && isWeekendAllowedProject
-          : true
-        : false;
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective ? 
+    isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
-    const durationControl = this.fb.control(
-      isNotEntered
-        ? ''
-        : day?.durationSeconds != null
-          ? this.secondsToHHMM(day.durationSeconds)
-          : '',
+    const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ? 
+      this.secondsToHHMM(day.durationSeconds) : '',
       Validators.required
     );
 
@@ -177,19 +174,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       projectId: [{ value: day?.projectId || null, disabled: !shouldEnable }],
       projectName: [{ value: day?.projectName || '', disabled: !shouldEnable }],
       entryDate: [{ value: dateValue || '', disabled: !shouldEnable }],
-      startTime: [
-        { value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable },
-        Validators.required,
-      ],
-      endTime: [
-        { value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable },
-        Validators.required,
-      ],
+      startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }, Validators.required],
+      endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }, Validators.required],
       duration: durationControl,
-      description: [
-        { value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable },
-        Validators.required,
-      ],
+      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }, Validators.required,],
       approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
@@ -198,12 +186,42 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  @ViewChild('datePicker') datePicker: any;
+  onDateSelect(selectedDate: Date) {
+    if (!selectedDate) return;
+    const selected = moment(selectedDate);
+    const monday = selected.clone().startOf('isoWeek');  // Monday
+    const sunday = selected.clone().endOf('isoWeek');    // Sunday
+    this.start = monday.toDate();
+    this.end = sunday.toDate();
+
+    //  Update min/max for datepicker to highlight current week
+    this.weakstartdate = this.start;
+    this.weakenddate = this.end;
+
+    // Assign the date range to the picker model
+    this.date = [this.start, this.end];
+
+    //  Update the week range visually / in state
+    this.setWeekRange(monday, sunday);
+
+    //Format start date for API call
+    const formattedStart = monday.format('YYYY-MM-DD');
+
+    // ✅ Hit your API
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+
+    // Close the datepicker
+    setTimeout(() => {
+      if (this.datePicker) {
+        this.datePicker.hideOverlay();
+      }
+    }, 100);
+  }
 
   // --- Add new project row ---
   addProject(project?: any, isProjectSelected: boolean = false) {
     const days = project?.days || [];
-
-
     // Patch "No Client / No Project" info
     let selectedProject = null;
     if (project?.isNoClientProject) {
@@ -256,12 +274,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
     if (!project || !project.days) return [];
-    return project.days
-      .filter(
-        (day: any) =>
-          day.approvalStatus?.toLowerCase() === 'draft' && !!day.entryId
-      )
-      .map((day: any) => day.entryId);
+    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' && 
+    !!day.entryId).map((day: any) => day.entryId);
   }
 
   openModalfordeletealldata(content: any, index: number) {
@@ -280,9 +294,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.http.DeleteData('Timesheet/delete-entries', payload).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Draft entries deleted successfully'
-          );
+          this.conformationPopup.openSuccessModal('Draft entries deleted successfully');
           this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
           this.getTimeSheetEntriesbyEmployeeId(
             this.employeeId,
@@ -295,9 +307,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal(
-            err?.error?.message || 'Failed to delete time entry'
-          );
+          this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to delete time entry');
         },
       });
     } else {
@@ -316,11 +326,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.start = start.toDate();
     this.end = end.toDate();
     this.date = [this.start, this.end];
-    this.displayLabel = `${start.format('DD MMM YYYY')} - ${end.format(
-      'DD MMM YYYY'
-    )}`;
-    this.minDate = start.toDate();
-    this.maxDate = end.toDate();
+    this.displayLabel = `${start.format('DD MMM YYYY')} - ${end.format('DD MMM YYYY')}`;
+    this.weakstartdate = start.toDate();
+    this.weakenddate = end.toDate();
   }
 
   // previous week
@@ -330,6 +338,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const prevEnd = moment(this.end).subtract(7, 'days').endOf('day');
       this.start = prevStart.toDate();
       this.end = prevEnd.toDate();
+      this.weakstartdate = this.start;
+      this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
@@ -343,6 +353,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const nextEnd = moment(this.end).add(7, 'days').endOf('day');
       this.start = nextStart.toDate();
       this.end = nextEnd.toDate();
+      this.weakstartdate = this.start;
+      this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
       this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
@@ -351,117 +363,108 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //GET DATA to show in table
   getTimeSheetEntriesbyEmployeeId(employeeId: number, start: any) {
-    this.http
-      .getData(`Timesheet/week/employee/${employeeId}?weekStartDate=${start}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const data = res.data;
-          this.timesheetdata = res.data;
-          this.totalDuration = this.secondsToHHMM(
-            data.totalDurationSeconds || 0
-          );
-          // Store start & end globally so state is preserved
-          this.start = new Date(data.weekStartDate);
-          this.end = new Date(data.weekEndDate);
-          this.weekStartDate = new Date(data.weekStartDate);
-          this.weekEndDate = new Date(data.weekEndDate);
-          // Generate week dates array (Mon-Sun)
-          this.weekDates = [];
-          for (let i = 0; i < 7; i++) {
-            const date = new Date(this.weekStartDate!);
-            date.setDate(date.getDate() + i);
-            this.weekDates.push(date);
-          }
-          this.timesheetForm.reset();
-          this.projects.clear();
-          // Populate availableProjects dropdown
-          this.noclientproject =
-            data.projects?.some((p: any) => p.isNoClientProject) ?? false;
-          this.availableProjects = data.projects || [];
-          if (data.projects && data.projects.length > 0) {
-            // Check if this is a project with actual project data or just empty template
-            data.projects.forEach((p: any) => {
-              const isNoClientProject = p.isNoClientProject ?? false;
-              const hasProjectData = p.projectId && p.projectName;
-              // If it has project data, treat it as a selected project
-              const isProjectSelected = hasProjectData || isNoClientProject;
-              this.addProject(p, isProjectSelected);
-              this.getResourceData();
-            });
-          } else {
-            // No projects at all, add blank row
-            this.addProject();
-          }
-        },
-      });
+    this.loading = true;
+    this.http.getData(`Timesheet/week/employee/${employeeId}?weekStartDate=${start}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        const data = res.data;
+        this.timesheetdata = res.data;
+        this.totalDuration = this.secondsToHHMM(
+          data.totalDurationSeconds || 0
+        );
+        // Store start & end globally so state is preserved
+        this.start = new Date(data.weekStartDate);
+        this.end = new Date(data.weekEndDate);
+        this.weekStartDate = new Date(data.weekStartDate);
+        this.weekEndDate = new Date(data.weekEndDate);
+        // Generate week dates array (Mon-Sun)
+        this.weekDates = [];
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(this.weekStartDate!);
+          date.setDate(date.getDate() + i);
+          this.weekDates.push(date);
+        }
+        this.timesheetForm.reset();
+        this.projects.clear();
+        // Populate availableProjects dropdown
+        this.noclientproject =
+          data.projects?.some((p: any) => p.isNoClientProject) ?? false;
+        this.availableProjects = data.projects || [];
+        if (data.projects && data.projects.length > 0) {
+          // Check if this is a project with actual project data or just empty template
+          data.projects.forEach((p: any) => {
+            const isNoClientProject = p.isNoClientProject ?? false;
+            const hasProjectData = p.projectId && p.projectName;
+            // If it has project data, treat it as a selected project
+            const isProjectSelected = hasProjectData || isNoClientProject;
+            this.addProject(p, isProjectSelected);
+            this.getResourceData();
+          });
+        } else {
+          // No projects at all, add blank row
+          this.addProject();
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+      },
+    });
   }
 
   //GET CLIENT AND PROJECT
   getResourceData() {
-    this.http
-      .getDataIncludeParams(
-        `ProjectResource?status=active&employeeId=${this.employeeId}&isProjectRequired=true`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
-        if (res.success) {
-          this.resourcesArrayList = res.data;
-          const rawData = res.data;
-          this.clients = rawData.reduce((acc: any[], curr: any) => {
-            let existingClient = acc.find(
-              (c) => c.clientId === curr.client.clientId
-            );
-            const projectObj = {
-              projectId: curr?.project?.projectId,
-              projectName: curr?.project?.projectName,
-              startDate: curr?.startDate,
-              endDate: curr?.endDate,
-              status: curr?.status,
-              role: curr?.role,
-              isWeekendAllowed:
-                curr?.project?.isWeekendAllowed ||
-                curr?.client?.isWeekendAllowed,
-              isOverTimeAllowed:
-                curr?.project?.isOverTimeAllowed ||
-                curr?.client?.isOverTimeAllowed,
-              isBillable: curr?.project?.isbillable || curr?.client?.isbillable,
-            };
-
-            if (existingClient) {
-              existingClient.projects.push(projectObj);
-            } else {
-              acc.push({
-                clientId: curr?.client?.clientId,
-                clientName: curr?.client?.clientName,
-                projects: [projectObj],
-                shift: curr?.shift,
-              });
-            }
-            return acc;
-          }, []);
-          // If "No Client/Project" flag is not set, add it manually
-          if (!this.noclientproject) {
-            this.clients.unshift({
-              clientId: 0,
-              clientName: 'No Client',
-              projects: [
-                {
-                  projectId: 0,
-                  projectName: 'No Project',
-                  startDate: null,
-                  endDate: null,
-                  status: null,
-                  role: null,
-                  isWeekendAllowed: false,
-                  isOverTimeAllowed: false,
-                  isBillable: false,
-                  isNoClientProject: true,
-                },
-              ],
+    this.http.getDataIncludeParams(`ProjectResource?status=active&employeeId=${this.employeeId}&isProjectRequired=true`).pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
+      if (res.success) {
+        this.resourcesArrayList = res.data;
+        const rawData = res.data;
+        this.clients = rawData.reduce((acc: any[], curr: any) => {
+          let existingClient = acc.find((c) => c.clientId === curr.client.clientId);
+          const projectObj = {
+            projectId: curr?.project?.projectId,
+            projectName: curr?.project?.projectName,
+            startDate: curr?.startDate,
+            endDate: curr?.endDate,
+            status: curr?.status,
+            role: curr?.role,
+            isWeekendAllowed: curr?.project?.isWeekendAllowed || curr?.client?.isWeekendAllowed,
+            isOverTimeAllowed: curr?.project?.isOverTimeAllowed || curr?.client?.isOverTimeAllowed,
+            isBillable: curr?.project?.isbillable || curr?.client?.isbillable,
+          }
+          if (existingClient) {
+            existingClient.projects.push(projectObj);
+          } else {
+            acc.push({
+              clientId: curr?.client?.clientId,
+              clientName: curr?.client?.clientName,
+              projects: [projectObj],
+              shift: curr?.shift,
             });
           }
+          return acc;
+        }, []);
+        // If "No Client/Project" flag is not set, add it manually
+        if (!this.noclientproject) {
+          this.clients.unshift({
+            clientId: 0,
+            clientName: 'No Client',
+            projects: [
+              {
+                projectId: 0,
+                projectName: 'No Project',
+                startDate: null,
+                endDate: null,
+                status: null,
+                role: null,
+                isWeekendAllowed: false,
+                isOverTimeAllowed: false,
+                isBillable: false,
+                isNoClientProject: true,
+              },
+            ],
+          });
         }
-      });
+      }
+    });
   }
 
   // Calculate total hours across all projects (weekly total)
@@ -480,9 +483,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
   // Calculate total hours per day (column total)
@@ -497,24 +498,22 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes
-      .toString()
-      .padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
   getJobDetails() {
     let EmployeeId = parseInt(this.employeeId);
-    this.subscription = this.http
-      .getData(`JobDetails/Empname/${EmployeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.jobdetails = data[0];
-        },
-        error: (data: any) => {
-          console.log(data);
-        },
-      });
+    this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.jobdetails = data[0];
+        this.effectiveDate = new Date(this.jobdetails.effectiveDate);
+      },
+      error: (data: any) => {
+        console.log(data);
+      },
+    });
   }
+
   // Check if daily total exceeds 8 hours
   isDayExceeded(day: string): boolean {
     let totalMinutes = 0;
@@ -541,21 +540,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = '';
-
     let today = new Date().toDateString();
     let inputDay = new Date(dayName).toDateString(); // make sure dayName is a valid date string
-
     const isToday = today === inputDay;
-
     if (value?.length === 4) {
       let hours = parseInt(value.slice(0, 2), 10);
       let minutes = parseInt(value.slice(2), 10);
-
       if (hours >= 70 && value?.endsWith('00')) {
         hours = parseInt(value.slice(0, 1), 10);
         minutes = 0;
       }
-
       // ✅ Today can allow 24:00, otherwise max 23:59
       if (isToday) {
         if (hours > 24) hours = 24;
@@ -565,14 +559,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         if (hours > 23) hours = 23;
         if (minutes > 59) minutes = 59;
       }
-
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes
-        .toString()
-        .padStart(2, '0')}`;
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     } else if (value?.length === 3) {
       let hours = parseInt(value[0], 10);
       let minutes = parseInt(value?.slice(1), 10);
-
       if (isToday) {
         if (hours > 24) hours = 24;
         if (minutes > 59) minutes = 59;
@@ -581,10 +571,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         if (hours > 23) hours = 23;
         if (minutes > 59) minutes = 59;
       }
-
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes
-        .toString()
-        .padStart(2, '0')}`;
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     } else if (value?.length <= 2 && value?.length > 0) {
       let hours = parseInt(value, 10);
       if (isToday) {
@@ -598,12 +585,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     } else {
       formatted = '';
     }
-
     const control = this.projects.at(rowIndex).get(`${dayName}.${duration}`);
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
-
     this.showDots[rowIndex][dayName] = true;
   }
 
@@ -659,10 +644,34 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       .filter((c: any) => c && c.projects.length > 0);
   }
 
+  // Helper method to determine if a date is weekend/holiday/leave
+  getDayStatus(date: Date): { isBlocked: boolean; blockReason: string; isLeave: boolean } {
+    // Check if it's a holiday or leave from existing data first
+    const existingDayData = this.availableProjects[0]?.days?.find((day: any) => {
+      const dayDate = new Date(day.entryDate);
+      return dayDate.toDateString() === date.toDateString();
+    });
+
+    // If existing data has blockReason as 'Weekend', use it
+    if (existingDayData?.blockReason === 'Weekend') {
+      return {
+        isBlocked: true,
+        blockReason: 'Weekend',
+        isLeave: existingDayData?.isLeave || false
+      };
+    }
+
+    // Otherwise return existing data or default values
+    return {
+      isBlocked: existingDayData?.isBlocked || false,
+      blockReason: existingDayData?.blockReason || '',
+      isLeave: existingDayData?.isLeave || false
+    };
+  }
+
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
-    console.log(client, project);
-
+    this.selectedProjectResource = null
     const form = row as FormGroup;
     // Patch project details
     form.patchValue({
@@ -678,71 +687,67 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
     const selectedResource = this.resourcesArrayList.find(
-      (res: any) =>
-        res.project?.projectId === project.projectId &&
+      (res: any) => res.project?.projectId === project.projectId &&
         res.client?.clientId === client.clientId
     );
 
     if (selectedResource) {
-      console.log('Full project object:', selectedResource.weekendWorkAllowed);
-      // Example: store it in a weekendWorkAllowed for form binding
       this.selectedProjectResource = selectedResource;
     }
+
     this.selectedclientid = client.clientId;
     this.selectedprojectid = project.projectId;
     this.selectedProjectName = project.projectName;
     this.selectedClientname = client.clientName;
     this.selectedShiftDetails = client.shift;
+
     // Days array
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    days.forEach((dayKey) => {
+    days.forEach((dayKey, index) => {
       const dayForm = form.get(dayKey) as FormGroup;
-      if (!dayForm) return;
-      const isBlocked = dayForm.get('isBlocked')?.value;
-      const blockReason = dayForm.get('blockReason')?.value;
-      const isLeave = dayForm.get('isLeave')?.value;
-      const dateValue = dayForm.get('entryDate')?.value;
-      
+      const entryDate = this.weekDates[index];
+
+      // Get day status (weekend/holiday/leave)
+      const dayStatus = this.getDayStatus(entryDate);
+      const { isBlocked, blockReason, isLeave } = dayStatus;
+
+      // Update form controls with day status
+      dayForm.patchValue({
+        isBlocked,
+        blockReason,
+        isLeave
+      });
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const entryDate = dateValue ? new Date(dateValue) : null;
-      const isFutureDate = entryDate ? entryDate > today : false;
-      // Enable basic fields if not blocked or leave
-      [
-        'clientName',
-        'clientId',
-        'projectName',
-        'projectId',
-        'startTime',
-        'endTime',
-        'description',
-      ].forEach((ctrl) => {
-        if (!isBlocked && !isLeave) {
+      const isFutureDate = entryDate > today;
+
+      // Check if project is effective for this date
+      let isEffective = true;
+      if (
+        this.selectedProjectResource &&
+        this.selectedProjectResource.project?.projectId !== 0 &&
+        this.selectedProjectResource.startDate
+      ) {
+        const resourceStartDate = new Date(this.selectedProjectResource.startDate);
+        resourceStartDate.setHours(0, 0, 0, 0);
+        isEffective = entryDate >= resourceStartDate;
+      }
+
+      // Enable/disable fields based on conditions
+      const shouldEnable = !isLeave && !isFutureDate && isEffective &&
+        (!isBlocked || (blockReason === 'Weekend' && this.selectedProjectResource?.weekendWorkAllowed));
+
+      ['duration', 'description', 'startTime', 'endTime'].forEach((ctrl) => {
+        if (shouldEnable) {
           dayForm.get(ctrl)?.enable();
         } else {
           dayForm.get(ctrl)?.disable();
         }
       });
-      // Enable duration
-      if (!isBlocked && !isLeave && !isFutureDate ) {
-        dayForm.get('duration')?.enable();
-        dayForm.get('description')?.enable();
-        dayForm.get('startTime')?.enable();
-        dayForm.get('endTime')?.enable()
-      } else if (
-        blockReason === 'Weekend' &&
-        this.selectedProjectResource?.weekendWorkAllowed
-      ) {
-        // If weekend is blocked but project allows weekends
-        dayForm.get('duration')?.enable();
-        dayForm.get('description')?.enable();
-        dayForm.get('startTime')?.enable();
-        dayForm.get('endTime')?.enable()
-      } else {
-        dayForm.get('duration')?.disable();
-      }
     });
-    // Close dropdown safely
+
+    // Close dropdown
     const dropdownMenu = document.querySelector('.dropdown-menu.show');
     if (dropdownMenu) dropdownMenu.classList.remove('show');
     const dropdownBtn = document.getElementById('dropdownMenuButton');
@@ -756,7 +761,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   hasUnselectedProjects(client: any): boolean {
     return client.projects.some((p: any) => {
       const isNoClientProject = client.clientId === 0 && p.projectId === 0;
-
       if (isNoClientProject) {
         return !this.selectedProjectIds.includes(0); // check against 0
       }
@@ -765,8 +769,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   showprojectlength(projects: any[], selectedProjectIds: any[]): number {
-    return projects.filter((p) => !selectedProjectIds.includes(p.projectId))
-      .length;
+    return projects.filter((p) => !selectedProjectIds.includes(p.projectId)).length;
   }
 
   // Get all selected project IDs across all rows
@@ -777,27 +780,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //OPEN TIME ENTERIY
-  openModal(
-    content: any,
-    dayForm: AbstractControl | null,
-    index: number,
-    dayKey: string
-  ) {
-
+  openModal(content: any,dayForm: AbstractControl | null,index: number,dayKey: string) {
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference
-
-
-
       const shiftData = this.resourcesArrayList.find(
         (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value
       );
-      if (
-        (this.selectedShiftDetails == undefined ||
-          this.selectedShiftDetails == null) &&
-        this.dayForm.get('projectId')?.value != null
-      ) {
+      if ((this.selectedShiftDetails == undefined || this.selectedShiftDetails == null) &&
+        this.dayForm.get('projectId')?.value != null) {
         this.selectedShiftDetails = shiftData?.shift;
       }
       // const status = dayForm.get('approvalStatus')?.value;
@@ -897,14 +888,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       // }
     }
   }
+
   recalculateTimes(dayKey: string, startIndex: number) {
     for (let i = 0; i < this.projects.length; i++) {
       const projectForm = this.projects.at(i).get(dayKey) as FormGroup;
       const duration = projectForm.get('duration')?.value;
-
       let startTime: string | undefined;
       let endTime: string | undefined;
-
       // Try to find last filled endTime from previous projects
       for (let j = i - 1; j >= 0; j--) {
         const prevEnd = this.projects.at(j).get(dayKey)?.get('endTime')?.value;
@@ -913,7 +903,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           break;
         }
       }
-
       // If no previous endTime found, look forward for next filled project's startTime
       if (!startTime) {
         for (let j = i + 1; j < this.projects.length; j++) {
@@ -925,19 +914,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           }
         }
       }
-
       // If no previous or next filled time, use shift start time
       if (!startTime) {
         startTime = this.selectedShiftDetails?.shiftStartTime;
       }
-
       // Calculate endTime if duration exists
       if (startTime && duration) {
         const [hours, minutes] = duration.split(':').map(Number);
-        endTime = moment(startTime, 'HH:mm:ss')
-          .add(hours, 'hours')
-          .add(minutes, 'minutes')
-          .format('HH:mm:ss');
+        endTime = moment(startTime, 'HH:mm:ss').add(hours, 'hours').add(minutes, 'minutes').format('HH:mm:ss');
       }
 
       projectForm.patchValue({
@@ -947,10 +931,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
-
   //single recoder
   saveDayEntry() {
-    this.spinnerLoader = true
+    this.spinnerLoader = true;
     // Prepare payload
     const formValue = this.dayForm.value;
     const toTimeSpan = (time: string | null | undefined): string => {
@@ -986,10 +969,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
     };
+
     // POST request
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
-        this.spinnerLoader = false
+        this.spinnerLoader = false;
         this.timesheetForm.reset();
         this.modalService.dismissAll();
         this.getResourceData();
@@ -999,13 +983,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedProjectName = null;
         this.selectedClientname = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-        this.getTimeSheetEntriesbyEmployeeId(
-          this.employeeId,
-          this.formattedweakendStart
-        );
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
-        this.spinnerLoader = false
+        this.spinnerLoader = false;
         this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error saving entry', err);
       },
@@ -1027,10 +1008,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.timesheetForm.reset()
     this.modalService.dismissAll();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-    this.getTimeSheetEntriesbyEmployeeId(
-      this.employeeId,
-      this.formattedweakendStart
-    );
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
   }
 
   //payload for submit-for-approval
@@ -1083,13 +1061,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedProjectName = null;
         this.selectedClientname = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
-        this.getTimeSheetEntriesbyEmployeeId(
-          this.employeeId,
-          this.formattedweakendStart
-        );
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
-        this.spinnerLoaderforallrecoders = false
+        this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);
       },
@@ -1101,7 +1076,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (!project) return false;
     const projectId = project.get('projectId')?.value;
     const projectName = project.get('projectName')?.value;
-
     if (index === 0 && !projectId && !projectName) {
       return false;
     }

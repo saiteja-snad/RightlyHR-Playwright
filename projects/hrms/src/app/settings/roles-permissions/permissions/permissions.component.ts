@@ -1117,7 +1117,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Project Management Authority',
     'Letter Frequency Configurations'
   ];
-
+selectAllLettersTabs=[
+  'NDA Document','MSA Document'
+]
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],

@@ -64,7 +64,7 @@ export class ClientContactInformationComponent {
   getClientsData(clientID: any): void {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.inactiveClientStatus = res.data.status;
+        this.inactiveClientStatus = res.data.status.toLowerCase();
       },
       error: (err) => {
         console.error('Error fetching clients:', err);
@@ -126,9 +126,8 @@ export class ClientContactInformationComponent {
         this.getContactData(this.clientId);
       },
       error: (err) => {
-        this.conformationPopup.openErrorModal('Error deleting contact.');
+        this.conformationPopup.openErrorModal(err.error.message)
         console.error('Error deleting contact:', err);
-        this.modalService.dismissAll();
       }
     });
   }
@@ -176,7 +175,7 @@ export class ClientContactInformationComponent {
       error: (err) => {
         this.spinnerLoader = false;
         console.error("Update failed:", err);
-        this.conformationPopup.openErrorModal('Failed to update contact');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }
@@ -249,9 +248,9 @@ export class ClientContactInformationComponent {
           this.getContactData(this.clientId);
         },
         error: (err) => {
-          this.conformationPopup.openErrorModal('Error deleting contact.');
+          this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-          this.modalService.dismissAll();
+          this.getContactData(this.clientId);
         }
       });
   }

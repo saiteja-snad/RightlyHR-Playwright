@@ -41,7 +41,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   projectStartDate: any;
   projectEndDate: any;
 
-  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal,public formValidation: FormValidationService,
+  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationService,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService) { }
 
   ngOnInit() {
@@ -84,8 +84,8 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     this.addResourceForm = this.fb.group({
       resourceName: [null, Validators.required],
       resourceEmail: [null, [Validators.required, Validators.email]],
-      resourceRole: [null, [Validators.required,  Validators.maxLength(50),
-        Validators.minLength(2),
+      resourceRole: [null, [Validators.required, Validators.maxLength(50),
+      Validators.minLength(2),
       ]],
       resourcePhone: [null, Validators.required],
       designation: [null, Validators.required],
@@ -139,7 +139,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       },
     });
   }
-  
+
   selectproject(projectId: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -211,7 +211,6 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     });
   }
 
-
   isActive(route: string): boolean {
     return this.router.url.includes(route);
   }
@@ -252,6 +251,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   StartndendDateValidation() {
     const StartDate = this.addResourceForm.get('startDate')?.value;
     const EndDate = this.addResourceForm.get('endDate')?.value;
@@ -326,15 +326,16 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       return null;
     };
   }
+
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
-
   }
 
   close() {
     this.modalService.dismissAll();
     this.addResourceForm.reset();
   }
+  
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -55,18 +55,17 @@ export class ProjectViewComponent implements OnInit {
       }
     });
     this.enableResourceOnDateChange();
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       if (this.router.url.includes('/project-management/projects/details/timesheet')) {
         this.resetForm();
       }
     });
-
   }
+
   resetForm() {
     this.datepickerForm.reset();
     this.datepickerForm.get('resourceId')?.disable();
+    this.http.setRequest(null);
   }
 
   createContactForm() {
@@ -138,11 +137,11 @@ export class ProjectViewComponent implements OnInit {
       (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
+
   getAllresourcesData() {
     this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.resourcesData = res?.data?.map((x: any) => x.employee) ?? []; // Extract "data" array
-        console.log(this.resourcesData);
       },
       error: (err) => {
         console.error('Error fetching employee data:', err);
@@ -161,7 +160,8 @@ export class ProjectViewComponent implements OnInit {
           const project = this.projectsData[0];
           this.clientsId = project?.client?.clientId ?? null;
           this.inactiveStatus = (res?.data ?? []).some((p: any) =>
-            p.status === 'Inactive' || p.client.status === 'Inactive') ? 'Inactive' : 'Active';
+            p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
+          ) ? 'inactive' : 'active';
         } else {
           this.clientsId = null; // No projects returned
         }

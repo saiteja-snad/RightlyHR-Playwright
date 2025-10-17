@@ -9,6 +9,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Project } from '../../../Interfaces/projects.model';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormsModule } from '@angular/forms';
@@ -28,8 +29,9 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   projectsData: Project[] = [];
   empinfo: any = {};
   searchValue: any;
+  inactiveClientStatus: any;
   constructor(private router: Router, private http: HttpService, private conformationPopup: OpenModalService,
-    private modalService: NgbModal, private route: ActivatedRoute) { }
+    private modalService: NgbModal, private route: ActivatedRoute, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -85,6 +87,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     this.http.getData(`Project?clientId=${clientID}&status=Inactive`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
+        this.inactiveClientStatus = res?.data?.[0]?.client?.status.toLowerCase();
         this.loading = false;
       },
       error: (err) => {

@@ -43,4 +43,15 @@ export class ProjectTabsComponent {
     // Exact match or starts with followed by `/` to avoid partial matches
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }
+
+  isDocumentTabActive(link: string): boolean {
+    const currentUrl = this.router.url.split('?')[0]; // Remove query params
+    // For Documents tab, check both documents and inactivedocuments routes
+    if (link === '/project-management/projects/details/documents') {
+      return currentUrl.includes('/project-management/projects/details/documents') || 
+      currentUrl.includes('/project-management/projects/details/inactivedocuments');
+    }
+    // For other tabs, use exact match
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
 }

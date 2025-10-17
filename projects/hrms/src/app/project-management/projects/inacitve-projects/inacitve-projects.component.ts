@@ -30,6 +30,7 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
   empinfo: any = {};
   searchValue: any;
   inactiveClientStatus: any;
+  
   constructor(private router: Router, private http: HttpService, private conformationPopup: OpenModalService,
     private modalService: NgbModal, private route: ActivatedRoute, public rbac: RbacService) { }
 

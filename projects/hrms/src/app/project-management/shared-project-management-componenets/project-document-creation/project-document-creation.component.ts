@@ -30,8 +30,9 @@ export class ProjectDocumentCreationComponent {
   displayClientAttachment: string = '';
   documentTypes: IEAV[] = [];
   fileErrorMessage: string = '';
+  
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private http: HttpService,
-    private modalService: NgbModal, private conformationPopup: OpenModalService ,public formValidations: FormValidationsService,) { }
+    private modalService: NgbModal, private conformationPopup: OpenModalService, public formValidations: FormValidationsService,) { }
 
   ngOnInit() {
     const today = new Date();
@@ -62,7 +63,7 @@ export class ProjectDocumentCreationComponent {
       //   this.formValidations.maxCharactersValidator(100),
       //   Validators.pattern(/^[^\s].*$/)
       // ]],
-    //  createdDate: [null, Validators.required],
+      //  createdDate: [null, Validators.required],
       documentType: [null, Validators.required],
       documentUrl: [null, Validators.required]
     });
@@ -96,7 +97,7 @@ export class ProjectDocumentCreationComponent {
   openModal(content: any, data: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     this.addDocumentForm.patchValue({
-     // documentName: data?.documentName,
+      // documentName: data?.documentName,
       createdDate: this.formatDateToLocal(data?.createdAt),
       documentType: data?.documentType,
       documentUrl: data?.documentUrl
@@ -127,11 +128,11 @@ export class ProjectDocumentCreationComponent {
 
   // file select and validation function
   onChangeClientAttachment(event: any): void {
-      this.displayClientAttachment = '';
-     this.fileErrorMessage = ''; 
+    this.displayClientAttachment = '';
+    this.fileErrorMessage = '';
     const file: File = event.target.files[0];
     if (!file) return;
-     const allowedTypes = [
+    const allowedTypes = [
       'image/jpeg',
       'image/png',
       'application/pdf',
@@ -246,7 +247,7 @@ export class ProjectDocumentCreationComponent {
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-         this.conformationPopup.openErrorModal(err.error.message);
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

@@ -3,8 +3,7 @@
         <p-tablist>
             <ng-container *ngFor="let tab of filteredTabs;">
                 <p-tab [value]="tab.link">
-                    <a [routerLink]="[tab.link]" [queryParamsHandling]="'preserve'"   routerLinkActive="active-nav-link" 
-                    class="nav-link">
+                    <a [routerLink]="[tab.link]" [queryParamsHandling]="'preserve'" routerLinkActive="active-nav-link"  class="nav-link">
                         {{ tab.label | translate }}
                     </a>
                 </p-tab>

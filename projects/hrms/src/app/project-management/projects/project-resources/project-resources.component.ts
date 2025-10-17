@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit,OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,13 +19,13 @@ import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/conf
 import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-project-resources',
-  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe, 
+  imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
     Select, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
 
-export class ProjectResourcesComponent implements OnInit, OnDestroy{
+export class ProjectResourcesComponent implements OnInit, OnDestroy {
   resourcesData = [] as IResource[];
   subscription!: Subscription;
   updateResourceForm!: FormGroup;
@@ -48,8 +48,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy{
   endDatevalidate: any;
   inactiveStatus: any;
 
-  constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal, 
-     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService,public formValidation: FormValidationsService,) { }
+  constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
+    private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
+    public formValidation: FormValidationsService,) { }
 
   ngOnInit() {
     this.initializeForms();
@@ -90,7 +91,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy{
       billable: [false],
       allowweekendWork: [false],
       resourceRole: [null, [Validators.required, Validators.maxLength(50),
-        Validators.minLength(2),]]
+      Validators.minLength(2),]]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -352,7 +353,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy{
       }
     });
   }
-  
+
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -362,11 +363,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy{
     // this.router.navigate(['/project-management/clients/active'])
   }
 
-   
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
-      if (this.subscription) {
+    if (this.subscription) {
       this.subscription.unsubscribe()
     }
   }

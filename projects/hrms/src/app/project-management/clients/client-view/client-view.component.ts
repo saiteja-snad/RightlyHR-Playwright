@@ -14,7 +14,6 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { AuthService } from '../../../services/auth.service';
 import { ResourceCreationComponent } from "../../shared-project-management-componenets/resource-creation/resource-creation.component";
-import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { RbacService } from '../../../services/rbac.service';
 import { IEAV } from '../../../settings/project-management-configurations/models/project-type.modal';
 import dayjs, { Dayjs } from 'dayjs';
@@ -23,7 +22,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { Project } from '../../../Interfaces/projects.model';
 @Component({
   selector: 'app-client-view',
-  imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ConfirmationIconComponent, ClientTabsComponent,
+  imports: [CommonModule, ProjectManagementModuleInfoComponent, DatePicker, ClientTabsComponent,
     RouterModule, ReactiveFormsModule, TranslateModule, ProjcetCreationComponent, ProjectContactInfoCreationComponent,
     ResourceCreationComponent, Select],
   templateUrl: './client-view.component.html',

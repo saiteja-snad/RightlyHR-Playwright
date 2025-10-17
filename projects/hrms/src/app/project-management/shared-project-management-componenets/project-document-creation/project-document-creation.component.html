@@ -42,8 +42,8 @@
                     <label for="documentAttachment" class="form-label custom-label mb-2">Attachment
                         <span class="text-danger">*</span></label>
                     <input type="file" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
-                        (change)="onChangeClientAttachment($event)" id="documentAttachment" formControlName="documentUrl"
-                        class="form-control custom-input px-0" />
+                        (change)="onChangeClientAttachment($event)" id="documentAttachment"
+                        formControlName="documentUrl" class="form-control custom-input px-0" />
                     <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
                     <div class="error-msg" *ngIf="addDocumentForm.get('documentUrl')?.touched && 
                     addDocumentForm.get('documentUrl')?.invalid &&!fileErrorMessage">Attachment is required</div>

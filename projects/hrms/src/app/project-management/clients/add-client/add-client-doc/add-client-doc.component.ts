@@ -57,13 +57,11 @@ export class AddClientDocComponent {
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
-  
   }
 
   getEAV() {
     this.subscription = this.http.getData('entityAttributeValues?entity=Project&attribute=Letters').subscribe({
       next: (data: any) => {
-        console.log("data", data);
         // 1 Collect all values (single or comma-separated) into a Set
         const selected = new Set<string>();
         data.forEach((row: any) => {

@@ -25,7 +25,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
   timesheetSummaryChartData: any;
   timesheetutilizeSummaryChartData: any;
   timesheetSummaryOptions: any;
-   timesheetUtilizeSummaryOptions: any;
+  timesheetUtilizeSummaryOptions: any;
   statusCounts$ = new BehaviorSubject<MonthlySummaryItem[]>([]);
   utilizationcount$ = new BehaviorSubject<any>(null);
   totalEntries = 0;
@@ -39,7 +39,7 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
       if (request) {
         this.getProjectSummary(request);
       }
-      else{
+      else {
         this.resetSummary();
       }
     });
@@ -63,61 +63,53 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
         this.statusCounts$.next(summaryItems);
         this.totalEntries = monthlySummary?.totalEntries ?? 0;
         // utiliztionsummery charts
-      const utilizationSummary = data?.utilizationSummary;
-      const overall = utilizationSummary?.overall;
-      const utilizationArray = (() => {
-        if (!overall || !overall.loggedHHMM) return [];
-
-        const hhmm = overall.loggedHHMM as string;
-
-        // If exactly "0:00" or "00:00", return empty array
-        if (hhmm === '0:00' || hhmm === '00:00') return [];
-
-        // Split by ":" and convert to numbers
-        const parts = hhmm.split(':').map(Number);
-
-        // If parsing fails or less than 2 parts, return empty array
-        if (parts.length < 2 || parts.some(isNaN)) return [];
-
-        const h = parts[0];
-        const m = parts[1];
-
-        // 🧠 Format display string: omit minutes if 00
-        const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
-
-        return [
-          {
-            key: 'loggedHours',
-            label: 'Logged Hours',
-          value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`),
-            loggedHHMM, // formatted display value
-            loggedISO: overall.loggedISO,
-          },
-        ];
-      })();
-
-      this.utilizationcount$.next(utilizationArray);
-      // time sheet summary charts data
-      this.timesheetSummaryChartData = {
-        datasets: [
-          {
-            data: summaryItems.map((i) => i.value),
-            backgroundColor: summaryItems.map((i) => i.colour),
-            borderWidth: 0,
-          },
-        ],
-      };
-      // utiliztionsummery charts data
-      this.timesheetutilizeSummaryChartData = {
-        datasets: [
-          {
-            data: utilizationArray.map((i) => i.value),
-            backgroundColor: ['#4CAF50', '#FF9800'],
-            borderWidth: 0,
-          },
-        ],
-      };
-      this.timesheetSummaryOptions = {
+        const utilizationSummary = data?.utilizationSummary;
+        const overall = utilizationSummary?.overall;
+        const utilizationArray = (() => {
+          if (!overall || !overall.loggedHHMM) return [];
+          const hhmm = overall.loggedHHMM as string;
+          // If exactly "0:00" or "00:00", return empty array
+          if (hhmm === '0:00' || hhmm === '00:00') return [];
+          // Split by ":" and convert to numbers
+          const parts = hhmm.split(':').map(Number);
+          // If parsing fails or less than 2 parts, return empty array
+          if (parts.length < 2 || parts.some(isNaN)) return [];
+          const h = parts[0];
+          const m = parts[1];
+          // 🧠 Format display string: omit minutes if 00
+          const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
+          return [
+            {
+              key: 'loggedHours',
+              label: 'Logged Hours',
+              value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`),
+              loggedHHMM, // formatted display value
+              loggedISO: overall.loggedISO,
+            },
+          ];
+        })();
+        this.utilizationcount$.next(utilizationArray);
+        // time sheet summary charts data
+        this.timesheetSummaryChartData = {
+          datasets: [
+            {
+              data: summaryItems.map((i) => i.value),
+              backgroundColor: summaryItems.map((i) => i.colour),
+              borderWidth: 0,
+            },
+          ],
+        };
+        // utiliztionsummery charts data
+        this.timesheetutilizeSummaryChartData = {
+          datasets: [
+            {
+              data: utilizationArray.map((i) => i.value),
+              backgroundColor: ['#4CAF50', '#FF9800'],
+              borderWidth: 0,
+            },
+          ],
+        };
+        this.timesheetSummaryOptions = {
           cutout: '70%',
         };
         this.timesheetUtilizeSummaryOptions = {
@@ -147,7 +139,6 @@ export class ProjectTimesheetsComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   resetSummary() {
     this.attendanceSummaryData = [];

@@ -12,8 +12,8 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <th> Employee ID</th>
-                    <th> Name</th>
+                    <th>Employee ID</th>
+                    <th>Name</th>
                     <th>Designation</th>
                     <th>Role</th>
                     <th>Email</th>
@@ -154,8 +154,8 @@
 
                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourceEmail" class="form-label custom-label mb-2">Email<span
-                                class="text-danger">*</span></label>
+                        <label for="resourceEmail" class="form-label custom-label mb-2">Email
+                            <span class="text-danger">*</span></label>
                         <input type="email" id="resourceEmail" formControlName="resourceEmail"
                             class="form-control custom-input" placeholder="Enter email address" readonly />
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceEmail')?.touched && 
@@ -181,7 +181,6 @@
                         [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
                         updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
-
                     </div>
 
                     <!-- End Date -->
@@ -213,7 +212,6 @@
                         <div class="error-msg">
                             <div *ngIf="updateResourceForm.get('resourceAllocationhrs')?.touched &&  updateResourceForm.get('resourceAllocationhrs')?.invalid">
                                 Allocation Hours are required</div>
-                           
                             <div *ngIf="updateResourceForm.get('allocatedFrequencyType')?.touched && updateResourceForm.get('allocatedFrequencyType')?.invalid">
                                 <div *ngIf="updateResourceForm.get('allocatedFrequencyType')?.errors?.['required']">
                                     Please select a frequency type

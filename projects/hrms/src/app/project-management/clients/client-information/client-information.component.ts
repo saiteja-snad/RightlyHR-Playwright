@@ -78,11 +78,9 @@ export class ClientInformationComponent {
       logo: [{ value: '', disabled: true }, attachmentValidators]
     });
     // Clean emojis dynamically as user types or pastes
-
     // Object.keys(this.clientForm.controls).forEach(controlName => {
     //   this.formValidation.cleanEmojiOnChange(this.clientForm.get(controlName)!);
     // });
-
   }
 
   getClientsData(clientID: any): void {
@@ -121,8 +119,7 @@ export class ClientInformationComponent {
       allowWeekendWork: client.weekendWorkAllowed
     });
     this.clientAttachment = client.logoPath
-    this.displayClientAttachment = client.logoPath
-      ? client.logoPath.split('/').pop() : null;
+    this.displayClientAttachment = client.logoPath ? client.logoPath.split('/').pop() : null;
     const attachmentValidators = this.displayClientAttachment ? [] : [Validators.required];
     this.clientForm.get('logo')?.setValidators(attachmentValidators);
     this.clientForm.get('logo')?.updateValueAndValidity();
@@ -147,16 +144,14 @@ export class ClientInformationComponent {
     this.clientForm.get('logo')?.updateValueAndValidity();
     this.displayClientAttachment = '';
     const file: File = event.target.files[0];
-
-      
-  if (!file) {
-    this.clientAttachment = null;
-     const attachmentValidators = this.displayClientAttachment ? [] : [Validators.required];
-    this.clientForm.get('logo')?.setValidators(attachmentValidators);
-    this.clientForm.get('logo')?.updateValueAndValidity();
-    this.resetClientFormAttachment();
-    return;
-  }
+    if (!file) {
+      this.clientAttachment = null;
+      const attachmentValidators = this.displayClientAttachment ? [] : [Validators.required];
+      this.clientForm.get('logo')?.setValidators(attachmentValidators);
+      this.clientForm.get('logo')?.updateValueAndValidity();
+      this.resetClientFormAttachment();
+      return;
+    }
     if (!file) return;
     const allowedTypes = [
       'image/jpeg',

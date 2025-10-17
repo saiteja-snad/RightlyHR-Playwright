@@ -24,7 +24,7 @@ export class ClientTabsComponent {
     },
     {
       label: 'Projects', link: '/project-management/clients/details/projects', icon: 'main-menu-icons/project-management-project.png',
-      permission: { feature: 'Client Projects', action: 'view' }
+      permission: { feature: 'Client Projects', action: 'view' },
     },
     {
       label: 'Resources', link: '/project-management/clients/details/resources', icon: 'main-menu-icons/project-management-resources.png',

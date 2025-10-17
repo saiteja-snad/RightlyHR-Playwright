@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
@@ -36,7 +36,7 @@ export class InactiveClientDocumentsComponent {
   inactiveClientStatus: any;
   selecteddata: any;
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal, 
+  constructor(private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService) { }
 
   ngOnInit() {
@@ -101,7 +101,7 @@ export class InactiveClientDocumentsComponent {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-    //  documentName: formValue.documentName,
+      //  documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,
@@ -153,7 +153,7 @@ export class InactiveClientDocumentsComponent {
   close() {
     this.modalService.dismissAll();
   }
-  
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

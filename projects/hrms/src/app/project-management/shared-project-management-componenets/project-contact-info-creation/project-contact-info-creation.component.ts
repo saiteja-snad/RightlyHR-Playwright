@@ -84,14 +84,14 @@ export class ProjectContactInfoCreationComponent implements OnInit, OnDestroy {
   // Create a single contact form group
   createContactGroup(): FormGroup {
     const group = this.fb.group({
-      contactName: [null, [Validators.required,this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51) ]],
-      contactPhone: [null,[ Validators.required, ]],
-      contactRole: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51) ]],
-      contactEmail: [null, [Validators.required, Validators.email, ]],
+      contactName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51)]],
+      contactPhone: [null, [Validators.required,]],
+      contactRole: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(51)]],
+      contactEmail: [null, [Validators.required, Validators.email,]],
       countryCode: [null, [Validators.required]],
       dialling_code: [null, [Validators.required]]
     });
- 
+
     return group
   }
 
@@ -108,7 +108,6 @@ export class ProjectContactInfoCreationComponent implements OnInit, OnDestroy {
   // Remove a row
   removeContact(index: number) {
     this.contacts.removeAt(index);
-    
   }
 
   cancel() {

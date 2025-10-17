@@ -15,7 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 @Component({
   selector: 'app-inactive-project-documents',
-  imports: [NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, DateformatPipe, 
+  imports: [NoDataFoundComponent, DataLoaderContentComponent, DownloadIconComponent, DateformatPipe,
     TranslateModule, CommonModule, DateformatPipe, ConfirmationIconComponent],
   templateUrl: './inactive-project-documents.component.html',
   styleUrl: './inactive-project-documents.component.scss'
@@ -37,7 +37,7 @@ export class InactiveProjectDocumentsComponent {
   inactiveStatus: any;
   selecteddata: any;
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal, 
+  constructor(private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService) { }
 
   ngOnInit() {
@@ -46,7 +46,7 @@ export class InactiveProjectDocumentsComponent {
     this.currentDate = now.toISOString().split('T')[0];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.route.queryParams.subscribe(params => {
-    const projectId = params['id'];
+      const projectId = params['id'];
       if (projectId) {
         this.projectId = projectId;
         this.getDocumentDetails(projectId);
@@ -104,7 +104,7 @@ export class InactiveProjectDocumentsComponent {
     const payload = {
       entityType: "project",
       entityId: this.route.snapshot.queryParams['id'],
-     // documentName: formValue.documentName,
+      // documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,

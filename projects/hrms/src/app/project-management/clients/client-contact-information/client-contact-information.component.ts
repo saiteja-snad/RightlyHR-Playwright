@@ -128,7 +128,6 @@ export class ClientContactInformationComponent {
       error: (err) => {
         this.conformationPopup.openErrorModal(err.error.message)
         console.error('Error deleting contact:', err);
-      
       }
     });
   }
@@ -251,8 +250,7 @@ export class ClientContactInformationComponent {
         error: (err) => {
           this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-              this.getContactData(this.clientId);
-        
+          this.getContactData(this.clientId);
         }
       });
   }

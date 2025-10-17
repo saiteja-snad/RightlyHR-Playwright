@@ -7,13 +7,12 @@ import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
 import { TranslateModule } from '@ngx-translate/core';
-import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-client-time-sheets',
-  imports: [CommonModule, TranslateModule, ChartModule, InfoIconComponent, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe],
+  imports: [CommonModule, TranslateModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe],
   templateUrl: './client-time-sheets.component.html',
   styleUrl: './client-time-sheets.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -30,10 +29,9 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
   statusCounts$ = new BehaviorSubject<MonthlySummaryItem[]>([]);
   utilizationcount$ = new BehaviorSubject<any>(null);
   totalEntries = 0;
-  loading = false
+  loading = false;
 
-
-  constructor(private modalService: NgbModal, private route: ActivatedRoute, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private http: HttpService) { }
 
   ngOnInit() {
     //this.resetSummary();
@@ -55,62 +53,52 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
         const data: TimesheetSummaryResponse = res?.data;
         // this.attendanceSummaryData = data?.dailyData ?? [];
         const resourceName = data?.resource;
-
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
           fusionEmployeeId: resourceName.fusionEmployeeId,
           resourceName: resourceName.name
         }));
-        console.log(this.attendanceSummaryData);
         const monthlySummary = data?.monthlySummary;
         const summaryItems = monthlySummary?.items ?? [];
         this.statusCounts$.next(summaryItems);
         this.totalEntries = monthlySummary?.totalEntries ?? 0;
         // utiliztionsummery charts
         const utilizationSummary = data?.utilizationSummary;
-       const overall = utilizationSummary?.overall;
-       const utilizationArray = (() => {
-         if (!overall || !overall.loggedHHMM) return [];
-
-         const hhmm = overall.loggedHHMM as string;
-
-         // If exactly "0:00" or "00:00", return empty array
-         if (hhmm === '0:00' || hhmm === '00:00') return [];
-
-         // Split by ":" and convert to numbers
-         const parts = hhmm.split(':').map(Number);
-
-         // If parsing fails or less than 2 parts, return empty array
-         if (parts.length < 2 || parts.some(isNaN)) return [];
-
-         const h = parts[0];
-         const m = parts[1];
-
-         // 🧠 Format display string: omit minutes if 00
-         const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
-
-         return [
-           {
-             key: 'loggedHours',
-             label: 'Logged Hours',
-             value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`), // hours.minutes format for chart
-             loggedHHMM, // formatted display value
-             loggedISO: overall.loggedISO,
-           },
-         ];
-       })();
-
-       this.utilizationcount$.next(utilizationArray);
-       // time sheet summary charts data
-       this.timesheetSummaryChartData = {
-         datasets: [
-           {
-             data: summaryItems.map((i) => i.value),
-             backgroundColor: summaryItems.map((i) => i.colour),
-             borderWidth: 0,
-           },
-         ],
-       };
+        const overall = utilizationSummary?.overall;
+        const utilizationArray = (() => {
+          if (!overall || !overall.loggedHHMM) return [];
+          const hhmm = overall.loggedHHMM as string;
+          // If exactly "0:00" or "00:00", return empty array
+          if (hhmm === '0:00' || hhmm === '00:00') return [];
+          // Split by ":" and convert to numbers
+          const parts = hhmm.split(':').map(Number);
+          // If parsing fails or less than 2 parts, return empty array
+          if (parts.length < 2 || parts.some(isNaN)) return [];
+          const h = parts[0];
+          const m = parts[1];
+          // 🧠 Format display string: omit minutes if 00
+          const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
+          return [
+            {
+              key: 'loggedHours',
+              label: 'Logged Hours',
+              value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`), // hours.minutes format for chart
+              loggedHHMM, // formatted display value
+              loggedISO: overall.loggedISO,
+            },
+          ];
+        })();
+        this.utilizationcount$.next(utilizationArray);
+        // time sheet summary charts data
+        this.timesheetSummaryChartData = {
+          datasets: [
+            {
+              data: summaryItems.map((i) => i.value),
+              backgroundColor: summaryItems.map((i) => i.colour),
+              borderWidth: 0,
+            },
+          ],
+        };
         // utiliztion summery charts data
         this.timesheetutilizeSummaryChartData = {
           datasets: [
@@ -121,7 +109,7 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
             }
           ]
         };
-           this.timesheetSummaryOptions = {
+        this.timesheetSummaryOptions = {
           cutout: '70%',
         };
         this.timesheetUtilizeSummaryOptions = {
@@ -165,7 +153,7 @@ export class ClientTimeSheetsComponent implements OnInit, OnDestroy {
     this.attendanceSummaryData = [];
     this.statusCounts$.next([]);
     this.totalEntries = 0;
-     this.utilizationcount$.next([]);
+    this.utilizationcount$.next([]);
     this.timesheetSummaryChartData = { labels: [], datasets: [] };
     this.timesheetutilizeSummaryChartData = { labels: [], datasets: [] };
   }

@@ -40,9 +40,7 @@
         <div class="d-flex gap-3 align-items-center" *ngIf="isActive('/project-management/clients/details/projects')">
             @if(rbac.allowedToAccess('Client Projects.delete')){
             <div>
-                <a (click)="navigationtoinactive()" class="primary-link">
-                    <u>Inactive Projects</u>
-                </a>
+                <a (click)="navigationtoinactive()" class="primary-link"><u>Inactive Projects</u></a>
             </div>
             }
 
@@ -134,13 +132,12 @@
                 <div class="row">
                     <!-- Document Type -->
                     <div class="col-md-6 mb-3">
-                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span
-                                class="text-danger">*</span></label>
+                        <label for="documentType" class="form-label custom-label mb-2">Document Type
+                            <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
-                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
-                                formControlName="documentType" placeholder="Please select document type"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
+                                optionLabel="value" optionValue="value" formControlName="documentType"
+                                placeholder="Please select document type" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="addDocumentForm.get('documentType')?.touched && addDocumentForm.get('documentType')?.invalid">
@@ -183,10 +180,8 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="addDocumentForm.invalid">Add</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="addDocumentForm.invalid">Add</button>
                 </div>
             </form>
         </div>

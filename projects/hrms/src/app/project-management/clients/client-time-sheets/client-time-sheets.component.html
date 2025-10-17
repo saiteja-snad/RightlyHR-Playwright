@@ -16,9 +16,7 @@
                         <td>{{row.fusionEmployeeId}}</td>
                         <td>{{row.resourceName}}</td>
                         <td>{{ row.date | dateformat }}</td>
-                        <td>
-                            {{ row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs' }}
-                        </td>
+                        <td>{{ row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs' }}</td>
                         <td [style.color]="row.dailySummary.colour"><b><span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b></td>
                         <!-- <td>
                         <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
@@ -85,14 +83,13 @@
                     <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
                         [options]="timesheetUtilizeSummaryOptions"></p-chart>
                 </div>
-
                 <ul class="list-style-none ps-0 pt-3 mb-0">
                     @if (utilizationcount$ | async; as utilizationList) {
                     @for (item of utilizationList; track $index) {
                     <li>
                         <div class="d-flex justify-content-between summart-text">
                             <div class="summary-name">{{ item.label }}</div>
-                            <div>{{ item.loggedHHMM     }}</div>
+                            <div>{{ item.loggedHHMM }}</div>
                         </div>
                     </li>
                     }

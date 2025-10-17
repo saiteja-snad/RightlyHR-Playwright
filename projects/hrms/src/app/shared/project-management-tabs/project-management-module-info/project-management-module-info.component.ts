@@ -68,6 +68,7 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/clients/details/info': MODULE_INFOS.CLIENT_INFORMATION_INFO,
       '/project-management/clients/details/contact-info': MODULE_INFOS.CLIENT_CONATACTDETAILES_INFO,
       '/project-management/clients/details/projects': MODULE_INFOS.CLIENT_Projects_INFO,
+      '/project-management/clients/details/inactiveprojects': MODULE_INFOS.CLIENT_Projects_INFO,
       '/project-management/clients/details/resources': MODULE_INFOS.CLIENT_Resource_INFO,
       '/project-management/projects/details/information': MODULE_INFOS.Project_Details_INFO,
       '/project-management/projects/details/contact-info': MODULE_INFOS.Contacts_Related_to_Projects,
@@ -108,7 +109,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/clients/details/contact-info') {
       this.componentname = 'Contact Information';
     }
-    else if (currentUrl === '/project-management/clients/details/projects') {
+    else if (currentUrl === '/project-management/clients/details/projects' || currentUrl === '/project-management/clients/details/inactiveprojects') {
       this.componentname = 'Projects';
     }
     else if (currentUrl === '/project-management/clients/details/resources') {
@@ -181,5 +182,4 @@ export class ProjectManagementModuleInfoComponent {
       this.router.navigate(['project-management/projects/active']);
     }
   }
-
 }

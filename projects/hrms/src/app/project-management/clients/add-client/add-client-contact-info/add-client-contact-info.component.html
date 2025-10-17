@@ -15,7 +15,8 @@
                     <tr *ngFor="let contact of contacts.controls; let i = index" [formGroupName]="i">
                         <td>
                             <input type="text" class="form-control custom-input" placeholder="Please enter contact name"
-                                formControlName="contactName" [autocomplete]="false" autocomplete="off" (input)="formValidation.validateInput(contact.get('contactName'))"
+                                formControlName="contactName" [autocomplete]="false" autocomplete="off"
+                                (input)="formValidation.validateInput(contact.get('contactName'))"
                                 (keydown)="formValidation.restrictSpecialCharacters($event)" maxlength="51" autocomplete="off">
                             <div *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid" class="error-msg">
                                 <div *ngIf="contact.get('contactName')?.errors?.['required']">{{'Contact Name is required' | translate }}</div>
@@ -26,32 +27,25 @@
                         <td>
                             <input type="email" class="form-control custom-input" autocomplete="off" formControlName="contactEmail"
                                 placeholder="Please enter email">
-                            <div class="error-msg"
-                                *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">
-                                <div *ngIf="contact.get('contactEmail')?.errors?.['required']">{{'Email is required'|
-                                    translate }}</div>
+                            <div class="error-msg" *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">
+                                <div *ngIf="contact.get('contactEmail')?.errors?.['required']">{{'Email is required'| translate }}</div>
                                 <div *ngIf="contact.get('contactEmail')?.errors?.['email']">{{'Please enter a valid email address' | translate }}</div>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                                 <div>
-                                    <lib-country-list class="country-input"
-                                        [selectedCountryConfig]="selectedCountryConfig"
-                                        [countryListConfig]="countryListConfig"
-                                        [selectedCountryCode]="contact.get('countryCode')?.value"
+                                    <lib-country-list class="country-input" [selectedCountryConfig]="selectedCountryConfig"
+                                        [countryListConfig]="countryListConfig" [selectedCountryCode]="contact.get('countryCode')?.value"
                                         (onCountryChange)="onCountryChange($event, i)">
                                     </lib-country-list>
                                 </div>
                                 <input type="text" class="form-control custom-input" formControlName="contactPhone"
-                                    placeholder="Please enter phone number"
-                                    (keypress)="formValidation.restrictAlphabets($event)">
+                                    placeholder="Please enter phone number" (keypress)="formValidation.restrictAlphabets($event)">
                             </div>
-                            <div class="error-msg"
-                                *ngIf="contact.get('contactPhone')?.touched && contact.get('contactPhone')?.invalid">
+                            <div class="error-msg" *ngIf="contact.get('contactPhone')?.touched && contact.get('contactPhone')?.invalid">
                                 <div *ngIf="contact.get('contactPhone')?.errors?.['required']">{{ 'Phone number is required' | translate }}</div>
-                                <div
-                                    *ngIf="!contact.get('contactPhone')?.errors?.['required'] && contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">
+                                <div *ngIf="!contact.get('contactPhone')?.errors?.['required'] && contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">
                                     {{ 'Please enter a valid phone number'| translate }}</div>
                             </div>
                         </td>
@@ -59,8 +53,7 @@
                             <input type="text" class="form-control custom-input"
                                 (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="51"
                                 formControlName="contactRole" placeholder="Please enter role">
-                            <div class="error-msg"
-                                *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
+                            <div class="error-msg" *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
                                 <div *ngIf="contact.get('contactRole')?.errors?.['required']">
                                     {{ 'Role is required' | translate }}
                                 </div>
@@ -74,18 +67,18 @@
                         </td>
                   
                         <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <div *ngIf="contacts.length > 1">
-                            <a class="cursor" (click)="removeContact(i)">
-                                <app-circular-delete />
-                            </a>
+                            <div class="d-flex align-items-center gap-3">
+                                <div *ngIf="contacts.length > 1">
+                                    <a class="cursor" (click)="removeContact(i)">
+                                        <app-circular-delete />
+                                    </a>
+                                </div>
+                                <div *ngIf="i === contacts.length - 1">
+                                    <a class="cursor" (click)="addContact()">
+                                        <app-circular-add />
+                                    </a>
+                                </div>
                             </div>
-                            <div *ngIf="i === contacts.length - 1">
-                            <a class="cursor" (click)="addContact()">
-                                <app-circular-add />
-                            </a>
-                            </div>
-                        </div>
                         </td>
                     </tr>
                 </tbody>
@@ -94,8 +87,7 @@
 
         <div class="footer-content">
             <div class="d-flex justify-content-end align-items-center gap-3">
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="closepopup(confirmationpopup)">Cancel</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">Cancel</button>
                 <button type="submit" [disabled]="addContactForm.invalid" class="custom-btn btn-primary">Next</button>
             </div>
         </div>

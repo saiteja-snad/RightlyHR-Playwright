@@ -14,11 +14,11 @@ import { environment } from '../../../../environments/environment.dev';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
-import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
 import { InactiveclientPipe } from "../../../Pipes/inactiveclient.pipe";
 @Component({
   selector: 'app-inactive-clients',
-  imports: [CommonModule, ProjectManagementModuleInfoComponent, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, ActiveclientsPipe, InactiveclientPipe],
+  imports: [CommonModule, ProjectManagementModuleInfoComponent, FormsModule, NoDataFoundComponent,
+    DataLoaderContentComponent, ConfirmationIconComponent, TranslateModule, InactiveclientPipe],
   templateUrl: './inactive-clients.component.html',
   styleUrl: './inactive-clients.component.scss'
 })

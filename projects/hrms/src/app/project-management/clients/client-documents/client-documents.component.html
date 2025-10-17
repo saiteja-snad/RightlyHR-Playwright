@@ -48,12 +48,12 @@
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <!-- @if(rbac.allowedToAccess('Client Documents.update')){
-                                                            <li>
-                                                                <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
-                                                                    <i class="bi bi-pencil me-2"></i>Update
-                                                                </a>
-                                                            </li>
-                                                            } -->
+                                        <li>
+                                            <a class="dropdown-item" (click)="openModal(updateDocumentmodal, data,'lg')">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                    } -->
                                     @if(rbac.allowedToAccess('Client Documents.delete')){
                                     <li (click)="openModal(deleteconformation, data, 'm')">
                                         <a class="dropdown-item">
@@ -97,16 +97,14 @@
                         <label for="documentType" class="form-label custom-label mb-2">Document Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
-                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
-                                formControlName="documentType" placeholder="Please select document type"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
+                                optionLabel="value" optionValue="value" formControlName="documentType"
+                                placeholder="Please select document type" class="form-select custom-select"></p-select>
                         </div>
-                        <div class="error-msg"
-                            *ngIf="updateDocumentForm.get('documentType')?.touched && updateDocumentForm.get('documentType')?.invalid">
-                            Document Type is required
-                        </div>
+                        <div class="error-msg" *ngIf="updateDocumentForm.get('documentType')?.touched && 
+                        updateDocumentForm.get('documentType')?.invalid">Document Type is required</div>
                     </div>
+
                     <!-- File Name -->
                     <!-- <div class="col-md-6 mb-3">
                         <label for="documentName" class="form-label custom-label mb-2">File Name<span
@@ -119,8 +117,6 @@
                         </div>
                     </div> -->
 
-
-
                     <!-- Document Attachment -->
                     <div class="col-md-6 mb-3">
                         <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
@@ -129,19 +125,11 @@
                             accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                             (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
                         <span class="custom-file-name text-wrap">
-                            {{
-                            (updateDocumentForm.get('documentUrl')?.value?.name
-                            ? updateDocumentForm.get('documentUrl')?.value?.name.split('/').pop()
-                            : (updateDocumentForm.get('documentUrl')?.value
-                            ? updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_')
-                            )
-                            }}
+                            {{(updateDocumentForm.get('documentUrl')?.value?.name ?  updateDocumentForm.get('documentUrl')?.value?.name.split('/').pop()
+                            : (updateDocumentForm.get('documentUrl')?.value ? updateDocumentForm.get('documentUrl')?.value.split('/').pop() : '_'))}}
                         </span>
-
-                        <div class="error-msg"
-                            *ngIf="updateDocumentForm.get('documentAttachment')?.touched && updateDocumentForm.get('documentAttachment')?.invalid">
-                            Attachment is required
-                        </div>
+                        <div class="error-msg" *ngIf="updateDocumentForm.get('documentAttachment')?.touched && 
+                        updateDocumentForm.get('documentAttachment')?.invalid">Attachment is required</div>
                     </div>
 
                     <!-- Signed Copy -->
@@ -153,10 +141,8 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateDocumentForm.invalid">Update</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid">Update</button>
                 </div>
             </form>
         </div>
@@ -171,10 +157,8 @@
             <p class="confirmation-text">{{'Are you sure you want to archive this Documents?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
-                translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="DeleteDocument()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

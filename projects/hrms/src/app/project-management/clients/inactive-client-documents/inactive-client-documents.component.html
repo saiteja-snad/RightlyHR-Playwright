@@ -10,7 +10,7 @@
                 <th>Attachment</th>
                 <th class="text-center">Dowload</th>
                 @if((rbac.allowedToAccess('Client Documents.update') || rbac.allowedToAccess('Client Documents.delete'))
-                        && this.inactiveClientStatus !== 'inactive'){
+                && this.inactiveClientStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>

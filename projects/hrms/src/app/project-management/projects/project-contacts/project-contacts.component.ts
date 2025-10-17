@@ -199,9 +199,9 @@ export class ProjectContactsComponent implements OnInit {
           this.getContactData(this.projectId);
         },
         error: (err) => {
-         this.conformationPopup.openErrorModal(err.error.message)
+          this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-           this.getContactData(this.projectId);
+          this.getContactData(this.projectId);
         }
       });
   }
@@ -249,7 +249,7 @@ export class ProjectContactsComponent implements OnInit {
       error: (err) => {
         this.spinnerLoader = false;
         console.error("Update failed:", err);
-          this.conformationPopup.openErrorModal(err.error.message);
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

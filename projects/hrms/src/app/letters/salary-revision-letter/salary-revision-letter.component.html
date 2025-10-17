@@ -79,10 +79,9 @@
                         Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
                         Salary in Personal and Job Tabs Before Generating the Document.</p>
                 </div>
-
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="employeeForm.invalid || spinnerLoader">
+                        [disabled]="employeeForm.invalid || spinnerLoader || documentGenerated">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
                                 <span class="spinner-border button-spinner text-light" role="status"
@@ -92,6 +91,19 @@
                         </ng-container>
                         <ng-template #addText>
                             <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
+                    <button type="button" class="custom-btn btn-primary"
+                        [disabled]="!documentGenerated || releaseLoader" (click)="releaseToEmployee()">
+                        <ng-container *ngIf="releaseLoader; else releaseText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #releaseText>
+                            <span>{{'Release to Employee' | translate}}</span>
                         </ng-template>
                     </button>
                 </div>
@@ -278,18 +290,19 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                    <td class="text-center">Medical insurance</td>
-                                    <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ">
-                                        </span>
-                                        <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
-                                    </td>
-                                    <td class="text-center"><span
-                                            *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
-                                        </span>
-                                        <ng-template
-                                            #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
-                                    </td>
-                                </tr>
+                                            <td class="text-center">Medical insurance</td>
+                                            <td class="text-center"><span
+                                                    *ngIf="!appraisalData.educationAllowances;else educ">
+                                                </span>
+                                                <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
+                                            </td>
+                                            <td class="text-center"><span
+                                                    *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
+                                                </span>
+                                                <ng-template
+                                                    #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
+                                            </td>
+                                        </tr>
                                         <!-- <tr>
                                             <td class="text-center">Medical insurance</td>
                                             <td class="text-center"><span

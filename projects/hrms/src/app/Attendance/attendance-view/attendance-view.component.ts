@@ -433,33 +433,28 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   }
 
   // function to get the data of employees by hierarchy
-  getAllEmployeeDetails() {
-    // let EmployeeId=this.employeeId;
-    const satus = ['active', 'Trainee Active'];
-    this.subscription = this.http
-      .getData(`Employeedata/Getallemployees?statuses=${satus}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.getAllEmployeeInfo = response
-              .filter(
-                (employee: any) =>
-                  employee.employeeId !== this.empdata.employeeId
-              )
-              .map((employee: any) => {
-                return {
-                  ...employee,
-                  fullName: `${
-                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName ?? ''} ${
-                    employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
-                };
-              });
-          }
-        },
-      });
-  }
+ getAllEmployeeDetails() {
+  const statuses = ['active', 'Trainee Active'];
+  this.subscription = this.http
+    .getData(`Employeedata/Getallemployees?statuses=${statuses}`)
+    .subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.getAllEmployeeInfo = response
+            .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
+            .map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim()
+            }))
+            .sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
+        }
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    });
+}
+
 
   onclickRegularization(date: Date) {
     this.regularizationForm.patchValue({
@@ -467,8 +462,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  // function to get the data of employees by hierarchy
-  getEmployeeDetails() {
+getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
@@ -476,13 +470,19 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           if (response) {
             const myTeam = response.filter((e: any) => e.isAccess);
-            this.get_Employeelist_forTM = myTeam.map((employee: any) => {
-              return {
-                ...employee,
-                fullName: `${ employee.fusionEmpId ? employee.fusionEmpId + ' - ' : '' }${employee.firstName} 
-                ${ employee.middleName ? employee.middleName + ' ' : '' }${employee.lastName}`,
-              };
-            });
+            this.get_Employeelist_forTM = myTeam
+              .map((employee: any) => {
+                return {
+                  ...employee,
+                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+                };
+              })
+              .sort((a: any, b: any) => {
+                const idA = parseInt(a.fusionEmpId?.replace(/\D/g, '') || '0', 10);
+                const idB = parseInt(b.fusionEmpId?.replace(/\D/g, '') || '0', 10);
+                return idA - idB;
+              });
           }
         },
       });

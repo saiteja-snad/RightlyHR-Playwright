@@ -38,10 +38,10 @@ export const MODULE_INFOS = {
     SETTINGS_DYNAMIC_FORMS_INACTIVE_FORMS: "Design, manage, and reuse custom forms for modules like PMS. Inactive forms to maintain clean workflows without losing past data.",
     SETTINGS_DYNAMIC_FORMS_DRAFT_FORMS: "Design and manage custom forms for any module with ease. Track them by status Draft—to build, pause, or finalize forms at your pace.",
     SETTINGS_DYNAMIC_FORMS_FORM_SETTINGS: "Customize form scoring with flexible rating scales for performance reviews, feedback, or assessments. Define rating types, ranges, and apply them to any section within your dynamic forms.",
-    
+
     //attendance Configuration Module Info
     SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO: "Attendance Configuration module allows administrators to set up and manage attendance policies, including attendance lock dates, shift configurations, and holiday calendars. It provides options to create, update, and publish attendance settings for accurate time tracking and compliance.",
-    
+
     //Expenses Module Info
     EXPENSES_MODULE_INFO: "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
 
@@ -137,10 +137,13 @@ export const MODULE_INFOS = {
     RELIEVING_LETTER_MODULE_INFO: "Issue relieving letters to employees upon exit. This letter confirms their resignation acceptance, last working date, and relieving status. It can be generated after completing the exit process.",
     PROBATION_CONFIRMATION_LETTER_MODULE_INFO: "Generate confirmation letters for employees who successfully complete their probation. The letter includes confirmation date and updated employment status, and can be downloaded or shared by HR.",
     PROBATION_EXTENSION_LETTER_MODULE_INFO: "Issue extension letters when an employee’s probation is extended. The letter outlines the new extension period and expectations. HR can generate it with relevant remarks and approvals.",
+    TRAINEE_RELIEVING_LETTER_MODULE_INFO: "Issue relieving letters to trainees upon exit. This letter confirms their resignation acceptance, last working date, and relieving status. It can be generated after completing the exit process.",
     NDA_Letter: 'Simplify the creation and tracking of Non-Disclosure Agreements (NDA) with automated letter generation. Admins can quickly generate NDA documents using standardized templates, send them for signing, and maintain signed copies within the client record. This ensures confidentiality, faster turnaround, and organized documentation for all client engagements.',
     MSA_Letter: 'Easily generate and manage Master Service Agreement (MSA) documents within the system. Admins can create MSA letters for clients directly, using predefined templates that ensure consistency and compliance. Once generated, the document can be shared for signature, stored securely, and linked to the respective client profile for future reference and audits.',
+
     NDA_LETTER_MODULE_INFO: "Generate NDA Letters to formally protect the organization’s confidential information. This letter defines the employee’s or contractor’s responsibility to maintain secrecy, outlines the scope of confidential data, and specifies the terms of compliance. HR can create, customize, and issue it digitally or in print.",
     CONTRACT_OFFER_LETTER_MODULE_INFO: "Generate and issue Contractor Offer Letters for external or temporary staff. The letter includes details such as contract duration, compensation, terms of engagement, and reporting structure. HR can configure templates and share them digitally with contractors.",
+
     //Dashboard Module Info
     DASHBOARD_MODULE_INFO: "The Dashboard provides a summary view of employee and trainee statuses, prospective employees, current job openings, and probation details. It also offers quick access to document history, displaying key information like username, date, designation, status, and options to download relevant documents.",
     PROSPECTIVE_EMPLOYEES_MODULE_INFO: "The Prospective Employees page lists candidates with details such as ID, name, personal email, phone number, location, designation, and sub-status reflecting their onboarding progress. Users can add new prospective employees and search the list for efficient candidate management.",

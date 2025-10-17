@@ -25,7 +25,7 @@ import { DatePicker } from 'primeng/datepicker';
 })
 
 export class PermissionReportsComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   permissionReportForm!: FormGroup;
   loggedInUser = {} as IemployeeDetails;
@@ -83,7 +83,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       employee: [null],
       manager: [null],
       dateRange: [null],
-      team:[null]
+      team: [null]
     });
     this.permissionReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
@@ -97,44 +97,62 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
   getAllEmployees() {
-    const loggedInUser = this.authService.getToken();
-    this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
+  const loggedInUser = this.authService.getToken();
+  this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        const employeedata = data
+          .map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
+
             return {
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+              firstName, //  trimmed
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
             };
-          });
-           this.employeeDetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+          })
+          .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+          );
 
-  getTeam() {
-    this.http.getData('PendingApprovalsAuthority/getAll').pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.teamManagerDetails = data.map((employee: any) => {
+        this.employeeDetails = [
+          { fullName: 'All Employees', employeeId: 'all' },
+          ...employeedata
+        ];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+}
+
+
+getTeam() {
+  this.http.getData('PendingApprovalsAuthority/getAll').pipe(takeUntil(this.destroy$)).subscribe({
+    next: (data: any) => {
+      this.teamManagerDetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
 
-  clearAllFilters() { 
+  clearAllFilters() {
     this.permissionReportForm.reset();
     this.filteredPermissionData = [];
   }
@@ -145,7 +163,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
   }
-  
+
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
@@ -160,16 +178,16 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
     //filter condition
     const noFilterProvided = !formValue.employee && !formValue.leaveCategory && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
-  
+
     if (noFilterProvided) {
       this.filteredPermissionData = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
       return;
     }
-  
+
     const request: IAttendanceDetails = {};
-    
+
     if (this.selectLeaveEmployeeIds.length >= 0) {
       const ids = this.selectLeaveEmployeeIds?.join(',');
       request.employeeId = ids;  // The selected employee IDs are set here
@@ -179,7 +197,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee?.employeeId;
     }
-  
+
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
     }
@@ -189,9 +207,9 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.StartDate = this.formatDate(this.parseDate(startDate));
       request.EndDate = this.formatDate(this.parseDate(endDate));
     }
-    
+
     //Apply my team
-    if(formValue.manager){
+    if (formValue.manager) {
       request.teamManagerId = formValue.manager.employeeId;
     }
 
@@ -344,33 +362,52 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getMyTeam() {
-    const EmployeeId = this.loggedInUser?.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => {
+getMyTeam() {
+  const EmployeeId = this.loggedInUser?.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+
+          this.getEmployeeInfo = myTeam
+            .map((employee: any) => {
+              const firstName = employee.firstName ? employee.firstName.trim() : '';
+              const middleName = employee.middleName ? employee.middleName.trim() : '';
+              const lastName = employee.lastName ? employee.lastName.trim() : '';
+
               return {
                 ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
+                firstName, //  trimmed for sorting
+                lastName,  //  trimmed for fallback
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
               };
-            });
-            this.getEmployeeInfo.unshift({
-              fullName: 'All Employees',
-              fusionEmpId: this.loggedInUser.fusionEmpId,
-              employeeId: this.loggedInUser.employeeId,
-            });
-          }
-        },
-      });
-  }
+            })
+            .sort((a: any, b: any) => {
+              // Primary: firstName (case-insensitive)
+              const firstCompare = a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
+              if (firstCompare !== 0) return firstCompare;
 
-  navigation(){
+              // Secondary: lastName (case-insensitive)
+              return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
+            });
+
+          // Add "All Employees" at the top
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+      error: (err) => console.log(err),
+    });
+}
+
+
+
+  navigation() {
     this.router.navigate(['/reports']);
   }
 

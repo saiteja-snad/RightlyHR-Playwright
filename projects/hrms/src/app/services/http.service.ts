@@ -459,6 +459,9 @@ export class HttpService {
       responseType: 'blob',
     });
   }
+ upadteLateLoginValues(url: string, data: any) {
+    return this.http.post(`${this.ApiUrl}${url}`, data);
+  }
 
   fileupload(url: string, file: any) {
     const formData = new FormData();

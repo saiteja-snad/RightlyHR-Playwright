@@ -89,27 +89,31 @@ export class TeamComponent implements OnInit, OnDestroy {
       centered: true
     });
   }
-  getTeam() {
+getTeam() {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
+        console.log(data);
         if (data) {
-          this.teamdetails = data.map((employee: any) => {
+          this.teamdetails = data.map((emp: any) => {
+            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+            const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`.trim();
+
             return {
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+              ...emp,
+              fullName: fullName.replace(/\s+/g, ' ')
             };
-          });
+          }).sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+          );
         }
+        console.log("Team details" + this.teamdetails)
       },
       error: (reason: any) => {
         console.log(reason);
-        alert("Fetching data failed");
+        alert("Insertion of data is failed")
       }
     });
   }
-
 
   sortdepartments() {
     this.deptdetails = this.deptdetails.sort((a, b) => {

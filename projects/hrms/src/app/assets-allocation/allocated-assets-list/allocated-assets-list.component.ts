@@ -866,25 +866,37 @@ getassetsdata(pagenum: number, pagesize: number, locationid: any, sublocationid:
     });
   }
 
-  getEmployeedata() {
-    if (!this.loactionid || !this.sublocation) {
-      return;
-    }
-    this.http.getData(`JobDetails/empslocansublocation?locationId=${this.loactionid}&sublocationId=${this.sublocation}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.employeeiddetails = data.map((employee: any) => ({
-          ...employee,
-          employeeName: `${employee.fusionEmployeeId ?? ''}- ${employee.employeeName} `,
-
-        }));
-        console.log(this.employeeiddetails);
-      },
-      error: (reason: any) => {
-      },
-    });
+getEmployeedata() {
+  if (!this.loactionid || !this.sublocation) {
+    return;
   }
+  this.http
+    .getData(
+      `JobDetails/empslocansublocation?locationId=${this.loactionid}&sublocationId=${this.sublocation}`
+    )
+     .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.employeeiddetails = data
+            .sort((a: any, b: any) =>
+              (a.employeeName ?? '').localeCompare(
+                b.employeeName ?? '',
+                undefined,
+                { sensitivity: 'base' }
+              )
+            )
+            .map((employee: any) => ({
+              ...employee,
+              employeeName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.employeeName ?? ''}`,
+            }));
 
-
+          console.log(this.employeeiddetails);
+        },
+        error: (reason: any) => {
+          console.error('Error fetching employee data:', reason);
+        },
+      });
+}
 
 
 

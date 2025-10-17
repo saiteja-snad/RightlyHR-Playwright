@@ -104,7 +104,7 @@ export class BankLoanLetterComponent implements OnInit, OnDestroy {
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
         },
         error: (reason: any) => {
           console.log(reason);

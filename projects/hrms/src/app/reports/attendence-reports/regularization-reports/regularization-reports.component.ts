@@ -95,45 +95,68 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     // Check if any field has a value
     return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
+getAllEmployees() {
+  const loggedInUser = this.authService.getToken();
+  this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        const employeedata = data
+          .map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-  getAllEmployees() {
-    const loggedInUser = this.authService.getToken();
-    this.http.getData('Employeedata/ActiveEmployees').pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+              firstName, // trimmed for sorting
+              lastName,  //  trimmed for fallback
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
             };
-          });
-          this.employeeDetails = [
-            { fullName: 'All Employees', employeeId: 'all' },
-            ...employeedata
-          ];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+          })
+          .sort((a: any, b: any) => {
+            // Primary: firstName (case-insensitive)
+            const firstCompare = a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
+            if (firstCompare !== 0) return firstCompare;
 
-  getTeam() {
-    this.http.getData('PendingApprovalsAuthority/getAll').pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.teamManagerDetails = data.map((employee: any) => {
+            // Secondary: lastName (case-insensitive)
+            return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
+          });
+
+        // Add "All Employees" at the top
+        this.employeeDetails = [
+          { fullName: 'All Employees', employeeId: 'all' },
+          ...employeedata
+        ];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+}
+
+getTeam() {
+  this.http.getData('PendingApprovalsAuthority/getAll').pipe(takeUntil(this.destroy$)).subscribe({
+    next: (data: any) => {
+      this.teamManagerDetails = data
+        .map((employee: any) => {
+          const firstName = employee.firstName ? employee.firstName.trim() : '';
+          const middleName = employee.middleName ? employee.middleName.trim() : '';
+          const lastName = employee.lastName ? employee.lastName.trim() : '';
+
           return {
             ...employee,
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} 
-            ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            firstName, //  trimmed
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
           };
-        });
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
+        })
+        .sort((a: any, b: any) =>
+          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+        );
+    },
+    error: (reason: any) => console.log(reason),
+  });
+}
+
 
   clearAllFilters() {
     this.regularizationReportForm.reset();
@@ -339,9 +362,9 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
       this.selectedEmployeeId = [];
       // If "All Employees" is selected, set employeeId as an empty array or a special flag
       if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => 
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) =>
           employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => 
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) =>
           employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
         this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
@@ -350,31 +373,49 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getMyTeam() {
-    const EmployeeId = this.loggedInUser?.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => {
+getMyTeam() {
+  const EmployeeId = this.loggedInUser?.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+
+          this.getEmployeeInfo = myTeam
+            .map((employee: any) => {
+              const firstName = employee.firstName ? employee.firstName.trim() : '';
+              const middleName = employee.middleName ? employee.middleName.trim() : '';
+              const lastName = employee.lastName ? employee.lastName.trim() : '';
+
               return {
                 ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
+                firstName, //  trimmed for sorting
+                lastName,  // trimmed for fallback
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
               };
+            })
+            .sort((a: any, b: any) => {
+              // Primary: firstName (case-insensitive)
+              const firstCompare = a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase());
+              if (firstCompare !== 0) return firstCompare;
+
+              // Secondary: lastName (case-insensitive)
+              return a.lastName.toLowerCase().localeCompare(b.lastName.toLowerCase());
             });
-            this.getEmployeeInfo.unshift({
-              fullName: 'All Employees',
-              fusionEmpId: this.loggedInUser.fusionEmpId,
-              employeeId: this.loggedInUser.employeeId,
-            });
-          }
-        },
-      });
-  }
+
+          // Add "All Employees" at the top
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+      error: (err) => console.log(err),
+    });
+}
+
 
   navigation() {
     this.router.navigate(['/reports']);

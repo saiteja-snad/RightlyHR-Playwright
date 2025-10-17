@@ -235,25 +235,32 @@ export class OnBeHalfOfComponent {
   }
 
   getMyTeamData() {
-    const EmployeeId = this.empdata.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.length) {
-            // No filter
-            this.getEmployeeInfo = response.map((employee: any) => ({
-              ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-            }));
-          }
-        },
-      });
-  }
+  const EmployeeId = this.empdata.employeeId;
+
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          this.getEmployeeInfo = response
+            .map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
+              return {
+                ...emp,
+                fullName
+              };
+            })
+            //  Alphabetical sorting by firstName
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+            );
+        }
+      },
+      error: (err) => console.error(err)
+    });
+}
 
   updateModuleInfo() {
     const url = this.router.url;
@@ -565,34 +572,37 @@ export class OnBeHalfOfComponent {
   }
 
   getEmployeeId() {
-    let loggedInUser = this.authService.getToken();
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          this.employeeiddetails = data
-            .filter(
-              (element: any) => element.employeeId != loggedInUser.employeeId
-            )
-            .map((employee: any) => ({
-              ...employee,
-              fullName: `${
-                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName ? employee.firstName : ''} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName ? employee.lastName : ''}`,
-              leaveRequestName: `${
-                employee.firstName ? employee.firstName : ''
-              } ${employee.middleName ? employee.middleName + ' ' : ''}${
-                employee.lastName ? employee.lastName : ''
-              } (${employee.fusionEmpId ? employee.fusionEmpId : ''})`,
-            }));
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+  let loggedInUser = this.authService.getToken();
+
+  this.subscription = this.http
+    .getData('Employeedata/ActiveEmployees')
+    .subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data
+          .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
+          .map((emp: any) => {
+            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+            const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''}`.trim();
+
+            const leaveRequestName = `${emp.firstName ?? ''} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName ?? ''} ${emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''}`.trim();
+
+            return {
+              ...emp,
+              fullName,
+              leaveRequestName
+            };
+          })
+          //  Alphabetical sorting by firstName
+          .sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+          );
+      },
+      error: (reason: any) => {
+        console.error(reason);
+      },
+    });
+}
+
 
   cadidateEmployeeId!: number;
   Onclickemployeeid(Value: any) {

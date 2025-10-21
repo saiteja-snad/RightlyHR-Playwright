@@ -106,6 +106,16 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       allowweekendWork: [false],
       approvalidAuthority: [null, Validators.required]
     });
+    this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+      this.validateDateRange();
+    });
+    this.addprojectform.get('endDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+      this.validateDateRange();
+    });
+    this.addprojectform.get('kickoffDate')?.valueChanges.subscribe(() => this.validateDateRange());
+    this.addprojectform.get('effectiveDate')?.valueChanges.subscribe(() => this.validateDateRange());
   }
 
   getClientsData(): void {
@@ -197,6 +207,11 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  get isFormInvalid(): boolean {
+    return this.addprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid || 
+           !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
   }
 
   StartndendDateValidation() {

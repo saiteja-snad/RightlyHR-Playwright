@@ -51,8 +51,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   kickoffBeforeEffectiveValid: boolean = true; // kickoff <= effective
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
- 
-  inactiveClientStatus:any
+
+  inactiveClientStatus: any
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
@@ -129,6 +129,16 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
       approvalidAuthority: [null, Validators.required]
     });
+     this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+      this.validateUpdateDateRange();
+    });
+    this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+      this.validateUpdateDateRange();
+    });
+    this.updateprojectform.get('updatekickoffDate')?.valueChanges.subscribe(() => this.validateUpdateDateRange());
+    this.updateprojectform.get('updatekickoffDate')?.valueChanges.subscribe(() => this.validateUpdateDateRange());
   }
 
   openModal(content: any) {
@@ -140,8 +150,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
-       
-         
+
+
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -354,31 +364,34 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
       if (kickoffDate) {
         const kickoff = new Date(kickoffDate);
-        // ✅ Kickoff must be within Start and End
+        //  Kickoff must be within Start and End
         this.kickoffDateValid = kickoff >= start && kickoff <= end;
 
         if (effectiveDate) {
           const effective = new Date(effectiveDate);
-          // ✅ Kickoff must be <= Effective
+          //  Kickoff must be <= Effective
           this.kickoffBeforeEffectiveValid = kickoff <= effective;
         }
       }
 
       if (effectiveDate) {
         const effective = new Date(effectiveDate);
-        // ✅ Effective must be within Start and End
+        //  Effective must be within Start and End
         this.effectiveDateValidRange = effective >= start && effective <= end;
 
         if (kickoffDate) {
           const kickoff = new Date(kickoffDate);
-          // ✅ Effective must be >= Kickoff
+          //  Effective must be >= Kickoff
           this.effectiveAfterKickoffValid = effective >= kickoff;
         }
       }
     }
   }
 
-
+  get isFormInvalid(): boolean {
+    return this.updateprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid ||
+      !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
+  }
   closepopup(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }

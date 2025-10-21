@@ -272,7 +272,7 @@
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
             (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="updateprojectform.invalid || spinnerLoader">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid|| spinnerLoader">
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading' | translate}}...</span>

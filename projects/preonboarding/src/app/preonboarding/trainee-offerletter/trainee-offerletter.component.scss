@@ -1,7 +1,7 @@
-
-*{
+* {
     font-family: 'Verdana', sans-serif !important;
 }
+
 .custom-main-sub-content {
     width: 100%;
     height: calc(100dvh - 21rem);
@@ -42,7 +42,9 @@ th {
 }
 
 .salary-details-table {
-    tr:nth-child(4),tr:nth-child(9) {
+
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -51,15 +53,14 @@ th {
     }
 }
 
-.note{
+.note {
     font-weight: 600;
 }
 
-.count-text{
+.count-text {
     font-size: 14px;
     font-weight: 400;
 }
-
 
 textarea:focus {
     box-shadow: none !important;
@@ -74,10 +75,10 @@ textarea:focus {
     .letter-page-content {
         height: 380mm;
         width: 270mm;
-          padding-top: 10rem !important;
+        padding-top: 10rem !important;
         position: relative;
-        background-image: url('/images/snad-letter-bg.jpg');
-        background-size: 100% 100%;
+        background-image: url('/images/snad-new-letter-bg.png') !important;
+        background-size: 103% 102.5%;
         background-repeat: no-repeat;
         background-position: center;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -89,11 +90,10 @@ textarea:focus {
             color: #000000;
             text-align: justify
         }
-
-      
     }
 }
-.authority-signature{
+
+.authority-signature {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }

@@ -1,5 +1,4 @@
 * {
-
     font-family: 'VERDANA', sans-serif !important;
 }
 
@@ -45,7 +44,7 @@ input:focus {
         width: 270mm;
         padding-top: 12.5rem !important;
         position: relative;
-        background-image: url('/images/snad-letter-bg.jpg');
+        background-image: url('/images/snad-new-letter-bg.png');
         background-size: 100% 100%;
         background-repeat: no-repeat;
         background-position: center;
@@ -53,7 +52,7 @@ input:focus {
         overflow: hidden;
 
         .letter-page-sub-content {
-              padding: 20px 110px;
+            padding: 20px 110px;
             color: #000000;
             font-size: 16px;
             line-height: 19px;
@@ -70,9 +69,7 @@ input:focus {
     }
 }
 
-
 .note {
-
     font-size: 14px;
     font-weight: 600;
     text-align: justify !important;
@@ -85,9 +82,9 @@ input:focus {
 
 .name {
     font-size: 18px;
-   
 }
-.box-serpately{
+
+.box-serpately {
     display: inline-block;
     width: 91px;
     height: 20px;

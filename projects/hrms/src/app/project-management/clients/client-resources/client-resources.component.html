@@ -200,7 +200,7 @@
                             <span class="text-danger">*</span></label>
                         <div class="d-flex w-100">
                             <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
-                                class="form-control custom-input w-50" placeholder="Please enter hours" [maxlength]="10"
+                                class="form-control custom-input w-50" placeholder="Please enter hours" [maxlength]="5"
                                 (keypress)="formValidation.restrictAlphabets($event)" />
                             <div class="custom-p-select-content w-50">
                                 <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false" [showClear]="false"

@@ -84,7 +84,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.employeeid = parseInt(this.empinfo.employeeId);
-    this.loadClientsAndProjects(this.page, this.pageSize);
+    this.loadClientsAndProjects(this.page, this.pageSize,  this.startdate, this.enddate );
     this.http.selectedEmployeeIdTimesheet$.pipe(takeUntil(this.destroy$)).subscribe(data => {
       if (data) {
         // Example: store locally
@@ -94,7 +94,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
           this.startdate = data.request.dateRange.startDate;
           this.enddate = data.request.dateRange.endDate;
         }
-        this.loadClientsAndProjects(this.page, this.pageSize);
+        this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
       }
       // else{
       // this.loadClientsAndProjects(this.page, this.pageSize); 
@@ -121,14 +121,14 @@ export class TimeSheetApprovalsComponent implements OnInit {
   onRowsChange() {
     this.page = 1;
     this.first = 0;
-    this.loadClientsAndProjects(this.page, this.pageSize);
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.loadClientsAndProjects(this.page, this.pageSize);
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // Called when first size changes
@@ -137,7 +137,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.loadClientsAndProjects(this.page, this.pageSize);
+    this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
   }
 
   // bulk data approve method
@@ -155,7 +155,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
   }
 
   // load timesheet data based on project and employee
-  loadClientsAndProjects(page: number, pageSize: number): void {
+  loadClientsAndProjects(page: number, pageSize: number, startdate:any,enddate:any): void {
     this.dataload = true;
     let url = `v2/PendingApproval/employee/${this.empinfo?.employeeId}?moduleId=${environment.timesheetModuleId}&page=${page}&pageSize=${pageSize}`;
     if (this.employeeresource) url += `&requestedBy=${this.employeeresource}`;
@@ -363,7 +363,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.loadClientsAndProjects(this.page, this.pageSize);
+          this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
           this.selectedMap = {};
@@ -446,7 +446,7 @@ export class TimeSheetApprovalsComponent implements OnInit {
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.loadClientsAndProjects(this.page, this.pageSize);
+          this.loadClientsAndProjects(this.page, this.pageSize, this.startdate, this.enddate);
           this.selectedLeavesItems = [];
           this.selectedEntries = [];
           this.selectedMap = {};

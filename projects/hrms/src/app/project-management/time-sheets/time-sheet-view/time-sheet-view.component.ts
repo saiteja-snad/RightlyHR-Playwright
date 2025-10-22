@@ -179,7 +179,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }, Validators.required],
       duration: durationControl,
       description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }, Validators.required,],
-      approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
+      approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
       isBillable: [{value:day?.isBillable || false,disabled: !billablecheck}],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],

@@ -365,19 +365,19 @@
                     </div>
                 </div>
 
-                <div  class="col-md-12 mb-3">
+                <div class="col-md-12 mb-3">
                     <div class="form-check form-switch">
                         <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
                             formControlName="isBillable">
                         <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Billable
-                            </label>
+                        </label>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-3 pt-4">
                     <span type="button" class="text-danger"
-                         *ngIf="dayForm.get('approvalStatus')?.value !== 'Not Entered'"
+                        *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
-                        
+
                     <button type="button" class="custom-btn btn-secondary w-100"
                         (click)="openModalforconformation(confirmationpopup)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary w-100"

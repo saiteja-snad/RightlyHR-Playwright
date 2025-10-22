@@ -552,7 +552,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         hours = parseInt(value.slice(0, 1), 10);
         minutes = 0;
       }
-      // ✅ Today can allow 24:00, otherwise max 23:59
+      //  Today can allow 24:00, otherwise max 23:59
       if (isToday) {
         if (hours > 24) hours = 24;
         if (minutes > 59) minutes = 59;
@@ -798,7 +798,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference
-      console.log(this.dayForm.get('approvalStatus')?.value );
 
       const approvalStatus = this.dayForm.get('approvalStatus')?.value;
       if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
@@ -807,7 +806,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
             res.client?.clientId === this.dayForm.get('clientId')?.value
         );
-        console.log(selectedResource)
+      
         this.dayForm.patchValue({
           isBillable: this.selectedProjectResource?.billable ?? selectedResource?.billable
         })

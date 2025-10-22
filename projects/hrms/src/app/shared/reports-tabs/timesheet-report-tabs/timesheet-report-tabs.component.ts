@@ -17,57 +17,57 @@ export class TimesheetReportTabsComponent {
     {
       label: 'My Timesheet Report',
       route: '/reports/timesheet-reports/my-timesheet-report',
-      icon: '/time-off-icon/leaves-icon.png',
+      icon: '/reports-icons/my-timesheet-report.png',
       description: MODULE_INFOS.MY_TIMESHEET_REPORTS_MODULE_INFO,
       permission: { feature: 'My Timesheet Report', action: 'view' }
     },
     {
       label: 'Timesheet Summary Monthly Report',
       route: '/reports/timesheet-reports/timesheet-summary-monthly-report',
-      icon: '/time-off-icon/Leave-summary-report-icon.png',
+      icon: '/reports-icons/timesheet-summary-monthly-report.png',
       description: MODULE_INFOS.ATTENDANCE_TIMESHEET_SUMMARY_MONTHLY_REPORTS_MODULE_INFO,
       permission: { feature: 'Timesheet Summary Monthly Report', action: 'view' }
     },
     {
       label: 'Team Timesheet Report(Manager)',
       route: '/reports/timesheet-reports/team-timesheet-report',
-      icon: '/time-off-icon/comp-off.png',
+      icon: '/reports-icons/team-timesheet-report.png',
       description: MODULE_INFOS.TEAM_TIMESHEET_REPORTS_MODULE_INFO,
       permission: { feature: 'Team Timesheet Report', action: 'view' }
     },
     {
       label: 'Pending Approval Status Report',
       route: '/reports/timesheet-reports/pending-approval-status-report',
-      icon: '/time-off-icon/WFH-icon.png',
+      icon: '/reports-icons/pending-approval-status-report.png',
       description: MODULE_INFOS.PENDING_APPROVAL_REPORTS_MODULE_INFO,
       permission: { feature: 'Pending Approval Status Report', action: 'view' }
     },
     // { label: 'Absent Report', route: '/reports/attendence-reports/absent-report',permission: { feature: 'Absent Report', action: 'view' } },
     {
       label: 'Project Effort Report',
-      route: '/reports/timesheet-reports/project-effort-report',
-      icon: '/time-off-icon/Inactive-employee-report-icon.png',
+      route: '/reports/timesheet-reports/project-efforts-report',
+      icon: '/reports-icons/project-efforts-report.png',
       description: MODULE_INFOS.PROJECT_EFFORT_REPORTS_MODULE_INFO,
       permission: { feature: 'Project Effort Report', action: 'view' }
     },
     {
       label: 'Utilization Report',
       route: '/reports/timesheet-reports/utilization-report',
-      icon: '/time-off-icon/Yearly-summary-report-icon.png',
+      icon: '/reports-icons/utilization-report.png',
       description: MODULE_INFOS.UTILIZATION_REPORTS_MODULE_INFO,
       permission: { feature: 'Utilization Report', action: 'view' }
     },
     {
       label: 'Resource Availability Report',
       route: '/reports/timesheet-reports/resource-availability-report',
-      icon: '/time-off-icon/permissions-icon.png',
+      icon: '/reports-icons/resource-availability-report.png',
       description: MODULE_INFOS.RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO,
       permission: { feature: 'Resource Availability Report', action: 'view' }
     },
     {
       label: 'Attendance vs Timesheet Report',
       route: '/reports/timesheet-reports/attendance-vs-timesheet-report',
-      icon: '/time-off-icon/regularization-icon.png',
+      icon: '/reports-icons/attendance-vs-timesheet-report.png',
       description: MODULE_INFOS.ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO,
       permission: { feature: 'Attendance vs Timesheet Report', action: 'view' }
     },

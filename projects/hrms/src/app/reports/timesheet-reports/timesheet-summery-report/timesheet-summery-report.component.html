@@ -1,6 +1,173 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <!-- Header -->
-        <app-reports-header />
-    </div>
+  <div class="component-header-content">
+    <!-- Header -->
+    <app-reports-header/>
+
+    <form autocomplete="off" [formGroup]="MyTimesheetReportForm" (ngSubmit)="generatemytimesheetReport()" *ngIf="MyTimesheetReportForm">
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Timesheet Summary Monthly Report  - Generate.view')){
+        <button type="button" class="clear-all-btn" [disabled]="
+          !MyTimesheetReportForm.get('employee')?.value &&
+          !MyTimesheetReportForm.get('dateRange')?.value &&
+          !MyTimesheetReportForm.get('manager')?.value &&
+          !MyTimesheetReportForm.get('leaveCategory')?.value &&
+          !MyTimesheetReportForm.get('team')?.value
+        " (click)="clearAllFilters()">
+          Clear All
+        </button>
+          <!-- Client-->
+        @if(rbac.allowedToAccess('Timesheet Client List(Timesheet Summary).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <!-- <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select> -->
+             <p-select [options]="projectsData" optionLabel="displayName" optionValue="projectId" [filter]="true"
+                        [resetFilterOnHide]="true" filterBy="displayName" formControlName="projectId"
+                        placeholder="Please select client" class="form-select custom-select"
+                       >
+            </p-select>
+          </div>
+        </div>
+        }
+
+        <!-- Project-->
+        @if(rbac.allowedToAccess('Timesheet Project List(Timesheet Summary).view')){
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <!-- <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+              filterPlaceholder="Search manager">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select> -->
+            <p-select [options]="projectsData" optionLabel="displayprojectName" optionValue="projectId" [filter]="true"
+                        [resetFilterOnHide]="true" filterBy="displayprojectName" formControlName="projectId"
+                        placeholder="Please select project" class="form-select custom-select"
+                       >
+            </p-select>
+          </div>
+        </div>
+        }
+
+        <!-- Date Range -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
+             [showIcon]="true" [readonlyInput]="true" />
+          </div>
+        </div>
+
+       
+        <!--My Team-->
+        <!-- @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All EmployeesList(Leaves).view')
+         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){ -->
+        <!-- <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+              filterPlaceholder="Search employee" (onChange)="onClick($event)">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div> -->
+        }
+        <!-- Belaible -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
+              formControlName="leaveCategory" placeholder="Select Billable" class="form-select custom-select"
+              filterPlaceholder="Search leave type">
+              <!-- <ng-template #selectedItem let-selectedOption>{{ selectedOption.key }}</ng-template>
+              <ng-template let-employee #item>{{ employee.key }}</ng-template> -->
+            </p-select>
+          </div>
+        </div>
+        <!-- Status-->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+              formControlName="manager" placeholder="Please Status" class="form-select custom-select"
+              filterPlaceholder="Search manager">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+              <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+            </p-select>
+          </div>
+        </div>       
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Timesheet Summary Monthly Report  - Generate.view')){
+          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+
+          @if(rbac.allowedToAccess('Timesheet Summary Monthly Report  - Generate.view') && rbac.allowedToAccess('Timesheet Summary Monthly Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+            [disabled]="filteredleaveRecord.length == 0 || disableBtn">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="custom-table-content">
+    @if (!isLoading) {
+    <table id="leaveReportTable" class="w-100">
+      <thead>
+        <th>Client</th>
+        <th>Project</th>
+        <th>Employee</th>
+        <th>Billable</th>
+        <th>Non-Billable</th>
+        <th>Total</th>
+      </thead>
+      <tbody>
+        @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+        <tr>
+          <app-no-data-found />
+        </tr>
+        }
+        @else {
+        @for (record of filteredleaveRecord; track $index) {
+        <tr>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.teamManagerName ?? '-' }}</td>
+          <td>{{ record.location ?? '-' }}</td>
+          <td>{{ record.subLocation ?? '-' }}</td>
+          <td>{{ record.shift ?? '-' }}</td>
+          <td>{{ record.leaveType ?? '-' }}</td>
+          <td>{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>
+          <td>{{ record.enddate ? (record.enddate | date: 'dd-MMM-yyyy') : '-' }}</td>
+          <td>{{ record.availed ?? '-'}}</td>
+          <td>{{ record.appliedDate| date: 'dd-MMM-yyyy' : '-'}}</td>
+          <td>{{ record.days ?? '-' }}</td>
+        </tr>
+        }
+        }
+      </tbody>
+    </table>
+    }
+    @else{
+    <app-data-loader-content />
+    }
+  </div>
 </div>

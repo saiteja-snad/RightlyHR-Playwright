@@ -826,6 +826,33 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance vs Timesheet Report - Generate',
     'Attendance vs Timesheet Report - Export',
   ];
+   timesheetReportsEmployeeTeamTabsFields = [
+    'Timesheet All Employees List(My-Timesheet)',
+    'Timesheet Client List(My-Timesheet)',
+    'Timesheet Project List(My-Timesheet)',
+    'Timesheet All Employees List(Timesheet Summary)',
+    'Timesheet Client List(Timesheet Summary)',
+    'Timesheet Project List(Timesheet Summary)',
+    'Timesheet All Employees List(Team Timesheet)',
+    'Timesheet Client List(Team Timesheet)',
+    'Timesheet Project List(Team Timesheet)',
+    'Timesheet All Employees List(Pending-Approval-Status)',
+    'Timesheet Client List(Pending-Approval-Status)',
+    'Timesheet Project List(Pending-Approval-Status)',
+    'Timesheet All Employees List(Project-Effect-Report)',
+    'Timesheet Client List(Project-Effect-Report)',
+    'Timesheet Project List(Project-Effect-Report)',
+    'Timesheet All Employees List(Utilization)',
+    'Timesheet Client List(Utilization)',
+    'Timesheet Project List(Utilization)',
+    'Timesheet All Employees List(Resource-availability)',
+    'Timesheet Client List(Resource-availability)',
+    'Timesheet Project List(Resource-availability)',
+    'Timesheet All Employees List(Attendance-vs-Timesheet)',
+    'Timesheet Client List(Attendance-vs-Timesheet)',
+    'Timesheet Project List(Attendance-vs-Timesheet)'
+  ];
+
   assetManagementTabsFields = [
     'Asset Management - Create',
     'Asset Management - All',

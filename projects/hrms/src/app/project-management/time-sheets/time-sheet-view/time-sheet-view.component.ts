@@ -705,6 +705,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.selectedClientname = client.clientName;
     this.selectedShiftDetails = client.shift;
 
+    // Update billable controls for all days
+    const billableCheck = selectedResource?.billable || false;
+    
     // Days array
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     days.forEach((dayKey, index) => {
@@ -749,6 +752,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           dayForm.get(ctrl)?.disable();
         }
       });
+      
+      // Update billable control disabled state
+      if (billableCheck) {
+        dayForm.get('isBillable')?.enable();
+      } else {
+        dayForm.get('isBillable')?.disable();
+      }
     });
 
     // Close dropdown

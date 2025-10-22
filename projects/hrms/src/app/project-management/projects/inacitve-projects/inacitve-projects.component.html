@@ -52,10 +52,10 @@
                                         <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
                                     </td>
                                     <td>{{ project.client.clientName }}</td>
-                                    <td>{{ project.startDate | date: 'dd-MMM-yyyy' }}</td>
-                                    <td>{{ project.endDate | date: 'dd-MMM-yyyy' }}</td>
-                                    <td>{{ project.effectiveDate | date: 'dd-MMM-yyyy' }}</td>
-                                    <td>{{ project.kickoffDate | date: 'dd-MMM-yyyy' }}</td>
+                                    <td>{{ project.startDate | dateformat }}</td>
+                                    <td>{{ project.endDate | dateformat }}</td>
+                                    <td>{{ project.effectiveDate | dateformat }}</td>
+                                    <td>{{ project.kickoffDate | dateformat }}</td>
                                     <td>{{ project.projectType }}</td>
                                     <td>{{ project.status }}</td>
                                     @if((rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus!=='inactive'){

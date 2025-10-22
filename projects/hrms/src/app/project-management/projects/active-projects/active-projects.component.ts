@@ -18,10 +18,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
-    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe],
+    ReactiveFormsModule, Select, ProjectManagementModuleInfoComponent, ProjcetCreationComponent, ActiveprojectsPipe, DateformatPipe],
   templateUrl: './active-projects.component.html',
   styleUrl: './active-projects.component.scss'
 })

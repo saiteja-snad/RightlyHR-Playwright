@@ -30,8 +30,9 @@ export class ProjectDocumentCreationComponent {
   displayClientAttachment: string = '';
   documentTypes: IEAV[] = [];
   fileErrorMessage: string = '';
+  
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private http: HttpService,
-    private modalService: NgbModal, private conformationPopup: OpenModalService ,public formValidations: FormValidationsService,) { }
+    private modalService: NgbModal, private conformationPopup: OpenModalService, public formValidations: FormValidationsService,) { }
 
   ngOnInit() {
     const today = new Date();
@@ -56,13 +57,13 @@ export class ProjectDocumentCreationComponent {
   // initialization of form
   createDocumentForm() {
     this.addDocumentForm = this.fb.group({
-      documentName: [null, [Validators.required,  Validators.maxLength(101),
-        Validators.minLength(2),
-        this.formValidations.minCharactersValidator(2),
-        this.formValidations.maxCharactersValidator(100),
-        Validators.pattern(/^[^\s].*$/)
-      ]],
-    //  createdDate: [null, Validators.required],
+      // documentName: [null, [Validators.required,  Validators.maxLength(101),
+      //   Validators.minLength(2),
+      //   this.formValidations.minCharactersValidator(2),
+      //   this.formValidations.maxCharactersValidator(100),
+      //   Validators.pattern(/^[^\s].*$/)
+      // ]],
+      //  createdDate: [null, Validators.required],
       documentType: [null, Validators.required],
       documentUrl: [null, Validators.required]
     });
@@ -96,7 +97,7 @@ export class ProjectDocumentCreationComponent {
   openModal(content: any, data: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     this.addDocumentForm.patchValue({
-      documentName: data?.documentName,
+      // documentName: data?.documentName,
       createdDate: this.formatDateToLocal(data?.createdAt),
       documentType: data?.documentType,
       documentUrl: data?.documentUrl
@@ -127,11 +128,11 @@ export class ProjectDocumentCreationComponent {
 
   // file select and validation function
   onChangeClientAttachment(event: any): void {
-      this.displayClientAttachment = '';
-     this.fileErrorMessage = ''; 
+    this.displayClientAttachment = '';
+    this.fileErrorMessage = '';
     const file: File = event.target.files[0];
     if (!file) return;
-     const allowedTypes = [
+    const allowedTypes = [
       'image/jpeg',
       'image/png',
       'application/pdf',
@@ -207,7 +208,7 @@ export class ProjectDocumentCreationComponent {
     const payload = {
       entityType: "project",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+      //documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: logoPath,
@@ -246,7 +247,7 @@ export class ProjectDocumentCreationComponent {
       },
       error: (err: any) => {
         this.spinnerLoader = false;
-        this.conformationPopup.openErrorModal('Failed to add document. Please try again.');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

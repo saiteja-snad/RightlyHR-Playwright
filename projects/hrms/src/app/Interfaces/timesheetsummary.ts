@@ -51,9 +51,11 @@ export interface TimesheetEntry {
 }
 
 export interface DailySummary {
-    totalLoggedHours: number;
+    totalLoggedHours: string;
     status: string;
     colour:string
+    loggedISO: string;
+    loggedHHMM: string;
 }
 
 
@@ -62,6 +64,7 @@ export interface MonthlySummaryItem {
   status: string;
   value: number;
   colour: string;
+
 }
 
 export interface MonthlySummary {
@@ -70,9 +73,13 @@ export interface MonthlySummary {
 }
 export interface UtilizationSummary {
   overall: Overall;
+  loggedISO: string;
+  loggedHHMM: string;
 }
 
 export interface Overall {
   loggedHours: number;
+  loggedISO: string;
+  loggedHHMM: string;
   allocatedHours: number;
 }

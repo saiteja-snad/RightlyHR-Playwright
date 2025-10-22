@@ -3,30 +3,31 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                <th>File Name</th>
-                <th>Created Date</th>
                 <th>Document Type</th>
+                <th>Created Date</th>
+                <!-- <th>File Name</th> -->
                 <th>Attachment</th>
                 <th class="text-center">Download</th>
-                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete'))){
+                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) &&
+                inactiveStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
             <tbody>
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
-                        <td>{{data.documentName}}</td>
-                        <td>{{data.createdAt | dateformat}}</td>
                         <td>{{data.documentType}}</td>
-                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
-                         <td class="text-center">
-                            <span *ngIf="data.documentUrl;else noData"
-                                (click)="onAttachmentDownload(data)">
+                        <td>{{data.createdAt | dateformat}}</td>
+                        <!-- <td>{{data.documentName}}</td> -->
+                        <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
+                        <td class="text-center">
+                            <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
                                 <app-download-icon />
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) ){
+                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
+                        && inactiveStatus !== 'inactive' ){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">

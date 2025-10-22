@@ -75,27 +75,34 @@ export class SignatureAuthorityComponent implements OnInit {
       });
   }
 
-  getAllActiveEmployees() {
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          this.employeeiddetails = data as IemployeeDetails[];
-          this.employeeiddetails = this.employeeiddetails.map(
-            (emp: IemployeeDetails) => ({
+ getAllActiveEmployees() {
+  this.subscription = this.http
+    .getData('Employeedata/ActiveEmployees')
+    .subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data as IemployeeDetails[];
+
+        this.employeeiddetails = this.employeeiddetails
+          .map((emp: IemployeeDetails) => {
+            const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : ''; 
+            const fullName = `${fusionPart}${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''}`.trim();
+
+            return {
               ...emp,
-              fullName: `${emp.fusionEmpId ?? ''} - ${emp.firstName ?? ''} ${
-                emp.middleName ?? ''
-              } ${emp.lastName ?? ''}`, // Concatenate firstName, middleName, lastName
-            })
+              fullName: fullName.replace(/\s+/g, ' '), // clean extra spaces
+            };
+          })
+          .sort((a: any, b: any) =>
+            a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
           );
-          console.log(this.employeeiddetails);
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+
+        console.log(this.employeeiddetails);
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+}
 
   getAllSignatureEmployees() {
     this.loading = true;

@@ -18,7 +18,8 @@ import { ActiveclientsPipe } from "../../../Pipes/activeclients.pipe";
 import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-active-clients',
-  imports: [CommonModule,FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe],
+  imports: [CommonModule,FormsModule, ProjectManagementModuleInfoComponent, NoDataFoundComponent, 
+    DataLoaderContentComponent, TranslateModule, ConfirmationIconComponent, ActiveclientsPipe],
   templateUrl: './active-clients.component.html',
   styleUrl: './active-clients.component.scss'
 })
@@ -31,8 +32,8 @@ export class ActiveClientsComponent implements OnInit {
   selectedClient: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private modalService: NgbModal, public rbac: RbacService, private route: ActivatedRoute,
-    private http: HttpService, public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
+  constructor(private modalService: NgbModal, public rbac: RbacService, private http: HttpService, 
+    public formValidation: FormValidationsService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');

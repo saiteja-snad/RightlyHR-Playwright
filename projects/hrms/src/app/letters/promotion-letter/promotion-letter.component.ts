@@ -14,7 +14,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import moment from 'moment';
 @Component({
   selector: 'app-promotion-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
@@ -22,7 +24,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrl: './promotion-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class PromotionLetterComponent implements OnInit,OnDestroy {
+export class PromotionLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   appraisalData = {} as any;
   PromotionTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
@@ -64,15 +66,16 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-  spinnerLoader= false;
+  spinnerLoader = false;
   jobErrorMessage!: string;
-
+  releaseLoader = false;
+  documentGenerated = false;
   constructor(
     private http: HttpService,
     private router: Router,
     private authService: AuthService,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal, 
+    private modalService: NgbModal,
     private fb: FormBuilder,
   ) { }
 
@@ -139,10 +142,10 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
 
     this.subscription = this.http.getData(`JobDetails/Empname/${Employee.employeeId}`).subscribe({
       next: (data: any) => {
-        
+
         if (!data || data.length === 0) {
           this.jobErrorMessage = 'No job details found for this employee.';
-           this.employeeForm.get('jobValid')?.setValue(false);
+          this.employeeForm.get('jobValid')?.setValue(false);
         } else {
           let res = data.reverse()[0];
           Employee.jobRole = data[0].jobRole
@@ -203,7 +206,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
       this.signatureAuthorityName = null
     }
   }
-  
+
   onclickDesignation() {
     let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => (c.employeeId == this.promotiondata.authorityid)
@@ -231,7 +234,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` // Concatenate first, middle, last name and trim any extra spaces
-        }));
+        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
       },
       error: (error: any) => {
         console.error(error);
@@ -439,7 +442,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
-          });
+          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
         },
         error: (reason: any) => {
         },
@@ -447,7 +450,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
   }
 
   async postPromotionLetterFormSubmit(f: FormGroup) {
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     if (this.employeeForm.invalid) {
       // Mark all fields as touched so validation messages appear
       this.employeeForm.markAllAsTouched();
@@ -496,9 +499,8 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
       });
   }
 
-  uploadPromotionLetter() {
-
-    let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.promotiondata.employeeId}`;
+   uploadPromotionLetter() {
+    let filePath = `/FusionDocuments/Employee Documents/Promotion Letters/${this.promotiondata.employeeId}`;
     this.subscription = this.http
       .uploadFileWithQuery(
         'FileSystem/uploadfiletodirectory',
@@ -511,89 +513,87 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
             this.result.documentUrl = data.path;
             this.conformationPopup.openSuccessModal("Promotion letter generated successfully")
           }
-          let loggedInUser = this.authService.getToken();
-
-          let emaildetails = {
-            personEmail: this.promotiondata.workEmail,
-            senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-            senderEmail: loggedInUser.workEmail,
-            firstName: this.promotiondata.firstName,
-            lastName: this.promotiondata.lastName,
-            middleName: this.promotiondata.middleName,
-            jobRole: this.promotiondata.jobRole,
-            documentUrl: this.result.documentUrl,
-            compeffectivedate:this.formatDatebyDatestring(this.promotiondata.compeffectivedate),
-            // compeffectivedate: `${this.promotiondata.compeffectivedate ?? 'N/A'
-            //   }`,
-            employeeId: this.promotiondata.employeeId,
-            compensationamount: this.promotiondata.salary
-          }
-
-          if (loggedInUser.middleName) {
-
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-
-          } else {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-
-          }
-
-          this.subscription = this.http.postdata(`CustomEmail/Promotionletter`, emaildetails).subscribe({
-            next: (data: any) => {
-              this.conformationPopup.openSuccessModal("Email has been sent successfully");
-              setTimeout(()=>{
-                this.navigateDashboard();
-              }, 2000)
-            },
-            error: (err: any) => {
-              this.spinnerLoader= false;
-            },
-            complete: () => {
-              this.spinnerLoader= false;
-            }
-          })
-           this.postPromotionlettersDetails(this.result.documentUrl);
+          this.postPromotionlettersDetails(this.result.documentUrl);
         },
         error: (reason: any) => {
           this.spinnerLoader= false;
         },
       });
   }
- postPromotionlettersDetails(docUrl: string) {
+  postPromotionlettersDetails(docUrl: string) {
   let loggedInUser = this.authService.getToken();
-
   const postAppDetails = {
     employeeId: this.promotiondata.employeeId,
     status: 'Released',
     documentLink: docUrl,
     createdBy: loggedInUser.employeeId,
-    signatureempId: this.promotiondata.signatureempId, 
+    signatureempId: this.promotiondata.signatureempId,
     createdAt: new Date().toISOString(),
     revisedSalary: this.promotiondata.revisedSalary || 0,
     letterType: 'Promotion Letter',
-    note: this.promotiondata.note || '', 
-    authoritySignature: this.promotiondata.authoritySignature, 
-    issuedDate: this.promotiondata.dateofpromotion,
-    candidateStatus:'Generated',
-    docType:this.promotiondata.Documenttype,
+    note: this.promotiondata.note || '',
+    authoritySignature: this.promotiondata.authoritySignatureId,
+    issuedDate: this.employeeForm.get('dateofpromotion')?.value,
+    candidateStatus: 'Generated',
+    docType: this.employeeForm.get('Documenttype')?.value.value,
+    jobId: this.promotiondata.jobId,
+    compensationDataId: this.promotiondata.compId,
   };
-
-
-
   this.subscription = this.http
     .postdata('AppraisalLetter/postgeneratedappraisalpromotionletter', postAppDetails)
     .subscribe({
       next: (data: any) => {
-        console.log(data);
-       this.conformationPopup.openSuccessModal('Promotion Letter Generated Successfully');
-        this.router.navigate(['/admin']);
+        this.sendPromotionemail();
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal('The Letter cannot be Acknowledged');
         console.log(reason);
       },
     });
 }
+ formatDates(date: Date): string {
+    return moment(date).format('YYYY-MM-DD');
+  }
+  
+
+ sendPromotionemail() {
+   let loggedInUser = this.authService.getToken();
+
+   let emaildetails = {
+     personEmail: this.promotiondata.workEmail,
+     senderName: `${loggedInUser.firstName ? loggedInUser.firstName : ''} ${loggedInUser.middleName ? loggedInUser.middleName : ''} ${loggedInUser.lastName ? loggedInUser.lastName : ''}`,
+     senderEmail: loggedInUser.workEmail,
+     firstName: this.promotiondata.firstName,
+     lastName: this.promotiondata.lastName,
+     middleName: this.promotiondata.middleName,
+     documentUrl: this.result.documentUrl,
+     compeffectivedate: this.formatDates(this.employeeCompensationDetails.compeffectivedate ),
+     employeeId: this.promotiondata.employeeId,
+     compensationamount: this.promotiondata.salary,
+     effectiveDate: this.formatDates(this.employeeCompensationDetails.compeffectivedate),
+     jobRole: this.employeeForm.get('JobRole')?.value.designationName,
+     generatedBy: this.promotiondata.employeeId,
+     generatedDate: new Date().toISOString(),
+   };
+
+   this.subscription = this.http
+     .postdata(`CustomEmail/Promotionletter`, emaildetails)
+     .subscribe({
+       next: (data: any) => {
+         this.conformationPopup.openSuccessModal(
+           'Email has been sent successfully'
+         );
+         setTimeout(() => {
+           this.navigateDashboard();
+         }, 2000);
+       },
+       error: (err: any) => {
+         this.spinnerLoader = false;
+       },
+       complete: () => {
+         this.spinnerLoader = false;
+       },
+     });
+  }
 
   //to post Appraisal Letter Details
   postPromotionDetails(docurl: string) {
@@ -629,7 +629,7 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if ((charCode < 65 || charCode > 90) &&(charCode < 97 || charCode > 122) && charCode !== 32) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;
@@ -646,7 +646,60 @@ export class PromotionLetterComponent implements OnInit,OnDestroy {
   closeDropdown() {
     this.isDropdownOpen = false;
   }
+ releaseToEmployee() {
+  this.releaseLoader = true;
+  let filePath = `/FusionDocuments/Employee Documents/Appraisal Letters/${this.promotiondata.employeeId}`;
+  this.subscription = this.http
+    .uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filePath,
+      this.PromotionFile
+    )
+    .subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.result.documentUrl = data.path;
+        }
+        let loggedInUser = this.authService.getToken();
+        let emaildetails = {
+          personEmail: this.promotiondata.workEmail,
+          senderName: loggedInUser.middleName
+            ? `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
+            : `${loggedInUser.firstName} ${loggedInUser.lastName}`,
+          senderEmail: loggedInUser.workEmail,
+          firstName: this.promotiondata.firstName,
+          lastName: this.promotiondata.lastName,
+          middleName: this.promotiondata.middleName,
+          jobRole: this.promotiondata.jobRole,
+          documentUrl: this.result.documentUrl,
+          compeffectivedate: this.formatDatebyDatestring(this.promotiondata.compeffectivedate),
+          employeeId: this.promotiondata.employeeId,
+          compensationamount: this.promotiondata.salary
+        };
 
+        this.subscription = this.http.postdata(`CustomEmail/Promotionletter`, emaildetails).subscribe({
+          next: (data: any) => {
+            this.conformationPopup.openSuccessModal("Email has been sent successfully");
+            setTimeout(() => {
+              this.employeeForm.reset();
+              this.promotiondata = {};
+              this.documentGenerated = false;
+              this.navigateDashboard();
+            }, 2000);
+          },
+          error: (err: any) => {
+            this.releaseLoader = false;
+          },
+          complete: () => {
+            this.releaseLoader = false;
+          }
+        });
+      },
+      error: (reason: any) => {
+        this.releaseLoader = false;
+      },
+    });
+ }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

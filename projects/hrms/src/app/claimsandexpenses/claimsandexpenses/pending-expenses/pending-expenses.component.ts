@@ -13,9 +13,10 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
@@ -37,6 +38,7 @@ export class PendingExpensesComponent implements OnInit,OnDestroy {
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   draftsCount: number = 0;
  expensesAttachment: any;
+  selectedData={} as any;
   constructor(private http: HttpService,public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
  selectedYear: any;
@@ -62,7 +64,12 @@ export class PendingExpensesComponent implements OnInit,OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
-
+//download expenses popup open function
+  openpopupforDownload(content: any, expenseDetails: any) {
+     this.selectedData = expenseDetails;
+    this.modalService.open(content, { size: 'xl', centered: true });
+  }
+  
   comments_Function(comments: any) {
     this.commentsrecivced = comments
   }

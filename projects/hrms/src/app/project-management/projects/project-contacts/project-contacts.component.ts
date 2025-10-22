@@ -66,7 +66,8 @@ export class ProjectContactsComponent implements OnInit {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
-          p.status === 'Inactive' || p.client.status === 'Inactive') ? 'Inactive' : 'Active';
+          p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
+        ) ? 'inactive' : 'active';
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -157,9 +158,9 @@ export class ProjectContactsComponent implements OnInit {
           this.getContactData(this.projectId);
         },
         error: (err) => {
-          this.conformationPopup.openErrorModal('Error deleting contact.');
+          this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-          this.modalService.dismissAll();
+        
         }
       });
   }
@@ -198,9 +199,9 @@ export class ProjectContactsComponent implements OnInit {
           this.getContactData(this.projectId);
         },
         error: (err) => {
-          this.conformationPopup.openErrorModal('Error deleting contact.');
+          this.conformationPopup.openErrorModal(err.error.message)
           console.error('Error deleting contact:', err);
-          this.modalService.dismissAll();
+          this.getContactData(this.projectId);
         }
       });
   }
@@ -248,7 +249,7 @@ export class ProjectContactsComponent implements OnInit {
       error: (err) => {
         this.spinnerLoader = false;
         console.error("Update failed:", err);
-        this.conformationPopup.openErrorModal('Failed to update contact Info');
+        this.conformationPopup.openErrorModal(err.error.message);
       }
     });
   }

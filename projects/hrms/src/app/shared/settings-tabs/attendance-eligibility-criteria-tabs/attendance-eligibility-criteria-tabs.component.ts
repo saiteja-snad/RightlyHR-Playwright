@@ -30,6 +30,7 @@ export class AttendanceEligibilityCriteriaTabsComponent {
     { label: 'Global Permissions',route: '/settings/timeoff-configurations/eligibility-criterias/global-permissions',permission: { feature: 'Eligibility Global Permissions Tab', action: 'view' } },
     { label: 'Attendance Regularization Types',route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types',permission: { feature: 'Attendance Regularization Tab', action: 'view' } },
     { label: 'Attendance Regularization Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria',permission: { feature: 'Attendance Regularization Eligibility Tab', action: 'view' } },
-    { label: 'Remote Login Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria',permission: { feature: 'Remote Login Eligibility Tab', action: 'view' } }
+    { label: 'Remote Login Eligibility Criteria',route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria',permission: { feature: 'Remote Login Eligibility Tab', action: 'view' } },
+    { label: 'Late Login Alert Configuration', route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: { feature: 'Late Login Alert Configuration Tab', action: 'view' } }
   ];
 }

@@ -98,6 +98,8 @@ export class LettersInfoComponent {
       this.componentname = 'Probation Extension Letter';
     }
 
+   
+
     else if (this.router.url === '/letters/trainee-relieving-letter') {
       this.componentname = 'Trainee Relieving Letter';
     }
@@ -110,6 +112,7 @@ export class LettersInfoComponent {
     else if (this.router.url === '/letters/trainee-internship-completion-letter') {
       this.componentname = 'Trainee Completion Letter';
     }
+
   }
 
   navigateEmployeeManagement() {

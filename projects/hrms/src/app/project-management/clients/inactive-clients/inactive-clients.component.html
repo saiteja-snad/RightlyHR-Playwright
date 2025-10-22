@@ -19,6 +19,7 @@
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
         </div>
+
         <ng-container *ngIf="loading; else maincontent">
             <ng-template #loadingSpinner>
                 <div>
@@ -55,9 +56,9 @@
                                     </td>
                                     <td>{{client?.contact?.name || '-'}}</td>
                                     <td>{{client?.contact?.email || '-'}}</td>
-                                    <td>{{client?.contact?.phoneDialCode || '-'}}  {{client?.contact?.phoneNumber || '-'}}</td>
+                                    <td>{{client?.contact?.phoneDialCode || '-'}} {{client?.contact?.phoneNumber || '-'}}</td>
                                     <td>{{client?.contact?.role || '-'}}</td>
-                                    <td>{{ client.status }}</td>
+                                    <td>{{client.status}}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
                                             <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -81,7 +82,6 @@
                                 <app-no-data-found></app-no-data-found>
                             </tr>
                         </ng-template>
-
                     </tbody>
                 </table>
             </div>

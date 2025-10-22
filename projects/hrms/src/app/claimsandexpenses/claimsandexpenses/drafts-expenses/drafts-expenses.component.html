@@ -2,8 +2,9 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search by expense title / total amount" aria-label="Username"
-            [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
+        <input type="search" class="form-control custom-search-input"
+            placeholder="Search by expense title / total amount" aria-label="Username" [(ngModel)]="searchTerm"
+            (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
     </div>
 
     <div class="custom-table-content">
@@ -36,6 +37,12 @@
                                     <li><a class="dropdown-item"
                                             (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
                                             <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                            (click)="openpopupforDownload(openpopupForDownload,exp)">
+                                            <i class="bi bi-download me-1"></i>Download
+                                        </a>
                                     </li>
                                 </ul>
                             </div>
@@ -140,7 +147,8 @@
 
                             <!-- Expense Item -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Expense Item' | translate}}<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Item' | translate}}<span
+                                        class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
@@ -154,7 +162,8 @@
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
                                         Expense title must not contain only spaces
                                     </div>
-                                    <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched" class="error-msg">
+                                    <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
+                                        class="error-msg">
                                         <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
                                             Expense Type is required</div>
                                     </div>
@@ -331,6 +340,17 @@
                 {{'No' | translate}}</button>
             <button type="submit" class="custom-btn btn-primary" (click)="removeExpense();modal.dismiss()">
                 {{'Yes' | translate}}</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #openpopupForDownload let-modal>
+    <div class="popup-container" ngbAutofocus>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Expense</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        </div>
+        <div class="popup-content">
+            <app-download-expense [downloadData]="selectedData" />
         </div>
     </div>
 </ng-template>

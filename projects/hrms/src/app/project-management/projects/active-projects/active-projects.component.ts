@@ -51,7 +51,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   kickoffBeforeEffectiveValid: boolean = true; // kickoff <= effective
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
-
+ 
+  inactiveClientStatus:any
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }
@@ -139,6 +140,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? []; // Extract "data" array
+       
+         
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -157,6 +160,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.loading = false
         this.projectsData = res?.data ?? [];
+        this.inactiveClientStatus = res?.data?.[0]?.client?.status.toLowerCase();
+        console.log(this.inactiveClientStatus);
+
       },
       error: (err) => {
         this.loading = false

@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import { environment } from '../../../../environments/environment';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
- import { Client } from '../../../clients.model';
+import { Client } from '../../../clients.model';
 @Component({
   selector: 'app-my-timesheet-report',
   imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
@@ -28,7 +28,7 @@ import { filter, Subject, Subscription, takeUntil } from 'rxjs';
   templateUrl: './my-timesheet-report.component.html',
   styleUrl: './my-timesheet-report.component.scss'
 })
-export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
+export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
@@ -53,10 +53,11 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
   filteredleaveRecords = false;
   selectLeaveEmployeeIds: number[] = [];
   getEmployeeInfo = [] as any;
-   destroy$ = new Subject<boolean>();
-    empinfo: any;
-      loading: boolean = true;
-      clients: Client[] = [];
+  destroy$ = new Subject<boolean>();
+  empinfo: any;
+  loading: boolean = true;
+  clients: Client[] = [];
+  disableproject = true;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -73,6 +74,12 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
     { key: 'Yes', value: 'yes' },
     { key: 'No', value: 'no' },
   ];
+  TimesheetStatus = [
+    { key: 'Waiting for Approval', value: 'Waiting for Approval' },
+    { key: 'Approved', value: 'Approved' },
+    { key: 'Rejected', value: 'Rejected' },
+  ];
+  clientDropdownList: { label: string; value: number }[] = [];
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -83,7 +90,7 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
   ) { }
 
   ngOnInit(): void {
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -92,7 +99,8 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
     };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
-    this.getAllActiveProjects();
+    this.getClientsData();
+    // this.getAllActiveProjects();
     this.getAttendanceReports();
     this.getTeam();
     this.getMyTeam();
@@ -100,12 +108,11 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
 
   initializeForm() {
     this.MyTimesheetReportForm = this.fb.group({
-      employee: [null],
-      manager: [null],
+      client: [null],
+      project: [{ value: [], disabled: true }],
       dateRange: [null],
-      leaveCategory: [null],
-      team: [null]
-      // year: ['']
+      status: [null],
+      billable: [null]
     });
     this.MyTimesheetReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
@@ -117,56 +124,66 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
     this.filteredleaveRecord = [];
   }
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.loading = false;
-        this.clients = Array.isArray(res?.data) ? res.data : [];
-        this.clients = this.clients.map((client: any) => ({
-          ...client         
-        }));
-      },
-      error: (err) => {
-        this.loading = false;
-        this.clients = [];
-        console.error('Error fetching clients:', err);
-      }
-    });
+    this.http.getData(`Client/GetAll?status=Active`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
+          if (Array.isArray(res?.data)) {
+            this.clients = res.data;
+
+            // 🔹 Map for dropdown (clientId + clientName)
+            this.clientDropdownList = this.clients.map((client: any) => ({
+              label: client.clientName, // display in dropdown
+              value: client.clientId    // selected value
+            }));
+          } else {
+            this.clients = [];
+            this.clientDropdownList = [];
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('Error fetching clients:', err);
+        }
+      });
   }
-// getEmployeeId() {
-//   const loggedInUser = this.authService.getToken();
-//   this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-//     next: (data: any) => {
-//       const employeedata = data
-//         .map((employee: any) => {
-//           const firstName = employee.firstName ? employee.firstName.trim() : '';
-//           const middleName = employee.middleName ? employee.middleName.trim() : '';
-//           const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-//           return {
-//             ...employee,
-//             firstName, // trimmed
-//             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-//           };
-//         })
-//         .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
-//         .sort((a: any, b: any) =>
-//           a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-//         );
+  // getEmployeeId() {
+  //   const loggedInUser = this.authService.getToken();
+  //   this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+  //     next: (data: any) => {
+  //       const employeedata = data
+  //         .map((employee: any) => {
+  //           const firstName = employee.firstName ? employee.firstName.trim() : '';
+  //           const middleName = employee.middleName ? employee.middleName.trim() : '';
+  //           const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-//       this.employeeiddetails = [
-//         { fullName: 'All Employees', employeeId: 'all' },
-//         ...employeedata
-//       ];
-//     },
-//     error: (reason: any) => {
-//       console.log(reason);
-//     },
-//   });
-// }
+  //           return {
+  //             ...employee,
+  //             firstName, // trimmed
+  //             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+  //           };
+  //         })
+  //         .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
+  //         .sort((a: any, b: any) =>
+  //           a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+  //         );
 
-  getAllActiveProjects() {
+  //       this.employeeiddetails = [
+  //         { fullName: 'All Employees', employeeId: 'all' },
+  //         ...employeedata
+  //       ];
+  //     },
+  //     error: (reason: any) => {
+  //       console.log(reason);
+  //     },
+  //   });
+  // }
+
+  getAllActiveProjects(event: any) {
     this.http
-      .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
+      .getData(`Project?status=Active&clientId=${event.value || 0}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -174,16 +191,16 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
 
           this.projectsData = projects.map((p: any) => ({
             ...p,
-          //  displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
-             displayName: `${p.client?.clientName || 'Unknown Client'}`,
-             displayprojectName: `${p.projectName || 'Unnamed Project'}`
+            //  displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
+            displayName: `${p.client?.clientName || 'Unknown Client'}`,
+            displayprojectName: `${p.projectName || 'Unnamed Project'}`
           }));
 
-          this.projectsData.unshift({
-            projectId: 0,
-            displayName: 'No Client',
-             displayprojectName: 'No Project'
-          });
+          // this.projectsData.unshift({
+          //   projectId: 0,
+          //   displayName: 'No Client',
+          //    displayprojectName: 'No Project'
+          // });
         },
         error: (err) => {
           console.error('Error fetching projects:', err);
@@ -198,28 +215,28 @@ export class MyTimesheetReportComponent  implements OnInit, OnDestroy{
         },
       });
   }
-getTeam() {
-  this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
-    next: (data: any) => {
-      this.teamdetails = data
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
+  getTeam() {
+    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+      next: (data: any) => {
+        this.teamdetails = data
+          .map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-          return {
-            ...employee,
-            firstName, //  trimmed
-            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        })
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-        );
-    },
-    error: (reason: any) => console.log(reason),
-  });
-}
+            return {
+              ...employee,
+              firstName, //  trimmed
+              fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          })
+          .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+          );
+      },
+      error: (reason: any) => console.log(reason),
+    });
+  }
 
 
   getAttendanceReports() {
@@ -250,9 +267,9 @@ getTeam() {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { employee, manager, dateRange, leaveCategory, team } = this.MyTimesheetReportForm.value;
+    const { client, project, dateRange, billable, status } = this.MyTimesheetReportForm.value;
     // Check if any field has a value
-    return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
+    return !(client || project || (dateRange && (dateRange.startDate || dateRange.endDate)) || billable || status);
   }
 
   generatemytimesheetReport(): void {
@@ -454,40 +471,40 @@ getTeam() {
     }
   }
 
- getMyTeam() {
-  const EmployeeId = this.loggedInUser?.employeeId;
-  this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-    next: (response: any) => {
-      if (response) {
-        const myTeam = response.filter((e: any) => e.isAccess);
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
 
-        this.getEmployeeInfo = myTeam
-          .map((employee: any) => {
-            const firstName = employee.firstName ? employee.firstName.trim() : '';
-            const middleName = employee.middleName ? employee.middleName.trim() : '';
-            const lastName = employee.lastName ? employee.lastName.trim() : '';
+          this.getEmployeeInfo = myTeam
+            .map((employee: any) => {
+              const firstName = employee.firstName ? employee.firstName.trim() : '';
+              const middleName = employee.middleName ? employee.middleName.trim() : '';
+              const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-            return {
-              ...employee,
-              firstName, //  trimmed
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-            };
-          })
-          .sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-          );
+              return {
+                ...employee,
+                firstName, //  trimmed
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+              };
+            })
+            .sort((a: any, b: any) =>
+              a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
+            );
 
-        // Insert "All Employees" at the top
-        this.getEmployeeInfo.unshift({
-          fullName: 'All Employees',
-          fusionEmpId: this.loggedInUser.fusionEmpId,
-          employeeId: this.loggedInUser.employeeId,
-        });
-      }
-    },
-    error: (err) => console.log(err),
-  });
-}
+          // Insert "All Employees" at the top
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+      error: (err) => console.log(err),
+    });
+  }
 
 
   // isAnyFilterApplied(): boolean {

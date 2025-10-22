@@ -225,6 +225,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       workLocation: Values.workLocation,
       offerStartDat: Values.offerStartDate,
       offerExpiryDate: Values.offerExpiryDate,
+      approvedBy: loggedInUser.employeeId
     };
     this.subscription = this.http
       .postdata(`CustomEmail/offerletter`, emaildetails)

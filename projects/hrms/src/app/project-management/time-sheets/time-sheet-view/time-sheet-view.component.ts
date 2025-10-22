@@ -64,7 +64,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   spinnerLoaderforallrecoders = false;
   datesSelected = false;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, 
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
@@ -152,10 +152,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
 
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective ? 
-    isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective ?
+      isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
-    const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ? 
+    const billablecheck=matchedResource?.billable || this.selectedProjectResource?.billable
+    const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
       this.secondsToHHMM(day.durationSeconds) : '',
       Validators.required
     );
@@ -179,6 +180,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       duration: durationControl,
       description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }, Validators.required,],
       approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
+      isBillable: [{value:day?.isBillable || false,disabled: !billablecheck}],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
@@ -274,8 +276,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
     if (!project || !project.days) return [];
-    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' && 
-    !!day.entryId).map((day: any) => day.entryId);
+    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' &&
+      !!day.entryId).map((day: any) => day.entryId);
   }
 
   openModalfordeletealldata(content: any, index: number) {
@@ -693,6 +695,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     if (selectedResource) {
       this.selectedProjectResource = selectedResource;
+      console.log(this.selectedProjectResource);
+      
     }
 
     this.selectedclientid = client.clientId;
@@ -780,10 +784,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //OPEN TIME ENTERIY
-  openModal(content: any,dayForm: AbstractControl | null,index: number,dayKey: string) {
+  openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference
+      console.log(this.dayForm.get('approvalStatus')?.value );
+
+      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+      if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
+        
+        const selectedResource = this.resourcesArrayList.find(
+          (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
+            res.client?.clientId === this.dayForm.get('clientId')?.value
+        );
+        console.log(selectedResource)
+        this.dayForm.patchValue({
+          isBillable: this.selectedProjectResource?.billable ?? selectedResource?.billable
+        })
+        
+      }
       const shiftData = this.resourcesArrayList.find(
         (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value
       );
@@ -791,6 +810,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.dayForm.get('projectId')?.value != null) {
         this.selectedShiftDetails = shiftData?.shift;
       }
+
       // const status = dayForm.get('approvalStatus')?.value;
       // if(index===0){
       //   console.log(index,'index value',this.selectedShiftDetails)
@@ -968,6 +988,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+      isBillable:formValue.isBillable || false
     };
 
     // POST request
@@ -982,6 +1003,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedprojectid = null;
         this.selectedProjectName = null;
         this.selectedClientname = null;
+        this.selectedProjectResource = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },

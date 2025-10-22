@@ -9,9 +9,8 @@
             </div>
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
-                    <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
-                        [placeholder]="displayLabel"  
-                        (onSelect)="onDateSelect($event)">
+                    <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
+                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)">
                     </p-datepicker>
                 </div>
                 <button class="custom-btn btn-primary week-change-btn-prev" (click)="previousWeek()">
@@ -36,7 +35,7 @@
     </div>
 
     <div class="custom-table-content">
-         @if (!loading) {
+        @if (!loading) {
         <form [formGroup]="timesheetForm">
             <table class="w-100">
                 <thead>
@@ -304,10 +303,10 @@
                 </div>
             </div>
         </form>
-         }
-    @else {
-    <app-data-loader-content />
-    }
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>
 
@@ -365,10 +364,20 @@
                         Duration is required
                     </div>
                 </div>
+
+                <div  class="col-md-12 mb-3">
+                    <div class="form-check form-switch">
+                        <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
+                            formControlName="isBillable">
+                        <label for="project-overtime-eligibility" class="form-label custom-toggle-label">Billable
+                            </label>
+                    </div>
+                </div>
                 <div class="d-flex align-items-center gap-3 pt-4">
                     <span type="button" class="text-danger"
-                        *ngIf="dayForm.get('approvalStatus')?.value !== 'Not Entered'"
+                         *ngIf="dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>
+                        
                     <button type="button" class="custom-btn btn-secondary w-100"
                         (click)="openModalforconformation(confirmationpopup)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary w-100"

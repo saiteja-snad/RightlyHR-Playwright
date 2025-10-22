@@ -728,6 +728,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Org Leave Balance',
     'Team Leave Balance Summary',
     'Team Leave Balance',
+    'Timesheet Reports',
   ];
   standardReportsTabsFields = [
     'Employee Master Data',
@@ -795,6 +796,35 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(Regularization)',
     'Attendance Team Manager List(Regularization)',
     'My Team Report(Regularization)',
+  ];
+  timesheetReportsTabsFields = [
+    'My Timesheet Report',
+    'My Timesheet Report - Generate',
+    'My Timesheet Report - Export',
+    'My Timesheet Report - Summary',
+    'My Timesheet Report - Summary - Generate',
+    'My Timesheet Report - Summary - Export',
+    'Timesheet Summary Monthly Report',
+    'Timesheet Summary Monthly Report - Generate',
+    'Timesheet Summary Monthly Report - Export',
+    'Team Timesheet Report',
+    'Team Timesheet Report - Generate',
+    'Team Timesheet Report - Export',
+    'Pending Approval Status Report',
+    'Pending Approval Status Report - Generate',
+    'Pending Approval Status Report - Export',
+    'Project Effort Report',
+    'Project Effort Report - Generate',
+    'Project Effort Report - Export',
+    'Utilization Report',
+    'Utilization Report - Generate',
+    'Utilization Report - Export',
+    'Resource Availability Report',
+    'Resource Availability Report - Generate',
+    'Resource Availability Report - Export',
+    'Attendance vs Timesheet Report',
+    'Attendance vs Timesheet Report - Generate',
+    'Attendance vs Timesheet Report - Export',
   ];
   assetManagementTabsFields = [
     'Asset Management - Create',

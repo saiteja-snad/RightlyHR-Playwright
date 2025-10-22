@@ -7,7 +7,7 @@ import {
   EXPENSE_TABS,
   IT_SUPPORT_TEAM_TICKETS_TABS,
   COMP_OFF_SUB_TABS,
-
+  TIMESHEET_REPORTS_TABS,
   ON_BEHALF_OF_TABS,
   PERMISSIONS_SUB_TABS,
   REGULARIZATION_SUB_TABS,
@@ -304,9 +304,16 @@ export class AccessNavigationService {
             }
           }
         }
-
+        if (this.rbac.allowedToAccess('Timesheet Reports.view')) {
+          for (const item of TIMESHEET_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
-          return (route = '/reports/monthly-attandance-reports');
+          return (route = '/reports/monthly-attendance-reports');
         }
 
         if (this.rbac.allowedToAccess('Policy Reports.view')) {
@@ -967,7 +974,15 @@ export class AccessNavigationService {
           }
         }
         break;
-
+      case '/reports/timesheet-reports':
+        if (this.rbac.allowedToAccess('Timesheet Reports.view')) {
+          for (const item of TIMESHEET_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
       case '/reports/monthly-attandance-reports':
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
           return (route = '/reports/monthly-attandance-reports');

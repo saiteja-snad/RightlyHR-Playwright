@@ -25,6 +25,7 @@ export const MODULE_INFOS = {
     SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO: "Assign personalized leave days by selecting year, location, sub-location, shift, category, and employee. This module allows tailoring leave entitlements at the individual employee level for greater flexibility and control.",
     SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO: "Configure company-wide criteria for Comp Off, Work From Home, and Permissions including entitlement rules and eligibility. Define global policies and regularization types with time-based values like expiry, past/future days, and minimum hour thresholds for full or half-day adjustments.",
     SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO: "This module allows viewing and managing leave entitlements for employees based on filters like Employee ID, DOJ, Location, and Shift. It displays detailed leave categories with corresponding policy and entitled leaves for each individual.",
+    SETTINGS_TIMESHEET_REPORT_MODULE_INFO: "Manage employee leave lifecycle from application to approval, including comp-offs, permissions, and regularization. Enables smooth tracking, manager actions, and real-time balance visibility.",
 
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO: "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
@@ -99,6 +100,16 @@ export const MODULE_INFOS = {
     //Reports Module Standard Reports Module Info
     POLICY_REPORTS_MODULE_INFO: "Get a comprehensive overview of policy development across departments. Easily filter and track which policies were assigned to whom and when.",
     POLICY_REPORTS_POLICY_ACK_REPORT_MODULE_INFO: "Monitor employee compliance by tracking who acknowledged which policies and when. Useful for audits, policy rollout tracking, and ensuring accountability across teams.",
+    
+    //Timesheet Reports Module Info
+    MY_TIMESHEET_REPORTS_MODULE_INFO: "Get a complete view of employee attendance reports, including leave, comp off, WFH, permissions, and absences. Helps track availability, ensure compliance, and support workforce planning.",
+    ATTENDANCE_TIMESHEET_SUMMARY_MONTHLY_REPORTS_MODULE_INFO: "Displays detailed information on all leave applications submitted by employees, including types of leave, start and end dates, number of days availed, department, reporting manager, and approval status.",
+    TEAM_TIMESHEET_REPORTS_MODULE_INFO: "Provides a summarized view of leave balances and leave availed by employees across various leave types. Useful for tracking total entitlement, usage, and remaining balance for each employee.",
+    PENDING_APPROVAL_REPORTS_MODULE_INFO: "Shows compensatory off records for employees who have worked beyond normal working hours or on holidays. Includes applied dates, approved days, and usage status.",
+    PROJECT_EFFORT_REPORTS_MODULE_INFO: "Lists all work-from-home requests along with dates, approval status, employee details, and related comments. Helps HR track remote work utilization and approvals.",
+    UTILIZATION_REPORTS_MODULE_INFO: "Captures all unplanned or unauthorised absences within a selected date range. Helps identify patterns in absenteeism for compliance and corrective action.",
+    RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO: "The Inactive Employee Report shows leave entitlements, availed leaves, and balance for inactive employees. It aids in exit processing and compliance audits.",
+    ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO: "Provides an annual summary of attendance, leaves, permissions, and other related activities for each employee. Helps HR analyze yearly trends and employee availability.",
     //Calendar Module Info 
     CALENDAR_MODULE_INFO: "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
 

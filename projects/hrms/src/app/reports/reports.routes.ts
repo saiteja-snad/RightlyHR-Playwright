@@ -41,7 +41,19 @@ export default [
     { path: 'team-leave-balance', loadComponent: () => import('./team-leave-balance/team-leave-balance.component').then((m) => m.TeamLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance.view' } },
     { path: 'team-leave-summary', loadComponent: () => import('./team-leave-summary/team-leave-summary.component').then((m) => m.TeamLeaveSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance Summary.view' } },
     { path: 'org-leave-balance', loadComponent: () => import('./org-leave-balance//org-leave-balance.component').then((m) => m.OrgLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Org Leave Balance.view' } },
-
+     {
+        path: 'timesheet-reports', children: [
+            //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
+            { path: 'my-timesheet-report', loadComponent: () => import('./timesheet-reports/my-timesheet-report/my-timesheet-report.component').then((m) => m.MyTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'My Timesheet Report.view' } },
+            { path: 'timesheet-summary-monthly-report', loadComponent: () => import('./timesheet-reports/timesheet-summery-report/timesheet-summery-report.component').then((m) => m.TimesheetSummeryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Timesheet Summary Monthly Report.view' } },
+            { path: 'team-timesheet-report', loadComponent: () => import('./timesheet-reports/team-timesheet-report/team-timesheet-report.component').then((m) => m.TeamTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Timesheet Report.view' } },
+            { path: 'pending-approval-status-report', loadComponent: () => import('./timesheet-reports/pending-approval-status-report/pending-approval-status-report.component').then((m) => m.PendingApprovalStatusReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Pending Approval Status Report.view' } },
+            { path: 'project-effort-report', loadComponent: () => import('./timesheet-reports/project-effort-report/project-effort-report.component').then((m) => m.ProjectEffortReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Project Effort Report.view' } },
+            { path: 'utilization-report', loadComponent: () => import('./timesheet-reports/utilization-report/utilization-report.component').then((m) => m.UtilizationReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Utilization Report.view' } },
+            { path: 'resource-availability-report', loadComponent: () => import('./timesheet-reports/resource-availability-report/resource-availability-report.component').then((m) => m.ResourceAvailabilityReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Resource Availability Report.view' } },
+            { path: 'attendance-vs-timesheet-report', loadComponent: () => import('./timesheet-reports/attendance-vs-timesheet-report/attendance-vs-timesheet-report.component').then((m) => m.AttendanceVsTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Attendance vs Timesheet Report.view' } },
+        ]
+    },
 
 
 ] as Route[];

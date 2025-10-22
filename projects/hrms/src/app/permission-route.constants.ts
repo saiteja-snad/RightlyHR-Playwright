@@ -186,6 +186,17 @@ export const ATTENDANCE_REPORTS_TABS = [
   { route: '/reports/attendence-reports/regularization-report', permission: 'Regularization Report.view' }
 ];
 
+export const TIMESHEET_REPORTS_TABS = [
+  { route: '/reports/timesheet-reports/my-timesheet-report', permission: 'My Timesheet Report.view' },
+  { route: '/reports/timesheet-reports/timesheet-summary-monthly-report', permission: 'Timesheet Summary Monthly Report.view' },
+  { route: '/reports/timesheet-reports/team-timesheet-report', permission: 'Team Timesheet Report.view' },
+  { route: '/reports/timesheet-reports/pending-approval-status-report', permission: 'Pending Approval Status Report.view' },
+  { route: '/reports/timesheet-reports/project-effort-report', permission: 'Project Effort Report.view' },
+  { route: '/reports/timesheet-reports/utilization-report', permission: 'Utilization Report.view' },
+  { route: '/reports/timesheet-reports/resource-availability-report', permission: 'Resource Availability Report.view' },
+  { route: '/reports/timesheet-reports/attendance-vs-timesheet-report', permission: 'Attendance vs Timesheet Report.view' },
+];
+
 export const POLICY_REPORTS_TABS = [
   { route: '/reports/policy-reports/policy-acknowledgment-report', permission: 'Policy Acknowledgement Report.view' }
 ];

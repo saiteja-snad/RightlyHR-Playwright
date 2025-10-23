@@ -99,7 +99,7 @@ export class ClientResourcesComponent {
   }
 
   getResourceData(id: any) {
-    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active&entityType=Client&entityRefId=${id}&isProjectRequired=true`).subscribe({
+    this.subscription = this.http.getDataIncludeParams(`ProjectResource?status=Active&entityType=Client&entityRefId=${id}&isProjectRequired=true&isGroupedByProject=true`).subscribe({
       next: (data: any) => {
         this.resourcesData = data.data;
         this.loading = false;

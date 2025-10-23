@@ -12,32 +12,35 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
+
                     <th>Employee ID</th>
                     <th>Name</th>
                     <th>Designation</th>
                     <th>Role</th>
                     <th>Email</th>
                     <th>Phone Number</th>
+                    <th> Project Assigned</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
-                    this.inactiveClientStatus !== 'inactive'){
+                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
+
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber || '' }}</td>
+                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber ||
+                                '' }}</td>
+                            <td>{{data?.project?.projectName}}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
-                            this.inactiveClientStatus !== 'inactive'){
+                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -91,10 +94,11 @@
                         <label for="resourceName" class="form-label custom-label mb-2">Resource Name
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                                [showClear]="false" optionValue="id" placeholder="Please select employee" formControlName="resourceName"
-                                class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true" [readonly]="true"
-                                [ngClass]="{ 'readonly-select': true }">
+                            <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true"
+                                filterBy="fullName" [showClear]="false" optionValue="id"
+                                placeholder="Please select employee" formControlName="resourceName"
+                                class="custom-select w-100" (onChange)="onClickEmployee($event)"
+                                resetFilterOnHide="true" [readonly]="true" [ngClass]="{ 'readonly-select': true }">
                             </p-select>
                         </div>
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
@@ -117,9 +121,11 @@
                         <input type="text" formControlName="resourceRole" class="form-control custom-input"
                             placeholder="Please enter role" (keydown)="formValidation.restrictInitialSpace($event)" />
                         <div class="error-msg">
-                            <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
+                            <div
+                                *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
-                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
+                            <div
+                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
                             || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
                                 {{ 'Role must be between 250 characters' | translate }}
                             </div>
@@ -177,8 +183,9 @@
                         <label for="startDate" class="form-label custom-label mb-2">Start Date
                             <span class="text-danger">*</span></label>
                         <input type="date" id="startDate" formControlName="startDate" class="form-control custom-input"
-                            onkeypress="return false"   [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
+                            onkeypress="return false"
+                            [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                            [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " />
                         <div class="error-msg" *ngIf="updateResourceForm.get('startDate')?.touched && 
                         updateResourceForm.get('startDate')?.invalid">Start Date is required</div>
                     </div>
@@ -189,7 +196,8 @@
                             <span class="text-danger">*</span></label>
                         <input type="date" id="endDate" formControlName="endDate" class="form-control custom-input"
                             onkeypress="return false" />
-                        <div class="error-msg" *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
+                        <div class="error-msg"
+                            *ngIf="updateResourceForm.get('endDate')?.touched && updateResourceForm.get('endDate')?.invalid">
                             End Date is required
                         </div>
                     </div>
@@ -203,16 +211,19 @@
                                 class="form-control custom-input w-50" placeholder="Please enter hours" [maxlength]="5"
                                 (keypress)="formValidation.restrictAlphabets($event)" />
                             <div class="custom-p-select-content w-50">
-                                <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false" [showClear]="false"
-                                    optionValue="value" placeholder="Please select frequency" formControlName="allocatedFrequencyType"
-                                    class="custom-select w-100" [ngClass]="{ 'readonly-select': true }">
+                                <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false"
+                                    [showClear]="false" optionValue="value" placeholder="Please select frequency"
+                                    formControlName="allocatedFrequencyType" class="custom-select w-100"
+                                    [ngClass]="{ 'readonly-select': true }">
                                 </p-select>
                             </div>
                         </div>
                         <div class="error-msg">
-                            <div *ngIf="updateResourceForm.get('resourceAllocationhrs')?.touched &&  updateResourceForm.get('resourceAllocationhrs')?.invalid">
+                            <div
+                                *ngIf="updateResourceForm.get('resourceAllocationhrs')?.touched &&  updateResourceForm.get('resourceAllocationhrs')?.invalid">
                                 Allocation Hours are required</div>
-                            <div *ngIf="updateResourceForm.get('allocatedFrequencyType')?.touched && updateResourceForm.get('allocatedFrequencyType')?.invalid">
+                            <div
+                                *ngIf="updateResourceForm.get('allocatedFrequencyType')?.touched && updateResourceForm.get('allocatedFrequencyType')?.invalid">
                                 <div *ngIf="updateResourceForm.get('allocatedFrequencyType')?.errors?.['required']">
                                     Please select a frequency type
                                 </div>
@@ -221,21 +232,26 @@
                     </div>
 
                     <!-- Switches -->
-                  <div class="col-md-12 mb-3">
+                    <div class="col-md-12 mb-3">
                         <div class="d-flex gap-3 align-items-center">
                             <div class="form-check form-switch">
-                                <input id="clients-overtime-eligibility"  class="form-check-input" type="checkbox" formControlName="overtimeEligible">
-                                <label for="clients-overtime-eligibility" class="form-label custom-toggle-label">Overtime Eligibility</label>
+                                <input id="clients-overtime-eligibility" class="form-check-input" type="checkbox"
+                                    formControlName="overtimeEligible">
+                                <label for="clients-overtime-eligibility"
+                                    class="form-label custom-toggle-label">Overtime Eligibility</label>
                             </div>
 
                             <div class="form-check form-switch">
-                                <input id="client-billable"  class="form-check-input" type="checkbox" formControlName="billable">
-                                <label for="client-billable"  class="form-label custom-toggle-label">Billable</label>
+                                <input id="client-billable" class="form-check-input" type="checkbox"
+                                    formControlName="billable">
+                                <label for="client-billable" class="form-label custom-toggle-label">Billable</label>
                             </div>
 
                             <div class="form-check form-switch">
-                                <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" formControlName="allowweekendWork">
-                                <label for="client-allow-weekend-work" class="form-label custom-toggle-label">Allow Weekend Work</label>
+                                <input id="client-allow-weekend-work" class="form-check-input" type="checkbox"
+                                    formControlName="allowweekendWork">
+                                <label for="client-allow-weekend-work" class="form-label custom-toggle-label">Allow
+                                    Weekend Work</label>
                             </div>
                         </div>
                     </div>
@@ -243,8 +259,10 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateResourceForm.invalid">Update</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="updateResourceForm.invalid">Update</button>
                 </div>
             </form>
         </div>
@@ -259,8 +277,10 @@
             <p class="confirmation-text">{{'Are you sure you want to delete this Resource?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deleteResources()">{{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteResources()">{{'Yes' |
+                translate}}</button>
         </div>
     </div>
 </ng-template>

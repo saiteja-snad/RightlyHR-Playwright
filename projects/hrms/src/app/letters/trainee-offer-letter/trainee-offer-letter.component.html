@@ -195,14 +195,27 @@
                         </div>
                     </div>
                 </div>
-
+                  <div class="mb-3">
+                    <label class="form-label custom-label mb-2">Stipend/Salary Applicable <span
+                            class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="stipend" optionLabel="name"
+                            placeholder="Please select stipend/salary applicable" formControlName="stipend"
+                            class="form-select custom-select"
+                            >
+                        </p-select>
+                    </div>
+                    <div *ngIf="employeeForm.get('stipend')?.invalid && employeeForm.get('stipend')?.touched">
+                        <div class="error-msg">Stipend/Salary applicable is required</div>
+                    </div>
+                </div>
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
+                    <label class="form-label custom-label mb-2"> {{'Monthly Stipend Salary '|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="number" class="form-control custom-input" formControlName="amount"
-                        placeholder="Please enter salary" (ngModelChange)="onclickCTC($event)" />
+                        placeholder="Please enter monthly stipend salary"  />
                     <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
-                        <div class="error-msg">Salary is required</div>
+                        <div class="error-msg">Monthly Stipend Salary is required</div>
                     </div>
                 </div>
 
@@ -298,7 +311,7 @@
                         <div class="error-msg">Training Period is required</div>
                     </div>
                 </div>
-
+              
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
@@ -401,7 +414,8 @@
                                         <li class="mb-1">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}}
                                             {{traineeEmpData.lastName}},</li>
                                     </ng-template>
-                                    <li class="mb-1" *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
+                                    <li class="mb-1" *ngIf="!traineeEmpData.addressLine1;else address">
+                                        {{'Address'|translate}}:</li>
                                     <ng-template #address>
                                         <li class="mb-1">{{traineeEmpData.addressLine1}},</li>
                                         @if(traineeEmpData.addressLine2){
@@ -430,7 +444,8 @@
                                     </li>
                                     <li class="mb-4"><b>{{'Working Hours and Location'|translate}}:
                                         </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to
-                                        Friday), at our office located at SNAD Developers India Pvt Ltd, {{traineeEmpData.address}}. Occasionally,
+                                        Friday), at our office located at SNAD Developers India Pvt Ltd,
+                                        {{traineeEmpData.address}}. Occasionally,
                                         you may be required to work additional hours or remotely, depending on the
                                         nature of the projects and business requirements.
                                     </li>
@@ -438,12 +453,42 @@
                                         reporting to <u>{{ traineeEmpData.reportingmanagerName }}</u>.
                                     </li>
                                     <li class="mb-4">
-                                        <b>{{'Stipend/Salary and Benefits'|translate}}: </b>During the internship
-                                        period, you’re eligible to receive Rs.10,000/- per month as a stipend/salary.
-                                        After successful completion of the internship period, you will be appointed as
-                                        an employee of SNAD Developers India Pvt Ltd with a CTC of
-                                        <b>{{traineeEmpData.amount}}</b> per
-                                        annum.
+                                        <b >{{'Stipend/Salary and Benefits'|translate}}: </b>
+
+                                        <ul class="bullet mt-2">
+                                            <ng-container *ngIf="employeeForm.get('stipend')?.value?.value===true">
+                                                <li class="mb-1"><b>Internship Period (First 3 Months):</b>
+                                                    This will be an unpaid internship, and you will
+                                                    not be eligible for any stipend/salary during this period.
+
+                                                </li>
+                                                <li class="mb-1">
+                                                    <b> Stipend (Next 3 Months):</b>
+                                                    Upon successful completion of the first 3 months, you will
+                                                    receive a stipend of <b>INR {{employeeForm.get('amount')?.value  ?? 00}} per month </b> for the next 3 months.
+                                                </li>
+                                            </ng-container>
+                                            <ng-container *ngIf="employeeForm.get('stipend')?.value?.value===false">
+                                                <li class="mb-1"><b>Internship Period (First 3 Months):</b>
+                                                    This will be an unpaid internship, and you will
+                                                    not be eligible for any stipend/salary during this period.
+
+                                                </li>
+                                                <li class="mb-1">
+                                                    <b> Stipend (Next 3 Months):</b>
+                                                    Upon successful completion of the first 3 months, you will
+                                                    receive a stipend of <b>INR {{employeeForm.get('amount')?.value  ?? 00}} per month </b> for the next 3 months.
+                                                </li>
+                                                <li class="mb-1">
+                                                    <b>Full-Time Employment:</b>
+                                                    After completion 6 months from the date of joining, based
+                                                    on satisfactory performance, you will be appointed as a full-time
+                                                    employee of SNAD
+                                                    with a <b> CTC of per annum </b>
+                                                </li>
+                                            </ng-container>
+                                        </ul>
+
                                     </li>
                                     <li class="mb-4">
                                         <b>{{'Responsibilities'|translate}}: </b>Your primary responsibilities will be
@@ -493,12 +538,12 @@
                                     </p>
                                     <p>We are excited about the possibility of you joining our
                                         team and look forward to a productive and successful internship.</p>
-                                
+
                                 </div>
-                                 <p class="pt-3">Your Sincerely,</p>
+                                <p class="pt-3">Your Sincerely,</p>
                                 <p class="letter-sub-header mb-5">For SNAD Developers India Pvt Ltd</p>
                                 <div class="mb-3"></div>
-                                 <div>
+                                <div>
                                     <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
                                     <p class="authorized-signatory mb-1">
                                         Authorized Signatory, </p>

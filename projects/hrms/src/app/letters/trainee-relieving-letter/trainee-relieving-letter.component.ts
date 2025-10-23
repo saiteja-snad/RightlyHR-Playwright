@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -18,13 +18,13 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../l
 
 @Component({
   selector: 'app-trainee-relieving-letter',
-imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './trainee-relieving-letter.component.html',
   styleUrl: './trainee-relieving-letter.component.scss'
 })
-export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
-   subscription!: Subscription;
-  relievingTemplate: any | string | ArrayBuffer | null = null; 
+export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
+  relievingTemplate: any | string | ArrayBuffer | null = null;
   result = {} as any;
   RelievingFile!: File;
   gender: any;
@@ -36,18 +36,20 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   signatureAuthorityDetails: IEmployeeSignatures[] = [];
   selectedAuthority!: IEmployeeSignatures;
   selectedEmployeeJobDetails!: IEmployeeJobDetails;
+  managerDetails: any = null;
   employeeFullname!: string;
+  getAllEmployeeInfo = [] as any;
   jobErrorMessage!: string;
   authorityFullName!: string;
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false }
   ];
-  spinnerLoader= false;
+  spinnerLoader = false;
 
   constructor(
-    private router: Router, 
-    private fb: FormBuilder, 
+    private router: Router,
+    private fb: FormBuilder,
     private http: HttpService,
     private httpclient: HttpClient,
     private authService: AuthService,
@@ -57,7 +59,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.getRelievingTemplate();
     this.initializeForm();
-    this.getEmployeeId();
+    this.getAllInActiveEmployees();
     this.getAuthorityDetails();
   }
 
@@ -72,7 +74,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   }
 
   navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
+    this.router.navigate(['/employee-management/all-employees'])
   }
 
   DateValidation() {
@@ -82,14 +84,14 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       this.jobErrorMessage = 'Relieving issued date must be after the employee joining date.';
       this.employeeForm.get('jobValid')?.setValue(false);
     } else {
-      this.jobErrorMessage = '';  
+      this.jobErrorMessage = '';
       this.employeeForm.get('jobValid')?.setValue(true);
     }
   }
 
   preventTyping(event: KeyboardEvent) {
     event.preventDefault();
-  }  
+  }
 
   async getRelievingTemplate() {
     this.relievingTemplate = await this.httpclient
@@ -98,38 +100,34 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       }).toPromise();
   }
 
-    getEmployeeId() {
-    const status = ['Trainee Inactive'];
-    this.subscription = this.http
-      .getData(`Employeedata/Getallemployees?statuses=${status}`)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.employeeDetails = data as IEmployeeDetails[];
-          this.employeeDetails = data.map((employee: any) => {
-            return {
-              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
-              // Concatenate first, middle (if present), and last name
-            };
-          }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
-          console.log(this.employeeDetails);
-        },
-        error: (reason: any) => {
-
-          console.log(reason);
-        },
-      });
+  getAllInActiveEmployees() {
+    const status = 'Trainee Inactive';
+    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
+      next: (data: any) => {
+        this.employeeDetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          };
+        });
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
+
   getAuthorityDetails() {
-    let offertype = 'Relieving Letter';
+    let offertype = 'Trainee Completion Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.signatureAuthorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() 
-        })).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); 
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
+        }));
       },
       error: (error: any) => {
         console.error(error);
@@ -138,6 +136,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   }
 
   onClickEmployee(event: any) {
+    this.managerDetails = null;
     this.selectedEmployee = event.value;
     if (this.selectedEmployee.lastworkingday && !this.selectedEmployee.lastworkingday) {
       this.selectedEmployee.lastworkingday = this.selectedEmployee.lastworkingday;
@@ -162,8 +161,10 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
           this.jobErrorMessage = 'No job details found for this employee.';
           this.employeeForm.get('jobValid')?.setValue(false);
         } else {
-          let res = data.reverse()[0];  
+          let res = data.reverse()[0];
           this.selectedEmployeeJobDetails = res;
+          // Pass reportsto to getAllEmployeeDetails
+          this.getAllEmployeeDetails(res.reportsto);
           this.jobErrorMessage = '';
           this.employeeForm.get('jobValid')?.setValue(true);
         }
@@ -174,12 +175,33 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
     });
   }
 
+  getAllEmployeeDetails(managerId?: number) {
+    const satus = ['active'];
+    this.subscription = this.http.getData(`Employeedata/Getallemployees?statuses=${satus}`).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.getAllEmployeeInfo = response.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} 
+              ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+            };
+          });
+          // Find manager details if managerId is provided
+          if (managerId) {
+            this.managerDetails = this.getAllEmployeeInfo.find((emp: any) => emp.employeeId === managerId) || null;
+          }
+        }
+      },
+    });
+  }
+
   onclickDesignation(event: any) {
-    this.selectedAuthority= event.value;
+    this.selectedAuthority = event.value;
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName}
        ${this.selectedAuthority.lastName}` : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
-    } 
+    }
   }
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);
@@ -190,14 +212,15 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
   }
 
   async postRelievingLetterFormSubmit(f: FormGroup) {
+
     const data = f.value;
     let fileName = '';
-    this.spinnerLoader= true;
+    this.spinnerLoader = true;
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
       fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_RelievingLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
-      return; 
+      return;
     }
     data.dateofRelieving = this.formatDate(data.dateofRelieving);
     data.dateOfJoining = this.formatDate(new Date(this.selectedEmployee.dateOfJoining));
@@ -214,7 +237,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
         const blob = pdf.output('blob');
         //creating form file to upload into AZure
         let d: Date = new Date()
-        this.RelievingFile = new File([blob], fileName,{type: 'application/pdf',});
+        this.RelievingFile = new File([blob], fileName, { type: 'application/pdf', });
         this.uploadRelievingLetter();
       });
     }
@@ -226,7 +249,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         if (data) {
           this.result.documentUrl = data.path;
-          this.conformationPopup.openSuccessModal('Trainee Relieving letter generated successfully')
+          this.conformationPopup.openSuccessModal('Trainee completion letter generated successfully')
           this.relievingemail();
         }
       },
@@ -261,14 +284,14 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`CustomEmail/relievingLetter`, emaildetails).subscribe({
       next: (data: any) => {
         this.conformationPopup.openSuccessModal('Email has been sent successfully')
-        setTimeout(()=>{
+        setTimeout(() => {
           this.navigateDashboard();
         }, 2000)
       },
       error: (err: any) => {
-        this.spinnerLoader= false;
-      },complete: ()=>{
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
+      }, complete: () => {
+        this.spinnerLoader = false;
       }
     })
   }

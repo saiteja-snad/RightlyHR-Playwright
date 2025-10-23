@@ -18,6 +18,7 @@ export interface IEmployeeDetails {
     workEmail: string;
     dateOfJoining: string;
     lastworkingday: string;
+    contractorLastWorkingDate: string;
     probationEndDate?: string;
     noticePeriod: string;
     emergencyName: string;

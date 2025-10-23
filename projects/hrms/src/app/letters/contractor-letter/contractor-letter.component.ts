@@ -219,53 +219,54 @@ export class ContractorLetterComponent {
   }
 
   //function to generate the offer letter
-  async generateOfferLetter() {
+    async generateOfferLetter() {
     this.loading = true;
-    const data = this.prospectiveEmpData;
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = pdf.internal.pageSize.getWidth();
-    const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6']; // IDs of the content elements to be converted to PDF
-    // Create a single canvas to combine all content elements
-    const combinedCanvas = document.createElement('canvas');
-    combinedCanvas.width = imgWidth;
-    combinedCanvas.height = pdfContents.length * imgHeight;
-    const imagesData = [];
-    // this.isLoading = true;
-    for (const contentId of pdfContents) {
-      const pdfContent = document.getElementById(contentId);
-      if (pdfContent) {
-        const canvas = await html2canvas(pdfContent, { scale: 2, useCORS: true });
-        const imgData = canvas.toDataURL('image/png');
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        imagesData.push({ imgData, imgHeight });
+
+    // Let Angular update the DOM before starting heavy operations
+    setTimeout(async () => {
+      const data = this.prospectiveEmpData;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = pdf.internal.pageSize.getWidth();
+      const imgHeight = pdf.internal.pageSize.getHeight();
+      const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6'];
+
+      const imagesData = [];
+
+      for (const contentId of pdfContents) {
+        const pdfContent = document.getElementById(contentId);
+        if (pdfContent) {
+          const canvas = await html2canvas(pdfContent, { scale: 2, useCORS: true });
+          const imgData = canvas.toDataURL('image/png');
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+          imagesData.push({ imgData, imgHeight });
+        }
       }
-    }
-    // Add all images to the PDF except for the last one
-    for (let i = 0; i < imagesData.length - 1; i++) {
-      const imageData = imagesData[i];
-      pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
-      pdf.addPage(); // Add a new page for the next image (except for the last one)
-    }
-    // Add the last image without adding a new page
-    if (imagesData.length > 0) {
-      const lastImageData = imagesData[imagesData.length - 1];
-      pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
-    }
-    const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
-    pdf.save(fileName);
-    const blob = pdf.output('blob');
-    //creating form file to upload into AZure
-    let d: Date = new Date();
-    const file = new File([blob], fileName, {
-      type: 'application/pdf',
+
+      for (let i = 0; i < imagesData.length - 1; i++) {
+        const imageData = imagesData[i];
+        pdf.addImage(imageData.imgData, 'PNG', 0, 0, imgWidth, imageData.imgHeight, '', 'FAST');
+        pdf.addPage();
+      }
+
+      if (imagesData.length > 0) {
+        const lastImageData = imagesData[imagesData.length - 1];
+        pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
+      }
+
+      const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_OfferLetter.pdf`;
+      pdf.save(fileName);
+
+      const blob = pdf.output('blob');
+      const file = new File([blob], fileName, { type: 'application/pdf' });
+      this.generatedfile = file;
+      this.generatingEmployeeId = this.prospectiveEmpData.empId;
+
+      this.loading = false;
+      this.disableFieldsForApproval = false;
+      this.conformationPopup.openSuccessModal('Offer Letter generated successfully');
     });
-    this.generatedfile = file;
-    this.generatingEmployeeId = this.prospectiveEmpData.empId;
-    this.loading = false
-    this.disableFieldsForApproval = false;
-    this.conformationPopup.openSuccessModal('Offer Letter generated successfully');
-  }
+}
+
   //download document
   async downLoadDocument(EmpValue: any) {
     const data = this.prospectiveEmpData;

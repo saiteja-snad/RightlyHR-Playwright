@@ -163,7 +163,7 @@ export class RelievingLetterComponent implements OnInit, OnDestroy {
     }
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
-
+  
   getJobdetails(employeeId: any) {
     this.subscription = this.http.getData(`JobDetails/${employeeId}`).subscribe({
       next: (data: any) => {
@@ -245,6 +245,7 @@ export class RelievingLetterComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal('Relieving letter generated successfully');
           if (this.employeeStatus != null) {
             this.updateEmployeeStatus();
+            this.updateEmployeeData();
           }
           this.relievingemail();
         }
@@ -333,6 +334,19 @@ export class RelievingLetterComponent implements OnInit, OnDestroy {
       return this.employeeForm.get('lastWorkingDate')?.value;
     }
     return this.selectedEmployee?.lastworkingday;
+  }
+
+  updateEmployeeData(){
+    this.selectedEmployee.lastworkingday = this.employeeForm.get('lastWorkingDate')?.value? this.employeeForm.get('lastWorkingDate')?.value : 
+                                                      this.selectedEmployee.lastworkingday;
+    this.subscription = this.http.postdata('Employeedata/UPDATER', this.selectedEmployee).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: (err: any) => {
+        console.log(err);
+      }
+    });
   }
 
   ngOnDestroy(): void {

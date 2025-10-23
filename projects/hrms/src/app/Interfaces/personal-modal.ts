@@ -100,6 +100,7 @@ export interface Ipersonal {
     remoteLoginWorkLocation: string;
     allowRemoteLogin: boolean;
     remoteLoginManagerId: number;
+    contractorLastWorkingDate: string
 }
 export interface IStatus {
 

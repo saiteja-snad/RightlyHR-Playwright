@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IRehiredata, ITermination } from '../../../Interfaces/job-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
@@ -17,7 +17,7 @@ import { Skeleton } from 'primeng/skeleton';
   templateUrl: './offboarding-details.component.html',
   styleUrl: './offboarding-details.component.scss'
 })
-export class OffboardingDetailsComponent {
+export class OffboardingDetailsComponent implements OnInit, OnDestroy{
   buttons = false;
   isEditing: boolean = false;
   offboardingForm!: FormGroup
@@ -34,6 +34,7 @@ export class OffboardingDetailsComponent {
 
 
   constructor(private modalService: NgbModal, private router: Router, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+
   ngOnInit() {
     this.getRehire();
     this.getTermination();
@@ -59,7 +60,8 @@ export class OffboardingDetailsComponent {
       exitReason: [{ value: '', disabled: true }],
       eligibleForRehire: [{ value: '', disabled: true }],
       relievingType: [{ value: '', disabled: true }],
-      lastWorkingDay: [{ value: '', disabled: true }]
+      lastWorkingDay: [{ value: '', disabled: true }],
+      contractorLastWorkingDay: [{ value: '', disabled: true }]
     });
   }
 
@@ -110,6 +112,7 @@ export class OffboardingDetailsComponent {
         this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
         this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
         this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
+        this.empdata.contractorLastWorkingDate = this.formatDate(this.empdata.contractorLastWorkingDate);
 
         console.log(this.empdata);
 
@@ -119,7 +122,8 @@ export class OffboardingDetailsComponent {
           exitReason: this.empdata.termreasonoffboard || '', // Replace with the correct property if different
           eligibleForRehire: this.empdata.eligibleforrehire || '', // Replace with the correct property if different
           relievingType: this.empdata.separationType || '', // Replace with the correct property if different
-          lastWorkingDay: this.empdata.lastworkingday || '' // Replace with the correct property if different
+          lastWorkingDay: this.empdata.lastworkingday || '', // Replace with the correct property if different
+          contractorLastWorkingDay: this.empdata.contractorLastWorkingDate || ''
         });
 
         
@@ -138,5 +142,11 @@ export class OffboardingDetailsComponent {
         this.terminationDetails = data as ITermination[];
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    if(this.subscription){
+      this.subscription.unsubscribe();
+    }
   }
 }

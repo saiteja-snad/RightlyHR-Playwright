@@ -86,7 +86,7 @@ export class ReportsHeaderComponent implements OnInit {
      else if (this.router.url === '/reports/timesheet-reports/pending-approval-status-report') {
       this.componentname = 'Pending Approval Status';
     }
-     else if (this.router.url === '/reports/timesheet-reports/project-effort-report') {
+     else if (this.router.url === '/reports/timesheet-reports/project-efforts-report') {
       this.componentname = 'Project Effort';
     }
      else if (this.router.url === '/reports/timesheet-reports/utilization-report') {

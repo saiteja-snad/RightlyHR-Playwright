@@ -21,12 +21,13 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IRoleAndResponsibility } from '../../settings/employee-fields/job/roles-and-responsibilities/roles-and-responsiblities';
 import { IFrequency } from '../../Interfaces/job-model';
 import { Editor } from 'primeng/editor';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-contractor-letter',
-  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule,Editor],
+  imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor],
   templateUrl: './contractor-letter.component.html',
   styleUrl: './contractor-letter.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ContractorLetterComponent {
@@ -87,10 +88,10 @@ export class ContractorLetterComponent {
   countryCode = 'Country code'
   frequencyDetails = [] as IFrequency[];
   currencyDetails = [
-  { key: 'INR', value: '₹' },
-  { key: 'USD', value: '$' }
-  // add more as needed
-];
+    { key: 'INR', value: '₹' },
+    { key: 'USD', value: '$' }
+    // add more as needed
+  ];
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -151,16 +152,16 @@ export class ContractorLetterComponent {
     this.getAuthorityDetails();
     this.getFrequency();
     this.employeeForm.get('currencyType')?.valueChanges.subscribe((currency) => {
-    const amountControl = this.employeeForm.get('amount');
-    if (currency) {
-      amountControl?.enable();
-      this.selectedSymbol = this.currencyDetails.find(c => c.key === currency)?.value || '';
-    } else {
-      amountControl?.disable();
-      amountControl?.reset();
-      this.selectedSymbol = '';
-    }
-  });
+      const amountControl = this.employeeForm.get('amount');
+      if (currency) {
+        amountControl?.enable();
+        this.selectedSymbol = this.currencyDetails.find(c => c.key === currency)?.value || '';
+      } else {
+        amountControl?.disable();
+        amountControl?.reset();
+        this.selectedSymbol = '';
+      }
+    });
   }
 
   //function to get frequency dropdown
@@ -197,11 +198,11 @@ export class ContractorLetterComponent {
       address: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
-      Copys: [null,  Validators.required],
+      Copys: [null, Validators.required],
       offerExpiryDate: ['', Validators.required],
       authorityid: [null, Validators.required],
       frequency: [null, Validators.required],
-      currencyType : [null, Validators.required],
+      currencyType: [null, Validators.required],
     },
       { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
     );
@@ -211,11 +212,11 @@ export class ContractorLetterComponent {
     this.prospectiveEmpData.amount = Value;
   }
 
-editorRequiredValidator(control: FormControl) {
-  const value = control.value || '';
-  const text = value.replace(/<[^>]*>/g, '').trim();
-  return text ? null : { required: true };
-}
+  editorRequiredValidator(control: FormControl) {
+    const value = control.value || '';
+    const text = value.replace(/<[^>]*>/g, '').trim();
+    return text ? null : { required: true };
+  }
 
   //function to generate the offer letter
   async generateOfferLetter() {
@@ -446,7 +447,7 @@ editorRequiredValidator(control: FormControl) {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}` 
+          fullName: `${authority.firstName} ${authority.middleName ? authority.middleName + ' ' : ''}${authority.lastName}`
           // Concatenate first, middle, last name and trim any extra spaces
         }));
       },
@@ -515,7 +516,7 @@ editorRequiredValidator(control: FormControl) {
   pathValuesFuction() {
     const formValues = this.employeeForm.value;
     this.prospectiveEmpData.offerIssuedDate = formValues.offerIssuedDate,
-      this.prospectiveEmpData.dateOfJoining = formValues.dateOfJoining,
+      // this.prospectiveEmpData.dateOfJoining = formValues.dateOfJoining,
       this.prospectiveEmpData.Copys = formValues.Copys,
       this.prospectiveEmpData.offerExpiryDate = formValues.offerExpiryDate
   }
@@ -529,7 +530,9 @@ editorRequiredValidator(control: FormControl) {
         next: (data: any) => {
           if (data.isEmployeevalid === true) {
             if (Empidvalue) {
+               
               this.prospectiveEmpData = data.checkofferletter;
+              this.getEmployeeStatusChanges(Empidvalue.value)
               this.employeeForm?.patchValue({
                 personalEmail: this.prospectiveEmpData.personalEmail,
                 title: this.prospectiveEmpData?.title,
@@ -582,6 +585,7 @@ editorRequiredValidator(control: FormControl) {
         error: (err: any) => {
           console.log(err);
           this.resetInputFields();
+          this.conformationPopup.openErrorModal(err.error.message);
         },
       });
     }
@@ -852,11 +856,11 @@ editorRequiredValidator(control: FormControl) {
       rolesAndResponsibilitesId: this.prospectiveEmpData.rolesAndResponsibilitiesId,
       rolesAndResponsibilitesData: this.employeeForm.get('rolesAndResponsibilitiesId')?.value,
       letterType: this.prospectiveEmpData.empType === 'Contract'
-      ? 'Contract Offer Letter'
-      : 'Offer Letter',
-      currencyType : this.employeeForm.get('currencyType')?.value
+        ? 'Contract Offer Letter'
+        : 'Offer Letter',
+      currencyType: this.employeeForm.get('currencyType')?.value
     };
-    
+
     console.log(postOfferLetterDetails);
     this.subscription = this.http.postdata('OfferLetter/postContractOfferLetter', postOfferLetterDetails).subscribe({
       next: (data: any) => {
@@ -870,26 +874,27 @@ editorRequiredValidator(control: FormControl) {
 
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
+     
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.ApprovalLoader = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
-    this.prospectiveEmpData.empstatus = 'Prospective Contract',
-    this.prospectiveEmpData.emailaddress = data.personalEmail,
-    this.prospectiveEmpData.contactnumber = parseInt(data.phoneNumber),
-    this.prospectiveEmpData.emailId = this.employeeaddress.emailId,
-    this.prospectiveEmpData.fusionEmpId = data.fusionPlusEmpId,
-    this.prospectiveEmpData.insurance = this.employeeaddress.insurance,
-    this.prospectiveEmpData.generateOffer = true,
-    this.prospectiveEmpData.pf = this.employeeForm.get('pf')?.value,
-    this.prospectiveEmpData.esic = this.employeeForm.get('esic')?.value,
-    this.prospectiveEmpData.dob = this.employeeaddress.dob,
-    this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
-    this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
-    this.prospectiveEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value,
-    this.prospectiveEmpData.substatus = 'Offer Letter Generated',
-    this.prospectiveEmpData.password = this.employeeaddress.password
+      this.prospectiveEmpData.empstatus = 'Prospective Contract',
+      this.prospectiveEmpData.emailaddress = data.personalEmail,
+      this.prospectiveEmpData.contactnumber = parseInt(data.phoneNumber),
+      this.prospectiveEmpData.emailId = this.employeeaddress.emailId,
+      this.prospectiveEmpData.fusionEmpId = data.fusionPlusEmpId,
+      this.prospectiveEmpData.insurance = this.employeeaddress.insurance,
+      this.prospectiveEmpData.generateOffer = true,
+      this.prospectiveEmpData.pf = this.employeeForm.get('pf')?.value,
+      this.prospectiveEmpData.esic = this.employeeForm.get('esic')?.value,
+      this.prospectiveEmpData.dob = this.employeeaddress.dob,
+      this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
+      this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
+      this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null? this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
+      this.prospectiveEmpData.substatus = 'Offer Letter Generated',
+      this.prospectiveEmpData.password = this.employeeaddress.password
     this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-   this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -928,8 +933,8 @@ editorRequiredValidator(control: FormControl) {
     if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
       employeeData.substatus = 'Offer Letter Generated';
       (employeeData.generateOffer = false),
-      (employeeData.esic = this.prospectiveEmpData.esic),
-      (employeeData.pf = this.prospectiveEmpData.pf);
+        (employeeData.esic = this.prospectiveEmpData.esic),
+        (employeeData.pf = this.prospectiveEmpData.pf);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -948,7 +953,7 @@ editorRequiredValidator(control: FormControl) {
       });
     } else {
       (employeeData.substatus = 'Offer Letter Regenerated'),
-      (employeeData.generateOffer = false);
+        (employeeData.generateOffer = false);
       this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
         next: (res: any) => {
           this.result = res;
@@ -1158,6 +1163,19 @@ editorRequiredValidator(control: FormControl) {
       error: (err: any) => {
         console.log(err);
       },
+    });
+  }
+
+  employeeStatus: any | null;
+  getEmployeeStatusChanges(employeeId: number) {
+    this.subscription = this.http.getData(`EmployeeChangeHistory/GetByEmployeeId/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employeeStatus = data.data.find((statusChange: any) =>
+          statusChange.oldValue.toLowerCase() === 'active' &&
+          statusChange.newValue.toLowerCase() === 'prospective contract' &&
+          statusChange.moduleId == environment.contractEmployeeConversionModuleId
+        );
+      }
     });
   }
 

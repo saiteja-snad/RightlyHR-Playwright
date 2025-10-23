@@ -45,6 +45,7 @@ export interface IEmployeeDetails {
     emergencyphonecountryflag?: string;
     contactnumbercountryflag?: string;
     marriedDate?: string;
+    empType?: string;
 }
 
 export interface IEmployeeJobDetails {

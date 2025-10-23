@@ -45,7 +45,7 @@ export class TimesheetReportTabsComponent {
     // { label: 'Absent Report', route: '/reports/attendence-reports/absent-report',permission: { feature: 'Absent Report', action: 'view' } },
     {
       label: 'Project Effort Report',
-      route: '/reports/timesheet-reports/project-efforts-report',
+      route: '/reports/timesheet-reports/project-effort-report',
       icon: '/reports-icons/project-efforts-report.png',
       description: MODULE_INFOS.PROJECT_EFFORT_REPORTS_MODULE_INFO,
       permission: { feature: 'Project Effort Report', action: 'view' }

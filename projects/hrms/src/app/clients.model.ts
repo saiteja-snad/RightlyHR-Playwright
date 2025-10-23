@@ -37,4 +37,32 @@ export interface Client {
     createdAt: string;
     updatedAt: string;
   };
+
+  
 }
+
+export interface Project {
+  projectId: number;
+  projectName: string;
+  startDate?: string | null;
+  endDate?: string | null;
+  status?: string | null;
+  role?: string | null;
+  isWeekendAllowed?: boolean;
+  isOverTimeAllowed?: boolean;
+  isBillable?: boolean;
+  isNoClientProject?: boolean;
+}
+
+export interface Client {
+  clientId: number;
+  clientName: string;
+  isWeekendAllowed?: boolean;
+  isOverTimeAllowed?: boolean;
+  isbillable?: boolean;
+  shift?: any;
+
+  // 👇 Add this line
+  projects?: Project[];
+}
+

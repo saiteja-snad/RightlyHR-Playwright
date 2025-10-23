@@ -21,10 +21,13 @@ import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import { environment } from '../../../../environments/environment';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { Client } from '../../../clients.model';
+import { TimesheetReportTabsComponent } from '../../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { PaginatorModule } from 'primeng/paginator';
 @Component({
   selector: 'app-my-timesheet-report',
   imports: [DatePicker, CommonModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
-    NoDataFoundComponent, DataLoaderContentComponent, ReportsHeaderComponent],
+    NoDataFoundComponent,PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './my-timesheet-report.component.html',
   styleUrl: './my-timesheet-report.component.scss'
 })
@@ -33,7 +36,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
-  filteredleaveRecord: any[] = [];
+  filteredmytimesheetRecord: any[] = [];
   projectsData: any[] = [];
   teamdetails = [] as any[];
   selectedEmployeeId: any = null;
@@ -57,7 +60,9 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   empinfo: any;
   loading: boolean = true;
   clients: Client[] = [];
+  projects: TimesheetReportTabsComponent[] = [];
   disableproject = true;
+  noclientproject = false;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -71,22 +76,35 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   };
   localeOptions: any;
   BillableOptions = [
-    { key: 'Yes', value: 'yes' },
-    { key: 'No', value: 'no' },
+    { key: 'Yes', value: 'true' },
+    { key: 'No', value: 'false' },
   ];
   TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
-    { key: 'Approved', value: 'Approved' },
+    { key: 'Approved', value: 'Processed' },
     { key: 'Rejected', value: 'Rejected' },
   ];
   clientDropdownList: { label: string; value: number }[] = [];
+  resourcesArrayList: any;
+    page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 }
+  ];
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public readonly router: Router
+    public readonly router: Router,
+     private conformationPopup: OpenModalService,
   ) { }
 
   ngOnInit(): void {
@@ -99,21 +117,20 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
-    this.getClientsData();
-    // this.getAllActiveProjects();
+    this.getResourceData();
     this.getAttendanceReports();
-    this.getTeam();
     this.getMyTeam();
   }
 
   initializeForm() {
     this.MyTimesheetReportForm = this.fb.group({
       client: [null],
-      project: [{ value: [], disabled: true }],
+      project: [{ value: null, disabled: true }],
       dateRange: [null],
       status: [null],
       billable: [null]
     });
+    this.MyTimesheetReportForm.addControl('projects', this.fb.array([]));
     this.MyTimesheetReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
@@ -121,123 +138,156 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.MyTimesheetReportForm.reset();
-    this.filteredleaveRecord = [];
+    this.filteredmytimesheetRecord = [];
+    this.MyTimesheetReportForm.get('project')?.disable(); 
+    this.collectionSize = 0;
   }
-  getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-          if (Array.isArray(res?.data)) {
-            this.clients = res.data;
 
-            // 🔹 Map for dropdown (clientId + clientName)
-            this.clientDropdownList = this.clients.map((client: any) => ({
-              label: client.clientName, // display in dropdown
-              value: client.clientId    // selected value
-            }));
-          } else {
-            this.clients = [];
-            this.clientDropdownList = [];
+    // called for pagination 
+  onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.generatemytimesheetReport(this.page, this.pageSize);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.generatemytimesheetReport(this.page, this.pageSize);
+  }
+
+  // Called when first size changes
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.generatemytimesheetReport(this.page, this.pageSize);
+  }
+  //GET CLIENT AND PROJECT
+  getResourceData() {
+    this.http
+      .getDataIncludeParams(`ProjectResource?status=active&employeeId=${this.empinfo.employeeId}&isProjectRequired=true`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        if (res.success) {
+          const rawData = res.data;
+
+          // Group projects under each client
+          this.clients = rawData.reduce((acc: any[], curr: any) => {
+            const existingClient = acc.find((c) => c.clientId === curr.client.clientId);
+
+            const projectObj = {
+              projectId: curr.project.projectId,
+              projectName: curr.project.projectName,
+              startDate: curr.startDate,
+              endDate: curr.endDate,
+              status: curr.status,
+              role: curr.role,
+              isWeekendAllowed: curr.project.isWeekendAllowed || curr.client.isWeekendAllowed,
+              isOverTimeAllowed: curr.project.isOverTimeAllowed || curr.client.isOverTimeAllowed,
+              isBillable: curr.project.isbillable || curr.client.isbillable,
+            };
+
+            if (existingClient) {
+              existingClient.projects.push(projectObj);
+            } else {
+              acc.push({
+                clientId: curr.client.clientId,
+                clientName: curr.client.clientName,
+                projects: [projectObj],
+                shift: curr.shift,
+              });
+            }
+            return acc;
+          }, []);
+
+          // Add "No Client/No Project" option
+          if (!this.noclientproject) {
+            this.clients.unshift({
+              clientId: 0,
+              clientName: 'No Client',
+              projects: [
+                {
+                  projectId: 0,
+                  projectName: 'No Project',
+                  isNoClientProject: true,
+                },
+              ],
+              taxId: '',
+              websiteUrl: '',
+              industryType: '',
+              logoPath: '',
+              address: '',
+              status: '',
+              overtimeEligibile: false,
+              billable: false,
+              weekendWorkAllowed: false,
+              createdBy: {
+                id: 0,
+                name: ''
+              },
+              updatedBy: {
+                id: 0,
+                name: ''
+              },
+              createdAt: '',
+              updatedAt: '',
+              contact: {
+                contactId: 0,
+                entityRefId: 0,
+                name: '',
+                email: '',
+                phoneNumber: '',
+                phoneCountryCode: '',
+                phoneDialCode: '',
+                role: '',
+                primaryContact: false,
+                active: false,
+                createdAt: '',
+                updatedAt: ''
+              }
+            });
           }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error fetching clients:', err);
+
+          // Prepare dropdown data for <p-select>
+          this.clientDropdownList = this.clients.map((c) => ({
+            label: c.clientName,
+            value: c.clientId,
+          }));
         }
       });
   }
 
-  // getEmployeeId() {
-  //   const loggedInUser = this.authService.getToken();
-  //   this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-  //     next: (data: any) => {
-  //       const employeedata = data
-  //         .map((employee: any) => {
-  //           const firstName = employee.firstName ? employee.firstName.trim() : '';
-  //           const middleName = employee.middleName ? employee.middleName.trim() : '';
-  //           const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-  //           return {
-  //             ...employee,
-  //             firstName, // trimmed
-  //             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-  //           };
-  //         })
-  //         .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
-  //         .sort((a: any, b: any) =>
-  //           a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-  //         );
-
-  //       this.employeeiddetails = [
-  //         { fullName: 'All Employees', employeeId: 'all' },
-  //         ...employeedata
-  //       ];
-  //     },
-  //     error: (reason: any) => {
-  //       console.log(reason);
-  //     },
-  //   });
+  // Called on client dropdown change
+  // getAllActiveProjects(event: any) {
+  //   const selectedClientId = event.value;
+  //   const selectedClient = this.clients.find((c) => c.clientId === selectedClientId);
+  //   this.projectsData = selectedClient && selectedClient.projects
+  //     ? selectedClient.projects.map((p: any) => ({
+  //       displayprojectName: p.projectName,
+  //       projectId: p.projectId,
+  //     }))
+  //     : [];
   // }
+getAllActiveProjects(event: any) {
+  const selectedClientId = event.value;
+  const selectedClient = this.clients.find((c) => c.clientId === selectedClientId);
 
-  getAllActiveProjects(event: any) {
-    this.http
-      .getData(`Project?status=Active&clientId=${event.value || 0}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const projects = res?.data || [];
+  if (selectedClient && selectedClient.projects) {
+    this.projectsData = selectedClient.projects.map((p: any) => ({
+      displayprojectName: p.projectName,
+      projectId: p.projectId,
+    }));
 
-          this.projectsData = projects.map((p: any) => ({
-            ...p,
-            //  displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
-            displayName: `${p.client?.clientName || 'Unknown Client'}`,
-            displayprojectName: `${p.projectName || 'Unnamed Project'}`
-          }));
-
-          // this.projectsData.unshift({
-          //   projectId: 0,
-          //   displayName: 'No Client',
-          //    displayprojectName: 'No Project'
-          // });
-        },
-        error: (err) => {
-          console.error('Error fetching projects:', err);
-
-          this.projectsData = [
-            {
-              projectId: 0,
-              displayName: 'No Client',
-              displayprojectName: 'No Project'
-            }
-          ];
-        },
-      });
+    this.MyTimesheetReportForm.get('project')?.enable(); // enable when client chosen
+  } else {
+    this.projectsData = [];
+    this.MyTimesheetReportForm.get('project')?.reset();
+    this.MyTimesheetReportForm.get('project')?.disable(); // disable if no projects or no client
   }
-  getTeam() {
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
-      next: (data: any) => {
-        this.teamdetails = data
-          .map((employee: any) => {
-            const firstName = employee.firstName ? employee.firstName.trim() : '';
-            const middleName = employee.middleName ? employee.middleName.trim() : '';
-            const lastName = employee.lastName ? employee.lastName.trim() : '';
-
-            return {
-              ...employee,
-              firstName, //  trimmed
-              fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-            };
-          })
-          .sort((a: any, b: any) =>
-            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase()) //  Alphabetical by first name
-          );
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
-
+}
 
   getAttendanceReports() {
     this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
@@ -266,75 +316,69 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     return date instanceof Date ? date : new Date(date);
   }
 
-  get isLeaveGenerateDisabled(): boolean {
-    const { client, project, dateRange, billable, status } = this.MyTimesheetReportForm.value;
-    // Check if any field has a value
-    return !(client || project || (dateRange && (dateRange.startDate || dateRange.endDate)) || billable || status);
-  }
+  // get isLeaveGenerateDisabled(): boolean {
+  //   const { client, project, dateRange, billable, status } = this.MyTimesheetReportForm.value;
+  //   // Check if any field has a value
+  //   return !(client || project || (dateRange && (dateRange.startDate || dateRange.endDate)) || billable || status);
+  // }
+get isLeaveGenerateDisabled(): boolean {
+  const { client, project, dateRange, billable, status } = this.MyTimesheetReportForm.value;
 
-  generatemytimesheetReport(): void {
-    this.spinnerLoader1 = true;
-    this.isLoading = true;
-    const formValue = this.MyTimesheetReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
-    const dateRangeArray = formValue.dateRange || [];
-    const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
-    const endDate: Dayjs | null = dateRangeArray[1] ? dayjs(dateRangeArray[1]) : (startDate ? startDate : null);
-    //filter condition
-    const noFilterProvided = !formValue.employee && (!startDate || !endDate) && !formValue.month && !formValue.manager && !formValue.team;
+  const hasClient = client !== null && client !== undefined;
+  const hasProject = project !== null && project !== undefined;
+  const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
+  const hasBillable = billable !== null && billable !== undefined;
+  const hasStatus = status !== null && status !== undefined;
 
-    if (noFilterProvided) {
-      this.filteredleaveRecord = [];
-      this.spinnerLoader1 = false;
-      this.isLoading = false;
+  return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus);
+}
+
+  generatemytimesheetReport(page: number, pageSize: number) {
+    if (this.MyTimesheetReportForm.invalid) {
       return;
     }
-
-    const request: IAttendanceDetails = {};
-
-    if (this.selectLeaveEmployeeIds.length >= 0) {
-      const ids = this.selectLeaveEmployeeIds?.join(',');
-      request.employeeId = ids;  // The selected employee IDs are set here
+    this.spinnerLoader1 = true;
+    const formValue = this.MyTimesheetReportForm.value;
+    const employeeId = this.empinfo?.employeeId || 0;
+    const startDate = formValue.dateRange?.[0] ? new Date(formValue.dateRange[0]).toISOString() : null;
+    const endDate = formValue.dateRange?.[1] ? new Date(formValue.dateRange[1]).toISOString() : null;
+    const params: any = {
+      ReportType: 'MyTimesheet',
+      EmployeeIds: employeeId,
+    };
+    if (startDate) params.StartDate = startDate;
+    if (endDate) params.EndDate = endDate;
+    if (formValue.client !== null && formValue.client !== undefined) {
+      params.ClientIds = formValue.client;
     }
 
-    // Apply leave category if selected
-    if (formValue.leaveCategory) {
-      request.LeaveName = formValue.leaveCategory.value;
+    if (formValue.project !== null && formValue.project !== undefined) {
+      params.ProjectIds = formValue.project;
     }
-
-    // Apply date range if provided
-    if (startDate && endDate) {
-      request.StartDate = this.formatDate(this.parseDate(startDate));
-      request.EndDate = this.formatDate(this.parseDate(endDate));
-    }
-
-    // Apply manager name if provided
-    if (formValue.manager) {
-      request.teamManagerID = formValue.manager.employeeId;
-    }
-
-    // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
-      request.employeeId = formValue.employee.employeeId;
-    }
-
-    this.reportsService.getAttendanceReports(request).subscribe({
-      next: (response: any) => {
-        this.filteredleaveRecord = response ?? [];
-      },
-      error: (error) => {
+    if (formValue.billable?.value) params.Billable = formValue.billable.value;
+    if (formValue.status?.value) params.Statuses = formValue.status.value;
+    const queryString = new URLSearchParams(params).toString();
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+           this.collectionSize = res.data.totalCount;
         this.spinnerLoader1 = false;
+        if (res.success && res.data?.items) {
+          this.filteredmytimesheetRecord = res.data.items;
+          this.disableBtn = false;
+        } else {
+          this.filteredmytimesheetRecord = [];
+        }
+      },
+      error: (err) => {
+        this.spinnerLoader1 = false;
+         this.conformationPopup.openErrorModal(err.error.message);
+        console.error('Error fetching report:', err);
+        this.filteredmytimesheetRecord = [];
         this.disableBtn = true;
-        this.isLoading = false;
-        this.filteredleaveRecord = [];
       },
-      complete: () => {
-        this.spinnerLoader1 = false;
-        this.disableBtn = false;
-        this.isLoading = false;
-      }
     });
   }
+
 
   exportToExcelYearly(): void {
     // Define header mappings
@@ -380,7 +424,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     };
 
     // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredleaveRecord.map(record => {
+    const modifiedData = this.filteredmytimesheetRecord.map(record => {
       const modifiedRecord: any = {};
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);

@@ -249,7 +249,7 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data) {
           this.result.documentUrl = data.path;
-          this.conformationPopup.openSuccessModal('Trainee completion letter generated successfully')
+          this.conformationPopup.openSuccessModal('Trainee relieving letter generated successfully')
           this.relievingemail();
         }
       },

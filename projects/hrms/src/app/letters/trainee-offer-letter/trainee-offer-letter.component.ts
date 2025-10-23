@@ -271,6 +271,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
             };
           }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
         }
+        console.log(this.getAllEmployeeInfo);
+        
       },
     });
   }

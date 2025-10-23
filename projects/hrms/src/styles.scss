@@ -153,6 +153,7 @@ body {
         height: 2.5rem;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -835,6 +836,7 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
+
 // Select Styling 
 
 // p select stylings
@@ -848,6 +850,8 @@ select:focus {
 
     .p-select-option {
         white-space: normal !important;
+        text-wrap: wrap !important;
+        line-break: anywhere !important;
     }
 
     .p-select-option.p-select-option-selected.p-focus {
@@ -962,6 +966,7 @@ select:focus {
         background-color: #FFFFFF;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -980,7 +985,8 @@ select:focus {
         z-index: 1;
     }
 
-    th,td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1036,6 +1042,7 @@ select:focus {
         z-index: 1;
     }
 }
+
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1138,6 +1145,7 @@ select:focus {
         }
     }
 }
+
 // My Info Stylings Ends
 
 // letter main content
@@ -1239,13 +1247,17 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-    table,th,td {
+
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,td {
+    th,
+    td {
         padding: 0.5rem 0.625rem;
         text-align: center;
         color: #000;
@@ -1334,6 +1346,7 @@ select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 //My Info Stylings
@@ -1530,6 +1543,7 @@ input[type="file"] {
         }
     }
 }
+
 //pagenation stylings
 
 // custom phone number input with country code stylings
@@ -1588,6 +1602,7 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
+
 // custom phone number input with country code stylings
 
 // ERROR MESSAGE
@@ -1621,7 +1636,7 @@ input[type="file"] {
     .popup-header-border {
         border-bottom: 1.5px solid transparent;
         border-image-source: linear-gradient(90deg, var(--white-color) -6.98%,
-        #94B1DE 50.67%, var(--white-color) 108.91%);
+                #94B1DE 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }
@@ -1722,6 +1737,7 @@ input[type="file"] {
     padding: 1rem;
     overflow: auto;
 }
+
 // popup stylings ends
 
 // download text
@@ -1757,6 +1773,7 @@ input[type="file"] {
         text-align: right;
     }
 }
+
 //styles for popup table
 
 // styles for expenses
@@ -1774,7 +1791,8 @@ input[type="file"] {
         z-index: 1;
     }
 
-    th,td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1884,6 +1902,7 @@ input[type="file"] {
         padding: 1rem 0rem;
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -1961,6 +1980,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1979,6 +1999,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -2511,6 +2532,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 // Attendance accordian
 .custom-accordians {
+
     // accordian styling
     .p-accordionpanel {
         border-style: none !important;
@@ -2567,7 +2589,8 @@ input[type=number]::-webkit-outer-spin-button {
         border-collapse: collapse;
         table-layout: fixed;
 
-        th,td {
+        th,
+        td {
             text-align: center;
             padding: 0.5rem;
             border: 1px solid #D1D8E3;
@@ -2629,7 +2652,8 @@ input[type=number]::-webkit-outer-spin-button {
     .p-datepicker-day-view {
         font-size: var(--fontsize12);
 
-        th,td {
+        th,
+        td {
             text-align: center;
         }
 

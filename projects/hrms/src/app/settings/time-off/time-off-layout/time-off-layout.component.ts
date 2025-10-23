@@ -42,7 +42,8 @@ export class TimeOffLayoutComponent implements OnInit {
       '/settings/timeoff-configurations/leave-allocation': MODULE_INFOS.SETTINGS_LEAVE_ALLOCATION_MODULE_INFO,
       '/settings/timeoff-configurations/flexible-leave-allocation': MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
       '/settings/timeoff-configurations/eligibility-criterias': MODULE_INFOS.SETTINGS_ATTENDANCE_ELIGIBILITY_CRITERIA_MODULE_INFO,
-      '/settings/timeoff-configurations/load-entitlements': MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO
+      '/settings/timeoff-configurations/load-entitlements': MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
+      '/settings/timeoff-configurations/flexible-wfh-allocation': MODULE_INFOS.SETTINGS_FLEXIBLE_LEAVE_ALLOCATION_MODULE_INFO,
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

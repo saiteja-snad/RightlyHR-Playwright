@@ -1084,6 +1084,12 @@ export class AccessNavigationService {
             '/settings/timeoff-configurations/flexible-leave-allocation');
         }
         break;
+         case '/settings/timeoff-configurations/flexible-wfh-allocation':
+        if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
+          return (route =
+            '/settings/timeoff-configurations/flexible-wfh-allocation');
+        }
+        break;
 
       case '/settings/timeoff-configurations/load-entitlements':
         if (this.rbac.allowedToAccess('Load Entitlements Tab.view')) {

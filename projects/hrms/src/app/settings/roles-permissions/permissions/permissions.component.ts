@@ -282,6 +282,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     const viewOnlyFields = [
       'Leave Allocation Tab',
       'Flexible Leave Allocation Tab',
+      'Flexible WFH Allocation Tab',
       'Load Entitlements Tab',
       'Attendance Eligibility Criteria Tab',
       'Comp Off Entitlement Tab',

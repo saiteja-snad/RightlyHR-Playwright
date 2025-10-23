@@ -121,6 +121,7 @@ export const permissionsData = [
   { fields: 'Flexible Leave Allocation Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Eligibility Criteria Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Load Entitlements Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Flexible WFH Allocation Tab', View: false, Update: false, Create: false, Delete: false },
 
   //Settings Time Off Leave Category Tabs Section
   { fields: 'Leave Category Pending Tab', View: false, Update: false, Create: false, Delete: false },

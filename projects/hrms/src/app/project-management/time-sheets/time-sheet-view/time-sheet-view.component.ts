@@ -537,61 +537,60 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  //TIME ENTERIY
+  //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string) {
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
-    let formatted = '';
-    let today = new Date().toDateString();
-    let inputDay = new Date(dayName).toDateString(); // make sure dayName is a valid date string
-    const isToday = today === inputDay;
-    if (value?.length === 4) {
-      let hours = parseInt(value.slice(0, 2), 10);
-      let minutes = parseInt(value.slice(2), 10);
-      if (hours >= 70 && value?.endsWith('00')) {
-        hours = parseInt(value.slice(0, 1), 10);
-        minutes = 0;
-      }
-      //  Today can allow 24:00, otherwise max 23:59
-      if (isToday) {
-        if (hours > 24) hours = 24;
-        if (minutes > 59) minutes = 59;
-        if (hours === 24) minutes = 0;
-      } else {
-        if (hours > 23) hours = 23;
-        if (minutes > 59) minutes = 59;
-      }
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length === 3) {
-      let hours = parseInt(value[0], 10);
-      let minutes = parseInt(value?.slice(1), 10);
-      if (isToday) {
-        if (hours > 24) hours = 24;
-        if (minutes > 59) minutes = 59;
-        if (hours === 24) minutes = 0;
-      } else {
-        if (hours > 23) hours = 23;
-        if (minutes > 59) minutes = 59;
-      }
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length <= 2 && value?.length > 0) {
-      let hours = parseInt(value, 10);
-      if (isToday) {
-        if (hours > 24) hours = 24;
-        if (hours === 24) formatted = '24:00';
-        else formatted = `${hours.toString().padStart(2, '0')}:00`;
-      } else {
-        if (hours > 23) hours = 23;
-        formatted = `${hours.toString().padStart(2, '0')}:00`;
-      }
-    } else {
-      formatted = '';
-    }
+    let formatted = this.getFormattedTime(value);
+
     const control = this.projects.at(rowIndex).get(`${dayName}.${duration}`);
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
     this.showDots[rowIndex][dayName] = true;
+  }
+
+  //TIME FORMAT FOR MODAL
+  formatModalTime(event: any) {
+    let value = event.target.value;
+    value = value?.replace(/\D/g, ''); // digits only
+    let formatted = this.getFormattedTime(value);
+
+    this.dayForm.get('duration')?.setValue(formatted, { emitEvent: false });
+  }
+
+  //COMMON TIME FORMATTING LOGIC
+  getFormattedTime(value: string): string {
+    let formatted = '';
+
+    if (value?.length === 1) {
+      // Single digit = minutes (0-9 minutes)
+      let minutes = parseInt(value, 10);
+      formatted = `00:0${minutes}`;
+    } else if (value?.length === 2) {
+      // Two digits = tens place minutes (10-59 minutes)
+      let minutes = parseInt(value, 10);
+      if (minutes > 59) minutes = 59;
+      formatted = `00:${minutes.toString().padStart(2, '0')}`;
+    } else if (value?.length === 3) {
+      // Three digits = hours (1-24 hours)
+      let hours = parseInt(value[0], 10);
+      let minutes = parseInt(value.slice(1), 10);
+      if (hours > 24) hours = 24;
+      if (minutes > 59) minutes = 59;
+      if (hours === 24) minutes = 0;
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    } else if (value?.length === 4) {
+      // Four digits = hours and minutes
+      let hours = parseInt(value.slice(0, 2), 10);
+      let minutes = parseInt(value.slice(2), 10);
+      if (hours > 24) hours = 24;
+      if (minutes > 59) minutes = 59;
+      if (hours === 24) minutes = 0;
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
+    return formatted;
   }
 
   //DELETE RECODER
@@ -905,7 +904,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       // }
       //============================================================
       //helper method for start time and end time
-      this.recalculateTimes(dayKey, index);
+      // this.recalculateTimes(dayKey, index);
 
       //-------------------------------------------------------
       // enable/disable based on status

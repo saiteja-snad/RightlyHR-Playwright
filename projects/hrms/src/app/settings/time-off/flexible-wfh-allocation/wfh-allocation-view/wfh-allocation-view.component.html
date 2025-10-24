@@ -1,39 +1,31 @@
- <div class="d-flex gap-3 w-100">
-<app-wfh-allocation-tabs/>
- <div class="custom-component-right-content p-3">
-
-    <div class="custom-table-content mt-2">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Employee Name</th>
-                    <th>Days</th>
-                    <th>Created By</th>
-                    <th>Created On</th>
-                    <th>Last Updated By</th>
-                    <th>Last Updated On</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (selectedEmployee?.length>0) {
-                <tr *ngFor="let item of selectedEmployee">
-                    <td> {{item.name}}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                }
-                @else {
-                <tr>
-                    <app-no-data-found></app-no-data-found>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    
- </div>
- </div>
+<div class="custom-table-content mt-2">
+    <table class="w-100">
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Days</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Last Updated By</th>
+                <th>Last Updated On</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (selectedEmployee?.length>0) {
+            <tr *ngFor="let item of selectedEmployee">
+                <td> {{item.name}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            }
+            @else {
+            <tr>
+                <app-no-data-found />
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -9,26 +9,25 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-import { ILocation, ISubLocation, IShiftHeader, ICategoryDetails, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
-import { WfhAllocationTabsComponent } from "../wfh-allocation-tabs/wfh-allocation-tabs.component";
+import { ILocation, ISubLocation, IShiftHeader, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
 import { MultiSelectModule } from 'primeng/multiselect';
-
 @Component({
   selector: 'app-wfh-allocation',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule,MultiSelectModule, NoDataFoundComponent, WfhAllocationTabsComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, NoDataFoundComponent],
   templateUrl: './wfh-allocation.component.html',
   styleUrl: './wfh-allocation.component.scss'
 })
+
 export class WfhAllocationComponent implements OnInit, OnDestroy {
-wfhAllocationForm!: FormGroup;
-selectedEmployees: any[] = [];
+  wfhAllocationForm!: FormGroup;
+  selectedEmployees: any[] = [];
   isSubmitting = false;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
   subLocationDetails = [] as ISubLocation[];
   shiftDetails = [] as IShiftHeader[];
   categoryDetails = [
-    {name:'WFH',value:'WFH'}
+    { name: 'WFH', value: 'WFH' }
   ]
   employeeDetails = [] as IEmployees[];
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -37,9 +36,9 @@ selectedEmployees: any[] = [];
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
-     private modal: OpenModalService,
-     private modalService: NgbModal,
-     public rbac: RbacService
+    private modal: OpenModalService,
+    private modalService: NgbModal,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {
@@ -76,13 +75,14 @@ selectedEmployees: any[] = [];
       this.wfhAllocationForm.get('location')?.enable();
     }
   }
+  
   //method to enable the category name
-categoryenable(){
-  if(this.wfhAllocationForm.get('shift')?.value){
-  this.wfhAllocationForm.get('categoryName')?.enable();
+  categoryenable() {
+    if (this.wfhAllocationForm.get('shift')?.value) {
+      this.wfhAllocationForm.get('categoryName')?.enable();
+    }
   }
 
-}
   private getAllLocations(): void {
     this.http.getData('JobLocation')
       .pipe(takeUntil(this.destroy$))
@@ -146,33 +146,34 @@ categoryenable(){
       }
     });
   }
-get employeeFormArray(): FormArray {
-  return this.wfhAllocationForm.get('employees') as FormArray;
-}
 
-onSelectedEmployee(selectedList: any[], form: FormGroup) {
-  this.selectedEmployees = selectedList || [];
+  get employeeFormArray(): FormArray {
+    return this.wfhAllocationForm.get('employees') as FormArray;
+  }
 
- const employeeArray = form.get('employees') as FormArray;
-  //  Clear existing entries
-  employeeArray.clear();
-  this.selectedEmployees.forEach((emp:any) => {
-    employeeArray.push(
-      this.fb.group({
-        employeeId: [emp.employeeId],
-        fullName: [emp.fullName],
-        days: ['', Validators.required],
-        createdBy: [emp.fName || '—'],
-        createdOn: [emp.effectiveDate || new Date()],
-        lastUpdatedBy: [emp.lName || '—'],
-        lastUpdatedOn: [emp.effectiveDate || new Date()],
-      })
-    );
-  });
+  onSelectedEmployee(selectedList: any[], form: FormGroup) {
+    this.selectedEmployees = selectedList || [];
 
-  // ✅ Tell TypeScript explicitly this is a FormArray
-  form.setControl('employees', employeeArray as FormArray);
-}
+    const employeeArray = form.get('employees') as FormArray;
+    //  Clear existing entries
+    employeeArray.clear();
+    this.selectedEmployees.forEach((emp: any) => {
+      employeeArray.push(
+        this.fb.group({
+          employeeId: [emp.employeeId],
+          fullName: [emp.fullName],
+          days: ['', Validators.required],
+          createdBy: [emp.fName || '—'],
+          createdOn: [emp.effectiveDate || new Date()],
+          lastUpdatedBy: [emp.lName || '—'],
+          lastUpdatedOn: [emp.effectiveDate || new Date()],
+        })
+      );
+    });
+
+    // ✅ Tell TypeScript explicitly this is a FormArray
+    form.setControl('employees', employeeArray as FormArray);
+  }
 
   validateInput(event: KeyboardEvent) {
     const input = event.key;
@@ -262,17 +263,12 @@ onSelectedEmployee(selectedList: any[], form: FormGroup) {
         this.wfhAllocationForm.get('shiftName')?.disable();
         this.wfhAllocationForm.get('categoryName')?.disable();
         this.wfhAllocationForm.get('shift')?.disable();
-
         this.selectedEmployees = [];
         this.modal.openSuccessModal('WFH allocation published successfully!');
-        
-
-
-
       },
       error: (err: any) => {
         this.modalService.dismissAll();
-        this.modal.openErrorModal(err.error.message? err.error.message: 'Failed to publish wfh allocation!');
+        this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to publish wfh allocation!');
       },
       complete: () => {
         // this.modalService.dismissAll();

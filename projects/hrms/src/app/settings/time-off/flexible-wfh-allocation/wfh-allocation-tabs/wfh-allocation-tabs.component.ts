@@ -5,15 +5,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { AccessNavigationService } from '../../../../services/access-navigation.service';
 import { RbacService } from '../../../../services/rbac.service';
-
 @Component({
   selector: 'app-wfh-allocation-tabs',
   imports: [TabsModule, RouterModule, CommonModule, TranslateModule],
   templateUrl: './wfh-allocation-tabs.component.html',
   styleUrl: './wfh-allocation-tabs.component.scss',
 })
+
 export class WfhAllocationTabsComponent implements OnInit {
-  navTabs: any[]= [
+  navTabs: any[] = [
     {
       label: 'Active Allocations',
       icon: '/settings-icon/active-allocation.png',
@@ -29,23 +29,20 @@ export class WfhAllocationTabsComponent implements OnInit {
       permission: { feature: 'Allocation History Tab', action: 'view' },
     },
   ];
-  constructor(
-    private rbac: RbacService,
-    private router: Router,
-    private accessNav: AccessNavigationService
-  ) {}
+
+  constructor(private rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) { }
+
   ngOnInit(): void {
     this.navTabs = this.navTabs.filter(
       (tab) =>
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
   }
-    navigateToAccessedRoute(route: string) {
+
+  navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);

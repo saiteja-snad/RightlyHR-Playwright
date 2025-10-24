@@ -12,10 +12,11 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { ILocation, ISubLocation, IShiftHeader, ICategoryDetails, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
 import { WfhAllocationTabsComponent } from "../wfh-allocation-tabs/wfh-allocation-tabs.component";
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-wfh-allocation',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule,MultiSelectModule, NoDataFoundComponent, WfhAllocationTabsComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, NoDataFoundComponent, WfhAllocationTabsComponent, DateformatPipe],
   templateUrl: './wfh-allocation.component.html',
   styleUrl: './wfh-allocation.component.scss'
 })
@@ -162,18 +163,27 @@ onSelectedEmployee(selectedList: any[], form: FormGroup) {
         employeeId: [emp.employeeId],
         fullName: [emp.fullName],
         days: ['', Validators.required],
-        createdBy: [emp.fName || '—'],
-        createdOn: [emp.effectiveDate || new Date()],
-        lastUpdatedBy: [emp.lName || '—'],
-        lastUpdatedOn: [emp.effectiveDate || new Date()],
+        createdBy: [''],
+        createdOn: [''],
+        lastUpdatedBy: [''],
+        lastUpdatedOn: [''],
       })
     );
   });
 
-  // ✅ Tell TypeScript explicitly this is a FormArray
+  //  Tell TypeScript explicitly this is a FormArray
   form.setControl('employees', employeeArray as FormArray);
 }
+removeEmployee(index: number, employeeId: number) {
+  //  Remove from FormArray
+  const employeeArray = this.employeeFormArray;
+  employeeArray.removeAt(index);
 
+  //  Remove from selectedEmployees array (used by p-multiSelect)
+  this.selectedEmployees = this.selectedEmployees.filter(emp => emp.employeeId !== employeeId);
+  //Update the multiSelect FormControl so the checkbox deselects
+  this.wfhAllocationForm.get('employeeName')?.setValue(this.selectedEmployees);
+}
   validateInput(event: KeyboardEvent) {
     const input = event.key;
     const numericInput = /^[0-9]$/;

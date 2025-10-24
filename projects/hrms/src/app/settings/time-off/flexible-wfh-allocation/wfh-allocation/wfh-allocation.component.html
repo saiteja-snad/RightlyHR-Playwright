@@ -153,6 +153,7 @@
                     <th>Created On</th>
                     <th>Last Updated By</th>
                     <th>Last Updated On</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody formArrayName="employees">
@@ -165,14 +166,18 @@
                             <div *ngIf="emp.get('days')?.errors?.['required']">Please enter days</div>
                         </div>
                     </td>
-                    <td>{{ emp.get('createdBy')?.value }}</td>
-                    <td>{{ emp.get('createdOn')?.value | date: 'dd-MM-yyyy' }}</td>
-                    <td>{{ emp.get('lastUpdatedBy')?.value }}</td>
-                    <td>{{ emp.get('lastUpdatedOn')?.value | date: 'dd-MM-yyyy' }}</td>
+                    <td>{{ emp.get('createdBy')?.value ?emp.get('createdBy')?.value:'-' }}</td>
+                    <td>{{ emp.get('createdOn')?.value ?(emp.get('createdOn')?.value | dateformat) :'-' }}</td>
+                    <td>{{ emp.get('lastUpdatedBy')?.value ?emp.get('lastUpdatedBy')?.value :'-' }}</td>
+                    <td>{{ emp.get('lastUpdatedOn')?.value ?(emp.get('lastUpdatedOn')?.value|dateformat) :'-' }}</td>
+                    <td class="text-center"><a class="custom-action-btn"
+                            (click)="removeEmployee(i, emp.get('employeeId')?.value)">
+                            <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a></td>
+                    
                 </tr>
             
                 <tr *ngIf="employeeFormArray.length === 0">
-                    <td colspan="6"><app-no-data-found></app-no-data-found></td>
+                    <td colspan="6"><app-no-data-found/></td>
                 </tr>
             </tbody>
         </table>

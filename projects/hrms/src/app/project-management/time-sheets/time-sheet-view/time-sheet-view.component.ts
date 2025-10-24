@@ -122,7 +122,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
-    // const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
+     const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
 
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
@@ -153,7 +153,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
 
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective ?
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus ?
       isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
     const billablecheck = matchedResource?.billable || this.selectedProjectResource?.billable

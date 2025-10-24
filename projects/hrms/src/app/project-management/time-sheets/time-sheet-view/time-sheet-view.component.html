@@ -103,7 +103,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'mon', i, 'duration')"
                                         (blur)="formatTime($event, 'mon', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration  || (project.get('mon.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('mon.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask, project.get('mon'),i,'mon')">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -128,7 +128,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'tue', i, 'duration')"
                                         (blur)="formatTime($event, 'tue', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration  || (project.get('tue.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('tue.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask,project.get('tue'),i,'tue')">
                                         <i class="bi bi-three-dots-vertical"></i>

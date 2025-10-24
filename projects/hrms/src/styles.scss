@@ -850,6 +850,8 @@ select:focus {
 
     .p-select-option {
         white-space: normal !important;
+        text-wrap: wrap !important;
+        line-break: anywhere !important;
     }
 
     .p-select-option.p-select-option-selected.p-focus {

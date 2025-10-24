@@ -398,7 +398,7 @@ export class TeamTimesheetReportComponent {
       params.EmployeeIds = formValue.employeid;
     }
     if (formValue.belaible?.value) params.Billable = formValue.belaible.value;
-    if (formValue.status?.value) params.Status = formValue.status.value;
+    if (formValue.status?.value) params.Statuses = formValue.status.value;
     return params;
   }
   generateteamTimesheetReport(page: number, pageSize: number) {

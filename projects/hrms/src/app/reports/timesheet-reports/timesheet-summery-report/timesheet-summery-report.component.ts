@@ -472,7 +472,7 @@ export class TimesheetSummeryReportComponent {
       `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
     ).subscribe({
       next: (response: HttpResponse<Blob>) => {
-        // ✅ Extract filename from Content-Disposition
+        // Extract filename from Content-Disposition
         let filename = 'TimesheetSummery.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
 
@@ -488,7 +488,7 @@ export class TimesheetSummeryReportComponent {
           }
         }
 
-        // ✅ Download the blob as before
+        // Download the blob as before
         const blob = new Blob([response.body!], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });

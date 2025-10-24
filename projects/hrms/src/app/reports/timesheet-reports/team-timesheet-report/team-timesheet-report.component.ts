@@ -110,17 +110,17 @@ export class TeamTimesheetReportComponent {
     })
   }
     isFilterApplied(): boolean {
-  const formValue = this.TeamTimesheetReportForm.value;
+    const formValue = this.TeamTimesheetReportForm.value;
 
-  return (
-    (formValue.clientId && formValue.clientId !== null) ||
-    (formValue.projectId && formValue.projectId !== null) ||
-    (formValue.employeid && formValue.employeid !== null) ||
-    (formValue.dateRange && formValue.dateRange.length > 0) ||
-    (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
-    (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined)
-  );
-}
+    return (
+      (formValue.clientId && formValue.clientId !== null) ||
+      (formValue.projectId && formValue.projectId !== null) ||
+      (formValue.employeid && formValue.employeid !== null) ||
+      (formValue.dateRange && formValue.dateRange.length > 0) ||
+      (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
+      (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined)
+    );
+  }
   clearAllFilters(): void {
     this.TeamTimesheetReportForm.reset();
     this.filteredtimesheetsummeryRecord = [];

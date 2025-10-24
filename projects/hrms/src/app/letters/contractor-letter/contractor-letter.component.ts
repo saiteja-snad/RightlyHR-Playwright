@@ -894,8 +894,8 @@ export class ContractorLetterComponent {
       this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null? this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';

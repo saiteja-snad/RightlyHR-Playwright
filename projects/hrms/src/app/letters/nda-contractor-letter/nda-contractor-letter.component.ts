@@ -84,7 +84,7 @@ export class NdaContractorLetterComponent {
       employeeId: ['', Validators.required],
       ndassentdate: ['', Validators.required],
       SelectDropDown: ['', Validators.required],
-      dateOfJoining: ['', Validators.required],
+      dateOfJoining: [{ value: '', disabled: true }, Validators.required],
       documentType: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
@@ -95,12 +95,12 @@ export class NdaContractorLetterComponent {
       country: [''],
       pinCode: ['']
     });
-    this.employeeForm.get('ndassentdate')?.valueChanges.subscribe(() => {
-    this.JoiningDateValidation();
-  });
-    this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
-      this.JoiningDateValidation();
-    });
+  //   this.employeeForm.get('ndassentdate')?.valueChanges.subscribe(() => {
+  //   this.JoiningDateValidation();
+  // });
+  //   this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
+  //     this.JoiningDateValidation();
+  //   });
   }
 
   getAllActiveEmployees() {

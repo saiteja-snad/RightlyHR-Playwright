@@ -109,7 +109,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
 
 
   getAllEmployeeDetails() {
-    const satus = ['Active', 'Trainee Active'];
+     const status = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({

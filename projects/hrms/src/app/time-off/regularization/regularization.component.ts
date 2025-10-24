@@ -64,7 +64,7 @@ export class RegularizationComponent {
 
   getAllEmployeeDetails() {
      const status = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.map((employee: any) => ({
           label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,

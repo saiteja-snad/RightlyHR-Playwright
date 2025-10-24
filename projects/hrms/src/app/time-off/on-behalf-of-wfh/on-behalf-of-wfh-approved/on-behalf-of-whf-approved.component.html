@@ -11,8 +11,8 @@
         <th>{{'Status'| translate}}</th>
       </thead>
       <tbody>
-        <ng-container *ngIf="approvedWFHs!.length > 0; else noDataTemplate">
-          <tr *ngFor="let wfhRequest of approvedWFHs; let i = index">
+        <ng-container *ngIf="wfhData!.length > 0; else noDataTemplate">
+          <tr *ngFor="let wfhRequest of wfhData; let i = index">
             <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
             <td [ngSwitch]="wfhRequest.durationType">
               <span *ngSwitchCase="1">First Half</span>

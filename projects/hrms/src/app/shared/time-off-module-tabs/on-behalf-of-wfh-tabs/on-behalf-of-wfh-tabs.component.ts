@@ -3,11 +3,9 @@ import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subject, takeUntil } from 'rxjs';
-import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
-import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-behalf-of-wfh-tabs',
@@ -17,64 +15,82 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
 })
 
 export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
-  compOff = [] as any;
+  filteredTabs: any[] = [];
+  loading = false
   rejectedWFHRequestsCount = 0;
   waitingForApprovalWFHCount = 0;
   approvedWFHRequestsCount = 0;
   processedWFHRequestsCount = 0;
-  selectempid: any;
-  navTabs: any[] = [];
-  filteredTabs: any[] = [];
   cancelWFHRequestsCount = 0;
-  empinfo = {} as IJob;
-  loading = false
   destroy$: Subject<boolean> = new Subject<boolean>();
-  selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
-    private TimeoffYearFilterService: TimeoffYearFilterService) {
-    // effect(() => {
-    //   if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
-    //     this.getWFHRequest();
-    //     this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
-    //     this.http.wfhTriggerSignal.set(false);
-    //   }
-    // });
-  }
+  navTabs: any[] = [
+    {
+      label: 'Waiting For Approval',
+      link: 'waiting-for-approval',
+      icon: '/time-off-icon/waiting-for-approval-icon.png',
+      permission: { feature: 'Waiting For Approval (On Behalf Of WFH)', action: 'view' },
+    },
+    {
+      label: 'Approved',
+      link: 'approved',
+      icon: '/time-off-icon/approved-icon.png',
+      permission: { feature: 'Approved (On Behalf Of WFH)', action: 'view' },
+    },
+    {
+      label: 'Processed',
+      link: 'processed',
+      icon: '/time-off-icon/processed-icon.png',
+      permission: { feature: 'Processed (On Behalf Of WFH)', action: 'view' },
+    },
+    {
+      label: 'Rejected',
+      link: 'rejected',
+      icon: '/time-off-icon/rejected-icon.png',
+      permission: { feature: 'Rejected (On Behalf Of WFH)', action: 'view' },
+    },
+    {
+      label: 'Cancelled',
+      link: 'cancelled',
+      icon: '/time-off-icon/cancelled-icon.png',
+      permission: { feature: 'Cancelled (On Behalf Of WFH)', action: 'view' },
+    },
+  ];
 
-  ngOnInit(): void {
-    this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
-      if (year !== null) {
-        this.selectedYear = year;
-        this.http.selectedEmployeeIdWFH$.subscribe((id) => {
-          if (id) {
-            debugger
-            // Use the new employee ID here
-            this.selectempid = id;
-            // this.getCompOffEMPRequest();
-            this.getWFHRequest();
-          }
-          else {
-            this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-            this.getWFHRequest();
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    public rbac: RbacService
+  ) {
+    effect(() => {
+      if (this.http.onBehlafOfWFHSignal()) {
+        this.http.onBehalfOfWFHSelectedEmp$.subscribe((emp: number) => {
+          if (emp) {
+            this.getWFHRequest(emp);
           }
         });
       }
     });
   }
 
-  getWFHRequest() {
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+
+  getWFHRequest(employeeId: number) {
     this.loading = true
-    let empId = this.empinfo.employeeId;
-    this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    const selectedYear = new Date().getFullYear();
+    this.http.getFilterOnBehalfWFHDataByID(employeeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
-        // if (Array.isArray(response)) {
+        if (Array.isArray(response)) {
           const waiting = response.filter((item: { status: string; }) => item.status === 'Waiting for Approval');
           const approved = response.filter((item: { status: string; }) => item.status === 'Approved');
           const rejected = response.filter((item: { status: string; }) => item.status === 'Rejected');
           const processed = response.filter((item: { status: string; }) => item.status === 'Processed');
           const cancelled = response.filter((item: { status: string; }) => item.status === 'Cancelled');
+
+          // Count Assign
           this.waitingForApprovalWFHCount = waiting.length;
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;
@@ -82,9 +98,9 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
           this.cancelWFHRequestsCount = cancelled.length
           this.updateNavTabs();
           this.loading = false
-        // } else {
-        //   console.error('Invalid response format');
-        // }
+        } else {
+          console.error('Invalid response format');
+        }
       },
       error: (reason: any) => {
         this.loading = true;
@@ -93,32 +109,6 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // getCompOffEMPRequest() {
-  //   let empId = this.selectempid;
-  //   this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (response: any) => {
-  //       console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
-  //       if (Array.isArray(response)) {
-  //         const waiting = response.filter(item => item.status === 'Waiting for Approval');
-  //         const approved = response.filter(item => item.status === 'Approved');
-  //         const rejected = response.filter(item => item.status === 'Rejected');
-  //         const processed = response.filter(item => item.status === 'Processed');
-  //         const cancelled = response.filter(item => item.status === 'Cancelled');
-  //         this.waitingForApprovalWFHCount = waiting.length;
-  //         this.approvedWFHRequestsCount = approved.length;
-  //         this.rejectedWFHRequestsCount = rejected.length;
-  //         this.processedWFHRequestsCount = processed.length;
-  //         this.cancelWFHRequestsCount = cancelled.length
-  //         this.updateNavTabs();
-  //       } else {
-  //         console.error('Invalid response format');
-  //       }
-  //     },
-  //     error: (reason: any) => {
-  //       console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
-  //     }
-  //   });
-  // }
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
@@ -173,6 +163,5 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-    this.http.setEmployeeIdWFH(null);
   }
 }

@@ -865,5 +865,7 @@ export const permissionsData = [
   { fields: 'Processed (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Cancelled (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH All Employees', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
 
 ];

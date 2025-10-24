@@ -29,7 +29,7 @@ export class OnbehalfofMainTabsComponent {
     this.allowedWfh = this.empinfo.allowWFH;
     this.allowRemoteLogin = this.empinfo.allowRemoteLogin;
     this.navTabs = [
-      { label: 'WFH', link: '/on-behalf-of/on-behalf-of-wfh', icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'Comp Off Module', action: 'view' } },
+      { label: 'WFH', link: '/on-behalf-of/on-behalf-of-wfh', icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'On Behalf Of WFH', action: 'view' } },
       // { label: 'Regularization', link: '/time-off/regularization', icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },
     ];
     this.filterTabsByRbac();

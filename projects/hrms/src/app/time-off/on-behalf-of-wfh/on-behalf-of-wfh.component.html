@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name">On Behalf Of<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            <div class="commpoment-name">On Behalf Of<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span>
             </div>
             <div class="component-header">{{'On Behalf Of WFH'|translate}}</div>
             <div>
@@ -11,88 +12,24 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            @if (rbac.allowedToAccess('On Behalf Of All Employees.view')) {
-           <div class="d-flex align-items-center gap-3" >
-             <label class="form-label filter-labels m-0">Select Employee</label>
-            <div class="custom-p-select-content">
-                <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"  optionLabel="fullName" [filter]="true"
-                    filterBy="fullName" [showClear]="true" placeholder="Please select employee"  (onChange)="onEmployeeChange($event)"
-                    class="form-select custom-select" resetFilterOnHide="true">
-                </p-select>
-            </div>
-           </div>
-            }
-
-            @else if (rbac.allowedToAccess('My Team On Behalf Of.view')) {
-            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
-            <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    class="form-select custom-select" name="myteamemployees" placeholder="Please select employee" [filter]="true"
-                    resetFilterOnHide="true" [showClear]="true" [(ngModel)]="selectedMyTeamEmployee"  (onChange)="onMyTeamChange($event)">
-                </p-select>
+            @if (rbac.allowedToAccess('On Behalf Of WFH All Employees.view')) {
+            <div class="d-flex align-items-center gap-3">
+                <label class="form-label filter-labels m-0">Select Employee</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"
+                        optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
+                        placeholder="Please select employee" (onChange)="onEmployeeChange($event)"
+                        class="form-select custom-select" resetFilterOnHide="true">
+                    </p-select>
+                </div>
             </div>
             }
 
-            
-            <!-- @if(showbutton){ -->
-             @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {
-           <!-- <div *ngIf="disaplyapplybutton"> -->
-                <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"
-                    *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Request WFH</button>
-            <!-- </div> -->
-            <!-- } -->
+            @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" [disabled]="!selectedOtherEmployee"
+                *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Request WFH</button>
             }
         </div>
-        <!-- <div class="d-flex align-items-center gap-3">
-            @if(rbac.allowedToAccess('All Employees (WFH).view') && rbac.allowedToAccess('My Team (WFH).view')) {
-            <div class="d-flex align-items-center gap-2">
-                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                    {{'Select Employee' | translate}}</label>
-                <div class="custom-p-select-content">
-                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
-                        (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
-                </div>
-            </div>
-            }
-            @else if(rbac.allowedToAccess('All Employees (WFH).view')) {
-            <div class="d-flex align-items-center gap-2">
-                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
-                    {{'Select Employee' | translate}}</label>
-                <div class="custom-p-select-content">
-                    <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                        optionLabel="label" optionValue="value" showClear="true" placeholder="Select employee name"
-                        (onChange)="onCheckemployee($event.value)" class="form-select custom-select"></p-select>
-                </div>
-            </div>
-            }
-            @else if (rbac.allowedToAccess('My Team (WFH).view')) {
-            <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
-            <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    class="form-select custom-select" name="myteamemployees" placeholder="Select employee name"
-                    [filter]="true" resetFilterOnHide="true" showClear="true" required
-                    (onChange)="onCheckemployee($event.value)">
-                </p-select>
-            </div>
-            }
-
-            <div class="d-flex gap-2 align-items-center">
-                <label class="form-label custom-label filter-labels m-0" for="">Select Year</label>
-                <form autocomplete="off" [formGroup]="yearSelectionForm">
-                    <div class="custom-p-select-content">
-                        <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
-                            class="form-select custom-select" (onChange)="onYearChange()">
-                        </p-select>
-                    </div>
-                </form>
-            </div>
-
-            <div *ngIf="disaplyapplybutton">
-                <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"
-                    *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Request WFH</button>
-            </div>
-        </div> -->
     </div>
 
     <!--Module Information-->
@@ -125,14 +62,15 @@
                 <div class="mb-3">
                     <label for="workedDate" class="form-label custom-label mb-2">Worked Date
                         <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate" autocomplete="off"
-                        formControlName="workedDate" (change)="getWFHBal(addWFHForm.get('workedDate')?.value)" [min]="getPastDate()"
-                        [max]="getFutureDate()">
+                    <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
+                        autocomplete="off" formControlName="workedDate">
                     <div class="error-msg">
                         <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid">
                             Worked Date is required</div>
-                        <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for WFH</div>
-                        <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
+                        <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']">Selected date is not eligible for
+                            WFH</div>
+                        <div *ngIf="addWFHForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your
+                            date of joining.</div>
                     </div>
                 </div>
 
@@ -147,11 +85,13 @@
                             <!-- Half Day Selection -->
                             <div *ngIf="addWFHForm.get('availing')?.value === 'Half Day'">
                                 <div class="form-check my-2">
-                                    <input type="radio" class="form-check-input" id="firstHalf" [value]="1" formControlName="halfType">
+                                    <input type="radio" class="form-check-input" id="firstHalf" [value]="1"
+                                        formControlName="halfType">
                                     <label class="form-check-label" for="firstHalf">First Half</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" class="form-check-input" id="secondHalf" [value]="3" formControlName="halfType">
+                                    <input type="radio" class="form-check-input" id="secondHalf" [value]="3"
+                                        formControlName="halfType">
                                     <label class="form-check-label" for="secondHalf">Second Half</label>
                                 </div>
                             </div>
@@ -159,7 +99,7 @@
 
                         <div class="form-check">
                             <input type="radio" class="form-check-input" id="fullDay" value="Full Day"
-                                formControlName="availing" [value]="2" (change)="updateDuration()">
+                                formControlName="availing" [value]="2">
                             <label class="form-check-label custom-label" for="fullDay">Full Day</label>
                         </div>
                     </div>
@@ -176,14 +116,16 @@
                     <div class="textarea-count-text">{{ addWFHForm.get('reason')?.value?.length || 0 }}/250</div>
                     <div class="error-msg" *ngIf="addWFHForm.get('reason')?.errors?.['minlength']">
                         Reason must be at least 10 characters</div>
-                    <div class="error-msg" *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
+                    <div class="error-msg"
+                        *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
                         <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">Reason is required</div>
-                        <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters</div>
+                        <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters
+                        </div>
                     </div>
                 </div>
 
                 <!-- <div class="mb-3" *ngIf="availablebalance"><b>Balance:{{availablebalance}}</b></div> -->
-                <div *ngIf="wfhValidations.isdurationValidated">{{wfhValidations.DurationErrorMessage}}</div>
+                <!-- <div *ngIf="wfhValidations.isdurationValidated">{{wfhValidations.DurationErrorMessage}}</div> -->
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)"

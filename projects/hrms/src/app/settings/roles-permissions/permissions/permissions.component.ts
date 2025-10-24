@@ -1127,7 +1127,7 @@ selectAllOnBehalfOf = [
 
 selectAllOnBehalfOfWFH = [
   'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
-  , 'Cancelled (On Behalf Of WFH)'
+  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'Request On Behalf Of WFH Button'
 ]
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1910,11 +1910,8 @@ selectAllOnBehalfOfWFH = [
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
-    if (action === 'Update') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Create' || action === 'Delete') {
-      return !this.roleToFilter?.id;
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
     }
     return false;
   }
@@ -1923,11 +1920,8 @@ selectAllOnBehalfOfWFH = [
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
-    if (action === 'Update') {
-      return !this.roleToFilter?.id;
-    }
-    if (action === 'Create' || action === 'Delete') {
-      return !this.roleToFilter?.id;
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
     }
     return false;
   }

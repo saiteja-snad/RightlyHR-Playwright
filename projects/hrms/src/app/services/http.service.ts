@@ -152,6 +152,12 @@ export class HttpService {
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
+  // OnBehalfOf WFH
+  onBehlafOfWFHSignal = signal<boolean>(false);
+  onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(0);
+
+
+
   // function for employeid TIMEOFF
   private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
 

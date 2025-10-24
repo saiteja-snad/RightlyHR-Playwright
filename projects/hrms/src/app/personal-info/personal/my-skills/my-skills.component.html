@@ -1,0 +1,123 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">My Skills</span></div>
+        <div class="custom-add-btn" (click)="openModal(addnewskill)"><i class="bi bi-plus plus-icon me-1"></i>Add New
+            Skill
+        </div>
+    </div>
+</div>
+<div class="add-data-content">
+    <div class="card custom-background-card p-4">
+        <div class="row">
+            <div class="custom-label chip mb-2">
+                <label class="custom-label mb-3" for="technicalskills">Technical Skills</label>
+                <div class="flex flex-wrap gap-2 ">
+                   <p-chip label="Angular(Expert)" [removable]="true" />     
+                   <!-- <p-chip *ngFor="let skill of technicalSkills" [label]="skill.name + '(' + skill.level + ')'" [removable]="true"
+                        (onRemove)="removeSkill(skill)">
+                    </p-chip> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="add-data-content pt-2">
+    <div class="card custom-background-card p-4">
+        <div class="row">
+            <div class="custom-label chip mb-2">
+                <label class="custom-label  mb-3" for="softskills">Soft Skills</label>
+                 <div class="flex flex-wrap gap-2">      
+                    <p-chip label="Angular(Expert)" [removable]="true" />      
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #addnewskill let-modal>
+    <form autocomplete="off" [formGroup]="AddForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div class="pt-2">
+                    <p class="popup-heading mb-0">{{ 'Add New Skill' }}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal); resetForm()">
+                        <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="custom-main-popup-content ">
+                <!-- Skill Category Field -->
+                <div class="mb-3">
+                    <label for="skillcategory" class="form-label custom-label mb-2">
+                        {{ 'Skill Category' }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select class="form-select custom-input" [options]="" optionLabel="skillcategory"
+                            optionValue="gradeId" [filter]="true" [showClear]="false" formControlName="skillcategory"
+                            placeholder="{{'Please select skill category'}}">
+                        </p-select>
+                    </div>
+                </div>
+
+                <!-- Skills Field -->
+                <div class="mb-3">
+                    <label for="skills" class="form-label custom-label mb-2">
+                        {{ 'Skill(s)' }} <span class="error-msg">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" formControlName="skills"
+                        placeholder="Please enter Skills separated by commas (e.g.,React,Angular)" />
+                    <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg">
+                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">
+                            {{ 'Skill(s) is required' }}
+                        </div>
+                    </div>
+                </div>
+                <!-- Proficiency Level Field -->
+                <div class="mb-3">
+                    <label for="proficiencylevel" class="form-label custom-label mb-2">
+                        {{ 'Proficiency Level' }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select class="form-select custom-input" [options]="proficiencyoptions" optionLabel="label"
+                            optionValue="value" [filter]="true" [showClear]="false" formControlName="proficiencylevel"
+                            placeholder="{{'Please select skill category'}}">
+                        </p-select>
+                        <div *ngIf="AddForm.get('proficiencylevel')?.touched && AddForm.get('proficiencylevel')?.invalid"
+                            class="error-msg">
+                            <div *ngIf="AddForm.get('proficiencylevel')?.errors?.['required']">{{'Proficiency Level is required'}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openConfirmationModal(confirmation)">Cancel</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)"
+                        [disabled]="AddForm.invalid">
+                        {{ 'Add' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+<ng-template #confirmation let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="resetForm()">
+                Yes
+            </button>
+        </div>
+    </div>
+</ng-template>

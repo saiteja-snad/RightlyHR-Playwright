@@ -1,0 +1,15 @@
+::ng-deep .p-chip {
+  background-color: white; /* overall chip background */
+  border: 1px solid #ccc;  /* optional border */
+}
+
+.skill-name {
+  color: rgba(6, 39, 79, 1);
+  font-weight: 500;
+}
+
+.proficiency {
+  color: #000; /* normal text color */
+  font-weight: normal;
+  margin-left: 2px; /* small spacing */
+}

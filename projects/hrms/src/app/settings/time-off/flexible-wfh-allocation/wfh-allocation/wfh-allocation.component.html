@@ -3,7 +3,7 @@
 <app-wfh-allocation-tabs/>
  <div class="custom-component-right-content p-3">
 
-<form autocomplete="off" [formGroup]="leaveAllocationForm" (ngSubmit)="publishLeaveAllocation(leaveAllocationForm)">
+<form autocomplete="off" [formGroup]="wfhAllocationForm" (ngSubmit)="publishLeaveAllocation(wfhAllocationForm)">
     <div class="card custom-background-card p-3 mt-2">
         <div class="row mb-3">
             <!-- Year -->
@@ -19,9 +19,9 @@
                         <ng-template let-year #item>{{ year }}</ng-template>
                     </p-select>
                 </div>
-                <div *ngIf="leaveAllocationForm.get('year')?.touched && leaveAllocationForm.get('year')?.invalid"
+                <div *ngIf="wfhAllocationForm.get('year')?.touched && wfhAllocationForm.get('year')?.invalid"
                     class="error-msg">
-                    <div *ngIf="leaveAllocationForm.get('year')?.errors?.['required']">
+                    <div *ngIf="wfhAllocationForm.get('year')?.errors?.['required']">
                         Please select year
                     </div>
                 </div>
@@ -41,9 +41,9 @@
                         <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                     </p-select>
                 </div>
-                <div *ngIf="leaveAllocationForm.get('location')?.touched && leaveAllocationForm.get('location')?.invalid"
+                <div *ngIf="wfhAllocationForm.get('location')?.touched && wfhAllocationForm.get('location')?.invalid"
                     class="error-msg">
-                    <div *ngIf="leaveAllocationForm.get('location')?.errors?.['required']">
+                    <div *ngIf="wfhAllocationForm.get('location')?.errors?.['required']">
                         Please select location
                     </div>
                 </div>
@@ -65,9 +65,9 @@
                     </p-select>
                 </div>
                 
-                <div *ngIf="leaveAllocationForm.get('subLocation')?.touched && leaveAllocationForm.get('subLocation')?.invalid"
+                <div *ngIf="wfhAllocationForm.get('subLocation')?.touched && wfhAllocationForm.get('subLocation')?.invalid"
                     class="error-msg">
-                    <div *ngIf="leaveAllocationForm.get('subLocation')?.errors?.['required']">
+                    <div *ngIf="wfhAllocationForm.get('subLocation')?.errors?.['required']">
                         Please select sub location
                     </div>
                 </div>
@@ -86,9 +86,9 @@
                         <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                     </p-select>
                 </div>
-                <div *ngIf="leaveAllocationForm.get('shift')?.touched && leaveAllocationForm.get('shift')?.invalid"
+                <div *ngIf="wfhAllocationForm.get('shift')?.touched && wfhAllocationForm.get('shift')?.invalid"
                     class="error-msg">
-                    <div *ngIf="leaveAllocationForm.get('shift')?.errors?.['required']">
+                    <div *ngIf="wfhAllocationForm.get('shift')?.errors?.['required']">
                         Please select shift
                     </div>
                 </div>
@@ -107,9 +107,9 @@
                         <ng-template let-location #item>{{ location.name }}</ng-template>
                     </p-select>
                 </div>
-                <div *ngIf="leaveAllocationForm.get('categoryName')?.touched && leaveAllocationForm.get('categoryName')?.invalid"
+                <div *ngIf="wfhAllocationForm.get('categoryName')?.touched && wfhAllocationForm.get('categoryName')?.invalid"
                     class="error-msg">
-                    <div *ngIf="leaveAllocationForm.get('categoryName')?.errors?.['required']">
+                    <div *ngIf="wfhAllocationForm.get('categoryName')?.errors?.['required']">
                         Please select category name
                     </div>
                 </div>
@@ -120,22 +120,22 @@
                 <label for="employeeName" class="form-label custom-label mb-2">
                     {{ "Employee Name" | translate }}<span class="text-danger">*</span>
                 </label>
-                <div class="custom-p-select-content">
-                    <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                <div class="custom-p-multiSelect-content">
+                    <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                         [showClear]="false" class="form-select custom-select" formControlName="employeeName"
                         placeholder="Please select employee"
-                        (onChange)="onSelectedEmployee($event.value, leaveAllocationForm)">
+                        (onChange)="onSelectedEmployee($event.value, wfhAllocationForm)">
                         <ng-template let-selectedOption #selectedItem>
                             {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
                         </ng-template>
                         <ng-template let-user #item>
                             {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
                         </ng-template>
-                    </p-select>
+                    </p-multiSelect>
                 </div>
-                <div *ngIf="leaveAllocationForm.get('employeeName')?.touched && leaveAllocationForm.get('employeeName')?.invalid"
+                <div *ngIf="wfhAllocationForm.get('employeeName')?.touched && wfhAllocationForm.get('employeeName')?.invalid"
                     class="error-msg">
-                    <div *ngIf="leaveAllocationForm.get('employeeName')?.errors?.['required']">
+                    <div *ngIf="wfhAllocationForm.get('employeeName')?.errors?.['required']">
                         Please select employee
                     </div>
                 </div>
@@ -155,37 +155,31 @@
                     <th>Last Updated On</th>
                 </tr>
             </thead>
-            <tbody>
-                @if (selectedEmployee != null) {
-                <tr>
-                    <td> {{selectedEmployee}}</td>
-                    <td *ngIf="selectedEmployee">
-                        <input type="text" formControlName="days" class="form-control custom-input mt-2"
+            <tbody formArrayName="employees">
+                <tr *ngFor="let emp of employeeFormArray.controls; let i = index" [formGroupName]="i">
+                    <td>{{ emp.get('fullName')?.value }}</td>
+                    <td>
+                        <input type="number" formControlName="days" class="form-control custom-input mt-2"
                             placeholder="Please enter days" min="0" max="365" (keypress)="validateInput($event)" />
-                        <div *ngIf="leaveAllocationForm.get('days')?.touched && leaveAllocationForm.get('days')?.invalid"
-                            class="error-msg">
-                            <div *ngIf="leaveAllocationForm.get('days')?.errors?.['required']">
-                                Please enter days
-                            </div>
+                        <div *ngIf="emp.get('days')?.touched && emp.get('days')?.invalid" class="error-msg">
+                            <div *ngIf="emp.get('days')?.errors?.['required']">Please enter days</div>
                         </div>
                     </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ emp.get('createdBy')?.value }}</td>
+                    <td>{{ emp.get('createdOn')?.value | date: 'dd-MM-yyyy' }}</td>
+                    <td>{{ emp.get('lastUpdatedBy')?.value }}</td>
+                    <td>{{ emp.get('lastUpdatedOn')?.value | date: 'dd-MM-yyyy' }}</td>
                 </tr>
-                }
-                @else {
-                <tr>
-                    <app-no-data-found></app-no-data-found>
+            
+                <tr *ngIf="employeeFormArray.length === 0">
+                    <td colspan="6"><app-no-data-found></app-no-data-found></td>
                 </tr>
-                }
             </tbody>
         </table>
     </div>
     <div class="d-flex justify-content-end gap-3 p-3"
         *ngIf="rbac.allowedToAccess('Flexible Leave Allocation Tab.create')">
-        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leaveAllocationForm.invalid">Add</button>
+        <button type="submit" class="custom-btn btn-primary px-5" [disabled]="wfhAllocationForm.invalid">Add</button>
     </div>
 </form>
     

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
@@ -11,16 +11,17 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { ILocation, ISubLocation, IShiftHeader, ICategoryDetails, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
 import { WfhAllocationTabsComponent } from "../wfh-allocation-tabs/wfh-allocation-tabs.component";
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-wfh-allocation',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NoDataFoundComponent, WfhAllocationTabsComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule,MultiSelectModule, NoDataFoundComponent, WfhAllocationTabsComponent],
   templateUrl: './wfh-allocation.component.html',
   styleUrl: './wfh-allocation.component.scss'
 })
 export class WfhAllocationComponent implements OnInit, OnDestroy {
-leaveAllocationForm!: FormGroup;
-  selectedEmployee!: string | null;
+wfhAllocationForm!: FormGroup;
+selectedEmployees: any[] = [];
   isSubmitting = false;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
@@ -49,13 +50,14 @@ leaveAllocationForm!: FormGroup;
   }
 
   inititializeForm() {
-    this.leaveAllocationForm = this.fb.group({
+    this.wfhAllocationForm = this.fb.group({
       year: ['', Validators.required],
       location: [{ value: '', disabled: true }, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
       categoryName: [{ value: '', disabled: true }, Validators.required],
       employeeName: [{ value: '', disabled: true }, Validators.required],
+      employees: this.fb.array([]) as FormArray,
       days: ['', Validators.required]
     });
   }
@@ -70,14 +72,14 @@ leaveAllocationForm!: FormGroup;
   }
 
   enableLocation(): void {
-    if (this.leaveAllocationForm.get('year')?.value) {
-      this.leaveAllocationForm.get('location')?.enable();
+    if (this.wfhAllocationForm.get('year')?.value) {
+      this.wfhAllocationForm.get('location')?.enable();
     }
   }
   //method to enable the category name
 categoryenable(){
-  if(this.leaveAllocationForm.get('shift')?.value){
-  this.leaveAllocationForm.get('categoryName')?.enable();
+  if(this.wfhAllocationForm.get('shift')?.value){
+  this.wfhAllocationForm.get('categoryName')?.enable();
   }
 
 }
@@ -93,11 +95,11 @@ categoryenable(){
   onLocationChange(location: ILocation): void {
     if (location?.jobSubLocations?.length) {
       this.subLocationDetails = location.jobSubLocations;
-      this.leaveAllocationForm.get('subLocation')?.enable();
+      this.wfhAllocationForm.get('subLocation')?.enable();
     } else {
       this.subLocationDetails = [];
-      this.leaveAllocationForm.get('subLocation')?.enable();
-      this.leaveAllocationForm.get('subLocation')?.reset();
+      this.wfhAllocationForm.get('subLocation')?.enable();
+      this.wfhAllocationForm.get('subLocation')?.reset();
     }
   }
 
@@ -112,22 +114,22 @@ categoryenable(){
       .subscribe({
         next: (res: any) => {
           this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
-          this.leaveAllocationForm.get('shift')?.enable();
+          this.wfhAllocationForm.get('shift')?.enable();
         },
         error: err => {
           console.error('Error fetching shifts:', err);
           this.shiftDetails = [];
-          this.leaveAllocationForm.get('shift')?.reset();
-          this.leaveAllocationForm.get('shift')?.disable();
+          this.wfhAllocationForm.get('shift')?.reset();
+          this.wfhAllocationForm.get('shift')?.disable();
         }
       });
   }
 
   getAllEmployees() {
     const payload = {
-      locationId: this.leaveAllocationForm.get('location')?.value?.id,
-      subLocationId: this.leaveAllocationForm.get('subLocation')?.value?.id,
-      shiftId: this.leaveAllocationForm.get('shift')?.value?.id,
+      locationId: this.wfhAllocationForm.get('location')?.value?.id,
+      subLocationId: this.wfhAllocationForm.get('subLocation')?.value?.id,
+      shiftId: this.wfhAllocationForm.get('shift')?.value?.id,
     };
     this.http.getDataWithQueryParams("Employeedata/getAll", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -135,40 +137,42 @@ categoryenable(){
           ...employee,
           fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
-        this.leaveAllocationForm.get('employeeName')?.enable();
+        this.wfhAllocationForm.get('employeeName')?.enable();
       },
       error: err => {
         console.error('Error fetching employees:', err);
-        this.leaveAllocationForm.get('employeeName')?.reset();
-        this.leaveAllocationForm.get('employeeName')?.disable();
+        this.wfhAllocationForm.get('employeeName')?.reset();
+        this.wfhAllocationForm.get('employeeName')?.disable();
       }
     });
   }
+get employeeFormArray(): FormArray {
+  return this.wfhAllocationForm.get('employees') as FormArray;
+}
 
-  onSelectedEmployee(event: any, form: FormGroup) {
-    this.selectedEmployee = event.fullName;
-    
-    const formData = form.value;
-    const payload = {
-      categoryId: formData.categoryName.id,
-      entityReferenceId: event.employeeId,
-      year: formData.year,
-      status: 'Published',
-      shiftId: formData.shift.id,
-      locationId: formData.location.id,
-      subLocationId: formData.subLocation.id,
-      entityType: "Employee"
-    }
+onSelectedEmployee(selectedList: any[], form: FormGroup) {
+  this.selectedEmployees = selectedList || [];
 
-    this.http.postdata("LeavePolicy/getallemployeeid", payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        form.get('days')?.setValue(res.allowedDays, { emitEvent: false });
-      },
-      error: err => {
-        console.error('Error fetching employee ID:', err);
-      }
-    });
-  }
+ const employeeArray = form.get('employees') as FormArray;
+  //  Clear existing entries
+  employeeArray.clear();
+  this.selectedEmployees.forEach((emp:any) => {
+    employeeArray.push(
+      this.fb.group({
+        employeeId: [emp.employeeId],
+        fullName: [emp.fullName],
+        days: ['', Validators.required],
+        createdBy: [emp.fName || '—'],
+        createdOn: [emp.effectiveDate || new Date()],
+        lastUpdatedBy: [emp.lName || '—'],
+        lastUpdatedOn: [emp.effectiveDate || new Date()],
+      })
+    );
+  });
+
+  // ✅ Tell TypeScript explicitly this is a FormArray
+  form.setControl('employees', employeeArray as FormArray);
+}
 
   validateInput(event: KeyboardEvent) {
     const input = event.key;
@@ -187,7 +191,7 @@ categoryenable(){
   }
 
   private handleFormValueChanges(): void {
-    const form = this.leaveAllocationForm;
+    const form = this.wfhAllocationForm;
 
     const resetAndDisable = (controls: string[]) => {
       controls.forEach(control => {
@@ -253,14 +257,14 @@ categoryenable(){
 
     this.http.postdata("LeavePolicy", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.leaveAllocationForm.get('subLocation')?.disable();
-        this.leaveAllocationForm.get('location')?.disable();
-        this.leaveAllocationForm.get('shiftName')?.disable();
-        this.leaveAllocationForm.get('categoryName')?.disable();
-        this.leaveAllocationForm.get('shift')?.disable();
+        this.wfhAllocationForm.get('subLocation')?.disable();
+        this.wfhAllocationForm.get('location')?.disable();
+        this.wfhAllocationForm.get('shiftName')?.disable();
+        this.wfhAllocationForm.get('categoryName')?.disable();
+        this.wfhAllocationForm.get('shift')?.disable();
 
-        this.selectedEmployee = null;
-        this.modal.openSuccessModal('Leave allocation published successfully!');
+        this.selectedEmployees = [];
+        this.modal.openSuccessModal('WFH allocation published successfully!');
         
 
 
@@ -268,7 +272,7 @@ categoryenable(){
       },
       error: (err: any) => {
         this.modalService.dismissAll();
-        this.modal.openErrorModal(err.error.message? err.error.message: 'Failed to publish leave allocation!');
+        this.modal.openErrorModal(err.error.message? err.error.message: 'Failed to publish wfh allocation!');
       },
       complete: () => {
         // this.modalService.dismissAll();

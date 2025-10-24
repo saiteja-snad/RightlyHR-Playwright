@@ -33,13 +33,13 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
     private TimeoffYearFilterService: TimeoffYearFilterService) {
-    effect(() => {
-      if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
-        this.getWFHRequest();
-        this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
-        this.http.wfhTriggerSignal.set(false);
-      }
-    });
+    // effect(() => {
+    //   if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
+    //     this.getWFHRequest();
+    //     this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
+    //     this.http.wfhTriggerSignal.set(false);
+    //   }
+    // });
   }
 
   ngOnInit(): void {
@@ -48,9 +48,11 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         this.selectedYear = year;
         this.http.selectedEmployeeIdWFH$.subscribe((id) => {
           if (id) {
+            debugger
             // Use the new employee ID here
             this.selectempid = id;
-            this.getCompOffEMPRequest();
+            // this.getCompOffEMPRequest();
+            this.getWFHRequest();
           }
           else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -64,15 +66,15 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   getWFHRequest() {
     this.loading = true
     let empId = this.empinfo.employeeId;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
-        if (Array.isArray(response)) {
-          const waiting = response.filter(item => item.status === 'Waiting for Approval');
-          const approved = response.filter(item => item.status === 'Approved');
-          const rejected = response.filter(item => item.status === 'Rejected');
-          const processed = response.filter(item => item.status === 'Processed');
-          const cancelled = response.filter(item => item.status === 'Cancelled');
+        // if (Array.isArray(response)) {
+          const waiting = response.filter((item: { status: string; }) => item.status === 'Waiting for Approval');
+          const approved = response.filter((item: { status: string; }) => item.status === 'Approved');
+          const rejected = response.filter((item: { status: string; }) => item.status === 'Rejected');
+          const processed = response.filter((item: { status: string; }) => item.status === 'Processed');
+          const cancelled = response.filter((item: { status: string; }) => item.status === 'Cancelled');
           this.waitingForApprovalWFHCount = waiting.length;
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;
@@ -80,9 +82,9 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
           this.cancelWFHRequestsCount = cancelled.length
           this.updateNavTabs();
           this.loading = false
-        } else {
-          console.error('Invalid response format');
-        }
+        // } else {
+        //   console.error('Invalid response format');
+        // }
       },
       error: (reason: any) => {
         this.loading = true;
@@ -91,32 +93,32 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCompOffEMPRequest() {
-    let empId = this.selectempid;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
-        if (Array.isArray(response)) {
-          const waiting = response.filter(item => item.status === 'Waiting for Approval');
-          const approved = response.filter(item => item.status === 'Approved');
-          const rejected = response.filter(item => item.status === 'Rejected');
-          const processed = response.filter(item => item.status === 'Processed');
-          const cancelled = response.filter(item => item.status === 'Cancelled');
-          this.waitingForApprovalWFHCount = waiting.length;
-          this.approvedWFHRequestsCount = approved.length;
-          this.rejectedWFHRequestsCount = rejected.length;
-          this.processedWFHRequestsCount = processed.length;
-          this.cancelWFHRequestsCount = cancelled.length
-          this.updateNavTabs();
-        } else {
-          console.error('Invalid response format');
-        }
-      },
-      error: (reason: any) => {
-        console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
-      }
-    });
-  }
+  // getCompOffEMPRequest() {
+  //   let empId = this.selectempid;
+  //   this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (response: any) => {
+  //       console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
+  //       if (Array.isArray(response)) {
+  //         const waiting = response.filter(item => item.status === 'Waiting for Approval');
+  //         const approved = response.filter(item => item.status === 'Approved');
+  //         const rejected = response.filter(item => item.status === 'Rejected');
+  //         const processed = response.filter(item => item.status === 'Processed');
+  //         const cancelled = response.filter(item => item.status === 'Cancelled');
+  //         this.waitingForApprovalWFHCount = waiting.length;
+  //         this.approvedWFHRequestsCount = approved.length;
+  //         this.rejectedWFHRequestsCount = rejected.length;
+  //         this.processedWFHRequestsCount = processed.length;
+  //         this.cancelWFHRequestsCount = cancelled.length
+  //         this.updateNavTabs();
+  //       } else {
+  //         console.error('Invalid response format');
+  //       }
+  //     },
+  //     error: (reason: any) => {
+  //       console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
+  //     }
+  //   });
+  // }
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {

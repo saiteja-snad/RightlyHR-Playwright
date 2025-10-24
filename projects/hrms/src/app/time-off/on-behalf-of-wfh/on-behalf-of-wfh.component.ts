@@ -174,12 +174,12 @@ export class OnBehalfOfWfhComponent {
       this.http.setEmployeeIdWFH(employeedId);
       // this.disaplyapplybutton = false;
       this.getWorkfromhomeRequest(employeedId);
-      this.getWFHBalance(employeedId);
+      // this.getWFHBalance(employeedId);
     } else {
       this.http.setEmployeeIdWFH(null);
       // this.disaplyapplybutton = true;
       this.getWorkfromhomeRequest(this.empinfo.employeeId);
-      this.getWFHBalance(this.empinfo.employeeId);
+      // this.getWFHBalance(this.empinfo.employeeId);
     }
   }
 
@@ -207,16 +207,16 @@ export class OnBehalfOfWfhComponent {
     });
   }
 
-  getWFHBalance(employeedId: any) {
-    let empId = employeedId;
-    let currentDate = new Date().toISOString().split('T')[0];
-    this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
-      next: (response: any) => {
-        this.wfhBalance = response;
-      },
-      error: (reason: any) => console.log(reason),
-    });
-  }
+  // getWFHBalance(employeedId: any) {
+  //   let empId = employeedId;
+  //   let currentDate = new Date().toISOString().split('T')[0];
+  //   this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
+  //     next: (response: any) => {
+  //       this.wfhBalance = response;
+  //     },
+  //     error: (reason: any) => console.log(reason),
+  //   });
+  // }
 
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;

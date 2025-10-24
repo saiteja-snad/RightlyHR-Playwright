@@ -1,6 +1,6 @@
 
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -22,6 +22,7 @@ import { IRoleAndResponsibility } from '../../settings/employee-fields/job/roles
 import { IFrequency } from '../../Interfaces/job-model';
 import { Editor } from 'primeng/editor';
 import { environment } from '../../../environments/environment';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 @Component({
   selector: 'app-contractor-letter',
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, DateformatPipe, NgbPopoverModule, Editor],
@@ -30,7 +31,7 @@ import { environment } from '../../../environments/environment';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ContractorLetterComponent {
+export class ContractorLetterComponent implements OnInit, OnDestroy{
   currentDate = moment();
   isIssuedDateValid = true;
   isExpiryDateValid = true;
@@ -131,7 +132,7 @@ export class ContractorLetterComponent {
   expiryDatevalidate: any;
   selectedSymbol: string = '';
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService
+    private authService: AuthService, private conformationPopup: OpenModalService, public formvalidators: FormValidationService, private sanitizer: DomSanitizer
     // private _userAcessService: UserAccessService,
   ) {
     this.initializeForm();
@@ -219,7 +220,7 @@ export class ContractorLetterComponent {
   }
 
   //function to generate the offer letter
-    async generateOfferLetter() {
+  async generateOfferLetter() {
     this.loading = true;
 
     // Let Angular update the DOM before starting heavy operations
@@ -265,7 +266,7 @@ export class ContractorLetterComponent {
       this.disableFieldsForApproval = false;
       this.conformationPopup.openSuccessModal('Offer Letter generated successfully');
     });
-}
+  }
 
   //download document
   async downLoadDocument(EmpValue: any) {
@@ -531,7 +532,7 @@ export class ContractorLetterComponent {
         next: (data: any) => {
           if (data.isEmployeevalid === true) {
             if (Empidvalue) {
-               
+
               this.prospectiveEmpData = data.checkofferletter;
               this.getEmployeeStatusChanges(Empidvalue.value)
               this.employeeForm?.patchValue({
@@ -875,7 +876,7 @@ export class ContractorLetterComponent {
 
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
-     
+
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.ApprovalLoader = true;
     this.prospectiveEmpData.employeeId = this.prospectiveEmpData.empId,
@@ -891,11 +892,11 @@ export class ContractorLetterComponent {
       this.prospectiveEmpData.dob = this.employeeaddress.dob,
       this.prospectiveEmpData.bloodGroup = this.employeeaddress.bloodGroup,
       this.prospectiveEmpData.trainingEndDate = data.trainingEndDate,
-      this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null? this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
+      this.prospectiveEmpData.dateOfJoining = this.employeeStatus != null ? this.prospectiveEmpData.dateOfJoining : this.employeeForm.get('dateOfJoining')?.value,
       this.prospectiveEmpData.substatus = 'Offer Letter Generated',
       this.prospectiveEmpData.password = this.employeeaddress.password
-      this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
-      this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
+    this.prospectiveEmpData.reportsTo = this.prospectiveEmpData.reportsTo?.toString();
+    this.prospectiveEmpData.empId = this.prospectiveEmpData.empId.toString();
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
@@ -928,6 +929,14 @@ export class ContractorLetterComponent {
     else {
       this.employeeForm.reset();
     }
+  }
+
+  get safeRolesAndResponsibilities(): SafeHtml {
+    let html = this.employeeForm.get('rolesAndResponsibilitiesId')?.value || '';
+    html = html.replace(/<p><br><\/p>/g, ''); // remove empty paragraphs
+  html = html.replace(/<\/p><p>/g, '<br>'); // convert paragraph breaks to <br>
+  html = html.replace(/<p>|<\/p>/g, ''); // remove remaining p tags
+  return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   updateEmployeeData(employeeData: any) {

@@ -859,4 +859,8 @@ export const permissionsData = [
   { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
 
+   //Settings Time Off flexible wfh allocation Tabs Section
+  { fields: 'Allocation History Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Active Allocations Tab', View: false, Update: false, Create: false, Delete: false },
+
 ];

@@ -60,6 +60,7 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
+  FLEXIBLE_WFH_ALLOCATION_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -1086,8 +1087,11 @@ export class AccessNavigationService {
         break;
          case '/settings/timeoff-configurations/flexible-wfh-allocation':
         if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
-          return (route =
-            '/settings/timeoff-configurations/flexible-wfh-allocation');
+         for (const item of FLEXIBLE_WFH_ALLOCATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 

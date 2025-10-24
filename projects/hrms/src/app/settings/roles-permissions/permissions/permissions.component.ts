@@ -473,6 +473,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
+  flexibleWFHTabsFields=[
+    'Active Allocations Tab',
+    'Allocation History Tab'
+  ]
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',

@@ -10,10 +10,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { ILocation, ISubLocation, IShiftHeader, ICategoryDetails, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
+import { WfhAllocationTabsComponent } from "../wfh-allocation-tabs/wfh-allocation-tabs.component";
 
 @Component({
   selector: 'app-wfh-allocation',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NoDataFoundComponent, WfhAllocationTabsComponent],
   templateUrl: './wfh-allocation.component.html',
   styleUrl: './wfh-allocation.component.scss'
 })
@@ -73,7 +74,13 @@ leaveAllocationForm!: FormGroup;
       this.leaveAllocationForm.get('location')?.enable();
     }
   }
+  //method to enable the category name
+categoryenable(){
+  if(this.leaveAllocationForm.get('shift')?.value){
+  this.leaveAllocationForm.get('categoryName')?.enable();
+  }
 
+}
   private getAllLocations(): void {
     this.http.getData('JobLocation')
       .pipe(takeUntil(this.destroy$))

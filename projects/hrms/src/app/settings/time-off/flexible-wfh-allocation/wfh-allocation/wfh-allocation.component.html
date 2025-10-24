@@ -1,3 +1,8 @@
+
+ <div class="d-flex gap-3 w-100">
+<app-wfh-allocation-tabs/>
+ <div class="custom-component-right-content p-3">
+
 <form autocomplete="off" [formGroup]="leaveAllocationForm" (ngSubmit)="publishLeaveAllocation(leaveAllocationForm)">
     <div class="card custom-background-card p-3 mt-2">
         <div class="row mb-3">
@@ -76,7 +81,7 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                         [showClear]="false" formControlName="shift" placeholder="Please select shift"
-                        class="form-select custom-select">
+                        class="form-select custom-select" (onChange)="categoryenable()">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                         <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                     </p-select>
@@ -144,6 +149,10 @@
                 <tr>
                     <th>Employee Name</th>
                     <th>Days</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Last Updated By</th>
+                    <th>Last Updated On</th>
                 </tr>
             </thead>
             <tbody>
@@ -160,6 +169,10 @@
                             </div>
                         </div>
                     </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 }
                 @else {
@@ -175,3 +188,7 @@
         <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leaveAllocationForm.invalid">Add</button>
     </div>
 </form>
+    
+ </div>
+ </div>
+

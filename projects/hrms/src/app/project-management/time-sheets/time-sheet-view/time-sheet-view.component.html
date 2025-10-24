@@ -153,7 +153,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'wed', i, 'duration')"
                                         (blur)="formatTime($event, 'wed', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration  || (project.get('wed.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('wed.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask,project.get('wed'),i,'wed')">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -178,7 +178,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'thu', i, 'duration')"
                                         (blur)="formatTime($event, 'thu', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration  || (project.get('thu.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('thu.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask,project.get('thu'),i,'thu')">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -203,7 +203,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'fri', i, 'duration')"
                                         (blur)="formatTime($event, 'fri', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration  || (project.get('fri.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('fri.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask,project.get('fri'),i,'fri')">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -228,7 +228,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'sat', i, 'duration')"
                                         (blur)="formatTime($event, 'sat', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration  || (project.get('sat.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('sat.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask,project.get('sat'),i,'sat')">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -253,7 +253,7 @@
                                         (keypress)="allowNumbersOnly($event)"
                                         (keyup.enter)="formatTime($event, 'sun', i, 'duration')"
                                         (blur)="formatTime($event, 'sun', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration"
+                                    <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration  || (project.get('sun.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('sun.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
                                         class="input-group-text border-none cursor"
                                         (click)="openModal(addtask,project.get('sun'),i,'sun')">
                                         <i class="bi bi-three-dots-vertical"></i>

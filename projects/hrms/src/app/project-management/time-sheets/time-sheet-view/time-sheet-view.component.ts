@@ -1198,7 +1198,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
-    const status = control?.value?.approvalStatus;
+    const status = control?.getRawValue()?.approvalStatus;
+ 
     return {
       approved: status === 'Processed',
       rejected: status === 'Rejected',

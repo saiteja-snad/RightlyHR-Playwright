@@ -20,12 +20,12 @@
 
                         <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                                 <td class="text-center">
-                            <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                            <ng-container *ngIf="row.entries[0]?.summary; else noEntries">
                                 <a type="button" [ngbPopover]="description">
                                     <app-info-icon />
                                 </a>
                                 <ng-template #description>
-                                    <p class="mb-0">{{ row.entries[0]?.summary || '-' }}</p>
+                                    <p class="mb-0">{{ row.entries[0]?.summary  }}</p>
                                 </ng-template>
                             </ng-container>
                             <ng-template #noEntries>

@@ -122,6 +122,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
+    // const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
 
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
@@ -130,7 +131,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const resourcestartdate = matchedResource?.startDate
       ? new Date(matchedResource.startDate)
       : null;
-      
+
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
     }
@@ -175,10 +176,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       projectId: [{ value: day?.projectId || null, disabled: !shouldEnable }],
       projectName: [{ value: day?.projectName || '', disabled: !shouldEnable }],
       entryDate: [{ value: dateValue || '', disabled: !shouldEnable }],
-      startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }, Validators.required],
-      endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }, Validators.required],
+      startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }],
+      endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }],
       duration: durationControl,
-      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }, Validators.required,],
+      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
       isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
@@ -548,6 +549,54 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       control.setValue(formatted, { emitEvent: false });
     }
     this.showDots[rowIndex][dayName] = true;
+
+    // Auto-save on blur if duration has value
+    if (formatted && (event.type === 'blur' || event.type === 'keyup')) {
+      const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
+      const approvalStatus = dayForm?.get('approvalStatus')?.value;
+
+      // Don't auto-save if already processed or waiting for approval
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
+        this.autoSaveTableEntry(rowIndex, dayName);
+      }
+    }
+  }
+
+  //AUTO SAVE TABLE ENTRY
+  autoSaveTableEntry(rowIndex: number, dayName: string) {
+    const projectForm = this.projects.at(rowIndex);
+    const dayForm = projectForm.get(dayName) as FormGroup;
+
+    if (!dayForm || !dayForm.get('duration')?.value) return;
+
+    const formValue = dayForm.value;
+    const projectValue = projectForm.value;
+
+    const payload = {
+      entryId: formValue.entryId || null,
+      employeeId: this.employeeId || null,
+      entryDate: formValue.entryDate,
+      startTime: formValue.startTime || null,
+      endTime: formValue.endTime || null,
+      description: formValue.description || null,
+      approvalStatus: 'draft',
+      clientId: projectValue.selectedProject?.clientId || null,
+      projectId: projectValue.selectedProject?.projectId || null,
+      timesheetId: this.timesheetdata?.timesheetId || null,
+      isOverride: formValue.isBlocked || false,
+      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || null,
+      isBillable: formValue.isBillable || false
+    };
+
+    this.http.postdata('Timesheet/save-or-update', payload).subscribe({
+      next: (res) => {
+        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+      },
+      error: (err) => {
+        console.error('Auto-save failed', err);
+      },
+    });
   }
 
   //TIME FORMAT FOR MODAL
@@ -796,6 +845,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (dayForm instanceof FormGroup) {
       this.modalService.open(content, { centered: true, backdrop: 'static' });
       this.dayForm = dayForm; // keep reference
+
+      if (this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') {
+        this.dayForm.disable();
+      } else {
+        this.dayForm.enable();
+      }
 
       const approvalStatus = this.dayForm.get('approvalStatus')?.value;
       if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {

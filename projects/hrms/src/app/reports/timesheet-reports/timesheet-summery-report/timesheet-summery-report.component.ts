@@ -4,7 +4,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { AuthService } from '../../../services/auth.service';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { HttpService } from '../../../services/http.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -75,6 +75,7 @@ export class TimesheetSummeryReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  showDateRangeError = false;
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -97,7 +98,7 @@ export class TimesheetSummeryReportComponent {
       clientId: [null],
       projectId: [{ value: null, disabled: true }],
       employeid: [{ value: null, disabled: true }],
-      dateRange: [null],
+      dateRange: [null, Validators.required],
       belaible: [null],
       // year: ['']
     });
@@ -395,11 +396,14 @@ export class TimesheetSummeryReportComponent {
     if (formValue.belaible?.value) params.Billable = formValue.belaible.value;
     return params;
   }
-
+ 
   generatetimesheetSummeryReport(page: number, pageSize: number) {
+      this.showDateRangeError = !!this.TimesheetSummeryReportForm.get('dateRange')?.invalid;
     if (this.TimesheetSummeryReportForm.invalid) {
       return;
     }
+   
+    this.showDateRangeError = false;
     this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();

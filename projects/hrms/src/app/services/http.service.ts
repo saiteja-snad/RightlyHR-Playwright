@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -519,6 +519,13 @@ export class HttpService {
       responseType: 'blob', // Set response type to 'blob' to handle file download
     });
   }
+downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
+  const apiurl = `${this.ApiUrl}${url}`;
+  return this.http.get(apiurl, {
+    responseType: 'blob',
+    observe: 'response'  // 👈 allows access to headers
+  });
+}
 
   // PMS Form Submission
   // getReviewCycles(url:string, searchQuery: string, page: number, pageSize: number): Observable<any> {

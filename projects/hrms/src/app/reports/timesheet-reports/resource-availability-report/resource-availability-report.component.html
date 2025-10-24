@@ -58,7 +58,7 @@
           }
 
           @if(rbac.allowedToAccess('Resource Availability Report - Generate.view') && rbac.allowedToAccess('Resource Availability Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+          <button type="button" class="custom-btn btn-primary" (click)="exportResourceAvailabilityReport()"
             [disabled]="filteredpendingapprovalRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

@@ -61,8 +61,7 @@
        <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="TimesheetStatus" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="status" placeholder="Select Status" class="form-select custom-select"
-              filterPlaceholder="Search leave type">
+              formControlName="status" placeholder="Select Status" class="form-select custom-select">
             </p-select>
           </div>
         </div>   
@@ -81,7 +80,7 @@
           }
 
           @if(rbac.allowedToAccess('Pending Approval Status Report - Generate.view') && rbac.allowedToAccess('Pending Approval Status Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+          <button type="button" class="custom-btn btn-primary" (click)="exportPendingApprovalReport()"
             [disabled]="filteredpendingapprovalRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -121,9 +120,22 @@
         <td>{{ record.employee ?? '-' }}</td>
         <td>{{ record.client ?? '-' }}</td>
         <td>{{ record.project ?? '-' }}</td>
-        <td>{{ record.description ?? '-' }}</td>
         <td>
-          {{ record.status === 'Processed' ? 'Approved' : (record.status ?? '-') }}
+            <div class="d-flex align-items-center gap-1">
+              <div *ngIf="record.description !== null">
+                <div [ngbPopover]="popContent">
+                  <app-info-icon />
+                </div>
+              </div>
+
+              <!-- Popover content -->
+              <ng-template #popContent>
+                {{ record.description }}
+              </ng-template>
+            </div>
+          </td>
+        <td>
+          {{ record.status ?? '-' }}
         </td>
         <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
       </tr>

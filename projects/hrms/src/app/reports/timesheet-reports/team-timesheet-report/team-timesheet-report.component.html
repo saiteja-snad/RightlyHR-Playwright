@@ -90,7 +90,7 @@
           }
 
           @if(rbac.allowedToAccess('Team Timesheet Report - Generate.view') && rbac.allowedToAccess('Team Timesheet Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+          <button type="button" class="custom-btn btn-primary" (click)="exportTeamTimesheetReport()"
             [disabled]="filteredtimesheetsummeryRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -135,7 +135,20 @@
         <td>{{ record.employee ?? '-' }}</td>
         <td>{{ record.client ?? '-' }}</td>
         <td>{{ record.project ?? '-' }}</td>
-        <td>{{ record.description ?? '-' }}</td>
+         <td>
+            <div class="d-flex align-items-center gap-1">
+              <div *ngIf="record.description !== null">
+                <div [ngbPopover]="popContent">
+                  <app-info-icon />
+                </div>
+              </div>
+
+              <!-- Popover content -->
+              <ng-template #popContent>
+                {{ record.description }}
+              </ng-template>
+            </div>
+          </td>
         <td>{{ record.hoursWorked ?? '-' }}</td>
         <td>{{ record.billableStatus ?? '-' }}</td>
        <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td>

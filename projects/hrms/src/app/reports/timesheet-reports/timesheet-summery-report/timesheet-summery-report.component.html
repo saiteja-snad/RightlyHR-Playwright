@@ -62,8 +62,7 @@
          <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="belaible" placeholder="Select Billable" class="form-select custom-select"
-              filterPlaceholder="Search leave type">
+              formControlName="belaible" placeholder="Select Billable" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -83,7 +82,7 @@
 
           @if(rbac.allowedToAccess('Timesheet Summary Monthly Report - Generate.view') &&
           rbac.allowedToAccess('Timesheet Summary Monthly Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+          <button type="button" class="custom-btn btn-primary" (click)="exportTimesheetSummery()"
             [disabled]="filteredtimesheetsummeryRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

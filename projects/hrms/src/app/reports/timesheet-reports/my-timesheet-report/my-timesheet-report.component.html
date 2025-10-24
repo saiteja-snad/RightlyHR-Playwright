@@ -8,11 +8,6 @@
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('My Timesheet Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
-          // !MyTimesheetReportForm.get('client')?.value &&
-          // !MyTimesheetReportForm.get('project')?.value &&
-          // !MyTimesheetReportForm.get('billable')?.value &&
-          // !MyTimesheetReportForm.get('status')?.value &&
-          // !MyTimesheetReportForm.get('dateRange')?.value
           MyTimesheetReportForm.get('client')?.value == null &&
           MyTimesheetReportForm.get('project')?.value == null &&
           MyTimesheetReportForm.get('billable')?.value == null &&
@@ -47,19 +42,18 @@
         }
 
         <!-- Date Range -->
-         <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" />
           </div>
-        </div>       
+        </div>
         }
         <!-- Belaible -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="billable" placeholder="Select Billable" class="form-select custom-select"
-              filterPlaceholder="Search leave type">
+              formControlName="billable" placeholder="Select Billable" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -67,8 +61,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="TimesheetStatus" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="status" placeholder="Select Status" class="form-select custom-select"
-              filterPlaceholder="Search leave type">
+              formControlName="status" placeholder="Select Status" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -86,7 +79,7 @@
           }
 
           @if(rbac.allowedToAccess('My Timesheet Report - Generate.view') && rbac.allowedToAccess('My Timesheet Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+          <button type="button" class="custom-btn btn-primary" (click)="exportmytimesheetreport()"
             [disabled]="filteredmytimesheetRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -128,11 +121,25 @@
           <td>{{ record.date ? (record.date | date: 'EEEE') : '-' }}</td>
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
-          <td>{{ record.description ?? '-' }}</td>
+          <td>
+            <div class="d-flex align-items-center gap-1">
+              <div *ngIf="record.description !== null">
+                <div [ngbPopover]="popContent">
+                  <app-info-icon />
+                </div>
+              </div>
+
+              <!-- Popover content -->
+              <ng-template #popContent>
+                {{ record.description }}
+              </ng-template>
+            </div>
+          </td>
+          <!-- <td>{{ record.description ?? '-' }}</td> -->
           <td>{{ record.hoursWorked ?? '-' }}</td>
           <td>{{ record.billableStatus ?? '-' }}</td>
           <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
-          <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td>
+          <td>{{ record.approvalStatus ?? '-' }}</td>
         </tr>
         }
         }
@@ -143,22 +150,22 @@
     <app-data-loader-content />
     }
   </div>
-      @if(collectionSize > 0){
-      <div class="pagination-content">
-        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-          <div class="d-flex align-items-center gap-3 p-2">
-            <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-              (ngModelChange)="onPageSizeChange($event)">
-              <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
-            </select>
-            <span class="pagination-label text-nowrap">
-              Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
-              of {{collectionSize }}
-            </span>
-          </div>
-          <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-            (onPageChange)="onPageChange($event)"></p-paginator>
-        </div>
+  @if(collectionSize > 0){
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          of {{collectionSize }}
+        </span>
       </div>
-      }
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
 </div>

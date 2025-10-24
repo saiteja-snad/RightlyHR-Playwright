@@ -26,10 +26,13 @@ import { Client } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpResponse } from '@angular/common/http';
 @Component({
   selector: 'app-pending-approval-status-report',
-  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
-    NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
+  imports: [DatePicker, CommonModule,NgbPopoverModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+    NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './pending-approval-status-report.component.html',
   styleUrl: './pending-approval-status-report.component.scss'
 })
@@ -69,23 +72,12 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   isDistinct = true;
   employeeData: any[] = [];
   noclientproject = false;
-  ranges: any = {
-    Today: [dayjs(), dayjs()],
-    Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
-    'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
-    'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
-    'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
-    'Last Month': [
-      dayjs().subtract(1, 'month').startOf('month'),
-      dayjs().subtract(1, 'month').endOf('month'),
-    ],
-  };
   localeOptions: any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
   ];
-   TimesheetStatus = [
+  TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
     { key: 'Approved', value: 'Processed' },
     { key: 'Rejected', value: 'Rejected' },
@@ -112,7 +104,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -142,7 +134,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     this.filteredpendingapprovalRecord = [];
     this.PendingApprovalReportForm.get('projectId')?.disable();
     this.PendingApprovalReportForm.get('employeid')?.disable();
-     this.collectionSize = 0;
+    this.collectionSize = 0;
   }
   // called for pagination 
   onRowsChange() {
@@ -396,7 +388,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange,status } = this.PendingApprovalReportForm.value;
+    const { clientId, projectId, employeid, dateRange, status } = this.PendingApprovalReportForm.value;
 
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
@@ -406,16 +398,19 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
 
     return !(hasClient || hasProject || hasDateRange || hasStatus || hasEmployeid);
   }
-
-  generatependingapprovalReport(page: number, pageSize: number) {
-    if (this.PendingApprovalReportForm.invalid) {
-      return;
-    }
-    this.spinnerLoader1 = true;
+  buildTimesheetReportParams() {
     const formValue = this.PendingApprovalReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
-    const startDate = formValue.dateRange?.[0] ? new Date(formValue.dateRange[0]).toISOString() : null;
-    const endDate = formValue.dateRange?.[1] ? new Date(formValue.dateRange[1]).toISOString() : null;
+
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
+    }
+
+    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'PendingApproval',
       EmployeeIds: employeeId,
@@ -432,7 +427,16 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     if (formValue.employeid !== null && formValue.employeid !== undefined) {
       params.EmployeeIds = formValue.employeid;
     }
-    if (formValue.status?.value) params.Status = formValue.status.value;
+    if (formValue.status?.value) params.Statuses = formValue.status.value;
+    return params;
+  }
+
+  generatependingapprovalReport(page: number, pageSize: number) {
+    if (this.PendingApprovalReportForm.invalid) {
+      return;
+    }
+    this.spinnerLoader1 = true;
+    const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -456,142 +460,51 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
 
 
   }
-  exportToExcelYearly(): void {
-    // Define header mappings
-    this.spinnerLoader2 = true;
-    const HEADER_MAPPINGS: { [key: string]: string } = {
-      fusionEmpId: 'EMPLOYEE ID',
-      employeeName: 'EMPLOYEE NAME',
-      department: 'DEPARTMENT',
-      teamManagerName: 'TEAM MANAGER',
-      location: 'LOCATION',
-      sublocation: 'SUB LOCATION',
-      shift: 'SHIFT',
-      leaveType: 'LEAVE TYPE',
-      startdate: 'LEAVE START DATE',
-      enddate: 'LEAVE END DATE',
-      availed: 'AVAILED',
-      appliedDate: 'APPLIED DATE',
-      days: 'DAYS'
-    };
 
-    // Define new sequence
-    const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'LEAVE TYPE',
-      'LEAVE START DATE',
-      'LEAVE END DATE',
-      'AVAILED',
-      'APPLIED DATE',
-      'DAYS'
-    ];
+  exportPendingApprovalReport() {
+  const params = this.buildTimesheetReportParams();
+  const queryString = new URLSearchParams(params).toString();
 
-    // Function to format date in dd-MMM-yyyy format
-    const formatDate = (dateString: string): string => {
-      const date = new Date(dateString);
-      const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
-      return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
-    };
+  this.http.downloadTimesheetReport(
+    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+  ).subscribe({
+    next: (response: HttpResponse<Blob>) => {
+      // Extract filename from Content-Disposition
+      let filename = 'PendingApprovalReport.xlsx';
+      const contentDisposition = response.headers.get('content-disposition');
 
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredpendingapprovalRecord.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'startdate' || originalColumnName === 'enddate' || originalColumnName === 'appliedDate') {
-            // Extract the year part from the date
-            modifiedRecord[columnName] = formatDate(record[originalColumnName]);
-          } else {
-            modifiedRecord[columnName] = record[originalColumnName];
-          }
-        } else {
-          modifiedRecord[columnName] = '';
+      if (contentDisposition) {
+        // Handle both regular and UTF-8 encoded filenames
+        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+
+        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+          filename = decodeURIComponent(utf8FilenameMatch[1]);
+        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+          filename = asciiFilenameMatch[1];
         }
+      }
+
+      //  Download the blob as before
+      const blob = new Blob([response.body!], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
-      return modifiedRecord;
-    });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      window.URL.revokeObjectURL(url);
 
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
-
-    // Merge cells for WFH Report row from A1 to I1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
-
-    // Add WFH Report row
-    XLSX.utils.sheet_add_aoa(ws, [['LEAVE REPORT']], { origin: 'A1' });
-
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
-
-    // Apply styles to WFH Report row
-    const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    wfhReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
-    ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
-
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
-
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
-
-    // Generate Excel file and trigger download
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Leave Report');
-    XLSX.writeFile(wb, 'Leave_Report.xlsx');
-    this.spinnerLoader2 = false;
-  }
-
-  getColumnWidth(data: any[], columnName: string): number {
-    // Find the maximum width of data in the column
-    const maxWidth = data.reduce((max: number, record: any) => {
-      const value = record[columnName]?.toString().length || 0;
-      return value > max ? value : max;
-    }, 0);
-    // Set minimum width to 10
-    return Math.max(10, maxWidth);
-  }
-
-  onClick(employeeIds: any) {
-    if (employeeIds.value) {
-      //   this.filteredtimesheetsummeryRecord = true;
-      this.selectLeaveEmployeeIds = [];
-      this.selectedEmployeeId = [];
-      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) =>
-          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) =>
-          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
-      } else {
-        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
-        this.selectedEmployeeId.push(employeeIds.value.employeeId);
-      }
-    }
-  }
-
-
+      console.log('Downloaded file:', filename);
+      this.conformationPopup.openSuccessModal("Pending Approval Report  Generated Successfully");
+    },
+    error: (err: any) => {
+      this.conformationPopup.openErrorModal('No records found');
+    },
+    complete: () => { }
+  });
+}
   navigation() {
     this.router.navigate(['/reports']);
   }

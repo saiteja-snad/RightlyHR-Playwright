@@ -82,7 +82,7 @@
           }
 
           @if(rbac.allowedToAccess('Utilization Report - Generate.view') && rbac.allowedToAccess('Utilization Report - Export.view')){
-          <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+          <button type="button" class="custom-btn btn-primary" (click)="exportUtilizationReport()"
             [disabled]="filteredpendingapprovalRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

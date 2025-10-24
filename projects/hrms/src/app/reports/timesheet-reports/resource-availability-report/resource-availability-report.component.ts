@@ -24,15 +24,16 @@ import { Client } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { HttpResponse } from '@angular/common/http';
 @Component({
   selector: 'app-resource-availability-report',
- imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './resource-availability-report.component.html',
   styleUrl: './resource-availability-report.component.scss'
 })
 export class ResourceAvailabilityReportComponent {
- moduleinfo: string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -83,7 +84,7 @@ export class ResourceAvailabilityReportComponent {
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
   ];
-   TimesheetStatus = [
+  TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
     { key: 'Approved', value: 'Processed' },
     { key: 'Rejected', value: 'Rejected' },
@@ -110,7 +111,7 @@ export class ResourceAvailabilityReportComponent {
   ) { }
 
   ngOnInit(): void {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.localeOptions = {
       applyLabel: 'ok',
       format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
@@ -137,7 +138,7 @@ export class ResourceAvailabilityReportComponent {
     this.ResourceAvailabilityReportForm.reset();
     this.filteredpendingapprovalRecord = [];
     this.ResourceAvailabilityReportForm.get('employeid')?.disable();
-     this.collectionSize = 0;
+    this.collectionSize = 0;
   }
   // called for pagination 
   onRowsChange() {
@@ -181,47 +182,47 @@ export class ResourceAvailabilityReportComponent {
   // }
 
   getProjectsData(): void {
-  this.loading = true;
-  this.http.getData(`Project?status=Active`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-        this.loading = false;
+    this.loading = true;
+    this.http.getData(`Project?status=Active`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.loading = false;
 
-        if (Array.isArray(res?.data)) {
-          // Store the raw project data
-          this.projectsList = res.data.map((project: any) => ({
-            label: project.projectName + (project.client?.clientName ? ` (${project.client.clientName})` : ''),
-            value: project.projectId
-          }));
+          if (Array.isArray(res?.data)) {
+            // Store the raw project data
+            this.projectsList = res.data.map((project: any) => ({
+              label: project.projectName + (project.client?.clientName ? ` (${project.client.clientName})` : ''),
+              value: project.projectId
+            }));
 
-          // 🔹 Optionally add “No Project” choice at the top
-          const noProjectExists = this.projectsList.some(p => p.value === 0);
-          // Add "No Client/No Project" option
-          if (!noProjectExists) {
-            this.projectsList.unshift({
-              label: 'No Project',
-              value: 0
-            });
+            // 🔹 Optionally add “No Project” choice at the top
+            const noProjectExists = this.projectsList.some(p => p.value === 0);
+            // Add "No Client/No Project" option
+            if (!noProjectExists) {
+              this.projectsList.unshift({
+                label: 'No Project',
+                value: 0
+              });
+            }
+
+          } else {
+            this.projectsList = [];
           }
-
-        } else {
-          this.projectsList = [];
+        },
+        error: (err) => {
+          this.loading = false;
+          console.error('Error fetching projects:', err);
         }
-      },
-      error: (err) => {
-        this.loading = false;
-        console.error('Error fetching projects:', err);
-      }
-    });
-}
+      });
+  }
   onClientChange(event: any): void {
     const clientId = event.value;
     this.ResourceAvailabilityReportForm.patchValue({ projectId: null }); // reset project
     this.ResourceAvailabilityReportForm.get('projectId')?.enable();
     this.ResourceAvailabilityReportForm.get('employeid')?.disable();
     this.ResourceAvailabilityReportForm.get('employeid')?.setValue([]);
-   // this.getProjectsByClientId(clientId);
+    // this.getProjectsByClientId(clientId);
   }
   /** When project selected */
   onProjectChange(event: any) {
@@ -335,7 +336,7 @@ export class ResourceAvailabilityReportComponent {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const {projectId, employeid, dateRange } = this.ResourceAvailabilityReportForm.value;
+    const { projectId, employeid, dateRange } = this.ResourceAvailabilityReportForm.value;
 
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
@@ -344,15 +345,19 @@ export class ResourceAvailabilityReportComponent {
     return !(hasProject || hasDateRange || hasEmployeid);
   }
 
-  generateResourceAvailabilityReport(page: number, pageSize: number) {
-    if (this.ResourceAvailabilityReportForm.invalid) {
-      return;
-    }
-    this.spinnerLoader1 = true;
+  buildTimesheetReportParams() {
     const formValue = this.ResourceAvailabilityReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
-    const startDate = formValue.dateRange?.[0] ? new Date(formValue.dateRange[0]).toISOString() : null;
-    const endDate = formValue.dateRange?.[1] ? new Date(formValue.dateRange[1]).toISOString() : null;
+
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
+    }
+
+    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'ResourceAvailability',
       EmployeeIds: employeeId,
@@ -370,6 +375,15 @@ export class ResourceAvailabilityReportComponent {
       params.EmployeeIds = formValue.employeid;
     }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
+    return params;
+  }
+
+  generateResourceAvailabilityReport(page: number, pageSize: number) {
+    if (this.ResourceAvailabilityReportForm.invalid) {
+      return;
+    }
+    this.spinnerLoader1 = true;
+    const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -393,142 +407,51 @@ export class ResourceAvailabilityReportComponent {
 
 
   }
-  exportToExcelYearly(): void {
-    // Define header mappings
-    this.spinnerLoader2 = true;
-    const HEADER_MAPPINGS: { [key: string]: string } = {
-      fusionEmpId: 'EMPLOYEE ID',
-      employeeName: 'EMPLOYEE NAME',
-      department: 'DEPARTMENT',
-      teamManagerName: 'TEAM MANAGER',
-      location: 'LOCATION',
-      sublocation: 'SUB LOCATION',
-      shift: 'SHIFT',
-      leaveType: 'LEAVE TYPE',
-      startdate: 'LEAVE START DATE',
-      enddate: 'LEAVE END DATE',
-      availed: 'AVAILED',
-      appliedDate: 'APPLIED DATE',
-      days: 'DAYS'
-    };
 
-    // Define new sequence
-    const NEW_SEQUENCE: string[] = [
-      'EMPLOYEE ID',
-      'EMPLOYEE NAME',
-      'DEPARTMENT',
-      'TEAM MANAGER',
-      'LOCATION',
-      'SUB LOCATION',
-      'SHIFT',
-      'LEAVE TYPE',
-      'LEAVE START DATE',
-      'LEAVE END DATE',
-      'AVAILED',
-      'APPLIED DATE',
-      'DAYS'
-    ];
+  exportResourceAvailabilityReport() {
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-    // Function to format date in dd-MMM-yyyy format
-    const formatDate = (dateString: string): string => {
-      const date = new Date(dateString);
-      const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
-      return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
-    };
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // Extract filename from Content-Disposition
+        let filename = 'ResourceAvailabilityReport.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-    // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredpendingapprovalRecord.map(record => {
-      const modifiedRecord: any = {};
-      NEW_SEQUENCE.forEach(columnName => {
-        const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
-        if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'startdate' || originalColumnName === 'enddate' || originalColumnName === 'appliedDate') {
-            // Extract the year part from the date
-            modifiedRecord[columnName] = formatDate(record[originalColumnName]);
-          } else {
-            modifiedRecord[columnName] = record[originalColumnName];
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
           }
-        } else {
-          modifiedRecord[columnName] = '';
         }
-      });
-      return modifiedRecord;
+
+        //  Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
+
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Resource Availability Report Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
     });
-
-    // Create a new empty worksheet
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
-
-    // Merge cells for WFH Report row from A1 to I1
-    ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
-
-    // Add WFH Report row
-    XLSX.utils.sheet_add_aoa(ws, [['LEAVE REPORT']], { origin: 'A1' });
-
-    // Add header row
-    const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
-    XLSX.utils.sheet_add_aoa(ws, [headerRow], { origin: 'A2' });
-
-    // Add data rows
-    XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
-
-    // Apply styles to WFH Report row
-    const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    wfhReportCell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: 'FFFF00' } } };
-    ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
-
-    // Apply styles to column headers
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      const cellAddress = XLSX.utils.encode_cell({ r: 1, c: index });
-      const cell = ws[cellAddress] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-      cell.s = { font: { bold: true }, alignment: { horizontal: 'center' }, fill: { bgColor: { rgb: '0000FF' } }, fontColor: { rgb: 'FFFFFF' } };
-      ws[cellAddress] = cell; // Assign the styled cell back to the worksheet
-    });
-
-    // Adjust column width to fit data
-    NEW_SEQUENCE.forEach((columnName, index) => {
-      let columnWidth = this.getColumnWidth(modifiedData, columnName);
-      if (columnName === 'EMPLOYEE ID' || columnName === 'DEPARTMENT' || columnName === 'APPLIED DATE' || columnName === 'SUB LOCATION') {
-        columnWidth += 5; // Increase width by 5
-      }
-      ws['!cols'] = ws['!cols'] || [];
-      ws['!cols'][index] = { wch: columnWidth };
-    });
-
-    // Generate Excel file and trigger download
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Leave Report');
-    XLSX.writeFile(wb, 'Leave_Report.xlsx');
-    this.spinnerLoader2 = false;
   }
-
-  getColumnWidth(data: any[], columnName: string): number {
-    // Find the maximum width of data in the column
-    const maxWidth = data.reduce((max: number, record: any) => {
-      const value = record[columnName]?.toString().length || 0;
-      return value > max ? value : max;
-    }, 0);
-    // Set minimum width to 10
-    return Math.max(10, maxWidth);
-  }
-
-  onClick(employeeIds: any) {
-    if (employeeIds.value) {
-      //   this.filteredtimesheetsummeryRecord = true;
-      this.selectLeaveEmployeeIds = [];
-      this.selectedEmployeeId = [];
-      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
-        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) =>
-          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
-        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) =>
-          employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
-      } else {
-        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
-        this.selectedEmployeeId.push(employeeIds.value.employeeId);
-      }
-    }
-  }
-
-
   navigation() {
     this.router.navigate(['/reports']);
   }

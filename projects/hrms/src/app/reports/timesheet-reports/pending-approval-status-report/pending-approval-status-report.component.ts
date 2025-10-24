@@ -31,39 +31,24 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpResponse } from '@angular/common/http';
 @Component({
   selector: 'app-pending-approval-status-report',
-  imports: [DatePicker, CommonModule,NgbPopoverModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, NgbPopoverModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent, InfoIconComponent],
   templateUrl: './pending-approval-status-report.component.html',
   styleUrl: './pending-approval-status-report.component.scss'
 })
 export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
-  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filteredpendingapprovalRecord: any[] = [];
   projectsData: any[] = [];
-  teamdetails = [] as any[];
-  selectedEmployeeId: any = null;
-  selectedWfhManager: string | null = null;
-  selectedMonth: string | null = null;
-  selectedLeave: string | null = null;
-  selectedYear: string | null = null;
-  uniqueLeaveCategory: any[] = [];
-  years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   PendingApprovalReportForm!: FormGroup;
-  empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
-  selectedDateRange: any;
-  wfhReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
   filteredleaveRecords = false;
-  selectLeaveEmployeeIds: number[] = [];
-  getEmployeeInfo = [] as any;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  loading: boolean = true;
   clients: Client[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
@@ -71,8 +56,9 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   projectId: any;
   isDistinct = true;
   employeeData: any[] = [];
+  loading: boolean = true;
   noclientproject = false;
-  localeOptions: any;
+  getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
@@ -105,12 +91,6 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.localeOptions = {
-      applyLabel: 'ok',
-      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
-      direction: 'ltr',
-      clearLabel: 'Clear', // could be rtl
-    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getClientsData();
@@ -376,17 +356,6 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
       });
   }
 
-  formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-  }
-
-  parseDate(date: any): Date {
-    return date instanceof Date ? date : new Date(date);
-  }
-
   get isLeaveGenerateDisabled(): boolean {
     const { clientId, projectId, employeid, dateRange, status } = this.PendingApprovalReportForm.value;
 
@@ -451,7 +420,6 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.spinnerLoader1 = false;
-        this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error fetching report:', err);
         this.filteredpendingapprovalRecord = [];
         this.disableBtn = true;
@@ -462,49 +430,49 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
   }
 
   exportPendingApprovalReport() {
-  const params = this.buildTimesheetReportParams();
-  const queryString = new URLSearchParams(params).toString();
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-  this.http.downloadTimesheetReport(
-    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-  ).subscribe({
-    next: (response: HttpResponse<Blob>) => {
-      // Extract filename from Content-Disposition
-      let filename = 'PendingApprovalReport.xlsx';
-      const contentDisposition = response.headers.get('content-disposition');
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // Extract filename from Content-Disposition
+        let filename = 'PendingApprovalReport.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-      if (contentDisposition) {
-        // Handle both regular and UTF-8 encoded filenames
-        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
 
-        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-          filename = decodeURIComponent(utf8FilenameMatch[1]);
-        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-          filename = asciiFilenameMatch[1];
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
         }
-      }
 
-      //  Download the blob as before
-      const blob = new Blob([response.body!], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      window.URL.revokeObjectURL(url);
+        //  Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
 
-      console.log('Downloaded file:', filename);
-      this.conformationPopup.openSuccessModal("Pending Approval Report  Generated Successfully");
-    },
-    error: (err: any) => {
-      this.conformationPopup.openErrorModal('No records found');
-    },
-    complete: () => { }
-  });
-}
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Pending Approval Report  Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
+  }
   navigation() {
     this.router.navigate(['/reports']);
   }

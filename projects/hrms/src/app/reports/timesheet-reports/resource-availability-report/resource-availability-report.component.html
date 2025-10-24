@@ -59,7 +59,7 @@
 
           @if(rbac.allowedToAccess('Resource Availability Report - Generate.view') && rbac.allowedToAccess('Resource Availability Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportResourceAvailabilityReport()"
-            [disabled]="filteredpendingapprovalRecord.length == 0 || disableBtn">
+            [disabled]="filteredResourceAvailabilityRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -88,7 +88,7 @@
         <th>Available From</th>
       </thead>
     <tbody>
-  @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
+  @if (!filteredResourceAvailabilityRecord || filteredResourceAvailabilityRecord.length === 0) {
     <tr>
       <td colspan="8" class="text-center">
         <app-no-data-found />
@@ -96,7 +96,7 @@
     </tr>
   }
   @else {
-    @for (record of filteredpendingapprovalRecord; track $index) {
+    @for (record of filteredResourceAvailabilityRecord; track $index) {
       <tr>
         <td>{{ record.fusionEmpId ?? '-' }}</td>
         <td>{{ record.employeeName ?? '-' }}</td>

@@ -255,7 +255,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
 
     return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus);
   }
-   buildTimesheetReportParams() {
+  buildTimesheetReportParams() {
     const formValue = this.MyTimesheetReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
 
@@ -311,50 +311,50 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     });
   }
 
-exportmytimesheetreport() {
-  const params = this.buildTimesheetReportParams();
-  const queryString = new URLSearchParams(params).toString();
+  exportmytimesheetreport() {
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-  this.http.downloadTimesheetReport(
-    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-  ).subscribe({
-    next: (response: HttpResponse<Blob>) => {
-      // ✅ Extract filename from Content-Disposition
-      let filename = 'mytimesheet.xlsx';
-      const contentDisposition = response.headers.get('content-disposition');
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // ✅ Extract filename from Content-Disposition
+        let filename = 'mytimesheet.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-      if (contentDisposition) {
-        // Handle both regular and UTF-8 encoded filenames
-        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
 
-        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-          filename = decodeURIComponent(utf8FilenameMatch[1]);
-        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-          filename = asciiFilenameMatch[1];
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
         }
-      }
 
-      // ✅ Download the blob as before
-      const blob = new Blob([response.body!], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      window.URL.revokeObjectURL(url);
+        // ✅ Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
 
-      console.log('Downloaded file:', filename);
-      this.conformationPopup.openSuccessModal("Report Generated Successfully");
-    },
-    error: (err: any) => {
-      this.conformationPopup.openErrorModal('No records found');
-    },
-    complete: () => { }
-  });
-}
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Report Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
+  }
 
 
 

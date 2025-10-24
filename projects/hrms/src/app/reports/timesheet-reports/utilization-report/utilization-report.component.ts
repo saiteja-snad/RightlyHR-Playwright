@@ -27,7 +27,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { HttpResponse } from '@angular/common/http';
 @Component({
   selector: 'app-utilization-report',
-imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
+  imports: [DatePicker, CommonModule, MultiSelectModule, FormsModule, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule,
     NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, ReportsHeaderComponent],
   templateUrl: './utilization-report.component.html',
   styleUrl: './utilization-report.component.scss'
@@ -36,28 +36,15 @@ export class UtilizationReportComponent {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
-  filteredpendingapprovalRecord: any[] = [];
+  filteredutilizationRecord: any[] = [];
   projectsData: any[] = [];
-  selectedEmployeeId: any = null;
-  selectedWfhManager: string | null = null;
-  selectedMonth: string | null = null;
-  selectedLeave: string | null = null;
-  selectedYear: string | null = null;
-  uniqueLeaveCategory: any[] = [];
-  years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   UtilizationReportForm!: FormGroup;
-  empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
-  selectedDateRange: any;
-  wfhReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
   filteredleaveRecords = false;
-  selectLeaveEmployeeIds: number[] = [];
-  getEmployeeInfo = [] as any;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  loading: boolean = true;
   clients: Client[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
@@ -65,24 +52,14 @@ export class UtilizationReportComponent {
   projectId: any;
   isDistinct = true;
   employeeData: any[] = [];
+  loading: boolean = true;
   noclientproject = false;
-  ranges: any = {
-    Today: [dayjs(), dayjs()],
-    Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
-    'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
-    'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
-    'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
-    'Last Month': [
-      dayjs().subtract(1, 'month').startOf('month'),
-      dayjs().subtract(1, 'month').endOf('month'),
-    ],
-  };
-  localeOptions: any;
+  getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
   ];
-   TimesheetStatus = [
+  TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
     { key: 'Approved', value: 'Processed' },
     { key: 'Rejected', value: 'Rejected' },
@@ -109,13 +86,7 @@ export class UtilizationReportComponent {
   ) { }
 
   ngOnInit(): void {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.localeOptions = {
-      applyLabel: 'ok',
-      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
-      direction: 'ltr',
-      clearLabel: 'Clear', // could be rtl
-    };
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getClientsData();
@@ -136,10 +107,10 @@ export class UtilizationReportComponent {
 
   clearAllFilters(): void {
     this.UtilizationReportForm.reset();
-    this.filteredpendingapprovalRecord = [];
+    this.filteredutilizationRecord = [];
     this.UtilizationReportForm.get('projectId')?.disable();
     this.UtilizationReportForm.get('employeid')?.disable();
-     this.collectionSize = 0;
+    this.collectionSize = 0;
   }
   // called for pagination 
   onRowsChange() {
@@ -382,8 +353,7 @@ export class UtilizationReportComponent {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange,billable } = this.UtilizationReportForm.value;
-
+    const { clientId, projectId, employeid, dateRange, billable } = this.UtilizationReportForm.value;
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
@@ -392,7 +362,7 @@ export class UtilizationReportComponent {
 
     return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid);
   }
- buildTimesheetReportParams() {
+  buildTimesheetReportParams() {
     const formValue = this.UtilizationReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
 
@@ -405,7 +375,7 @@ export class UtilizationReportComponent {
 
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
-     const params: any = {
+    const params: any = {
       ReportType: 'Utilization',
       EmployeeIds: employeeId,
     };
@@ -436,66 +406,66 @@ export class UtilizationReportComponent {
         this.collectionSize = res.data.totalCount;
         this.spinnerLoader1 = false;
         if (res.success && res.data?.items) {
-          this.filteredpendingapprovalRecord = res.data.items;
+          this.filteredutilizationRecord = res.data.items;
           this.disableBtn = false;
         } else {
-          this.filteredpendingapprovalRecord = [];
+          this.filteredutilizationRecord = [];
         }
       },
       error: (err) => {
         this.spinnerLoader1 = false;
         console.error('Error fetching report:', err);
-        this.filteredpendingapprovalRecord = [];
+        this.filteredutilizationRecord = [];
         this.disableBtn = true;
       },
     });
 
 
   }
-   exportUtilizationReport() {
-  const params = this.buildTimesheetReportParams();
-  const queryString = new URLSearchParams(params).toString();
+  exportUtilizationReport() {
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-  this.http.downloadTimesheetReport(
-    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-  ).subscribe({
-    next: (response: HttpResponse<Blob>) => {
-      // Extract filename from Content-Disposition
-      let filename = 'UtilizationReport.xlsx';
-      const contentDisposition = response.headers.get('content-disposition');
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // Extract filename from Content-Disposition
+        let filename = 'UtilizationReport.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-      if (contentDisposition) {
-        // Handle both regular and UTF-8 encoded filenames
-        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
 
-        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-          filename = decodeURIComponent(utf8FilenameMatch[1]);
-        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-          filename = asciiFilenameMatch[1];
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
         }
-      }
 
-      //  Download the blob as before
-      const blob = new Blob([response.body!], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      window.URL.revokeObjectURL(url);
+        //  Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
 
-      console.log('Downloaded file:', filename);
-      this.conformationPopup.openSuccessModal("Utilization Report Generated Successfully");
-    },
-    error: (err: any) => {
-      this.conformationPopup.openErrorModal('No records found');
-    },
-    complete: () => { }
-  });
-}
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Utilization Report Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
+  }
   navigation() {
     this.router.navigate(['/reports']);
   }

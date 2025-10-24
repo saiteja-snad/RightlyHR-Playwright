@@ -34,33 +34,18 @@ import { HttpResponse } from '@angular/common/http';
   styleUrl: './project-effort-report.component.scss'
 })
 export class ProjectEffortReportComponent {
-  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filteredpendingapprovalRecord: any[] = [];
   projectsData: any[] = [];
-  teamdetails = [] as any[];
-  selectedEmployeeId: any = null;
-  selectedWfhManager: string | null = null;
-  selectedMonth: string | null = null;
-  selectedLeave: string | null = null;
-  selectedYear: string | null = null;
-  uniqueLeaveCategory: any[] = [];
-  years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   ProjectEffortReportForm!: FormGroup;
-  empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
-  selectedDateRange: any;
-  wfhReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
   filteredleaveRecords = false;
-  selectLeaveEmployeeIds: number[] = [];
-  getEmployeeInfo = [] as any;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  loading: boolean = true;
   clients: Client[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
@@ -68,7 +53,9 @@ export class ProjectEffortReportComponent {
   projectId: any;
   isDistinct = true;
   employeeData: any[] = [];
+  loading: boolean = true;
   noclientproject = false;
+  getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
@@ -430,7 +417,6 @@ export class ProjectEffortReportComponent {
       },
       error: (err) => {
         this.spinnerLoader1 = false;
-        this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error fetching report:', err);
         this.filteredpendingapprovalRecord = [];
         this.disableBtn = true;
@@ -441,49 +427,49 @@ export class ProjectEffortReportComponent {
   }
 
   exportProjectEffortReport() {
-  const params = this.buildTimesheetReportParams();
-  const queryString = new URLSearchParams(params).toString();
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-  this.http.downloadTimesheetReport(
-    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-  ).subscribe({
-    next: (response: HttpResponse<Blob>) => {
-      // Extract filename from Content-Disposition
-      let filename = 'ProjectEffortReport.xlsx';
-      const contentDisposition = response.headers.get('content-disposition');
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // Extract filename from Content-Disposition
+        let filename = 'ProjectEffortReport.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-      if (contentDisposition) {
-        // Handle both regular and UTF-8 encoded filenames
-        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
 
-        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-          filename = decodeURIComponent(utf8FilenameMatch[1]);
-        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-          filename = asciiFilenameMatch[1];
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
         }
-      }
 
-      //  Download the blob as before
-      const blob = new Blob([response.body!], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      window.URL.revokeObjectURL(url);
+        //  Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
 
-      console.log('Downloaded file:', filename);
-      this.conformationPopup.openSuccessModal("Project Effort Report  Generated Successfully");
-    },
-    error: (err: any) => {
-      this.conformationPopup.openErrorModal('No records found');
-    },
-    complete: () => { }
-  });
-}
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Project Effort Report  Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
+  }
   navigation() {
     this.router.navigate(['/reports']);
   }

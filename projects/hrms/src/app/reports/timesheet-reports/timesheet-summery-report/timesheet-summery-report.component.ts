@@ -33,33 +33,18 @@ import { HttpResponse } from '@angular/common/http';
   styleUrl: './timesheet-summery-report.component.scss'
 })
 export class TimesheetSummeryReportComponent {
-  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   filteredtimesheetsummeryRecord: any[] = [];
   projectsData: any[] = [];
-  teamdetails = [] as any[];
-  selectedEmployeeId: any = null;
-  selectedWfhManager: string | null = null;
-  selectedMonth: string | null = null;
-  selectedLeave: string | null = null;
-  selectedYear: string | null = null;
-  uniqueLeaveCategory: any[] = [];
-  years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   TimesheetSummeryReportForm!: FormGroup;
-  empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
-  selectedDateRange: any;
-  wfhReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
   filteredleaveRecords = false;
-  selectLeaveEmployeeIds: number[] = [];
-  getEmployeeInfo = [] as any;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  loading: boolean = true;
   clients: Client[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
@@ -67,10 +52,17 @@ export class TimesheetSummeryReportComponent {
   projectId: any;
   isDistinct = true;
   employeeData: any[] = [];
+  loading: boolean = true;
   noclientproject = false;
+  getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
+  ];
+  TimesheetStatus = [
+    { key: 'Waiting for Approval', value: 'Waiting for Approval' },
+    { key: 'Approved', value: 'Processed' },
+    { key: 'Rejected', value: 'Rejected' },
   ];
   page = 1;
   pageSize = 10;
@@ -375,12 +367,12 @@ export class TimesheetSummeryReportComponent {
     const formValue = this.TimesheetSummeryReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
 
-   const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-  }
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
+    }
 
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
@@ -452,51 +444,51 @@ export class TimesheetSummeryReportComponent {
   //     },
   //     complete: () => { }
   //   });
- // }
+  // }
   exportTimesheetSummery() {
-  const params = this.buildTimesheetReportParams();
-  const queryString = new URLSearchParams(params).toString();
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-  this.http.downloadTimesheetReport(
-    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-  ).subscribe({
-    next: (response: HttpResponse<Blob>) => {
-      // ✅ Extract filename from Content-Disposition
-      let filename = 'TimesheetSummery.xlsx';
-      const contentDisposition = response.headers.get('content-disposition');
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // ✅ Extract filename from Content-Disposition
+        let filename = 'TimesheetSummery.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-      if (contentDisposition) {
-        // Handle both regular and UTF-8 encoded filenames
-        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
 
-        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-          filename = decodeURIComponent(utf8FilenameMatch[1]);
-        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-          filename = asciiFilenameMatch[1];
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
         }
-      }
 
-      // ✅ Download the blob as before
-      const blob = new Blob([response.body!], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      window.URL.revokeObjectURL(url);
+        // ✅ Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
 
-      console.log('Downloaded file:', filename);
-      this.conformationPopup.openSuccessModal("Timesheet Summery Report Generated Successfully");
-    },
-    error: (err: any) => {
-      this.conformationPopup.openErrorModal('No records found');
-    },
-    complete: () => { }
-  });
-}
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Timesheet Summery Report Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
+  }
 
 
   navigation() {

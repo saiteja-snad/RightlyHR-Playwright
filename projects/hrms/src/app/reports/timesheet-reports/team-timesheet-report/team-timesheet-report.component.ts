@@ -57,12 +57,12 @@ export class TeamTimesheetReportComponent {
   employeeData: any[] = [];
   loading: boolean = true;
   noclientproject = false;
- getEmployeeInfo = [] as any;
+  getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
   ];
-   TimesheetStatus = [
+  TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
     { key: 'Approved', value: 'Processed' },
     { key: 'Rejected', value: 'Rejected' },
@@ -89,7 +89,7 @@ export class TeamTimesheetReportComponent {
   ) { }
 
   ngOnInit(): void {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getClientsData();
@@ -114,7 +114,7 @@ export class TeamTimesheetReportComponent {
     this.filteredtimesheetsummeryRecord = [];
     this.TeamTimesheetReportForm.get('projectId')?.disable();
     this.TeamTimesheetReportForm.get('employeid')?.disable();
-     this.collectionSize = 0;
+    this.collectionSize = 0;
   }
   // called for pagination 
   onRowsChange() {
@@ -357,7 +357,7 @@ export class TeamTimesheetReportComponent {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, belaible,status } = this.TeamTimesheetReportForm.value;
+    const { clientId, projectId, employeid, dateRange, belaible, status } = this.TeamTimesheetReportForm.value;
 
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
@@ -372,12 +372,12 @@ export class TeamTimesheetReportComponent {
     const formValue = this.TeamTimesheetReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
 
-   const formatDate = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-  }
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
+    }
 
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
@@ -429,51 +429,51 @@ export class TeamTimesheetReportComponent {
 
 
   }
-  
+
   exportTeamTimesheetReport() {
-  const params = this.buildTimesheetReportParams();
-  const queryString = new URLSearchParams(params).toString();
+    const params = this.buildTimesheetReportParams();
+    const queryString = new URLSearchParams(params).toString();
 
-  this.http.downloadTimesheetReport(
-    `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-  ).subscribe({
-    next: (response: HttpResponse<Blob>) => {
-      // Extract filename from Content-Disposition
-      let filename = 'TeamTimesheetReport.xlsx';
-      const contentDisposition = response.headers.get('content-disposition');
+    this.http.downloadTimesheetReport(
+      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
+    ).subscribe({
+      next: (response: HttpResponse<Blob>) => {
+        // Extract filename from Content-Disposition
+        let filename = 'TeamTimesheetReport.xlsx';
+        const contentDisposition = response.headers.get('content-disposition');
 
-      if (contentDisposition) {
-        // Handle both regular and UTF-8 encoded filenames
-        const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
-        const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (contentDisposition) {
+          // Handle both regular and UTF-8 encoded filenames
+          const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
+          const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
 
-        if (utf8FilenameMatch && utf8FilenameMatch[1]) {
-          filename = decodeURIComponent(utf8FilenameMatch[1]);
-        } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
-          filename = asciiFilenameMatch[1];
+          if (utf8FilenameMatch && utf8FilenameMatch[1]) {
+            filename = decodeURIComponent(utf8FilenameMatch[1]);
+          } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
+            filename = asciiFilenameMatch[1];
+          }
         }
-      }
 
-      //  Download the blob as before
-      const blob = new Blob([response.body!], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      window.URL.revokeObjectURL(url);
+        //  Download the blob as before
+        const blob = new Blob([response.body!], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        window.URL.revokeObjectURL(url);
 
-      console.log('Downloaded file:', filename);
-      this.conformationPopup.openSuccessModal("Team Timesheet Report Generated Successfully");
-    },
-    error: (err: any) => {
-      this.conformationPopup.openErrorModal('No records found');
-    },
-    complete: () => { }
-  });
-}
+        console.log('Downloaded file:', filename);
+        this.conformationPopup.openSuccessModal("Team Timesheet Report Generated Successfully");
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal('No records found');
+      },
+      complete: () => { }
+    });
+  }
 
   navigation() {
     this.router.navigate(['/reports']);

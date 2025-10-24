@@ -33,53 +33,28 @@ import { HttpResponse } from '@angular/common/http';
   styleUrl: './resource-availability-report.component.scss'
 })
 export class ResourceAvailabilityReportComponent {
-  moduleinfo: string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
-  filteredpendingapprovalRecord: any[] = [];
+  filteredResourceAvailabilityRecord: any[] = [];
   projectsData: any[] = [];
-  teamdetails = [] as any[];
-  selectedEmployeeId: any = null;
-  selectedWfhManager: string | null = null;
-  selectedMonth: string | null = null;
-  selectedLeave: string | null = null;
-  selectedYear: string | null = null;
-  uniqueLeaveCategory: any[] = [];
-  years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   ResourceAvailabilityReportForm!: FormGroup;
-  empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
-  selectedDateRange: any;
-  wfhReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
   filteredleaveRecords = false;
-  selectLeaveEmployeeIds: number[] = [];
-  getEmployeeInfo = [] as any;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  loading: boolean = true;
   clients: Client[] = [];
   clientsData: any[] = [];
-  projectDropdownList: { label: string; value: number }[] = [];
+  clientDropdownList: { label: string; value: number }[] = [];
   projectsList: any[] = [];
   projectId: any;
   isDistinct = true;
   employeeData: any[] = [];
+  loading: boolean = true;
   noclientproject = false;
-  ranges: any = {
-    Today: [dayjs(), dayjs()],
-    Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
-    'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
-    'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
-    'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
-    'Last Month': [
-      dayjs().subtract(1, 'month').startOf('month'),
-      dayjs().subtract(1, 'month').endOf('month'),
-    ],
-  };
-  localeOptions: any;
+  getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
@@ -112,12 +87,6 @@ export class ResourceAvailabilityReportComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.localeOptions = {
-      applyLabel: 'ok',
-      format: this.authService.convertAngularDateFormatToJs(environment.dateformat).toUpperCase(),
-      direction: 'ltr',
-      clearLabel: 'Clear', // could be rtl
-    };
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getProjectsData();
@@ -136,7 +105,7 @@ export class ResourceAvailabilityReportComponent {
 
   clearAllFilters(): void {
     this.ResourceAvailabilityReportForm.reset();
-    this.filteredpendingapprovalRecord = [];
+    this.filteredResourceAvailabilityRecord = [];
     this.ResourceAvailabilityReportForm.get('employeid')?.disable();
     this.collectionSize = 0;
   }
@@ -162,24 +131,6 @@ export class ResourceAvailabilityReportComponent {
     this.first = 0;
     this.generateResourceAvailabilityReport(this.page, this.pageSize);
   }
-
-
-  //   getAllActiveProjects() {
-  //   this.loading = true;
-  //   this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (res: any) => {
-  //       this.projectsData = res?.data ?? []; // Extract "data" array
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching projects data:', err);
-  //       this.loading = false;
-  //       this.projectsData = [];
-  //     },
-  //     complete: () => {
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
 
   getProjectsData(): void {
     this.loading = true;
@@ -324,17 +275,6 @@ export class ResourceAvailabilityReportComponent {
       });
   }
 
-  formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-  }
-
-  parseDate(date: any): Date {
-    return date instanceof Date ? date : new Date(date);
-  }
-
   get isLeaveGenerateDisabled(): boolean {
     const { projectId, employeid, dateRange } = this.ResourceAvailabilityReportForm.value;
 
@@ -390,17 +330,16 @@ export class ResourceAvailabilityReportComponent {
         this.collectionSize = res.data.totalCount;
         this.spinnerLoader1 = false;
         if (res.success && res.data?.items) {
-          this.filteredpendingapprovalRecord = res.data.items;
+          this.filteredResourceAvailabilityRecord = res.data.items;
           this.disableBtn = false;
         } else {
-          this.filteredpendingapprovalRecord = [];
+          this.filteredResourceAvailabilityRecord = [];
         }
       },
       error: (err) => {
         this.spinnerLoader1 = false;
-        this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error fetching report:', err);
-        this.filteredpendingapprovalRecord = [];
+        this.filteredResourceAvailabilityRecord = [];
         this.disableBtn = true;
       },
     });

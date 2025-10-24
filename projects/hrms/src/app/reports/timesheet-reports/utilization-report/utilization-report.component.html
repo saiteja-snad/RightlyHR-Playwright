@@ -62,8 +62,7 @@
            <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="billable" placeholder="Select Billable" class="form-select custom-select"
-              filterPlaceholder="Search leave type">
+              formControlName="billable" placeholder="Select Billable" class="form-select custom-select">
             </p-select>
           </div>
         </div>
@@ -83,7 +82,7 @@
 
           @if(rbac.allowedToAccess('Utilization Report - Generate.view') && rbac.allowedToAccess('Utilization Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportUtilizationReport()"
-            [disabled]="filteredpendingapprovalRecord.length == 0 || disableBtn">
+            [disabled]="filteredutilizationRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -114,7 +113,7 @@
         <th>Non-Bill %</th>
       </thead>
      <tbody>
-  @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
+  @if (!filteredutilizationRecord || filteredutilizationRecord.length === 0) {
     <tr>
       <td colspan="9" class="text-center">
         <app-no-data-found />
@@ -122,7 +121,7 @@
     </tr>
   }
   @else {
-    @for (record of filteredpendingapprovalRecord; track $index) {
+    @for (record of filteredutilizationRecord; track $index) {
       <tr>
         <td>{{ record.clientName ?? '-' }}</td>
         <td>{{ record.projectName ?? '-' }}</td>

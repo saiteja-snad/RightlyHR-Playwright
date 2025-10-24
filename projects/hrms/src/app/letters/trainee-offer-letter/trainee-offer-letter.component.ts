@@ -706,6 +706,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     const data = JSON.parse(JSON.stringify(this.traineeEmpData));
     this.loading = true;
     this.traineeEmpData.employeeId = this.traineeEmpData.empId,
+     this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
       this.traineeEmpData.firstName = data.firstName,
       this.traineeEmpData.lastName = data.lastName,
       this.traineeEmpData.middleName = data.middleName,
@@ -735,6 +736,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     else {
       this.traineeEmpData.substatus = 'Offer Letter Generated';
     }
+    console.log(this.traineeEmpData);
+    
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.traineeEmpData).subscribe({
       next: (res: any) => {
         this.result = res.employeeData;

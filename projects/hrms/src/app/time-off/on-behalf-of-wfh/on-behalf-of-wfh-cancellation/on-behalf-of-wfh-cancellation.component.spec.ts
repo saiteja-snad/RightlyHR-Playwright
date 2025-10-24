@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-whf-cancellation.component';
+import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-wfh-cancellation.component';
 
 describe('OnBehalfOfWhfCancellationComponent', () => {
   let component: OnBehalfOfWhfCancellationComponent;

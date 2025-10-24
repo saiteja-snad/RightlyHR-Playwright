@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import { ICompOff } from '../../comp-off/compoff.modal';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
-  selector: 'app-on-behalf-of-whf-approved',
+  selector: 'app-on-behalf-of-whf-processed',
   imports: [CommonModule,
     NgbPopoverModule,
     FormsModule,
@@ -28,20 +28,20 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     DataLoaderContentComponent,
     TranslateModule,
     InfoIconComponent],
-  templateUrl: './on-behalf-of-whf-approved.component.html',
-  styleUrl: './on-behalf-of-whf-approved.component.scss'
+  templateUrl: './on-behalf-of-wfh-processed.component.html',
+  styleUrl: './on-behalf-of-wfh-processed.component.scss'
 })
-export class OnBehalfOfWhfApprovedComponent implements OnInit, OnDestroy {
-totalRecords = 100;
+export class OnBehalfOfWhfProcessedComponent {
+ totalRecords = 100;
   first: any = 0;
   rows: any = 10;
-  approvedWFHs: ICompOff[] = [];
+  processedWFHs: ICompOff[] = [];
   compOff = [] as any;
-  approvedWFHsCount = 0;
+  processedWFHsCount = 0;
   empinfo = {} as IJob;
-  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
+  selectempid: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -83,18 +83,20 @@ totalRecords = 100;
   getWFHRequests() {
     let empId = this.selectempid ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
-        this.approvedWFHs = this.compOff.filter(
-          (element: { status: string }) => element.status === 'Approved'
+        this.processedWFHs = this.compOff.filter(
+          (element: { status: string }) => element.status === 'Processed'
         );
-        this.approvedWFHsCount = this.approvedWFHs.length;
+        this.processedWFHsCount = this.processedWFHs.length;
+        console.log(this.processedWFHs.length);
+        
       },
       error: (error) => {
         this.dataload = false;
         console.error('Error fetching data:', error);
-        this.approvedWFHs = []; // Set to empty array on error
+        this.processedWFHs = []; // Set to empty array on error
       }, complete: () => {
         this.dataload = false;
       },

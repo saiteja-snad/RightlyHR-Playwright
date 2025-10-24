@@ -655,6 +655,10 @@ export class HttpService {
   getFilterWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
+  
+  getFilterOnBehalfWFHDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
+  }
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-whf-processed.component';
+import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-wfh-processed.component';
 
 describe('OnBehalfOfWhfProcessedComponent', () => {
   let component: OnBehalfOfWhfProcessedComponent;

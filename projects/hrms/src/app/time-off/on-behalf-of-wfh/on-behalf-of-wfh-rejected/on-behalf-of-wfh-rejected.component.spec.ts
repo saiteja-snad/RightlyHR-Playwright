@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-whf-rejected.component';
+import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-wfh-rejected.component';
 
 describe('OnBehalfOfWhfRejectedComponent', () => {
   let component: OnBehalfOfWhfRejectedComponent;

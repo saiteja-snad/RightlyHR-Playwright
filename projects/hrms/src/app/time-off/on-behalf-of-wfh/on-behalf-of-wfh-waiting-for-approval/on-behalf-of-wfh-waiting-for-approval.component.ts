@@ -33,8 +33,8 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     NoDataFoundComponent,
     DataLoaderContentComponent,
     InfoIconComponent],
-  templateUrl: './on-behalf-of-whf-waiting-for-approval.component.html',
-  styleUrl: './on-behalf-of-whf-waiting-for-approval.component.scss'
+  templateUrl: './on-behalf-of-wfh-waiting-for-approval.component.html',
+  styleUrl: './on-behalf-of-wfh-waiting-for-approval.component.scss'
 })
 export class OnBehalfOfWhfWaitingForApprovalComponent {
 totalRecords = 100;
@@ -128,7 +128,7 @@ totalRecords = 100;
     let empId = this.empinfo.employeeId;
     this.dataload = true;
     this.permissionForLoggedInUser = true;
-    this.subscription = this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.subscription = this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
         this.waitingForApprovalWFHs = response.filter(
@@ -202,7 +202,7 @@ totalRecords = 100;
     let empId = this.selectempid;
     this.dataload = true;
     this.permissionForLoggedInUser = false;
-    this.subscription = this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.subscription = this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
         this.waitingForApprovalWFHs = this.compOff.filter(

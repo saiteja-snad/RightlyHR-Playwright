@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OnBehalfOfWhfWaitingForApprovalComponent } from './on-behalf-of-whf-waiting-for-approval.component';
+import { OnBehalfOfWhfWaitingForApprovalComponent } from './on-behalf-of-wfh-waiting-for-approval.component';
 
 describe('OnBehalfOfWhfWaitingForApprovalComponent', () => {
   let component: OnBehalfOfWhfWaitingForApprovalComponent;

@@ -66,12 +66,13 @@ export class OnBehalfOfWfhTabsComponent {
       { label: 'WFH', link: '/time-off/on-behalf-of-wfh', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'WFH/On Duty Module', action: 'view' } }
     ];
     this.filterTabsByRbac();
+    this.getWFHRequest();
   }
 
   getWFHRequest() {
     this.loading = true
     let empId = this.empinfo.employeeId;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
         if (Array.isArray(response)) {
@@ -101,7 +102,7 @@ export class OnBehalfOfWfhTabsComponent {
 
   getCompOffEMPRequest() {
     let empId = this.selectempid;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT', response);
         if (Array.isArray(response)) {

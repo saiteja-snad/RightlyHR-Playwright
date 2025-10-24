@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import { ICompOff } from '../../comp-off/compoff.modal';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
-  selector: 'app-on-behalf-of-whf-cancellation',
+  selector: 'app-on-behalf-of-whf-rejected',
   imports: [CommonModule,
     NgbPopoverModule,
     FormsModule,
@@ -26,12 +26,13 @@ import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    TranslateModule, InfoIconComponent],
-  templateUrl: './on-behalf-of-whf-cancellation.component.html',
-  styleUrl: './on-behalf-of-whf-cancellation.component.scss'
+    TranslateModule,
+    InfoIconComponent],
+  templateUrl: './on-behalf-of-wfh-rejected.component.html',
+  styleUrl: './on-behalf-of-wfh-rejected.component.scss'
 })
-export class OnBehalfOfWhfCancellationComponent implements OnInit, OnDestroy {
-totalRecords = 100;
+export class OnBehalfOfWhfRejectedComponent {
+  totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   rejectedWFHs: ICompOff[] = [];
@@ -49,7 +50,7 @@ totalRecords = 100;
   ];
   selectedYear: any;
 
-  constructor(private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) { }
+  constructor(private http: HttpService,public rbac: RbacService,private TimeoffYearFilterService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.TimeoffYearFilterService.selectedYear$.subscribe(year => {
@@ -59,9 +60,8 @@ totalRecords = 100;
           if (id) {
             // Use the new employee ID here
             this.selectempid = id;
-            this.getWFHEMPRequests();
-          }
-          else {
+            this.getWFHRequests();
+          } else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
             this.getWFHRequests();
           }
@@ -80,39 +80,18 @@ totalRecords = 100;
   }
 
   getWFHRequests() {
-    let empId = this.empinfo.employeeId;
+    let empId = this.selectempid ?? this.empinfo.employeeId;
     this.dataload = true;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
         this.rejectedWFHs = this.compOff.filter(
-          (element: { status: string }) => element.status === 'Cancelled'
+          (element: { status: string }) => element.status === 'Rejected'
         );
         this.rejectedWFHsCount = this.rejectedWFHs.length;
       },
       error: (error) => {
         this.dataload = false;
-        console.error('Error fetching data:', error);
-        this.rejectedWFHs = []; // Set to empty array on error
-      }, complete: () => {
-        this.dataload = false;
-      },
-    });
-  }
-
-  // this method use when choose my team in dropdown
-  getWFHEMPRequests() {
-    let empId = this.selectempid;
-    this.dataload = true;
-    this.http.getFilterWFHDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        this.compOff = response;
-        this.rejectedWFHs = this.compOff.filter(
-          (element: { status: string }) => element.status === 'Cancelled'
-        );
-        this.rejectedWFHsCount = this.rejectedWFHs.length;
-      },
-      error: (error) => {
         console.error('Error fetching data:', error);
         this.rejectedWFHs = []; // Set to empty array on error
       }, complete: () => {

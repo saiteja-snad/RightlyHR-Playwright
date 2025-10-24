@@ -88,11 +88,11 @@ import { ContractorsComponent } from './pending-approvals/contractors/contractor
 import { ContractForYouComponent } from './pending-approvals/contractors/contract-for-you/contract-for-you.component';
 import { ContractForYourRoleComponent } from './pending-approvals/contractors/contract-for-your-role/contract-for-your-role.component';
 import { OnBehalfOfWfhComponent } from './on-behalf-of-wfh/on-behalf-of-wfh.component';
-import { OnBehalfOfWhfWaitingForApprovalComponent } from './on-behalf-of-wfh/on-behalf-of-whf-waiting-for-approval/on-behalf-of-whf-waiting-for-approval.component';
-import { OnBehalfOfWhfApprovedComponent } from './on-behalf-of-wfh/on-behalf-of-whf-approved/on-behalf-of-whf-approved.component';
-import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-wfh/on-behalf-of-whf-processed/on-behalf-of-whf-processed.component';
-import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-wfh/on-behalf-of-whf-rejected/on-behalf-of-whf-rejected.component';
-import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-wfh/on-behalf-of-whf-cancellation/on-behalf-of-whf-cancellation.component';
+import { OnBehalfOfWhfWaitingForApprovalComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-waiting-for-approval/on-behalf-of-wfh-waiting-for-approval.component';
+import { OnBehalfOfWhfApprovedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-approved/on-behalf-of-whf-approved.component';
+import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-processed/on-behalf-of-wfh-processed.component';
+import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-rejected/on-behalf-of-wfh-rejected.component';
+import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-cancellation/on-behalf-of-wfh-cancellation.component';
 
 
 export default [

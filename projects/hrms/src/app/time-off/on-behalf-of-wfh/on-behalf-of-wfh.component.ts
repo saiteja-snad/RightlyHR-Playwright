@@ -184,7 +184,7 @@ export class OnBehalfOfWfhComponent {
 
   getWorkfromhomeRequest(employeedId: any) {
     let empId = employeedId;
-    this.subscription = this.http.getFilterWFHDataByID(empId, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilterOnBehalfWFHDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
         this.Workfromhome = response;
         this.Workfromhome.forEach((element: { status: string }) => {

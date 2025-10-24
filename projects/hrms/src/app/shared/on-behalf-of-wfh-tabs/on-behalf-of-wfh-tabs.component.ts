@@ -17,7 +17,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
   styleUrl: './on-behalf-of-wfh-tabs.component.scss'
 })
 export class OnBehalfOfWfhTabsComponent {
-   compOff = [] as any;
+  compOff = [] as any;
   rejectedWFHRequestsCount = 0;
   waitingForApprovalWFHCount = 0;
   approvedWFHRequestsCount = 0;
@@ -32,8 +32,7 @@ export class OnBehalfOfWfhTabsComponent {
   selectedYear: any;
   columnsPerRow = 3;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, 
-    private TimeoffYearFilterService: TimeoffYearFilterService, private accessNav: AccessNavigationService) {
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
         this.getWFHRequest();
@@ -63,7 +62,7 @@ export class OnBehalfOfWfhTabsComponent {
 
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.navTabs = [
-      { label: 'WFH', link: '/time-off/on-behalf-of-wfh', icon:'/time-off-icon/WFH-icon.png', permission: { feature: 'WFH/On Duty Module', action: 'view' } }
+      { label: 'WFH', link: '/on-behalf-of/on-behalf-of-wfh', icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'WFH/On Duty Module', action: 'view' } }
     ];
     this.filterTabsByRbac();
     this.getWFHRequest();
@@ -178,7 +177,7 @@ export class OnBehalfOfWfhTabsComponent {
     this.filterTabsByRbac();
   }
 
-    navigateToAccessedRoute(route: string) {
+  navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
@@ -187,7 +186,7 @@ export class OnBehalfOfWfhTabsComponent {
     }
   }
 
-    isActiveRoute(link: string): boolean {
+  isActiveRoute(link: string): boolean {
     const currentUrl = this.router.url;
     // Exact match or starts with followed by `/` to avoid partial matches
     return currentUrl === link || currentUrl.startsWith(link + '/');

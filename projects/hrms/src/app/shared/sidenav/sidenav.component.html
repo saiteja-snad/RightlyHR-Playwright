@@ -85,11 +85,16 @@
             </li>
             }
 
-            <!--Time Off-->
-            @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/time-off/on-behalf-of-wfh');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/time-off/on-behalf-of-wfh')">
-                <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">On Behalf Of WFH
+            @if(this.rbac.allowedToAccess('Time-Off.view')){
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveOnBehaldOf()">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="main-menu-icons/clock.png" alt="Icon" class="main-menu-icon">On Behalf Of
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-on-behalf-of-wfh-tabs />
+                    </ul>
+                </div>
             </li>
             }
 

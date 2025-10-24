@@ -107,7 +107,6 @@ export class SidenavComponent implements OnInit {
   }
 
   goToAccessibleRoute(actualRoute: string) {
-    debugger
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
@@ -135,6 +134,12 @@ export class SidenavComponent implements OnInit {
     const currentUrl = this.router.url;
     // ✅Active for pending-approvals and its subroutes
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
+  }
+
+  isActiveOnBehaldOf(): boolean {
+    const currentUrl = this.router.url;
+    // ✅Active for pending-approvals and its subroutes
+    return currentUrl === '/on-behalf-of/on-behalf-of-wfh' || currentUrl.startsWith('/on-behalf-of/on-behalf-of-wfh');
   }
 
   resetDropdown(): void {

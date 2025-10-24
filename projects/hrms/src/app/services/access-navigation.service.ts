@@ -418,7 +418,6 @@ export class AccessNavigationService {
           }
         }
 
-
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -427,7 +426,6 @@ export class AccessNavigationService {
           return (route = 'time-off/global-permissions');
         }
         
-
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
             if (
@@ -604,16 +602,16 @@ export class AccessNavigationService {
         }
 
         break;
-
-      case '/time-off/on-behalf-of-wfh' :
-        if(this.rbac.allowedToAccess('On Behalf Of WFH.view')){
-          for(const item of ON_BEHALF_OF_WFH_TABS){
-            if(this.rbac.allowedToAccess(item.permission)){
-              return item.route
+        
+      case '/on-behalf-of/on-behalf-of-wfh':
+        if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
+          for (const item of ON_BEHALF_OF_WFH_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
         }
-      break;
+        break;
 
       case '/it-support':
         if (this.rbac.allowedToAccess('My Tickets Tab.view')) {
@@ -1311,7 +1309,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/time-off/on-behalf-of-wfh' :
+      case '/on-behalf-of/on-behalf-of-wfh' :
         if(this.rbac.allowedToAccess('On Behalf Of WFH.view')){
           for(const item of ON_BEHALF_OF_WFH_TABS){
             if(this.rbac.allowedToAccess(item.permission)){

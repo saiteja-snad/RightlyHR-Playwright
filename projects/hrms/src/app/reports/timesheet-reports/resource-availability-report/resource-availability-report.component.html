@@ -8,9 +8,9 @@
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
-          !ResourceAvailabilityReportForm.get('projectId')?.value &&
-          !ResourceAvailabilityReportForm.get('employeid')?.value &&
-          !ResourceAvailabilityReportForm.get('dateRange')?.value 
+          ResourceAvailabilityReportForm.get('projectId')?.value == null &&
+          ResourceAvailabilityReportForm.get('employeid')?.value == null &&
+          ResourceAvailabilityReportForm.get('dateRange')?.value == null
         " (click)="clearAllFilters()">
           Clear All
         </button>

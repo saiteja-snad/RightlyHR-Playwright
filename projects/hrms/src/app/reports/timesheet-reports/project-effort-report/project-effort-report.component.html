@@ -7,10 +7,10 @@
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
-          !ProjectEffortReportForm.get('clientId')?.value &&
-          !ProjectEffortReportForm.get('projectId')?.value &&
-          !ProjectEffortReportForm.get('employeid')?.value &&
-          !ProjectEffortReportForm.get('billable')?.value
+          ProjectEffortReportForm.get('clientId')?.value == null &&
+          ProjectEffortReportForm.get('projectId')?.value == null &&
+          ProjectEffortReportForm.get('employeid')?.value == null &&
+          ProjectEffortReportForm.get('billable')?.value == null
         " (click)="clearAllFilters()">
           Clear All
         </button>

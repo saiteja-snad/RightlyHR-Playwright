@@ -7,11 +7,11 @@
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Pending Approval Status Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
-          !PendingApprovalReportForm.get('clientId')?.value &&
-          !PendingApprovalReportForm.get('projectId')?.value &&
-          !PendingApprovalReportForm.get('employeid')?.value &&
-          !PendingApprovalReportForm.get('dateRange')?.value &&
-          !PendingApprovalReportForm.get('status')?.value
+          PendingApprovalReportForm.get('clientId')?.value == null &&
+          PendingApprovalReportForm.get('projectId')?.value == null &&
+          PendingApprovalReportForm.get('employeid')?.value == null &&
+          PendingApprovalReportForm.get('dateRange')?.value == null &&
+          PendingApprovalReportForm.get('status')?.value == null
         " (click)="clearAllFilters()">
           Clear All
         </button>

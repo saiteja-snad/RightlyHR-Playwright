@@ -274,11 +274,11 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     const params: any = {
       ReportType: 'MyTimesheet',
       EmployeeIds: employeeId,
+      ClientIds: formValue.client ? formValue.client : 0,   
+       ProjectIds: formValue.project ? formValue.project : 0 
     };
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
-    if (formValue.client) params.ClientIds = formValue.client;
-    if (formValue.project) params.ProjectIds = formValue.project;
     if (formValue.billable?.value) params.Billable = formValue.billable.value;
     if (formValue.status?.value) params.Statuses = formValue.status.value;
     return params;

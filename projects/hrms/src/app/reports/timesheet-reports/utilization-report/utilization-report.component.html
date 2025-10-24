@@ -7,11 +7,11 @@
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Utilization Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
-          !UtilizationReportForm.get('clientId')?.value &&
-          !UtilizationReportForm.get('projectId')?.value &&
-          !UtilizationReportForm.get('dateRange')?.value &&
-          !UtilizationReportForm.get('status')?.value &&
-          !UtilizationReportForm.get('billable')?.value
+          UtilizationReportForm.get('clientId')?.value == null &&
+          UtilizationReportForm.get('projectId')?.value == null &&
+          UtilizationReportForm.get('dateRange')?.value == null &&
+          UtilizationReportForm.get('status')?.value == null &&
+          UtilizationReportForm.get('billable')?.value == null
         " (click)="clearAllFilters()">
           Clear All
         </button>

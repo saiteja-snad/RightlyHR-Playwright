@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnDestroy, OnInit  } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subject, takeUntil } from 'rxjs';
-import { IJob } from '../../Interfaces/letters-model';
-import { HttpService } from '../../services/http.service';
-import { RbacService } from '../../services/rbac.service';
-import { SidetabsloadersComponent } from '../sidetabsloaders/sidetabsloaders.component';
-import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
-import { AccessNavigationService } from '../../services/access-navigation.service';
+import { IJob } from '../../../Interfaces/letters-model';
+import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
+import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 
 @Component({
   selector: 'app-on-behalf-of-wfh-tabs',
@@ -16,6 +15,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
   templateUrl: './on-behalf-of-wfh-tabs.component.html',
   styleUrl: './on-behalf-of-wfh-tabs.component.scss'
 })
+
 export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   compOff = [] as any;
   rejectedWFHRequestsCount = 0;
@@ -31,7 +31,8 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedYear: any;
 
-  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService, private TimeoffYearFilterService: TimeoffYearFilterService) {
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService,
+    private TimeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
         this.getWFHRequest();
@@ -72,7 +73,6 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
           const cancelled = response.filter(item => item.status === 'Cancelled');
-
           this.waitingForApprovalWFHCount = waiting.length;
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;
@@ -85,7 +85,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         }
       },
       error: (reason: any) => {
-        this.loading = true
+        this.loading = true;
         console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
       }
     });
@@ -102,7 +102,6 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
           const cancelled = response.filter(item => item.status === 'Cancelled');
-
           this.waitingForApprovalWFHCount = waiting.length;
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;

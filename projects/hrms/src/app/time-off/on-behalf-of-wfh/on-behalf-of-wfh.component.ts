@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators, FormsModule } from '@angular/forms';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,18 +17,18 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
 import { MODULE_INFOS } from '../../shared/modules-info';
-import { WfhApprovaltabsComponent } from '../../shared/time-off-module-tabs/wfh-approvaltabs/wfh-approvaltabs.component';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { AuthService } from '../../services/auth.service';
-import { OnBehalfOfWfhTabsComponent } from "../../shared/on-behalf-of-wfh-tabs/on-behalf-of-wfh-tabs.component";
-
+import { OnBehalfOfWfhTabsComponent } from "../../shared/time-off-module-tabs/on-behalf-of-wfh-tabs/on-behalf-of-wfh-tabs.component";
 @Component({
   selector: 'app-on-behalf-of-wfh',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
-    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfWfhTabsComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, TranslateModule, DropdownModule, Select, 
+    ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfWfhTabsComponent],
   templateUrl: './on-behalf-of-wfh.component.html',
-  styleUrl: './on-behalf-of-wfh.component.scss'
+  styleUrl: './on-behalf-of-wfh.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class OnBehalfOfWfhComponent {
   moduleinfo: string = '';
   subscription!: Subscription;

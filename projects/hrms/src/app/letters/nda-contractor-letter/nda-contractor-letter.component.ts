@@ -141,7 +141,7 @@ export class NdaContractorLetterComponent {
   }
 
   getAuthorityDetails() {
-    let offertype = 'Appointment Letter';
+    let offertype = 'NDA Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({

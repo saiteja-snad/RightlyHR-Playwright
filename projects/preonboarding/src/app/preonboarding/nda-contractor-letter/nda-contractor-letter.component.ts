@@ -144,7 +144,7 @@ export class NdaContractorLetterComponent implements OnInit, OnDestroy{
   //get offer letter Authority list
   authorityDetails = [] as any;
   getAuthorityDetails() {
-    let offertype = 'Offer Letter';
+    let offertype = 'NDA Letter';
     this.subscription = this.http.getData(`Preonboardingsignaturauthority?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authorityDetails = data;

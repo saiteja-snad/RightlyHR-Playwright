@@ -22,14 +22,14 @@ export class TimesheetReportTabsComponent {
       permission: { feature: 'My Timesheet Report', action: 'view' }
     },
     {
-      label: 'Timesheet Summary Monthly Report',
+      label: 'Timesheet Summary Report',
       route: '/reports/timesheet-reports/timesheet-summary-monthly-report',
       icon: '/reports-icons/timesheet-summary-monthly-report.png',
       description: MODULE_INFOS.ATTENDANCE_TIMESHEET_SUMMARY_MONTHLY_REPORTS_MODULE_INFO,
       permission: { feature: 'Timesheet Summary Monthly Report', action: 'view' }
     },
     {
-      label: 'Team Timesheet Report(Manager)',
+      label: 'Team Timesheet Report',
       route: '/reports/timesheet-reports/team-timesheet-report',
       icon: '/reports-icons/team-timesheet-report.png',
       description: MODULE_INFOS.TEAM_TIMESHEET_REPORTS_MODULE_INFO,

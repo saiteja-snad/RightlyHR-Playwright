@@ -19,7 +19,7 @@
          <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
-              formControlName="clientId" placeholder="Select Client" class="form-select custom-select"
+              formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
               (onChange)="onClientChange($event)">
             </p-select>
           </div>
@@ -31,7 +31,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
-              placeholder="Select Project" formControlName="projectId" class="form-select custom-select"
+              placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
               (onChange)="onProjectChange($event)">
             </p-select>
           </div>
@@ -52,8 +52,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
-              formControlName="billable" placeholder="Select Billable" class="form-select custom-select"
-              filterPlaceholder="Search leave type">
+              formControlName="billable" placeholder="Please select billable" class="form-select custom-select">
             </p-select>
           </div>
         </div>  

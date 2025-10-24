@@ -78,10 +78,10 @@ export class ReportsHeaderComponent implements OnInit {
       this.componentname = 'My Timesheet';
     }
      else if (this.router.url === '/reports/timesheet-reports/timesheet-summary-monthly-report') {
-      this.componentname = 'Timesheet Summary Monthly';
+      this.componentname = 'Timesheet Summary';
     }
      else if (this.router.url === '/reports/timesheet-reports/team-timesheet-report') {
-      this.componentname = 'Team Timesheet(Manager)';
+      this.componentname = 'Team Timesheet';
     }
      else if (this.router.url === '/reports/timesheet-reports/pending-approval-status-report') {
       this.componentname = 'Pending Approval Status';

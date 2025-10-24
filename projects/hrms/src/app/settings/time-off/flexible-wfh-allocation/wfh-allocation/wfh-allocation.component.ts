@@ -11,9 +11,10 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { ILocation, ISubLocation, IShiftHeader, IEmployees } from '../../flexible-leave-allocation/leave-allocation.model';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-wfh-allocation',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, NoDataFoundComponent, DateformatPipe],
   templateUrl: './wfh-allocation.component.html',
   styleUrl: './wfh-allocation.component.scss'
 })
@@ -33,13 +34,8 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   // @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
-  constructor(
-    private fb: FormBuilder,
-    private http: HttpService,
-    private modal: OpenModalService,
-    private modalService: NgbModal,
-    public rbac: RbacService
-  ) { }
+  constructor(private fb: FormBuilder, private http: HttpService, private modal: OpenModalService, 
+    private modalService: NgbModal, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
@@ -75,7 +71,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       this.wfhAllocationForm.get('location')?.enable();
     }
   }
-  
+
   //method to enable the category name
   categoryenable() {
     if (this.wfhAllocationForm.get('shift')?.value) {
@@ -84,12 +80,10 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   }
 
   private getAllLocations(): void {
-    this.http.getData('JobLocation')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => this.locationDetails = res.jobLocations || [],
-        error: err => console.error('Error fetching locations:', err)
-      });
+    this.http.getData('JobLocation').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => this.locationDetails = res.jobLocations || [],
+      error: err => console.error('Error fetching locations:', err)
+    });
   }
 
   onLocationChange(location: ILocation): void {
@@ -109,20 +103,18 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       subLocationId: subLocation.id
     };
 
-    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
-          this.wfhAllocationForm.get('shift')?.enable();
-        },
-        error: err => {
-          console.error('Error fetching shifts:', err);
-          this.shiftDetails = [];
-          this.wfhAllocationForm.get('shift')?.reset();
-          this.wfhAllocationForm.get('shift')?.disable();
-        }
-      });
+    this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
+        this.wfhAllocationForm.get('shift')?.enable();
+      },
+      error: err => {
+        console.error('Error fetching shifts:', err);
+        this.shiftDetails = [];
+        this.wfhAllocationForm.get('shift')?.reset();
+        this.wfhAllocationForm.get('shift')?.disable();
+      }
+    });
   }
 
   getAllEmployees() {
@@ -153,7 +145,6 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
 
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
     this.selectedEmployees = selectedList || [];
-
     const employeeArray = form.get('employees') as FormArray;
     //  Clear existing entries
     employeeArray.clear();
@@ -163,29 +154,35 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
           employeeId: [emp.employeeId],
           fullName: [emp.fullName],
           days: ['', Validators.required],
-          createdBy: [emp.fName || '—'],
-          createdOn: [emp.effectiveDate || new Date()],
-          lastUpdatedBy: [emp.lName || '—'],
-          lastUpdatedOn: [emp.effectiveDate || new Date()],
+          createdBy: [''],
+          createdOn: [''],
+          lastUpdatedBy: [''],
+          lastUpdatedOn: [''],
         })
       );
     });
-
-    // ✅ Tell TypeScript explicitly this is a FormArray
+    //  Tell TypeScript explicitly this is a FormArray
     form.setControl('employees', employeeArray as FormArray);
+  }
+  
+  removeEmployee(index: number, employeeId: number) {
+    //  Remove from FormArray
+    const employeeArray = this.employeeFormArray;
+    employeeArray.removeAt(index);
+    // Remove from selectedEmployees array (used by p-multiSelect)
+    this.selectedEmployees = this.selectedEmployees.filter(emp => emp.employeeId !== employeeId);
+    //Update the multiSelect FormControl so the checkbox deselects
+    this.wfhAllocationForm.get('employeeName')?.setValue(this.selectedEmployees);
   }
 
   validateInput(event: KeyboardEvent) {
     const input = event.key;
     const numericInput = /^[0-9]$/;
-
     if (!numericInput.test(input)) {
       event.preventDefault();
     }
-
     const currentValue = (event.target as HTMLInputElement).value;
-    const newValue = currentValue + input;
-
+    const newValue = currentValue + input
     if (newValue.length > 3 || +newValue > 365) {
       event.preventDefault();
     }
@@ -207,36 +204,26 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       });
     };
 
-    form.get('year')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        form.get('location')?.reset();
-        resetAndDisable(['subLocation', 'shift', 'categoryName', 'employeeName']);
-      });
+    form.get('year')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      form.get('location')?.reset();
+      resetAndDisable(['subLocation', 'shift', 'categoryName', 'employeeName']);
+    });
 
-    form.get('location')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        resetAndDisable(['subLocation', 'shift', 'categoryName', 'employeeName']);
-      });
+    form.get('location')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      resetAndDisable(['subLocation', 'shift', 'categoryName', 'employeeName']);
+    });
 
-    form.get('subLocation')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        resetAndDisable(['shift', 'categoryName', 'employeeName']);
-      });
+    form.get('subLocation')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      resetAndDisable(['shift', 'categoryName', 'employeeName']);
+    });
 
-    form.get('categoryName')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        resetAndDisable(['employeeName']);
-      });
+    form.get('categoryName')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      resetAndDisable(['employeeName']);
+    });
 
-    form.get('employeeName')?.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        resetOnly(['days']);
-      });
+    form.get('employeeName')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      resetOnly(['days']);
+    });
   }
 
   publishLeaveAllocation(form: FormGroup): void {
@@ -271,7 +258,6 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
         this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to publish wfh allocation!');
       },
       complete: () => {
-        // this.modalService.dismissAll();
         form.reset();
       }
     });

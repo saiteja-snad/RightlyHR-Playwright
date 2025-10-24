@@ -5,9 +5,7 @@
             <div class="row">
                 <!-- Year -->
                 <div class="col-md-4 mb-3">
-                    <label for="year" class="form-label custom-label mb-2">
-                        {{ "Year" | translate }}<span class="text-danger">*</span>
-                    </label>
+                    <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
                             class="form-select custom-select" formControlName="year" placeholder="Please select year"
@@ -23,9 +21,8 @@
 
                 <!-- Location -->
                 <div class="col-md-4 mb-3">
-                    <label for="location" class="form-label custom-label mb-2">
-                        {{ "Location" | translate }}<span class="text-danger">*</span>
-                    </label>
+                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate }}
+                        <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false" formControlName="location"
@@ -34,7 +31,8 @@
                             <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                         </p-select>
                     </div>
-                    <div *ngIf="wfhAllocationForm.get('location')?.touched && wfhAllocationForm.get('location')?.invalid" class="error-msg">
+                    <div *ngIf="wfhAllocationForm.get('location')?.touched && wfhAllocationForm.get('location')?.invalid"
+                        class="error-msg">
                         <div *ngIf="wfhAllocationForm.get('location')?.errors?.['required']">Please select location</div>
                     </div>
                 </div>
@@ -120,7 +118,7 @@
             </div>
         </div>
 
-        <div class="custom-table-content">
+        <div class="custom-table-content mt-2">
             <table class="w-100">
                 <thead>
                     <tr>
@@ -130,6 +128,7 @@
                         <th>Created On</th>
                         <th>Last Updated By</th>
                         <th>Last Updated On</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody formArrayName="employees">
@@ -142,14 +141,16 @@
                                 <div *ngIf="emp.get('days')?.errors?.['required']">Please enter days</div>
                             </div>
                         </td>
-                        <td>{{ emp.get('createdBy')?.value }}</td>
-                        <td>{{ emp.get('createdOn')?.value | date: 'dd-MM-yyyy' }}</td>
-                        <td>{{ emp.get('lastUpdatedBy')?.value }}</td>
-                        <td>{{ emp.get('lastUpdatedOn')?.value | date: 'dd-MM-yyyy' }}</td>
+                        <td>{{ emp.get('createdBy')?.value ?emp.get('createdBy')?.value:'-' }}</td>
+                        <td>{{ emp.get('createdOn')?.value ?(emp.get('createdOn')?.value | dateformat) :'-' }}</td>
+                        <td>{{ emp.get('lastUpdatedBy')?.value ?emp.get('lastUpdatedBy')?.value :'-' }}</td>
+                        <td>{{ emp.get('lastUpdatedOn')?.value ?(emp.get('lastUpdatedOn')?.value|dateformat) :'-' }}</td>
+                        <td class="text-center"><a class="custom-action-btn" (click)="removeEmployee(i, emp.get('employeeId')?.value)">
+                            <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a>
+                        </td>
                     </tr>
-
                     <tr *ngIf="employeeFormArray.length === 0">
-                        <td colspan="6"><app-no-data-found></app-no-data-found></td>
+                        <td colspan="6"><app-no-data-found /></td>
                     </tr>
                 </tbody>
             </table>

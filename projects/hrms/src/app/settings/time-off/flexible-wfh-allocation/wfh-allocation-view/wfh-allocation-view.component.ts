@@ -26,10 +26,11 @@ export class WfhAllocationViewComponent implements OnInit,OnDestroy{
      private modalService: NgbModal,
      public rbac: RbacService
   ) { }
+   ngOnInit(): void {
+    //throw new Error('Method not implemented.');
+  }
   ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
+    //throw new Error('Method not implemented.');
   }
-  ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
+ 
 }

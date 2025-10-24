@@ -37,7 +37,7 @@ export default [
     { path: 'viewleavecategory', loadComponent: () => import('./leave-categoery/view-leavecategory/view-leavecategory.component').then((m) => m.ViewLeavecategoryComponent) },
     {
         path: 'flexible-wfh-allocation', children: [
-            // { path: '', redirectTo: 'comp-off', pathMatch: 'full' },
+            { path: '', redirectTo: 'wfh-allocation', pathMatch: 'full' },
             { path: 'wfh-allocation', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation/wfh-allocation.component').then((m) => m.WfhAllocationComponent) },
             { path: 'wfh-allocation-view', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent) },
         

@@ -136,12 +136,6 @@ export class SidenavComponent implements OnInit {
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
   }
 
-  isActiveOnBehaldOf(): boolean {
-    const currentUrl = this.router.url;
-    // ✅Active for pending-approvals and its subroutes
-    return currentUrl === '/on-behalf-of/on-behalf-of-wfh' || currentUrl.startsWith('/on-behalf-of/on-behalf-of-wfh');
-  }
-
   resetDropdown(): void {
     this.selectedDropdownModule = null;
     this.updateFilteredModules();

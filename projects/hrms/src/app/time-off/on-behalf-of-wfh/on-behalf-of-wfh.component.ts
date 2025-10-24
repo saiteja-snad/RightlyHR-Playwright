@@ -20,11 +20,12 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { WfhApprovaltabsComponent } from '../../shared/time-off-module-tabs/wfh-approvaltabs/wfh-approvaltabs.component';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { AuthService } from '../../services/auth.service';
+import { OnBehalfOfWfhTabsComponent } from "../../shared/on-behalf-of-wfh-tabs/on-behalf-of-wfh-tabs.component";
 
 @Component({
   selector: 'app-on-behalf-of-wfh',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
-    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, FormsModule],
+    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, FormsModule, OnBehalfOfWfhTabsComponent],
   templateUrl: './on-behalf-of-wfh.component.html',
   styleUrl: './on-behalf-of-wfh.component.scss'
 })

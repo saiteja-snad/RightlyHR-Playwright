@@ -1120,6 +1120,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 selectAllLettersTabs=[
   'NDA Document','MSA Document'
 ]
+
+selectAllOnBehalfOf = [
+  'On Behalf Of', 'On Behalf Of WFH'
+]
+
+selectAllOnBehalfOfWFH = [
+  'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
+  , 'Cancelled (On Behalf Of WFH)'
+]
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],
@@ -1886,6 +1895,32 @@ selectAllLettersTabs=[
   isProjectManagementClientsTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       // Enable 'View' only if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isOnBehalfOfTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isOnBehalfOfWFHTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
       return !this.roleToFilter?.id;
     }
     if (action === 'Update') {

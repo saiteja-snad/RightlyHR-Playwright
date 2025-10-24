@@ -237,7 +237,6 @@ export const permissionsData = [
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Module Sub Tabs Section
   { fields: 'Waiting For Approval (Time Off)', View: false, Update: false, Create: false, Delete: false },
@@ -858,5 +857,13 @@ export const permissionsData = [
   { fields: 'Letter Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Waiting For Approval (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancelled (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
 
 ];

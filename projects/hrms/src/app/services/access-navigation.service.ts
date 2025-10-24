@@ -60,7 +60,8 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
-  ON_BEHALF_OF_WFH_TABS
+  ON_BEHALF_OF_WFH_TABS,
+  ON_BEHALF_OF
 } from '../permission-route.constants';
 
 @Injectable({
@@ -602,6 +603,16 @@ export class AccessNavigationService {
         }
 
         break;
+
+      case '/on-behalf-of':
+        if (this.rbac.allowedToAccess('On Behalf Of.view')) {
+          for (const item of ON_BEHALF_OF) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
         
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
@@ -1309,11 +1320,21 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/on-behalf-of/on-behalf-of-wfh' :
-        if(this.rbac.allowedToAccess('On Behalf Of WFH.view')){
-          for(const item of ON_BEHALF_OF_WFH_TABS){
-            if(this.rbac.allowedToAccess(item.permission)){
-              return item.route
+      case '/on-behalf-of':
+        if (this.rbac.allowedToAccess('On Behalf Of.view')) {
+          for (const item of ON_BEHALF_OF) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/on-behalf-of/on-behalf-of-wfh':
+        if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
+          for (const item of ON_BEHALF_OF_WFH_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
         }

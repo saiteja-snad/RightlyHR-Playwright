@@ -335,22 +335,54 @@ export class ContactorInfoComponent {
   getOnboardrequest() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     console.log(EmployeeId);
+
     this.subscription = this.http
       .getData(`ContractDetails/getbyemployeeId/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          this.dynamicData.next(data.data);
-          this.convdata = data.data[0];
-          this.disablebuttonforonboard1 = (this.convdata?.status == null || this.convdata?.status === 'Waiting for Approval' || this.convdata?.status === 'Approved' || this.convdata?.status === 'Processed' || this.convdata?.status === 'Rejected') && (this.convdata?.contractType === 'Conversion' || this.convdata.contractType === 'Extension');
-          this.disablebuttonforonboard2 = (this.convdata?.status === 'Waiting for Approval' || this.convdata?.status === 'Approved' || this.convdata?.status === 'Processed'|| this.convdata?.status === 'Rejected') && (this.convdata.contractType === 'Extension' || this.convdata.contractType === 'Conversion')
-          this.disablebuttonforonboard3 = this.showButtonBeforeContractExtendedDate(this.convdata.contractEndDate) && (this.convdata.contractType === 'Extension' || this.convdata.contractType === 'Contract' || this.convdata.contractType === 'Conversion') ;
-          this.dynamicDataCount = data.data;
+          // 🔹 Filter out records where status is "Active"
+          const filteredData = data.data.filter((x: any) => x.status?.toLowerCase() !== 'active');
+
+          if (filteredData.length === 0) {
+            console.warn('No contract records found (excluding Active)');
+            return;
+          }
+
+          this.dynamicData.next(filteredData);
+          this.convdata = filteredData[0];
+
+          this.disablebuttonforonboard1 =
+            (this.convdata?.status == null ||
+              this.convdata?.status === 'Waiting for Approval' ||
+              this.convdata?.status === 'Approved' ||
+              this.convdata?.status === 'Processed' ||
+              this.convdata?.status === 'Rejected') &&
+            (this.convdata?.contractType === 'Conversion' ||
+              this.convdata.contractType === 'Extension');
+
+          this.disablebuttonforonboard2 =
+            (this.convdata?.status === 'Waiting for Approval' ||
+              this.convdata?.status === 'Approved' ||
+              this.convdata?.status === 'Processed' ||
+              this.convdata?.status === 'Rejected') &&
+            (this.convdata.contractType === 'Extension' ||
+              this.convdata.contractType === 'Conversion');
+
+          this.disablebuttonforonboard3 =
+            this.showButtonBeforeContractExtendedDate(this.convdata.contractEndDate) &&
+            (this.convdata.contractType === 'Extension' ||
+              this.convdata.contractType === 'Contract' ||
+              this.convdata.contractType === 'Conversion');
+
+          this.dynamicDataCount = filteredData;
+
           let filtereddata = this.getSeparationDetails.some((ele: any) => {
             return ele.status?.toLowerCase() === 'rejected';
           });
+
           this.disablebuttonforonboard = filtereddata;
+
           this.extendCondition(this.dynamicDataCount);
-          
           this.isStatusAllowed();
         },
         error: (error: any) => {

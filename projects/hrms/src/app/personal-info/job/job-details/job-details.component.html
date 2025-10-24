@@ -552,12 +552,13 @@
                     </div>
                     <!-- //EndDate -->
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">Contract End Date<span class="error-msg">*</span></label>
+                        <!-- <label class="form-label custom-label mb-2">Contract End Date<span class="error-msg">*</span></label> -->
+                        <label class="form-label custom-label mb-2">Contract End Date</label>
                         <input type="date" class="form-control custom-input" placeholder="" [min]="this.contractConversionForm.get('contractstartdate')?.value" formControlName="contractenddate"
                             id="Contract End Date" />
-                        <div class="error-msg"
+                        <!-- <div class="error-msg"
                             *ngIf="contractConversionForm.get('contractenddate')?.invalid && contractConversionForm.get('contractenddate')?.touched">
-                            Contract End Date is required</div>
+                            Contract End Date is required</div> -->
                     </div>
                     <!-- //ExtendedDate -->
                     <!-- <div class="col-md-6 mb-3">

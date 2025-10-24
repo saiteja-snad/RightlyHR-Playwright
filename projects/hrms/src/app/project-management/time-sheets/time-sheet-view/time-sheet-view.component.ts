@@ -766,7 +766,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       dropdownBtn.classList.remove('show');
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
-    this.addProject();
+    // this.addProject();
   }
 
   // Check if any projects under this client are unselected

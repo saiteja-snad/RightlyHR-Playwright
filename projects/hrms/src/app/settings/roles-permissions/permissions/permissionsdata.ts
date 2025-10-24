@@ -237,6 +237,7 @@ export const permissionsData = [
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Module Sub Tabs Section
   { fields: 'Waiting For Approval (Time Off)', View: false, Update: false, Create: false, Delete: false },

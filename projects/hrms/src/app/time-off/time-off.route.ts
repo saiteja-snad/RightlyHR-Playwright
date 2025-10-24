@@ -87,6 +87,12 @@ import { ContractConversionComponent } from './pending-approvals/contract-conver
 import { ContractorsComponent } from './pending-approvals/contractors/contractors.component';
 import { ContractForYouComponent } from './pending-approvals/contractors/contract-for-you/contract-for-you.component';
 import { ContractForYourRoleComponent } from './pending-approvals/contractors/contract-for-your-role/contract-for-your-role.component';
+import { OnBehalfOfWfhComponent } from './on-behalf-of-wfh/on-behalf-of-wfh.component';
+import { OnBehalfOfWhfWaitingForApprovalComponent } from './on-behalf-of-wfh/on-behalf-of-whf-waiting-for-approval/on-behalf-of-whf-waiting-for-approval.component';
+import { OnBehalfOfWhfApprovedComponent } from './on-behalf-of-wfh/on-behalf-of-whf-approved/on-behalf-of-whf-approved.component';
+import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-wfh/on-behalf-of-whf-processed/on-behalf-of-whf-processed.component';
+import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-wfh/on-behalf-of-whf-rejected/on-behalf-of-whf-rejected.component';
+import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-wfh/on-behalf-of-whf-cancellation/on-behalf-of-whf-cancellation.component';
 
 
 export default [
@@ -552,5 +558,18 @@ export default [
     path: 'global-permissions',
     component: GlobalPermissionsComponent,
     data: { permission: 'Global Permissions Module.view' },
+  },
+  {
+    path: 'on-behalf-of-wfh',
+    component: OnBehalfOfWfhComponent,
+    children: [
+      {
+        path: 'waiting-for-approval', component: OnBehalfOfWhfWaitingForApprovalComponent,
+      },
+      { path: 'approved', component: OnBehalfOfWhfApprovedComponent },
+      { path: 'processed', component: OnBehalfOfWhfProcessedComponent },
+      { path: 'rejected', component: OnBehalfOfWhfRejectedComponent },
+      { path: 'cancelled', component: OnBehalfOfWhfCancellationComponent }
+    ],
   },
 ] as Route[];

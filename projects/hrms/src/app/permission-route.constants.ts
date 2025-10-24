@@ -576,3 +576,10 @@ export const PROJECTS_ROUTES = [
     permission: 'Documents Tab.view'
   }
 ];
+
+export const ON_BEHALF_OF_WFH_TABS = [
+  { route: '/time-off/on-behalf-of/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of WFH).view' },
+  { route: '/time-off/on-behalf-of/approved', permission: 'Approved (On Behalf Of WFH).view' },
+  { route: '/time-off/on-behalf-of/processed', permission: 'Processed (On Behalf Of WFH).view' },
+  { route: '/time-off/on-behalf-of/rejected', permission: 'Rejected (On Behalf Of WFH).view', },
+]

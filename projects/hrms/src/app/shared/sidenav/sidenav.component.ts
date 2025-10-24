@@ -8,9 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { ProjectManagementMainTabsComponent } from "../project-management-tabs/project-management-main-tabs/project-management-main-tabs.component";
+import { OnBehalfOfWfhTabsComponent } from "../on-behalf-of-wfh-tabs/on-behalf-of-wfh-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnBehalfOfWfhTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -106,6 +107,7 @@ export class SidenavComponent implements OnInit {
   }
 
   goToAccessibleRoute(actualRoute: string) {
+    debugger
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);

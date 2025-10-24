@@ -60,6 +60,7 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
+  ON_BEHALF_OF_WFH_TABS
 } from '../permission-route.constants';
 
 @Injectable({
@@ -425,6 +426,7 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
           return (route = 'time-off/global-permissions');
         }
+        
 
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
@@ -602,6 +604,16 @@ export class AccessNavigationService {
         }
 
         break;
+
+      case '/time-off/on-behalf-of-wfh' :
+        if(this.rbac.allowedToAccess('On Behalf Of WFH.view')){
+          for(const item of ON_BEHALF_OF_WFH_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route
+            }
+          }
+        }
+      break;
 
       case '/it-support':
         if (this.rbac.allowedToAccess('My Tickets Tab.view')) {
@@ -1298,6 +1310,17 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/time-off/on-behalf-of-wfh' :
+        if(this.rbac.allowedToAccess('On Behalf Of WFH.view')){
+          for(const item of ON_BEHALF_OF_WFH_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route
+            }
+          }
+        }
+        break;
+
       case 'attendance':
         if (this.rbac.allowedToAccess('Attendance.view')) {
           return (route = '/attendance');

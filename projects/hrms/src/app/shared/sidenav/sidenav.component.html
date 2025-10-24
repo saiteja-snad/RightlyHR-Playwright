@@ -85,6 +85,14 @@
             </li>
             }
 
+            <!--Time Off-->
+            @if(this.rbac.allowedToAccess('Reports.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/time-off/on-behalf-of-wfh');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/time-off/on-behalf-of-wfh')">
+                <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">On Behalf Of WFH
+            </li>
+            }
+
             <!--Selected Item form the dropdown-->
             <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
                 (click)="goToAccessibleRoute(selectedDropdownModule.route)"

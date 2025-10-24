@@ -13,7 +13,9 @@
           PendingApprovalReportForm.get('dateRange')?.value == null &&
           PendingApprovalReportForm.get('status')?.value == null
         " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
           Clear All
+          }
         </button>
           <!-- Client-->
         @if(rbac.allowedToAccess('Timesheet Client List(Pending-Approval-Status).view')){
@@ -53,7 +55,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" />
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
       }

@@ -14,7 +14,9 @@
           MyTimesheetReportForm.get('status')?.value == null &&
           MyTimesheetReportForm.get('dateRange')?.value == null
         " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
           Clear All
+          }
         </button>
 
         <!-- Client Dropdown -->
@@ -45,7 +47,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" />
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
         }
@@ -106,7 +108,7 @@
         <th>Hours Worked</th>
         <th>Billable/Non-Billable</th>
         <th>Submitted Date</th>
-        <th>Approval Status</th>
+        <th>Status</th>
       </thead>
       <tbody>
         @if (!filteredmytimesheetRecord || filteredmytimesheetRecord.length === 0) {
@@ -117,7 +119,7 @@
         @else {
         @for (record of filteredmytimesheetRecord; track $index) {
         <tr>
-          <td>{{ record.date ? (record.date | date: 'dd-MMM-yyyy') : '-' }}</td>
+          <td>{{ record.date ? (record.date | date) : '-' }}</td>
           <td>{{ record.date ? (record.date | date: 'EEEE') : '-' }}</td>
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>

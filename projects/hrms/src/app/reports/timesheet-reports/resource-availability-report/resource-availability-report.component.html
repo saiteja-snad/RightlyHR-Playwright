@@ -12,7 +12,9 @@
           ResourceAvailabilityReportForm.get('employeid')?.value == null &&
           ResourceAvailabilityReportForm.get('dateRange')?.value == null
         " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
           Clear All
+          }
         </button>
 
         <!-- Project-->
@@ -40,7 +42,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" />
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
         }
@@ -103,9 +105,9 @@
         <td>{{ record.department ?? '-' }}</td>
         <td>{{ record.designation ?? '-' }}</td>
         <td>{{ record.projectAssigned ?? '-' }}</td>
-        <td>{{ record.projectStartDate ? (record.projectStartDate | date: 'dd-MMM-yyyy') : '-' }}</td>
-        <td>{{ record.projectEndDate ? (record.projectEndDate | date: 'dd-MMM-yyyy') : '-' }}</td>
-        <td>{{ record.availableFrom ? (record.availableFrom | date: 'dd-MMM-yyyy') : '-' }}</td>
+        <td>{{ record.projectStartDate ? (record.projectStartDate | date) : '-' }}</td>
+        <td>{{ record.projectEndDate ? (record.projectEndDate | date) : '-' }}</td>
+        <td>{{ record.availableFrom ? (record.availableFrom | date) : '-' }}</td>
       </tr>
     }
   }

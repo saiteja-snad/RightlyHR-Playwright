@@ -13,7 +13,9 @@
           UtilizationReportForm.get('status')?.value == null &&
           UtilizationReportForm.get('billable')?.value == null
         " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
           Clear All
+          }
         </button>
           <!-- Client-->
         @if(rbac.allowedToAccess('Timesheet Client List(Utilization).view')){
@@ -53,7 +55,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" />
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
       }
@@ -107,10 +109,10 @@
          <th>Employee</th>
         <th>Dept</th>
         <th>Total Logged Hours</th>
-        <th>Billable</th>
-         <th>Non-Billable</th>
-        <th>Billable %</th>
-        <th>Non-Bill %</th>
+        <th>Billable Hrs</th>
+        <th>Non-Billable Hrs</th>
+        <th>Billable <i class="bi bi-percent"></i></th>
+        <th>Non-Billable <i class="bi bi-percent"></i></th>
       </thead>
      <tbody>
   @if (!filteredutilizationRecord || filteredutilizationRecord.length === 0) {

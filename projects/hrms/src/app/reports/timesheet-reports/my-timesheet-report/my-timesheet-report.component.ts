@@ -71,6 +71,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+   today: Date = new Date();
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -101,7 +102,17 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
       this.disableBtn = true;
     })
   }
+isFilterApplied(): boolean {
+  const formValue = this.MyTimesheetReportForm.value;
 
+  return (
+    (formValue.client && formValue.client !== null) ||
+    (formValue.project && formValue.project !== null) ||
+    (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+    (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined) ||
+    (formValue.dateRange && formValue.dateRange.length > 0)
+  );
+}
   clearAllFilters(): void {
     this.MyTimesheetReportForm.reset();
     this.filteredmytimesheetRecord = [];

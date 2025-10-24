@@ -78,6 +78,7 @@ export class TeamTimesheetReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  today: Date = new Date();
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -108,7 +109,18 @@ export class TeamTimesheetReportComponent {
       this.disableBtn = true;
     })
   }
+    isFilterApplied(): boolean {
+  const formValue = this.TeamTimesheetReportForm.value;
 
+  return (
+    (formValue.clientId && formValue.clientId !== null) ||
+    (formValue.projectId && formValue.projectId !== null) ||
+    (formValue.employeid && formValue.employeid !== null) ||
+    (formValue.dateRange && formValue.dateRange.length > 0) ||
+    (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
+    (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined)
+  );
+}
   clearAllFilters(): void {
     this.TeamTimesheetReportForm.reset();
     this.filteredtimesheetsummeryRecord = [];
@@ -372,12 +384,15 @@ export class TeamTimesheetReportComponent {
     const formValue = this.TeamTimesheetReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
 
-    const formatDate = (date: Date): string => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-    }
+    // format date as MM/dd/yyyy
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
 
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;

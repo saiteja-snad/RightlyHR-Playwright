@@ -105,7 +105,16 @@ export class ProjectEffortReportComponent {
       this.disableBtn = true;
     })
   }
-
+     isFilterApplied(): boolean {
+  const formValue = this.ProjectEffortReportForm.value;
+  return (
+    (formValue.clientId && formValue.clientId !== null) ||
+    (formValue.projectId && formValue.projectId !== null) ||
+    (formValue.employeid && formValue.employeid !== null) ||
+    (formValue.dateRange && formValue.dateRange.length > 0) ||
+    (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined)
+  );
+}
   clearAllFilters(): void {
     this.ProjectEffortReportForm.reset();
     this.filteredpendingapprovalRecord = [];
@@ -369,12 +378,15 @@ export class ProjectEffortReportComponent {
     const formValue = this.ProjectEffortReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
 
-    const formatDate = (date: Date): string => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
-    }
+     // format date as MM/dd/yyyy
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
 
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;

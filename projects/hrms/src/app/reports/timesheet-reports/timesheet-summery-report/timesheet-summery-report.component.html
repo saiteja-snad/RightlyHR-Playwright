@@ -14,7 +14,9 @@
           TimesheetSummeryReportForm.get('dateRange')?.value == null &&
           TimesheetSummeryReportForm.get('belaible')?.value == null 
         " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
           Clear All
+  }
         </button>
 
         <!-- Client-->
@@ -48,7 +50,7 @@
         <div>
           <div class="custom-date-range-picker">
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
-              [showIcon]="true" [readonlyInput]="true" />
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today"/>
           </div>
           <div class="error-msg mt-2" *ngIf="showDateRangeError">
             Date range is required
@@ -119,6 +121,7 @@
         @for (record of filteredtimesheetsummeryRecord; track $index) {
         <tr>
           <td>{{ record.month ?? '-' }}</td>
+               <!-- <td>{{ record.month ? (record.month | date: 'MM/dd/yyyy') : '-' }}</td> -->
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.clientName ?? '-' }}</td>

@@ -12,7 +12,9 @@
           ProjectEffortReportForm.get('employeid')?.value == null &&
           ProjectEffortReportForm.get('billable')?.value == null
         " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
           Clear All
+          }
         </button>
           <!-- Client-->
         @if(rbac.allowedToAccess('Timesheet Client List(Project-Effect-Report).view')){
@@ -94,9 +96,9 @@
         <th>Client</th>
         <th>Project</th>
         <th>Employee</th>
-        <th>Billable</th>
-        <th>Non-Billable</th>
-        <th>Total</th>
+        <th>Billable Hrs</th>
+        <th>Non-Billable Hrs</th>
+        <th>Total Hrs</th>
       </thead>
     <tbody>
         @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {

@@ -330,7 +330,7 @@ isFilterApplied(): boolean {
       `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
     ).subscribe({
       next: (response: HttpResponse<Blob>) => {
-        // ✅ Extract filename from Content-Disposition
+        // Extract filename from Content-Disposition
         let filename = 'mytimesheet.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
 
@@ -346,7 +346,7 @@ isFilterApplied(): boolean {
           }
         }
 
-        // ✅ Download the blob as before
+        // Download the blob as before
         const blob = new Blob([response.body!], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });

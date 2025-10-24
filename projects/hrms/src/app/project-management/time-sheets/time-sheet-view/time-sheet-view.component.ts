@@ -122,7 +122,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
-     const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
+    const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
 
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
@@ -298,6 +298,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Draft entries deleted successfully');
+            this.projects.removeAt(index);
           this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
           this.getTimeSheetEntriesbyEmployeeId(
             this.employeeId,
@@ -571,12 +572,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const formValue = dayForm.value;
     const projectValue = projectForm.value;
-
+    
+    // Get the correct date based on dayName
+    const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
+    const entryDate = this.weekDates && this.weekDates[dayIndex] 
+      ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
+      : moment().format('YYYY-MM-DD');
+   
     const payload = {
       entryId: formValue.entryId || null,
       employeeId: this.employeeId || null,
-      entryDate: formValue.entryDate,
-      startTime: formValue.startTime || null,
+      entryDate: entryDate,
+      startTime: formValue.startTime|| null,
       endTime: formValue.endTime || null,
       description: formValue.description || null,
       approvalStatus: 'draft',
@@ -590,11 +597,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
       next: (res) => {
+        this.conformationPopup.openSuccessModal('Time Entry Draft successfully');
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
         console.error('Auto-save failed', err);
+        this.conformationPopup.openErrorModal(err.error.message);
       },
     });
   }
@@ -1199,7 +1208,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
     const status = control?.getRawValue()?.approvalStatus;
- 
+
     return {
       approved: status === 'Processed',
       rejected: status === 'Rejected',

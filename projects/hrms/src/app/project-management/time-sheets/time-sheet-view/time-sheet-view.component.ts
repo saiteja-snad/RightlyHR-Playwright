@@ -76,8 +76,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.timesheetForm = this.fb.group({
       projects: this.fb.array([]),
     });
-    // Add one initial row
-    // this.addProject();
     this.getResourceData()
     this.getJobDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
@@ -128,9 +126,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
     );
+
     const resourcestartdate = matchedResource?.startDate
       ? new Date(matchedResource.startDate)
       : null;
+      
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
     }
@@ -155,7 +155,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective ?
       isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
-    const billablecheck=matchedResource?.billable || this.selectedProjectResource?.billable
+    const billablecheck = matchedResource?.billable || this.selectedProjectResource?.billable
     const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
       this.secondsToHHMM(day.durationSeconds) : '',
       Validators.required
@@ -180,7 +180,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       duration: durationControl,
       description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }, Validators.required,],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
-      isBillable: [{value:day?.isBillable || false,disabled: !billablecheck}],
+      isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
@@ -695,8 +695,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     if (selectedResource) {
       this.selectedProjectResource = selectedResource;
-      console.log(this.selectedProjectResource);
-      
     }
 
     this.selectedclientid = client.clientId;
@@ -707,7 +705,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     // Update billable controls for all days
     const billableCheck = selectedResource?.billable || false;
-    
+
     // Days array
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     days.forEach((dayKey, index) => {
@@ -752,7 +750,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           dayForm.get(ctrl)?.disable();
         }
       });
-      
+
       // Update billable control disabled state
       if (billableCheck) {
         dayForm.get('isBillable')?.enable();
@@ -769,6 +767,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       dropdownBtn.classList.remove('show');
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
+    this.addProject();
   }
 
   // Check if any projects under this client are unselected
@@ -801,16 +800,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
       const approvalStatus = this.dayForm.get('approvalStatus')?.value;
       if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
-        
+
         const selectedResource = this.resourcesArrayList.find(
           (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
             res.client?.clientId === this.dayForm.get('clientId')?.value
         );
-      
+
         this.dayForm.patchValue({
           isBillable: this.selectedProjectResource?.billable ?? selectedResource?.billable
         })
-        
+
       }
       const shiftData = this.resourcesArrayList.find(
         (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value
@@ -997,7 +996,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable:formValue.isBillable || false
+      isBillable: formValue.isBillable || false
     };
 
     // POST request

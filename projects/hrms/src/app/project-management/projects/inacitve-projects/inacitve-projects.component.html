@@ -31,15 +31,15 @@
             <div class="custom-table-content">
                 <table class="w-100">
                     <thead>
-                        <th>Project Name</th>
                         <th>Client Name</th>
+                        <th>Project Name</th>
                         <th>Start Date</th>
                         <th>End Date</th>
                         <th>Effective Date</th>
                         <th>Kickoff Date</th>
                         <th>Project Type</th>
                         <th>Status</th>
-                        @if(( rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus !=='inactive'){
+                        @if(( rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus!=='inactive'){
                         <th class="text-center">{{"Action" | translate}}</th>
                         }
                     </thead>
@@ -48,17 +48,20 @@
                         <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
                             <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
                                 <tr *ngFor="let project of filteredProjects; let i = index">
+                                          <td>{{ project.client.clientName }}</td>
                                     <td>
-                                        <a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName }}</a>
+                                        <a class="project-name cursor" (click)="navigateView(project.projectId)">{{
+                                            project.projectName }}</a>
                                     </td>
-                                    <td>{{ project.client.clientName }}</td>
+                              
                                     <td>{{ project.startDate | dateformat }}</td>
                                     <td>{{ project.endDate | dateformat }}</td>
                                     <td>{{ project.effectiveDate | dateformat }}</td>
                                     <td>{{ project.kickoffDate | dateformat }}</td>
                                     <td>{{ project.projectType }}</td>
                                     <td>{{ project.status }}</td>
-                                    @if((rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus!=='inactive'){
+                                    @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
+                                    inactiveClientStatus!=='inactive'){
                                     <td class="text-center">
                                         <div class="dropdown">
                                             <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -97,8 +100,10 @@
             <p class="confirmation-text pt-3">{{'Are you sure you want to Active this project?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="confirmStatusChange(modal)">{{'Yes' |
+                translate}}</button>
         </div>
     </div>
 </ng-template>

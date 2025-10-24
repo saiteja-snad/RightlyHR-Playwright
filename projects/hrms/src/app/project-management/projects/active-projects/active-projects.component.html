@@ -44,17 +44,15 @@
       <div class="custom-table-content">
         <table class="w-100">
           <thead>
+              <th>Client Name</th>
             <th>Project Name</th>
-            <th>Client Name</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Effective Date</th>
             <th>Kickoff Date</th>
             <th>Project Type</th>
             <th>Status</th>
-            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details
-            Tab.delete'))
-            && inactiveClientStatus !=='inactive' ){
+            @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus !=='inactive' ){
             <th class="text-center">{{"Action" | translate}}</th>
             }
           </thead>
@@ -62,10 +60,11 @@
             <ng-container *ngIf="(projectsData | activeprojects:searchValue) as filteredProjects">
               <ng-container *ngIf="filteredProjects.length > 0; else noDataTemplate">
                 <tr *ngFor="let project of filteredProjects; let i = index">
+                    <td>{{ project.client.clientName }}</td>
                   <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName
                       }}</a>
                   </td>
-                  <td>{{ project.client.clientName }}</td>
+                
                   <td>{{ project.startDate | dateformat }}</td>
                   <td>{{ project.endDate | dateformat }}</td>
                   <td>{{ project.effectiveDate | dateformat }}</td>

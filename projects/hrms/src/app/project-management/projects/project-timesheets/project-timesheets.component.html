@@ -3,10 +3,11 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                <th class="max-width">Resource Employee ID</th>
-                <th class="max-width">{{'Resource Name' | translate}}</th>
+                 <th class="max-width">{{'Employee ID' | translate}}</th>
+                <th class="max-width">{{'Employee Name' | translate}}</th>
                 <th class="max-width">{{'Date' | translate}}</th>
                 <th class="max-width">{{'Logged Hours' | translate }}</th>
+                   <th class="max-width">{{'Task Description' | translate }}</th>
                 <th class="max-width">{{'Status' | translate }}</th>
                 <!-- <th class="max-width">{{'Summary' | translate}}</th> -->
             </thead>
@@ -16,16 +17,25 @@
                         <td>{{row.fusionEmployeeId}}</td>
                         <td>{{row.resourceName}}</td>
                         <td>{{row.date | dateformat }}</td>
+
                         <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
+                                <td class="text-center">
+                            <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                <a type="button" [ngbPopover]="description">
+                                    <app-info-icon />
+                                </a>
+                                <ng-template #description>
+                                    <p class="mb-0">{{ row.entries[0]?.summary || '-' }}</p>
+                                </ng-template>
+                            </ng-container>
+                            <ng-template #noEntries>
+                                -
+                            </ng-template>
+                        </td>
                         <td [style.color]="row.dailySummary.colour"><b>
                             <span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b>
                         </td>
-                        <!-- <td>
-                            <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
-                                <a (click)="openModal(row.entries, summaryforlogs)"><app-info-icon /></a>
-                            </ng-container>
-                            <ng-template #noEntries>-</ng-template>
-                        </td> -->
+                  
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>

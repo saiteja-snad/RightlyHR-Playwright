@@ -148,10 +148,11 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   }
 
   onEmployeeChange(event: any): void {
-    const selectedEmp = event?.value || null;
+    const selectedEmp = event?.value || 0;
     this.selectedOtherEmployee = selectedEmp;
 
     this.http.onBehalfOfWFHSelectedEmp$.next(selectedEmp);
+
     this.http.onBehlafOfWFHSignal.set(!!selectedEmp);
 
     if (selectedEmp) {

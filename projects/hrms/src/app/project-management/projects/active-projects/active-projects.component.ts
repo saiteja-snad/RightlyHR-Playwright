@@ -19,6 +19,7 @@ import { IProjectAuthority } from '../../../settings/project-management-configur
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { IResource } from '../../../Interfaces/project-management/resources.model';
 @Component({
   selector: 'app-active-projects',
   imports: [NoDataFoundComponent, CommonModule, FormsModule, DataLoaderContentComponent, TranslateModule, RouterModule, ConfirmationIconComponent,
@@ -52,6 +53,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   kickoffBeforeEffectiveValid: boolean = true; // kickoff <= effective
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
+  resourcesData = [] as IResource[];
 
   inactiveClientStatus: any
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
@@ -110,6 +112,31 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error fetching authorities:', err);
         this.authorityList = [];
+      }
+    });
+  }
+
+
+  getResourceData(id: any) {
+    const projectId = id;
+    const params = {
+      status: 'Active',
+      entityType: 'project',
+      entityRefId: projectId,
+    };
+    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+      next: (res: any) => {
+        this.resourcesData = res.data;
+        this.loading = false;
+        this.authorityList = (res?.data || []).map((item: IResource) => ({
+          value: item.employee?.id ?? 0,
+          name: `${item.employee?.fusionEmployeeId ?? ''} - ${item.employee?.name ?? ''}`.trim(),
+          email: item.employee?.workMail ?? '',
+          recordId: item.resourceId ?? 0
+        }));
+      },
+      error: (reason: any) => {
+        this.loading = false;
       }
     });
   }
@@ -206,7 +233,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   openUpdateModal(modal: any, project: Project) {
-    this.getAuthorityList();
+    // this.getAuthorityList();
+    this.getResourceData(project.projectId);
     // Patch form values
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
@@ -221,7 +249,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatebillable: project.isBillable,
       updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
-      approvalidAuthority: project.pendingApprovalAuthority.id
+      approvalidAuthority: project.pendingApprovalAuthority?.id ?? null
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
@@ -398,6 +426,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   }
 
   close() {
+    this.updateprojectform.reset();
     this.modalService.dismissAll();
   }
 

@@ -121,7 +121,7 @@ export const MODULE_INFOS = {
     TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO: "The Global Permissions section allows bulk permission requests across departments and teams. Each request includes details like requester, duration, employee list, and reason.",
 
     //on behalf of module info
-    ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) section allows users to request WFH and track its status, with a current month balance displayed. It shows Worked Date, Availed days, Reason, Applied Date, Status, and available actions.",
+    ON_BEHALF_OF_WFH_MODULE_INFO : "The Work From Home (WFH) module enables HR or managers to apply and manage WFH requests on behalf of employees efficiently. It streamlines approval workflows, ensuring accurate tracking of remote work days. The module enhances transparency and flexibility in managing employee work arrangements.",
 
     //Events Module Info
     EVENTS_MODULE_INFO: "The Events section displays all upcoming and past events, allowing users to view and manage event details. New events can be created under Custom Events with date, title, description, and attachments for effective communication.",

@@ -25,7 +25,7 @@
             </div>
             }
 
-            @if(rbac.allowedToAccess('Request On Behalf Button.view') ) {
+            @if(rbac.allowedToAccess('Request On Behalf Of WFH Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" [disabled]="!selectedOtherEmployee"
                 *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Request WFH</button>
             }

@@ -57,6 +57,8 @@ export class OnBehalfOfWhfWaitingForApprovalComponent implements OnInit, OnDestr
     this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
       if (empId) {
         this.getWFHRequests(empId);
+      } else{
+        this.wfhData = [];
       }
     })
   }

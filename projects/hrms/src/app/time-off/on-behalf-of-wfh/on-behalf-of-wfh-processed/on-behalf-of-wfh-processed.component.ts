@@ -52,6 +52,8 @@ wfhData: ICompOff[] = [];
     this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
       if (empId) {
         this.getWFHRequests(empId);
+      }else{
+        this.wfhData = [];
       }
     })
   }

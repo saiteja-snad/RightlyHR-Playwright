@@ -157,6 +157,8 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
 
     if (selectedEmp) {
       this.getWorkfromhomeRequest(selectedEmp);
+    } else {
+      this.http.onBehalfOfWFHSelectedEmp$.next(null);
     }
   }
 
@@ -180,7 +182,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
       this.http.postdata('AttendanceRequests/postWFHRequest', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request submitted successfully');
+          this.sharedModalService.openSuccessModal('WFH Processed successfully');
           this.http.onBehlafOfWFHSignal.set(true);
         },
         error: (err: any) => {

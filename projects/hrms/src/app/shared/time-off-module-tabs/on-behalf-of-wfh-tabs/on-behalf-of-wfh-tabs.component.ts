@@ -67,6 +67,8 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
         this.http.onBehalfOfWFHSelectedEmp$.subscribe((emp: number) => {
           if (emp) {
             this.getWFHRequest(emp);
+          } else {
+            this.resetWFHCounts();
           }
         });
       }
@@ -158,6 +160,16 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
       },
     ];
     this.filterTabsByRbac();
+  }
+
+  resetWFHCounts(): void {
+    this.waitingForApprovalWFHCount = 0;
+    this.approvedWFHRequestsCount = 0;
+    this.rejectedWFHRequestsCount = 0;
+    this.processedWFHRequestsCount = 0;
+    this.cancelWFHRequestsCount = 0;
+    this.loading = false;
+    this.updateNavTabs();
   }
 
   ngOnDestroy(): void {

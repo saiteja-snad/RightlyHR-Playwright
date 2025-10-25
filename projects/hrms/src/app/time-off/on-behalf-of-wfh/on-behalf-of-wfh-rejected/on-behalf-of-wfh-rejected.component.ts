@@ -51,6 +51,8 @@ export class OnBehalfOfWhfRejectedComponent implements OnInit, OnDestroy {
     this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
       if (empId) {
         this.getWFHRequests(empId);
+      }else{
+        this.wfhData = [];
       }
     })
   }

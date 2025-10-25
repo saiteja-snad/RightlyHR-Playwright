@@ -22,20 +22,32 @@
                 </button>
             </div>
 
-            <!-- @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team(Expenses).view'))
-            { -->
+            @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view'))
+            {
             <div class="d-flex align-items-center gap-2">
                 <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee'
                     | translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select #employeeDropdown [options]="activeEmplist" [filter]="true" filterBy="label"
-                        resetFilterOnHide="true" optionLabel="label" optionValue="value" showClear="true"
+                        resetFilterOnHide="true" optionLabel="label" optionValue="value" [showClear]="false"
                         placeholder="Select employee name" (onChange)="onCheckemployee($event.value,'all employees')"
                         class="form-select custom-select"></p-select>
                 </div>
             </div>
-            <!-- } -->
-            <!-- @else if(rbac.allowedToAccess('My Team (Expenses).view')) { -->
+            } 
+            @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
+            <div class="d-flex align-items-center gap-2">
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee'
+                    | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select #employeeDropdown [options]="activeEmplist" [filter]="true" filterBy="label"
+                        resetFilterOnHide="true" optionLabel="label" optionValue="value"  [showClear]="false"
+                        placeholder="Select employee name" (onChange)="onCheckemployee($event.value,'all employees')"
+                        class="form-select custom-select"></p-select>
+                </div>
+            </div>
+        }
+             @else if(rbac.allowedToAccess('My Team (Timesheet).view')) { 
             <div class="d-flex align-items-center gap-2">
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
@@ -47,7 +59,7 @@
                   
                 </div>
             </div>
-            <!-- } -->
+            } 
 
             <div *ngIf="employeeSelected">
                 <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">

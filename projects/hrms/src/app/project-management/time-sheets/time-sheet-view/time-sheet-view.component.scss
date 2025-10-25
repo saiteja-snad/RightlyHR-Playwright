@@ -229,3 +229,10 @@
         }
     }
 }
+
+
+.custom-select-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: auto; /* so click still triggers stopPropagation */
+}

@@ -30,7 +30,7 @@
                 <div class="custom-p-select-content">
                     <p-select #employeeDropdown [options]="activeEmplist" [filter]="true" filterBy="label"
                         resetFilterOnHide="true" optionLabel="label" optionValue="value" [showClear]="false"
-                        placeholder="Select employee name" (onChange)="onCheckemployee($event.value,'all employees')"
+                        placeholder="please select employee" (onChange)="onCheckemployee($event.value,'all employees')"
                         class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                 <div class="custom-p-select-content">
                     <p-select #employeeDropdown [options]="activeEmplist" [filter]="true" filterBy="label"
                         resetFilterOnHide="true" optionLabel="label" optionValue="value"  [showClear]="false"
-                        placeholder="Select employee name" (onChange)="onCheckemployee($event.value,'all employees')"
+                        placeholder="please select employee" (onChange)="onCheckemployee($event.value,'all employees')"
                         class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                 <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                 <div class="custom-p-select-content">
                     <p-select  #employeeDropdown [options]="resourcesList" optionLabel="fullName"  [showClear]="false"
-                        name="myteamemployees" placeholder="Select employee name" [filter]="true"
+                        name="myteamemployees" placeholder="please select employee" [filter]="true"
                         resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false" required
                         (onChange)="onCheckemployee($event.value,'team')">
                     </p-select>
@@ -63,7 +63,7 @@
 
             <div *ngIf="employeeSelected">
                 <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">
-                    My Time sheet
+                    My Timesheet
                 </button>
             </div>
 
@@ -95,9 +95,9 @@
                 <tbody formArrayName="projects">
                     <tr *ngFor="let project of projects.controls; let i = index" [formGroupName]="i">
                         <td>
-                            <div class="dropdown">
+                            <div class="dropdown" >
                                 <div class="custom-select-btn cursor text-nowrap" id="dropdownMenuButton"
-                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"   [class.disabled]="employeeSelected"  (click)="onDropdownClick($event)">
                                     <u>{{ project.value.selectedProject?.clientName &&
                                         project.value.selectedProject?.projectName
                                         ? project.value.selectedProject.clientName + ' - ' +
@@ -124,7 +124,7 @@
                                                     <p-accordion-content>
                                                         <ul class="ps-0">
                                                             <ng-container *ngFor="let p of client.projects">
-                                                                <li class="list-project-name cursor"
+                                                                <li class="list-project-name cursor" 
                                                                     (click)="selectProjectForRow(project, client, p)"
                                                                     *ngIf="!selectedProjectIds.includes(p.projectId)">
                                                                     {{ p.projectName }}
@@ -351,11 +351,11 @@
                 </tfoot>
             </table>
             <div class="d-flex justify-content-between align-items-center p-3">
-                <div *ngIf="!employeeSelected">
+                <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
                 </div>
 
-                <div class="d-flex align-items-center gap-3">
+                <div class="d-flex  align-items-center gap-3">
                     <div class="d-flex align-items-center gap-1">
                         <div class="circular-dot circle-green"></div>
                         <div class="status-text">Approved</div>

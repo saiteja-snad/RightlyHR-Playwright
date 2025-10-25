@@ -174,8 +174,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
       isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
-    const billablecheck = matchedResource?.billable || this.selectedProjectResource?.billable
-    console.log(billablecheck);
+    const billablecheck = !!(matchedResource?.billable || this.selectedProjectResource?.billable);
+
 
     const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
       this.secondsToHHMM(day.durationSeconds) : '',
@@ -201,7 +201,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       duration: durationControl,
       description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
-      isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
+      isBillable: [{ value: day?.isBillable || false , disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
@@ -968,9 +968,17 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isLeave: existingDayData?.isLeave || false
     };
   }
+onDropdownClick(event: MouseEvent) {
+  if (!this.employeeSelected) {
+    event.stopPropagation(); // stop event bubbling
+    event.preventDefault();  // stop Bootstrap dropdown from opening
+  }
+}
 
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
+    console.log("ahsd");
+    
     this.selectedProjectResource = null
     const form = row as FormGroup;
     // Patch project details
@@ -1103,20 +1111,25 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
       this.dayForm = dayForm; // keep reference
 
-      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected) {
-        this.dayForm.disable();
-      } else {
-        this.dayForm.enable();
-      }
-
-      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
-      if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
-
-        const selectedResource = this.resourcesArrayList.find(
+      const selectedResource = this.resourcesArrayList.find(
           (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
             res.client?.clientId === this.dayForm.get('clientId')?.value
         );
 
+      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected  ) {
+        this.dayForm.disable();
+        
+      } else {
+        const billablecheck = !!(selectedResource?.billable || this.selectedProjectResource?.billable);
+        this.dayForm.enable();
+        if (!billablecheck) {
+          this.dayForm.get('isBillable')?.disable();
+        }
+        
+      }
+
+      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+      if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
         this.dayForm.patchValue({
           isBillable: this.selectedProjectResource?.billable ?? selectedResource?.billable
         })

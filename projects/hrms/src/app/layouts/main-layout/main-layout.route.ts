@@ -24,6 +24,7 @@ import { PhonebookComponent } from "../../phonebook/phonebook/phonebook.componen
 import { ContactDirectoryComponent } from "../../contact-directory/contact-directory/contact-directory.component";
 import { authGuard } from "../../auth/auth-guard/auth.guard";
 import { ProjectManagementLayoutComponent } from "../../project-management/project-management-layout/project-management-layout.component";
+import { CardsManagementLayoutComponent } from "../../cards-management/cards-management-layout/cards-management-layout.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -53,4 +54,5 @@ export default [
     { path: 'phonebook', component: PhonebookComponent, canActivate: [authGuard] },
     { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
     { path: 'project-management', component: ProjectManagementLayoutComponent, loadChildren: () => import('../../project-management/project-management.route') },
+    { path: 'card-management', component: CardsManagementLayoutComponent, loadChildren: () => import('../../cards-management/cards-management.route') },
 ] as Route[];

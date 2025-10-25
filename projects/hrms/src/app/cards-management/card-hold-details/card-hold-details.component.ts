@@ -63,6 +63,7 @@ export class CardHoldDetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getCardDetails();
   }
+  
 
   //clear form and close popup
   cleardata() {
@@ -105,7 +106,7 @@ export class CardHoldDetailsComponent implements OnInit, OnDestroy {
         this.http.updateCount(res.data.status);
         this.loader = false;
       },
-      error: (errormessage) => {
+      error: (errormessage: any) => {
         console.log(errormessage);
       }
     });

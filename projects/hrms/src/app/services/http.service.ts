@@ -496,7 +496,22 @@ export class HttpService {
   deleteData(url: string) {
     return this.http.delete(`${this.ApiUrl}${url}`);
   }
-
+//get card details
+ getcardDetails(
+    url: string,
+    pagenum: number,
+    pagesize: number,
+    searchparam?: string,
+    status?: string,
+  ): Observable<any> {
+    let params = new HttpParams()
+      .set('pageNumber', pagenum.toString())
+      .set('pageSize', pagesize.toString());
+    if (searchparam) params = params.set('search', searchparam);
+    if (status) params = params.set('status', status);
+    
+    return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
+  }
   getDataWithQueryParams(url: string, queryParams: any) {
     const params = new URLSearchParams();
     for (let key in queryParams) {

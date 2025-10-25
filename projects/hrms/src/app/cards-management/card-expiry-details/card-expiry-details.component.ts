@@ -9,7 +9,6 @@ import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
 import { Subject, takeUntil } from 'rxjs';
 import { Icardsdetails } from '../../Interfaces/cardsdetails.model';
-import { CardDetailsPipe } from '../../Pipes/card-details.pipe';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { FormValidationsService } from '../../services/form-validations.service';
 import { HttpService } from '../../services/http.service';
@@ -21,7 +20,7 @@ import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-card-expiry-details',
   imports: [CommonModule, TabsModule, FormsModule, TranslateModule, RouterModule, ReactiveFormsModule,
-    NgbPopoverModule, ChartModule, CardDetailsPipe, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent],
+    NgbPopoverModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, Paginator, InfoIconComponent],
   templateUrl: './card-expiry-details.component.html',
   styleUrl: './card-expiry-details.component.scss'
 })

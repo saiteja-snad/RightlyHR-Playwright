@@ -481,7 +481,7 @@ notPastYearValidator(): ValidatorFn {
       next: (res) => {
         this.modalService.dismissAll();
         this.getCardDetails();
-        this.conformationPopup.openSuccessModal('Card Allocated successfully');
+        this.conformationPopup.openSuccessModal('Card allocated successfully');
       },
       error: (err) => {
         console.error('Error creating card', err);

@@ -221,7 +221,7 @@ notPastYearValidator(): ValidatorFn {
         this.modalService.dismissAll();
         this.http.cardsregisterSignal.set(true);
         this.router.navigate(['/card-management/details']);
-        this.conformationPopup.openSuccessModal('Card Registered Successfully!');
+        this.conformationPopup.openSuccessModal('Card registered successfully!');
       },
       error: (err) => {
         console.error('Error creating card', err);

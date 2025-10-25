@@ -139,11 +139,11 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
         }));
 
         if(this.authorityList?.length > 0){
+          this.updateprojectform.get('approvalidAuthority')?.enable();
+          this.updateprojectform.get('approvalidAuthority')?.setValidators([Validators.required]);
           this.updateprojectform.patchValue({
             approvalidAuthority: project.pendingApprovalAuthority?.id ?? null
           });
-          this.updateprojectform.get('approvalidAuthority')?.enable();
-          this.updateprojectform.get('approvalidAuthority')?.setValidators(Validators.required);
         }
         }else{
           this.authorityList = [];
@@ -268,6 +268,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
     // Open modal
+    console.log(this.updateprojectform);
+    
     this.modalService.open(modal, { size: 'lg', centered: true, backdrop: 'static' });
   }
 

@@ -60,6 +60,7 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
+   CARDS_SUB_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -679,6 +680,15 @@ export class AccessNavigationService {
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+        case '/card-management':
+        if (this.rbac.allowedToAccess('Cards Management.view')) {
+          for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

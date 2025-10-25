@@ -515,6 +515,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Blood Bank',
     'Phone Book',
     'Contacts Directory',
+    'Cards Management',
   ];
   expensesModuleTabs = [
     'Draft Tab',
@@ -548,6 +549,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Under Maintenance',
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
+  ];
+   cardsModuleFields = [
+    'Cards Allocated',
+    'Cards Available',
+    'Cards Expired',
+    'Cards Hold',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',
@@ -872,6 +879,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Desk Details',
     'My Info Asset Details',
     'My Info Separation Request Button',
+    'My Info Card Details',
   ];
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
@@ -901,6 +909,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Separation Request',
     'No Due Form',
     'Employee Info Contract Conversion Request',
+    'Employee Info Card Details'
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',

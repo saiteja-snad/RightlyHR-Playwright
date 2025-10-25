@@ -576,3 +576,9 @@ export const PROJECTS_ROUTES = [
     permission: 'Documents Tab.view'
   }
 ];
+export const CARDS_SUB_TABS = [
+  { route: '/card-management/details', permission: 'Cards Available.view' },
+  { route: '/card-management/expiry', permission: 'Cards Expired.view' },
+  { route: '/card-management/allocated', permission: 'Cards Allocated.view' },
+  { route: '/card-management/hold', permission: 'Cards Hold.view' },
+]

@@ -51,7 +51,7 @@ export class HttpService {
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<boolean>(false);
-
+  cardsregisterSignal=signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -65,7 +65,12 @@ export class HttpService {
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
-
+//setting cards count
+ private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
+  counts$ = this.CardcountsSource.asObservable();
+  updateCount(counts: { [key: string]: number }) {
+    this.CardcountsSource.next(counts);
+  }
   // Function to set the communication service data for basic info
   basicDetailes = new Subject<void>();
   basicDetailesadded$ = this.basicDetailes.asObservable();

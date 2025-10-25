@@ -1,0 +1,229 @@
+<div class="custom-main-popup-container">
+  <div class="component-header-content">
+    <div class="heading-content">
+      @if(!router.url.startsWith('/card-management/card-history')){
+      <div class="commpoment-name" >Cards<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">Cards Management</div>
+      }@else {
+      <div (click)="goBack()" class="commpoment-name" style="cursor: pointer;">Cards Management<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">Card History</div>
+      }
+      <div>
+        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+      </div>
+    </div>
+
+    <div class="d-flex gap-3 align-items-center">
+      <div>
+        @if(rbac.allowedToAccess('Cards Management.view') && !router.url.startsWith('/card-management/card-history')){
+        <button type="button" class="custom-btn btn-primary" (click)="openModal(registerCardModal)">
+          Register a Card</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!--Module Information-->
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
+  
+  <div class="d-flex gap-3 w-100">
+    @if(!router.url.startsWith('/card-management/card-history')){
+    <div class="component-left-tabs-container">
+      <app-cardsmanagement-tabs />
+    </div>
+  }
+    <div class="component-right-content">
+      <router-outlet />
+    </div>
+  </div>
+</div>
+
+<!--Register card popup-->
+<ng-template #registerCardModal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Register a card</p>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form autocomplete="off" [formGroup]="cardDetailsForm" (ngSubmit)="postcarddetails(cardDetailsForm)">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="Card Name" class="form-label custom-label mb-2">Card Number<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <input type="text" class="form-control custom-input"  (keypress)="allowonlynumbers($event)"
+                (paste)="onCardNumberPaste($event)"  formControlName="cardNumber" placeholder="Please enter card number">
+            </div>
+            <div class="error-msg" *ngIf="cardDetailsForm.get('cardNumber')?.hasError('required') && cardDetailsForm.get('cardNumber')?.touched">
+              Card number is required
+            </div>
+            
+            <!-- Show when pattern invalid -->
+            <div class="error-msg" *ngIf="cardDetailsForm.get('cardNumber')?.hasError('pattern') && cardDetailsForm.get('cardNumber')?.touched">
+              Card number must be 16 digits
+            </div>
+            
+            <!-- Show when Luhn check fails -->
+            <div class="error-msg"
+              *ngIf="cardDetailsForm.get('cardNumber')?.hasError('validateCCNumber') && cardDetailsForm.get('cardNumber')?.touched">
+              Enter a valid card number
+            </div>
+          </div>
+
+
+          <!-- Card Type Field -->
+          <div class="col-md-6 mb-3">
+            <label for="cardtype" class="form-label custom-label mb-2">Card Type<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="cardTypeList" optionLabel="label" formControlName="cardType" placeholder="Select card type"
+                class="form-select custom-select"></p-select>
+            </div>
+            <div *ngIf="cardDetailsForm.get('cardType')?.invalid && cardDetailsForm.get('cardType')?.touched" class="error-msg">
+              Card Type is required
+            </div>
+          </div>
+
+          <!-- Desk Name Field -->
+          <div class="col-md-6 mb-3">
+            <label for="assetId" class="form-label custom-label mb-2">Card Category<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <input type="text" class="form-control custom-input text-capitalize" formControlName="cardCategory"
+                placeholder="Card category" readonly>
+            </div>
+            <!-- <div *ngIf="cardDetailsForm.get('cardCategory')?.invalid && cardDetailsForm.get('cardCategory')?.touched">
+              <div class="error-msg">card categor is required</div>
+            </div> -->
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="Department" class="form-label custom-label mb-2">Bank Name<span class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" optionValue="bankName1"
+                [resetFilterOnHide]="true" filterBy="bankName1" formControlName="bankName" placeholder="Select bank name"
+                class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="cardDetailsForm.controls['bankName'].invalid && (cardDetailsForm.controls['bankName'].touched 
+            || cardDetailsForm.controls['bankName'].dirty)">
+              <span *ngIf="cardDetailsForm.controls['bankName'].errors?.['required']">Bank Name is required</span>
+            </div>
+          </div>
+
+          <!-- Card Holder Name -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">
+              {{ 'Card Holder Name' | translate }}<span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control custom-input" formControlName="cardHolderName"
+              placeholder="Please enter card holder name" (keypress)="restrictInput($event)">
+            <div class="error-msg" *ngIf="cardDetailsForm.get('cardHolderName')?.invalid && cardDetailsForm.get('cardHolderName')?.touched">
+              Card Holder Name is required
+            </div>
+          </div>
+
+          <!-- Issue Date -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">{{ 'Date of Issue ' | translate }}<span class="text-danger">*</span></label>
+            <input type="date" id="issueDate" formControlName="issueDate" class="form-control custom-input" />
+            <div class="error-msg" *ngIf="cardDetailsForm.get('issueDate')?.invalid && cardDetailsForm.get('issueDate')?.touched">
+              Date of Issue is required
+            </div>
+          </div>
+
+          <!-- Expiry Month -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">{{ 'Expiry Month (MM)' | translate }}<span class="text-danger">*</span></label>
+            <input type="number" class="form-control custom-input" formControlName="expiryMonth" placeholder="Enter month (1–12)"
+              (keypress)="restrictMonthInput($event)"  [maxLength]="2" />
+            <!-- <div class="error-msg" *ngIf="cardDetailsForm.get('expiryMonth')?.invalid && cardDetailsForm.get('expiryMonth')?.touched">
+              Expiry month is required
+            </div> -->
+              <div class="error-msg" *ngIf="
+                    cardDetailsForm.get('expiryMonth')?.invalid &&
+                    cardDetailsForm.get('expiryMonth')?.touched
+                  ">
+                <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['required']">
+                  Expiry month is required
+                </div>
+                <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['maxlength']">
+                  Maximum 2 digits allowed
+                </div>
+                <div *ngIf="cardDetailsForm.get('expiryMonth')?.errors?.['max']">
+                  Must be between 1–12
+                </div>
+              </div>
+          </div>
+
+          <!-- Expiry Year -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label mb-2">{{ 'Expiry Year (YYYY)' | translate }}<span class="text-danger">*</span></label>
+            <input type="number" class="form-control custom-input" formControlName="expiryYear" placeholder="Enter expiry year"
+              (keypress)="restrictMonthInput($event)" [maxLength]="4" />
+            <div class="error-msg" *ngIf="cardDetailsForm.get('expiryYear')?.invalid && cardDetailsForm.get('expiryYear')?.touched">
+              <div *ngIf="cardDetailsForm.get('expiryYear')?.errors?.['required']">
+                Expiry year is required
+              </div>
+              <div *ngIf="cardDetailsForm.get('expiryYear')?.errors?.['pattern']">
+                Maximum 4 digits allowed
+              </div>
+              <div *ngIf="cardDetailsForm.get('expiryYear')?.errors?.['pastYear']">
+                Must be a valid current or future year 
+              </div>
+            </div>
+          </div>
+
+          <!-- Credit Limit -->
+          <div class="col-md-6 mb-3" *ngIf="cardDetailsForm.get('cardType')?.value?.value?.toLowerCase() !== 'debit'">
+            <label class="form-label custom-label mb-2">{{ 'Credit Limit' | translate }}<span class="text-danger">*</span></label>
+            <input type="number" class="form-control custom-input" min="0" formControlName="creditLimit" placeholder="Enter credit limit">
+              <div class="error-msg"
+                *ngIf="cardDetailsForm.get('creditLimit')?.hasError('required') && cardDetailsForm.get('creditLimit')?.touched">
+                Credit Limit is required
+              </div>
+              
+              <div class="error-msg"
+                *ngIf="cardDetailsForm.get('creditLimit')?.hasError('min') && cardDetailsForm.get('creditLimit')?.touched">
+                Must be a positive number
+              </div>
+
+          </div>
+
+          <!-- Shared Limit -->
+          <div class="col-md-6 mb-3 pt-2">
+            <div class="form-check form-switch pt-4">
+              <input class="form-check-input" type="checkbox" formControlName="sharedLimit">
+              <label class="form-label custom-toggle-label">Shared Limit</label>
+            </div>
+            <div class="error-msg" *ngIf="cardDetailsForm.get('sharedLimit')?.invalid && cardDetailsForm.get('sharedLimit')?.touched">
+              Shared Limit is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]=" cardDetailsForm.invalid">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<!-- confirmation popup -->
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+    </div>
+  </div>
+</ng-template>

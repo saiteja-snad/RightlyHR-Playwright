@@ -47,6 +47,7 @@
     "@ngx-translate/http-loader": "^16.0.1",
     "@popperjs/core": "^2.11.8",
     "@primeng/themes": "^19.0.10",
+    "angular-cc-library": "^3.5.0",
     "angular-oauth2-oidc": "^20.0.2",
     "bn-ng-idle": "^2.0.5",
     "bootstrap": "^5.3.3",

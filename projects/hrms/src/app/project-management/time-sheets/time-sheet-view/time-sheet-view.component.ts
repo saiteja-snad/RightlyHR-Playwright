@@ -499,8 +499,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getTotalPerDay(day: string): string {
     let totalMinutes = 0;
     this.projects.controls.forEach((project) => {
-      const duration = project.get([day, 'duration'])?.value;
-      if (duration) {
+      const dayControl = project.get(day);
+      const duration = dayControl?.get('duration')?.value;
+      const entryId = dayControl?.get('entryId')?.value;
+      
+      // Only count saved entries (with entryId)
+      if (duration && entryId ) {
         const [hh, mm] = duration.split(':').map(Number);
         totalMinutes += hh * 60 + (mm || 0);
       }
@@ -546,6 +550,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   private isDeleteModalOpen = false;
   private userClickedNo = false;
+  private isModalOpen = false;
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -597,9 +602,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
 
     // Auto-save on blur if duration has value
-    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo) {
+    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
       // Don't auto-save if already processed or waiting for approval
-      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval'  ) {
         this.autoSaveTableEntry(rowIndex, dayName);
       }
     }
@@ -919,7 +924,14 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   //OPEN TIME ENTERIY
   openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
     if (dayForm instanceof FormGroup) {
-      this.modalService.open(content, { centered: true, backdrop: 'static' });
+      this.isModalOpen = true;
+      const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+      
+      // Reset flag when modal is closed
+      modalRef.result.finally(() => {
+        this.isModalOpen = false;
+      });
+      
       this.dayForm = dayForm; // keep reference
 
       if (this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') {

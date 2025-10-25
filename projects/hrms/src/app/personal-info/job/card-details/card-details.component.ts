@@ -10,7 +10,6 @@ import { FormValidationsService } from '../../../services/form-validations.servi
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { translate } from 'pdf-lib';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { Router } from '@angular/router';

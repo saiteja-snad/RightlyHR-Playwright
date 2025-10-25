@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -63,7 +63,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   spinnerLoaderforallrecoders = false;
   datesSelected = false;
-
+  @ViewChild('datePicker') datePicker: any;
+  @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, private conformationPopup: OpenModalService) { }
 
@@ -189,7 +190,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  @ViewChild('datePicker') datePicker: any;
+
   onDateSelect(selectedDate: Date) {
     if (!selectedDate) return;
     const selected = moment(selectedDate);
@@ -281,6 +282,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       !!day.entryId).map((day: any) => day.entryId);
   }
 
+  openModalforsubmit(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
   openModalfordeletealldata(content: any, index: number) {
     this.rowdelete = index;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -298,7 +303,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Draft entries deleted successfully');
-            this.projects.removeAt(index);
+          this.projects.removeAt(index);
           this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
           this.getTimeSheetEntriesbyEmployeeId(
             this.employeeId,
@@ -539,32 +544,75 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  private isDeleteModalOpen = false;
+  private userClickedNo = false;
+
+  // Check if user is trying to clear duration for draft entries
+  checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
+    if (this.isDeleteModalOpen) {
+      event.preventDefault();
+      return;
+    }
+
+    const target = event.target as HTMLInputElement;
+    const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
+    const approvalStatus = dayForm?.get('approvalStatus')?.value;
+    const entryId = dayForm?.get('entryId')?.value;
+
+    // If user presses Delete/Backspace and field has value and status is draft
+    if ((event.key === 'Delete' || event.key === 'Backspace') &&
+      target.value &&
+      approvalStatus?.toLowerCase() === 'draft' &&
+      entryId) {
+
+      // Check if this action would clear the entire field
+      const willClearField = (target.selectionStart === 0 && target.selectionEnd === target.value.length) ||
+        (target.value.length === 1 && (target.selectionStart === 0 || target.selectionEnd === target.value.length));
+
+      if (willClearField) {
+        event.preventDefault();
+        this.isDeleteModalOpen = true;
+        this.opendeleteModal(this.deleteconformation, entryId);
+      }
+    }
+  }
+
   //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string) {
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
     let formatted = this.getFormattedTime(value);
 
+    const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
+    const approvalStatus = dayForm?.get('approvalStatus')?.value;
+
     const control = this.projects.at(rowIndex).get(`${dayName}.${duration}`);
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
-    this.showDots[rowIndex][dayName] = true;
+
+    // Show dots only if there's a formatted duration value
+    if (formatted) {
+      this.showDots[rowIndex][dayName] = true;
+    }
 
     // Auto-save on blur if duration has value
-    if (formatted && (event.type === 'blur' || event.type === 'keyup')) {
-      const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
-      const approvalStatus = dayForm?.get('approvalStatus')?.value;
-
+    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo) {
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         this.autoSaveTableEntry(rowIndex, dayName);
       }
     }
+
+    // Reset userClickedNo flag after processing
+    if (event.type === 'blur') {
+      this.userClickedNo = false;
+    }
   }
 
   //AUTO SAVE TABLE ENTRY
   autoSaveTableEntry(rowIndex: number, dayName: string) {
+
     const projectForm = this.projects.at(rowIndex);
     const dayForm = projectForm.get(dayName) as FormGroup;
 
@@ -572,18 +620,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     const formValue = dayForm.value;
     const projectValue = projectForm.value;
-    
+
     // Get the correct date based on dayName
     const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
-    const entryDate = this.weekDates && this.weekDates[dayIndex] 
+    const entryDate = this.weekDates && this.weekDates[dayIndex]
       ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
       : moment().format('YYYY-MM-DD');
-   
+
     const payload = {
       entryId: formValue.entryId || null,
       employeeId: this.employeeId || null,
       entryDate: entryDate,
-      startTime: formValue.startTime|| null,
+      startTime: formValue.startTime || null,
       endTime: formValue.endTime || null,
       description: formValue.description || null,
       approvalStatus: 'draft',
@@ -591,7 +639,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       projectId: projectValue.selectedProject?.projectId || null,
       timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
-      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || null,
+      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
       isBillable: formValue.isBillable || false
     };
 
@@ -651,10 +699,27 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return formatted;
   }
 
-  //DELETE RECODER
-  opendeleteModal(content: any, data: AbstractControl) {
+  opendeleteModal(content: any, data: any) {
     this.selectedentryid = data;
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.userClickedNo = false;
+    const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+
+    // Reset flag when modal is closed
+    modalRef.result.finally(() => {
+      this.isDeleteModalOpen = false;
+    });
+  }
+
+  // Handle No button click in delete modal
+  onDeleteModalNo() {
+    this.userClickedNo = true;
+    this.modalService.dismissAll();
+    this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+    this.getTimeSheetEntriesbyEmployeeId(
+      this.employeeId,
+      this.formattedweakendStart
+    );
+
   }
 
   //single entry delete
@@ -668,6 +733,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Time Entry is deleted successfully');
         this.selectedentryid = null;
+        this.isDeleteModalOpen = false;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(
           this.employeeId,
@@ -679,6 +745,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal(
           err?.error?.message || 'Failed to delete time entry'
         );
+        this.isDeleteModalOpen = false;
       },
     });
   }
@@ -1022,27 +1089,29 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  toTimeSpan = (time: string | null | undefined): string | null => {
+        if (!time) return null;
+        // If user gave "HH:mm" → make it "HH:mm:00"
+        if (/^\d{2}:\d{2}$/.test(time)) {
+          return `${time}:00`;
+        }
+        // If already "HH:mm:ss" → keep it
+        if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
+          return time;
+        }
+        // If API accidentally sends "HH:mm:ss:SS" → trim last ":SS"
+        if (/^\d{2}:\d{2}:\d{2}:\d{2}$/.test(time)) {
+          return time.substring(0, 8); // take only "HH:mm:ss"
+        }
+        return null;
+      };
+
   //single recoder
   saveDayEntry() {
     this.spinnerLoader = true;
     // Prepare payload
     const formValue = this.dayForm.value;
-    const toTimeSpan = (time: string | null | undefined): string => {
-      if (!time) return '00:00:00';
-      // If user gave "HH:mm" → make it "HH:mm:00"
-      if (/^\d{2}:\d{2}$/.test(time)) {
-        return `${time}:00`;
-      }
-      // If already "HH:mm:ss" → keep it
-      if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
-        return time;
-      }
-      // If API accidentally sends "HH:mm:ss:SS" → trim last ":SS"
-      if (/^\d{2}:\d{2}:\d{2}:\d{2}$/.test(time)) {
-        return time.substring(0, 8); // take only "HH:mm:ss"
-      }
-      return '00:00:00';
-    };
+ 
 
     const payload = {
       entryId: formValue.entryId || 0,
@@ -1050,8 +1119,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       entryDate: moment(this.dayForm.get('entryDate')?.value).format(
         'YYYY-MM-DD'
       ),
-      startTime: toTimeSpan(formValue.startTime) || '',
-      endTime: toTimeSpan(formValue.endTime) || '',
+      startTime: this.toTimeSpan(formValue.startTime) || null,
+      endTime: this.toTimeSpan(formValue.endTime) || null,
       description: formValue.description || '',
       approvalStatus: 'draft',
       clientId: formValue.clientId || this.selectedclientid || null,
@@ -1146,6 +1215,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
       next: (res) => {
         this.spinnerLoaderforallrecoders = false
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal(
           'Timesheet submitted successfully'
         );
@@ -1157,6 +1227,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
+         this.modalService.dismissAll();
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);

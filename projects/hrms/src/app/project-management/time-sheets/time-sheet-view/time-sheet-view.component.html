@@ -23,7 +23,7 @@
 
 
             <div>
-                <button type="button" class="custom-btn btn-primary px-4" (click)="submitTimesheet()"
+                <button type="button" class="custom-btn btn-primary px-4" (click)="openModalforsubmit(sumbitconfirmationpopup)"
                     [disabled]="isSubmitDisabled()">
                     @if (spinnerLoaderforallrecoders) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -101,6 +101,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                        (keydown)="checkClearDuration($event, 'mon', i)"
                                         (keyup.enter)="formatTime($event, 'mon', i, 'duration')"
                                         (blur)="formatTime($event, 'mon', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration  || (project.get('mon.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('mon.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -126,6 +127,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                        (keydown)="checkClearDuration($event, 'tue', i)"
                                         (keyup.enter)="formatTime($event, 'tue', i, 'duration')"
                                         (blur)="formatTime($event, 'tue', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration  || (project.get('tue.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('tue.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -151,6 +153,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                        (keydown)="checkClearDuration($event, 'wed', i)"
                                         (keyup.enter)="formatTime($event, 'wed', i, 'duration')"
                                         (blur)="formatTime($event, 'wed', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration  || (project.get('wed.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('wed.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -176,6 +179,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                        (keydown)="checkClearDuration($event, 'thu', i)"
                                         (keyup.enter)="formatTime($event, 'thu', i, 'duration')"
                                         (blur)="formatTime($event, 'thu', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration  || (project.get('thu.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('thu.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -201,6 +205,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                            (keydown)="checkClearDuration($event, 'fri', i)"
                                         (keyup.enter)="formatTime($event, 'fri', i, 'duration')"
                                         (blur)="formatTime($event, 'fri', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration  || (project.get('fri.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('fri.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -226,6 +231,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                            (keydown)="checkClearDuration($event, 'sat', i)"
                                         (keyup.enter)="formatTime($event, 'sat', i, 'duration')"
                                         (blur)="formatTime($event, 'sat', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration  || (project.get('sat.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('sat.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -251,6 +257,7 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
+                                            (keydown)="checkClearDuration($event, 'sun', i)"
                                         (keyup.enter)="formatTime($event, 'sun', i, 'duration')"
                                         (blur)="formatTime($event, 'sun', i, 'duration')">
                                     <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration  || (project.get('sun.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('sun.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
@@ -416,7 +423,7 @@
             <p class="confirmation-text mb-4">{{'Are you sure you want to delete?'}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="onDeleteModalNo()">{{'No'}}</button>
             <button type="submit" class="custom-btn btn-primary"
                 (click)="deletesingleentry();modal.dismiss()">{{'Yes'}}</button>
         </div>
@@ -461,7 +468,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="saveDayEntry()">{{"Yes"}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="submitTimesheet()">{{"Yes"}}</button>
         </div>
     </div>
 </ng-template>

@@ -50,6 +50,8 @@ export class ContractorLetterComponent {
   @ViewChild('rejectpopup') rejectpopup: any;
   updateempdata = {} as any;
   currentDate = moment();
+  selectedSymbol: string = '';
+
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
@@ -158,6 +160,12 @@ export class ContractorLetterComponent {
         this.offerLetterData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.offerLetterData.note = this.getofferdata.note
         this.offerLetterData.address = this.getofferdata.address;
+        if (this.getofferdata.currencyType === 'INR') {
+          this.selectedSymbol = '₹'
+        }
+        if (this.getofferdata.currencyType === 'USD') {
+          this.selectedSymbol = '$'
+        }
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }

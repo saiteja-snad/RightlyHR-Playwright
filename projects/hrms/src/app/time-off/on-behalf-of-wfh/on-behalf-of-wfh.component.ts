@@ -34,6 +34,8 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   employeeiddetails = [] as any;
   selectedOtherEmployee: any = null;
+  selectedEmpName!: string;
+  selectedEmpFusionId!: string;
 
   constructor(
     private modalService: NgbModal,
@@ -148,11 +150,13 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   }
 
   onEmployeeChange(event: any): void {
-    const selectedEmp = event?.value || 0;
-    this.selectedOtherEmployee = selectedEmp;
+    const selectedEmp = event?.value?.employeeId || 0;
+    this.selectedOtherEmployee = event?.value;
+
+    this.selectedEmpName= `${this.selectedOtherEmployee?.firstName ?? ''} ${this.selectedOtherEmployee?.middleName ? this.selectedOtherEmployee?.middleName + ' ' : ''}${this.selectedOtherEmployee?.lastName ?? ''}`
+    this.selectedEmpFusionId= this.selectedOtherEmployee?.fusionEmpId;
 
     this.http.onBehalfOfWFHSelectedEmp$.next(selectedEmp);
-
     this.http.onBehlafOfWFHSignal.set(!!selectedEmp);
 
     if (selectedEmp) {
@@ -174,7 +178,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
       const formData = addForm.value;
       const isFullDay = +formData.availing === 2;
       const payload = {
-        empId: this.selectedOtherEmployee,
+        empId: this.selectedOtherEmployee.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
         requestedComments: formData.reason,

@@ -16,7 +16,7 @@
             <div class="d-flex align-items-center gap-3">
                 <label class="form-label filter-labels m-0">Select Employee</label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
+                    <p-select [options]="employeeiddetails" optionLabel="fullName"
                         [(ngModel)]="selectedOtherEmployee" [filter]="true" [resetFilterOnHide]="true" filterBy="fullName"
                         [showClear]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event)"
                         (onClear)="onClearEmployee()" class="form-select custom-select">
@@ -27,7 +27,7 @@
 
             @if(rbac.allowedToAccess('Request On Behalf Of WFH Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" [disabled]="!selectedOtherEmployee"
-                *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Request WFH</button>
+                *ngIf="rbac.allowedToAccess('Request WFH Button.view')">Apply On Behalf Of</button>
             }
         </div>
     </div>
@@ -52,7 +52,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Request WFH</p>
+                <p class="popup-heading mb-0">Apply WFH On Behalf Of - {{selectedEmpName}} ({{selectedEmpFusionId}})</p>
             </div>
         </div>
 

@@ -192,6 +192,10 @@ export class NdaContractorLetterComponent {
         }
       },
       error: (err) => {
+        const doj = this.formatDatewithDate(this.employeeaddress.dateOfJoining);
+        this.employeeForm.patchValue({
+            dateOfJoining: doj
+          });
         console.error('Error fetching contractor details:', err);
       }
     });

@@ -236,7 +236,7 @@ export interface IEmployeeProfile {
   emergencynumber: number;
   title: string;
   password: string;
-  dateOfJoining: string;
+  dateOfJoining: any;
   probationEndDate: string;
   emergencyName: string;
   relationShip: string;

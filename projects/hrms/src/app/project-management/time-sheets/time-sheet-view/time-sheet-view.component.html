@@ -5,6 +5,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
+
             <div class="total-hrs">{{"Total Hours" }}:<span class="total-duration ms-1">{{ totalDuration}} Hrs</span>
             </div>
             <div class="d-flex week-picker-content">
@@ -21,10 +22,42 @@
                 </button>
             </div>
 
+            <!-- @if(rbac.allowedToAccess('All Employees (Expenses).view') && rbac.allowedToAccess('My Team(Expenses).view'))
+            { -->
+            <div class="d-flex align-items-center gap-2">
+                <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select Employee'
+                    | translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select #employeeDropdown [options]="activeEmplist" [filter]="true" filterBy="label"
+                        resetFilterOnHide="true" optionLabel="label" optionValue="value" showClear="true"
+                        placeholder="Select employee name" (onChange)="onCheckemployee($event.value,'all employees')"
+                        class="form-select custom-select"></p-select>
+                </div>
+            </div>
+            <!-- } -->
+            <!-- @else if(rbac.allowedToAccess('My Team (Expenses).view')) { -->
+            <div class="d-flex align-items-center gap-2">
+                <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
+                <div class="custom-p-select-content">
+                    <p-select  #employeeDropdown [options]="resourcesList" optionLabel="fullName"  [showClear]="false"
+                        name="myteamemployees" placeholder="Select employee name" [filter]="true"
+                        resetFilterOnHide="true" class="form-select custom-select" [autoDisplayFirst]="false" required
+                        (onChange)="onCheckemployee($event.value,'team')">
+                    </p-select>
+                  
+                </div>
+            </div>
+            <!-- } -->
 
-            <div>
-                <button type="button" class="custom-btn btn-primary px-4" (click)="openModalforsubmit(sumbitconfirmationpopup)"
-                    [disabled]="isSubmitDisabled()">
+            <div *ngIf="employeeSelected">
+                <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">
+                    My Time sheet
+                </button>
+            </div>
+
+            <div *ngIf="!employeeSelected">
+                <button type="button" class="custom-btn btn-primary px-4"
+                    (click)="openModalforsubmit(sumbitconfirmationpopup)" [disabled]="isSubmitDisabled()">
                     @if (spinnerLoaderforallrecoders) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     <span>{{'Loading' | translate}}...</span>
@@ -104,11 +137,11 @@
                                         (keydown)="checkClearDuration($event, 'mon', i)"
                                         (keyup.enter)="formatTime($event, 'mon', i, 'duration')"
                                         (blur)="formatTime($event, 'mon', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration  || (project.get('mon.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('mon.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()"
-                                       >
-                                        <i class="bi bi-three-dots-vertical cursor"  (click)="openModal(addtask, project.get('mon'),i,'mon')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['mon'] || project.get('mon')?.value?.duration  || (project.get('mon.approvalStatus')?.value && project.get('mon.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask, project.get('mon'),i,'mon')"></i>
                                     </span>
                                 </div>
                                 <div *ngIf="project.get('mon.approvalStatus')?.value === 'Rejected'" class="ms-2">
@@ -131,11 +164,11 @@
                                         (keydown)="checkClearDuration($event, 'tue', i)"
                                         (keyup.enter)="formatTime($event, 'tue', i, 'duration')"
                                         (blur)="formatTime($event, 'tue', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration  || (project.get('tue.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('tue.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()"
-                                       >
-                                        <i class="bi bi-three-dots-vertical cursor"  (click)="openModal(addtask,project.get('tue'),i,'tue')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['tue'] || project.get('tue')?.value?.duration  || (project.get('tue.approvalStatus')?.value  && project.get('tue.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask,project.get('tue'),i,'tue')"></i>
                                     </span>
                                 </div>
                                 <div *ngIf="project.get('tue.approvalStatus')?.value === 'Rejected'" class="ms-2">
@@ -158,10 +191,11 @@
                                         (keydown)="checkClearDuration($event, 'wed', i)"
                                         (keyup.enter)="formatTime($event, 'wed', i, 'duration')"
                                         (blur)="formatTime($event, 'wed', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration  || (project.get('wed.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('wed.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()">
-                                        <i class="bi bi-three-dots-vertical cursor"  (click)="openModal(addtask,project.get('wed'),i,'wed')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['wed'] || project.get('wed')?.value?.duration  || (project.get('wed.approvalStatus')?.value && project.get('wed.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask,project.get('wed'),i,'wed')"></i>
                                     </span>
                                 </div>
                                 <div *ngIf="project.get('wed.approvalStatus')?.value === 'Rejected'" class="ms-2">
@@ -184,10 +218,11 @@
                                         (keydown)="checkClearDuration($event, 'thu', i)"
                                         (keyup.enter)="formatTime($event, 'thu', i, 'duration')"
                                         (blur)="formatTime($event, 'thu', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration  || (project.get('thu.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('thu.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()">
-                                        <i class="bi bi-three-dots-vertical cursor" (click)="openModal(addtask,project.get('thu'),i,'thu')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['thu'] || project.get('thu')?.value?.duration  || (project.get('thu.approvalStatus')?.value && project.get('thu.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask,project.get('thu'),i,'thu')"></i>
                                     </span>
                                 </div>
                                 <div *ngIf="project.get('thu.approvalStatus')?.value === 'Rejected'" class="ms-2">
@@ -207,17 +242,17 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                            (keydown)="checkClearDuration($event, 'fri', i)"
+                                        (keydown)="checkClearDuration($event, 'fri', i)"
                                         (keyup.enter)="formatTime($event, 'fri', i, 'duration')"
                                         (blur)="formatTime($event, 'fri', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration  || (project.get('fri.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('fri.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()"
-                                        >
-                                        <i class="bi bi-three-dots-vertical cursor" (click)="openModal(addtask,project.get('fri'),i,'fri')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['fri'] || project.get('fri')?.value?.duration  || (project.get('fri.approvalStatus')?.value && project.get('fri.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask,project.get('fri'),i,'fri')"></i>
                                     </span>
                                 </div>
-                                <div *ngIf="project.get('fri.approvalStatus')?.value === 'Rejected'"  class="ms-2">
+                                <div *ngIf="project.get('fri.approvalStatus')?.value === 'Rejected'" class="ms-2">
                                     <a type="button" [ngbPopover]="description">
                                         <app-info-icon></app-info-icon>
                                     </a>
@@ -234,13 +269,14 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                            (keydown)="checkClearDuration($event, 'sat', i)"
+                                        (keydown)="checkClearDuration($event, 'sat', i)"
                                         (keyup.enter)="formatTime($event, 'sat', i, 'duration')"
                                         (blur)="formatTime($event, 'sat', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration  || (project.get('sat.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('sat.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()">
-                                        <i class="bi bi-three-dots-vertical cursor"  (click)="openModal(addtask,project.get('sat'),i,'sat')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['sat'] || project.get('sat')?.value?.duration  || (project.get('sat.approvalStatus')?.value  && project.get('sat.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask,project.get('sat'),i,'sat')"></i>
                                     </span>
                                 </div>
                                 <div *ngIf="project.get('sat.approvalStatus')?.value === 'Rejected'" class="ms-2">
@@ -260,14 +296,14 @@
                                     <input type="text" formControlName="duration"
                                         class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
                                         (keypress)="allowNumbersOnly($event)"
-                                            (keydown)="checkClearDuration($event, 'sun', i)"
+                                        (keydown)="checkClearDuration($event, 'sun', i)"
                                         (keyup.enter)="formatTime($event, 'sun', i, 'duration')"
                                         (blur)="formatTime($event, 'sun', i, 'duration')">
-                                    <span *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration  || (project.get('sun.approvalStatus')?.value?.toLowerCase() === 'processed' || project.get('sun.approvalStatus')?.value?.toLowerCase() === 'waiting for approval' ) "
-                                        class="input-group-text border-none "
-                                        (mousedown)="$event.preventDefault()"
-                                        >
-                                        <i class="bi bi-three-dots-vertical cursor" (click)="openModal(addtask,project.get('sun'),i,'sun')"></i>
+                                    <span
+                                        *ngIf="showDots[i]?.['sun'] || project.get('sun')?.value?.duration  || (project.get('sun.approvalStatus')?.value &&  project.get('sun.approvalStatus')?.value?.toLowerCase() !== 'not entered' ) "
+                                        class="input-group-text border-none " (mousedown)="$event.preventDefault()">
+                                        <i class="bi bi-three-dots-vertical cursor"
+                                            (click)="openModal(addtask,project.get('sun'),i,'sun')"></i>
                                     </span>
                                 </div>
                                 <div *ngIf="project.get('sun.approvalStatus')?.value === 'Rejected'" class="ms-2">
@@ -280,7 +316,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td *ngIf="!employeeSelected">
                             <span type="button" (click)="openModalfordeletealldata(alldeleteconformation,i)"
                                 *ngIf="canDelete(project,i)">
                                 <img src="icons/delete-02.png" alt="failure icon" class="delete-icon">
@@ -303,7 +339,7 @@
                 </tfoot>
             </table>
             <div class="d-flex justify-content-between align-items-center p-3">
-                <div>
+                <div *ngIf="!employeeSelected">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
                 </div>
 
@@ -398,7 +434,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-3 pt-4"
-                    *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Waiting for Approval' && dayForm.get('approvalStatus')?.value !== 'Processed'">
+                    *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Waiting for Approval' && dayForm.get('approvalStatus')?.value !== 'Processed'  && !employeeSelected">
                     <span type="button" class="text-danger"
                         *ngIf="dayForm.get('approvalStatus')?.value && dayForm.get('approvalStatus')?.value !== 'Not Entered'"
                         (click)="opendeleteModal(deleteconformation,dayForm.get('entryId')?.value)"><u>Delete</u></span>

@@ -11,15 +11,17 @@ import { AccordionModule } from 'primeng/accordion';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
-import { TimesheetResponse } from '../../../timesheetmodel';
+import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Select } from 'primeng/select';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
-    NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
+    NgbPopover, CommonModule, DatePicker, Select, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
     TranslateModule, DataLoaderContentComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
@@ -56,33 +58,48 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   clients: any[] = [];
   noclientproject = false;
   availableProjects: any[] = [];
+  activeEmplist = [] as any;
   selectedProjectResource: any;
   timesheetdata!: TimesheetResponse;
+  resourcesList: IResourceDetail[] = [];
   resourcesArrayList: any[] = [];
   totalDuration: any;
   spinnerLoader = false;
+  empdata = {} as any;
+  employeeSelected = false;
+  loggedinuser = {} as any;
   spinnerLoaderforallrecoders = false;
   datesSelected = false;
+  selectedResource: IResourceDetail | null = null;
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
+  @ViewChild('employeeDropdown') employeeDropdown: any;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
-    public authService: AuthService, private conformationPopup: OpenModalService) { }
+    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    const loggedInUser = this.authService.getToken();
-    this.employeeId = loggedInUser.employeeId;
+    this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.employeeId = this.empdata?.employeeId;
+
     const startOfWeek = moment().startOf('isoWeek'); // Sunday by default (you can use .startOf('isoWeek') for Monday)
     const endOfWeek = moment().endOf('isoWeek');
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({
       projects: this.fb.array([]),
     });
+    this.getResourceDetailsByManagerId();
     this.getResourceData()
-    this.getJobDetails();
+    this.getJobDetails()
+    this.getTeamManagersDetails();
+    this.getAllEmployeeDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+
     this.getTimeSheetEntriesbyEmployeeId(
       this.employeeId,
-      this.formattedweakendStart
+      this.formattedweakendStart,
+      undefined,
+      undefined
     );
   }
 
@@ -154,10 +171,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
 
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus ?
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
       isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
     const billablecheck = matchedResource?.billable || this.selectedProjectResource?.billable
+    console.log(billablecheck);
+
     const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
       this.secondsToHHMM(day.durationSeconds) : '',
       Validators.required
@@ -211,9 +230,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     //Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
-
-    // ✅ Hit your API
-    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+    this.loadTimeSheetByResource(formattedStart);
 
     // Close the datepicker
     setTimeout(() => {
@@ -222,6 +239,46 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       }
     }, 100);
   }
+
+  private loadTimeSheetByResource(formattedStart: string): void {
+  if (this.employeeSelected && this.selectedResource) {
+
+    let employeeIdToSend = this.empdata?.employeeId; // default logged-in user ID
+    let targetEmployeeId: number | undefined = undefined;
+    let isReportee: boolean | undefined = undefined;
+
+    switch (this.selectedResource.key) {
+      case 'team':
+        // Logged-in user is the employee; selected is the reportee
+        employeeIdToSend = this.empdata?.employeeId;
+        targetEmployeeId = this.selectedResource.id;
+        isReportee = this.selectedResource.isReportee;
+        break;
+
+      case 'all employees':
+        // Selected employee is the one whose timesheet we fetch
+        employeeIdToSend = this.selectedResource.id;
+        targetEmployeeId = this.selectedResource.id;
+        isReportee = this.selectedResource.isReportee;
+        break;
+
+      default:
+        break;
+    }
+
+    this.getTimeSheetEntriesbyEmployeeId(
+      employeeIdToSend,
+      formattedStart,
+      targetEmployeeId,
+      isReportee
+    );
+
+  } else {
+    // Fallback: load logged-in user’s data
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+  }
+}
+
 
   // --- Add new project row ---
   addProject(project?: any, isProjectSelected: boolean = false) {
@@ -273,6 +330,76 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       sat: false,
       sun: false,
     };
+  }
+  isReportee = false;
+  onCheckemployee(employeed: any, dropdownType?: string) {
+    this.employeeSelected = !!employeed;
+    const formattedStart = moment(this.start).format('YYYY-MM-DD');
+    if (employeed && dropdownType === 'team') {
+      this.employeeId = employeed.id;
+      this.isReportee = employeed.isReportee;
+      this.selectedResource = employeed;
+      this.getTimeSheetEntriesbyEmployeeId(this.empdata.employeeId, formattedStart, this.employeeId, this.isReportee);
+      this.getResourceData()
+      this.getJobDetails()
+    }
+    else if (employeed && dropdownType === 'all employees') {
+      this.employeeId = employeed;
+      this.selectedResource = {
+        id: employeed,
+        name: null,
+        fusionEmpId: null,
+        workMail: null,
+        isReportee: false,
+        key: 'all employees'
+      };
+
+      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart, undefined, undefined);
+      this.getResourceData()
+      this.getJobDetails()
+    }
+  }
+
+  mytimesheet() {
+    this.employeeId = this.empdata.employeeId;
+    this.employeeSelected = false;
+    if (this.employeeDropdown) {
+      this.employeeDropdown.clear();
+    }
+    const formattedStart = moment(this.start).format('YYYY-MM-DD');
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart, undefined, undefined);
+    this.getResourceData()
+    this.getJobDetails()
+  }
+
+  getAllEmployeeDetails() {
+    const satus = ['Active', 'Trainee Active'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
+  }
+  // function to get the data of employees by hierarchy
+  getEmployeeInfo = [] as any;
+  getTeamManagersDetails() {
+    const EmployeeId = parseInt(this.empdata.employeeId);
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          // No filter
+          this.getEmployeeInfo = response.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          }));
+        }
+      },
+    });
   }
 
   getDraftEntryIdsByProject(projectIndex: number): number[] {
@@ -351,7 +478,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
-      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+      this.loadTimeSheetByResource(formattedStart);
+
     }
   }
 
@@ -366,14 +494,24 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
-      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+      this.loadTimeSheetByResource(formattedStart);
+
     }
   }
 
   //GET DATA to show in table
-  getTimeSheetEntriesbyEmployeeId(employeeId: number, start: any) {
+  getTimeSheetEntriesbyEmployeeId(employeeId: number, start: any, targetEmployeeId?: number, isReportee?: boolean) {
     this.loading = true;
-    this.http.getData(`Timesheet/week/employee/${employeeId}?weekStartDate=${start}`).pipe(takeUntil(this.destroy$)).subscribe({
+    // ✅ Build query params dynamically
+    let query = `weekStartDate=${start}`;
+    if (targetEmployeeId) {
+      query += `&targetEmployeeId=${targetEmployeeId}`;
+    }
+    if (isReportee !== undefined) {
+      query += `&isReportee=${isReportee}`;
+    }
+
+    this.http.getData(`Timesheet/week/employee/${employeeId}?${query}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         const data = res.data;
@@ -502,9 +640,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       const dayControl = project.get(day);
       const duration = dayControl?.get('duration')?.value;
       const entryId = dayControl?.get('entryId')?.value;
-      
+
       // Only count saved entries (with entryId)
-      if (duration && entryId ) {
+      if (duration && entryId) {
         const [hh, mm] = duration.split(':').map(Number);
         totalMinutes += hh * 60 + (mm || 0);
       }
@@ -515,7 +653,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   getJobDetails() {
-    let EmployeeId = parseInt(this.employeeId);
+    let EmployeeId = this.employeeId;
     this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobdetails = data[0];
@@ -526,6 +664,28 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+
+  getResourceDetailsByManagerId() {
+    const EmployeeId = this.empdata?.employeeId;
+    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          this.resourcesList = res.data
+            // ✅ Remove employee by ID
+            .filter((emp: IResourceDetail) => emp.id !== EmployeeId)
+            // ✅ Add fullName for dropdown
+            .map((emp: IResourceDetail) => ({
+              ...emp,
+              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
+              key: 'team'
+            }));
+        }
+      },
+      error: (err: any) => console.error(err)
+    });
+  }
+
 
   // Check if daily total exceeds 8 hours
   isDayExceeded(day: string): boolean {
@@ -603,8 +763,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     // Auto-save on blur if duration has value
     if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
+
+
       // Don't auto-save if already processed or waiting for approval
-      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval'  ) {
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         this.autoSaveTableEntry(rowIndex, dayName);
       }
     }
@@ -632,6 +794,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
       : moment().format('YYYY-MM-DD');
 
+    // Determine billable status
+    const selectedResource = this.resourcesArrayList.find(
+      (res: any) => res.project?.projectId === formValue.projectId &&
+        res.client?.clientId === formValue.clientId
+    );
+    const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
+
     const payload = {
       entryId: formValue.entryId || null,
       employeeId: this.employeeId || null,
@@ -645,7 +814,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || null,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
-      isBillable: formValue.isBillable || false
+      isBillable: isBillable
     };
 
     this.http.postdata('Timesheet/save-or-update', payload).subscribe({
@@ -926,15 +1095,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (dayForm instanceof FormGroup) {
       this.isModalOpen = true;
       const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
-      
+
       // Reset flag when modal is closed
       modalRef.result.finally(() => {
         this.isModalOpen = false;
       });
-      
+
       this.dayForm = dayForm; // keep reference
 
-      if (this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') {
+      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected) {
         this.dayForm.disable();
       } else {
         this.dayForm.enable();
@@ -953,9 +1122,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         })
 
       }
+
       const shiftData = this.resourcesArrayList.find(
         (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value
       );
+
+
       if ((this.selectedShiftDetails == undefined || this.selectedShiftDetails == null) &&
         this.dayForm.get('projectId')?.value != null) {
         this.selectedShiftDetails = shiftData?.shift;
@@ -1102,28 +1274,28 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   toTimeSpan = (time: string | null | undefined): string | null => {
-        if (!time) return null;
-        // If user gave "HH:mm" → make it "HH:mm:00"
-        if (/^\d{2}:\d{2}$/.test(time)) {
-          return `${time}:00`;
-        }
-        // If already "HH:mm:ss" → keep it
-        if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
-          return time;
-        }
-        // If API accidentally sends "HH:mm:ss:SS" → trim last ":SS"
-        if (/^\d{2}:\d{2}:\d{2}:\d{2}$/.test(time)) {
-          return time.substring(0, 8); // take only "HH:mm:ss"
-        }
-        return null;
-      };
+    if (!time) return null;
+    // If user gave "HH:mm" → make it "HH:mm:00"
+    if (/^\d{2}:\d{2}$/.test(time)) {
+      return `${time}:00`;
+    }
+    // If already "HH:mm:ss" → keep it
+    if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
+      return time;
+    }
+    // If API accidentally sends "HH:mm:ss:SS" → trim last ":SS"
+    if (/^\d{2}:\d{2}:\d{2}:\d{2}$/.test(time)) {
+      return time.substring(0, 8); // take only "HH:mm:ss"
+    }
+    return null;
+  };
 
   //single recoder
   saveDayEntry() {
     this.spinnerLoader = true;
     // Prepare payload
     const formValue = this.dayForm.value;
- 
+
 
     const payload = {
       entryId: formValue.entryId || 0,
@@ -1239,7 +1411,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
-         this.modalService.dismissAll();
+        this.modalService.dismissAll();
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);

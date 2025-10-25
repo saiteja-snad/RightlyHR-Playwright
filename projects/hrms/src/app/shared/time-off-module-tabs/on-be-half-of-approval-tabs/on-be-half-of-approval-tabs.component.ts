@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
@@ -108,4 +108,8 @@ export class OnBeHalfOfApprovalTabsComponent implements OnInit{
     });
     this.loading=false  
   }
+
+
+
+  
 }

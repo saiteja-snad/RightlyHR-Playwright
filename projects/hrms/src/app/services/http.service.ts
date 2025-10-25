@@ -154,7 +154,7 @@ export class HttpService {
 
   // OnBehalfOf WFH
   onBehlafOfWFHSignal = signal<boolean>(false);
-  onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(0);
+  onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
 
 
 

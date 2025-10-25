@@ -162,6 +162,13 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
     }
   }
 
+  onClearEmployee(): void {
+    this.selectedOtherEmployee = null;
+    this.http.onBehalfOfWFHSelectedEmp$.next(null);
+    this.http.onBehlafOfWFHSignal.set(false);
+    // reset your WFH data or any dependent state here if needed
+  }
+
   applyWFH(addForm: FormGroup) {
     if (addForm.valid) {
       const formData = addForm.value;

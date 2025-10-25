@@ -173,6 +173,7 @@ export class OnBehalfOfWfhTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.http.onBehalfOfWFHSelectedEmp$.next(null);
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }

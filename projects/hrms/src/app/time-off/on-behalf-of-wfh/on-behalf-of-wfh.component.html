@@ -16,10 +16,10 @@
             <div class="d-flex align-items-center gap-3">
                 <label class="form-label filter-labels m-0">Select Employee</label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="employeeiddetails" optionValue="employeeId" [(ngModel)]="selectedOtherEmployee"
-                        optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
-                        placeholder="Please select employee" (onChange)="onEmployeeChange($event)"
-                        class="form-select custom-select" resetFilterOnHide="true">
+                    <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
+                        [(ngModel)]="selectedOtherEmployee" [filter]="true" [resetFilterOnHide]="true" filterBy="fullName"
+                        [showClear]="true" placeholder="Please select employee" (onChange)="onEmployeeChange($event)"
+                        (onClear)="onClearEmployee()" class="form-select custom-select">
                     </p-select>
                 </div>
             </div>

@@ -271,22 +271,7 @@ export default [
       // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  {
-    path: 'on-behalf-of',
-    component: OnBeHalfOfComponent,
-    children: [
-      {
-        path: 'waiting-for-approval',
-        component: OnBeHalfOfWaitingForApprovalComponent,
-        data: { permission: 'Waiting For Approval (Regularization).view' },
-      },
-      { path: 'approved', component: OnBeHalfOfApprovalComponent },
-      { path: 'processed', component: OnBeHalfOfProcessComponent },
-      { path: 'rejected', component: OnBeHalfOfRejectComponent },
-      { path: 'cancel', component: OnBeHalfOfCancelComponent },
-      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
-    ],
-  },
+ 
   {
     path: 'pending-approvals',
     component: PendingApprovalsComponent,
@@ -559,17 +544,17 @@ export default [
     component: GlobalPermissionsComponent,
     data: { permission: 'Global Permissions Module.view' },
   },
-  {
-    path: 'on-behalf-of-wfh',
-    component: OnBehalfOfWfhComponent,
-    children: [
-      {
-        path: 'waiting-for-approval', component: OnBehalfOfWhfWaitingForApprovalComponent,
-      },
-      { path: 'approved', component: OnBehalfOfWhfApprovedComponent },
-      { path: 'processed', component: OnBehalfOfWhfProcessedComponent },
-      { path: 'rejected', component: OnBehalfOfWhfRejectedComponent },
-      { path: 'cancelled', component: OnBehalfOfWhfCancellationComponent }
-    ],
-  },
+  // {
+  //   path: 'on-behalf-of-wfh',
+  //   component: OnBehalfOfWfhComponent,
+  //   children: [
+  //     {
+  //       path: 'waiting-for-approval', component: OnBehalfOfWhfWaitingForApprovalComponent,
+  //     },
+  //     { path: 'approved', component: OnBehalfOfWhfApprovedComponent },
+  //     { path: 'processed', component: OnBehalfOfWhfProcessedComponent },
+  //     { path: 'rejected', component: OnBehalfOfWhfRejectedComponent },
+  //     { path: 'cancelled', component: OnBehalfOfWhfCancellationComponent }
+  //   ],
+  // },
 ] as Route[];

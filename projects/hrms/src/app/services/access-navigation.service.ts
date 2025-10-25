@@ -411,14 +411,7 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
-          for (const item of ON_BEHALF_OF_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
-        }
-
+       
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -605,6 +598,14 @@ export class AccessNavigationService {
         break;
 
       case '/on-behalf-of':
+         if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
+          for (const item of ON_BEHALF_OF_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {
           for (const item of ON_BEHALF_OF) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1310,16 +1311,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/time-off/on-behalf-of':
-        if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
-          for (const item of ON_BEHALF_OF_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
-        }
-        break;
-
+    
       case '/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {
           for (const item of ON_BEHALF_OF) {
@@ -1329,6 +1321,16 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/on-behalf-of/on-behalf-of':
+        if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
+          for (const item of ON_BEHALF_OF_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
 
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {

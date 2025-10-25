@@ -158,12 +158,6 @@ export const REGULARIZATION_SUB_TABS = [
   { route: '/time-off/regularization/rejected', permission: 'Rejected (Regularization).view', },
 ]
 
-export const ON_BEHALF_OF_TABS = [
-  { route: '/time-off/on-behalf-of/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of).view' },
-  { route: '/time-off/on-behalf-of/approved', permission: 'Approved (On Behalf Of).view' },
-  { route: '/time-off/on-behalf-of/processed', permission: 'Processed (On Behalf Of).view' },
-  { route: '/time-off/on-behalf-of/rejected', permission: 'Rejected (On Behalf Of).view', },
-]
 
 
 export const STANDARD_REPORTS_TABS = [
@@ -579,6 +573,13 @@ export const PROJECTS_ROUTES = [
 
 export const ON_BEHALF_OF = [
   { route: '/on-behalf-of/on-behalf-of-wfh', permission: 'On Behalf Of WFH.view' },
+]
+
+export const ON_BEHALF_OF_TABS = [
+  { route: '/on-behalf-of/on-behalf-of/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of).view' },
+  { route: '/on-behalf-of/on-behalf-of/approved', permission: 'Approved (On Behalf Of).view' },
+  { route: '/on-behalf-of/on-behalf-of/processed', permission: 'Processed (On Behalf Of).view' },
+  { route: '/on-behalf-of/on-behalf-of/rejected', permission: 'Rejected (On Behalf Of).view', },
 ]
 
 export const ON_BEHALF_OF_WFH_TABS = [

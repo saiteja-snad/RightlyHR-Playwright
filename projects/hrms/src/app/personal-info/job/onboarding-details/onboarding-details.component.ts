@@ -442,7 +442,8 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       .subscribe({
         next: (data: any) => {
         // Filter out records with Active status
-        const filteredData = data.data.filter((x: any) => x.status?.toLowerCase() !== 'active');
+        
+        const filteredData = data.data;
         
         if (filteredData.length > 0) {
           const contract = filteredData[0];

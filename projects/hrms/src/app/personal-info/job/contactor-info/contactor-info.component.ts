@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
-import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -16,6 +15,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-contactor-info',
@@ -341,7 +341,7 @@ export class ContactorInfoComponent {
       .subscribe({
         next: (data: any) => {
           // 🔹 Filter out records where status is "Active"
-          const filteredData = data.data.filter((x: any) => x.status?.toLowerCase() !== 'active');
+          const filteredData = data.data;
 
           if (filteredData.length === 0) {
             console.warn('No contract records found (excluding Active)');

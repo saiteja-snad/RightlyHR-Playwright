@@ -3,22 +3,21 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                <th>File Name</th>
+                <th>Document Type</th>             
                 <th>Created Date</th>
-                <th>Document Type</th>
+                <!-- <th>File Name</th> -->
                 <th>Attachment</th>
                 <th class="text-center">Download</th>
-                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) &&
-                inactiveStatus !== 'Inactive'){
+                @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) && inactiveStatus !== 'inactive' ){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
             </thead>
             <tbody>
                 <ng-container *ngIf="(documentdata?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let data of documentdata">
-                        <td>{{data.documentName}}</td>
+                         <td>{{data.documentType}}</td>                      
                         <td>{{data.createdAt | dateformat}}</td>
-                        <td>{{data.documentType}}</td>
+                         <!-- <td>{{data.documentName}}</td> -->
                         <td>{{data.documentUrl? data.documentUrl.split('/').pop() : '_'}}</td>
                         <td class="text-center">
                             <span *ngIf="data.documentUrl;else noData" (click)="onAttachmentDownload(data)">
@@ -26,7 +25,8 @@
                             </span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) && inactiveStatus !== 'Inactive'){
+                        @if((rbac.allowedToAccess('Documents Tab.update') || rbac.allowedToAccess('Documents Tab.delete')) 
+                        && inactiveStatus !== 'inactive' ){
                         <td class="text-center">
                             <div class="dropdown">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -79,7 +79,7 @@
             <form [formGroup]="updateDocumentForm" autocomplete="off" (ngSubmit)="UpdateDocumentdata()">
                 <div class="row">
                     <!-- File Name -->
-                    <div class="col-md-6 mb-3">
+                    <!-- <div class="col-md-6 mb-3">
                         <label for="documentName" class="form-label custom-label mb-2">File Name<span
                                 class="text-danger">*</span></label>
                         <input type="text" id="documentName" formControlName="documentName"
@@ -96,17 +96,16 @@
                             class="error-msg">
                             {{ 'File Name must be at least 2 characters' | translate }}
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Document Type -->
                     <div class="col-md-6 mb-3">
                         <label for="documentType" class="form-label custom-label mb-2">Document Type<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentTypes" filterBy="value" [filter]="true"
-                                [resetFilterOnHide]="true" optionLabel="value" optionValue="value"
-                                formControlName="documentType" placeholder="Please select project type"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="documentTypes" filterBy="value" [filter]="true" [resetFilterOnHide]="true"
+                                optionLabel="value" optionValue="value" formControlName="documentType"
+                                placeholder="Please select project type" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="updateDocumentForm.get('documentType')?.touched && updateDocumentForm.get('documentType')?.invalid">
@@ -116,27 +115,20 @@
 
                     <!-- Document Attachment -->
                     <div class="col-md-12 mb-3">
-                        <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span
-                                class="text-danger">*</span></label>
-                        <input type="file" id="documentAttachment"
-                            accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
+                        <label for="documentAttachment" class="form-label custom-label mb-2">Attachment<span class="text-danger">*</span></label>
+                        <input type="file" id="documentAttachment" accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xls, .xlsx"
                             (change)="onChangeClientAttachment($event)" class="form-control custom-input px-0" />
                         <div class="custom-file-name text-wrap">{{ displayClientAttachment}}</div>
-                        <div class="error-msg" *ngIf="fileErrorMessage">
-                            {{ fileErrorMessage }}
-                        </div>
-                        <div class="error-msg"
-                            *ngIf="updateDocumentForm.get('documentUrl')?.touched && updateDocumentForm.get('documentUrl')?.invalid">
-                            Attachment is required
-                        </div>
+                        <div class="error-msg" *ngIf="fileErrorMessage">{{ fileErrorMessage }}</div>
+                        <div class="error-msg" *ngIf="updateDocumentForm.get('documentUrl')?.touched && 
+                        updateDocumentForm.get('documentUrl')?.invalid">Attachment is required</div>
                     </div>
                 </div>
+
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateDocumentForm.invalid || spinnerLoader ">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateDocumentForm.invalid || spinnerLoader ">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

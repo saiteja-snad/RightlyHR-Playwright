@@ -6,17 +6,17 @@ import { Router } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { ConfirmationIconComponent } from '../../../../icons/confirmation-icon/confirmation-icon.component';
 import { Subscription } from 'rxjs';
 import { IEAV } from '../../../../settings/project-management-configurations/models/project-type.modal';
 import { Select } from 'primeng/select';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-add-client-info',
-  imports: [ReactiveFormsModule, CommonModule, TranslateModule, ConfirmationIconComponent, Select],
+  imports: [ReactiveFormsModule, CommonModule, TranslateModule, Select],
   templateUrl: './add-client-info.component.html',
   styleUrl: './add-client-info.component.scss'
 })
+
 export class AddClientInfoComponent implements OnInit, OnDestroy {
   clientForm!: FormGroup;
   empinfo: any = {};
@@ -27,8 +27,9 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
   fileErrorMessage: string = '';
   subscription!: Subscription;
 
-  constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal, private route: Router, private http: HttpService,
-    public formValidation: FormValidationsService, private conformationPopup: OpenModalService) { }
+  constructor(private fb: FormBuilder, public formValidations: FormValidationsService, private modalService: NgbModal, 
+    private route: Router, private http: HttpService, public formValidation: FormValidationsService, 
+    private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -109,7 +110,6 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
         this.clientForm.reset();
         this.modalService.dismissAll();
         localStorage.setItem('newlyAddedClientId', res.data.clientId);
-        // this.conformationPopup.openSuccessModal('Client added successfully');
         this.route.navigate(['/project-management/clients/add/contact-info'])
       },
       error: (err: any) => {
@@ -135,7 +135,6 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
       createdBy: this.empinfo.employeeId,
       updatedBy: this.empinfo.employeeId
     };
-
   }
 
   onChangeClientAttachment(event: any): void {

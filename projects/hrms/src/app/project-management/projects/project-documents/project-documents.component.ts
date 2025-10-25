@@ -71,7 +71,8 @@ export class ProjectDocumentsComponent implements OnInit {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
-          p.status === 'Inactive' || p.client.status === 'Inactive') ? 'Inactive' : 'Active';
+          p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
+        ) ? 'inactive' : 'active';
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -93,12 +94,12 @@ export class ProjectDocumentsComponent implements OnInit {
   // initialization of form
   createDocumentForm() {
     this.updateDocumentForm = this.fb.group({
-      documentName: [null, [Validators.required, Validators.maxLength(101),
-      Validators.minLength(2),
-      this.formValidations.minCharactersValidator(2),
-      this.formValidations.maxCharactersValidator(101),
-      Validators.pattern(/^[^\s].*$/)
-      ]],
+      // documentName: [null, [Validators.required, Validators.maxLength(101),
+      // Validators.minLength(2),
+      // this.formValidations.minCharactersValidator(2),
+      // this.formValidations.maxCharactersValidator(101),
+      // Validators.pattern(/^[^\s].*$/)
+      // ]],
       documentType: [null, Validators.required],
       documentUrl: [null],
       documentId: [null]
@@ -129,7 +130,7 @@ export class ProjectDocumentsComponent implements OnInit {
     this.selecteddata = data
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     this.updateDocumentForm.patchValue({
-      documentName: data?.documentName,
+     // documentName: data?.documentName,
       createdDate: this.formatDateToLocal(data?.createdAt),
       documentType: data?.documentType,
       documentId: data?.documentId
@@ -257,7 +258,7 @@ export class ProjectDocumentsComponent implements OnInit {
     const payload = {
       entityType: "project",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+     // documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: documentUrlValue,
@@ -310,7 +311,7 @@ export class ProjectDocumentsComponent implements OnInit {
     const payload = {
       entityType: "project",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+     // documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,

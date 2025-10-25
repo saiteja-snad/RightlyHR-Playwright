@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
@@ -24,7 +24,7 @@ export class ClientTabsComponent {
     },
     {
       label: 'Projects', link: '/project-management/clients/details/projects', icon: 'main-menu-icons/project-management-project.png',
-      permission: { feature: 'Client Projects', action: 'view' }
+      permission: { feature: 'Client Projects', action: 'view' },
     },
     {
       label: 'Resources', link: '/project-management/clients/details/resources', icon: 'main-menu-icons/project-management-resources.png',
@@ -40,7 +40,7 @@ export class ClientTabsComponent {
     },
   ];
 
-  constructor(public rbac: RbacService) { }
+  constructor(public rbac: RbacService, private router: Router) { }
 
   ngOnInit(): void {
     this.filterTabsByRbac();
@@ -54,4 +54,24 @@ export class ClientTabsComponent {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
+
+  isDocumentTabActive(link: string): boolean {
+    const currentUrl = this.router.url.split('?')[0]; // Remove query params
+
+    // For Documents tab, check both documents and inactivedocuments routes
+    if (link === '/project-management/clients/details/documents') {
+      return currentUrl.includes('/project-management/clients/details/documents') ||
+        currentUrl.includes('/project-management/clients/details/inactivedocuments');
+    }
+
+    // For Projects tab, check both projects and inactiveprojects routes
+    if (link === '/project-management/clients/details/projects') {
+      return currentUrl.includes('/project-management/clients/details/projects') ||
+        currentUrl.includes('/project-management/clients/details/inactiveprojects');
+    }
+
+    // For other tabs, use exact match
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
+
 }

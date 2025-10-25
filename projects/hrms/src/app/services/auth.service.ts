@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal } from '@angular/core';
+import { Injectable,Inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { OAuthService, TokenResponse } from 'angular-oauth2-oidc';
 import { googleAuthConfig, microsoftAuthConfig } from '../auth/auth.config';
 import { Router } from '@angular/router';
-import { catchError, map, throwError } from 'rxjs';
+import { catchError, map, throwError } from'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Injectable({
   providedIn: 'root'

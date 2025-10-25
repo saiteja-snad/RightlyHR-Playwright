@@ -195,8 +195,6 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     });
   }
 
-
-
   close() {
     this.modalService.dismissAll();
   }
@@ -212,39 +210,34 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       this.startndEndDateValid = true;
     }
   }
+
   validateDateRange(): void {
     const startDate = this.addprojectform.get('startDate')?.value;
     const endDate = this.addprojectform.get('endDate')?.value;
     const kickoffDate = this.addprojectform.get('kickoffDate')?.value;
     const effectiveDate = this.addprojectform.get('effectiveDate')?.value;
-
     // reset all validations to true
     this.kickoffDateValid = true;
     this.kickoffBeforeEffectiveValid = true;
     this.effectiveDateValidRange = true;
     this.effectiveAfterKickoffValid = true;
-
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-
       if (kickoffDate) {
         const kickoff = new Date(kickoffDate);
         //  Kickoff must be within Start and End
         this.kickoffDateValid = kickoff >= start && kickoff <= end;
-
         if (effectiveDate) {
           const effective = new Date(effectiveDate);
           //  Kickoff must be on or before Effective
           this.kickoffBeforeEffectiveValid = kickoff <= effective;
         }
       }
-
       if (effectiveDate) {
         const effective = new Date(effectiveDate);
         //  Effective must be within Start and End
         this.effectiveDateValidRange = effective >= start && effective <= end;
-
         if (kickoffDate) {
           const kickoff = new Date(kickoffDate);
           //  Effective must be on or after Kickoff

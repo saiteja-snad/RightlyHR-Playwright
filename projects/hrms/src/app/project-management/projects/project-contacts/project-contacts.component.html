@@ -17,7 +17,8 @@
                     <th>Phone Number</th>
                     <th>Role</th>
                     <th class="text-center" style="text-transform: none;">Set as Primary Contact</th>
-                    @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) && inactiveStatus !== 'Inactive'){
+                    @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) 
+                    && inactiveStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>
@@ -30,12 +31,11 @@
                             <td>{{ contact?.role || '-' }}</td>
                             <td class="text-center">
                                 <span (click)="openispermiarayModal(conformation ,contact)">
-                                    <input type="checkbox"
-                                        [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
+                                    <input type="checkbox" [checked]="contact.primaryContact === true || contact.primaryContact === 'true'"
                                         [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
                                 </span>
                             </td>
-                            @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) && inactiveStatus !== 'Inactive'){
+                            @if((rbac.allowedToAccess('Contact Info Tab.update') || rbac.allowedToAccess('Contact Info Tab.delete')) && inactiveStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -81,10 +81,8 @@
             <p class="confirmation-text mb-4">{{'Are you sure you want to delete this Contact?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' |
-                translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deleteContact()">{{'Yes' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteContact()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -104,14 +102,11 @@
             </p>
         </div>
         <div class="custom-modal-footer" *ngIf="(contactData?.length ?? 0) > 1">
-            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'No' |
-                translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="yesChangesprimary()">{{'Yes' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="yesChangesprimary()">{{'Yes' | translate}}</button>
         </div>
         <div class="custom-modal-footer" *ngIf="contactData?.length === 1">
-            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'Ok' |
-                translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'Ok' | translate}}</button>
         </div>
     </div>
 </ng-template>
@@ -129,40 +124,32 @@
                 <div class="row">
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">
-                        <label for="contactname" class="form-label custom-label mb-2"> Contact Name
-                            <span class="text-danger">*</span></label>
+                        <label for="contactname" class="form-label custom-label mb-2">Contact Name<span class="text-danger">*</span></label>
                         <input type="text" id="contactname" formControlName="contactname" minlength="2" maxlength="51"
-                            placeholder="Please enter contact name"
-                            (keypress)="formValidation.restrictInitialSpace($event)" class="form-control custom-input">
-                        <div class="error-msg"
-                            *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is
-                                required</div>
+                            placeholder="Please enter contact name" (keypress)="formValidation.restrictInitialSpace($event)"
+                            class="form-control custom-input">
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is required</div>
                         </div>
-                        <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['maxCharacters']" class="error-msg">
+                        <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['maxCharacters'] || 
+                        updatecontactFrom.get('contactname')?.errors?.['minCharacters']" class="error-msg">
                             {{ 'Name must be between 2-50 characters' | translate }}
                         </div>
-                        <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minCharacters']" class="error-msg">
-                            {{ 'Name must be between 2-50 characters' | translate }}
-                        </div>
-
                     </div>
+
                     <div class="col-md-6 mb-3">
                         <label for="contactemail" class="form-label custom-label mb-2">Email
                             <span class="text-danger">*</span></label>
                         <input type="text" id="contactemail" formControlName="contactemail"
                             class="form-control custom-input" placeholder="Please enter email">
-                        <div class="error-msg"
-                            *ngIf="updatecontactFrom.get('contactemail')?.touched && updatecontactFrom.get('contactemail')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['required']">Email is
-                                required</div>
-                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['email']">Please enter a valid
-                                email address</div>
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactemail')?.touched && updatecontactFrom.get('contactemail')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['required']">Email is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactemail')?.errors?.['email']">Please enter a valid email address</div>
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="contactPhone" class="form-label custom-label mb-2">Phone Number<span
-                                class="text-danger">*</span></label>
+                        <label for="contactPhone" class="form-label custom-label mb-2">Phone Number<span class="text-danger">*</span></label>
                         <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                             <div>
                                 <lib-country-list class="country-input" [selectedCountryConfig]="selectedCountryConfig"
@@ -174,29 +161,22 @@
                             <input type="text" placeholder="Please enter phone number" class="form-control custom-input"
                                 formControlName="contactPhone" (keypress)="formValidation.restrictAlphabets($event)">
                         </div>
-                        <div class="error-msg"
-                            *ngIf="updatecontactFrom.get('contactPhone')?.touched && updatecontactFrom.get('contactPhone')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['required']">Phone number is
-                                required</div>
-                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['invalidPhoneNumber']">Invalid
-                                phone number</div>
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactPhone')?.touched && updatecontactFrom.get('contactPhone')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['required']">Phone number is required</div>
+                            <div *ngIf="updatecontactFrom.get('contactPhone')?.errors?.['invalidPhoneNumber']">Invalid phone number</div>
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
-                        <label for="contactrole" class="form-label custom-label mb-2">Role <span
-                                class="text-danger">*</span></label>
+                        <label for="contactrole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
                         <input type="text" id="contactrole" formControlName="contactrole" maxlength="2" maxlength="51"
                             (keypress)="formValidation.restrictInitialSpace($event)" placeholder="Please enter role"
                             class="form-control custom-input">
-                        <div class="error-msg"
-                            *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
-                            <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required
-                            </div>
+                        <div class="error-msg" *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
+                            <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required</div>
                         </div>
-                        <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['maxCharacters']" class="error-msg">
-                            {{ 'Role must be between 2-50 characters' | translate }}
-                        </div>
-                        <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['minCharacters']" class="error-msg">
+                        <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['maxCharacters'] || 
+                        updatecontactFrom.get('contactrole')?.errors?.['minCharacters']" class="error-msg">
                             {{ 'Role must be between 2-50 characters' | translate }}
                         </div>
                     </div>
@@ -204,10 +184,8 @@
 
                 <!-- Form Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updatecontactFrom.invalid || spinnerLoader">
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="updatecontactFrom.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

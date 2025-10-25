@@ -18,7 +18,7 @@
                     <th>Role</th>
                     <th class="text-center" style="text-transform: none;">Set as Primary Contact</th>
                     @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
-                    && this.inactiveClientStatus !== 'Inactive'){
+                    && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>
@@ -27,7 +27,7 @@
                         <tr *ngFor="let contact of contactData; let i = index">
                             <td>{{ contact.name }}</td>
                             <td>{{ contact.email }}</td>
-                            <td>{{contact.phoneDialCode}} {{ contact.phoneNumber }}</td>
+                            <td>{{ contact.phoneDialCode }} {{ contact.phoneNumber }}</td>
                             <td>{{ contact.role }}</td>
                             <td class="text-center">
                                 <span (click)="openispermiarayModal(conformation ,contact)">
@@ -35,8 +35,8 @@
                                         [disabled]="contact.primaryContact === true || contact.primaryContact === 'true'" />
                                 </span>
                             </td>
-                            @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete'))
-                            && this.inactiveClientStatus !== 'Inactive'){
+                            @if((rbac.allowedToAccess('Contact Information.update') || rbac.allowedToAccess('Contact Information.delete')) 
+                            && this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -45,16 +45,12 @@
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         @if(rbac.allowedToAccess('Contact Information.update')){
                                         <li (click)="openupdateModal(updatecontact ,contact)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
-                                            </a>
+                                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                         </li>
                                         }
                                         @if(rbac.allowedToAccess('Contact Information.delete')){
                                         <li (click)="opendeletModal(deleteconformation ,contact)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash me-2"></i>Delete
-                                            </a>
+                                            <a class="dropdown-item"><i class="bi bi-trash me-2"></i>Delete</a>
                                         </li>
                                         }
                                     </ul>
@@ -104,7 +100,8 @@
                         <label for="contactname" class="form-label custom-label mb-2">Contact Name
                             <span class="text-danger">*</span></label>
                         <input type="text" id="contactname" formControlName="contactname" maxlength="50" minlength="2"
-                            placeholder="Please enter contact name" class="form-control custom-input" (keydown)="formValidation.restrictInitialSpace($event)">
+                            placeholder="Please enter contact name" class="form-control custom-input"
+                            (keydown)="formValidation.restrictInitialSpace($event)">
                         <div class="error-msg"
                             *ngIf="updatecontactFrom.get('contactname')?.touched && updatecontactFrom.get('contactname')?.invalid">
                             <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['required']">Contact Name is required</div>
@@ -146,9 +143,7 @@
                             placeholder="Please enter role" class="form-control custom-input"(keypress)="formValidation.restrictInitialSpace($event)">
                         <div class="error-msg" *ngIf="updatecontactFrom.get('contactrole')?.touched && updatecontactFrom.get('contactrole')?.invalid">
                             <div *ngIf="updatecontactFrom.get('contactrole')?.errors?.['required']">Role is required</div>
-                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2
-                                characters required
-                            </div>
+                            <div *ngIf="updatecontactFrom.get('contactname')?.errors?.['minlength']">Minimum 2 characters required</div>
                         </div>
                     </div>
                 </div>
@@ -190,22 +185,15 @@
             <div class="mb-4">
                 <app-confirmation-icon />
             </div>
-            <p *ngIf="(contactData?.length ?? 0) > 1" class="confirmation-text mb-4">
-                {{'Are you sure you want to set this contact as primary?' | translate}}
-            </p>
-            <p *ngIf="contactData?.length === 1" class="confirmation-text mb-4">
-                {{'You have only one contact. It is set as primary and cannot be changed' | translate}}
-            </p>
+            <p *ngIf="(contactData?.length ?? 0) > 1" class="confirmation-text mb-4">{{'Are you sure you want to set this contact as primary?' | translate}}</p>
+            <p *ngIf="contactData?.length === 1" class="confirmation-text mb-4">{{'You have only one contact. It is set as primary and cannot be changed' | translate}}</p>
         </div>
         <div class="custom-modal-footer" *ngIf="(contactData?.length ?? 0) > 1">
-            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">
-                {{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="yesChangesprimary()">
-                {{'Yes' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="yesChangesprimary()">{{'Yes' | translate}}</button>
         </div>
         <div class="custom-modal-footer" *ngIf="contactData?.length === 1">
-            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">
-                {{'Ok' | translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="callapi();modal.dismiss()">{{'Ok' | translate}}</button>
         </div>
     </div>
 </ng-template>

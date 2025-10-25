@@ -16,7 +16,6 @@ export class ClientProgressBarComponent {
 
   ngOnInit(): void {
     this.setProgress(this.router.url);
-
     // listen for route changes
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {

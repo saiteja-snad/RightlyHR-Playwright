@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DownloadIconComponent } from "../../../icons/download-icon/download-icon.component";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -36,7 +36,7 @@ export class InactiveClientDocumentsComponent {
   inactiveClientStatus: any;
   selecteddata: any;
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal, 
+  constructor(private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
     private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService) { }
 
   ngOnInit() {
@@ -49,6 +49,18 @@ export class InactiveClientDocumentsComponent {
       if (clientID) {
         this.clientID = clientID;
         this.getDocumentDetails(clientID);
+        this.getClientsData(clientID);
+      }
+    });
+  }
+
+  getClientsData(clientID: any): void {
+    this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.inactiveClientStatus = res.data.status.toLowerCase();
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
       }
     });
   }
@@ -89,7 +101,7 @@ export class InactiveClientDocumentsComponent {
     const payload = {
       entityType: "client",
       entityId: this.route.snapshot.queryParams['id'],
-      documentName: formValue.documentName,
+      //  documentName: formValue.documentName,
       type: '',
       documentType: formValue.documentType,
       documentUrl: formValue.documentUrl,
@@ -100,8 +112,8 @@ export class InactiveClientDocumentsComponent {
       attributes: [
         {
           attributeKey: "signedCopy",
-          attributeValue: formValue.signedCopy ? "true" : "false",
-          dataType: "boolean"
+          attributeValue: formValue.signedCopy ? "yes" : "no",
+          dataType: "string"
         }
       ]
     };
@@ -141,7 +153,7 @@ export class InactiveClientDocumentsComponent {
   close() {
     this.modalService.dismissAll();
   }
-  
+
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();

@@ -24,10 +24,8 @@
                                 <input type="text" class="form-control custom-input" minlength="2" maxlength="51"
                                     (keypress)="formValidation.restrictInitialSpace($event)"
                                     placeholder="Please enter contact name" formControlName="contactName">
-                                <div class="error-msg"
-                                    *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid">
-                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">Contact Name is
-                                        required</div>
+                                <div class="error-msg" *ngIf="contact.get('contactName')?.touched && contact.get('contactName')?.invalid">
+                                    <div *ngIf="contact.get('contactName')?.errors?.['required']">Contact Name is required</div>
                                 </div>
                                 <div *ngIf="contact.get('contactName')?.errors?.['maxCharacters'] || 
                                     contact.get('contactName')?.errors?.['minCharacters']" class="error-msg">
@@ -35,54 +33,41 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="email" class="form-control custom-input" formControlName="contactEmail"
-                                    placeholder="Please enter email">
-                                <div class="error-msg"
-                                    *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">
-                                    <div *ngIf="contact.get('contactEmail')?.errors?.['required']">Email is required
-                                    </div>
-                                    <div *ngIf="contact.get('contactEmail')?.errors?.['email']">Please enter a valid
-                                        email address</div>
+                                <input type="email" class="form-control custom-input" formControlName="contactEmail" placeholder="Please enter email">
+                                <div class="error-msg" *ngIf="contact.get('contactEmail')?.touched && contact.get('contactEmail')?.invalid">
+                                    <div *ngIf="contact.get('contactEmail')?.errors?.['required']">Email is required</div>
+                                    <div *ngIf="contact.get('contactEmail')?.errors?.['email']">Please enter a valid email address</div>
                                 </div>
                             </td>
                             <td>
-                                <div
-                                    class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                                <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                                     <div>
-                                        <lib-country-list class="country-input"
-                                            [selectedCountryConfig]="selectedCountryConfig"
-                                            [countryListConfig]="countryListConfig"
-                                            [selectedCountryCode]="contact.get('countryCode')?.value"
+                                        <lib-country-list class="country-input" [selectedCountryConfig]="selectedCountryConfig"
+                                            [countryListConfig]="countryListConfig" [selectedCountryCode]="contact.get('countryCode')?.value"
                                             (onCountryChange)="onCountryChange($event, i)">
                                         </lib-country-list>
                                     </div>
-                                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)" formControlName="contactPhone"
-                                        placeholder="Please enter phone number">
+                                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)"
+                                        formControlName="contactPhone" placeholder="Please enter phone number">
                                 </div>
-                                <div class="error-msg"
-                                    *ngIf="contact.get('contactPhone')?.touched && contact.get('contactPhone')?.invalid">
-                                    <div *ngIf="contact.get('contactPhone')?.errors?.['required']">Phone number is
-                                        required</div>
-                                    <div *ngIf="contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">Please
-                                        enter a valid phone number</div>
+                                <div class="error-msg" *ngIf="contact.get('contactPhone')?.touched && contact.get('contactPhone')?.invalid">
+                                    <div *ngIf="contact.get('contactPhone')?.errors?.['required']">Phone number is required</div>
+                                    <div *ngIf="contact.get('contactPhone')?.errors?.['invalidPhoneNumber']">Please enter a valid phone number</div>
                                 </div>
                             </td>
+
                             <td>
-                                <input type="text" class="form-control custom-input" maxlength="51"
-                                    placeholder="Please enter role"
-                                    (keypress)="formValidation.restrictInitialSpace($event)"
-                                    formControlName="contactRole">
-                                <div class="error-msg"
-                                    *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
+                                <input type="text" class="form-control custom-input" maxlength="51" placeholder="Please enter role"
+                                    (keypress)="formValidation.restrictInitialSpace($event)" formControlName="contactRole">
+                                <div class="error-msg" *ngIf="contact.get('contactRole')?.touched && contact.get('contactRole')?.invalid">
                                     <div *ngIf="contact.get('contactRole')?.errors?.['required']">Role is required</div>
                                 </div>
-                                <div *ngIf="contact.get('contactRole')?.errors?.['maxCharacters']" class="error-msg">
-                                    {{ 'Role must be between 2-50 characters' | translate }}
-                                </div>
-                                <div *ngIf="contact.get('contactRole')?.errors?.['minCharacters']" class="error-msg">
+                                <div *ngIf="contact.get('contactRole')?.errors?.['maxCharacters'] || 
+                                contact.get('contactRole')?.errors?.['minCharacters']" class="error-msg">
                                     {{ 'Role must be between 2-50 characters' | translate }}
                                 </div>
                             </td>
+
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <div *ngIf="contacts.length > 1">
@@ -98,15 +83,13 @@
                                     </div>
                                 </div>
                             </td>
-
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary"
-                    (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary"
                     [disabled]="addContactForm.invalid || spinnerLoader">
                     @if (spinnerLoader) {

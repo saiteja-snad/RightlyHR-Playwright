@@ -372,17 +372,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.getJobDetails()
   }
 
+
   getAllEmployeeDetails() {
-    const satus = ['Active', 'Trainee Active'];
+    const EmployeeId = this.empdata?.employeeId;
+    const satus = ['Active', 'Trainee Active','Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
       next: (res: any) => {
-        this.activeEmplist = res.map((employee: any) => ({
+        this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
           label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
           value: employee.employeeId
         }));
       },
     });
   }
+ 
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
   getTeamManagersDetails() {

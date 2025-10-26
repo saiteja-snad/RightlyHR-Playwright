@@ -7,7 +7,6 @@ import {
   EXPENSE_TABS,
   IT_SUPPORT_TEAM_TICKETS_TABS,
   COMP_OFF_SUB_TABS,
-
   ON_BEHALF_OF_TABS,
   PERMISSIONS_SUB_TABS,
   REGULARIZATION_SUB_TABS,
@@ -60,6 +59,7 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
+  SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF
 } from '../permission-route.constants';
@@ -264,6 +264,9 @@ export class AccessNavigationService {
               return item.route;
             }
           }
+        }
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
+          return '/settings/attendance-configuration';
         }
         break;
 
@@ -1054,6 +1057,27 @@ export class AccessNavigationService {
       //     }
       //   }
       //   break;
+      //Attendance locking
+      case '/settings/attendance-configuration':
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view' )) {
+
+          for (const item of SETTINGS_AttendanceLock_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/settings/attendance-configuration/pending-for-submission':
+        if (this.rbac.allowedToAccess('Attendance Pending Tab.view')) {
+          return (route = '/settings/attendance-configuration/pending-for-submission');
+        }
+        break;
+      case '/settings/attendance-configuration/published':
+        if (this.rbac.allowedToAccess('Attendance Published Tab	.view')) {
+          return (route = '/settings/attendance-configuration/published');
+        }
+        break;
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {
           return '/settings/assets-configuration/vendor-detiles';

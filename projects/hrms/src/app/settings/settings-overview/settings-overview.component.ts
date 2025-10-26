@@ -28,7 +28,7 @@ export class SettingsOverviewComponent {
   settingsPMSConfigurations = MODULE_INFOS.PMS_CONFIGURATION_MODULE_INFO;
   settingDynamicFormsModule = MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO;
   settingAttendanceConfigurationModule = MODULE_INFOS.SETTINGS_ATTENDANCE_CONFIGURATION_MODULE_INFO;
-
+  
   constructor(
     public rbac: RbacService,
     private router: Router,

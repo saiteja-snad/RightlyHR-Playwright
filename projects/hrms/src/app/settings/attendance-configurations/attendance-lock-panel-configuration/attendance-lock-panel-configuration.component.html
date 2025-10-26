@@ -1,0 +1,350 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div>
+            <p class="component-header mb-0">{{'Attendance Lock'|translate}}</p>
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <div class="d-flex gap-2 align-items-center">
+                <label for="year" class="form-label custom-label mb-0">{{ "Year" | translate }}</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="yearDetails" [(ngModel)]="selectedYear" (onChange)="onYearChange($event.value)"
+                        [filter]="false" [showClear]="false" class="form-select custom-select"
+                        placeholder="Please select year">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                        <ng-template let-year #item>{{ year }}</ng-template>
+                    </p-select>
+                </div>
+            </div>
+            <button type="button" (click)="openModal(addAttendanceLockModal)" class="custom-btn btn-primary">Attendance
+                Lock</button>
+        </div>
+    </div>
+
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+            (ngModelChange)="onSearchTextChange()" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+
+    <ng-container *ngIf="dataLoad; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Category Type</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                        <th>Effective Date</th>
+                        <th>Status </th>
+                        <th>Locked By</th>
+                        <th class="text-center">Action(S)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if(attendanceLockData.length > 0){
+                    <tr *ngFor="let attendance of attendanceLockData">
+                        <td>{{attendance.module.moduleName}}</td>
+                        <td>{{attendance.startDate | dateformat}}</td>
+                        <td>{{attendance.endDate | dateformat}}</td>
+                        <td>{{attendance.effectiveDate | dateformat}}</td>
+                        <td>{{attendance.status}}</td>
+                        <td>{{attendance.addedByEmployee.employeeName}}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li (click)="openUpdateModal(updateAttendanceLockModal, attendance)">
+                                        <a class="dropdown-item"><i class="bi bi-pencil-fill me-2"></i>{{'Update' |
+                                            translate}}</a>
+                                    </li>
+                                    <li *ngIf="attendance.status === 'Pending for Submission'"
+                                        (click)="openPublishModal(publishModal, attendance)">
+                                        <a class="dropdown-item"><i class="bi bi-box-arrow-up me-2"></i>{{'Publish' |
+                                            translate}}</a>
+                                    </li>
+                                    <!-- @if (isEffectiveDateFuture(attendance.effectiveDate)) { -->
+
+                                    <li *ngIf="attendance.status === 'Pending for Submission'"
+                                        (click)="openDeleteModal(deleteModal, attendance)">
+                                        <a class="dropdown-item"><i class="bi bi-trash-fill me-2"></i>{{'Delete' |
+                                            translate}}</a>
+                                    </li>
+
+                                    <!-- } -->
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    }@else {
+                    <tr>
+                        <app-no-data-found />
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+
+    @if(attendanceLockData.length > 0){
+    <div class="pagination-content">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                    </option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
+                    +rows)}} of {{ collectionSize }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+    }
+</div>
+
+<!-- Add Attendance Lock Modal -->
+<ng-template #addAttendanceLockModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Add Attendance Lock' | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="attendanceLockForm"
+                (ngSubmit)="addAttendanceLock(attendanceLockForm)">
+                <div class="row">
+                    <!-- Category Name -->
+                    <div class="col-md-12 mb-3">
+                        <label for="categoryType" class="form-label custom-label custom-label mb-2">{{ 'Category Type' |
+                            translate }}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
+                            <p-select class="custom-select w-100" [options]="categoriesList" optionLabel="moduleName"
+                                [filter]="true" filterBy="moduleName" [showClear]="false" formControlName="categoryType"
+                                resetFilterOnHide="true" placeholder="Please select category type">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.moduleName
+                                    }}</ng-template>
+                                <ng-template let-maker #item>{{ maker.moduleName }}</ng-template>
+                            </p-select>
+                            <div class="error-msg"
+                                *ngIf="attendanceLockForm.get('categoryType')?.invalid && attendanceLockForm.get('categoryType')?.touched">
+                                Category Type is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- From Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label custom-label mb-2">{{'From Date' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="fromDate"
+                            [max]="todayString" (change)="onFromDateChange(attendanceLockForm)" />
+                        <div class="error-msg"
+                            *ngIf="attendanceLockForm.get('fromDate')?.invalid && attendanceLockForm.get('fromDate')?.touched">
+                            From Date is required
+                        </div>
+                    </div>
+
+                    <!-- To Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label custom-label mb-2">{{'To Date'| translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="toDate"
+                            [min]="fromDateString" (change)="onToDateChange(attendanceLockForm)" />
+                        <div class="error-msg"
+                            *ngIf="attendanceLockForm.get('toDate')?.invalid && attendanceLockForm.get('toDate')?.touched">
+                            To Date is required
+                        </div>
+                    </div>
+
+                    <!-- Effective Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label custom-label mb-2">{{'Effective Date'| translate}}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+                            [min]="getEffectiveDateMin()" />
+                        <div class="error-msg"
+                            *ngIf="attendanceLockForm.get('effectiveDate')?.invalid && attendanceLockForm.get('effectiveDate')?.touched">
+                            Effective Date is required
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" [disabled]="spinnerLoader"
+                        (click)="openModal(confirmationpopup)">{{'Cancel'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="attendanceLockForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Add' | translate}}</span>
+                        </ng-template>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Update Attendance Lock Modal -->
+<ng-template #updateAttendanceLockModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">Update Attendance Lock</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="updateAttendanceLockForm"
+                (ngSubmit)="updateAttendanceLock(updateAttendanceLockForm)">
+                <div class="row">
+                    <!-- Category Type -->
+                    <div class="col-md-12 mb-3">
+                        <label for="reviewCycle" class="form-label custom-label mb-2"><b>{{ 'Category Type' | translate
+                                }}</b><span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content w-100">
+                            <p-select class="custom-select w-100" [options]="categoriesList" optionLabel="moduleName"
+                                [filter]="true" filterBy="moduleName" [showClear]="false" formControlName="categoryType"
+                                resetFilterOnHide="true" placeholder="Please select category type"
+                                [disabled]="isPublished">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.moduleName
+                                    }}</ng-template>
+                                <ng-template let-maker #item>{{ maker.moduleName }}</ng-template>
+                            </p-select>
+                            <div class="error-msg"
+                                *ngIf="updateAttendanceLockForm.get('categoryType')?.invalid && updateAttendanceLockForm.get('categoryType')?.touched">
+                                Category Type is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- From Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'From Date' | translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="fromDate"
+                            [max]="todayString" (change)="onFromDateChange(updateAttendanceLockForm)"
+                            [disabled]="isPublished" />
+                        <div class="error-msg"
+                            *ngIf="updateAttendanceLockForm.get('fromDate')?.invalid && updateAttendanceLockForm.get('fromDate')?.touched">
+                            From Date is required
+                        </div>
+                    </div>
+
+                    <!-- To Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'To Date' | translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="toDate"
+                            [min]="fromDateString" (change)="onToDateChange(updateAttendanceLockForm)"
+                            [disabled]="isPublished" />
+                        <div class="error-msg"
+                            *ngIf="updateAttendanceLockForm.get('toDate')?.invalid && updateAttendanceLockForm.get('toDate')?.touched">
+                            To Date is required
+                        </div>
+                    </div>
+
+                    <!-- Effective Date -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{ 'Effective Date' | translate }}<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" formControlName="effectiveDate"
+                            [min]="toDateString" [disabled]="!isPublished" />
+                        <div class="error-msg"
+                            *ngIf="updateAttendanceLockForm.get('effectiveDate')?.invalid && updateAttendanceLockForm.get('effectiveDate')?.touched">
+                            Effective Date is required
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)"
+                        [disabled]="spinnerLoader">
+                        {{ 'Cancel' | translate }}
+                    </button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="updateAttendanceLockForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
+                                <span>{{ 'Loading...' }}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{ 'Update' | translate }}</span>
+                        </ng-template>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Publish Attendance Lock Modal -->
+<ng-template #publishModal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to publish this Attendance Lock?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="PublishAttendanceLock()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>
+<!-- Delete Attendance Lock Modal -->
+<ng-template #deleteModal let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete this Attendance Lock?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="deleteAttendanceLock()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--confirmation Model-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No' |
+                translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">{{'Yes' | translate}}</button>
+        </div>
+    </div>
+</ng-template>

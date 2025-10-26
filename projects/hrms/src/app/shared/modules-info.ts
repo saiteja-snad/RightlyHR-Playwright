@@ -217,4 +217,5 @@ export const MODULE_INFOS = {
     JOB_MODULE_PERSONAL_CARD_MODULE_INFO:"The Cards section in Employee Info allows employees to view all cards currently allocated to them. Employees can check key details such as card number, issued date, and expiry month. This ensures transparency and helps employees stay informed about their assigned company cards.",
     //Cards Management Module Info
     CARDS_MANAGEMENT_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
+    CARDS_HISTORY_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
 }

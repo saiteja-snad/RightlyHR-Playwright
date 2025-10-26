@@ -702,7 +702,7 @@ export class OnBeHalfOfComponent {
             }
             return 0;
           });
-          let gradeid = sortedresponse[sortedresponse.length - 1].gradeId;
+          let gradeid = sortedresponse[sortedresponse.length - 1]?.gradeId;
           this.getLeavePoliciesbygradeId(gradeid);
         },
       });

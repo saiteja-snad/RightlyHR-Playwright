@@ -94,7 +94,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       startDate: [null, Validators.required],
       endDate: [null, Validators.required],
       resourceAllocationhrs: [null, Validators.required],
-      allocatedFrequencyType: [null, Validators.required],
+      // allocatedFrequencyType: [null, Validators.required],
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false]
@@ -229,7 +229,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
       startDate: formValue.startDate,
       endDate: formValue.endDate,
       allocatedHours: formValue.resourceAllocationhrs,
-      allocatedFrequencyType: formValue.allocatedFrequencyType?.value,
+      allocatedFrequencyType: formValue.allocatedFrequencyType?.value || null,
       overtimeEligibile: formValue.overtimeEligible,
       billable: formValue.billable,
       weekendWorkAllowed: formValue.allowweekendWork,

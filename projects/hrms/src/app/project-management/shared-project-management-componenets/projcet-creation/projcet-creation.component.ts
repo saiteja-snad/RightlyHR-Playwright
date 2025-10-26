@@ -1,20 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { HttpService } from '../../../services/http.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IProjectAuthority } from '../../../settings/project-management-configurations/models/project-authority.modal';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-projcet-creation',
-  imports: [ReactiveFormsModule, Select, TranslateModule, CommonModule],
+  imports: [ReactiveFormsModule, Select, TranslateModule, CommonModule, NgbPopover, InfoIconComponent],
   templateUrl: './projcet-creation.component.html',
-  styleUrl: './projcet-creation.component.scss'
+  styleUrl: './projcet-creation.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ProjcetCreationComponent implements OnInit, OnDestroy {
@@ -46,7 +48,7 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
     this.createProjectForm();
     this.getclientbaedonRoute();
     this.getprojecttypesData();
-    this.getAuthorityList();
+    // this.getAuthorityList();
     this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
     });
@@ -104,8 +106,18 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      approvalidAuthority: [null, Validators.required]
+      approvalidAuthority: [{value:null,disabled:true}]
     });
+    this.addprojectform.get('startDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+      this.validateDateRange();
+    });
+    this.addprojectform.get('endDate')?.valueChanges.subscribe(() => {
+      this.StartndendDateValidation();
+      this.validateDateRange();
+    });
+    this.addprojectform.get('kickoffDate')?.valueChanges.subscribe(() => this.validateDateRange());
+    this.addprojectform.get('effectiveDate')?.valueChanges.subscribe(() => this.validateDateRange());
   }
 
   getClientsData(): void {
@@ -197,6 +209,11 @@ export class ProjcetCreationComponent implements OnInit, OnDestroy {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  get isFormInvalid(): boolean {
+    return this.addprojectform.invalid || !this.startndEndDateValid || !this.kickoffDateValid || 
+           !this.kickoffBeforeEffectiveValid || !this.effectiveDateValidRange || !this.effectiveAfterKickoffValid || this.loading;
   }
 
   StartndendDateValidation() {

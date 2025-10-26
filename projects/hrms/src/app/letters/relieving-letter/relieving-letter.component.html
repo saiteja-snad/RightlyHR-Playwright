@@ -31,6 +31,19 @@
                             <div class="error-msg">Issued date is required</div>
                         </div>
                     </div>
+
+                    <!-- Last Working Date for Contractor Prospective -->
+                    <div class="col-md-12 mb-4" *ngIf="isContractorProspective()">
+                        <label class="form-label custom-label mb-2">
+                            Last Working Date<span class="error-msg">*</span>
+                        </label>
+                        <input type="date" class="form-control custom-input" formControlName="lastWorkingDate"
+                        placeholder="Please enter last working date" (keydown)="preventTyping($event)" />
+
+                        <div *ngIf="employeeForm.get('lastWorkingDate')?.invalid && employeeForm.get('lastWorkingDate')?.touched">
+                            <div class="error-msg">Last working date is required</div>
+                        </div>
+                    </div>
     
                     <!-- Document Type -->
                     <div class="mb-3">
@@ -104,7 +117,7 @@
                                 We hereby certify that <b>{{gender3}}{{ employeeFullname }}</b> was employed with SNAD Developers India Pvt Ltd as a 
                                 <b>{{ selectedEmployeeJobDetails?.jobRole || '' }}</b> from
                                 <b>{{ employeeForm.get('employee')?.value?.dateOfJoining | dateformat }}</b> to
-                                <b>{{ selectedEmployee?.lastworkingday | dateformat }}.</b>
+                                <b>{{ getLastWorkingDate() | dateformat }}.</b>
                               </p>                              
                             <p>During <span>{{gender}}</span> tenure with our organization, <b>{{employeeFullname}}</b> exhibited commendable dedication, 
                                 professionalism, and competence in <span>{{gender}}</span> role.

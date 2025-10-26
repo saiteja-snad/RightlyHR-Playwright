@@ -112,7 +112,6 @@ export class LettersInfoComponent {
     else if (this.router.url === '/letters/trainee-internship-completion-letter') {
       this.componentname = 'Trainee Completion Letter';
     }
-
   }
 
   navigateEmployeeManagement() {

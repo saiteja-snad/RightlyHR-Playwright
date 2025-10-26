@@ -63,7 +63,7 @@
                     <label for="workedDate" class="form-label custom-label mb-2">Worked Date
                         <span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" onkeydown="return false" id="workedDate"
-                        autocomplete="off" formControlName="workedDate">
+                        autocomplete="off" formControlName="workedDate" [max]="today">
                     <div class="error-msg">
                         <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid">
                             Worked Date is required</div>

@@ -149,7 +149,7 @@
                         }
                         @if (first && !showSaperationDots && showContractDetailSeperationDots) {
                         @if(canAccess('create','contractconversionrequest')){
-                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive contract'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive'
                         )){
                         <td class="text-center">

@@ -858,4 +858,14 @@ export const permissionsData = [
   { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
 
+  { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Waiting For Approval (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancelled (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH All Employees', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
+
 ];

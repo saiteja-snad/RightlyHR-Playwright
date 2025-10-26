@@ -63,7 +63,7 @@ export class ProjectViewComponent implements OnInit {
   }
 
   resetForm() {
-    this.datepickerForm.reset();
+    this.datepickerForm.get('dateRange')?.reset();
     this.datepickerForm.get('resourceId')?.disable();
     this.http.setRequest(null);
   }
@@ -158,6 +158,14 @@ export class ProjectViewComponent implements OnInit {
         this.projectsData = Array.isArray(res?.data) ? res.data : [];
         if (this.projectsData?.length > 0) {
           const project = this.projectsData[0];
+          console.log(project)
+         this.datepickerForm.get('projectName')?.enable({ emitEvent: false });
+         this.datepickerForm.patchValue({
+           projectName: project?.projectName,
+         });
+         this.datepickerForm.get('projectName')?.disable({ emitEvent: false });
+
+          //  this.datepickerForm.get('projectName')?.disable();
           this.clientsId = project?.client?.clientId ?? null;
           this.inactiveStatus = (res?.data ?? []).some((p: any) =>
             p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
@@ -177,7 +185,8 @@ export class ProjectViewComponent implements OnInit {
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
-      resourceId: [{ value: null, disabled: true }]
+      resourceId: [{ value: null, disabled: true }],
+      projectName: [null],
     });
   }
 

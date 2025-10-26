@@ -3,7 +3,7 @@
         @if (!loading) {
         <table class="w-100">
             <thead>
-                   <th class="max-width">{{'Project Name' | translate}}</th>
+                   <!-- <th class="max-width">{{'Project Name' | translate}}</th> -->
                  <th class="max-width">{{'Employee ID' | translate}}</th>
                 <th class="max-width">{{'Employee Name' | translate}}</th>
                 <th class="max-width">{{'Date' | translate}}</th>
@@ -15,7 +15,7 @@
             <tbody>
                 <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let row of attendanceSummaryData">
-                        <td>{{row.entries[0]?.projectName || '-'}}</td>
+                        <!-- <td>{{row.entries[0]?.projectName || '-'}}</td> -->
                         <td>{{row.fusionEmployeeId}}</td>
                         <td>{{row.resourceName}}</td>
                         <td>{{row.date | dateformat }}</td>

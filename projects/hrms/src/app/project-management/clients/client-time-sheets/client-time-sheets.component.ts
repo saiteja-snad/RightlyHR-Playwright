@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { ChartModule } from 'primeng/chart';
@@ -10,9 +10,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-client-time-sheets',
-  imports: [CommonModule, TranslateModule, ChartModule, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe],
+  imports: [CommonModule, TranslateModule, ChartModule,NgbPopover, NoDataFoundComponent, DataLoaderContentComponent, DateformatPipe, InfoIconComponent],
   templateUrl: './client-time-sheets.component.html',
   styleUrl: './client-time-sheets.component.scss',
   encapsulation: ViewEncapsulation.None

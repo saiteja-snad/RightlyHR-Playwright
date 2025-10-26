@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,15 +11,17 @@ import { AccordionModule } from 'primeng/accordion';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subject, Subscription, takeUntil } from 'rxjs';
-import { TimesheetResponse } from '../../../timesheetmodel';
+import { IResourceDetail, TimesheetResponse } from '../../../timesheetmodel';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Select } from 'primeng/select';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
-    NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
+    NgbPopover, CommonModule, DatePicker, Select, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
     TranslateModule, DataLoaderContentComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
@@ -56,34 +58,48 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   clients: any[] = [];
   noclientproject = false;
   availableProjects: any[] = [];
+  activeEmplist = [] as any;
   selectedProjectResource: any;
   timesheetdata!: TimesheetResponse;
+  resourcesList: IResourceDetail[] = [];
   resourcesArrayList: any[] = [];
   totalDuration: any;
   spinnerLoader = false;
+  empdata = {} as any;
+  employeeSelected = false;
+  loggedinuser = {} as any;
   spinnerLoaderforallrecoders = false;
   datesSelected = false;
-
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, 
-    public authService: AuthService, private conformationPopup: OpenModalService) { }
+  selectedResource: IResourceDetail | null = null;
+  @ViewChild('datePicker') datePicker: any;
+  @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
+  @ViewChild('employeeDropdown') employeeDropdown: any;
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
+    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    const loggedInUser = this.authService.getToken();
-    this.employeeId = loggedInUser.employeeId;
+    this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.employeeId = this.empdata?.employeeId;
+
     const startOfWeek = moment().startOf('isoWeek'); // Sunday by default (you can use .startOf('isoWeek') for Monday)
     const endOfWeek = moment().endOf('isoWeek');
     this.setWeekRange(startOfWeek, endOfWeek);
     this.timesheetForm = this.fb.group({
       projects: this.fb.array([]),
     });
-    // Add one initial row
-    // this.addProject();
+    this.getResourceDetailsByManagerId();
     this.getResourceData()
-    this.getJobDetails();
+    this.getJobDetails()
+    this.getTeamManagersDetails();
+    this.getAllEmployeeDetails();
     this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+
     this.getTimeSheetEntriesbyEmployeeId(
       this.employeeId,
-      this.formattedweakendStart
+      this.formattedweakendStart,
+      undefined,
+      undefined
     );
   }
 
@@ -124,13 +140,16 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isFutureDate = entryDateObj ? entryDateObj > today : false;
     const isWeekend = blockReason === 'Weekend';
     const projectId = day?.projectId;
+    const approvedStatus = day?.approvalStatus === 'Processed' || day?.approvalStatus === 'Waiting for Approval';
 
     const matchedResource = this.resourcesArrayList?.find(
       (r: any) => r?.project?.projectId === projectId
     );
+
     const resourcestartdate = matchedResource?.startDate
       ? new Date(matchedResource.startDate)
       : null;
+
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
     }
@@ -152,10 +171,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
 
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective ? 
-    isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
+      isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
-    const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ? 
+    const billablecheck = !!(matchedResource?.billable || this.selectedProjectResource?.billable);
+
+
+    const durationControl = this.fb.control(isNotEntered ? '' : day?.durationSeconds != null ?
       this.secondsToHHMM(day.durationSeconds) : '',
       Validators.required
     );
@@ -174,11 +196,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       projectId: [{ value: day?.projectId || null, disabled: !shouldEnable }],
       projectName: [{ value: day?.projectName || '', disabled: !shouldEnable }],
       entryDate: [{ value: dateValue || '', disabled: !shouldEnable }],
-      startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }, Validators.required],
-      endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }, Validators.required],
+      startTime: [{ value: isNotEntered ? '' : day?.startTime || '', disabled: !shouldEnable }],
+      endTime: [{ value: isNotEntered ? '' : day?.endTime || '', disabled: !shouldEnable }],
       duration: durationControl,
-      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }, Validators.required,],
-      approvalStatus: [{ value: day?.approvalStatus || '', disabled: !shouldEnable }],
+      description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
+      approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
+      isBillable: [{ value: day?.isBillable || false , disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
@@ -186,7 +209,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  @ViewChild('datePicker') datePicker: any;
+
   onDateSelect(selectedDate: Date) {
     if (!selectedDate) return;
     const selected = moment(selectedDate);
@@ -207,9 +230,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     //Format start date for API call
     const formattedStart = monday.format('YYYY-MM-DD');
-
-    // ✅ Hit your API
-    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+    this.loadTimeSheetByResource(formattedStart);
 
     // Close the datepicker
     setTimeout(() => {
@@ -218,6 +239,46 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       }
     }, 100);
   }
+
+  private loadTimeSheetByResource(formattedStart: string): void {
+  if (this.employeeSelected && this.selectedResource) {
+
+    let employeeIdToSend = this.empdata?.employeeId; // default logged-in user ID
+    let targetEmployeeId: number | undefined = undefined;
+    let isReportee: boolean | undefined = undefined;
+
+    switch (this.selectedResource.key) {
+      case 'team':
+        // Logged-in user is the employee; selected is the reportee
+        employeeIdToSend = this.empdata?.employeeId;
+        targetEmployeeId = this.selectedResource.id;
+        isReportee = this.selectedResource.isReportee;
+        break;
+
+      case 'all employees':
+        // Selected employee is the one whose timesheet we fetch
+        employeeIdToSend = this.selectedResource.id;
+        targetEmployeeId = this.selectedResource.id;
+        isReportee = this.selectedResource.isReportee;
+        break;
+
+      default:
+        break;
+    }
+
+    this.getTimeSheetEntriesbyEmployeeId(
+      employeeIdToSend,
+      formattedStart,
+      targetEmployeeId,
+      isReportee
+    );
+
+  } else {
+    // Fallback: load logged-in user’s data
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+  }
+}
+
 
   // --- Add new project row ---
   addProject(project?: any, isProjectSelected: boolean = false) {
@@ -270,12 +331,89 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       sun: false,
     };
   }
+  isReportee = false;
+  onCheckemployee(employeed: any, dropdownType?: string) {
+    this.employeeSelected = !!employeed;
+    const formattedStart = moment(this.start).format('YYYY-MM-DD');
+    if (employeed && dropdownType === 'team') {
+      this.employeeId = employeed.id;
+      this.isReportee = employeed.isReportee;
+      this.selectedResource = employeed;
+      this.getTimeSheetEntriesbyEmployeeId(this.empdata.employeeId, formattedStart, this.employeeId, this.isReportee);
+      this.getResourceData()
+      this.getJobDetails()
+    }
+    else if (employeed && dropdownType === 'all employees') {
+      this.employeeId = employeed;
+      this.selectedResource = {
+        id: employeed,
+        name: null,
+        fusionEmpId: null,
+        workMail: null,
+        isReportee: false,
+        key: 'all employees'
+      };
+
+      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart, undefined, undefined);
+      this.getResourceData()
+      this.getJobDetails()
+    }
+  }
+
+  mytimesheet() {
+    this.employeeId = this.empdata.employeeId;
+    this.employeeSelected = false;
+    if (this.employeeDropdown) {
+      this.employeeDropdown.clear();
+    }
+    const formattedStart = moment(this.start).format('YYYY-MM-DD');
+    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart, undefined, undefined);
+    this.getResourceData()
+    this.getJobDetails()
+  }
+
+
+  getAllEmployeeDetails() {
+    const EmployeeId = this.empdata?.employeeId;
+    const satus = ['Active', 'Trainee Active','Active Contract'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
+  }
+ 
+  // function to get the data of employees by hierarchy
+  getEmployeeInfo = [] as any;
+  getTeamManagersDetails() {
+    const EmployeeId = parseInt(this.empdata.employeeId);
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          // No filter
+          this.getEmployeeInfo = response.map((employee: any) => ({
+            ...employee,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          }));
+        }
+      },
+    });
+  }
 
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
     if (!project || !project.days) return [];
-    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' && 
-    !!day.entryId).map((day: any) => day.entryId);
+    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' &&
+      !!day.entryId).map((day: any) => day.entryId);
+  }
+
+  openModalforsubmit(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   openModalfordeletealldata(content: any, index: number) {
@@ -295,6 +433,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Draft entries deleted successfully');
+          this.projects.removeAt(index);
           this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
           this.getTimeSheetEntriesbyEmployeeId(
             this.employeeId,
@@ -342,7 +481,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(prevStart, prevEnd);
       const formattedStart = moment(prevStart).format('YYYY-MM-DD');
-      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+      this.loadTimeSheetByResource(formattedStart);
+
     }
   }
 
@@ -357,14 +497,24 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.weakenddate = this.end;
       this.setWeekRange(nextStart, nextEnd);
       const formattedStart = moment(nextStart).format('YYYY-MM-DD');
-      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
+      this.loadTimeSheetByResource(formattedStart);
+
     }
   }
 
   //GET DATA to show in table
-  getTimeSheetEntriesbyEmployeeId(employeeId: number, start: any) {
+  getTimeSheetEntriesbyEmployeeId(employeeId: number, start: any, targetEmployeeId?: number, isReportee?: boolean) {
     this.loading = true;
-    this.http.getData(`Timesheet/week/employee/${employeeId}?weekStartDate=${start}`).pipe(takeUntil(this.destroy$)).subscribe({
+    // ✅ Build query params dynamically
+    let query = `weekStartDate=${start}`;
+    if (targetEmployeeId) {
+      query += `&targetEmployeeId=${targetEmployeeId}`;
+    }
+    if (isReportee !== undefined) {
+      query += `&isReportee=${isReportee}`;
+    }
+
+    this.http.getData(`Timesheet/week/employee/${employeeId}?${query}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         const data = res.data;
@@ -490,8 +640,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getTotalPerDay(day: string): string {
     let totalMinutes = 0;
     this.projects.controls.forEach((project) => {
-      const duration = project.get([day, 'duration'])?.value;
-      if (duration) {
+      const dayControl = project.get(day);
+      const duration = dayControl?.get('duration')?.value;
+      const entryId = dayControl?.get('entryId')?.value;
+
+      // Only count saved entries (with entryId)
+      if (duration && entryId) {
         const [hh, mm] = duration.split(':').map(Number);
         totalMinutes += hh * 60 + (mm || 0);
       }
@@ -502,7 +656,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   getJobDetails() {
-    let EmployeeId = parseInt(this.employeeId);
+    let EmployeeId = this.employeeId;
     this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.jobdetails = data[0];
@@ -513,6 +667,28 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+
+  getResourceDetailsByManagerId() {
+    const EmployeeId = this.empdata?.employeeId;
+    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          this.resourcesList = res.data
+            // ✅ Remove employee by ID
+            .filter((emp: IResourceDetail) => emp.id !== EmployeeId)
+            // ✅ Add fullName for dropdown
+            .map((emp: IResourceDetail) => ({
+              ...emp,
+              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
+              key: 'team'
+            }));
+        }
+      },
+      error: (err: any) => console.error(err)
+    });
+  }
+
 
   // Check if daily total exceeds 8 hours
   isDayExceeded(day: string): boolean {
@@ -535,67 +711,192 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  //TIME ENTERIY
+  private isDeleteModalOpen = false;
+  private userClickedNo = false;
+  private isModalOpen = false;
+
+  // Check if user is trying to clear duration for draft entries
+  checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
+    if (this.isDeleteModalOpen) {
+      event.preventDefault();
+      return;
+    }
+
+    const target = event.target as HTMLInputElement;
+    const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
+    const approvalStatus = dayForm?.get('approvalStatus')?.value;
+    const entryId = dayForm?.get('entryId')?.value;
+
+    // If user presses Delete/Backspace and field has value and status is draft
+    if ((event.key === 'Delete' || event.key === 'Backspace') &&
+      target.value &&
+      approvalStatus?.toLowerCase() === 'draft' &&
+      entryId) {
+
+      // Check if this action would clear the entire field
+      const willClearField = (target.selectionStart === 0 && target.selectionEnd === target.value.length) ||
+        (target.value.length === 1 && (target.selectionStart === 0 || target.selectionEnd === target.value.length));
+
+      if (willClearField) {
+        event.preventDefault();
+        this.isDeleteModalOpen = true;
+        this.opendeleteModal(this.deleteconformation, entryId);
+      }
+    }
+  }
+
+  //TIME ENTERIY FOR TABLE
   formatTime(event: any, dayName: string, rowIndex: number, duration: string) {
     let value = event.target.value;
     value = value?.replace(/\D/g, ''); // digits only
-    let formatted = '';
-    let today = new Date().toDateString();
-    let inputDay = new Date(dayName).toDateString(); // make sure dayName is a valid date string
-    const isToday = today === inputDay;
-    if (value?.length === 4) {
-      let hours = parseInt(value.slice(0, 2), 10);
-      let minutes = parseInt(value.slice(2), 10);
-      if (hours >= 70 && value?.endsWith('00')) {
-        hours = parseInt(value.slice(0, 1), 10);
-        minutes = 0;
-      }
-      // ✅ Today can allow 24:00, otherwise max 23:59
-      if (isToday) {
-        if (hours > 24) hours = 24;
-        if (minutes > 59) minutes = 59;
-        if (hours === 24) minutes = 0;
-      } else {
-        if (hours > 23) hours = 23;
-        if (minutes > 59) minutes = 59;
-      }
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length === 3) {
-      let hours = parseInt(value[0], 10);
-      let minutes = parseInt(value?.slice(1), 10);
-      if (isToday) {
-        if (hours > 24) hours = 24;
-        if (minutes > 59) minutes = 59;
-        if (hours === 24) minutes = 0;
-      } else {
-        if (hours > 23) hours = 23;
-        if (minutes > 59) minutes = 59;
-      }
-      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    } else if (value?.length <= 2 && value?.length > 0) {
-      let hours = parseInt(value, 10);
-      if (isToday) {
-        if (hours > 24) hours = 24;
-        if (hours === 24) formatted = '24:00';
-        else formatted = `${hours.toString().padStart(2, '0')}:00`;
-      } else {
-        if (hours > 23) hours = 23;
-        formatted = `${hours.toString().padStart(2, '0')}:00`;
-      }
-    } else {
-      formatted = '';
-    }
+    let formatted = this.getFormattedTime(value);
+
+    const dayForm = this.projects.at(rowIndex).get(dayName) as FormGroup;
+    const approvalStatus = dayForm?.get('approvalStatus')?.value;
+
     const control = this.projects.at(rowIndex).get(`${dayName}.${duration}`);
     if (control) {
       control.setValue(formatted, { emitEvent: false });
     }
-    this.showDots[rowIndex][dayName] = true;
+
+    // Show dots only if there's a formatted duration value
+    if (formatted) {
+      this.showDots[rowIndex][dayName] = true;
+    }
+
+    // Auto-save on blur if duration has value
+    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
+
+
+      // Don't auto-save if already processed or waiting for approval
+      if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
+        this.autoSaveTableEntry(rowIndex, dayName);
+      }
+    }
+
+    // Reset userClickedNo flag after processing
+    if (event.type === 'blur') {
+      this.userClickedNo = false;
+    }
   }
 
-  //DELETE RECODER
-  opendeleteModal(content: any, data: AbstractControl) {
+  //AUTO SAVE TABLE ENTRY
+  autoSaveTableEntry(rowIndex: number, dayName: string) {
+
+    const projectForm = this.projects.at(rowIndex);
+    const dayForm = projectForm.get(dayName) as FormGroup;
+
+    if (!dayForm || !dayForm.get('duration')?.value) return;
+
+    const formValue = dayForm.value;
+    const projectValue = projectForm.value;
+
+    // Get the correct date based on dayName
+    const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayName);
+    const entryDate = this.weekDates && this.weekDates[dayIndex]
+      ? moment(this.weekDates[dayIndex]).format('YYYY-MM-DD')
+      : moment().format('YYYY-MM-DD');
+
+    // Determine billable status
+    const selectedResource = this.resourcesArrayList.find(
+      (res: any) => res.project?.projectId === formValue.projectId &&
+        res.client?.clientId === formValue.clientId
+    );
+    const isBillable = this.selectedProjectResource?.billable ?? selectedResource?.billable ?? false;
+
+    const payload = {
+      entryId: formValue.entryId || null,
+      employeeId: this.employeeId || null,
+      entryDate: entryDate,
+      startTime: formValue.startTime || null,
+      endTime: formValue.endTime || null,
+      description: formValue.description || null,
+      approvalStatus: 'draft',
+      clientId: projectValue.selectedProject?.clientId || null,
+      projectId: projectValue.selectedProject?.projectId || null,
+      timesheetId: this.timesheetdata?.timesheetId || null,
+      isOverride: formValue.isBlocked || false,
+      totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+      isBillable: isBillable
+    };
+
+    this.http.postdata('Timesheet/save-or-update', payload).subscribe({
+      next: (res) => {
+        this.conformationPopup.openSuccessModal('Time Entry Draft successfully');
+        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+      },
+      error: (err) => {
+        console.error('Auto-save failed', err);
+        this.conformationPopup.openErrorModal(err.error.message);
+      },
+    });
+  }
+
+  //TIME FORMAT FOR MODAL
+  formatModalTime(event: any) {
+    let value = event.target.value;
+    value = value?.replace(/\D/g, ''); // digits only
+    let formatted = this.getFormattedTime(value);
+
+    this.dayForm.get('duration')?.setValue(formatted, { emitEvent: false });
+  }
+
+  //COMMON TIME FORMATTING LOGIC
+  getFormattedTime(value: string): string {
+    let formatted = '';
+
+    if (value?.length === 1) {
+      // Single digit = minutes (0-9 minutes)
+      let minutes = parseInt(value, 10);
+      formatted = `00:0${minutes}`;
+    } else if (value?.length === 2) {
+      // Two digits = tens place minutes (10-59 minutes)
+      let minutes = parseInt(value, 10);
+      if (minutes > 59) minutes = 59;
+      formatted = `00:${minutes.toString().padStart(2, '0')}`;
+    } else if (value?.length === 3) {
+      // Three digits = hours (1-24 hours)
+      let hours = parseInt(value[0], 10);
+      let minutes = parseInt(value.slice(1), 10);
+      if (hours > 24) hours = 24;
+      if (minutes > 59) minutes = 59;
+      if (hours === 24) minutes = 0;
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    } else if (value?.length === 4) {
+      // Four digits = hours and minutes
+      let hours = parseInt(value.slice(0, 2), 10);
+      let minutes = parseInt(value.slice(2), 10);
+      if (hours > 24) hours = 24;
+      if (minutes > 59) minutes = 59;
+      if (hours === 24) minutes = 0;
+      formatted = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
+    return formatted;
+  }
+
+  opendeleteModal(content: any, data: any) {
     this.selectedentryid = data;
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.userClickedNo = false;
+    const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+
+    // Reset flag when modal is closed
+    modalRef.result.finally(() => {
+      this.isDeleteModalOpen = false;
+    });
+  }
+
+  // Handle No button click in delete modal
+  onDeleteModalNo() {
+    this.userClickedNo = true;
+    this.modalService.dismissAll();
+    this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+    this.getTimeSheetEntriesbyEmployeeId(
+      this.employeeId,
+      this.formattedweakendStart
+    );
+
   }
 
   //single entry delete
@@ -609,6 +910,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Time Entry is deleted successfully');
         this.selectedentryid = null;
+        this.isDeleteModalOpen = false;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(
           this.employeeId,
@@ -620,6 +922,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal(
           err?.error?.message || 'Failed to delete time entry'
         );
+        this.isDeleteModalOpen = false;
       },
     });
   }
@@ -668,9 +971,17 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isLeave: existingDayData?.isLeave || false
     };
   }
+onDropdownClick(event: MouseEvent) {
+  if (!this.employeeSelected) {
+    event.stopPropagation(); // stop event bubbling
+    event.preventDefault();  // stop Bootstrap dropdown from opening
+  }
+}
 
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
+    console.log("ahsd");
+    
     this.selectedProjectResource = null
     const form = row as FormGroup;
     // Patch project details
@@ -700,6 +1011,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.selectedProjectName = project.projectName;
     this.selectedClientname = client.clientName;
     this.selectedShiftDetails = client.shift;
+
+    // Update billable controls for all days
+    const billableCheck = selectedResource?.billable || false;
 
     // Days array
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -745,6 +1059,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
           dayForm.get(ctrl)?.disable();
         }
       });
+
+      // Update billable control disabled state
+      if (billableCheck) {
+        dayForm.get('isBillable')?.enable();
+      } else {
+        dayForm.get('isBillable')?.disable();
+      }
     });
 
     // Close dropdown
@@ -755,6 +1076,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       dropdownBtn.classList.remove('show');
       dropdownBtn.setAttribute('aria-expanded', 'false');
     }
+    // this.addProject();
   }
 
   // Check if any projects under this client are unselected
@@ -780,17 +1102,53 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   //OPEN TIME ENTERIY
-  openModal(content: any,dayForm: AbstractControl | null,index: number,dayKey: string) {
+  openModal(content: any, dayForm: AbstractControl | null, index: number, dayKey: string) {
     if (dayForm instanceof FormGroup) {
-      this.modalService.open(content, { centered: true, backdrop: 'static' });
+      this.isModalOpen = true;
+      const modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
+
+      // Reset flag when modal is closed
+      modalRef.result.finally(() => {
+        this.isModalOpen = false;
+      });
+
       this.dayForm = dayForm; // keep reference
+
+      const selectedResource = this.resourcesArrayList.find(
+          (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
+            res.client?.clientId === this.dayForm.get('clientId')?.value
+        );
+
+      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected  ) {
+        this.dayForm.disable();
+        
+      } else {
+        const billablecheck = !!(selectedResource?.billable || this.selectedProjectResource?.billable);
+        this.dayForm.enable();
+        if (!billablecheck) {
+          this.dayForm.get('isBillable')?.disable();
+        }
+        
+      }
+
+      const approvalStatus = this.dayForm.get('approvalStatus')?.value;
+      if (approvalStatus === 'Not Entered' || approvalStatus === '' || approvalStatus === null || approvalStatus === undefined) {
+        this.dayForm.patchValue({
+          isBillable: this.selectedProjectResource?.billable ?? selectedResource?.billable
+        })
+
+      }
+
       const shiftData = this.resourcesArrayList.find(
         (ele: any) => ele?.entityRefId === this.dayForm.get('projectId')?.value
       );
+
+
       if ((this.selectedShiftDetails == undefined || this.selectedShiftDetails == null) &&
         this.dayForm.get('projectId')?.value != null) {
         this.selectedShiftDetails = shiftData?.shift;
       }
+
       // const status = dayForm.get('approvalStatus')?.value;
       // if(index===0){
       //   console.log(index,'index value',this.selectedShiftDetails)
@@ -877,7 +1235,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       // }
       //============================================================
       //helper method for start time and end time
-      this.recalculateTimes(dayKey, index);
+      // this.recalculateTimes(dayKey, index);
 
       //-------------------------------------------------------
       // enable/disable based on status
@@ -931,27 +1289,29 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  toTimeSpan = (time: string | null | undefined): string | null => {
+    if (!time) return null;
+    // If user gave "HH:mm" → make it "HH:mm:00"
+    if (/^\d{2}:\d{2}$/.test(time)) {
+      return `${time}:00`;
+    }
+    // If already "HH:mm:ss" → keep it
+    if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
+      return time;
+    }
+    // If API accidentally sends "HH:mm:ss:SS" → trim last ":SS"
+    if (/^\d{2}:\d{2}:\d{2}:\d{2}$/.test(time)) {
+      return time.substring(0, 8); // take only "HH:mm:ss"
+    }
+    return null;
+  };
+
   //single recoder
   saveDayEntry() {
     this.spinnerLoader = true;
     // Prepare payload
     const formValue = this.dayForm.value;
-    const toTimeSpan = (time: string | null | undefined): string => {
-      if (!time) return '00:00:00';
-      // If user gave "HH:mm" → make it "HH:mm:00"
-      if (/^\d{2}:\d{2}$/.test(time)) {
-        return `${time}:00`;
-      }
-      // If already "HH:mm:ss" → keep it
-      if (/^\d{2}:\d{2}:\d{2}$/.test(time)) {
-        return time;
-      }
-      // If API accidentally sends "HH:mm:ss:SS" → trim last ":SS"
-      if (/^\d{2}:\d{2}:\d{2}:\d{2}$/.test(time)) {
-        return time.substring(0, 8); // take only "HH:mm:ss"
-      }
-      return '00:00:00';
-    };
+
 
     const payload = {
       entryId: formValue.entryId || 0,
@@ -959,8 +1319,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       entryDate: moment(this.dayForm.get('entryDate')?.value).format(
         'YYYY-MM-DD'
       ),
-      startTime: toTimeSpan(formValue.startTime) || '',
-      endTime: toTimeSpan(formValue.endTime) || '',
+      startTime: this.toTimeSpan(formValue.startTime) || null,
+      endTime: this.toTimeSpan(formValue.endTime) || null,
       description: formValue.description || '',
       approvalStatus: 'draft',
       clientId: formValue.clientId || this.selectedclientid || null,
@@ -968,6 +1328,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       timesheetId: this.timesheetdata?.timesheetId || 0,
       isOverride: formValue.isBlocked || false,
       totalDurationSeconds: this.hhmmToSeconds(formValue.duration) || 0,
+      isBillable: formValue.isBillable || false
     };
 
     // POST request
@@ -982,6 +1343,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.selectedprojectid = null;
         this.selectedProjectName = null;
         this.selectedClientname = null;
+        this.selectedProjectResource = null;
         this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
@@ -1053,6 +1415,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.http.postdata('Timesheet/submit-for-approval', payload).subscribe({
       next: (res) => {
         this.spinnerLoaderforallrecoders = false
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal(
           'Timesheet submitted successfully'
         );
@@ -1064,6 +1427,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
+        this.modalService.dismissAll();
         this.spinnerLoaderforallrecoders = false;
         console.error('Failed to submit timesheet', err);
         this.conformationPopup.openSuccessModal(err.error.message);
@@ -1114,7 +1478,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
-    const status = control?.value?.approvalStatus;
+    const status = control?.getRawValue()?.approvalStatus;
+
     return {
       approved: status === 'Processed',
       rejected: status === 'Rejected',

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
@@ -16,7 +16,7 @@ import { SidetabsloadersComponent } from "../../sidetabsloaders/sidetabsloaders.
   styleUrl: './on-be-half-of-approval-tabs.component.scss'
 })
 
-export class OnBeHalfOfApprovalTabsComponent {
+export class OnBeHalfOfApprovalTabsComponent implements OnInit{
   loggedinuser = {} as any;
   empdata = {} as any;
   subscription!: Subscription;
@@ -108,4 +108,8 @@ export class OnBeHalfOfApprovalTabsComponent {
     });
     this.loading=false  
   }
+
+
+
+  
 }

@@ -1,12 +1,20 @@
 <div class="custom-main-component-container">
     <form autocomplete="off" [formGroup]="form" autocomplete="off" (ngSubmit)="onSubmit(form)" class="mb-4"
         *ngIf="rbac.allowedToAccess('Project Management Authority.create')">
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex  gap-2">
             <div class="custom-p-select-content">
                 <p-select formControlName="selected_user" [options]="usersList" name="user" id="user" optionLabel="fullName"
                     placeholder="Please select employee" class="w-100" [filter]="true" filterBy="fullName" [showClear]="true"
                     filterPlaceholder="Search employee" class="form-select custom-select w-100" resetFilterOnHide="true">
                 </p-select>
+                     <div class="error-msg">
+                        <div *ngIf="form.get('selected_user')?.touched && form.get('selected_user')?.invalid">
+                            <div *ngIf="form.get('selected_user')?.errors?.['required']">{{ 'Project Management Authority is required' | translate }}
+
+                            </div>
+                        </div>
+
+                    </div>
             </div>
             <div>
                 <button type="submit" class="custom-btn btn-primary py-2 px-4"

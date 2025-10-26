@@ -21,7 +21,7 @@ export class ActiveprojectsPipe implements PipeTransform {
          p.endDate?.toString().includes(lowerSearch) ||
          p.effectiveDate?.toString().includes(lowerSearch) ||
          p.kickoffDate?.toString().includes(lowerSearch) ||
-         p.projectType?.toString().includes(lowerSearch) ||
+         p.projectType?.toString().toLowerCase().includes(lowerSearch) ||
          p.status?.toLowerCase().includes(lowerSearch)
        );
      }

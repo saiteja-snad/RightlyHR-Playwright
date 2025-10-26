@@ -51,7 +51,7 @@ export class FormValidationsService {
   }
 
   // ✅ Allow only specific printable characters
-  const isValidCharacter = /^[A-Za-z\s!':]$/.test(key);
+  const isValidCharacter = /^[A-Za-z\s!':()]$/.test(key);
   if (!isValidCharacter) {
     event.preventDefault();
   }

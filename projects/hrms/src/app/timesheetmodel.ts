@@ -36,3 +36,15 @@ export interface DayEntry {
   projectName: string;
   duration: string;        // PTxHxM format
 }
+
+
+
+
+export interface IResourceDetail {
+  id: number;
+  name: string | null;
+  fusionEmpId: string | null;
+  workMail: string | null;
+  isReportee: boolean ;
+  key?: string;
+}

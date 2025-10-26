@@ -193,7 +193,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
       this.http.postdata('AttendanceRequests/postWFHRequest', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('WFH Processed successfully');
+          this.sharedModalService.openSuccessModal('WFH processed successfully');
           this.http.onBehlafOfWFHSignal.set(true);
         },
         error: (err: any) => {

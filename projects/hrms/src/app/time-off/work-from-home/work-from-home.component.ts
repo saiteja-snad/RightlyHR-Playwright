@@ -19,10 +19,11 @@ import { Select } from 'primeng/select';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
+import { Skeleton } from "primeng/skeleton";
 @Component({
   selector: 'app-work-from-home',
   imports: [CommonModule, RouterModule, ReactiveFormsModule, WfhApprovaltabsComponent,
-    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule],
+    TranslateModule, DropdownModule, Select, ModuleInformationComponent, NgbPopoverModule, Skeleton],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -63,7 +64,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   selectedYear: number = this.currentYear;
   years: number[] = [];
   activeEmplist = [] as any;
-
+  loadingGraph: boolean = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -208,11 +209,17 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   getWFHBalance(employeedId: any) {
+    
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
     this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
       next: (response: any) => {
         this.wfhBalance = response;
+         this.wfhBalancesdetails=[response];
+          this.loadingGraph = false;
+          this.totalbalance = response.totalBalance;
+          this.availablebalance = response.availableBalance;
+          this.initChart(response);
       },
       error: (reason: any) => console.log(reason),
     });
@@ -333,21 +340,76 @@ getTeamManagersDetails() {
       this.getWFHBal(workedDate);
     }
   }
-
+wfhBalancesdetails=[] as any;
   getWFHBal(currentDate?: any) {
+    this.loadingGraph = true;
     const empId = this.empinfo.employeeId;
     const date = currentDate ?? new Date().toISOString().split('T')[0];
     this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${date}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         if (response) {
+          console.log(response)
+           this.wfhBalancesdetails=[response];
+          this.loadingGraph = false;
           this.totalbalance = response.totalBalance;
           this.availablebalance = response.availableBalance;
+          this.initChart(response);
+         
         }
       },
       error: (reason: any) => console.log(reason),
     });
   }
 
+  initChart(item: any) {
+    const data: number[] = [];
+    const labels: string[] = [];
+    const backgroundColors: string[] = [];
+      data.push(item.availableBalance);
+      labels.push('WFH');
+      backgroundColors.push('#FF2E22');
+    this.totalbalance = {
+      datasets: [
+        {
+          data: data,
+          backgroundColor: backgroundColors,
+          borderWidth: 0
+        }
+      ]
+    };
+    this.totalbalance = {
+      cutout: '70%',
+      // borderWidth:'10px',
+    };
+  }
+
+  getAvailablewfhs(item: any): number {
+    if (item.availableBalance) {
+      return item.availableBalance ; 
+    } else {
+      return item.availableBalance;
+    }
+  }
+
+  getTransparentColor(hex: string, opacity: number): string {
+    // Remove leading # if present
+    hex = hex.replace('#', '');
+    // Convert 3-digit hex to 6-digit
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  getProgress(item: any): number {
+    const available = this.getAvailablewfhs(item);
+    const total = item.totalBalance || 1; // Avoid division by zero
+    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+    return percentage * 360;
+  }
   getDataByLPID(emp: any) {
     this.http.getData(`Timeoff/LPID/${emp}`).subscribe({
       next: (response: any) => {

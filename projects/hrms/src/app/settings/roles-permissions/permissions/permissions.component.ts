@@ -282,6 +282,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     const viewOnlyFields = [
       'Leave Allocation Tab',
       'Flexible Leave Allocation Tab',
+      'Flexible WFH Allocation Tab',
       'Load Entitlements Tab',
       'Attendance Eligibility Criteria Tab',
       'Comp Off Entitlement Tab',
@@ -477,6 +478,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
+  flexibleWFHTabsFields=[
+    'Active Allocations Tab',
+    'Allocation History Tab'
+  ]
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',

@@ -59,6 +59,7 @@ import {
   PROJECTS_ROUTES,
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
+  FLEXIBLE_WFH_ALLOCATION_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF
@@ -1128,6 +1129,15 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')) {
           return (route =
             '/settings/timeoff-configurations/flexible-leave-allocation');
+        }
+        break;
+         case '/settings/timeoff-configurations/flexible-wfh-allocation':
+        if (this.rbac.allowedToAccess('Flexible WFH Allocation Tab.view')) {
+         for (const item of FLEXIBLE_WFH_ALLOCATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 

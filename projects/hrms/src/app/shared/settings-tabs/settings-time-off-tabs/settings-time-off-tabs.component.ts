@@ -50,6 +50,13 @@ export class SettingsTimeOffTabsComponent {
       permission: { feature: 'Load Entitlements Tab', action: 'view' },
       icon:'/settings-icon/load-entitlement-icon.png',
       subjectText:MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
+    },
+     {
+      label: 'Flexible WFH Allocation',
+      link: '/settings/timeoff-configurations/flexible-wfh-allocation',
+      permission: { feature: 'Flexible WFH Allocation Tab', action: 'view' },
+      icon:'/settings-icon/flexible-leave-allocation-icon.png',
+      subjectText:MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
     }
   ];
 

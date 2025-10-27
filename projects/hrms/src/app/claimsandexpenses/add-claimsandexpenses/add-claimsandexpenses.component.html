@@ -78,7 +78,7 @@
                                     <p-select [options]="expensetype" optionValue="expenseId" optionLabel="expenseType"
                                         (onChange)="onchangeexpnes($event, i)" appendTo="body"
                                         placeholder="Please select expense type" formControlName="item_expense"
-                                        class="form-select custom-select"></p-select>
+                                        class="form-select custom-select" ></p-select>
                                 </div>
                                 <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
                                     class="error-msg">

@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
@@ -18,6 +18,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
   imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
+  encapsulation: ViewEncapsulation.None,
   providers: [DatePipe]
 })
 

@@ -407,9 +407,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
+    console.log(project);
+    
     if (!project || !project.days) return [];
-    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' && day.approvalStatus?.toLowerCase() === 'not entered' &&
+    console.log(project);
+
+    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' || day.approvalStatus?.toLowerCase() === 'not entered') &&
       !!day.entryId).map((day: any) => day.entryId);
+
+
   }
 
   openModalforsubmit(content: any) {

@@ -209,11 +209,17 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   }
 
   getWFHBalance(employeedId: any) {
+    
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
     this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
       next: (response: any) => {
         this.wfhBalance = response;
+         this.wfhBalancesdetails=[response];
+          this.loadingGraph = false;
+          this.totalbalance = response.totalBalance;
+          this.availablebalance = response.availableBalance;
+          this.initChart(response);
       },
       error: (reason: any) => console.log(reason),
     });
@@ -343,11 +349,12 @@ wfhBalancesdetails=[] as any;
       next: (response: any) => {
         if (response) {
           console.log(response)
-          this.wfhBalancesdetails=[response];
+           this.wfhBalancesdetails=[response];
           this.loadingGraph = false;
           this.totalbalance = response.totalBalance;
           this.availablebalance = response.availableBalance;
           this.initChart(response);
+         
         }
       },
       error: (reason: any) => console.log(reason),

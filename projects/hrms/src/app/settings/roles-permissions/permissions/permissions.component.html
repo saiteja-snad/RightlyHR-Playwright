@@ -937,7 +937,7 @@
                             <th colspan="5" class="custom-header">
                                 <div class="d-flex gap-2 align-items-center">
                                     <input type="checkbox" #selectAllcardstabs
-                                        (change)="toggleSelectAll(cardsModuleFields, selectAllcardstabs?.checked, isdekActionDisabled.bind(this))"
+                                        (change)="toggleSelectAll(cardsModuleFields, selectAllcardstabs?.checked, iscardsDisabled.bind(this))"
                                         [checked]="isAllSelected(cardsModuleFields)"
                                         [indeterminate]="isSomeSelected(cardsModuleFields)"
                                         [disabled]="!roleToFilter?.id">

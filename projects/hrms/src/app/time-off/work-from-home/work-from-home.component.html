@@ -79,13 +79,13 @@
                     <div class="d-flex gap-2">
                         <div class="leave-category-text">
                             <p class="m-0">Booked</p>
-                            <p class="m-0">{{item.availableBalance ? item.totalBalance -item.availableBalance  :'0'}}</p>
+                            <p class="m-0">{{item.booked ? item.booked  :'0'}}</p>
                         </div>
                         <div class="separator"></div>
                         <div class="leave-category-text">
                             <p class="m-0">Processed</p>
-                            @if (item.availed) {
-                            <p class="m-0">{{item.availed ? item.availed : '0'}}</p>
+                            @if (item.processed) {
+                            <p class="m-0">{{item.processed ? item.processed : '0'}}</p>
                             }
                             @else {
                             <p class="m-0">0</p>

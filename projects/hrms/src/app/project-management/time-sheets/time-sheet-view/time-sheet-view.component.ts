@@ -1477,7 +1477,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
   }
-
 canDelete(project?: AbstractControl, index?: number): boolean {
   if (!project) return false;
 
@@ -1485,32 +1484,33 @@ canDelete(project?: AbstractControl, index?: number): boolean {
   const projectName = project.get('projectName')?.value ?? '';
   const isNoClientProject = project.get('isNoClientProject')?.value ?? false;
 
-  // ✅ Allow delete for No Client/No Project rows
-  if (isNoClientProject === true  && project.get('approvalStatus')?.value.toLowerCase() === 'draft' ) {
-    return true;
-  }
+  // ✅ List of allowed approval statuses for delete
+  const allowedStatuses = ['draft', 'Not Entered', null, '', undefined];
 
-  // ❗ Block delete when no client/project AND not marked as isNoClientProject
-  if (!projectId && !projectName) {
-    return false;
-  }
-
-  // ✅ Existing approval rule
+  // ✅ Check approval status for each day
   const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-  return days.every(dayKey => {
+  const allDaysEditable = days.every(dayKey => {
     const dayControl = project.get(dayKey) as FormGroup;
     if (!dayControl) return true;
 
     const approvalStatus = dayControl.get('approvalStatus')?.value;
-    
-    return (
-      !approvalStatus ||
-      approvalStatus === 'draft' ||
-      approvalStatus === 'Not Entered' ||
-      approvalStatus === null
-    );
+    return allowedStatuses.includes(approvalStatus);
   });
+
+  // ✅ If No Client/Project - follow approval logic also
+  if (isNoClientProject === true) {
+    return allDaysEditable;  // ✅ Allow only if no approved days
+  }
+
+  // ❌ Prevent delete for empty row
+  if (!projectId && !projectName) {
+    return false;
+  }
+
+  // ✅ For normal project, same approval rule
+  return allDaysEditable;
 }
+
 
 
 

@@ -63,7 +63,7 @@ export class TimesheetReportTabsComponent {
       icon: '/reports-icons/resource-availability-report.png',
       description: MODULE_INFOS.RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO,
       permission: { feature: 'Resource Availability Report', action: 'view' }
-    },
+    }
     // {
     //   label: 'Attendance vs Timesheet Report',
     //   route: '/reports/timesheet-reports/attendance-vs-timesheet-report',

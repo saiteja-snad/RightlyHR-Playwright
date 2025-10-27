@@ -990,6 +990,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     this.selectedProjectResource = null
     const form = row as FormGroup;
+
+     // Extract previous values (if user is switching projects)
+  const prevClientId = form.get('clientId')?.value;
+  const prevProjectId = form.get('projectId')?.value;
+
+  
+    
     // Patch project details
     form.patchValue({
       clientId: client.clientId,
@@ -1003,6 +1010,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         projectName: project.projectName,
       },
     });
+
+      // Skip redundant selection
+    if (prevClientId === client?.clientId && prevProjectId === project?.projectId) {
+      console.log('Same project/client selected — no update needed.');
+      return;
+    }
 
 
     const selectedResource = this.resourcesArrayList.find(
@@ -1019,7 +1032,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const payload: any = {
       employeeId: this.empdata?.employeeId,
       weekStartDate: this.formattedweakendStart,
-      isBillable: billableCheck
+      isBillable: billableCheck,
+      previousProjectId: prevProjectId || null,
+      previousClientId: prevClientId || null,
     };
 
     // ✅ Add projectId only if not 0

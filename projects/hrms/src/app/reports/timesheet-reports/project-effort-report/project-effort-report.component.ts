@@ -76,6 +76,7 @@ export class ProjectEffortReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+   today: Date = new Date();
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -97,7 +98,7 @@ export class ProjectEffortReportComponent {
     this.ProjectEffortReportForm = this.fb.group({
       clientId: [null],
       projectId: [{ value: null, disabled: true }],
-      employeid: [{ value: null, disabled: true }],
+     // employeid: [{ value: null, disabled: true }],
       dateRange: [null],
       billable: [null]
     });
@@ -110,7 +111,7 @@ export class ProjectEffortReportComponent {
   return (
     (formValue.clientId && formValue.clientId !== null) ||
     (formValue.projectId && formValue.projectId !== null) ||
-    (formValue.employeid && formValue.employeid !== null) ||
+   // (formValue.employeid && formValue.employeid !== null) ||
     (formValue.dateRange && formValue.dateRange.length > 0) ||
     (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined)
   );
@@ -119,7 +120,7 @@ export class ProjectEffortReportComponent {
     this.ProjectEffortReportForm.reset();
     this.filteredpendingapprovalRecord = [];
     this.ProjectEffortReportForm.get('projectId')?.disable();
-    this.ProjectEffortReportForm.get('employeid')?.disable();
+   // this.ProjectEffortReportForm.get('employeid')?.disable();
     this.collectionSize = 0;
   }
   // called for pagination 
@@ -258,74 +259,74 @@ export class ProjectEffortReportComponent {
     const clientId = event.value;
     this.ProjectEffortReportForm.patchValue({ projectId: null }); // reset project
     this.ProjectEffortReportForm.get('projectId')?.enable();
-    this.ProjectEffortReportForm.get('employeid')?.disable();
-    this.ProjectEffortReportForm.get('employeid')?.setValue([]);
+   // this.ProjectEffortReportForm.get('employeid')?.disable();
+   // this.ProjectEffortReportForm.get('employeid')?.setValue([]);
     this.getProjectsByClientId(clientId);
   }
   /** When project selected */
-  onProjectChange(event: any) {
-    const selectedProjectId = event.value;
-    this.employeeData = [];
-    this.ProjectEffortReportForm.get('employeid')?.setValue([]);
-    if (selectedProjectId && selectedProjectId !== 0) {
-      this.projectId = selectedProjectId;
-      this.ProjectEffortReportForm.get('employeid')?.enable();
-      this.getAllActiveEmployees();
-    } else {
-      this.getTeamManagersDetails();
-      this.projectId = 0;
-      // Wait briefly to ensure getTeamManagersDetails() completes (optional)
-      setTimeout(() => {
-        if (this.getEmployeeInfo?.length) {
-          this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
-            id: emp.employeeId,
-            name: emp.fullName
-          }));
-          this.ProjectEffortReportForm.get('employeid')?.enable();
-        }
-      }, 300);
-    }
-  }
+  // onProjectChange(event: any) {
+  //   const selectedProjectId = event.value;
+  //   this.employeeData = [];
+  //   this.ProjectEffortReportForm.get('employeid')?.setValue([]);
+  //   if (selectedProjectId && selectedProjectId !== 0) {
+  //     this.projectId = selectedProjectId;
+  //     this.ProjectEffortReportForm.get('employeid')?.enable();
+  //     this.getAllActiveEmployees();
+  //   } else {
+  //     this.getTeamManagersDetails();
+  //     this.projectId = 0;
+  //     // Wait briefly to ensure getTeamManagersDetails() completes (optional)
+  //     setTimeout(() => {
+  //       if (this.getEmployeeInfo?.length) {
+  //         this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
+  //           id: emp.employeeId,
+  //           name: emp.fullName
+  //         }));
+  //         this.ProjectEffortReportForm.get('employeid')?.enable();
+  //       }
+  //     }, 300);
+  //   }
+  // }
 
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.length) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
-              employeeId: employee.employeeId,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
-            }));
-          } else {
-            this.getEmployeeInfo = [];
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching team manager details:', err);
-          this.getEmployeeInfo = [];
-        }
-      });
-  }
+  // getTeamManagersDetails() {
+  //   const EmployeeId = this.empinfo.employeeId;
+  //   this.subscription = this.http
+  //     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+  //     .subscribe({
+  //       next: (response: any) => {
+  //         if (response && response.length) {
+  //           const myTeam = response.filter((e: any) => e.isAccess);
+  //           this.getEmployeeInfo = myTeam.map((employee: any) => ({
+  //             employeeId: employee.employeeId,
+  //             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
+  //           }));
+  //         } else {
+  //           this.getEmployeeInfo = [];
+  //         }
+  //       },
+  //       error: (err) => {
+  //         console.error('Error fetching team manager details:', err);
+  //         this.getEmployeeInfo = [];
+  //       }
+  //     });
+  // }
   /** Get all active employees for selected project */
-  getAllActiveEmployees() {
-    this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
-          // if (this.employeeData.length > 0) {
-          this.ProjectEffortReportForm.get('employeid')?.enable();
-          // }
-        },
-        error: (err) => {
-          console.error('Error fetching employees:', err);
-          this.employeeData = [];
-        }
-      });
-  }
+  // getAllActiveEmployees() {
+  //   this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
+  //         // if (this.employeeData.length > 0) {
+  //         this.ProjectEffortReportForm.get('employeid')?.enable();
+  //         // }
+  //       },
+  //       error: (err) => {
+  //         console.error('Error fetching employees:', err);
+  //         this.employeeData = [];
+  //       }
+  //     });
+  // }
 
   getAllActiveProjects() {
     this.http
@@ -363,20 +364,20 @@ export class ProjectEffortReportComponent {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, billable } = this.ProjectEffortReportForm.value;
+    const { clientId, projectId, dateRange, billable } = this.ProjectEffortReportForm.value;
 
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasbillable = billable !== null && billable !== undefined;
-    const hasEmployeid = employeid !== null && employeid !== undefined;
+  //  const hasEmployeid = employeid !== null && employeid !== undefined;
 
-    return !(hasClient || hasProject || hasDateRange || hasbillable || hasEmployeid);
+    return !(hasClient || hasProject || hasDateRange || hasbillable);
   }
 
   buildTimesheetReportParams() {
     const formValue = this.ProjectEffortReportForm.value;
-    const employeeId = this.empinfo?.employeeId || 0;
+   // const employeeId = this.empinfo?.employeeId || 0;
 
      // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
@@ -391,8 +392,7 @@ export class ProjectEffortReportComponent {
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
-      ReportType: 'ProjectEffort',
-      EmployeeIds: employeeId,
+      ReportType: 'ProjectEffort'
     };
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
@@ -403,9 +403,9 @@ export class ProjectEffortReportComponent {
     if (formValue.projectId !== null && formValue.projectId !== undefined) {
       params.ProjectIds = formValue.projectId;
     }
-    if (formValue.employeid !== null && formValue.employeid !== undefined) {
-      params.EmployeeIds = formValue.employeid;
-    }
+    // if (formValue.employeid !== null && formValue.employeid !== undefined) {
+    //   params.EmployeeIds = formValue.employeid;
+    // }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
@@ -474,7 +474,7 @@ export class ProjectEffortReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Project Effort Report  Generated Successfully");
+        this.conformationPopup.openSuccessModal("report export successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

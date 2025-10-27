@@ -480,7 +480,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Pending Approval Report  Generated Successfully");
+        this.conformationPopup.openSuccessModal("report export successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

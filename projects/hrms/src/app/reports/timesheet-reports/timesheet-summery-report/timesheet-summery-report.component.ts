@@ -76,7 +76,6 @@ export class TimesheetSummeryReportComponent {
     { label: 25, value: 25 }
   ];
   today: Date = new Date();
-  showDateRangeError = false;
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -99,7 +98,7 @@ export class TimesheetSummeryReportComponent {
       clientId: [null],
       projectId: [{ value: null, disabled: true }],
       employeid: [{ value: null, disabled: true }],
-      dateRange: [null, Validators.required],
+      dateRange: [null],
       belaible: [null],
       // year: ['']
     });
@@ -375,50 +374,105 @@ export class TimesheetSummeryReportComponent {
     return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid);
   }
 
-  buildTimesheetReportParams() {
-    const formValue = this.TimesheetSummeryReportForm.value;
-    const employeeId = this.empinfo?.employeeId || 0;
+  // buildTimesheetReportParams() {
+  //   const formValue = this.TimesheetSummeryReportForm.value;
+  //   const employeeId = this.empinfo?.employeeId || 0;
 
-   // format date as MM/dd/yyyy
-    const formatDate = (date: Date | null) => {
-      if (!date) return null;
-      const d = new Date(date);
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      const year = d.getFullYear();
-      return `${month}/${day}/${year}`;
-    };
+  //  // format date as MM/dd/yyyy
+  //   const formatDate = (date: Date | null) => {
+  //     if (!date) return null;
+  //     const d = new Date(date);
+  //     const month = String(d.getMonth() + 1).padStart(2, '0');
+  //     const day = String(d.getDate()).padStart(2, '0');
+  //     const year = d.getFullYear();
+  //     return `${month}/${day}/${year}`;
+  //   };
 
 
-    const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
-    const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
-    const params: any = {
-      ReportType: 'TimesheetSummaryMonth',
-      EmployeeIds: employeeId,
-    };
-    if (startDate) params.StartDate = startDate;
-    if (endDate) params.EndDate = endDate;
-    if (formValue.clientId !== null && formValue.clientId !== undefined) {
-      params.ClientIds = formValue.clientId;
-    }
+  //   const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
+  //   const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
+  //   const params: any = {
+  //     ReportType: 'TimesheetSummaryMonth',
+  //     EmployeeIds: employeeId,
+  //   };
+  //   if (startDate) params.StartDate = startDate;
+  //   if (endDate) params.EndDate = endDate;
+  //   if (formValue.clientId !== null && formValue.clientId !== undefined) {
+  //     params.ClientIds = formValue.clientId;
+  //   }
 
-    if (formValue.projectId !== null && formValue.projectId !== undefined) {
-      params.ProjectIds = formValue.projectId;
-    }
-    if (formValue.employeid !== null && formValue.employeid !== undefined) {
-      params.EmployeeIds = formValue.employeid;
-    }
-    if (formValue.belaible?.value) params.Billable = formValue.belaible.value;
-    return params;
+  //   if (formValue.projectId !== null && formValue.projectId !== undefined) {
+  //     params.ProjectIds = formValue.projectId;
+  //   }
+  //   if (formValue.employeid !== null && formValue.employeid !== undefined) {
+  //     params.EmployeeIds = formValue.employeid;
+  //   }
+  //   if (formValue.belaible?.value) params.Billable = formValue.belaible.value;
+  //   return params;
+  // }
+ buildTimesheetReportParams() {
+  const formValue = this.TimesheetSummeryReportForm.value;
+  const employeeId = this.empinfo?.employeeId || 0;
+
+  // Helper to format date as MM/dd/yyyy
+  const formatDate = (date: Date | null) => {
+    if (!date) return null;
+    const d = new Date(date);
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
+  // Determine startDate and endDate
+  let startDate: string | null = null;
+  let endDate: string | null = null;
+
+  if (formValue.dateRange?.[0] && formValue.dateRange?.[1]) {
+    // Use selected date range
+    startDate = formatDate(formValue.dateRange[0]);
+    endDate = formatDate(formValue.dateRange[1]);
+  } else {
+    // Default to current month's start date and today's date
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    startDate = formatDate(firstDayOfMonth);
+    endDate = formatDate(today);
   }
- 
+
+  // Build params
+  const params: any = {
+    ReportType: 'TimesheetSummaryMonth',
+    EmployeeIds: employeeId,
+    StartDate: startDate,
+    EndDate: endDate
+  };
+
+  // Optional filters
+  if (formValue.clientId !== null && formValue.clientId !== undefined) {
+    params.ClientIds = formValue.clientId;
+  }
+
+  if (formValue.projectId !== null && formValue.projectId !== undefined) {
+    params.ProjectIds = formValue.projectId;
+  }
+
+  if (formValue.employeid !== null && formValue.employeid !== undefined) {
+    params.EmployeeIds = formValue.employeid;
+  }
+
+  if (formValue.belaible?.value) {
+    params.Billable = formValue.belaible.value;
+  }
+
+  return params;
+}
+
   generatetimesheetSummeryReport(page: number, pageSize: number) {
-      this.showDateRangeError = !!this.TimesheetSummeryReportForm.get('dateRange')?.invalid;
     if (this.TimesheetSummeryReportForm.invalid) {
       return;
     }
    
-    this.showDateRangeError = false;
     this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
@@ -500,7 +554,7 @@ export class TimesheetSummeryReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Timesheet Summery Report Generated Successfully");
+        this.conformationPopup.openSuccessModal("report export successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

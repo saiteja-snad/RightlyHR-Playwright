@@ -473,7 +473,7 @@ export class UtilizationReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("Utilization Report Generated Successfully");
+        this.conformationPopup.openSuccessModal("report export successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

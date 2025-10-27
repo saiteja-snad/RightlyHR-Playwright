@@ -64,13 +64,13 @@ export class TimesheetReportTabsComponent {
       description: MODULE_INFOS.RESOURCE_AVAILABILITY_REPORTS_MODULE_INFO,
       permission: { feature: 'Resource Availability Report', action: 'view' }
     },
-    {
-      label: 'Attendance vs Timesheet Report',
-      route: '/reports/timesheet-reports/attendance-vs-timesheet-report',
-      icon: '/reports-icons/attendance-vs-timesheet-report.png',
-      description: MODULE_INFOS.ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO,
-      permission: { feature: 'Attendance vs Timesheet Report', action: 'view' }
-    },
+    // {
+    //   label: 'Attendance vs Timesheet Report',
+    //   route: '/reports/timesheet-reports/attendance-vs-timesheet-report',
+    //   icon: '/reports-icons/attendance-vs-timesheet-report.png',
+    //   description: MODULE_INFOS.ATTENDANCE_VS_TIMESHEET_REPORTS_MODULE_INFO,
+    //   permission: { feature: 'Attendance vs Timesheet Report', action: 'view' }
+    // },
   ];
 
   constructor(public rbac: RbacService) { }

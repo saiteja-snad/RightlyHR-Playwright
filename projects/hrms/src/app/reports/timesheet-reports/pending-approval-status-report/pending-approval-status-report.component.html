@@ -58,7 +58,7 @@
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
           </div>
         </div>
-      }
+      
        <!-- Status-->
        <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
@@ -67,7 +67,7 @@
             </p-select>
           </div>
         </div>   
-            
+            }
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Pending Approval Status Report - Generate.view')){
@@ -101,12 +101,14 @@
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
+        <th>Employee Id</th>
         <th>Employee</th>
         <th>Client Name</th>
         <th>Project</th>
         <th>Task Description</th>
         <th>Status</th>
-        <th>Submitted</th>
+        <th>Logged Date</th>
+        <th>Submitted Date</th>
       </thead>
      <tbody>
   @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {
@@ -119,6 +121,7 @@
   @else {
     @for (record of filteredpendingapprovalRecord; track $index) {
       <tr>
+         <td>{{ record.employeeid ?? '-' }}</td>
         <td>{{ record.employee ?? '-' }}</td>
         <td>{{ record.client ?? '-' }}</td>
         <td>{{ record.project ?? '-' }}</td>
@@ -139,6 +142,7 @@
         <td>
           {{ record.status ?? '-' }}
         </td>
+        <td>{{ record.entryDate ? (record.entryDate | date) : '-' }}</td>
         <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
       </tr>
     }

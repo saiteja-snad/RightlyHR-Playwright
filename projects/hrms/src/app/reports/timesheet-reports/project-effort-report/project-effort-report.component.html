@@ -30,25 +30,40 @@
 
         <!-- Project-->
         @if(rbac.allowedToAccess('Timesheet Project List(Project-Effect-Report).view')){
-        <div class="d-flex align-items-center gap-2">
+        <!-- <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
               placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
-              (onChange)="onProjectChange($event)">
+             >
             </p-select>
+          </div>
+        </div> -->
+
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+              defaultLabel="Please select project" formControlName="projectId"
+              class="form-select custom-select"></p-multiSelect>
           </div>
         </div>
         }
-           @if(rbac.allowedToAccess('Timesheet All Employees List(Project-Effect-Report).view')){
+           <!-- @if(rbac.allowedToAccess('Timesheet All Employees List(Project-Effect-Report).view')){ -->
         <!-- Employee-->
-        <div class="d-flex align-items-center gap-2">
+        <!-- <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
               defaultLabel="Please select resource" formControlName="employeid"
               class="form-select custom-select"></p-multiSelect>
           </div>
+        </div> -->
+        <!-- } -->
+         <!-- Date Range -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
         </div>
-        }
 
       <!-- Belaible -->
         <div class="d-flex align-items-center gap-2">
@@ -95,7 +110,7 @@
 
         <th>Client</th>
         <th>Project</th>
-        <th>Employee</th>
+        <!-- <th>Employee</th> -->
         <th>Billable Hrs</th>
         <th>Non-Billable Hrs</th>
         <th>Total Hrs</th>
@@ -113,7 +128,7 @@
             <tr>
               <td>{{ record.client ?? '-' }}</td>
               <td>{{ record.project ?? '-' }}</td>
-              <td>{{ record.employee ?? '-' }}</td>
+              <!-- <td>{{ record.employee ?? '-' }}</td> -->
               <td>{{ record.billableHours ?? '-' }}</td>
               <td>{{ record.nonBillableHours ?? '-' }}</td>
               <td>{{ record.totalHours ?? '-' }}</td>

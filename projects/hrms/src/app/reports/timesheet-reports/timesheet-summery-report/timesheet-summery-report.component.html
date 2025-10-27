@@ -52,19 +52,16 @@
             <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
               [showIcon]="true" [readonlyInput]="true" [maxDate]="today"/>
           </div>
-          <div class="error-msg mt-2" *ngIf="showDateRangeError">
-            Date range is required
-          </div>
         </div>
 
-        }
+      
         <!-- Belaible -->
         <div class="custom-p-select-content">
           <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
             formControlName="billable" placeholder="Please select billable" class="form-select custom-select">
           </p-select>
         </div>
-
+           }
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Timesheet Summary Monthly Report - Generate.view')){

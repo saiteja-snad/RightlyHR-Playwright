@@ -102,7 +102,7 @@ export class TeamTimesheetReportComponent {
       projectId: [{ value: null, disabled: true }],
       employeid: [{ value: null, disabled: true }],
       dateRange: [null],
-      belaible: [null],
+      billable: [null],
       status: [null]
     });
     this.TeamTimesheetReportForm.valueChanges.subscribe(() => {
@@ -117,7 +117,7 @@ export class TeamTimesheetReportComponent {
       (formValue.projectId && formValue.projectId !== null) ||
       (formValue.employeid && formValue.employeid !== null) ||
       (formValue.dateRange && formValue.dateRange.length > 0) ||
-      (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
+      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
       (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined)
     );
   }
@@ -369,12 +369,12 @@ export class TeamTimesheetReportComponent {
   }
 
   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, belaible, status } = this.TeamTimesheetReportForm.value;
+    const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
 
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
-    const hasBillable = belaible !== null && belaible !== undefined;
+    const hasBillable = billable !== null && billable !== undefined;
     const hasStatus = status !== null && status !== undefined;
     const hasEmployeid = employeid !== null && employeid !== undefined;
 
@@ -412,7 +412,7 @@ export class TeamTimesheetReportComponent {
     if (formValue.employeid !== null && formValue.employeid !== undefined) {
       params.EmployeeIds = formValue.employeid;
     }
-    if (formValue.belaible?.value) params.Billable = formValue.belaible.value;
+    if (formValue.billable?.value) params.Billable = formValue.billable.value;
     if (formValue.status?.value) params.Statuses = formValue.status.value;
     return params;
   }

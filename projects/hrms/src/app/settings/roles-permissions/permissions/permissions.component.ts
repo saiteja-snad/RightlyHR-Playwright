@@ -831,9 +831,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Resource Availability Report',
     'Resource Availability Report - Generate',
     'Resource Availability Report - Export',
-    'Attendance vs Timesheet Report',
-    'Attendance vs Timesheet Report - Generate',
-    'Attendance vs Timesheet Report - Export',
+    // 'Attendance vs Timesheet Report',
+    // 'Attendance vs Timesheet Report - Generate',
+    // 'Attendance vs Timesheet Report - Export',
   ];
    timesheetReportsEmployeeTeamTabsFields = [
     'Timesheet All Employees List(My-Timesheet)',
@@ -857,9 +857,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Timesheet All Employees List(Resource-availability)',
     'Timesheet Client List(Resource-availability)',
     'Timesheet Project List(Resource-availability)',
-    'Timesheet All Employees List(Attendance-vs-Timesheet)',
-    'Timesheet Client List(Attendance-vs-Timesheet)',
-    'Timesheet Project List(Attendance-vs-Timesheet)'
+    // 'Timesheet All Employees List(Attendance-vs-Timesheet)',
+    // 'Timesheet Client List(Attendance-vs-Timesheet)',
+    // 'Timesheet Project List(Attendance-vs-Timesheet)'
   ];
 
   assetManagementTabsFields = [

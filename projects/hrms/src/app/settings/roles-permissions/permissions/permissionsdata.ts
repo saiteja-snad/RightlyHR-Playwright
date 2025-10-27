@@ -508,9 +508,9 @@ export const permissionsData = [
   { fields: 'Timesheet All Employees List(Resource-availability)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Client List(Resource-availability)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Project List(Resource-availability)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Timesheet All Employees List(Attendance-vs-Timesheet)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Timesheet Client List(Attendance-vs-Timesheet)', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Timesheet Project List(Attendance-vs-Timesheet)', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Timesheet All Employees List(Attendance-vs-Timesheet)', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Timesheet Client List(Attendance-vs-Timesheet)', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Timesheet Project List(Attendance-vs-Timesheet)', View: false, Update: false, Create: false, Delete: false },
 
 // Timesheet Reports Section
   { fields: 'My Timesheet Report', View: false, Update: false, Create: false, Delete: false },
@@ -534,9 +534,9 @@ export const permissionsData = [
   { fields: 'Resource Availability Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Resource Availability Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Resource Availability Report - Export', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Attendance vs Timesheet Report', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Attendance vs Timesheet Report - Generate', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Attendance vs Timesheet Repor - Export', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Attendance vs Timesheet Report', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Attendance vs Timesheet Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  // { fields: 'Attendance vs Timesheet Repor - Export', View: false, Update: false, Create: false, Delete: false },
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },

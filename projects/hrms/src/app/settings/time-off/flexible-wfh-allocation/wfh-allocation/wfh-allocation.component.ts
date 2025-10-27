@@ -53,7 +53,6 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       categoryName: [{ value: '', disabled: true }, Validators.required],
       employeeName: [{ value: '', disabled: true }, Validators.required],
       employees: this.fb.array([]) as FormArray,
-      days: ['', Validators.required]
     });
   }
 
@@ -154,6 +153,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
           employeeId: [emp.employeeId],
           fullName: [emp.fullName],
           days: ['', Validators.required],
+          effectivedate: ['', Validators.required],
           createdBy: [''],
           createdOn: [''],
           lastUpdatedBy: [''],

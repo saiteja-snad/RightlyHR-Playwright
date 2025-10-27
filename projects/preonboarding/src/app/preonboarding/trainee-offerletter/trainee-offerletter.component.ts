@@ -43,7 +43,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
-
+  stipendApplicablecheck!: boolean;
+  stipendAmountmonthly!: number;
   constructor(private http: HttpService, private router: Router, config: NgbModalConfig, private modalService: NgbModal,
     private fb: FormBuilder, private openPopup: PopupService,) {
     config.backdrop = 'static';
@@ -182,6 +183,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.getofferdata = data
         this.getOfferDetailsByOfferId(parseInt(this.getofferdata.id))
         let url = this.getofferdata.documentUrl
+        this.stipendAmountmonthly = this.getofferdata?.stipendAmount;
+        this.stipendApplicablecheck = this.getofferdata?.stipendApplicable;
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.traineeEmpData.note = this.getofferdata.note

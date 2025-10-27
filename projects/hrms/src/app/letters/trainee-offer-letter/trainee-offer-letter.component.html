@@ -195,27 +195,38 @@
                         </div>
                     </div>
                 </div>
-                  <div class="mb-3">
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2">Stipend/Salary Applicable <span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="stipend" optionLabel="name"
                             placeholder="Please select stipend/salary applicable" formControlName="stipend"
-                            class="form-select custom-select"
-                            >
+                            class="form-select custom-select">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('stipend')?.invalid && employeeForm.get('stipend')?.touched">
                         <div class="error-msg">Stipend/Salary applicable is required</div>
                     </div>
                 </div>
-                <div class="mb-3">
+
+                <div class="mb-3" *ngIf="employeeForm.get('stipend')?.value?.value===true">
                     <label class="form-label custom-label mb-2"> {{'Monthly Stipend Salary '|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="number" class="form-control custom-input" formControlName="amount"
-                        placeholder="Please enter monthly stipend salary"  />
-                    <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
+                    <input type="text" class="form-control custom-input" formControlName="monthlyammount"
+                        placeholder="Please enter monthly stipend salary" (keypress)="formValidation.restrictAlphabets($event)" />
+                    <div
+                        *ngIf="employeeForm.get('monthlyammount')?.invalid && employeeForm.get('monthlyammount')?.touched">
                         <div class="error-msg">Monthly Stipend Salary is required</div>
+                    </div>
+                </div>
+
+                <div class="mb-3" *ngIf="employeeForm.get('stipend')?.value?.value===false">
+                    <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
+                            class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)" formControlName="amount"
+                        placeholder="Please enter salary" />
+                    <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
+                        <div class="error-msg">Salary is required</div>
                     </div>
                 </div>
 
@@ -311,7 +322,7 @@
                         <div class="error-msg">Training Period is required</div>
                     </div>
                 </div>
-              
+
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
@@ -453,7 +464,7 @@
                                         reporting to <u>{{ traineeEmpData.reportingmanagerName }}</u>.
                                     </li>
                                     <li class="mb-4">
-                                        <b >{{'Stipend/Salary and Benefits'|translate}}: </b>
+                                        <b>{{'Stipend/Salary and Benefits'|translate}}: </b>
 
                                         <ul class="bullet mt-2">
                                             <ng-container *ngIf="employeeForm.get('stipend')?.value?.value===true">
@@ -465,7 +476,9 @@
                                                 <li class="mb-1">
                                                     <b> Stipend (Next 3 Months):</b>
                                                     Upon successful completion of the first 3 months, you will
-                                                    receive a stipend of <b>INR {{employeeForm.get('amount')?.value  ?? 00}} per month </b> for the next 3 months.
+                                                    receive a stipend of <b>INR
+                                                        {{employeeForm.get('monthlyammount')?.value ?? 00}} per month
+                                                    </b> for the next 3 months.
                                                 </li>
                                             </ng-container>
                                             <ng-container *ngIf="employeeForm.get('stipend')?.value?.value===false">
@@ -477,14 +490,17 @@
                                                 <li class="mb-1">
                                                     <b> Stipend (Next 3 Months):</b>
                                                     Upon successful completion of the first 3 months, you will
-                                                    receive a stipend of <b>INR {{employeeForm.get('amount')?.value  ?? 00}} per month </b> for the next 3 months.
+                                                    receive a stipend of <b>INR
+                                                        {{employeeForm.get('monthlyammount')?.value ?? 00}} per month
+                                                    </b> for the next 3 months.
                                                 </li>
                                                 <li class="mb-1">
                                                     <b>Full-Time Employment:</b>
                                                     After completion 6 months from the date of joining, based
                                                     on satisfactory performance, you will be appointed as a full-time
                                                     employee of SNAD
-                                                    with a <b> CTC of per annum </b>
+                                                    with a <b> CTC of {{employeeForm.get('amount')?.value ?? 00}} per
+                                                        annum </b>
                                                 </li>
                                             </ng-container>
                                         </ul>

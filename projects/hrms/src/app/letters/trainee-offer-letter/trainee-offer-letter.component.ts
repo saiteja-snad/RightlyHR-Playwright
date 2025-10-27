@@ -15,6 +15,7 @@ import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-trainee-offer-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,
@@ -129,7 +130,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     { name: 'Yes', value: true },
     { name: 'No', value: false }
   ];
-  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router,
+  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router,public formValidation: FormValidationService,
     private authService: AuthService, private conformationPopup: OpenModalService,) {
     this.initializeForm();
   }
@@ -151,6 +152,27 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     this.getAllWorkLocation();
     this.getAuthorityDetails();
     this.getEmployeeIdforReporting();
+
+    this.employeeForm.get('stipend')?.valueChanges.subscribe(selected => {
+      const monthlyControl = this.employeeForm.get('monthlyammount');
+      const amountControl = this.employeeForm.get('amount');
+
+      if (selected?.value === true) {
+        // ✅ If TRUE → monthlyammount is required
+        monthlyControl?.setValidators([Validators.required]);
+        amountControl?.clearValidators();
+        amountControl?.setValue(null); // Optional: clear amount
+      } else {
+        // ✅ If FALSE → amount is required
+        amountControl?.setValidators([Validators.required]);
+        monthlyControl?.clearValidators();
+        monthlyControl?.setValue(null); // Optional: clear monthly
+      }
+
+      monthlyControl?.updateValueAndValidity();
+      amountControl?.updateValueAndValidity();
+    });
+
   }
 
   initializeForm() {
@@ -171,7 +193,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       pinCode: [{ value: null, disabled: true }],
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
-      amount: ['', Validators.required],
+      amount: ['',],
+      monthlyammount: ['',],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],
@@ -187,6 +210,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     this.employeeForm.get('internshipperiod')?.valueChanges.subscribe((value: string) => {
       this.calculateEndDate(value);
     });
+
   }
 
   onclickcheckempidnull(empidValue: any) {
@@ -272,7 +296,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
           }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
         }
         console.log(this.getAllEmployeeInfo);
-        
+
       },
     });
   }
@@ -474,7 +498,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       jobRoleDetails: data?.jobRole,
       esic: data?.esic,
       pf: data?.pf,
-      amount: data?.amount,
+
       isVariablePay: data?.isVariablePay,
       variablePayAmount: data?.variablePayAmount,
       locationId: this.LocationDropDownData.find((x: any) => x.jobLocationName === data?.workLocation),
@@ -682,6 +706,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       approvedBy: null,
       approver: null,
       comments: null,
+      stipendAmount: this.employeeForm.get('monthlyammount')?.value,
+      stipendApplicable: this.employeeForm.get('stipend')?.value?.value,
       requestedDate: new Date(),
       offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
       authoritySignature: this.employeeForm.get('authorityid')?.value.employeeId,
@@ -703,10 +729,14 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
 
   //function to updated the data
   updateTraineeOfferLetterFieldsDetails(f: FormGroup) {
+    console.log(f.value);
+    
     const data = JSON.parse(JSON.stringify(this.traineeEmpData));
     this.loading = true;
+      
+      this.traineeEmpData.jobRole = this.jobRoleDetails;
     this.traineeEmpData.employeeId = this.traineeEmpData.empId,
-     this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
+      this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
       this.traineeEmpData.firstName = data.firstName,
       this.traineeEmpData.lastName = data.lastName,
       this.traineeEmpData.middleName = data.middleName,
@@ -737,7 +767,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       this.traineeEmpData.substatus = 'Offer Letter Generated';
     }
     console.log(this.traineeEmpData);
-    
+
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.traineeEmpData).subscribe({
       next: (res: any) => {
         this.result = res.employeeData;

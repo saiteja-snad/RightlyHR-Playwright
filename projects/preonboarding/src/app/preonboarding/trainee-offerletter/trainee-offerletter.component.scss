@@ -93,6 +93,11 @@ textarea:focus {
     }
 }
 
+.bullet {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
 .authority-signature {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;

@@ -14,10 +14,11 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationIconComponent } from "../../../icons/confirmation-icon/confirmation-icon.component";
 import { FormsModule } from '@angular/forms';
 import { ActiveprojectsPipe } from "../../../Pipes/activeprojects.pipe";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-inacitve-projects',
   imports: [NoDataFoundComponent, DataLoaderContentComponent, FormsModule, TranslateModule, CommonModule,
-    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe],
+    RouterModule, ProjectManagementModuleInfoComponent, ConfirmationIconComponent, ActiveprojectsPipe, DateformatPipe],
   templateUrl: './inacitve-projects.component.html',
   styleUrl: './inacitve-projects.component.scss'
 })

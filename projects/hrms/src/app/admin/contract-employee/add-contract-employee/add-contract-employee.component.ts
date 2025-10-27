@@ -168,6 +168,7 @@ export class AddContractEmployeeComponent implements OnInit {
 
   close() {
     this.modalService.dismissAll();
+    this.employeeForm.reset();
   }
 
   //function to refresh the form

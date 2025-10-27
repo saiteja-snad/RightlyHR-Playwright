@@ -91,8 +91,16 @@ export class EmployeOffBoardingComponent {
           console.log(data);
           this.offBoardingEmp = data;
           this.joiningDate = this.formatDateToLocal(data.dateOfJoining);
-          const lastWorking = this.formatDateToLocal(data.lastworkingday);
-          if (data.substatus.toLowerCase() === 'cleared no due') {
+          if (data.substatus.toLowerCase() === 'cleared no due' && data.empstatus === "Active") {
+            const lastWorking = this.formatDateToLocal(data.lastworkingday); 
+            this.offBoardingForm.patchValue({ lastdate: lastWorking });
+            const lastDateControl = this.offBoardingForm.get('lastdate');
+            if (lastDateControl) {
+              lastDateControl.disable();
+            }
+          }
+          if (data.substatus.toLowerCase() === 'cleared no due' && data.empstatus === "Active Contract") {
+            const lastWorking = this.formatDateToLocal(data.contractorLastWorkingDate); 
             this.offBoardingForm.patchValue({ lastdate: lastWorking });
             const lastDateControl = this.offBoardingForm.get('lastdate');
             if (lastDateControl) {
@@ -174,10 +182,16 @@ export class EmployeOffBoardingComponent {
           lastDateControl.enable();
         }
       const formdata=this.offBoardingForm.value
+      if(formdata.status.statusname === 'Inactive Contract'){
+        this.offBoardingEmp.contractorLastWorkingDay=formdata.lastdate;
+      }
+      else{
+        this.offBoardingEmp.lastworkingday=formdata.lastdate;
+      }
       this.offBoardingEmp.termtypeoffboard=formdata.exitType
       this.offBoardingEmp.termreasonoffboard=formdata.exit.reason;
       this.offBoardingEmp.empstatus=formdata.status.statusname;
-      this.offBoardingEmp.lastworkingday=formdata.lastdate;
+      
       this.offBoardingEmp.eligibleforrehire=formdata.eligiblefor.eligibleforrehire1;
       this.offBoardingEmp.separationType = this.offBoardingEmp.separationType;
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.offBoardingEmp).subscribe({

@@ -36,7 +36,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Non-Disclosure Agreement Sent Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="ndassentdate"
-                        placeholder="Please enter appointment sent date" [min]="todayDate" onkeydown="return false;" />
+                        placeholder="Please enter appointment sent date" onkeydown="return false;" />
                     <div *ngIf="employeeForm.get('ndassentdate')?.invalid && employeeForm.get('ndassentdate')?.touched">
                         <div class="error-msg">Non-Disclosure Agreement Sent Date is required</div>
                     </div>

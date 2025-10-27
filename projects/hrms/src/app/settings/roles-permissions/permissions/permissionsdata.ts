@@ -6,6 +6,7 @@ export const permissionsData = [
   { fields: 'Assets Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Tabs Sections
   { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
@@ -31,7 +32,10 @@ export const permissionsData = [
   { fields: 'Identity Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Relationship', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Bank Names', View: false, Update: false, Create: false, Delete: false },
-
+  // Attendance Locking
+  { fields: 'Attendance Pending Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Published Tab', View: false, Update: false, Create: false, Delete: false },
+  
   //Job Tab
   { fields: 'Job Role', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Job Type', View: false, Update: false, Create: false, Delete: false },
@@ -247,7 +251,7 @@ export const permissionsData = [
   { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Time Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Time Off)', View: false, Update: false, Create: false, Delete: false },
- 
+
   //Work From Home Sub Tabs Section
   { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (WFH)', View: false, Update: false, Create: false, Delete: false },
@@ -266,7 +270,7 @@ export const permissionsData = [
   { fields: 'Rejected (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team (Remote Login)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Remote Login)', View: false, Update: false, Create: false, Delete: false },
-  
+
   //Comp Off Sub Tabs Section    
   { fields: 'Waiting For Approval (Comp Off)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (Comp Off)', View: false, Update: false, Create: false, Delete: false },
@@ -628,9 +632,9 @@ export const permissionsData = [
   { fields: 'Employee Info Documents Dowload File', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Documents Acknowledgment', View: false, Update: false, Create: false, Delete: false },
 
-    //Employee Info Contract Conversion Request
+  //Employee Info Contract Conversion Request
   // { fields: 'Employee Info Contract Conversion Request', View: false, Update: false, Create: false, Delete: false },
-  
+
   //Employee Info Team Members Sub Tabs Section
   { fields: 'Employee Info Reporting Manager Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
@@ -725,7 +729,7 @@ export const permissionsData = [
   { fields: 'Salary Revision Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Promotion Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Contract Offer Letter', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'NDA Letter', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'NDA Letter', View: false, Update: false, Create: false, Delete: false },
 
   //Inactive Generate Documents
   { fields: 'Relieving Letter', View: false, Update: false, Create: false, Delete: false },
@@ -839,8 +843,8 @@ export const permissionsData = [
   { fields: 'Resources Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Timesheets Tab', View: false, Update: false, Create: false, Delete: false },
   //Documents
-    { fields: 'NDA Document', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'MSA Document', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'NDA Document', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'MSA Document', View: false, Update: false, Create: false, Delete: false },
 
   //Project Management client tabs
   { fields: 'Client Information', View: false, Update: false, Create: false, Delete: false },
@@ -856,6 +860,19 @@ export const permissionsData = [
   { fields: 'Client Document Type', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Letter Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'My Team (Timesheet)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Timesheet)', View: false, Update: false, Create: false, Delete: false },
+
+  { fields: 'On Behalf Of', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Waiting For Approval (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancelled (On Behalf Of WFH)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of WFH All Employees', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
 
 ];

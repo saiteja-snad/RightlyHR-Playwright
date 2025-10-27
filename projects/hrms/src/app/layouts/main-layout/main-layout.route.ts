@@ -53,4 +53,5 @@ export default [
     { path: 'phonebook', component: PhonebookComponent, canActivate: [authGuard] },
     { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
     { path: 'project-management', component: ProjectManagementLayoutComponent, loadChildren: () => import('../../project-management/project-management.route') },
+    { path: 'on-behalf-of', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/on-behalf-of.route') },
 ] as Route[];

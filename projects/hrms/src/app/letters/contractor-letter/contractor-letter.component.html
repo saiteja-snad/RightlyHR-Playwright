@@ -272,20 +272,7 @@
                     <input type="text" class="form-control custom-input" formControlName="address" [readonly]="true"
                         autocomplete="off" placeholder="Address">
                 </div> -->
-                <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Roles and Responsibilities<span
-                            class="error-msg">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="getAllRolesandResponsiblities" optionLabel="jobRoleName" [filter]="true"
-                            filterBy="jobRoleName" placeholder="Please select roles and responsibilities"
-                            formControlName="rolesAndResponsibilitiesId" class="form-select custom-select"
-                            resetFilterOnHide="true" (onChange)="onRoleChange($event.value)"></p-select>
-                    </div>
-                    <div
-                        *ngIf="employeeForm.get('rolesAndResponsibilitiesId')?.invalid && employeeForm.get('rolesAndResponsibilitiesId')?.touched">
-                        <div class="error-msg">Roles and Responsibilities is required</div>
-                    </div>
-                </div>
+                
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Offer Issued Date<span
                             class="error-msg">*</span></label>
@@ -350,6 +337,23 @@
                     <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched"
                         class="error-msg">
                         Document Type is required
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label custom-label mb-2">Note<span class="error-msg">*</span></label>
+                    <div class="custom-p-select-content">
+                        <!-- <p-select [options]="getAllRolesandResponsiblities" optionLabel="jobRoleName" [filter]="true"
+                                                            filterBy="jobRoleName" placeholder="Please select roles and responsibilities"
+                                                            formControlName="rolesAndResponsibilitiesId" class="form-select custom-select"
+                                                            resetFilterOnHide="true" (onChange)="onRoleChange($event.value)"></p-select> -->
+                        <p-editor formControlName="rolesAndResponsibilitiesId" [style]="{ height: '200px' }"
+                            (onBlur)="employeeForm.get('rolesAndResponsibilitiesId')?.markAsTouched()">
+                        </p-editor>
+                    </div>
+                    <div *ngIf="employeeForm.get('rolesAndResponsibilitiesId')?.hasError('required') 
+                          && employeeForm.get('rolesAndResponsibilitiesId')?.touched">
+                        <div class="error-msg">Note is required</div>
                     </div>
                 </div>
 
@@ -440,8 +444,7 @@
                                         </ul>
                                     </div>
                                     <div class="col-md-4 letter-sub-header">
-                                        <p class="text-end p-0"> {{employeeForm.get('offerIssuedDate')?.value |
-                                            dateformat}}</p>
+                                        <p class="text-end p-0"> {{employeeForm.get('offerIssuedDate')?.value | dateformat}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -461,7 +464,7 @@
                                 date with the company is {{(employeeForm.get('dateOfJoining')?.value)|dateformat}}.
                             <p class="mb-3">Please note the following details regarding your consultancy engagement </p>
 
-                            <div class="dynamicdata mb-3" [innerHTML]="prospectiveEmpData.rolesAndResponsibilitesData"></div>
+                            <div class="dynamicdata mb-3" [innerHTML]="safeRolesAndResponsibilities"></div>
                             <p>SNAD Developers India Pvt Ltd is in the business of product development and
                                 deployment and also providing technology and business consultants to various
                                 multinational companies. </p>

@@ -8,9 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { ProjectManagementMainTabsComponent } from "../project-management-tabs/project-management-main-tabs/project-management-main-tabs.component";
+import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-main-tabs/onbehalfof-main-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })

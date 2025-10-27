@@ -10,7 +10,8 @@
             <div class="row">
                 <!-- Resource Name -->
                 <div class="col-md-6 mb-3">
-                    <label for="resourceName" class="form-label custom-label mb-2">Resource Name<span class="text-danger">*</span></label>
+                    <label for="resourceName" class="form-label custom-label mb-2">Resource Name<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" placeholder="Please select resource name" formControlName="resourceName"
@@ -23,21 +24,27 @@
 
                 <!-- Designation -->
                 <div class="col-md-6 mb-3">
-                    <label for="designation" class="form-label custom-label mb-2">Designation<span class="text-danger">*</span></label>
-                    <input type="text" formControlName="designation" class="form-control custom-input" placeholder="Designation" readonly />
+                    <label for="designation" class="form-label custom-label mb-2">Designation<span
+                            class="text-danger">*</span></label>
+                    <input type="text" formControlName="designation" class="form-control custom-input"
+                        placeholder="Designation" readonly />
                     <!-- <div class="error-msg" *ngIf="addResourceForm.get('designation')?.touched && 
                         addResourceForm.get('designation')?.invalid">Designation is required</div> -->
                 </div>
 
                 <!-- Role -->
                 <div class="col-md-6 mb-3">
-                    <label for="resourceRole" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
-                    <input type="text" formControlName="resourceRole" (keypress)="formValidation.restrictInitialSpace($event)" 
-                    class="form-control custom-input" placeholder="Please enter role" [maxlength]="51" />
+                    <label for="resourceRole" class="form-label custom-label mb-2">Role<span
+                            class="text-danger">*</span></label>
+                    <input type="text" formControlName="resourceRole"
+                        (keypress)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
+                        placeholder="Please enter role" [maxlength]="51" />
                     <div class="error-msg">
-                        <div *ngIf="addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required']">
+                        <div
+                            *ngIf="addResourceForm.get('resourceRole')?.touched && addResourceForm.get('resourceRole')?.errors?.['required']">
                             Role is required</div>
-                        <div *ngIf="addResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || addResourceForm.get('resourceRole')?.errors?.['maxlength'] ||
+                        <div
+                            *ngIf="addResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || addResourceForm.get('resourceRole')?.errors?.['maxlength'] ||
                         addResourceForm.get('resourceRole')?.errors?.['minCharacters'] || addResourceForm.get('resourceRole')?.errors?.['minlength']">
                             {{ 'Role must be between 2-50 characters' | translate }}</div>
                     </div>
@@ -48,20 +55,23 @@
                     <label for="projectName" class="form-label custom-label mb-2">
                         Project Name<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true" [resetFilterOnHide]="true"
-                            filterBy="projectName" optionValue="projectId" formControlName="projectName"
-                            placeholder="Please select project name" class="form-select custom-select"
-                            (onChange)="selectproject($event.value)"></p-select>
+                        <p-select [options]="projectsDataDrown" optionLabel="projectName" [filter]="true"
+                            [resetFilterOnHide]="true" filterBy="projectName" optionValue="projectId"
+                            formControlName="projectName" placeholder="Please select project name"
+                            class="form-select custom-select" (onChange)="selectproject($event.value)"></p-select>
                     </div>
-                    <div class="error-msg" *ngIf="addResourceForm.get('projectName')?.touched && addResourceForm.get('projectName')?.invalid">
+                    <div class="error-msg"
+                        *ngIf="addResourceForm.get('projectName')?.touched && addResourceForm.get('projectName')?.invalid">
                         Project Name is required
                     </div>
                 </div>
 
                 <!-- Project Type -->
                 <div class="col-md-6 mb-3">
-                    <label for="projectType" class="form-label custom-label mb-2">Project Type<span class="text-danger">*</span></label>
-                    <input type="text" id="projectType" formControlName="projectType" class="form-control custom-input" placeholder="Project type" readonly />
+                    <label for="projectType" class="form-label custom-label mb-2">Project Type<span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="projectType" formControlName="projectType" class="form-control custom-input"
+                        placeholder="Project type" readonly />
                     <!-- <div class="error-msg"
                         *ngIf="addResourceForm.get('projectType')?.touched && addResourceForm.get('projectType')?.invalid">
                         Project Type is required
@@ -70,39 +80,47 @@
 
                 <!-- Resource Email -->
                 <div class="col-md-6 mb-3">
-                    <label for="resourceEmail" class="form-label custom-label mb-2">Email<span class="text-danger">*</span></label>
-                    <input type="email" id="resourceEmail" formControlName="resourceEmail" class="form-control custom-input" 
-                    placeholder="Email address" readonly />
+                    <label for="resourceEmail" class="form-label custom-label mb-2">Email<span
+                            class="text-danger">*</span></label>
+                    <input type="email" id="resourceEmail" formControlName="resourceEmail"
+                        class="form-control custom-input" placeholder="Email address" readonly />
                     <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourceEmail')?.touched && 
                     addResourceForm.get('resourceEmail')?.invalid">Email is required</div> -->
                 </div>
 
                 <!-- Phone Number -->
                 <div class="col-md-6 mb-3">
-                    <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number<span class="text-danger">*</span></label>
-                    <input type="text" id="resourcePhone" formControlName="resourcePhone" class="form-control custom-input" 
-                    placeholder="Phone number" readonly />
+                    <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number<span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="resourcePhone" formControlName="resourcePhone"
+                        class="form-control custom-input" placeholder="Phone number" readonly />
                     <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourcePhone')?.touched && 
                         addResourceForm.get('resourcePhone')?.invalid">Phone Number is required</div> -->
                 </div>
 
                 <!-- Start Date -->
                 <div class="col-md-6 mb-3">
-                    <label for="startDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
+                    <label for="startDate" class="form-label custom-label mb-2">Start Date<span
+                            class="text-danger">*</span></label>
                     <input type="date" id="startDate" formControlName="startDate"
                         [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
                         [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " onkeypress="return false"
-                        (change)="oncheckdates(addResourceForm.get('startDate')?.value)" class="form-control custom-input" />
+                        (change)="oncheckdates(addResourceForm.get('startDate')?.value)"
+                        class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('startDate')?.touched && 
                     addResourceForm.get('startDate')?.invalid">Start Date is required</div>
-                    <div class="error-msg" *ngIf="addResourceForm.hasError('endBeforeStart')">Start Date cannot be after End Date</div>
+                    <div class="error-msg" *ngIf="addResourceForm.hasError('endBeforeStart')">Start Date cannot be after
+                        End Date</div>
                 </div>
 
                 <!-- End Date -->
                 <div class="col-md-6 mb-3">
-                    <label for="endDate" class="form-label custom-label mb-2">End Date<span class="text-danger">*</span></label>
-                    <input type="date" id="endDate" formControlName="endDate" [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
-                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " onkeypress="return false" class="form-control custom-input" />
+                    <label for="endDate" class="form-label custom-label mb-2">End Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="endDate" formControlName="endDate"
+                        [min]="projectStartDate ? (projectStartDate | date:'yyyy-MM-dd') : null"
+                        [max]="projectEndDate ? (projectEndDate | date:'yyyy-MM-dd') : null " onkeypress="return false"
+                        class="form-control custom-input" />
                     <div class="error-msg" *ngIf="addResourceForm.get('endDate')?.touched && 
                     addResourceForm.get('endDate')?.invalid">End Date is required</div>
                 </div>
@@ -111,49 +129,54 @@
                 <div class="col-md-6 mb-3">
                     <label for="resourceAllocationhrs" class="form-label custom-label mb-2">
                         Allocation Hours<span class="text-danger">*</span></label>
-                    <div class="d-flex w-100">
-                        <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
-                            class="form-control custom-input w-50" [maxlength]="10"
-                            (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
-                        <div class="custom-p-select-content w-50">
+
+                    <input type="text" id="resourceAllocationhrs" formControlName="resourceAllocationhrs"
+                        class="form-control custom-input " [maxlength]="5"
+                        (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter hours" />
+                </div>
+                <!-- <div class="custom-p-select-content w-50">
                             <p-select [options]="frequencyTypes" optionLabel="label" [filter]="false"
                                 [showClear]="false" placeholder="Please select frequency"
                                 formControlName="allocatedFrequencyType" class="custom-select w-100">
                             </p-select>
-                        </div>
-                    </div>
-                    <!-- Input Error Messages -->
-                    <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && addResourceForm.get('resourceAllocationhrs')?.invalid">
+                        </div> -->
+
+
+                <!-- <div class="error-msg" *ngIf="addResourceForm.get('resourceAllocationhrs')?.touched && addResourceForm.get('resourceAllocationhrs')?.invalid">
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['required']">Allocation Hours is required</div>
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursWeek']">Maximum 168 hours allowed per week</div>
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursMonth']">Maximum 744 hours allowed per month</div>
                         <div *ngIf="addResourceForm.get('resourceAllocationhrs')?.errors?.['maxHoursProject']">Maximum 99999 hours allowed per project</div>
                     </div>
 
-                    <!-- Select Error Messages -->
                     <div class="error-msg" *ngIf="addResourceForm.get('allocatedFrequencyType')?.touched && addResourceForm.get('allocatedFrequencyType')?.invalid">
                         <div *ngIf="addResourceForm.get('allocatedFrequencyType')?.errors?.['required']">
                             Please select a frequency type
                         </div>
-                    </div>
-                </div>
+                    </div> -->
+
 
                 <!-- Switches -->
                 <div class="col-md-12 mb-3">
                     <div class="d-flex gap-4 align-itmes-center">
                         <div class="form-check form-switch">
-                            <input id="project-overtime-eligibility" class="form-check-input" type="checkbox" role="switch" formControlName="overtimeEligible">
-                            <label for="project-overtime-eligibility" class="form-check-label custom-toggle-label">Overtime Eligibility</label>
+                            <input id="project-overtime-eligibility" class="form-check-input" type="checkbox"
+                                role="switch" formControlName="overtimeEligible">
+                            <label for="project-overtime-eligibility"
+                                class="form-check-label custom-toggle-label">Overtime Eligibility</label>
                         </div>
 
                         <div class="form-check form-switch">
-                            <input id="client-billable" class="form-check-input" type="checkbox" role="switch" formControlName="billable">
+                            <input id="client-billable" class="form-check-input" type="checkbox" role="switch"
+                                formControlName="billable">
                             <label class="form-check-label custom-toggle-label" for="client-billable">Billable</label>
                         </div>
 
                         <div class="form-check form-switch">
-                            <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" role="switch" formControlName="allowweekendWork">
-                            <label for="client-allow-weekend-work" class="form-check-label custom-toggle-label">Allow Weekend Work</label>
+                            <input id="client-allow-weekend-work" class="form-check-input" type="checkbox" role="switch"
+                                formControlName="allowweekendWork">
+                            <label for="client-allow-weekend-work" class="form-check-label custom-toggle-label">Allow
+                                Weekend Work</label>
                         </div>
                     </div>
                 </div>
@@ -161,7 +184,8 @@
 
             <!-- Form Buttons -->
             <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
+                <button type="button" class="custom-btn btn-secondary"
+                    (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="addResourceForm.invalid">Add</button>
             </div>
         </form>

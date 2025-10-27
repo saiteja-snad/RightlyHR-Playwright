@@ -24,11 +24,11 @@ import { IEmployeeSignatures } from '../letters.modal';
   imports: [CommonModule, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule, NgbPopoverModule, DateformatPipe],
   templateUrl: './nda-contractor-letter.component.html',
   styleUrl: './nda-contractor-letter.component.scss',
-  encapsulation:ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class NdaContractorLetterComponent {
-   subscription!: Subscription;
+  subscription!: Subscription;
   appointmentLetterTemplate: any | string | ArrayBuffer | null = null;
   JoinDateValid: boolean = true;
   currentDate: Date = new Date();
@@ -84,7 +84,7 @@ export class NdaContractorLetterComponent {
       employeeId: ['', Validators.required],
       ndassentdate: ['', Validators.required],
       SelectDropDown: ['', Validators.required],
-      dateOfJoining: ['', Validators.required],
+      dateOfJoining: [{ value: '', disabled: true }, Validators.required],
       documentType: ['', Validators.required],
       notes: ['',],
       authorityid: ['', Validators.required],
@@ -95,9 +95,12 @@ export class NdaContractorLetterComponent {
       country: [''],
       pinCode: ['']
     });
-    this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
-      this.JoiningDateValidation();
-    });
+  //   this.employeeForm.get('ndassentdate')?.valueChanges.subscribe(() => {
+  //   this.JoiningDateValidation();
+  // });
+  //   this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
+  //     this.JoiningDateValidation();
+  //   });
   }
 
   getAllActiveEmployees() {
@@ -138,7 +141,7 @@ export class NdaContractorLetterComponent {
   }
 
   getAuthorityDetails() {
-    let offertype = 'Appointment Letter';
+    let offertype = 'NDA Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
@@ -161,19 +164,41 @@ export class NdaContractorLetterComponent {
   }
 
   onClickEmployee(event: any) {
-    
-    console.log(event)
     this.selectedEmployee = event.value;
     this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ? this.selectedEmployee.middleName + ' ' : '') + this.selectedEmployee.lastName;
-    const doj = this.formatDatewithDate(this.selectedEmployee.dateOfJoining);
-    this.employeeForm.patchValue({
-      dateOfJoining: doj
-    });
+    this.getContractorDetails(this.selectedEmployee.employeeId);
     this.getJobdetails(this.selectedEmployee.employeeId);
     this.getEmployeeAddress(this.selectedEmployee.employeeId);
     this.getIdentityByEmpid(this.selectedEmployee.employeeId);
     this.getOfferLetterDetails(this.selectedEmployee.employeeId);
     this.getAssestTypeByEmployeeId(this.selectedEmployee.employeeId);
+  }
+
+  getContractorDetails(employeeId: number) {
+    this.subscription = this.http.getData(`ContractDetails/getbyemployeeId/${employeeId}`).subscribe({
+      next: (res: any) => {
+        if (res?.data?.length > 0) {
+          const latestRecord = res.data.reduce((latest: { id: number; }, current: { id: number; }) => {
+            return current.id > latest.id ? current : latest;
+          });
+
+          const doj = this.formatDatewithDate(latestRecord.contractStartDate);
+
+          this.employeeForm.patchValue({
+            dateOfJoining: doj
+          });
+        } else {
+          console.log('No contractor details found.');
+        }
+      },
+      error: (err) => {
+        const doj = this.formatDatewithDate(this.employeeaddress.dateOfJoining);
+        this.employeeForm.patchValue({
+            dateOfJoining: doj
+          });
+        console.error('Error fetching contractor details:', err);
+      }
+    });
   }
 
   assesttypegetdetails = [] as IAssertsType[];
@@ -244,16 +269,16 @@ export class NdaContractorLetterComponent {
       }
     })
   }
-designationName:any;
+  designationName: any;
   onclickDesignation(event: any) {
     this.selectedAuthority = event.value;
     console.log(this.selectedAuthority);
-    
+
     if (this.selectedAuthority) {
       this.authorityFullName = this.selectedAuthority.middleName
         ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
         : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
-        this.designationName = this.selectedAuthority.designation
+      this.designationName = this.selectedAuthority.designation
     }
   }
 
@@ -289,6 +314,7 @@ designationName:any;
   JoiningDateValidation() {
     const appointmentDate = this.employeeForm.get('ndassentdate')?.value;
     const dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
+
     if (appointmentDate && dateOfJoining) {
       const appDate = new Date(appointmentDate);
       const joinDate = new Date(dateOfJoining);
@@ -296,16 +322,19 @@ designationName:any;
     } else {
       this.JoinDateValid = true;
     }
+
+    // Optional: trigger Angular validation refresh
+    this.employeeForm.get('dateOfJoining')?.updateValueAndValidity({ onlySelf: true });
   }
 
+
   async onAppointmentLetterSubmit(f: FormGroup) {
-    console.log(f)
     this.spinnerLoader = true;
     const data = f.value;
     let fileName = '';
 
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
-      fileName = `${this.selectedEmployee.firstName ??''}_${this.selectedEmployee.middleName ??''}_${this.selectedEmployee.lastName ??''}_${new Date().getTime()}_Non-DisclosureAgreementLetter_Unsigned.pdf`;
+      fileName = `${this.selectedEmployee.firstName ?? ''}_${this.selectedEmployee.middleName ?? ''}_${this.selectedEmployee.lastName ?? ''}_${new Date().getTime()}_Non-DisclosureAgreementLetter_Unsigned.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
       return;
@@ -352,7 +381,7 @@ designationName:any;
     this.conformationPopup.openSuccessModal('Non-Disclosure Agreement Letter generated successfully')
   }
 
-  
+
 
   //Post NDA Details
   postNDADetails(docUrl: string) {
@@ -373,7 +402,7 @@ designationName:any;
         'YYYY-MM-DD'
       ),
       jobId: this.employeeJobDetails?.id,
-      isDeleted:false
+      isDeleted: false
     };
     this.subscription = this.http.postdata('NdaLetter/generateLetter', postAppDetails).subscribe({
       next: (data: any) => {
@@ -382,13 +411,13 @@ designationName:any;
           this.navigateDashboard();
           this.spinnerLoader1 = false;
         }, 1000);
-          this.sendEmployeeDetails();
-         
+        this.sendEmployeeDetails();
+
 
       },
       error: (reason: any) => {
         console.log(reason);
-        
+
         this.conformationPopup.openErrorModal(reason.error.details)
         this.spinnerLoader = false;
       },
@@ -433,14 +462,14 @@ designationName:any;
     });
   }
   //NDA letter email
-   ndaLetterEmail(docUrl: string) {
+  ndaLetterEmail(docUrl: string) {
     let loggedInUser = this.authService.getToken();
     let emaildetails = {
       senderEmail: loggedInUser.workEmail,
       personEmail: this.selectedEmployee.emailaddress,
-      senderName: `${loggedInUser.firstName ??''} ${loggedInUser.middleName??''} ${loggedInUser.lastName??''}`,
+      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}`,
       personName: `${this.selectedEmployee.firstName ?? ""} ${this.selectedEmployee.middleName ?? ""} ${this.selectedEmployee.lastName ?? ""}`,
-      appointee: `${this.selectedEmployee.firstName ??''} ${this.selectedEmployee.middleName??''} ${this.selectedEmployee.lastName??''}`,
+      appointee: `${this.selectedEmployee.firstName ?? ''} ${this.selectedEmployee.middleName ?? ''} ${this.selectedEmployee.lastName ?? ''}`,
       role: this.employeeJobDetails?.jobRole ?? '',
       department: this.employeeForm.get('department')?.value.departmentName,
       workLocation: (this.employeeJobDetails?.workLocation ?? '') + ", " + (this.employeeJobDetails?.subLocation ?? ''),
@@ -449,14 +478,14 @@ designationName:any;
       dateOfJoining: this.selectedEmployee.dateOfJoining,
       reportingManagerId: this.employeeJobDetails?.reportsto,
       teamManagerId: this.employeeJobDetails?.reportingmanagerId,
-      reportingManagerName: `${this.employeeJobDetails?.fName ??''} ${this.employeeJobDetails?.mName??''} ${this.employeeJobDetails?.lName??''}`,
-      teamManagerName: `${this.employeeJobDetails?.firstName??''} ${this.employeeJobDetails?.middleName??''} ${this.employeeJobDetails?.lastName??''}`,
-      generatedBy:loggedInUser.employeeId,
+      reportingManagerName: `${this.employeeJobDetails?.fName ?? ''} ${this.employeeJobDetails?.mName ?? ''} ${this.employeeJobDetails?.lName ?? ''}`,
+      teamManagerName: `${this.employeeJobDetails?.firstName ?? ''} ${this.employeeJobDetails?.middleName ?? ''} ${this.employeeJobDetails?.lastName ?? ''}`,
+      generatedBy: loggedInUser.employeeId,
       generatedDate: new Date().toISOString(),
     }
     this.subscription = this.http.postdata(`CustomEmail/ndaletter`, emaildetails).subscribe({
       next: (data: any) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.conformationPopup.openSuccessModal('Email has been sent successfully');
       },
       error: (err: any) => {
@@ -482,7 +511,7 @@ designationName:any;
     this.subscription = this.http.postdata('AssetTable', postAssetDetails).subscribe({
       next: (data: any) => {
         this.assertdata = data;
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
       },
       error: (reason: any) => {
         this.spinnerLoader = false;

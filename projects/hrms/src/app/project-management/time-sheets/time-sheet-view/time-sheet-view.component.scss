@@ -16,11 +16,14 @@
 }
 
 .week-change-btn-prev {
+    background: var(--primary-color) !important;
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
+    margin-right: 1px;
 }
 
 .week-change-btn-next {
+    background: var(--primary-color) !important;
     border-top-left-radius: 0px !important;
     border-bottom-left-radius: 0px !important;
 }
@@ -128,15 +131,21 @@
     border-radius: 6px;
 }
 
+
+
 .rejected {
     border: 1px solid rgba(234, 54, 44, 1) !important;
     border-radius: 6px;
 }
 
+
+
 .waiting {
     border: 1px solid rgba(252, 185, 16, 1) !important;
     border-radius: 6px;
 }
+
+
 
 .circular-dot {
     width: 12px;
@@ -164,4 +173,66 @@
 
 .clock-icon {
     width: 1rem;
+}
+
+.custom-table-content {
+    border: 1px solid #CCDAEC !important;
+
+    td {
+        border: 1px solid #CCDAEC !important;
+    }
+
+    th {
+        border: 1px solid #FFFF !important;
+        border-top: 0px !important;
+    }
+
+    th:first-child {
+        border-top-left-radius: 0.45rem;
+        border-left: 0px !important;
+    }
+
+    th:last-child {
+        border-top-right-radius: 0.45rem;
+        border-right: 0px !important;
+    }
+
+    td:first-child {
+        border-left: 0px !important;
+    }
+
+    td:last-child {
+        border-right: 0px !important;
+    }
+
+    tbody {
+        td {
+            background-color: #f1f3f8 !important;
+
+            .custom-input {
+                background-color: #FFFF !important;
+            }
+
+            .custom-input:read-only {
+                background-color: #dde4eb !important;
+            }
+        }
+
+        td:first-child, td:last-child {
+            background-color: #FFFF !important;
+        }
+    }
+
+    tfoot {
+        td {
+            color: #060606;
+        }
+    }
+}
+
+
+.custom-select-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: auto; /* so click still triggers stopPropagation */
 }

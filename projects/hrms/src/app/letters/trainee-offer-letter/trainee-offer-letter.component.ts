@@ -251,8 +251,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   }
 
   getAllEmployeeDetails() {
-    const satus = ['active'];
-    this.subscription = this.http.getData(`Employeedata/Getallemployees?statuses=${satus}`).subscribe({
+    const satus = ['active',];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
       next: (response: any) => {
         if (response) {
           // this.getAllEmployeeInfo = response;

@@ -1,142 +1,125 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div class="heading-content">
-            <div class="component-header">Employee Skills Directory</div>
-        </div>
+  <div class="component-header-content">
+    <div class="heading-content">
+      <div class="component-header">Employee Skills Directory</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Search -->
+    <div class="input-group custom-search mb-3">
+      <span class="input-group-text custom-input-group-search" id="basic-addon1">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="search" class="form-control custom-search-input" placeholder="Search" />
     </div>
 
-    <div class="main-content">
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search" aria-label="Search"
-                aria-describedby="basic-addon1">
-        </div>
-        <!-- <ng-container *ngIf="loading; else maincontent">
-            <div>
-                <app-data-loader-content />
-            </div>
-        </ng-container> -->
-
-
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th>Title</th>
-                        <th>Key Skills</th>
-                        <th>Current Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr>
-                            <td>Mounika</td>
-                            <td>Front End Developer</td>
-                            <td>Angular</td>
-                            <td>Commited</td>
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li><a class="dropdown-item" (click)="openModal(employeeDetailModal)">
-                                                <i class="bi bi-eye-fill me-2"></i>View</a></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-
-            <ng-template #noDataTemplate>
-                <tr>
-                    <td colspan="2" class="text-center">
-                        <app-no-data-found></app-no-data-found>
-                    </td>
-                </tr>
-            </ng-template>
-        </div>
-
+    <!-- Table -->
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Title</th>
+            <th>Key Skills</th>
+            <th>Current Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mounika</td>
+            <td>Developer</td>
+            <td>Angular</td>
+            <td>Committed</td>
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" (click)="openModal(employeeDetailModal)">
+                      <i class="bi bi-eye-fill me-2"></i>View
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
+  </div>
 </div>
 
+<!-- Popup -->
 <ng-template #employeeDetailModal let-modal ngbAutofocus>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-main-popup-content">
       <div class="cross-btn">
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="closePopup(modal)">
+          <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+        </a>
       </div>
+
+      <!-- Profile Info -->
       <div class="d-flex justify-content-center text-center align-items-center flex-column">
         <div class="mb-3">
-          <ng-container *ngIf="imageUrl; else showProfileIcon">
-            <img [src]="imageUrl" alt="Profile Image" class="profile-image">
-          </ng-container>
-          <ng-template #showProfileIcon>
-            <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'" />
-          </ng-template>
+          <img [src]="imageUrl" alt="Profile Image" class="profile-image" />
         </div>
         <div>
-          <p class="name mb-2">Mounika</p>
-          <p class="job-role mb-2">Developer</p>
-          <!-- <p class="department">{{department}}</p> -->
+          <p class="name mb-2">Mounika (SD302115)</p>
+          <p class="department mb-2">Technology - Design</p>
+          <p class="job-role mb-2">UI/UX Designer</p>
         </div>
-        <div class="d-flex align-items-center gap-3">
-          <div (click)="shareVia('outlook')" class="cursor">
-            <app-mail-icon />
-          </div>
-          <div (click)="shareVia('teams')" class="cursor">
-            <app-chat-icon />
-          </div>
-
-          <div *ngIf="linkedinurl" (click)="shareVia('linkedin')" class="cursor">
-            <img src="\icons\logos_linkedin-icon.png" alt="LinkedIn" class="shared-icons">
-          </div>
+        <div class="commitment-card mb-3">
+          <p class="commitment-text">• Committed until Mar 31, 2026</p>
         </div>
       </div>
       <div class="dashed-border my-3"></div>
-      <div class="custom-card mb-3">
-        <p class="label-text text-truncate mb-2">
-          <img src="/icons/shift-icon.png" alt="Icon" class="custom-icon me-2">
-          <span class="link-text">
-            <span *ngIf="jobdata?.jobTypeName; else noData">Developer</span>
-            <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName" class="mx-1">|</span>
-            <span *ngIf="jobdata?.shiftName">General</span>
-            <span
-              *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">9:00</span>
-            <ng-template #noData>N/A</ng-template>
-          </span>
-        </p>
-        <p class="label-text text-truncate mb-2">
-          <a [href]="'mailto:' + 'mounika@Gmail.com'">
-            <img src="/icons/mail-icon.png" alt="Icon" class="custom-icon me-2">
-            <span class="link-text"><u>moun</u></span>
-          </a>
-          <span *ngIf="!empdata?.workEmail" class="link-text">NA</span>
-        </p>
-        
-      </div>
-      <div class="manager-card mb-3">
-        <div class="accent-bar"></div>
-        <div class="w-100">
-          <p class="label-name mb-1">Team Manager</p>
-          <p class="label-name count-text m-0">Nagesh</p>
-        </div>
-      </div>
-      <div class="manager-card">
-        <div class="accent-bar1"></div>
-        <div class="w-100">
-          <p class="label-name mb-1">Reporting Manager</p>
-          <p class="label-name count-text m-0">Koushik</p>
-        </div>
-      </div>
+      <!-- Tabs -->
+      <!-- <p-tabs value="0">
+        <p-tablist class="commitment-card mb-3">
+          <p-tab value="0">Skills</p-tab>
+          <p-tab value="1">Projects</p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+          <p-tabpanel value="0">
+  
+            <div class="skills-section">
+              <p class="skills-title">Technical Skills</p>
+              <p-chip label="Angular(Expert)" />
+            </div>
+
+       
+            <div class="skills-section mt-3">
+              <p class="skills-title">Soft Skills</p>
+              <p-chip label="Angular(Expert)" />
+            </div>
+          </p-tabpanel>
+
+          <p-tabpanel value="1">
+            <div class="skills-section">
+              <p class="skills-title">Projects</p>
+              <div class="skills-container">
+                <div>Internal HR Portal Redesign</div>
+                <div>Mobile App UX Revamp</div>
+              </div>
+            </div>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs> -->
+
+      <p-tabs>
+        <p-tab *ngFor="let tab of navTabs">
+          {{ tab.label }}
+        </p-tab>
+      </p-tabs>
+
+
+
     </div>
   </div>
 </ng-template>

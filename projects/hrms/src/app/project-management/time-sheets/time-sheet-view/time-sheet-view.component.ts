@@ -1467,23 +1467,26 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  //hide delet button
- canDelete(project?: AbstractControl, index?: number): boolean {
+canDelete(project?: AbstractControl, index?: number): boolean {
   if (!project) return false;
 
   const projectId = project.get('projectId')?.value ?? null;
   const projectName = project.get('projectName')?.value ?? '';
   const isNoClientProject = project.get('isNoClientProject')?.value ?? false;
-  console.log(isNoClientProject);
-  
-  // ❗ Block delete for "No Client / No Project" rows
-  if (isNoClientProject === true || (!projectId && !projectName)) {
+
+  // ✅ Allow delete for No Client/No Project rows
+  if (isNoClientProject === true) {
+    return true;
+  }
+
+  // ❗ Block delete when no client/project AND not marked as isNoClientProject
+  if (!projectId && !projectName) {
     return false;
   }
 
-  // ✅ Existing approval status validation
+  // ✅ Existing approval rule
   const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-  return days.every((dayKey) => {
+  return days.every(dayKey => {
     const dayControl = project.get(dayKey) as FormGroup;
     if (!dayControl) return true;
 
@@ -1496,6 +1499,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     );
   });
 }
+
 
 
   //disable button for sumbit for approval

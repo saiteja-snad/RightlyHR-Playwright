@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormsModule } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../../services/http.service';
@@ -13,6 +13,7 @@ import { IWfhAllocationViewModel } from './wfh-allocation-view-model';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { Paginator } from 'primeng/paginator';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-wfh-allocation-view',
   imports: [
@@ -25,7 +26,9 @@ import { Paginator } from 'primeng/paginator';
     DataLoaderContentComponent,
     FormsModule,
     Paginator,
-  ],
+    InfoIconComponent,
+    NgbPopoverModule
+],
   templateUrl: './wfh-allocation-view.component.html',
   styleUrl: './wfh-allocation-view.component.scss',
 })
@@ -48,6 +51,7 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  wfh_history=[] as any;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -58,6 +62,10 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllwfhallocations();
+  }
+    openHistoryPopup(content: any, Details: IWfhAllocationViewModel): void {
+    this.getWfhallocationHistory(Details.employeeId.id);
+    this.modalService.open(content, { centered: true,size:'xl', backdrop: 'static', keyboard: false });
   }
   // get all wfh allocations
   getAllwfhallocations(): void {
@@ -105,7 +113,21 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
     this.pageNumber = event.pageCount;
     this.getAllwfhallocations();
   }
-
+//get wfh allocation history
+  getWfhallocationHistory(EmployeeId:any): void {
+    let url = `FlexibleWfhAllocation/getWfhAllocationSummary?employeeId=${EmployeeId}`;
+    this.http
+      .getData(url)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.wfh_history = res.data || [];
+        },
+        error: (err) => {
+          console.error('Error fetching shifts:', err);
+        },
+      });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -126,8 +126,8 @@
                         <th>Days</th>
                         <th>Created By</th>
                         <th>Created On</th>
-                        <th>Last Updated By</th>
-                        <th>Last Updated On</th>
+                        <!-- <th>Last Updated By</th>
+                        <th>Last Updated On</th> -->
                         <th></th>
                     </tr>
                 </thead>
@@ -143,8 +143,8 @@
                         </td>
                         <td>{{ emp.get('createdBy')?.value ?emp.get('createdBy')?.value:'-' }}</td>
                         <td>{{ emp.get('createdOn')?.value ?(emp.get('createdOn')?.value | dateformat) :'-' }}</td>
-                        <td>{{ emp.get('lastUpdatedBy')?.value ?emp.get('lastUpdatedBy')?.value :'-' }}</td>
-                        <td>{{ emp.get('lastUpdatedOn')?.value ?(emp.get('lastUpdatedOn')?.value|dateformat) :'-' }}</td>
+                        <!-- <td>{{ emp.get('lastUpdatedBy')?.value ?emp.get('lastUpdatedBy')?.value :'-' }}</td>
+                        <td>{{ emp.get('lastUpdatedOn')?.value ?(emp.get('lastUpdatedOn')?.value|dateformat) :'-' }}</td> -->
                         <td class="text-center"><a class="custom-action-btn" (click)="removeEmployee(i, emp.get('employeeId')?.value)">
                             <i class="bi bi-trash3 text-danger custom-action-btn-icon"></i></a>
                         </td>

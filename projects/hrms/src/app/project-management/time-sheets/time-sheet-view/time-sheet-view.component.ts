@@ -1486,7 +1486,7 @@ canDelete(project?: AbstractControl, index?: number): boolean {
   const isNoClientProject = project.get('isNoClientProject')?.value ?? false;
 
   // ✅ Allow delete for No Client/No Project rows
-  if (isNoClientProject === true) {
+  if (isNoClientProject === true  && project.get('approvalStatus')?.value.toLowerCase() === 'draft' ) {
     return true;
   }
 
@@ -1502,6 +1502,7 @@ canDelete(project?: AbstractControl, index?: number): boolean {
     if (!dayControl) return true;
 
     const approvalStatus = dayControl.get('approvalStatus')?.value;
+    
     return (
       !approvalStatus ||
       approvalStatus === 'draft' ||

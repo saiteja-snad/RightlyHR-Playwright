@@ -11,7 +11,7 @@
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
                     <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
-                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)">
+                        [readonlyInput]="true" [placeholder]="displayLabel" (onSelect)="onDateSelect($event)" (mousedown)="$event.preventDefault()">
                     </p-datepicker>
                 </div>
                 <button class="custom-btn btn-primary week-change-btn-prev" (mousedown)="$event.preventDefault()" (click)="previousWeek()">

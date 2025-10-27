@@ -23,6 +23,8 @@ import {
 } from '../../flexible-leave-allocation/leave-allocation.model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
+import { AuthService } from '../../../../services/auth.service';
+import moment from 'moment';
 @Component({
   selector: 'app-wfh-allocation',
   imports: [
@@ -48,18 +50,23 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   categoryDetails = [{ name: 'WFH', value: 'WFH' }];
   employeeDetails = [] as IEmployees[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  // @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
+  isloading = false;
+  minEffectiveDate!: string;
+  maxEffectiveDate!: string;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
     private modal: OpenModalService,
     private modalService: NgbModal,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public auth: AuthService
   ) {}
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
+    this.minEffectiveDate = moment().startOf('month').format('YYYY-MM-DD');
+    this.maxEffectiveDate = moment().endOf('month').format('YYYY-MM-DD');
     this.inititializeForm();
     this.getAllLocations();
     this.handleFormValueChanges();
@@ -175,28 +182,68 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   get employeeFormArray(): FormArray {
     return this.wfhAllocationForm.get('employees') as FormArray;
   }
+  // get by employee wfh allocations
+  getByEmployeewfhallocations(employeeIds: any, form: FormGroup): void {
+    this.isloading = true;
+    const ids = employeeIds.map((emp: any) => emp.employeeId).join(',');
+    this.http
+      .getData(`FlexibleWfhAllocation/getAll?employeeIds=${ids}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.isloading = false;
+          const apiData = res?.data || [];
+          const employeeArray = this.fb.array<FormGroup>([]);
+          // Loop through all selected employees
+          employeeIds.forEach((selectedEmp: any) => {
+            // Try to find matching allocation data from API
+            const existing = apiData?.find(
+              (x: any) => x.employeeId?.id === selectedEmp?.employeeId
+            );
 
+            // Push either existing or blank form
+            employeeArray?.push(
+              this.fb.group({
+                employeeId: [selectedEmp?.employeeId],
+                fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
+                days: [existing?.allowedDays || '', [Validators.required]],
+                effectivedate: [
+                  existing?.effectiveDate
+                    ? moment(existing?.effectiveDate)?.format('YYYY-MM-DD')
+                    : '',
+                  [Validators.required,this.validateEffectiveDate?.bind(this)],
+                ],
+                createdBy: [existing?.createdBy?.name || ''],
+                createdOn: [existing?.createdAt || ''],
+              })
+            );
+          });
+
+          // Set the updated employee list in form
+          form.setControl('employees', employeeArray);
+        },
+        error: (err) => {
+          this.isloading = false;
+          console.error('Error fetching shifts:', err);
+        },
+      });
+  }
+  validateEffectiveDate(control: any) {
+    if (!control.value) return null;
+
+    const selectedDate = moment(control.value, 'YYYY-MM-DD');
+    const minDate = moment(this.minEffectiveDate, 'YYYY-MM-DD');
+    const maxDate = moment(this.maxEffectiveDate, 'YYYY-MM-DD');
+
+    if (selectedDate.isBefore(minDate) || selectedDate.isAfter(maxDate)) {
+      return { invalidDate: true };
+    }
+
+    return null;
+  }
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
     this.selectedEmployees = selectedList || [];
-    const employeeArray = form.get('employees') as FormArray;
-    //  Clear existing entries
-    employeeArray.clear();
-    this.selectedEmployees.forEach((emp: any) => {
-      employeeArray.push(
-        this.fb.group({
-          employeeId: [emp.employeeId],
-          fullName: [emp.fullName],
-          days: ['', Validators.required],
-          effectivedate: ['', Validators.required],
-          createdBy: [''],
-          createdOn: [''],
-          lastUpdatedBy: [''],
-          lastUpdatedOn: [''],
-        })
-      );
-    });
-    //  Tell TypeScript explicitly this is a FormArray
-    form.setControl('employees', employeeArray as FormArray);
+    this.getByEmployeewfhallocations(this.selectedEmployees, form);
   }
 
   removeEmployee(index: number, employeeId: number) {
@@ -290,43 +337,50 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   }
 
   publishLeaveAllocation(form: FormGroup): void {
+    const loggedInUserId = this.auth.getToken();
     if (form.invalid) return;
     // this.modalService.open(this.stagingLoadingModal, { centered: true });
     const formData = form.value;
-    const payload = [
-      {
-        year: formData.year,
-        locationId: formData.location.id,
-        subLocationId: formData.subLocation.id,
-        shiftId: formData.shift.id,
-        categoryId: formData.categoryName.id,
-        employeeId: formData.employeeName.employeeId,
-        allowedDays: +formData.days,
-        entityReferenceId: formData.employeeName.employeeId,
-        status: 'Published',
-        entityType: 'Employee',
-      },
-    ];
-
+    // Build payload array from employees FormArray
+    const employees = formData.employees || [];
+    const payload = employees.map((emp: any) => ({
+      employeeId: emp.employeeId,
+      allowedDays: Number(emp.days) || 0,
+      effectiveDate: emp.effectivedate
+        ? moment(emp.effectivedate).format('YYYY-MM-DD')
+        : null,
+      createdBy: loggedInUserId.employeeId,
+      frequency: 'Monthly',
+      flexibleAllocation: true,
+      updatedBy: loggedInUserId.employeeId,
+    }));
+    if (!payload.length) {
+      this.modal.openErrorModal('No employees to allocate.');
+      return;
+    }
     this.http
-      .postdata('LeavePolicy', payload)
+      .postdata('FlexibleWfhAllocation/create', payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.selectedEmployees = [];
+          this.wfhAllocationForm.reset();
+          this.wfhAllocationForm = this.fb.group({
+            employees: this.fb.array([]),
+          });
           this.wfhAllocationForm.get('subLocation')?.disable();
           this.wfhAllocationForm.get('location')?.disable();
           this.wfhAllocationForm.get('shiftName')?.disable();
           this.wfhAllocationForm.get('categoryName')?.disable();
           this.wfhAllocationForm.get('shift')?.disable();
-          this.selectedEmployees = [];
-          this.modal.openSuccessModal('WFH allocation published successfully!');
+          this.modal.openSuccessModal('WFH allocation saved successfully!');
         },
         error: (err: any) => {
           this.modalService.dismissAll();
           this.modal.openErrorModal(
             err.error.message
               ? err.error.message
-              : 'Failed to publish wfh allocation!'
+              : 'Failed to save wfh allocation!'
           );
         },
         complete: () => {

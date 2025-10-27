@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th>Employee Name</th>
-                <th>Effective Date</th>
+                <th>Effective From</th>
                 <th>Days</th>
                 <th>Created By</th>
                 <th>Created On</th>
@@ -12,21 +12,24 @@
             </tr>
         </thead>
         <tbody>
-            @if (getAllocationDetails?.length>0) {
-            <tr *ngFor="let item of getAllocationDetails">
-                <td> {{item.name}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <!-- <td></td>
-                <td></td> -->
+            @if (getAllocationDetails$ | async; as getAllocationDetails) {
+            @if (!isloading && getAllocationDetails.length > 0) {
+            @for (item of getAllocationDetails; track item) {
+            <tr>
+                <td>{{ item?.employeeId?.name || '-' }}</td>
+                <td>{{ item?.effectiveDate ? (item?.effectiveDate | dateformat) : '-' }}</td>
+                <td>{{ item?.allowedDays || '-' }}</td>
+                <td>{{ item?.createdBy?.name || '-' }}</td>
+                <td>{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
             </tr>
             }
-            @else {
-            <tr>
-                <app-no-data-found />
-            </tr>
+            } @else {
+            <tr><app-no-data-found /></tr>
+            }
+            } @else {
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
             }
         </tbody>
     </table>

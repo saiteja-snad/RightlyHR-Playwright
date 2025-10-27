@@ -35,7 +35,7 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   private allTabs = [
     { label: 'Draft', link: '/claimsandexpenses/expenses/draft', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Draft Tab', action: 'view' }, count: this.draftsCount },
     { label: 'Approved', link: '/claimsandexpenses/expenses/approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved Tab', action: 'view' }, count: this.ApprovedCount },
-    { label: 'Pending', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
+    { label: 'Waiting For Approval ', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
     { label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
     { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount }
   ];

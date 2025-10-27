@@ -110,7 +110,7 @@
 
         <th>Client</th>
         <th>Project</th>
-        <!-- <th>Employee</th> -->
+        <th>Allocated Hour</th>
         <th>Billable Hrs</th>
         <th>Non-Billable Hrs</th>
         <th>Total Hrs</th>
@@ -128,7 +128,7 @@
             <tr>
               <td>{{ record.client ?? '-' }}</td>
               <td>{{ record.project ?? '-' }}</td>
-              <!-- <td>{{ record.employee ?? '-' }}</td> -->
+              <td>{{ record.projectAllocatedHours ?? '-' }}</td>
               <td>{{ record.billableHours ?? '-' }}</td>
               <td>{{ record.nonBillableHours ?? '-' }}</td>
               <td>{{ record.totalHours ?? '-' }}</td>

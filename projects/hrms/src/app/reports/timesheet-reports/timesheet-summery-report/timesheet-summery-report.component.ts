@@ -99,7 +99,7 @@ export class TimesheetSummeryReportComponent {
       projectId: [{ value: null, disabled: true }],
       employeid: [{ value: null, disabled: true }],
       dateRange: [null],
-      belaible: [null],
+      billable: [null],
       // year: ['']
     });
     this.TimesheetSummeryReportForm.valueChanges.subscribe(() => {
@@ -461,8 +461,8 @@ export class TimesheetSummeryReportComponent {
     params.EmployeeIds = formValue.employeid;
   }
 
-  if (formValue.belaible?.value) {
-    params.Billable = formValue.belaible.value;
+  if (formValue.billable?.value) {
+    params.Billable = formValue.billable.value;
   }
 
   return params;

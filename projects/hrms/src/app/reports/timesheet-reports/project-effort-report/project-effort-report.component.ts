@@ -59,6 +59,7 @@ export class ProjectEffortReportComponent {
   BillableOptions = [
     { key: 'Yes', value: 'true' },
     { key: 'No', value: 'false' },
+    { key: 'Both',value:'both' },
   ];
   TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
@@ -406,7 +407,7 @@ export class ProjectEffortReportComponent {
     // if (formValue.employeid !== null && formValue.employeid !== undefined) {
     //   params.EmployeeIds = formValue.employeid;
     // }
-    if (formValue.billable?.value) params.billable = formValue.billable.value;
+    if (formValue.billable?.value && formValue.billable?.value != 'both') params.billable = formValue.billable.value;
     return params;
   }
   generateProjectEffortReport(page: number, pageSize: number) {

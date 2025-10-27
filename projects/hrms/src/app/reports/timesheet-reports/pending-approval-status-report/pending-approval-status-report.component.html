@@ -121,7 +121,7 @@
   @else {
     @for (record of filteredpendingapprovalRecord; track $index) {
       <tr>
-         <td>{{ record.employeeid ?? '-' }}</td>
+         <td>{{ record.fusionEmpId ?? '-' }}</td>
         <td>{{ record.employee ?? '-' }}</td>
         <td>{{ record.client ?? '-' }}</td>
         <td>{{ record.project ?? '-' }}</td>

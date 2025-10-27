@@ -97,6 +97,7 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
         <th>Date</th>
+         <th>Employee Id</th>
         <th>Employee Name</th>
         <th>Department</th>
         <th>Client Name</th>
@@ -118,6 +119,7 @@
         @for (record of filteredtimesheetsummeryRecord; track $index) {
         <tr>
           <td>{{ record.month ?? '-' }}</td>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>
           <td>{{ record.department ?? '-' }}</td>
           <td>{{ record.clientName ?? '-' }}</td>

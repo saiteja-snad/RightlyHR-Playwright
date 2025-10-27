@@ -23,14 +23,14 @@ import { Select } from 'primeng/select';
 import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe,Select, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe, Select, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe],
   encapsulation: ViewEncapsulation.None
 })
 
-export class DraftsExpensesComponent implements OnInit,OnDestroy {
+export class DraftsExpensesComponent implements OnInit, OnDestroy {
   empinfo: any;
   Myexpense: any;
   removeindex: any;
@@ -46,7 +46,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   minDate!: string;
   maxDate!: string;
   emails = [];
-   loggedinuser = {} as any;
+  loggedinuser = {} as any;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   expenseheaderiteams: INewExpense[] = [];
   updataid!: number;
@@ -54,34 +54,34 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   saveasDraftloder = false;
   expensesAttachment: any;
   filehidedonload = true;
-  selectedData={} as any;
+  selectedData = {} as any;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   searchTerm: any = '';
-    selectedYear: any;
-  loader=false
-    selectemp: any;
+  selectedYear: any;
+  loader = false
+  selectemp: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
- expense: IExpenses[] = [];
+  expense: IExpenses[] = [];
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
-   private SelectedyeartimeOffService: TimeoffYearFilterService, public formValidation: FormValidationService, public rbac: RbacService,  public authService: AuthService) { }
+    private SelectedyeartimeOffService: TimeoffYearFilterService, public formValidation: FormValidationService, public rbac: RbacService, public authService: AuthService) { }
 
   ngOnInit(): void {
-     this.loggedinuser = this.authService.getToken();
-     console.log("Logged in user:", this.loggedinuser);
-     
+    this.loggedinuser = this.authService.getToken();
+    console.log("Logged in user:", this.loggedinuser);
+
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     console.log(this.empinfo);
-    
+
     this.initiateForm();
     this.getEmployeeId();
-    this.getdatabyentriy(); 
+    this.getdatabyentriy();
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
-    
+
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
@@ -92,8 +92,10 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
             this.getexpensesheaderbyemployeeid();
           }
         });
+
       }
-    }); 
+    });
+    this.getexpensesheaderbyemployeeid();
     this.getExpensestypestopatch();
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
@@ -102,7 +104,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
-      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
+      expensesTitle: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       // approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
@@ -112,7 +114,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       expenseId: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/.*\S.*/)]],
+      item_Name: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
@@ -143,7 +145,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   getExpensestypestopatch() {
     this.subscription = this.http.getData("Expense").subscribe({
       next: (data: any) => {
-           this.expense = data;
+        this.expense = data;
       }
     })
   }
@@ -223,24 +225,24 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
         },
       });
   }
-  
+
   private renameFiles(originalFile: File, newName: string) {
     return new File([originalFile], newName, {
       type: originalFile.type,
       lastModified: originalFile.lastModified,
     });
   }
-fileuploadhide :any;
+  fileuploadhide: any;
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
     //if (!file) return;
     if (!file) {
-        this.fileuploadhide = true;
-    //    const control = this.expenseItems.at(index)?.get('attachment_url');
-    // control?.setValue(null);
-    // control?.markAsTouched();
-     //control?.updateValueAndValidity();
-     }
+      this.fileuploadhide = true;
+      //    const control = this.expenseItems.at(index)?.get('attachment_url');
+      // control?.setValue(null);
+      // control?.markAsTouched();
+      //control?.updateValueAndValidity();
+    }
     const allowedTypes = [
       'image/jpeg',
       'image/png',
@@ -269,12 +271,12 @@ fileuploadhide :any;
       filepath,
       file
     );
-      this.fileuploadhide = false;
+    this.fileuploadhide = false;
     fileUpload$.subscribe({
       next: (data: any) => {
         // Assuming data.path contains the uploaded file path
         const uploadedFilePath = data.path;
-        this.filehidedonload= false;
+        this.filehidedonload = false;
         this.expenseItems.at(index).get('attachment_url')?.setValue(uploadedFilePath);
       },
       error: (error: any) => {
@@ -298,7 +300,7 @@ fileuploadhide :any;
 
   submitepxenses(form: FormGroup) {
     this.spinnerLoader = true
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
     const payload = {
       expenses_ID: this.updataid,
       applied_date: new Date().toISOString(),
@@ -316,10 +318,10 @@ fileuploadhide :any;
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Waiting for Approval',
-        attachment_url:  item.attachment_url,
+        attachment_url: item.attachment_url,
       })),
     };
-  
+
     // Check if there is any file to upload
     if (this.Myexpense) {
       const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, this.Myexpense)
@@ -536,7 +538,7 @@ fileuploadhide :any;
 
   patchExpenseItem(item: any): void {
     this.expenseItems.push(this.fb.group({
-      item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
+      item_Name: [item.item_Name, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       expenseId: [item.expenseId, Validators.required],
       item_Description: [item.item_Description],
       expense_Date: [this.datepipe.transform(item.expense_Date, 'yyyy-MM-dd'), Validators.required],
@@ -547,7 +549,7 @@ fileuploadhide :any;
   }
 
   onSelectDownload(file: any): void {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile',file.value).subscribe({
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.value).subscribe({
       next: (res: any) => {
         // Check if the response body is of type Blob
         const blob: Blob = res.body as Blob;
@@ -621,7 +623,7 @@ fileuploadhide :any;
     this.conformationPopup.openSuccessModal("Expense item deleted successfully")
   }
   openpopupforDownload(content: any, expenseDetails: any) {
-     this.selectedData = expenseDetails;
+    this.selectedData = expenseDetails;
     this.modalService.open(content, { size: 'xl', centered: true });
   }
   ngOnDestroy(): void {

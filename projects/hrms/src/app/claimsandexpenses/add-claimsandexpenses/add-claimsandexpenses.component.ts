@@ -240,7 +240,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
     // Handle file dialog cancel or no file selected
     if (!file) {
-   
+
       control?.reset();
       control?.setErrors({ required: true });
       control?.markAsTouched();
@@ -372,7 +372,8 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
+              this.conformationPopup.openSuccessModal('Your expense request has been submitted');
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.getexpensesheaderbyid(this.empinfo.employeeId);
             }
           },
@@ -388,8 +389,9 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
+              this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.newExpenseForm.reset();
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
@@ -460,6 +462,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal(' Expense request saved as draft ');
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
               // this.filterAllExpenses()
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
@@ -480,6 +483,8 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
           next: (data: any) => {
             if (data) {
               this.conformationPopup.openSuccessModal('Expense request saved as draft');
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
+              this.http.setnewcountDetails();
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

@@ -204,6 +204,9 @@ isLoading = false;
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Request has been approved successfully');
         this.signalService.contractConversionForYouRoleTriggerSignal.set(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       error: (reason: any) => {
         this.isLoading = false;
@@ -236,6 +239,9 @@ isLoading = false;
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Request rejected successfully');
         this.signalService.contractConversionForYouRoleTriggerSignal.set(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       error: (reason: any) => {
         this.isLoading = false
@@ -263,6 +269,9 @@ isLoading = false;
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Request processed successfully');
         this.signalService.contractConversionForYouRoleTriggerSignal.set(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message)

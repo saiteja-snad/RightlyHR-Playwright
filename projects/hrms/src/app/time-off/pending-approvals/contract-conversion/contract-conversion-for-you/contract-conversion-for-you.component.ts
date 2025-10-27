@@ -198,6 +198,9 @@ appover_comments = {} as any;
       next: (respone: any) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Request has been approved successfully');
+        window.location.reload();setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       error: (reason: any) => {
         this.isLoading = false;
@@ -230,6 +233,9 @@ appover_comments = {} as any;
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Request rejected successfully');
         this.signalService.contractForyouTriggerSignal.set(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       error: (reason: any) => {
         this.isLoading = false
@@ -253,7 +259,10 @@ appover_comments = {} as any;
     };
     this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request processed successfully')
+        this.conformationPopup.openSuccessModal('Request processed successfully');
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message)

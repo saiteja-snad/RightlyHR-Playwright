@@ -125,8 +125,21 @@
 
         <!--Timesheet Approval Authority-->
         <div class="col-md-6 mb-3">
-          <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
-            <span class="text-danger">*</span></label>
+          <div class="d-flex gap-2">
+            <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
+            </label>
+            <div>
+        
+              <div>
+                 <a type="button" [ngbPopover]="description">
+                  <app-info-icon />
+                  </a>
+              </div>
+              <ng-template #description>
+                <p class="mb-0">{{ 'This field will be enabled after allocating resources to this project'}}</p>
+              </ng-template>
+            </div>
+          </div>
           <div class="custom-p-select-content">
             <p-select [options]="authorityList" formControlName="approvalidAuthority" [filter]="true" [resetFilterOnHide]="true"
               filterBy="name" optionLabel="name" optionValue="value" placeholder="Please select timesheet approval authority"
@@ -162,7 +175,7 @@
       <!-- Form Buttons -->
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">Cancel</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="addprojectform.invalid || loading">
+        <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid || loading">
           @if (loading) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           <span>{{'Loading' | translate}}...</span>

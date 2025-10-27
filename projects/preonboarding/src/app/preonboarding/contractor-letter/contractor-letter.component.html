@@ -66,7 +66,7 @@
 
                                     <p class="mb-3">We are pleased to offer you contract employment in SNAD Developers
                                         India Pvt
-                                        Ltd. as a <b>{{prosempdata?.jobRole}}</b> on a remuneration of <b>{{this.offerLetterData.currencyType}}
+                                        Ltd. as a <b>{{prosempdata?.jobRole}}</b> on a remuneration of <b>{{ selectedSymbol }} {{this.offerLetterData.currencyType}}
                                             {{prosempdata.salary ?? 0}}<span *ngIf="offerLetterData?.currencyType === 'INR'"> /-</span> per {{prosempdata.frequency}}</b>.
                                         You will have to submit weekly/monthly Time sheet approved by the reporting
                                         manager.
@@ -75,7 +75,7 @@
                                     </p>
 
                                      <p class="mb-2">Please note the following details regarding your consultancy engagement </p>
-                                    <div class="dynamicdata" [innerHTML]="offerLetterData.rolesAndResponsibilitesData">
+                                    <div class="dynamicdata" [innerHTML]="safeRolesAndResponsibilities">
                                     </div>
                                     <p>SNAD Developers India Pvt Ltd is in the business of product development and
                                 deployment and also providing technology and business consultants to various

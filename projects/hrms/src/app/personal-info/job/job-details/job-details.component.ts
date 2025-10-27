@@ -212,7 +212,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   initializeFormContractConversion(): void {
     this.contractConversionForm = this.fb.group({
       contractstartdate: [new Date().toISOString().substring(0, 10), Validators.required],
-      contractenddate: [null, Validators.required],
+      contractenddate: [null],
       extendReason: [null, [Validators.required, Validators.maxLength(400)]]
     });
     

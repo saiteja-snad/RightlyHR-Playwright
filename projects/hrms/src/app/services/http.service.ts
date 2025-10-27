@@ -152,6 +152,12 @@ export class HttpService {
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
+  // OnBehalfOf WFH
+  onBehlafOfWFHSignal = signal<boolean>(false);
+  onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
+
+
+
   // function for employeid TIMEOFF
   private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
 
@@ -654,6 +660,10 @@ export class HttpService {
 
   getFilterWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
+  }
+  
+  getFilterOnBehalfWFHDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {

@@ -57,6 +57,15 @@
             Last Working Day is required.
           </div>
         </div>
+
+        <div class="col-lg-4 col-md-6 mb-3">
+          <label for="contractorLastWorkingDay" class="form-label custom-label mb-2">Contractor Last Working Day</label>
+          <input type="date" class="form-control custom-input" id="contractorLastWorkingDay" formControlName="contractorLastWorkingDay" />
+          <div class="error-msg"
+            *ngIf="offboardingForm.get('contractorLastWorkingDay')?.invalid && offboardingForm.get('contractorLastWorkingDay')?.touched">
+            Contract Last Working Day is required.
+          </div>
+        </div>
       </div>
     </form>
   </div>

@@ -16,7 +16,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private modalService: NgbModal,
-    @Inject(OAuthService) private oauthService: OAuthService,
+    private oauthService: OAuthService,
   ) { }
 
   ApiUrl = environment.ApiUrl;
@@ -97,7 +97,7 @@ export class AuthService {
         prompt: 'select_account'  // 🔑 Force Microsoft to always show the account picker
       }
     });
-    return this.oauthService.loadDiscoveryDocumentAndLogin().then((loggedIn) => {
+    return this.oauthService.loadDiscoveryDocumentAndLogin().then((loggedIn: any) => {
       if (loggedIn) {
         const accessToken = this.oauthService.getAccessToken();
         const idToken = this.oauthService.getIdToken();
@@ -215,13 +215,13 @@ export class AuthService {
     }
 
     this.postData(`v2/Auth/logout`, payload).subscribe({
-      next: (res) => {
+      next: (res : any) => {
         this.modalService.dismissAll();
         sessionStorage.clear();
         localStorage.clear();
         this.router.navigate(['/login']);
       },
-      error: (err) => {
+      error: (err :any) => {
         localStorage.clear();
         sessionStorage.clear();
         this.router.navigate(['/login']);

@@ -117,7 +117,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{'Cancel'|translate}}</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{'Cancel'|translate}}</button>
                 <button type="submit" [disabled]="employeeForm.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
             </div>
         </form>
@@ -132,7 +132,7 @@
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">Yes</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
     </div>
   </div>
 </ng-template>

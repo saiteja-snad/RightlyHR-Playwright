@@ -7,7 +7,6 @@ import {
   EXPENSE_TABS,
   IT_SUPPORT_TEAM_TICKETS_TABS,
   COMP_OFF_SUB_TABS,
-
   ON_BEHALF_OF_TABS,
   PERMISSIONS_SUB_TABS,
   REGULARIZATION_SUB_TABS,
@@ -61,6 +60,9 @@ import {
   CONTRACT_CONVERSION_REQUEST_SUB_TABS,
   CONTRACT_REQUEST_SUB_TABS,
   FLEXIBLE_WFH_ALLOCATION_TABS,
+  SETTINGS_AttendanceLock_TABS,
+  ON_BEHALF_OF_WFH_TABS,
+  ON_BEHALF_OF
 } from '../permission-route.constants';
 
 @Injectable({
@@ -264,6 +266,9 @@ export class AccessNavigationService {
             }
           }
         }
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
+          return '/settings/attendance-configuration';
+        }
         break;
 
       case '/policies':
@@ -410,15 +415,7 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
-          for (const item of ON_BEHALF_OF_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
-        }
-
-
+       
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -426,7 +423,7 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
           return (route = 'time-off/global-permissions');
         }
-
+        
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
             if (
@@ -602,6 +599,34 @@ export class AccessNavigationService {
 
         }
 
+        break;
+
+      case '/on-behalf-of':
+         if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
+          for (const item of ON_BEHALF_OF_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('On Behalf Of.view')) {
+          for (const item of ON_BEHALF_OF) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
+        
+      case '/on-behalf-of/on-behalf-of-wfh':
+        if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
+          for (const item of ON_BEHALF_OF_WFH_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
 
       case '/it-support':
@@ -1033,6 +1058,27 @@ export class AccessNavigationService {
       //     }
       //   }
       //   break;
+      //Attendance locking
+      case '/settings/attendance-configuration':
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view' )) {
+
+          for (const item of SETTINGS_AttendanceLock_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case '/settings/attendance-configuration/pending-for-submission':
+        if (this.rbac.allowedToAccess('Attendance Pending Tab.view')) {
+          return (route = '/settings/attendance-configuration/pending-for-submission');
+        }
+        break;
+      case '/settings/attendance-configuration/published':
+        if (this.rbac.allowedToAccess('Attendance Published Tab	.view')) {
+          return (route = '/settings/attendance-configuration/published');
+        }
+        break;
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {
           return '/settings/assets-configuration/vendor-detiles';
@@ -1299,7 +1345,18 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/time-off/on-behalf-of':
+    
+      case '/on-behalf-of':
+        if (this.rbac.allowedToAccess('On Behalf Of.view')) {
+          for (const item of ON_BEHALF_OF) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/on-behalf-of/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
           for (const item of ON_BEHALF_OF_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1307,7 +1364,18 @@ export class AccessNavigationService {
             }
           }
         }
+      break;
+
+      case '/on-behalf-of/on-behalf-of-wfh':
+        if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
+          for (const item of ON_BEHALF_OF_WFH_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
         break;
+
       case 'attendance':
         if (this.rbac.allowedToAccess('Attendance.view')) {
           return (route = '/attendance');

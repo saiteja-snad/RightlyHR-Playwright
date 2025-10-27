@@ -52,7 +52,7 @@
             </td>
             <td>{{ item.status ? item.status : 'NA' }}</td>
             <td class="text-center" [ngClass]="{ 'disabled-button': isEditing }">
-              @if(first && (( item.status ==='Rejected' || item.status ==='Processed') && (this.empdata.substatus === 'NDA Letter Accepted' || this.empdata.substatus === 'Contract Extended') &&
+              <!-- @if(first && (( item.status ==='Rejected' || item.status ==='Processed') && (this.empdata.substatus === 'NDA Letter Accepted' || this.empdata.substatus === 'Contract Extended') &&
               this.empdata.empstatus === 'Active Contract') && disablebuttonforonboard3){
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
@@ -66,7 +66,7 @@
                   </li>
                 </ul>
               </div>
-              }
+              } -->
               @if(first && (item.status==='Processed' && this.empdata.substatus === 'Contract Converted' &&
               this.empdata.empstatus === 'Active Contract')){
               <div class="dropdown">

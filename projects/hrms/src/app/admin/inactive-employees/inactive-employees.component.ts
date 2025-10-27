@@ -28,13 +28,13 @@ export class InactiveEmployeesComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private http: HttpService, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
-    this.empdata();
+    this.empdata('Inactive');
   }
 
   //function for inactive employees
-  empdata() {
+  empdata(status:any) {
     this.loader = true;
-    this.subscription = this.http.getData(`Employeedata/InactiveEmployees`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
       next: (data: any) => {
         this.InActive = data as Iinactive[];
         this.loader = false;

@@ -24,5 +24,6 @@ export interface IdayLogs {
 export interface Itags {
     name: string;
     order: any;
-    colour: any;
+    colour: string;
+    additionalInfo?: any;
 }

@@ -4,8 +4,7 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter industry type"
-                    formControlName="industryType" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
-                    formValidations.blockNonAlphabets($event)"  maxlength="51">
+                    formControlName="industryType" aria-label="stat" (keydown)="formValidations.restrictInitialSpace($event)"  maxlength="51">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addForm.invalid">{{'Add'|translate}}</button>
                 </span>
@@ -88,8 +87,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Industry Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="industryType"
-                        placeholder="Please enter industry" (keydown)="formValidations.restrictInput($event); 
-                        formValidations.blockNonAlphabets($event)" maxlength="51">
+                        placeholder="Please enter industry" (keydown)="formValidations.restrictInitialSpace($event)" maxlength="51">
                     <div class="error-msg">
                         <div *ngIf="updateForm.get('industryType')?.touched && updateForm.get('industryType')?.invalid">
                             <div *ngIf="updateForm.get('industryType')?.errors?.['required']">

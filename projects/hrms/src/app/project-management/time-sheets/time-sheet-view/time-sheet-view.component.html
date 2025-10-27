@@ -387,7 +387,7 @@
             </div>
 
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a  (click)="modal.dismiss()" (mousedown)="$event.preventDefault()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 

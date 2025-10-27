@@ -201,7 +201,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       duration: durationControl,
       description: [{ value: isNotEntered ? null : day?.description || null, disabled: !shouldEnable }],
       approvalStatus: [{ value: day?.approvalStatus || null, disabled: !shouldEnable }],
-      isBillable: [{ value: day?.isBillable || false , disabled: !billablecheck }],
+      isBillable: [{ value: day?.isBillable || false, disabled: !billablecheck }],
       isLeave: [{ value: day?.isLeave || false, disabled: true }],
       isBlocked: [{ value: day?.isBlocked || false, disabled: true }],
       rejectReason: [day?.rejectReason || ''],
@@ -241,43 +241,43 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
   private loadTimeSheetByResource(formattedStart: string): void {
-  if (this.employeeSelected && this.selectedResource) {
+    if (this.employeeSelected && this.selectedResource) {
 
-    let employeeIdToSend = this.empdata?.employeeId; // default logged-in user ID
-    let targetEmployeeId: number | undefined = undefined;
-    let isReportee: boolean | undefined = undefined;
+      let employeeIdToSend = this.empdata?.employeeId; // default logged-in user ID
+      let targetEmployeeId: number | undefined = undefined;
+      let isReportee: boolean | undefined = undefined;
 
-    switch (this.selectedResource.key) {
-      case 'team':
-        // Logged-in user is the employee; selected is the reportee
-        employeeIdToSend = this.empdata?.employeeId;
-        targetEmployeeId = this.selectedResource.id;
-        isReportee = this.selectedResource.isReportee;
-        break;
+      switch (this.selectedResource.key) {
+        case 'team':
+          // Logged-in user is the employee; selected is the reportee
+          employeeIdToSend = this.empdata?.employeeId;
+          targetEmployeeId = this.selectedResource.id;
+          isReportee = this.selectedResource.isReportee;
+          break;
 
-      case 'all employees':
-        // Selected employee is the one whose timesheet we fetch
-        employeeIdToSend = this.selectedResource.id;
-        targetEmployeeId = this.selectedResource.id;
-        isReportee = this.selectedResource.isReportee;
-        break;
+        case 'all employees':
+          // Selected employee is the one whose timesheet we fetch
+          employeeIdToSend = this.selectedResource.id;
+          targetEmployeeId = this.selectedResource.id;
+          isReportee = this.selectedResource.isReportee;
+          break;
 
-      default:
-        break;
+        default:
+          break;
+      }
+
+      this.getTimeSheetEntriesbyEmployeeId(
+        employeeIdToSend,
+        formattedStart,
+        targetEmployeeId,
+        isReportee
+      );
+
+    } else {
+      // Fallback: load logged-in user’s data
+      this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
     }
-
-    this.getTimeSheetEntriesbyEmployeeId(
-      employeeIdToSend,
-      formattedStart,
-      targetEmployeeId,
-      isReportee
-    );
-
-  } else {
-    // Fallback: load logged-in user’s data
-    this.getTimeSheetEntriesbyEmployeeId(this.employeeId, formattedStart);
   }
-}
 
 
   // --- Add new project row ---
@@ -375,7 +375,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   getAllEmployeeDetails() {
     const EmployeeId = this.empdata?.employeeId;
-    const satus = ['Active', 'Trainee Active','Active Contract'];
+    const satus = ['Active', 'Trainee Active', 'Active Contract'];
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
       next: (res: any) => {
         this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
@@ -385,7 +385,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
   }
- 
+
   // function to get the data of employees by hierarchy
   getEmployeeInfo = [] as any;
   getTeamManagersDetails() {
@@ -408,7 +408,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
     if (!project || !project.days) return [];
-    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' &&
+    return project.days.filter((day: any) => day.approvalStatus?.toLowerCase() === 'draft' && day.approvalStatus?.toLowerCase() === 'not entered' &&
       !!day.entryId).map((day: any) => day.entryId);
   }
 
@@ -971,17 +971,17 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isLeave: existingDayData?.isLeave || false
     };
   }
-onDropdownClick(event: MouseEvent) {
-  if (!this.employeeSelected) {
-    event.stopPropagation(); // stop event bubbling
-    event.preventDefault();  // stop Bootstrap dropdown from opening
+  onDropdownClick(event: MouseEvent) {
+    if (!this.employeeSelected) {
+      event.stopPropagation(); // stop event bubbling
+      event.preventDefault();  // stop Bootstrap dropdown from opening
+    }
   }
-}
 
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
     console.log("ahsd");
-    
+
     this.selectedProjectResource = null
     const form = row as FormGroup;
     // Patch project details
@@ -997,6 +997,8 @@ onDropdownClick(event: MouseEvent) {
         projectName: project.projectName,
       },
     });
+
+
     const selectedResource = this.resourcesArrayList.find(
       (res: any) => res.project?.projectId === project.projectId &&
         res.client?.clientId === client.clientId
@@ -1005,6 +1007,36 @@ onDropdownClick(event: MouseEvent) {
     if (selectedResource) {
       this.selectedProjectResource = selectedResource;
     }
+    this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+    const billableCheck = selectedResource?.billable || false;
+    // Base payload
+    const payload: any = {
+      employeeId: this.empdata?.employeeId,
+      weekStartDate: this.formattedweakendStart,
+      isBillable: billableCheck
+    };
+
+    // ✅ Add projectId only if not 0
+    if (project?.projectId && project.projectId !== 0) {
+      payload.projectId = project.projectId;
+    }
+
+    // ✅ Add clientId only if not 0
+    if (client?.clientId && client.clientId !== 0) {
+      payload.clientId = client.clientId;
+    }
+
+    // ✅ Now call API
+    this.http.postdata('Timesheet/select-project', payload).subscribe({
+      next: (res) => {
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        console.log('Project state saved successfully');
+      },
+      error: (err) => console.error('Error saving project state:', err)
+    });
+
+
+
 
     this.selectedclientid = client.clientId;
     this.selectedprojectid = project.projectId;
@@ -1013,7 +1045,7 @@ onDropdownClick(event: MouseEvent) {
     this.selectedShiftDetails = client.shift;
 
     // Update billable controls for all days
-    const billableCheck = selectedResource?.billable || false;
+
 
     // Days array
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -1115,20 +1147,20 @@ onDropdownClick(event: MouseEvent) {
       this.dayForm = dayForm; // keep reference
 
       const selectedResource = this.resourcesArrayList.find(
-          (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
-            res.client?.clientId === this.dayForm.get('clientId')?.value
-        );
+        (res: any) => res.project?.projectId === this.dayForm.get('projectId')?.value &&
+          res.client?.clientId === this.dayForm.get('clientId')?.value
+      );
 
-      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected  ) {
+      if ((this.dayForm.get('approvalStatus')?.value === 'Processed' || this.dayForm.get('approvalStatus')?.value === 'Waiting for Approval') || this.employeeSelected) {
         this.dayForm.disable();
-        
+
       } else {
         const billablecheck = !!(selectedResource?.billable || this.selectedProjectResource?.billable);
         this.dayForm.enable();
         if (!billablecheck) {
           this.dayForm.get('isBillable')?.disable();
         }
-        
+
       }
 
       const approvalStatus = this.dayForm.get('approvalStatus')?.value;
@@ -1436,26 +1468,35 @@ onDropdownClick(event: MouseEvent) {
   }
 
   //hide delet button
-  canDelete(project?: AbstractControl, index?: number): boolean {
-    if (!project) return false;
-    const projectId = project.get('projectId')?.value;
-    const projectName = project.get('projectName')?.value;
-    if (index === 0 && !projectId && !projectName) {
-      return false;
-    }
-    const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    return days.every((dayKey) => {
-      const dayControl = project.get(dayKey) as FormGroup;
-      if (!dayControl) return true; // no day, consider deletable
-      const approvalStatus = dayControl.get('approvalStatus')?.value;
-      return (
-        !approvalStatus ||
-        approvalStatus === 'draft' ||
-        approvalStatus === 'Not Entered' ||
-        approvalStatus === null
-      );
-    });
+ canDelete(project?: AbstractControl, index?: number): boolean {
+  if (!project) return false;
+
+  const projectId = project.get('projectId')?.value ?? null;
+  const projectName = project.get('projectName')?.value ?? '';
+  const isNoClientProject = project.get('isNoClientProject')?.value ?? false;
+  console.log(isNoClientProject);
+  
+  // ❗ Block delete for "No Client / No Project" rows
+  if (isNoClientProject === true || (!projectId && !projectName)) {
+    return false;
   }
+
+  // ✅ Existing approval status validation
+  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  return days.every((dayKey) => {
+    const dayControl = project.get(dayKey) as FormGroup;
+    if (!dayControl) return true;
+
+    const approvalStatus = dayControl.get('approvalStatus')?.value;
+    return (
+      !approvalStatus ||
+      approvalStatus === 'draft' ||
+      approvalStatus === 'Not Entered' ||
+      approvalStatus === null
+    );
+  });
+}
+
 
   //disable button for sumbit for approval
   isSubmitDisabled(): boolean {

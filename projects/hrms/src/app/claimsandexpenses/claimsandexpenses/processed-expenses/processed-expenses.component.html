@@ -160,8 +160,8 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <div class="card p-3">
-        <div *ngFor="let comment of commentsrecivced">
+      <div >
+        <div *ngFor="let comment of commentsrecivced" class="card p-3 mb-3">
           <div class="mb-0">
             <p><b>Processed by:</b> {{ comment.addedName }} </p>
             <p><b>Processed by ID:</b> {{ comment.addedByFusionEmpId }} </p>

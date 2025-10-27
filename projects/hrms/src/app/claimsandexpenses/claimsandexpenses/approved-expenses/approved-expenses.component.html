@@ -156,8 +156,8 @@
     </div>
     
     <div class="custom-main-popup-content">
-      <div class="card p-3">
-        <div *ngFor="let comment of commentsrecivced">
+      <div >
+        <div *ngFor="let comment of commentsrecivced" class="card p-3 mb-3">
           <div class="mb-0">
             <p><b>Commented by:</b> {{ comment.addedName }} </p>
             <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
@@ -170,6 +170,7 @@
     </div>
   </div>
 </ng-template>
+
  <ng-template #openpopupForDownload let-modal>
         <div class="popup-container" ngbAutofocus>
             <div class="modal-header">

@@ -19,9 +19,11 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
 import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
+import { Select } from 'primeng/select';
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
+  imports: [CommonModule, DateformatPipe,Select, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent, DownloadExpenseComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe],
@@ -44,6 +46,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   minDate!: string;
   maxDate!: string;
   emails = [];
+   loggedinuser = {} as any;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   expenseheaderiteams: INewExpense[] = [];
   updataid!: number;
@@ -60,19 +63,25 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   loader=false
     selectemp: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
-  expense = new BehaviorSubject<IExpenses[]>([]);
+ expense: IExpenses[] = [];
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
-   private SelectedyeartimeOffService: TimeoffYearFilterService, public formValidation: FormValidationService, public rbac: RbacService) { }
+   private SelectedyeartimeOffService: TimeoffYearFilterService, public formValidation: FormValidationService, public rbac: RbacService,  public authService: AuthService) { }
 
   ngOnInit(): void {
+     this.loggedinuser = this.authService.getToken();
+     console.log("Logged in user:", this.loggedinuser);
+     
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    console.log(this.empinfo);
+    
     this.initiateForm();
     this.getEmployeeId();
     this.getdatabyentriy(); 
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
+    
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
@@ -84,7 +93,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
           }
         });
       }
-    }); this.getexpensesheaderbyemployeeid();
+    }); 
     this.getExpensestypestopatch();
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
@@ -134,7 +143,7 @@ export class DraftsExpensesComponent implements OnInit,OnDestroy {
   getExpensestypestopatch() {
     this.subscription = this.http.getData("Expense").subscribe({
       next: (data: any) => {
-        this.expense.next(data);
+           this.expense = data;
       }
     })
   }
@@ -331,7 +340,7 @@ fileuploadhide :any;
           this.newExpenseForm.reset();
           this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-          this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
+          this.conformationPopup.openSuccessModal('Your expense request has been submitted');
           this.getexpensesheaderbyemployeeid();
         },
         error: (error: any) => {
@@ -348,7 +357,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll()
           this.http.setnewcountDetails();
-          this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
+          this.conformationPopup.openSuccessModal('Your expense request has been submitted');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
@@ -443,7 +452,7 @@ fileuploadhide :any;
   }
 
   openModal(content: any) {
-    this.filehidedonload= true;
+
 
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
@@ -510,7 +519,7 @@ fileuploadhide :any;
 
   populateForm(data: any): void {
     // Ensure that the expenses array is populated
-    const expensesArray = this.expense.getValue()
+    const expensesArray = this.expense;
     const expenseIdToFind = data.expenseitem[0].expenseId;
     this.matchingExpense = expensesArray.find(exp => exp.expenseId === expenseIdToFind);
     this.newExpenseForm.patchValue({

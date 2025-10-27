@@ -77,7 +77,7 @@
     <div class="custom-main-popup-content">
       <div class="d-flex gap-3 mb-3">
         <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
-        <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
+        <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
       </div>
       <div class="custom-table">
         <table class="w-100">
@@ -156,8 +156,8 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <div class="card p-3">
-        <div *ngFor="let comment of commentsrecivced">
+      <div >
+        <div *ngFor="let comment of commentsrecivced" class="card p-3 mb-3">
           <div>
             <p><b>Commented by:</b> {{ comment.addedName }} </p>
             <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>

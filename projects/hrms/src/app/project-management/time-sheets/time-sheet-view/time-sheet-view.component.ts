@@ -1132,6 +1132,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     return projects.filter((p) => !selectedProjectIds.includes(p.projectId)).length;
   }
 
+  hasAnyDuration(project: AbstractControl): boolean {
+    const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    return days.some(day => project.get(day)?.get('duration')?.value && project.get(day)?.get('approvalStatus')?.value.toLowerCase() !== 'not entered');
+  }
+
   // Get all selected project IDs across all rows
   get selectedProjectIds(): any[] {
     return this.projects.controls

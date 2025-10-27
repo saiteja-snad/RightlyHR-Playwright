@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IExpense, IExpenses, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
@@ -65,7 +65,7 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   expense: IExpenses[] = [];
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
-    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
+    private http: HttpService, private cdRef: ChangeDetectorRef, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
     private SelectedyeartimeOffService: TimeoffYearFilterService, public formValidation: FormValidationService, public rbac: RbacService, public authService: AuthService) { }
 
   ngOnInit(): void {
@@ -233,15 +233,25 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
     });
   }
   fileuploadhide: any;
+      markFileTouched(index: number): void {
+    const control = this.expenseItems.at(index)?.get('attachment_url');
+    if (!control?.value) {
+      control?.markAsTouched();
+      control?.setErrors({ required: true });
+      control?.updateValueAndValidity();
+    }
+  }
+  
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
     //if (!file) return;
+      const control = this.expenseItems.at(index)?.get('attachment_url');
     if (!file) {
-      this.fileuploadhide = true;
-      //    const control = this.expenseItems.at(index)?.get('attachment_url');
-      // control?.setValue(null);
-      // control?.markAsTouched();
-      //control?.updateValueAndValidity();
+   control?.reset();
+      control?.setErrors({ required: true });
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+      this.cdRef.detectChanges();
     }
     const allowedTypes = [
       'image/jpeg',
@@ -285,6 +295,8 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+
 
   onchangeexpnes() {
     // this.selectedexpensesid = this.newExpenseForm.controls['expense'].value

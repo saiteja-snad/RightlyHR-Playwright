@@ -161,6 +161,7 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Client Document Type';
     }
+  
     else if (url.startsWith('/settings/project-management-config/project-document-type')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Document Type';
@@ -169,6 +170,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Letter Configurations';
     }
+         else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Frequency Configurations';
+    }
     else if (url.startsWith('/settings/project-management-config/signature-authority')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = 'Project Management Authority';
@@ -176,6 +181,15 @@ export class SettingsHeaderComponent implements OnInit {
     else if (url.startsWith('/settings/project-management-config/letter-frequency')) {
       this.moduleName = 'Project Management Configurations';
       this.componentName = ' Letter Configurations Frequency';
+    }
+
+    else if (url.startsWith('/settings/attendance-configuration/pending-for-submission')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Pending For Submission';
+    }
+    else if (url.startsWith('/settings/attendance-configuration/published')) {
+      this.moduleName = 'Attendance Configuration';
+      this.componentName = 'Published';
     }
   }
 

@@ -461,6 +461,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
   settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
+  
+    settingsAttendanceLockingTab = [
+    'Pending Attendance Locking',
+    'Published Attendance Locking'
+  ]
   timeoffSettingsFields = [
     'Leave Category Tab',
     'Leave Allocation Tab',
@@ -493,6 +498,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Inactive Forms',
     'Draft Forms',
     'Form Settings',
+  ];
+   AttendanceTypeFields = [
+    'Attendance Pending Tab',
+    'Attendance Published Tab'
   ];
   sidebarTabsFields = [
     'Dashboard',
@@ -1176,6 +1185,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
 selectAllLettersTabs=[
   'NDA Document','MSA Document'
+]
+
+selectAllOnBehalfOf = [
+  'On Behalf Of', 'On Behalf Of WFH'
+]
+
+selectAllOnBehalfOfWFH = [
+  'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
+  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'Request On Behalf Of WFH Button'
 ]
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1950,6 +1968,26 @@ selectAllLettersTabs=[
     }
     if (action === 'Create' || action === 'Delete') {
       return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  isOnBehalfOfTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isOnBehalfOfWFHTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
     }
     return false;
   }

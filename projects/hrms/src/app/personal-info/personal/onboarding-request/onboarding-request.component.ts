@@ -18,6 +18,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { DocumentData } from '../../../Interfaces/document.model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
@@ -44,7 +45,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   // For modal view
   @ViewChild('viewmodel') viewmodel!: NgbModal;
 
-  constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
+  constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router, public formvalidation: FormValidationsService,
     private conformationPopup: OpenModalService, private modalService: NgbModal, public rbac: RbacService) { this.intitalizeForm(); }
 
   ngOnInit(): void {
@@ -74,10 +75,10 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   intitalizeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
     this.reRequestForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
+      comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
   }
 

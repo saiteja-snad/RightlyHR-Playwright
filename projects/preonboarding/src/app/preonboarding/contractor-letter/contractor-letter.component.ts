@@ -18,6 +18,7 @@ import { Iofferletter, IJobDetails } from '../../models/offer-letter.model';
 import { IAddress } from '../../models/personal-details.model';
 import { DetailedStepProgressbarComponent } from '../../shared/detailed-step-progressbar/detailed-step-progressbar.component';
 import { DateFormatPipe } from "../../Pipes/date-format.pipe";
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-contractor-letter',
@@ -26,7 +27,7 @@ import { DateFormatPipe } from "../../Pipes/date-format.pipe";
   styleUrl: './contractor-letter.component.scss'
 })
 export class ContractorLetterComponent {
-    subscription!: Subscription;
+  subscription!: Subscription;
   doxImageUrl!: any;
   prosempdata = {} as any;
   offeraccepteddata = {} as any;
@@ -48,8 +49,10 @@ export class ContractorLetterComponent {
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
   updateempdata = {} as any;
-  currentDate=moment();
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService) { }
+  currentDate = moment();
+  selectedSymbol: string = '';
+
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     const storedstep = 3;
@@ -85,7 +88,7 @@ export class ContractorLetterComponent {
 
   initializeRejectForm() {
     this.rejectForm = this.fb.group({
-      rejectReason: ['', [Validators.required,Validators.pattern(/^(?!\s).*$/)]],
+      rejectReason: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
     });
   }
 
@@ -111,6 +114,11 @@ export class ContractorLetterComponent {
   //function to navigate to the previous page
   navigatePrevious() {
     this.router.navigate(['/document']);
+  }
+
+  get safeRolesAndResponsibilities(): SafeHtml {
+    const html = this.offerLetterData.rolesAndResponsibilitesData || '';
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
   //function to get address details 
@@ -151,7 +159,13 @@ export class ContractorLetterComponent {
         this.offerLetterData.currencyType = this.getofferdata.currencyType
         this.offerLetterData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.offerLetterData.note = this.getofferdata.note
-         this.offerLetterData.address=this.getofferdata.address;
+        this.offerLetterData.address = this.getofferdata.address;
+        if (this.getofferdata.currencyType === 'INR') {
+          this.selectedSymbol = '₹'
+        }
+        if (this.getofferdata.currencyType === 'USD') {
+          this.selectedSymbol = '$'
+        }
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }
@@ -160,7 +174,8 @@ export class ContractorLetterComponent {
         this.offerLetterData.city = this.address.city
         this.offerLetterData.state = this.address.state
         this.offerLetterData.country = this.address.country
-        this.offerLetterData.zipCode = this.address.zipCode
+        this.offerLetterData.zipCode = this.address.zipCode;
+        this.offerLetterData.rolesAndResponsibilitesData = this.getofferdata.rolesAndResponsibilitesData;
         let signatureAuthorityDetails = this.authorityDetails.find(
           (c: any) => (c.employeeId == this.getofferdata.authoritySignature)
         );
@@ -175,26 +190,23 @@ export class ContractorLetterComponent {
           this.offerLetterData.authorityName = ''
           this.authorityDesignation = ''
         }
-        if(this.getofferdata.rolesAndResponsibilitesId){
+        if (this.getofferdata.rolesAndResponsibilitesId) {
           this.getRolesandResponsibilities()
         }
       },
       error: (err: any) => {
         console.log(err);
-        if (err.status = 401) {
-          this.http.logOut();
-        }
       }
     })
   }
   //function to get the roles and responsiblites by id
-getRolesandResponsibilities(){
-  this.subscription = this.http.getData(`PreonboardingOfferLetter/getRolesAndResponsibilitiesById?Id=${this.getofferdata.rolesAndResponsibilitesId}`).subscribe({
+  getRolesandResponsibilities() {
+    this.subscription = this.http.getData(`PreonboardingOfferLetter/getRolesAndResponsibilitiesById?Id=${this.getofferdata.rolesAndResponsibilitesId}`).subscribe({
       next: (data: any) => {
         if (data) {
-          this.offerLetterData.rolesAndResponsibilitesData=data.rolesAndResponsibilitesData;
-          
-        } 
+          this.offerLetterData.rolesAndResponsibilitesData = data.rolesAndResponsibilitesData;
+
+        }
       },
       error: (reason: any) => {
         console.log(reason);
@@ -237,9 +249,9 @@ getRolesandResponsibilities(){
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
         this.confiramtionpopups.openSuccess('Offer letter rejected successfully');
-        
-       
-        
+
+
+
       },
       error: (err: any) => {
         console.log(err);
@@ -253,7 +265,7 @@ getRolesandResponsibilities(){
         let res = data[0];
         this.employeeCompensationDetails = res;
         Employee.salary = res.compensationamount;
-        Employee.frequency=res.frequency;
+        Employee.frequency = res.frequency;
         Employee.variablePayAmount = res.variablePayAmount;
         //CTC calculation stated
         Employee.grossby = 12
@@ -424,7 +436,7 @@ getRolesandResponsibilities(){
         if (respone) {
           this.updatedOfferLetterDetails = respone as Iofferletter;
           console.log(this.updatedOfferLetterDetails);
-          
+
         }
       },
       error: (reason: any) => {
@@ -445,7 +457,7 @@ getRolesandResponsibilities(){
         Employee.workLocation = res.lopcation;
         Employee.subLocation = res.subLocation;
         this.getaddress(this.jobDeatils.
-          locationId,this.jobDeatils.subLocationId);
+          locationId, this.jobDeatils.subLocationId);
       }
     })
   }
@@ -580,7 +592,7 @@ getRolesandResponsibilities(){
       }
     })
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

@@ -441,12 +441,19 @@ export class OnboardingDetailsComponent implements OnInit, OnDestroy{
       .getData(`ContractDetails/getbyemployeeId/${Empid}`)
       .subscribe({
         next: (data: any) => {
-        this.contractForm.patchValue({
+        // Filter out records with Active status
+        
+        const filteredData = data.data;
+        
+        if (filteredData.length > 0) {
+          const contract = filteredData[0];
+          this.contractForm.patchValue({
             empType: this.empinfo.empType,
-            dateOfJoining: this.formatDateToLocal(data.data[0].contractStartDate),
-            durationofContracts: data.data[0].contractDuration,
-            contractEndDate: this.formatDateToLocal(data.data[0].contractEndDate),
+            dateOfJoining: this.formatDateToLocal(contract.contractStartDate),
+            durationofContracts: contract.contractDuration,
+            contractEndDate: this.formatDateToLocal(contract.contractEndDate),
           });
+        }
         },
         error: (Reason) => console.log(Reason),
       });

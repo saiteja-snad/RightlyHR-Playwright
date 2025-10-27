@@ -22,7 +22,7 @@ import { Ipersonal } from '../../models/personal-details.model';
 export class ReviewComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   isCheckedoffer: boolean = false;
-  isCheckedndcletter:boolean=false;
+  isCheckedndcletter: boolean = false;
   prosempdata = {} as any;
   eduDetails: any;
   experiance: any;
@@ -32,10 +32,10 @@ export class ReviewComponent implements OnInit, OnDestroy {
   candidatesatus: any;
   candidateDocUrl: any;
   loadingcircle: boolean = false;
-  constructor(private http: HttpService,private router: Router, private modalService: NgbModal, private location: Location) { }
+  constructor(private http: HttpService, private router: Router, private modalService: NgbModal, private location: Location) { }
 
   ngOnInit(): void {
-   const currentstage= localStorage.getItem('currentStep')?? "0";
+    const currentstage = localStorage.getItem('currentStep') ?? "0";
     console.log(currentstage)
     if (parseInt(currentstage) > 6) {
       const storedstep = 8;
@@ -58,7 +58,7 @@ export class ReviewComponent implements OnInit, OnDestroy {
   navigatePrevious() {
     this.router.navigate(['/experience-details']);
   }
- navigatePreviousndcletter() {
+  navigatePreviousndcletter() {
     this.router.navigate(['/nda-contractor-letter']);
   }
   openconformatioModal(content: any) {
@@ -152,64 +152,74 @@ export class ReviewComponent implements OnInit, OnDestroy {
     console.log(`PDF URL: ${this.DocViewURL}`);
   }
 
-  appliccationData: any;
+  applicationData: any[] = [];
   getJobApplicationDetails() {
-    let EmployeeId = this.prosempdata.employeeId;
+    const EmployeeId = this.prosempdata.employeeId;
+
     this.subscription = this.http.getData(`PreonboardingJobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.appliccationData = data;
+        if (Array.isArray(data) && data.length > 0) {
+          const latestRecord = data.reduce((latest, current) => {
+            return current.id > latest.id ? current : latest;
+          });
+
+          this.applicationData = [latestRecord];
+        } else {
+          this.applicationData = [];
+          console.log('No job application details found.');
+        }
       },
       error: (error: any) => {
-        console.log(error);
+        console.error('Error fetching job application details:', error);
       }
     });
   }
 
   submitReviw() {
-    if(this.empDetails.substatus === 'NDA Letter Rejected'){
+    if (this.empDetails.substatus === 'NDA Letter Rejected') {
       const empdata = {
-      "employeeId": this.prosempdata.employeeId,
-      "comments" : "Rejected"
-    };
+        "employeeId": this.prosempdata.employeeId,
+        "comments": "Rejected"
+      };
       this.subscription = this.http.postData('PreonboardingEmail/NdaLetterNotAccepted', empdata).subscribe({
-      next: (data: any) => {
-        this.loadingcircle = true;
-        this.modalService.dismissAll();
-        this.router.navigate(['/application-submited']);
-      }
-    })
+        next: (data: any) => {
+          this.loadingcircle = true;
+          this.modalService.dismissAll();
+          this.router.navigate(['/application-submited']);
+        }
+      })
     }
-    if(this.empDetails.substatus === 'NDA Letter Released'){
+    if (this.empDetails.substatus === 'NDA Letter Released') {
       const empdata = {
-      "employeeId": this.prosempdata.employeeId,
-      "approvedBy" : this.ndaletterDetails.ndaSentBy
-    };
+        "employeeId": this.prosempdata.employeeId,
+        "approvedBy": this.ndaletterDetails.ndaSentBy
+      };
       this.subscription = this.http.postData('PreonboardingEmail/NdaLetterAccepted', empdata).subscribe({
-      next: (data: any) => {
-        this.loadingcircle = true;
-        this.modalService.dismissAll();
-        this.router.navigate(['/application-submited']);
-      }
-    })
+        next: (data: any) => {
+          this.loadingcircle = true;
+          this.modalService.dismissAll();
+          this.router.navigate(['/application-submited']);
+        }
+      })
     }
-    else{
+    else {
       const empdata = {
-      "empId": this.prosempdata.employeeId,
-    };
+        "empId": this.prosempdata.employeeId,
+      };
       this.subscription = this.http.postData('PreonboardingEmail/ReviewFormSubmit', empdata).subscribe({
-      next: (data: any) => {
-        this.loadingcircle = true;
-        this.modalService.dismissAll();
-        this.router.navigate(['/application-submited']);
-      }
-    })
+        next: (data: any) => {
+          this.loadingcircle = true;
+          this.modalService.dismissAll();
+          this.router.navigate(['/application-submited']);
+        }
+      })
     }
   }
 
   submitReviwForNda() {
     const empdata = {
       "empId": this.prosempdata.employeeId,
-      "approvedBy" : this.ndaletterDetails.ndaSentBy
+      "approvedBy": this.ndaletterDetails.ndaSentBy
     };
     this.subscription = this.http.postData('PreonboardingEmail/NdaLetterAccepted', empdata).subscribe({
       next: (data: any) => {
@@ -297,13 +307,13 @@ export class ReviewComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postData(`PreonboardingOfferLetter/UPDATE`, updatedata).subscribe({
       next: (data: any) => {
         this.loadingcircle = true;
-        if(this.prosempdata.substatus === 'NDA Letter Released'){
-            this.submitReviwForNda();
+        if (this.prosempdata.substatus === 'NDA Letter Released') {
+          this.submitReviwForNda();
         }
-        else{
+        else {
           this.submitReviw();
         }
-        
+
       },
       error: (err: any) => {
         console.log(err);

@@ -108,8 +108,17 @@
                             <!--Sub status content-->
                             @if((item?.tags ?? []).length > 0 &&item.status){
                             <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
-                                @for(item of item.tags; track $index){
-                                <div class="card substatus-card">{{item?.name}}</div>
+                                @for(tag of item.tags; track $index){
+                                <div class="card substatus-card"  
+                                [ngStyle]="{ color: tag?.colour ?? '#305889',borderColor: tag?.colour ?? '#305889'}">
+                                     {{tag?.name}}
+                                    @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.exceededBreakDuration){
+                                        ({{tag?.additionalInfo?.exceededBreakDuration}})
+                                    }
+                                     @if(tag?.additionalInfo && tag?.additionalInfo?.showAdditionalInfo && tag?.additionalInfo?.lateLoginDuration){
+                                        ({{tag?.additionalInfo?.lateLoginDuration}})
+                                    }
+                                </div>
                                 }
                             </div>
                             }

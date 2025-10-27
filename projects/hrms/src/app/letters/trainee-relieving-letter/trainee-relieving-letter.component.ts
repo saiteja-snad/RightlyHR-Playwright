@@ -101,7 +101,7 @@ export class TraineeRelievingLetterComponent implements OnInit,OnDestroy {
     getEmployeeId() {
     const status = ['Trainee Inactive'];
     this.subscription = this.http
-      .getData(`Employeedata/Getallemployees?statuses=${status}`)
+      .getData(`Employeedata/v3/Getallemployees?statuses=${status}`)
       .subscribe({
         next: (data: any) => {
           console.log(data);

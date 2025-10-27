@@ -66,17 +66,17 @@
                                             <b>Stipend/Salary and Benefits: </b>
                                                   <ul class="bullet mt-2">
                                             <ng-container *ngIf="stipendApplicablecheck===true">
-                                                <li class="mb-1"><b>Internship Period (First 3 Months):</b>
-                                                    This will be an unpaid internship, and you will
-                                                    not be eligible for any stipend/salary during this period.
-
+                                                 <li class="mb-1"><b> Stipend:</b>As per company policy, you will be entitled to
+                                                    receive a monthly
+                                                    stipend of INR <b>  {{stipendAmountmonthly}} </b> for the duration of your internship.
                                                 </li>
-                                                <li class="mb-1">
-                                                    <b> Stipend (Next 3 Months):</b>
-                                                    Upon successful completion of the first 3 months, you will
-                                                    receive a stipend of <b>INR
-                                                        {{stipendAmountmonthly ?? 00}} per month
-                                                    </b> for the next 3 months.
+                                                  <li class="mb-1"><b>Full-Time Employment:</b>
+                                                    Upon successful completion of your internship and subject to
+                                                    satisfactory performance, you may be considered for full-time
+                                                    employment with SNAD. The terms and conditions of full-time
+                                                    employment, including compensation and benefits, will be
+                                                    communicated at the time of confirmation.
+
                                                 </li>
                                             </ng-container>
                                             <ng-container *ngIf="stipendApplicablecheck===false">
@@ -89,7 +89,7 @@
                                                     <b> Stipend (Next 3 Months):</b>
                                                     Upon successful completion of the first 3 months, you will
                                                     receive a stipend of <b>INR
-                                                        {{stipendAmountmonthly ?? 00}} per month
+                                                        {{stipendAmountmonthly }} per month
                                                     </b> for the next 3 months.
                                                 </li>
                                                 <li class="mb-1">
@@ -97,7 +97,7 @@
                                                     After completion 6 months from the date of joining, based
                                                     on satisfactory performance, you will be appointed as a full-time
                                                     employee of SNAD
-                                                    with a <b> CTC of  per
+                                                    with a <b> CTC of <b>{{traineeEmpData?.salary}}</b>  per
                                                         annum </b>
                                                 </li>
                                             </ng-container>

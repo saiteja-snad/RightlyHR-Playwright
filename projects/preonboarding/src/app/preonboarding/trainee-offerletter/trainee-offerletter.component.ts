@@ -141,6 +141,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         let res = data.reverse()[0];
         this.employeeCompensationDetails = res;
         this.traineeEmpData.salary = Employee.salary = res.compensationamount;
+        console.log(this.traineeEmpData.salary);
+        
       },
       error: (reason: any) => {
         console.log(reason);
@@ -188,7 +190,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
         this.traineeEmpData.note = this.getofferdata.note
-        if (this.employeeaddress.employeeAddresses.length > 0) {
+        if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }
         this.traineeEmpData.addressLine1 = this.address.addressLine1

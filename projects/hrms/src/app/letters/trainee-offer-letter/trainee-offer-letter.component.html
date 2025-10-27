@@ -209,11 +209,12 @@
                     </div>
                 </div>
 
-                <div class="mb-3" *ngIf="employeeForm.get('stipend')?.value?.value===true">
+                <div class="mb-3" >
                     <label class="form-label custom-label mb-2"> {{'Monthly Stipend Salary '|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="monthlyammount"
-                        placeholder="Please enter monthly stipend salary" (keypress)="formValidation.restrictAlphabets($event)" />
+                        placeholder="Please enter monthly stipend salary"
+                        (keypress)="formValidation.restrictAlphabets($event)" />
                     <div
                         *ngIf="employeeForm.get('monthlyammount')?.invalid && employeeForm.get('monthlyammount')?.touched">
                         <div class="error-msg">Monthly Stipend Salary is required</div>
@@ -223,7 +224,9 @@
                 <div class="mb-3" *ngIf="employeeForm.get('stipend')?.value?.value===false">
                     <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)" formControlName="amount"
+                    <input type="text" class="form-control custom-input"
+                        (keypress)="formValidation.restrictAlphabets($event)" formControlName="amount"
+                         (ngModelChange)="onclickCTC($event)"
                         placeholder="Please enter salary" />
                     <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                         <div class="error-msg">Salary is required</div>
@@ -468,18 +471,20 @@
 
                                         <ul class="bullet mt-2">
                                             <ng-container *ngIf="employeeForm.get('stipend')?.value?.value===true">
-                                                <li class="mb-1"><b>Internship Period (First 3 Months):</b>
-                                                    This will be an unpaid internship, and you will
-                                                    not be eligible for any stipend/salary during this period.
+                                                <li class="mb-1"><b> Stipend:</b>As per company policy, you will be entitled to
+                                                    receive a monthly
+                                                    stipend of INR <b>  {{employeeForm.get('monthlyammount')?.value ?? 00}} </b> for the duration of your internship.
+                                                </li>
+
+                                                <li class="mb-1"><b>Full-Time Employment:</b>
+                                                    Upon successful completion of your internship and subject to
+                                                    satisfactory performance, you may be considered for full-time
+                                                    employment with SNAD. The terms and conditions of full-time
+                                                    employment, including compensation and benefits, will be
+                                                    communicated at the time of confirmation.
 
                                                 </li>
-                                                <li class="mb-1">
-                                                    <b> Stipend (Next 3 Months):</b>
-                                                    Upon successful completion of the first 3 months, you will
-                                                    receive a stipend of <b>INR
-                                                        {{employeeForm.get('monthlyammount')?.value ?? 00}} per month
-                                                    </b> for the next 3 months.
-                                                </li>
+                                             
                                             </ng-container>
                                             <ng-container *ngIf="employeeForm.get('stipend')?.value?.value===false">
                                                 <li class="mb-1"><b>Internship Period (First 3 Months):</b>

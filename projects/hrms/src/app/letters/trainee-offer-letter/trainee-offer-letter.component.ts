@@ -130,7 +130,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     { name: 'Yes', value: true },
     { name: 'No', value: false }
   ];
-  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router,public formValidation: FormValidationService,
+  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router, public formValidation: FormValidationService,
     private authService: AuthService, private conformationPopup: OpenModalService,) {
     this.initializeForm();
   }
@@ -154,22 +154,19 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     this.getEmployeeIdforReporting();
 
     this.employeeForm.get('stipend')?.valueChanges.subscribe(selected => {
-      const monthlyControl = this.employeeForm.get('monthlyammount');
       const amountControl = this.employeeForm.get('amount');
 
-      if (selected?.value === true) {
-        // ✅ If TRUE → monthlyammount is required
-        monthlyControl?.setValidators([Validators.required]);
+      if (selected?.value === false) {
+
+        amountControl?.setValidators([Validators.required]);
+
+      } else {
+
         amountControl?.clearValidators();
         amountControl?.setValue(null); // Optional: clear amount
-      } else {
-        // ✅ If FALSE → amount is required
-        amountControl?.setValidators([Validators.required]);
-        monthlyControl?.clearValidators();
-        monthlyControl?.setValue(null); // Optional: clear monthly
       }
 
-      monthlyControl?.updateValueAndValidity();
+
       amountControl?.updateValueAndValidity();
     });
 
@@ -730,11 +727,11 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   //function to updated the data
   updateTraineeOfferLetterFieldsDetails(f: FormGroup) {
     console.log(f.value);
-    
+
     const data = JSON.parse(JSON.stringify(this.traineeEmpData));
     this.loading = true;
-      
-      this.traineeEmpData.jobRole = this.jobRoleDetails;
+
+    this.traineeEmpData.jobRole = this.jobRoleDetails;
     this.traineeEmpData.employeeId = this.traineeEmpData.empId,
       this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
       this.traineeEmpData.firstName = data.firstName,
@@ -887,12 +884,20 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       gradeId: null,
       isdeleted: 'Active',
     };
-    this.subscription = this.http.postdata('Compensationdata', Compensationdata).subscribe({
-      next: (data: any) => {
-        //alert("comp data successfully added")
-      },
-      error: (Reason) => console.log(Reason),
-    });
+
+    if (this.traineeEmpData?.amount && this.employeeForm.get('amount')?.value) {
+      this.subscription = this.http.postdata('Compensationdata', Compensationdata).subscribe({
+        next: (data: any) => {
+          //alert("comp data successfully added")
+        },
+        error: (Reason) => console.log(Reason),
+      });
+    }
+    else {
+      console.log('no ctc');
+
+    }
+
     this.subscription = this.http.postdata('Employementtype', employmentdata).subscribe({
       next: (data: any) => {
         this.disableFieldsForApproval = false;

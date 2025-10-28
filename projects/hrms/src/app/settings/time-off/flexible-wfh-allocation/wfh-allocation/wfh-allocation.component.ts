@@ -211,7 +211,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
                   existing?.effectiveDate
                     ? moment(existing?.effectiveDate)?.format('YYYY-MM-DD')
                     : '',
-                  [Validators.required,this.validateEffectiveDate?.bind(this)],
+                  [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
                 createdBy: [existing?.createdBy?.name || ''],
                 createdOn: [existing?.createdAt || ''],
@@ -388,7 +388,22 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+  //to reset the form
+  cancle() {
+    this.wfhAllocationForm.reset();
+    this.wfhAllocationForm = this.fb.group({
+      employees: this.fb.array([]),
+    });
+    this.wfhAllocationForm.get('subLocation')?.disable();
+    this.wfhAllocationForm.get('location')?.disable();
+    this.wfhAllocationForm.get('shiftName')?.disable();
+    this.wfhAllocationForm.get('categoryName')?.disable();
+    this.wfhAllocationForm.get('shift')?.disable();
+  }
+  //to open the confirmation popup
+  resetForm(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

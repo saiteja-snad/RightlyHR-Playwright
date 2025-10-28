@@ -6,15 +6,15 @@
     <div class="component-data-content">
         <div class="component-header mb-3">Offer Letter</div>
         <div class="card custom-main-sub-content p-4">
-            <div class="letter-data-content p-4">
+            <div class="letter-data-content p-5">
                 <div class="d-flex justify-content-center">
                     <div>
-                        <div class="letter-page-content" id="pdfContent1">
+                        <div class="letter-page-content my-4" id="pdfContent1">
                             <div class="letter-page-sub-content">
                                 <br />
                                
-                                <div class="w-100 mt-5 mb-4">
-                                    <p class="letter-header text-center mb-0">OFFER LETTER</p>
+                                <div class="text-center mt-5 mb-4">
+                                    <p class="letter-header text-center mb-0"><b>OFFER LETTER</b></p>
                                 </div>
                                 <div class="letter-div">
                                     <div class="row">
@@ -131,23 +131,25 @@
                         <div class="letter-page-content my-4" id="pdfContent2">
                             <div class="letter-page-sub-content">
                               
-                                <div class="pt-2">
+                                <div class="pt-4">
                                     <div *ngIf="true">
                                         <!-- <app-letterhead></app-letterhead> -->
                                     </div>
                                     <ng-template #doc>
                                         <div style="margin-bottom: 7rem;"></div>
                                     </ng-template>
-                                    <div class="p-3">
+                                    <div >
                                         <p *ngIf="(traineeEmpData.note)"><b>Note:</b> {{traineeEmpData.note}} </p>
                                         <p>Please confirm your acceptance of this offer by signing and returning a scanned copy of this letter within 1 day to 
-                                            <u><b>hr&#64;SNAD Developers India Pvt Ltd.com</b></u></p>
-                                        <p>We are excited about the possibility of you joining our team and look forward to a productive and successful internship.</p>
+                                            <a href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"
+                                            target="_blank" rel="noopener noreferrer">
+                                            <u>hr&#64;snaddevelopers.com</u></a></p>
+                                        <p class="mb-4">We are excited about the possibility of you joining our team and look forward to a productive and successful internship.</p>
                                         <p> Your Sincerely,</p>
                                         <p><b>For SNAD Developers India Pvt Ltd</b></p>
                                     </div>
 
-                                    <div class="p-3">
+                                    <div >
                                         <p class="m-0 authority-signature">{{traineeEmpData.authorityName}}</p>
                                         <p class="m-0 paragraph boldsize1"> Authorized Signatory, </p>
                                         <p class="m-0 paragraph boldsize1">{{traineeEmpData.authorityName}}</p>
@@ -155,16 +157,16 @@
                                         <br>
                                         <hr>
                                         <br>
-                                        <p>
+                                        <p class="mb-3">
                                             I, <u><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</b></u>, 
                                             acknowledge that I have read and understood the terms of this Internship Offer, and I accept the offer as outlined above.
                                         </p>
                                     </div>
-                                    <div class="p-3">
-                                        <p class=" mb-3 mt-4">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
+                                    <div >
+                                        <p class="mb-2">Signature: <span *ngIf="traineeEmpData.firstName; else signaturename1">
                                            <span class="authority-signature">{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}}</span> </span>
                                             <ng-template #signaturename1>_________________________</ng-template></p>
-                                        <p class="mb-3 mt-4">Date: {{currentDate|dateformat}}</p>
+                                        <p class="mb-2">Date: {{currentDate|dateformat}}</p>
                                     </div>
                                 </div>
                             </div>

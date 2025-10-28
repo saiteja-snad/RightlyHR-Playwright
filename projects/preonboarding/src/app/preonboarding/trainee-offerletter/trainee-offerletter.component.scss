@@ -2,6 +2,30 @@
     font-family: 'Verdana', sans-serif !important;
 }
 
+.letter-data-content {
+    width: 100%;
+
+    .letter-page-content {
+        height: 380mm;
+        width: 270mm;
+        padding-top: 10rem !important;
+        position: relative;
+        background-image: url('/images/snad-new-letter-bg.png') !important;
+        background-size: 103% 102.5%;
+        background-repeat: no-repeat;
+        background-position: center;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        overflow: hidden;
+
+        .letter-page-sub-content {
+            padding: 20px 110px;
+            font-size: var(--fontsize14);
+            color: #000000;
+            text-align: justify
+        }
+    }
+}
+
 .custom-main-sub-content {
     width: 100%;
     height: calc(100dvh - 21rem);
@@ -26,13 +50,16 @@
     margin-right: 8px;
 }
 
-table,th,td {
+table,
+th,
+td {
     border: 1px solid #474747;
     border-collapse: collapse;
     color: #000;
 }
 
-th,td {
+th,
+td {
     padding: 6px 20px;
 }
 
@@ -69,33 +96,11 @@ textarea:focus {
     border: 1px solid #DEE8F3 !important;
 }
 
-.letter-data-content {
-    width: 100%;
 
-    .letter-page-content {
-        height: 380mm;
-        width: 270mm;
-        padding-top: 10rem !important;
-        position: relative;
-        background-image: url('/images/snad-new-letter-bg.png') !important;
-        background-size: 103% 102.5%;
-        background-repeat: no-repeat;
-        background-position: center;
-        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-        overflow: hidden;
-
-        .letter-page-sub-content {
-            padding: 1.25rem 3.75rem;
-            font-size: var(--fontsize14);
-            color: #000000;
-            text-align: justify
-        }
-    }
-}
 
 .bullet {
-  list-style-type: disc;
-  padding-left: 20px;
+    list-style-type: disc;
+    padding-left: 20px;
 }
 
 .authority-signature {

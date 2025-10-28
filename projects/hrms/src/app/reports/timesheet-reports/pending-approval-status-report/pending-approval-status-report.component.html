@@ -6,17 +6,24 @@
     <form autocomplete="off" [formGroup]="PendingApprovalReportForm" (ngSubmit)="generatependingapprovalReport(page,pageSize)" *ngIf="PendingApprovalReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Pending Approval Status Report - Generate.view')){
-        <button type="button" class="clear-all-btn" [disabled]="
-          PendingApprovalReportForm.get('clientId')?.value == null &&
-          PendingApprovalReportForm.get('projectId')?.value == null &&
-          PendingApprovalReportForm.get('employeid')?.value == null &&
-          PendingApprovalReportForm.get('dateRange')?.value == null &&
-          PendingApprovalReportForm.get('status')?.value == null
-        " (click)="clearAllFilters()">
-          @if(isFilterApplied()) {
-          Clear All
-          }
-        </button>
+        <button
+  type="button"
+  class="clear-all-btn"
+  [disabled]="
+    PendingApprovalReportForm.get('clientId')?.value === null ||
+    PendingApprovalReportForm.get('clientId')?.value === undefined &&
+    PendingApprovalReportForm.get('projectId')?.value === null &&
+    PendingApprovalReportForm.get('employeid')?.value === null &&
+    PendingApprovalReportForm.get('dateRange')?.value == null &&
+    PendingApprovalReportForm.get('status')?.value == null
+  "
+  (click)="clearAllFilters()"
+>
+  @if(isFilterApplied()) {
+    Clear All
+  }
+</button>
+
           <!-- Client-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">

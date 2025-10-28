@@ -117,17 +117,18 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     this.PendingApprovalReportForm.get('employeid')?.disable();
     this.collectionSize = 0;
   }
-    isFilterApplied(): boolean {
+   isFilterApplied(): boolean {
   const formValue = this.PendingApprovalReportForm.value;
 
   return (
-    (formValue.clientId && formValue.clientId !== null) ||
-    (formValue.projectId && formValue.projectId !== null) ||
-    (formValue.employeid && formValue.employeid !== null) ||
+    (formValue.clientId !== null && formValue.clientId !== undefined) ||
+    (formValue.projectId !== null && formValue.projectId !== undefined) ||
+    (formValue.employeid !== null && formValue.employeid !== undefined) ||
     (formValue.dateRange && formValue.dateRange.length > 0) ||
     (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined)
   );
 }
+
   // called for pagination 
   onRowsChange() {
     this.page = 1;

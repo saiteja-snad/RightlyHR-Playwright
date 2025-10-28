@@ -160,29 +160,32 @@ export class TeamTimesheetReportComponent {
     this.TeamTimesheetReportForm.get('projectId')?.enable();
     this.TeamTimesheetReportForm.get('employeid')?.enable();
   }
-  getResourceDetailsByManagerId() {
-    const EmployeeId = this.empinfo?.employeeId;
-    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
-      next: (res: any) => {
-        if (res?.success) {
-          this.employeeiddetails = res.data
-            //  Remove employee by ID
-            .filter((emp: IResourceDetail) => emp.id !== EmployeeId)
-            // Add fullName for dropdown
-            .map((emp: IResourceDetail) => ({
-              ...emp,
-              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
-              key: 'team'
-            }));
-        }
+ getResourceDetailsByManagerId() {
+  const EmployeeId = this.empinfo?.employeeId;
+  this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
+    next: (res: any) => {
+      if (res?.success) {
+        this.employeeiddetails = res.data
+          // Remove self
+          .filter((emp: any) => emp.id !== EmployeeId)
+          // Add fullName for dropdown
+          .map((emp: any) => ({
+            ...emp,
+            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
+            key: 'team'
+          }));
+
+        // ✅ Correct key mapping
         this.employeeData = this.employeeiddetails.map((e: any) => ({
-          id: e.employeeId,
+          id: e.id,
           name: e.fullName
         }));
-      },
-      error: (err: any) => console.error(err)
-    });
-  }
+      }
+    },
+    error: (err: any) => console.error(err)
+  });
+}
+
 
   // called for pagination 
   onRowsChange() {
@@ -702,9 +705,19 @@ export class TeamTimesheetReportComponent {
     if (formValue.projectId !== null && formValue.projectId !== undefined) {
       params.ProjectIds = formValue.projectId;
     }
-    if (formValue.employeid !== null && formValue.employeid !== undefined) {
-      params.EmployeeIds = formValue.employeid;
-    }
+    // if (formValue.employeid !== null && formValue.employeid !== undefined) {
+    //   params.EmployeeIds = formValue.employeid;
+    // }
+    if (formValue.employeid?.length) {
+  if (Array.isArray(formValue.employeid)) {
+    // already an array of IDs
+    params.EmployeeIds = formValue.employeid;
+  } else {
+    // if it’s a single selected value (edge case)
+    params.EmployeeIds = [formValue.employeid];
+  }
+}
+
     if (formValue.billable?.value) params.Billable = formValue.billable.value;
     if (formValue.status?.value) params.Statuses = formValue.status.value;
     return params;

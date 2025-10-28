@@ -122,7 +122,6 @@ export class TeamTimesheetReportComponent {
   }
   isFilterApplied(): boolean {
     const formValue = this.TeamTimesheetReportForm.value;
-
     return (
       (formValue.clientId && formValue.clientId !== null) ||
       (formValue.projectId && formValue.projectId !== null) ||
@@ -151,14 +150,8 @@ export class TeamTimesheetReportComponent {
     this.TeamTimesheetReportForm.get('billable')?.setValue(null);
     this.TeamTimesheetReportForm.get('status')?.setValue(null);
     this.TeamTimesheetReportForm.get('dateRange')?.setValue(null);
-
     this.collectionSize = 0;
 
-
-
-    // re-enable disabled fields (if any)
-    this.TeamTimesheetReportForm.get('projectId')?.enable();
-    this.TeamTimesheetReportForm.get('employeid')?.enable();
   }
  getResourceDetailsByManagerId() {
   const EmployeeId = this.empinfo?.employeeId;
@@ -175,7 +168,7 @@ export class TeamTimesheetReportComponent {
             key: 'team'
           }));
 
-        // ✅ Correct key mapping
+        // Correct key mapping
         this.employeeData = this.employeeiddetails.map((e: any) => ({
           id: e.id,
           name: e.fullName
@@ -217,7 +210,6 @@ export class TeamTimesheetReportComponent {
         next: (res: any) => {
           if (res.success && Array.isArray(res.data)) {
             const projectData = res.data;
-
             // Extract and map clients from project data
             const clients = projectData
               .filter((p: any) => p.client) // ensure client exists
@@ -258,16 +250,16 @@ export class TeamTimesheetReportComponent {
               ],
             };
 
-            // ✅ Final client list
+            // Final client list
             this.clients = [noClientEntry, ...mergedClients];
 
-            // ✅ Build dropdowns for p-select
+            // Build dropdowns for p-select
             this.clientDropdownList = this.clients.map((client: any) => ({
               label: client.clientName,
               value: client.clientId,
             }));
 
-            // ✅ For initial project dropdown (all projects combined)
+            // For initial project dropdown (all projects combined)
             const allProjects = this.clients.flatMap((c: any) => c.projects);
             this.projectsList = allProjects.map((p: any) => ({
               label: p.projectName,
@@ -332,9 +324,6 @@ export class TeamTimesheetReportComponent {
         },
         error: (err) => {
           console.error('Error fetching manager dropdown data:', err);
-
-
-
           this.clientDropdownList = [
             { label: 'No Client', value: 0 },
           ];
@@ -443,7 +432,7 @@ export class TeamTimesheetReportComponent {
           });
         }
 
-        // ✅ Map for dropdown
+        // Map for dropdown
         this.projectsList = this.projectsData.map((project: any) => ({
           label: project.projectName,
           value: project.projectId,
@@ -462,7 +451,6 @@ export class TeamTimesheetReportComponent {
       }
     });
   }
-
 
   getEmployeeData() {
     const loggedInUser = this.authService.getToken();
@@ -497,7 +485,6 @@ export class TeamTimesheetReportComponent {
           id: e.employeeId,
           name: e.fullName
         }));
-
         // (Optional) log to verify
         console.log('Employee dropdown data:', this.employeeData);
       },
@@ -507,7 +494,6 @@ export class TeamTimesheetReportComponent {
       },
     });
   }
-
 
   getProjectsByClientId(clientId: number): void {
     //If "No Client" selected, show only "No Project"
@@ -542,13 +528,9 @@ export class TeamTimesheetReportComponent {
       });
   }
 
-
-
   onClientChange(event: any): void {
     const clientId = event.value;
     this.TeamTimesheetReportForm.patchValue({ projectId: null }); // reset project
-    // this.TeamTimesheetReportForm.get('projectId')?.enable();
-    // this.TeamTimesheetReportForm.get('employeid')?.disable();
     this.TeamTimesheetReportForm.get('employeid')?.setValue([]);
     this.getProjectsByClientId(clientId);
   }
@@ -559,7 +541,6 @@ export class TeamTimesheetReportComponent {
     this.TeamTimesheetReportForm.get('employeid')?.setValue([]);
     if (selectedProjectId && selectedProjectId !== 0) {
       this.projectId = selectedProjectId;
-      // this.TeamTimesheetReportForm.get('employeid')?.enable();
       this.getAllActiveEmployees();
     } else {
       this.getTeamManagersDetails();
@@ -571,7 +552,6 @@ export class TeamTimesheetReportComponent {
             id: emp.employeeId,
             name: emp.fullName
           }));
-          // this.TeamTimesheetReportForm.get('employeid')?.enable();
         }
       }, 300);
     }
@@ -606,9 +586,6 @@ export class TeamTimesheetReportComponent {
       .subscribe({
         next: (res: any) => {
           this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
-          // if (this.employeeData.length > 0) {
-          // this.TeamTimesheetReportForm.get('employeid')?.enable();
-          // }
         },
         error: (err) => {
           console.error('Error fetching employees:', err);
@@ -616,9 +593,9 @@ export class TeamTimesheetReportComponent {
         }
       });
   }
-  // get isLeaveGenerateDisabled(): boolean {
-  //   const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
 
+  //  get isLeaveGenerateDisabled(): boolean {
+  //   const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
   //   const hasClient = clientId !== null && clientId !== undefined;
   //   const hasProject = projectId !== null && projectId !== undefined;
   //   const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
@@ -629,18 +606,22 @@ export class TeamTimesheetReportComponent {
   //   return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
   // }
 
-   get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
 
-    const hasClient = clientId !== null && clientId !== undefined;
-    const hasProject = projectId !== null && projectId !== undefined;
-    const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
-    const hasBillable = billable !== null && billable !== undefined;
-    const hasStatus = status !== null && status !== undefined;
-    const hasEmployeid = employeid !== null && employeid !== undefined;
+  get isLeaveGenerateDisabled(): boolean {
+  const { clientId, projectId, employeid, dateRange, billable, status } =
+    this.TeamTimesheetReportForm.value;
 
-    return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
-  }
+  const hasClient = clientId !== null && clientId !== undefined;
+  const hasProject = projectId !== null && projectId !== undefined;
+  const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
+  const hasBillable = billable !== null && billable !== undefined;
+  const hasStatus = status !== null && status !== undefined;
+  const hasEmployeid = Array.isArray(employeid) && employeid.length > 0;
+
+  // Disable if none of them are selected
+  return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
+}
+
   getAllActiveProjects() {
     this.http
       .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
@@ -648,7 +629,6 @@ export class TeamTimesheetReportComponent {
       .subscribe({
         next: (res: any) => {
           const projects = res?.data || [];
-
           this.projectsData = projects.map((p: any) => ({
             ...p,
             //  displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
@@ -664,7 +644,6 @@ export class TeamTimesheetReportComponent {
         },
         error: (err) => {
           console.error('Error fetching projects:', err);
-
           this.projectsData = [
             {
               projectId: 0,
@@ -680,7 +659,6 @@ export class TeamTimesheetReportComponent {
   buildTimesheetReportParams() {
     const formValue = this.TeamTimesheetReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
-
     // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
       if (!date) return null;

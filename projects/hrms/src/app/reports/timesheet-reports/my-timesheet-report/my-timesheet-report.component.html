@@ -20,7 +20,6 @@
         </button>
 
         <!-- Client Dropdown -->
-        @if(rbac.allowedToAccess('Timesheet Client List(My-Timesheet).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
@@ -29,10 +28,8 @@
             </p-select>
           </div>
         </div>
-        }
 
         <!-- Project Dropdown -->
-        @if(rbac.allowedToAccess('Timesheet Project List(My-Timesheet).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="projectsData" optionLabel="displayprojectName" optionValue="projectId" [filter]="true"
@@ -41,8 +38,6 @@
             </p-select>
           </div>
         </div>
-        }
-
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">

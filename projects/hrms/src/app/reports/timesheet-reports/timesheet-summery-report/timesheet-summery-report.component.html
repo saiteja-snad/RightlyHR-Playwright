@@ -20,32 +20,26 @@
         </button>
 
         <!-- Client-->
-        @if(rbac.allowedToAccess('Timesheet Client List(Timesheet Summary).view')){
           <div class="custom-p-select-content">
             <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
               formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
               (onChange)="onClientChange($event)">
             </p-select>
           </div>
-        }
 
         <!-- Project-->
-        @if(rbac.allowedToAccess('Timesheet Project List(Timesheet Summary).view')){
           <div class="custom-p-select-content">
             <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
               placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
               (onChange)="onProjectChange($event)">
             </p-select>
           </div>
-        }
-        @if(rbac.allowedToAccess('Timesheet All Employees List(Timesheet Summary).view')){
         <!-- Employee-->
           <div class="custom-p-multiSelect-content">
             <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
               defaultLabel="Please select resource" formControlName="employeid"
               class="form-select custom-select"></p-multiSelect>
           </div>
-        }
         <!-- Date Range -->
         <div>
           <div class="custom-date-range-picker">

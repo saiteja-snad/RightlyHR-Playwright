@@ -19,7 +19,6 @@
          }
         </button>
           <!-- Client-->
-        @if(rbac.allowedToAccess('Timesheet Client List(Team Timesheet).view')){
          <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
@@ -27,11 +26,9 @@
               (onChange)="onClientChange($event)">
             </p-select>
           </div>
-        </div>
-        }
+        </div>      
 
         <!-- Project-->
-        @if(rbac.allowedToAccess('Timesheet Project List(Team Timesheet).view')){
        <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
@@ -40,8 +37,6 @@
             </p-select>
           </div>
         </div>
-        }
-       @if(rbac.allowedToAccess('Timesheet All Employees List(Team Timesheet).view')){
         <!-- Employee-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
@@ -50,7 +45,6 @@
               class="form-select custom-select"></p-multiSelect>
           </div>
         </div>
-        }
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">

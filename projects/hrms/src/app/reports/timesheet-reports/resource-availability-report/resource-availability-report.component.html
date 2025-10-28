@@ -18,17 +18,13 @@
         </button>
 
         <!-- Project-->
-        @if(rbac.allowedToAccess('Timesheet Project List(Resource-availability).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true" formControlName="projectId"
               placeholder="Please select project" class="form-select custom-select" (onChange)="onProjectChange($event)">
             </p-select>
           </div>
-        </div>
-        }
-    
-        @if(rbac.allowedToAccess('Timesheet All Employees List(Resource-availability).view')){
+        </div>       
         <!-- Employee-->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-multiSelect-content">
@@ -36,8 +32,7 @@
               defaultLabel="Please select resource" formControlName="employeid"
               class="form-select custom-select"></p-multiSelect>
           </div>
-        </div>
-        }
+        </div>       
         <!-- Date Range -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-date-range-picker">

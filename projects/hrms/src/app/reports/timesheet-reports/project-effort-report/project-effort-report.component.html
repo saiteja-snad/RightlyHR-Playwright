@@ -17,7 +17,6 @@
           }
         </button>
           <!-- Client-->
-        @if(rbac.allowedToAccess('Timesheet Client List(Project-Effect-Report).view')){
          <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
@@ -26,10 +25,8 @@
             </p-select>
           </div>
         </div>
-        }
 
         <!-- Project-->
-        @if(rbac.allowedToAccess('Timesheet Project List(Project-Effect-Report).view')){
         <!-- <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
@@ -45,8 +42,7 @@
               defaultLabel="Please select project" formControlName="projectId"
               class="form-select custom-select"></p-multiSelect>
           </div>
-        </div>
-        }
+        </div>       
            <!-- @if(rbac.allowedToAccess('Timesheet All Employees List(Project-Effect-Report).view')){ -->
         <!-- Employee-->
         <!-- <div class="d-flex align-items-center gap-2">

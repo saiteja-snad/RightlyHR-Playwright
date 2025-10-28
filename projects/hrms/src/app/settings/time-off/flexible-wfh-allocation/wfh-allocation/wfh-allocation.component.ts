@@ -189,7 +189,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
     //const ids = employeeIds.map((emp: any) => emp.employeeId);
     let params = new HttpParams();
     employeeIds.forEach((id: any) => {
-      params = params.append('employeeIds', id);
+      params = params.append('employeeIds', id.employeeId);
     });
     this.http
       .getDataIncludeParams(`FlexibleWfhAllocation/getAll`,{ params })
@@ -342,7 +342,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       });
   }
 
-  publishLeaveAllocation(form: FormGroup): void {
+  publishWFHAllocation(form: FormGroup): void {
     this.isloading=true;
     const loggedInUserId = this.auth.getToken();
     if (form.invalid) return;

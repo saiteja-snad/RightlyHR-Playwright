@@ -863,7 +863,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   generatepostingtorepectivefields() {
     let data = this.traineeEmpData;
     const Compensationdata = {
-      // id: data.compensationId,
+      id: data.compensationId,
       employeeId: data.empId,
       compeffectivedate: data.dateOfJoining,
       overtimeeligibility: null,

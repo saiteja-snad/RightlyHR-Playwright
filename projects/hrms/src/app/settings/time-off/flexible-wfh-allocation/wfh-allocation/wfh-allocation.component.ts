@@ -330,7 +330,8 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       .get('categoryName')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetAndDisable(['employeeName']);
+        resetOnly(['employeeName','employees']);
+        (this.wfhAllocationForm.get('employees') as FormArray).clear();
       });
 
     form

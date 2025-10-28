@@ -185,8 +185,17 @@
         <div class="d-flex justify-content-end gap-3 p-3" *ngIf="rbac.allowedToAccess('Active Allocations Tab.create')">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)"
                 >{{'cancel'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary px-5"
-                [disabled]="wfhAllocationForm.invalid">{{'Save'|translate}}</button>
+                <button type="submit" class="custom-btn btn-primary px-5"
+                [disabled]="wfhAllocationForm.invalid ||isloading">
+            @if(isloading){
+            <div class="button-loader-content">
+              <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+              <span>{{'Loading...'}}</span>
+            </div>
+            }@else { {{'Save'|translate}} }
+          </button>
+            <!-- <button type="submit" class="custom-btn btn-primary px-5"
+                [disabled]="wfhAllocationForm.invalid">{{'Save'|translate}}</button> -->
         </div>
     </form>
 </div>

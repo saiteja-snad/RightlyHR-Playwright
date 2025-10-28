@@ -25,6 +25,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../../services/auth.service';
 import moment from 'moment';
+import { HttpParams } from '@angular/common/http';
 @Component({
   selector: 'app-wfh-allocation',
   imports: [
@@ -185,9 +186,13 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   // get by employee wfh allocations
   getByEmployeewfhallocations(employeeIds: any, form: FormGroup): void {
     this.isloading = true;
-    const ids = employeeIds.map((emp: any) => emp.employeeId).join(',');
+    //const ids = employeeIds.map((emp: any) => emp.employeeId);
+    let params = new HttpParams();
+    employeeIds.forEach((id: any) => {
+      params = params.append('employeeIds', id);
+    });
     this.http
-      .getData(`FlexibleWfhAllocation/getAll?employeeIds=${ids}`)
+      .getDataIncludeParams(`FlexibleWfhAllocation/getAll`,{ params })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -337,6 +342,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   }
 
   publishLeaveAllocation(form: FormGroup): void {
+    this.isloading=true;
     const loggedInUserId = this.auth.getToken();
     if (form.invalid) return;
     // this.modalService.open(this.stagingLoadingModal, { centered: true });
@@ -363,19 +369,21 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.isloading=false;
           this.selectedEmployees = [];
           this.wfhAllocationForm.reset();
           this.wfhAllocationForm = this.fb.group({
             employees: this.fb.array([]),
           });
-          this.wfhAllocationForm.get('subLocation')?.disable();
           this.wfhAllocationForm.get('location')?.disable();
+          this.wfhAllocationForm.get('subLocation')?.disable();
           this.wfhAllocationForm.get('shiftName')?.disable();
           this.wfhAllocationForm.get('categoryName')?.disable();
           this.wfhAllocationForm.get('shift')?.disable();
           this.modal.openSuccessModal('WFH allocation saved successfully!');
         },
         error: (err: any) => {
+          this.isloading=false;
           this.modalService.dismissAll();
           this.modal.openErrorModal(
             err.error.message

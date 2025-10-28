@@ -98,13 +98,13 @@ export class TeamTimesheetReportComponent {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     if (this.rbac.allowedToAccess('Team Timesheet Report - Admin-Approval.view')) {
-   this.getManagerDropdownData(this.empinfo.employeeId);
-   this.getResourceDetailsByManagerId();
-  } else {
-    this.getClientsData();
-    this.getProjectsData();
-    this.getEmployeeData();
-   }
+      this.getClientsData();
+      this.getProjectsData();
+      this.getEmployeeData();
+    } else {
+      this.getManagerDropdownData(this.empinfo.employeeId);
+      this.getResourceDetailsByManagerId();
+    }
   }
 
   initializeForm() {
@@ -120,7 +120,7 @@ export class TeamTimesheetReportComponent {
       this.disableBtn = true;
     })
   }
-    isFilterApplied(): boolean {
+  isFilterApplied(): boolean {
     const formValue = this.TeamTimesheetReportForm.value;
 
     return (
@@ -134,32 +134,32 @@ export class TeamTimesheetReportComponent {
   }
 
   clearAllFilters(): void {
-  this.TeamTimesheetReportForm.reset();
-  this.filteredtimesheetsummeryRecord = [];
-   if (this.rbac.allowedToAccess('Team Timesheet Report - Admin-Approval.view')) {
-    this.getManagerDropdownData(this.empinfo.employeeId);
-    }else{
-  // Re-fetch all dropdown data
-  this.getClientsData();
-  this.getProjectsData();
-  this.getEmployeeData();
+    this.TeamTimesheetReportForm.reset();
+    this.filteredtimesheetsummeryRecord = [];
+    if (this.rbac.allowedToAccess('Team Timesheet Report - Admin-Approval.view')) {
+      this.getClientsData();
+      this.getProjectsData();
+      this.getEmployeeData();
+    } else {
+      this.getManagerDropdownData(this.empinfo.employeeId);
+      this.getResourceDetailsByManagerId();
     }
-  // reset specific controls properly
-  this.TeamTimesheetReportForm.get('employeid')?.setValue([]);
-  this.TeamTimesheetReportForm.get('projectId')?.setValue(null);
-  this.TeamTimesheetReportForm.get('clientId')?.setValue(null);
-  this.TeamTimesheetReportForm.get('billable')?.setValue(null);
-  this.TeamTimesheetReportForm.get('status')?.setValue(null);
-  this.TeamTimesheetReportForm.get('dateRange')?.setValue(null);
+    // reset specific controls properly
+    this.TeamTimesheetReportForm.get('employeid')?.setValue([]);
+    this.TeamTimesheetReportForm.get('projectId')?.setValue(null);
+    this.TeamTimesheetReportForm.get('clientId')?.setValue(null);
+    this.TeamTimesheetReportForm.get('billable')?.setValue(null);
+    this.TeamTimesheetReportForm.get('status')?.setValue(null);
+    this.TeamTimesheetReportForm.get('dateRange')?.setValue(null);
 
-  this.collectionSize = 0;
+    this.collectionSize = 0;
 
 
 
-  // re-enable disabled fields (if any)
-  this.TeamTimesheetReportForm.get('projectId')?.enable();
-  this.TeamTimesheetReportForm.get('employeid')?.enable();
-}
+    // re-enable disabled fields (if any)
+    this.TeamTimesheetReportForm.get('projectId')?.enable();
+    this.TeamTimesheetReportForm.get('employeid')?.enable();
+  }
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empinfo?.employeeId;
     this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
@@ -176,9 +176,9 @@ export class TeamTimesheetReportComponent {
             }));
         }
         this.employeeData = this.employeeiddetails.map((e: any) => ({
-        id: e.employeeId,
-        name: e.fullName
-      }));
+          id: e.employeeId,
+          name: e.fullName
+        }));
       },
       error: (err: any) => console.error(err)
     });
@@ -191,90 +191,87 @@ export class TeamTimesheetReportComponent {
     this.generateteamTimesheetReport(this.page, this.pageSize);
   }
 
-onPageChange(event: any) {
-  this.page = event.page + 1;
-  this.pageSize = event.rows;
-  this.first = event.first;
+ onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.generateteamTimesheetReport(this.page, this.pageSize, false);
+  }
 
-  this.generateteamTimesheetReport(this.page, this.pageSize, false);
-  
-  // Ensure paginator UI syncs immediately
-  this.cdr.detectChanges();
-}
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateteamTimesheetReport(this.page, this.pageSize,true);
+    this.generateteamTimesheetReport(this.page, this.pageSize, false);
   }
 
-getManagerDropdownData(managerId: number): void {
-  this.http.getData(`Project?status=Active&projectAuthorityId=${managerId}`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (res: any) => {
-        if (res.success && Array.isArray(res.data)) {
-          const projectData = res.data;
+  getManagerDropdownData(managerId: number): void {
+    this.http.getData(`Project?status=Active&projectAuthorityId=${managerId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          if (res.success && Array.isArray(res.data)) {
+            const projectData = res.data;
 
-          // Extract and map clients from project data
-          const clients = projectData
-            .filter((p: any) => p.client) // ensure client exists
-            .map((p: any) => ({
-              clientId: p.client.clientId,
-              clientName: p.client.clientName,
+            // Extract and map clients from project data
+            const clients = projectData
+              .filter((p: any) => p.client) // ensure client exists
+              .map((p: any) => ({
+                clientId: p.client.clientId,
+                clientName: p.client.clientName,
+                projects: [
+                  {
+                    projectId: p.projectId,
+                    projectName: p.projectName,
+                  },
+                ],
+              }));
+
+            // Group projects under the same clientId
+            const mergedClients: any[] = [];
+            clients.forEach((c: { clientId: any; projects: any; }) => {
+              const existing = mergedClients.find(
+                (x) => x.clientId === c.clientId
+              );
+              if (existing) {
+                existing.projects.push(...c.projects);
+              } else {
+                mergedClients.push({ ...c });
+              }
+            });
+
+            // ✅ Add "No Client" entry with "No Project"
+            const noClientEntry = {
+              clientId: 0,
+              clientName: 'No Client',
               projects: [
                 {
-                  projectId: p.projectId,
-                  projectName: p.projectName,
+                  projectId: 0,
+                  projectName: 'No Project',
+                  isNoClientProject: true,
                 },
               ],
+            };
+
+            // ✅ Final client list
+            this.clients = [noClientEntry, ...mergedClients];
+
+            // ✅ Build dropdowns for p-select
+            this.clientDropdownList = this.clients.map((client: any) => ({
+              label: client.clientName,
+              value: client.clientId,
             }));
 
-          // Group projects under the same clientId
-          const mergedClients: any[] = [];
-          clients.forEach((c: { clientId: any; projects: any; }) => {
-            const existing = mergedClients.find(
-              (x) => x.clientId === c.clientId
-            );
-            if (existing) {
-              existing.projects.push(...c.projects);
-            } else {
-              mergedClients.push({ ...c });
-            }
-          });
-
-          // ✅ Add "No Client" entry with "No Project"
-          const noClientEntry = {
-            clientId: 0,
-            clientName: 'No Client',
-            projects: [
-              {
-                projectId: 0,
-                projectName: 'No Project',
-                isNoClientProject: true,
-              },
-            ],
-          };
-
-          // ✅ Final client list
-          this.clients = [noClientEntry, ...mergedClients];
-
-          // ✅ Build dropdowns for p-select
-          this.clientDropdownList = this.clients.map((client: any) => ({
-            label: client.clientName,
-            value: client.clientId,
-          }));
-
-          // ✅ For initial project dropdown (all projects combined)
-          const allProjects = this.clients.flatMap((c: any) => c.projects);
-          this.projectsList = allProjects.map((p: any) => ({
-            label: p.projectName,
-            value: p.projectId,
-          }));
-        } else {
-           // 🔹 Add "No Client" option only once
+            // ✅ For initial project dropdown (all projects combined)
+            const allProjects = this.clients.flatMap((c: any) => c.projects);
+            this.projectsList = allProjects.map((p: any) => ({
+              label: p.projectName,
+              value: p.projectId,
+            }));
+          } else {
+            // 🔹 Add "No Client" option only once
             if (!this.noclientproject) {
               this.clients.unshift({
                 clientId: 0,
@@ -322,34 +319,34 @@ getManagerDropdownData(managerId: number): void {
               });
             }
 
+            this.clientDropdownList = [
+              { label: 'No Client', value: 0 },
+            ];
+            this.projectsList = [
+              { label: 'No Project', value: 0 },
+            ];
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching manager dropdown data:', err);
+
+
+
           this.clientDropdownList = [
             { label: 'No Client', value: 0 },
           ];
           this.projectsList = [
             { label: 'No Project', value: 0 },
           ];
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching manager dropdown data:', err);
+        },
+      });
+  }
 
-       
-
-        this.clientDropdownList = [
-          { label: 'No Client', value: 0 },
-        ];
-        this.projectsList = [
-          { label: 'No Project', value: 0 },
-        ];
-      },
-    });
-}
-
-removeDuplicateClients(clients: any[]): any[] {
-  const map = new Map();
-  clients.forEach((c) => map.set(c.clientId, c));
-  return Array.from(map.values());
-}
+  removeDuplicateClients(clients: any[]): any[] {
+    const map = new Map();
+    clients.forEach((c) => map.set(c.clientId, c));
+    return Array.from(map.values());
+  }
 
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -426,87 +423,87 @@ removeDuplicateClients(clients: any[]): any[] {
       });
   }
 
-getProjectsData() {
-  this.loading = true;
-  this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
-    next: (res: any) => {
-      this.projectsData = res?.data ?? [];
-  
-      // Add "No Project" only if not already present
-      const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
-      if (!noProjectExists) {
-        this.projectsData.unshift({
-          projectId: 0,
-          projectName: 'No Project',
-          clientId: 0,
-          isNoClientProject: true,
-        });
+  getProjectsData() {
+    this.loading = true;
+    this.http.getData('Project?status=Active').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsData = res?.data ?? [];
+
+        // Add "No Project" only if not already present
+        const noProjectExists = this.projectsData?.some((p: any) => p.projectId === 0);
+        if (!noProjectExists) {
+          this.projectsData.unshift({
+            projectId: 0,
+            projectName: 'No Project',
+            clientId: 0,
+            isNoClientProject: true,
+          });
+        }
+
+        // ✅ Map for dropdown
+        this.projectsList = this.projectsData.map((project: any) => ({
+          label: project.projectName,
+          value: project.projectId,
+        }));
+      },
+
+      error: (err) => {
+        console.error('Error fetching projects data:', err);
+        this.loading = false;
+        this.projectsData = [];
+        this.projectsList = [];
+      },
+
+      complete: () => {
+        this.loading = false;
       }
-
-      // ✅ Map for dropdown
-      this.projectsList = this.projectsData.map((project: any) => ({
-        label: project.projectName,
-        value: project.projectId,
-      }));
-    },
-
-    error: (err) => {
-      console.error('Error fetching projects data:', err);
-      this.loading = false;
-      this.projectsData = [];
-      this.projectsList = [];
-    },
-
-    complete: () => {
-      this.loading = false;
-    }
-  });
-}
+    });
+  }
 
 
-getEmployeeData() {
-  const loggedInUser = this.authService.getToken();
+  getEmployeeData() {
+    const loggedInUser = this.authService.getToken();
 
-  this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
-    next: (data: any) => {
-      const employeedata = (data || [])
-        .map((employee: any) => {
-          const firstName = employee.firstName ? employee.firstName.trim() : '';
-          const middleName = employee.middleName ? employee.middleName.trim() : '';
-          const lastName = employee.lastName ? employee.lastName.trim() : '';
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        const employeedata = (data || [])
+          .map((employee: any) => {
+            const firstName = employee.firstName ? employee.firstName.trim() : '';
+            const middleName = employee.middleName ? employee.middleName.trim() : '';
+            const lastName = employee.lastName ? employee.lastName.trim() : '';
 
-          return {
-            ...employee,
-            firstName,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
-          };
-        })
-        .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
-        .sort((a: any, b: any) =>
-          a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
-        );
+            return {
+              ...employee,
+              firstName,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${firstName} ${middleName ? middleName + ' ' : ''}${lastName}`.trim(),
+            };
+          })
+          .filter((employee: any) => employee.employeeId !== loggedInUser.employeeId)
+          .sort((a: any, b: any) =>
+            a.firstName.toLowerCase().localeCompare(b.firstName.toLowerCase())
+          );
 
-      // ✅ Step 1: Store all employees (including “All Employees” at the top)
-      this.employeeiddetails = [
-        // { fullName: 'All Employees', employeeId: 'all' },
-        ...employeedata
-      ];
+        // ✅ Step 1: Store all employees (including “All Employees” at the top)
+        this.employeeiddetails = [
+          // { fullName: 'All Employees', employeeId: 'all' },
+          ...employeedata
+        ];
 
-      // ✅ Step 2: Map for the dropdown component
-      this.employeeData = this.employeeiddetails.map((e: any) => ({
-        id: e.employeeId,
-        name: e.fullName
-      }));
+        // ✅ Step 2: Map for the dropdown component
+        this.employeeData = this.employeeiddetails.map((e: any) => ({
+          id: e.employeeId,
+          name: e.fullName
+        }));
 
-      // (Optional) log to verify
-      console.log('Employee dropdown data:', this.employeeData);
-    },
-    error: (reason: any) => {
-      console.error('Error fetching employees:', reason);
-      this.employeeData = [];
-    },
-  });
-}
+        // (Optional) log to verify
+        console.log('Employee dropdown data:', this.employeeData);
+      },
+      error: (reason: any) => {
+        console.error('Error fetching employees:', reason);
+        this.employeeData = [];
+      },
+    });
+  }
 
 
   getProjectsByClientId(clientId: number): void {
@@ -616,7 +613,31 @@ getEmployeeData() {
         }
       });
   }
+  // get isLeaveGenerateDisabled(): boolean {
+  //   const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
 
+  //   const hasClient = clientId !== null && clientId !== undefined;
+  //   const hasProject = projectId !== null && projectId !== undefined;
+  //   const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
+  //   const hasBillable = billable !== null && billable !== undefined;
+  //   const hasStatus = status !== null && status !== undefined;
+  //   const hasEmployeid = employeid !== null && employeid !== undefined;
+
+  //   return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
+  // }
+
+   get isLeaveGenerateDisabled(): boolean {
+    const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
+
+    const hasClient = clientId !== null && clientId !== undefined;
+    const hasProject = projectId !== null && projectId !== undefined;
+    const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
+    const hasBillable = billable !== null && billable !== undefined;
+    const hasStatus = status !== null && status !== undefined;
+    const hasEmployeid = employeid !== null && employeid !== undefined;
+
+    return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
+  }
   getAllActiveProjects() {
     this.http
       .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
@@ -652,18 +673,7 @@ getEmployeeData() {
       });
   }
 
-  get isLeaveGenerateDisabled(): boolean {
-    const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
 
-    const hasClient = clientId !== null && clientId !== undefined;
-    const hasProject = projectId !== null && projectId !== undefined;
-    const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
-    const hasBillable = billable !== null && billable !== undefined;
-    const hasStatus = status !== null && status !== undefined;
-    const hasEmployeid = employeid !== null && employeid !== undefined;
-
-    return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
-  }
   buildTimesheetReportParams() {
     const formValue = this.TeamTimesheetReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
@@ -703,8 +713,8 @@ getEmployeeData() {
     if (this.TeamTimesheetReportForm.invalid) {
       return;
     }
-      // 🔹 Prevent multiple fast clicks while loading
-  if (this.spinnerLoader1) return;
+    // 🔹 Prevent multiple fast clicks while loading
+    if (this.spinnerLoader1) return;
     if (showLoader) {
       this.spinnerLoader1 = true;
     }
@@ -731,12 +741,12 @@ getEmployeeData() {
 
 
   }
-get showingRange(): string {
-  if (this.collectionSize === 0) return '';
-  const start = this.first + 1;
-  const end = Math.min(this.first + this.rows, this.collectionSize);
-  return `Showing ${start} - ${end} of ${this.collectionSize}`;
-}
+  get showingRange(): string {
+    if (this.collectionSize === 0) return '';
+    const start = this.first + 1;
+    const end = Math.min(this.first + this.rows, this.collectionSize);
+    return `Showing ${start} - ${end} of ${this.collectionSize}`;
+  }
   exportTeamTimesheetReport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();

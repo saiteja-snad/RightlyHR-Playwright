@@ -353,6 +353,18 @@ export class HttpService {
       responseType: 'blob',
     });
   }
+ downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string): Observable<Blob> {
+  let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
+
+  if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
+  if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
+  if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
+
+  return this.http.get(apiUrl, {
+    responseType: 'blob',
+  });
+}
+
 
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);

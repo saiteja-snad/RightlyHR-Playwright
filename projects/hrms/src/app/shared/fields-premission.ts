@@ -167,6 +167,10 @@ export const MY_INFO_CLAIMS = [
     claim: 'My Info Education Details'
   },
   {
+    permission:'myskills',
+    claim:'My Skills'
+  },
+  {
     permission: 'identity',
     claim: 'My Info Identity Details'
   },

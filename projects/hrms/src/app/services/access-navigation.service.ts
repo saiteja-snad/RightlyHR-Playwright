@@ -352,6 +352,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/skill-directory':
+        if (this.rbac.allowedToAccess('Skill Management.view')) {
+          return (route = '/skill-directory');
+        }
+        break;
+
       case '/claimsandexpenses':
         for (const item of EXPENSE_TABS) {
           if (this.rbac.allowedToAccess(item.permission)) {
@@ -1490,7 +1496,7 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
-           if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
             return (route = '/time-off/pending-approvals/time-sheets');
           }
 
@@ -1585,7 +1591,7 @@ export class AccessNavigationService {
           }
         }
         break;
-        case '/time-off/pending-approvals/contractors-request':
+      case '/time-off/pending-approvals/contractors-request':
         if (this.rbac.allowedToAccess('Contractor Details Tab.view')) {
           for (const item of CONTRACT_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

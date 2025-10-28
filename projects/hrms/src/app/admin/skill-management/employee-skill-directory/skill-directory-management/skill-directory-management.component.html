@@ -3,6 +3,40 @@
     <div class="heading-content">
       <div class="component-header">Employee Skills Directory</div>
     </div>
+
+    <div class="d-flex align-items-center gap-3">
+      <!-- Status Filter -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="custom-p-select-content">
+          <p-select [options]="EmpStatus" [filter]="true" filterBy="label" resetFilterOnHide="true" optionLabel="label"
+            optionValue="value" showClear="true" placeholder="Select All Status"
+            (onChange)="onCheckemployeeStatus($event.value)" class="form-select custom-select">
+          </p-select>
+        </div>
+      </div>
+
+      <!-- Date Range -->
+      <div class="d-flex month-picker-content">
+        <div class="custom-date-range-picker me-2">
+          <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true" [readonlyInput]="true"
+            [placeholder]="displayLabel || 'Select Date Range'" (ngModelChange)="onDateChange($event)">
+          </p-datepicker>
+        </div>
+      </div>
+
+      <!-- Export Button -->
+      <div>
+        <button type="button" class="custom-btn btn-primary px-4" (click)="submitExport()"
+          [disabled]="isSubmitDisabled()">
+          @if (spinnerLoaderforallrecoders) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          <span>Loading...</span>
+          } @else {
+          <span>Export</span>
+          }
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="main-content">
@@ -11,11 +45,12 @@
       <span class="input-group-text custom-input-group-search" id="basic-addon1">
         <i class="bi bi-search"></i>
       </span>
-      <input type="search" class="form-control custom-search-input" placeholder="Search" />
+      <input type="search" class="form-control custom-search-input" placeholder="Search by Employee or Skill or Designation "
+        [(ngModel)]="searchQuery" />
     </div>
 
-    <!-- Table -->
     <div class="custom-table-content">
+      @if (!spinnerLoaderforallrecoders) {
       <table class="w-100">
         <thead>
           <tr>
@@ -26,12 +61,14 @@
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr>
-            <td>Mounika</td>
-            <td>Developer</td>
-            <td>Angular</td>
-            <td>Committed</td>
+          @if ((MySkills | skills : searchQuery).length > 0) {
+          <tr *ngFor="let emp of MySkills | skills : searchQuery">
+            <td>{{ emp.employee?.name || '-' }}</td>
+            <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
+            <td>{{ getSkillList(emp) }}</td>
+            <td>{{ emp.employeeProjectStatus || '-' }}</td>
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -39,7 +76,7 @@
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <li>
-                    <a class="dropdown-item" (click)="openModal(employeeDetailModal)">
+                    <a class="dropdown-item" (click)="openModal(employeeDetailModal, emp)">
                       <i class="bi bi-eye-fill me-2"></i>View
                     </a>
                   </li>
@@ -47,13 +84,56 @@
               </div>
             </td>
           </tr>
+          } @else {
+          <tr>
+            <td colspan="5">
+              <app-no-data-found />
+            </td>
+          </tr>
+          }
         </tbody>
       </table>
+      } @else {
+      <app-data-loader-content />
+      }
     </div>
+    
+  @if (MySkills.length > 0) {
+    <div class="pagination-content mt-3">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select
+            class="form-select custom-pagination-select"
+            [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)"
+          >
+            <option *ngFor="let option of options" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} -
+            {{
+              (+first + +rows) > totalCount
+                ? totalCount
+                : (+first + +rows)
+            }}
+            of {{ totalCount }}
+          </span>
+        </div>
+
+        <p-paginator
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="totalCount"
+          (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
+    </div>
+  }
   </div>
 </div>
 
-<!-- Popup -->
+<!-- Employee Details Modal -->
 <ng-template #employeeDetailModal let-modal ngbAutofocus>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-main-popup-content">
@@ -63,63 +143,78 @@
         </a>
       </div>
 
-      <!-- Profile Info -->
       <div class="d-flex justify-content-center text-center align-items-center flex-column">
         <div class="mb-3">
           <img [src]="imageUrl" alt="Profile Image" class="profile-image" />
         </div>
-        <div>
-          <p class="name mb-2">Mounika (SD302115)</p>
-          <p class="department mb-2">Technology - Design</p>
-          <p class="job-role mb-2">UI/UX Designer</p>
-        </div>
-        <div class="commitment-card mb-3">
-          <p class="commitment-text">• Committed until Mar 31, 2026</p>
-        </div>
-      </div>
-      <div class="dashed-border my-3"></div>
-      <!-- Tabs -->
-      <!-- <p-tabs value="0">
-        <p-tablist class="commitment-card mb-3">
-          <p-tab value="0">Skills</p-tab>
-          <p-tab value="1">Projects</p-tab>
-        </p-tablist>
 
-        <p-tabpanels>
+        <div>
+          <p class="name mb-2">{{ selectedEmployee?.employee?.name }}</p>
+          <p class="department mb-2">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
+          <p class="job-role mb-2">Employee ID: {{ selectedEmployee?.employeeId }}</p>
+          <div class="commitment-card mb-3">
+            <p class="commitment-text">• Status: {{ selectedEmployee?.employeeProjectStatus }}</p>
+          </div>
+        </div>
+
+        <div class="dashed-border my-3"></div>
+
+        <p-tabs value="0">
+          <p-tablist class="commitment-card mb-3">
+            <p-tab value="0">Skills</p-tab>
+            <p-tab value="1">Projects</p-tab>
+          </p-tablist>
+
+          <!-- Skills Tab -->
           <p-tabpanel value="0">
-  
             <div class="skills-section">
               <p class="skills-title">Technical Skills</p>
-              <p-chip label="Angular(Expert)" />
+              @if (selectedEmployee?.techSkills?.length) {
+              <div class="skills-container">
+                <p-chip *ngFor="let skill of selectedEmployee.techSkills"
+                  [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
+                </p-chip>
+              </div>
+              } @else {
+              <p class="text-muted">No technical skills</p>
+              }
             </div>
 
-       
             <div class="skills-section mt-3">
               <p class="skills-title">Soft Skills</p>
-              <p-chip label="Angular(Expert)" />
+              @if (selectedEmployee?.softSkills?.length) {
+              <div class="skills-container">
+                <p-chip *ngFor="let skill of selectedEmployee.softSkills"
+                  [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
+                </p-chip>
+              </div>
+              } @else {
+              <p class="text-muted">No soft skills</p>
+              }
             </div>
           </p-tabpanel>
 
+          <!-- Projects Tab -->
           <p-tabpanel value="1">
             <div class="skills-section">
               <p class="skills-title">Projects</p>
+              @if (selectedEmployee?.projects?.length) {
               <div class="skills-container">
-                <div>Internal HR Portal Redesign</div>
-                <div>Mobile App UX Revamp</div>
+                <div *ngFor="let proj of selectedEmployee.projects" class="project-item mb-2 card p-3">
+                  <div class="fw-semibold">{{ proj.projectName }}</div>
+                  <div class="text-muted small">
+                    <div>{{ proj.projectDesignation }}</div>
+                    {{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}
+                  </div>
+                </div>
               </div>
+              } @else {
+              <p class="text-muted">No projects available</p>
+              }
             </div>
           </p-tabpanel>
-        </p-tabpanels>
-      </p-tabs> -->
-
-      <p-tabs>
-        <p-tab *ngFor="let tab of navTabs">
-          {{ tab.label }}
-        </p-tab>
-      </p-tabs>
-
-
-
+        </p-tabs>
+      </div>
     </div>
   </div>
 </ng-template>

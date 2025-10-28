@@ -63,7 +63,7 @@
         <!-- Belaible -->
          <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
+            <p-select [options]="BillableOptions"optionLabel="key" filterBy="key"
               formControlName="billable" placeholder="Please select billable" class="form-select custom-select"
               filterPlaceholder="Search leave type">
             </p-select>
@@ -113,13 +113,13 @@
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
-        <th>Date</th>
-        <th>Employee Id</th>
+        <th>Worked Date</th>
+        <th>Employee ID</th>
         <th>Employee</th>
         <th>Client</th>
         <th>Project</th>
         <th>Description</th>
-        <th>Hours</th>
+        <th>Logged Hours</th>
         <th>Billable/Non-Billable</th>
         <th>Approval Status</th>
         <th>Submitted Date</th>
@@ -142,18 +142,24 @@
         <td>{{ record.client ?? '-' }}</td>
         <td>{{ record.project ?? '-' }}</td>
          <td>
-            <div class="d-flex align-items-center gap-1">
-              <div *ngIf="record.description !== null">
-                <div [ngbPopover]="popContent">
-                  <app-info-icon />
-                </div>
-              </div>
-
-              <!-- Popover content -->
-              <ng-template #popContent>
-                {{ record.description }}
-              </ng-template>
-            </div>
+          <div class="d-flex align-items-center gap-1">
+                <!-- Show info icon if description is present -->
+           <ng-container *ngIf="record.description && record.description.trim() !== ''; else noDescription">
+                  <div [ngbPopover]="popContent">
+                    <app-info-icon />
+                  </div>
+                </ng-container>
+              
+                <!-- Fallback when no description -->
+                <ng-template #noDescription>
+                  <div>-</div>
+                </ng-template>
+              
+                <!-- Popover content -->
+                <ng-template #popContent>
+                  {{ record.description }}
+                </ng-template>
+              </div>                 
           </td>
         <td>{{ record.hoursWorked ?? '-' }}</td>
         <td>{{ record.billableStatus ?? '-' }}</td>

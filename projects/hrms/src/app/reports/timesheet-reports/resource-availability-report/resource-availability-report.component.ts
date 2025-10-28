@@ -129,7 +129,7 @@ export class ResourceAvailabilityReportComponent {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateResourceAvailabilityReport(this.page, this.pageSize);
+    this.generateResourceAvailabilityReport(this.page, this.pageSize, false);
   }
 
   // Called when first size changes
@@ -138,7 +138,7 @@ export class ResourceAvailabilityReportComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateResourceAvailabilityReport(this.page, this.pageSize);
+    this.generateResourceAvailabilityReport(this.page, this.pageSize, false);
   }
 
   getProjectsData(): void {
@@ -312,7 +312,7 @@ export class ResourceAvailabilityReportComponent {
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'ResourceAvailability',
-      EmployeeIds: employeeId,
+      // EmployeeIds: employeeId,
     };
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
@@ -330,11 +330,13 @@ export class ResourceAvailabilityReportComponent {
     return params;
   }
 
-  generateResourceAvailabilityReport(page: number, pageSize: number) {
+  generateResourceAvailabilityReport(page: number, pageSize: number, showLoader: boolean = true) {
     if (this.ResourceAvailabilityReportForm.invalid) {
       return;
     }
-    this.spinnerLoader1 = true;
+    if (showLoader) {
+      this.spinnerLoader1 = true;
+    }
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -395,7 +397,7 @@ export class ResourceAvailabilityReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("report export successfully");
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

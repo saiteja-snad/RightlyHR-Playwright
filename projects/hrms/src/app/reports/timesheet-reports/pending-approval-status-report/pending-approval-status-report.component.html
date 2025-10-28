@@ -101,13 +101,13 @@
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
-        <th>Employee Id</th>
+        <th>Worked Date</th>
+        <th>Employee ID</th>
         <th>Employee</th>
         <th>Client Name</th>
         <th>Project</th>
         <th>Task Description</th>
         <th>Status</th>
-        <th>Logged Date</th>
         <th>Submitted Date</th>
       </thead>
      <tbody>
@@ -121,28 +121,34 @@
   @else {
     @for (record of filteredpendingapprovalRecord; track $index) {
       <tr>
+         <td>{{ record.entryDate ? (record.entryDate | date) : '-' }}</td>
          <td>{{ record.fusionEmpId ?? '-' }}</td>
         <td>{{ record.employee ?? '-' }}</td>
         <td>{{ record.client ?? '-' }}</td>
         <td>{{ record.project ?? '-' }}</td>
         <td>
-            <div class="d-flex align-items-center gap-1">
-              <div *ngIf="record.description !== null">
-                <div [ngbPopover]="popContent">
-                  <app-info-icon />
-                </div>
-              </div>
-
-              <!-- Popover content -->
-              <ng-template #popContent>
-                {{ record.description }}
-              </ng-template>
-            </div>
+          <div class="d-flex align-items-center gap-1">
+                <!-- Show info icon if description is present -->
+           <ng-container *ngIf="record.description && record.description.trim() !== ''; else noDescription">
+                  <div [ngbPopover]="popContent">
+                    <app-info-icon />
+                  </div>
+                </ng-container>
+              
+                <!-- Fallback when no description -->
+                <ng-template #noDescription>
+                  <div>-</div>
+                </ng-template>
+              
+                <!-- Popover content -->
+                <ng-template #popContent>
+                  {{ record.description }}
+                </ng-template>
+              </div>                 
           </td>
         <td>
           {{ record.status ?? '-' }}
         </td>
-        <td>{{ record.entryDate ? (record.entryDate | date) : '-' }}</td>
         <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
       </tr>
     }

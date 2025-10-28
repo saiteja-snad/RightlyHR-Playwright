@@ -139,7 +139,7 @@ export class TeamTimesheetReportComponent {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateteamTimesheetReport(this.page, this.pageSize);
+    this.generateteamTimesheetReport(this.page, this.pageSize,false);
   }
 
   // Called when first size changes
@@ -148,7 +148,7 @@ export class TeamTimesheetReportComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateteamTimesheetReport(this.page, this.pageSize);
+    this.generateteamTimesheetReport(this.page, this.pageSize,false);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -397,8 +397,7 @@ export class TeamTimesheetReportComponent {
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
-      ReportType: 'TeamTimesheet',
-      EmployeeIds: employeeId,
+      ReportType: 'TeamTimesheet'
     };
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
@@ -416,11 +415,13 @@ export class TeamTimesheetReportComponent {
     if (formValue.status?.value) params.Statuses = formValue.status.value;
     return params;
   }
-  generateteamTimesheetReport(page: number, pageSize: number) {
+  generateteamTimesheetReport(page: number, pageSize: number, showLoader: boolean = true) {
     if (this.TeamTimesheetReportForm.invalid) {
       return;
     }
-    this.spinnerLoader1 = true;
+    if (showLoader) {
+      this.spinnerLoader1 = true;
+    }
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -481,7 +482,7 @@ export class TeamTimesheetReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("report export successfully");
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

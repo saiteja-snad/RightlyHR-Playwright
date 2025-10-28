@@ -131,7 +131,7 @@ isFilterApplied(): boolean {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generatemytimesheetReport(this.page, this.pageSize);
+     this.generatemytimesheetReport(this.page, this.pageSize,false);
   }
 
   // Called when first size changes
@@ -140,7 +140,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatemytimesheetReport(this.page, this.pageSize);
+    this.generatemytimesheetReport(this.page, this.pageSize, false);
   }
   //GET CLIENT AND PROJECT
   getResourceData() {
@@ -241,6 +241,10 @@ isFilterApplied(): boolean {
   getAllActiveProjects(event: any) {
     const selectedClientId = event.value;
     const selectedClient = this.clients.find((c) => c.clientId === selectedClientId);
+// Always reset project when client changes
+  const projectControl = this.MyTimesheetReportForm.get('project');
+  projectControl?.reset();
+  this.projectsData = [];
 
     if (selectedClient && selectedClient.projects) {
       this.projectsData = selectedClient.projects.map((p: any) => ({
@@ -251,6 +255,7 @@ isFilterApplied(): boolean {
       this.MyTimesheetReportForm.get('project')?.enable(); // enable when client chosen
     } else {
       this.projectsData = [];
+      this.MyTimesheetReportForm.get('project')?.setValue(0);
       this.MyTimesheetReportForm.get('project')?.reset();
       this.MyTimesheetReportForm.get('project')?.disable(); // disable if no projects or no client
     }
@@ -284,10 +289,17 @@ isFilterApplied(): boolean {
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'MyTimesheet',
-      EmployeeIds: employeeId,
-      ClientIds: formValue.client ? formValue.client : 0,   
-       ProjectIds: formValue.project ? formValue.project : 0 
+      //EmployeeIds: employeeId,
+      // ClientIds: formValue.client ? formValue.client : 0,   
+      //  ProjectIds: formValue.project ? formValue.project : 0 
     };
+    if (formValue.client !== null && formValue.client !== undefined) {
+      params.ClientIds = formValue.client ? formValue.client : 0;
+    }
+
+    if (formValue.project !== null && formValue.project !== undefined) {
+      params.ProjectIds = formValue.project ? formValue.project : 0;
+    }
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
     if (formValue.billable?.value) params.Billable = formValue.billable.value;
@@ -295,11 +307,14 @@ isFilterApplied(): boolean {
     return params;
   }
 
-  generatemytimesheetReport(page: number, pageSize: number) {
+  generatemytimesheetReport(page: number, pageSize: number, showLoader: boolean = true) {
     if (this.MyTimesheetReportForm.invalid) {
       return;
     }
+
+     if (showLoader) {
     this.spinnerLoader1 = true;
+  }
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -358,7 +373,7 @@ isFilterApplied(): boolean {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("report export successfully");
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

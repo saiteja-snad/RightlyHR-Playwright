@@ -139,7 +139,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generatependingapprovalReport(this.page, this.pageSize);
+    this.generatependingapprovalReport(this.page, this.pageSize, false);
   }
 
   // Called when first size changes
@@ -148,7 +148,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatependingapprovalReport(this.page, this.pageSize);
+    this.generatependingapprovalReport(this.page, this.pageSize, false);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -397,7 +397,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'PendingApproval',
-      EmployeeIds: employeeId,
+      // EmployeeIds: employeeId,
     };
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
@@ -415,11 +415,13 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
     return params;
   }
 
-  generatependingapprovalReport(page: number, pageSize: number) {
+  generatependingapprovalReport(page: number, pageSize: number, showLoader: boolean = true) {
     if (this.PendingApprovalReportForm.invalid) {
       return;
     }
-    this.spinnerLoader1 = true;
+    if (showLoader) {
+      this.spinnerLoader1 = true;
+    }
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -480,7 +482,7 @@ export class PendingApprovalStatusReportComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("report export successfully");
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

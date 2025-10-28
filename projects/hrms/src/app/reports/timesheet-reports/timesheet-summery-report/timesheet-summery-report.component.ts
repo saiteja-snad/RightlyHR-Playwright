@@ -135,7 +135,7 @@ export class TimesheetSummeryReportComponent {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generatetimesheetSummeryReport(this.page, this.pageSize);
+    this.generatetimesheetSummeryReport(this.page, this.pageSize,false);
   }
 
   // Called when first size changes
@@ -144,7 +144,7 @@ export class TimesheetSummeryReportComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatetimesheetSummeryReport(this.page, this.pageSize);
+    this.generatetimesheetSummeryReport(this.page, this.pageSize, false);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -443,7 +443,7 @@ export class TimesheetSummeryReportComponent {
   // Build params
   const params: any = {
     ReportType: 'TimesheetSummaryMonth',
-    EmployeeIds: employeeId,
+    // EmployeeIds: employeeId,
     StartDate: startDate,
     EndDate: endDate
   };
@@ -468,12 +468,14 @@ export class TimesheetSummeryReportComponent {
   return params;
 }
 
-  generatetimesheetSummeryReport(page: number, pageSize: number) {
+  generatetimesheetSummeryReport(page: number, pageSize: number, showLoader: boolean = true) {
     if (this.TimesheetSummeryReportForm.invalid) {
       return;
     }
-   
-    this.spinnerLoader1 = true;
+
+    if (showLoader) {
+      this.spinnerLoader1 = true;
+    }
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -554,7 +556,7 @@ export class TimesheetSummeryReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("report export successfully");
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

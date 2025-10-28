@@ -57,8 +57,7 @@ export class UtilizationReportComponent {
   getEmployeeInfo = [] as any;
   BillableOptions = [
     { key: 'Yes', value: 'true' },
-    { key: 'No', value: 'false' },
-    { key: 'Both',value:'both' },
+    { key: 'No', value: 'false' }
   ];
   TimesheetStatus = [
     { key: 'Waiting for Approval', value: 'Waiting for Approval' },
@@ -135,7 +134,7 @@ export class UtilizationReportComponent {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateUtilizationReport(this.page, this.pageSize);
+    this.generateUtilizationReport(this.page, this.pageSize, false);
   }
 
   // Called when first size changes
@@ -144,7 +143,7 @@ export class UtilizationReportComponent {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateUtilizationReport(this.page, this.pageSize);
+    this.generateUtilizationReport(this.page, this.pageSize, false);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -393,7 +392,7 @@ export class UtilizationReportComponent {
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'Utilization',
-      EmployeeIds: employeeId,
+      // EmployeeIds: employeeId,
     };
     if (startDate) params.StartDate = startDate;
     if (endDate) params.EndDate = endDate;
@@ -407,14 +406,16 @@ export class UtilizationReportComponent {
     if (formValue.employeid !== null && formValue.employeid !== undefined) {
       params.EmployeeIds = formValue.employeid;
     }
-    if (formValue.billable?.value && formValue.billable?.value != 'both') params.billable = formValue.billable.value;
+    if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
-  generateUtilizationReport(page: number, pageSize: number) {
+  generateUtilizationReport(page: number, pageSize: number, showLoader: boolean = true) {
     if (this.UtilizationReportForm.invalid) {
       return;
     }
-    this.spinnerLoader1 = true;
+    if (showLoader) {
+      this.spinnerLoader1 = true;
+    }
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
     this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -474,7 +475,7 @@ export class UtilizationReportComponent {
         window.URL.revokeObjectURL(url);
 
         console.log('Downloaded file:', filename);
-        this.conformationPopup.openSuccessModal("report export successfully");
+        this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('No records found');

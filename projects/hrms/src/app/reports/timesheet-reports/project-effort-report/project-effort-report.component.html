@@ -68,7 +68,7 @@
       <!-- Belaible -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="BillableOptions" [filter]="true" optionLabel="key" filterBy="key"
+            <p-select [options]="BillableOptions" optionLabel="key" filterBy="key"
               formControlName="billable" placeholder="Please select billable" class="form-select custom-select">
             </p-select>
           </div>
@@ -113,7 +113,7 @@
         <th>Allocated Hour</th>
         <th>Billable Hrs</th>
         <th>Non-Billable Hrs</th>
-        <th>Total Hrs</th>
+        <th>Total Logged Hrs</th>
       </thead>
     <tbody>
         @if (!filteredpendingapprovalRecord || filteredpendingapprovalRecord.length === 0) {

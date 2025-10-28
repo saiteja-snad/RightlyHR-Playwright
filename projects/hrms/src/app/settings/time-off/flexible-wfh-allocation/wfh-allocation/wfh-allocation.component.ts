@@ -233,19 +233,17 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
         },
       });
   }
-  validateEffectiveDate(control: any) {
-    if (!control.value) return null;
-
-    const selectedDate = moment(control.value, 'YYYY-MM-DD');
-    const minDate = moment(this.minEffectiveDate, 'YYYY-MM-DD');
-    const maxDate = moment(this.maxEffectiveDate, 'YYYY-MM-DD');
-
-    if (selectedDate.isBefore(minDate) || selectedDate.isAfter(maxDate)) {
-      return { invalidDate: true };
-    }
-
-    return null;
+validateEffectiveDate(control: any) {
+  if (!control.value) return null;
+  const selectedDate = moment(control.value, 'YYYY-MM-DD');
+  const startOfCurrentMonth = moment().startOf('month'); // 1st day of current month
+  //  If selected date is before the start of current month → invalid
+  if (selectedDate.isBefore(startOfCurrentMonth, 'day')) {
+    return { invalidDate: true };
   }
+  // Otherwise valid (current or future)
+  return null;
+}
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
     this.selectedEmployees = selectedList || [];
     this.getByEmployeewfhallocations(this.selectedEmployees, form);
@@ -379,7 +377,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
           this.wfhAllocationForm.get('shiftName')?.disable();
           this.wfhAllocationForm.get('categoryName')?.disable();
           this.wfhAllocationForm.get('shift')?.disable();
-          this.modal.openSuccessModal('WFH allocation saved successfully!');
+          this.modal.openSuccessModal('Flexible WFH allocated successfully');
         },
         error: (err: any) => {
           this.isloading=false;

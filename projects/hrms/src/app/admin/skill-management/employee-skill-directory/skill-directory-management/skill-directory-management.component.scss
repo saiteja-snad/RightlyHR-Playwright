@@ -85,4 +85,25 @@
     border-top-left-radius: 0px !important;
     border-bottom-left-radius: 0px !important;
 }
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #fff;
+  min-width: 90px;
+  text-align: center;
+}
+
+.status-available {
+  color: #00A912; // green
+   font-size: 14px;
+}
+
+.status-committed {
+  color: #E0A101; // amber
+   font-size: 14px;
+}
 

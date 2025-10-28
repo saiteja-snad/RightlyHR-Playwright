@@ -16,13 +16,15 @@ import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-f
 import { SkillEmployeePipe } from "../../../../Pipes/skills.pipe";
 import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { PaginatorModule } from "primeng/paginator";
-
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
   imports: [
-    TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, DataLoaderContentComponent,
+    TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, DataLoaderContentComponent, MultiSelectModule,
     NoDataFoundComponent,
     SkillEmployeePipe,
     PaginatorModule
@@ -38,8 +40,7 @@ export class SkillDirectoryManagementComponent {
   MySkills: any[] = [];
   date!: Date[];
   @ViewChild('datePicker') datePicker: any;
-  private start!: Date;
-  private end!: Date;
+  subscription!: Subscription;
   monthStartDate!: Date;
   page = 1;
   pageSize = 10;
@@ -54,18 +55,23 @@ export class SkillDirectoryManagementComponent {
   searchQuery: string = '';
   totalCount!: number;
   monthEndDate!: Date;
-  selectedStatus: string | null = null;
+  selectedStatus: string = 'All Status';
   selectedMonthRange: boolean = false;
   selectedEmployee: any = null;
   spinnerLoaderforallrecoders = false;
   loader = false;
   searchValue = '';
   empinfo: any = {};
+  categoryList: any
+  selectedSkills: string[] = [];
   EmpStatus = [
+    { label: 'All Status', value: 'All Status' },
     { label: 'Committed', value: 'Committed' },
     { label: 'Available', value: 'Available' }
   ]
   displayLabel!: string;
+  multiSkillOptions: any[] = [];
+
   constructor(
     private http: HttpService,
     public formValidation: FormValidationService,
@@ -75,15 +81,18 @@ export class SkillDirectoryManagementComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.selectedStatus = 'All Status';
     this.getEmployeeSkills();
+    this.getMultiskills()
     this.navTabs = [
       { label: 'Skills' },
       { label: 'Projects' },
     ];
   }
   onCheckemployeeStatus(statusValue: any) {
-    this.selectedStatus = statusValue || null;
-    this.getEmployeeSkills(); // Refresh on status change
+    // handle clear case or All Status
+    this.selectedStatus = !statusValue || statusValue === 'All Status' ? 'All Status' : statusValue;
+    this.getEmployeeSkills();
   }
 
   onSearch(value: string) {
@@ -91,6 +100,10 @@ export class SkillDirectoryManagementComponent {
     this.getEmployeeSkills(); // Trigger search on typing or Enter
   }
 
+  onSkillSelectionChange(): void {
+    // When skills change, trigger employee search
+    this.getEmployeeSkills();
+  }
   onDateChange(dates: Date[]) {
     // Reset
     if (!dates || dates.length === 0) {
@@ -118,7 +131,7 @@ export class SkillDirectoryManagementComponent {
     }
   }
 
-   onPageChange(event: any) {
+  onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
     const currentPage = Math.floor(this.first / this.rows) + 1;
@@ -132,13 +145,16 @@ export class SkillDirectoryManagementComponent {
     this.page = 1;
     this.getEmployeeSkills();
   }
-  getSkillList(emp: any): string {
-    if (!emp?.skills?.length) return '-';
-
-    return emp.skills
-      .filter((s: any) => s.isActive)
-      .map((s: any) => `${s.skillName} (${s.proficiencyLevel})`)
-      .join(', ') || '-';
+  getActiveSkills(emp: any): any[] {
+    if (!emp?.skills?.length) return [];
+    return emp.skills.filter((s: any) => s.isActive);
+  }
+  getStatusClass(status: string): string {
+    if (!status) return '';
+    const normalized = status.toLowerCase();
+    if (normalized === 'available') return 'status-available';
+    if (normalized === 'committed') return 'status-committed';
+    return '';
   }
 
   openModal(content: any, emp: any) {
@@ -164,11 +180,27 @@ export class SkillDirectoryManagementComponent {
       pageSize: this.pageSize,
     };
 
-    if (this.selectedStatus) params.resourceStatus = this.selectedStatus;
-    if (this.searchQuery) params.searchQuery = this.searchQuery;
+    //  Handle status filters
+    if (this.selectedStatus && this.selectedStatus !== 'All Status') {
+      params.resourceStatus = this.selectedStatus;
+    } else {
+      params.resourceStatusList = ['Committed', 'Available'];
+    }
+
+    //  Handle search text
+    if (this.searchQuery) {
+      params.searchQuery = this.searchQuery;
+    }
+
+    //  Handle date range
     if (this.monthStartDate && this.monthEndDate) {
       params.fromDate = this.monthStartDate.toISOString();
       params.toDate = this.monthEndDate.toISOString();
+    }
+
+    // Handle multi-select skills (comma-separated)
+    if (this.selectedSkills && this.selectedSkills.length > 0) {
+      params.skillSearch = this.selectedSkills.join(',');
     }
 
     this.spinnerLoaderforallrecoders = true;
@@ -180,7 +212,7 @@ export class SkillDirectoryManagementComponent {
             this.MySkills = res.data.items;
             this.totalCount = res.data.totalCount;
           } else {
-            this.MySkills = []; // clear old data
+            this.MySkills = [];
             this.totalCount = 0;
           }
         },
@@ -195,12 +227,47 @@ export class SkillDirectoryManagementComponent {
   }
 
 
+  getMultiskills() {
+    this.loader = true;
+    this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
+      next: (response: any) => {
+        console.log('API Response:', response);
+
+        if (response?.success && Array.isArray(response.data)) {
+          this.multiSkillOptions = response.data.map((skill: any) => ({
+            label: skill.skillName, // text shown in dropdown
+            value: skill.skillName  // actual value stored
+          }));
+        } else {
+          this.multiSkillOptions = [];
+        }
+
+        console.log('multiSkillOptions:', this.multiSkillOptions);
+        this.loader = false;
+      },
+      error: (reason: any) => {
+        console.error('Error fetching skills:', reason);
+        this.loader = false;
+      }
+    });
+  }
+
+  getCategory() {
+    const params = {
+      entity: "employee",
+      attribute: "skillset"
+    }
+    this.subscription = this.http.getDataIncludeParams("entityAttributeValues", params).subscribe({
+      next: (data: any) => {
+        this.categoryList = data;
+      }
+    })
+  }
+
   closePopup(modal: any) {
     modal.dismiss();
   }
-  isSubmitDisabled(): boolean {
-    return !(this.selectedStatus && this.monthStartDate && this.monthEndDate);
-  }
+
 
   submitExport() {
     this.spinnerLoaderforallrecoders = true;

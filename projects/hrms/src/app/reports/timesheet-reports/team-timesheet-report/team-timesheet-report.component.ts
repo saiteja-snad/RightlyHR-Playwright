@@ -729,15 +729,8 @@ export class TeamTimesheetReportComponent {
         this.disableBtn = true;
       },
     });
-
-
   }
-  get showingRange(): string {
-    if (this.collectionSize === 0) return '';
-    const start = this.first + 1;
-    const end = Math.min(this.first + this.rows, this.collectionSize);
-    return `Showing ${start} - ${end} of ${this.collectionSize}`;
-  }
+ 
   exportTeamTimesheetReport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();

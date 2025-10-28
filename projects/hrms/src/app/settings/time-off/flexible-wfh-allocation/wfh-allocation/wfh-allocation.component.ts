@@ -372,9 +372,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
           this.isloading=false;
           this.selectedEmployees = [];
           this.wfhAllocationForm.reset();
-          this.wfhAllocationForm = this.fb.group({
-            employees: this.fb.array([]),
-          });
+          (this.wfhAllocationForm.get('employees') as FormArray).clear();
           this.wfhAllocationForm.get('location')?.disable();
           this.wfhAllocationForm.get('subLocation')?.disable();
           this.wfhAllocationForm.get('shiftName')?.disable();
@@ -399,9 +397,8 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   //to reset the form
   cancle() {
     this.wfhAllocationForm.reset();
-    this.wfhAllocationForm = this.fb.group({
-      employees: this.fb.array([]),
-    });
+    // clear employees array
+  (this.wfhAllocationForm.get('employees') as FormArray).clear();
     this.wfhAllocationForm.get('subLocation')?.disable();
     this.wfhAllocationForm.get('location')?.disable();
     this.wfhAllocationForm.get('shiftName')?.disable();

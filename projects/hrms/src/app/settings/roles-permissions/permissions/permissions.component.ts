@@ -819,6 +819,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Team Timesheet Report',
     'Team Timesheet Report - Generate',
     'Team Timesheet Report - Export',
+    'Team Timesheet Report - Admin-Approval',
     'Pending Approval Status Report',
     'Pending Approval Status Report - Generate',
     'Pending Approval Status Report - Export',

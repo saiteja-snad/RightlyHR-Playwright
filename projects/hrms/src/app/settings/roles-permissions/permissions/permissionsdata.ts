@@ -522,6 +522,7 @@ export const permissionsData = [
   { fields: 'Team Timesheet Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Timesheet Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Timesheet Report - Export', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Team Timesheet Report - Admin-Approval', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approval Status Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approval Status Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Pending Approval Status Report - Export', View: false, Update: false, Create: false, Delete: false },

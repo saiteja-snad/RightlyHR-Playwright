@@ -105,15 +105,27 @@ export class UtilizationReportComponent {
       this.disableBtn = true;
     })
   }
-     isFilterApplied(): boolean {
+//      isFilterApplied(): boolean {
+//   const formValue = this.UtilizationReportForm.value;
+
+//   return (
+//     (formValue.clientId && formValue.clientId !== null) ||
+//     (formValue.projectId && formValue.projectId !== null) ||
+//     (formValue.employeid && formValue.employeid !== null) ||
+//     (formValue.dateRange && formValue.dateRange.length > 0) ||
+//     (formValue.billable && formValue.billable !== null && formValue.billable !== undefined)
+//   );
+// }
+
+isFilterApplied(): boolean {
   const formValue = this.UtilizationReportForm.value;
 
   return (
-    (formValue.clientId && formValue.clientId !== null) ||
-    (formValue.projectId && formValue.projectId !== null) ||
-    (formValue.employeid && formValue.employeid !== null) ||
-    (formValue.dateRange && formValue.dateRange.length > 0) ||
-    (formValue.billable && formValue.billable !== null && formValue.billable !== undefined)
+    (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
+    (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+    (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
+    (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+    (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
   );
 }
   clearAllFilters(): void {

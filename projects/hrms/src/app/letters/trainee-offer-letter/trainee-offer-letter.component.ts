@@ -885,17 +885,15 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       isdeleted: 'Active',
     };
 
-    if (this.traineeEmpData?.amount && this.employeeForm.get('amount')?.value) {
+    if (this.traineeEmpData?.amount != null && this.employeeForm.get('amount')?.value != null) {
       this.subscription = this.http.postdata('Compensationdata', Compensationdata).subscribe({
         next: (data: any) => {
-          //alert("comp data successfully added")
+          console.log("comp data successfully added");
         },
         error: (Reason) => console.log(Reason),
       });
-    }
-    else {
-      console.log('no ctc');
-
+    } else {
+      console.log('no ctc data available');
     }
 
     this.subscription = this.http.postdata('Employementtype', employmentdata).subscribe({

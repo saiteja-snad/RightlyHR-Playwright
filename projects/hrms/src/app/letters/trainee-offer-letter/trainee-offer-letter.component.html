@@ -373,7 +373,7 @@
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" placeholder="Please select signature authority"
                             (onChange)="onclickDesignations($event)" class="form-select custom-select"
-                            formControlName="authorityid" resetFilterOnHide="true">
+                            formControlName="authorityid" resetFilterOnHide="true"   appendTo="body">
                             <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
                                 emp.lastName }}</ng-template>
                             <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{

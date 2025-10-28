@@ -27,3 +27,9 @@ input:focus {
   list-style-type: disc;
   padding-left: 20px;
 }
+
+
+.p-select-option.p-select-option-selected {
+    background: #e8f0fb !important;
+    color: #222222 !important;
+}

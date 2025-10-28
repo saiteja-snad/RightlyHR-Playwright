@@ -7,13 +7,15 @@
     </div>
 
     <!-- Technical Skills -->
-    <div class="card custom-background-card p-4 mb-3" *ngIf="technicalSkills.length">
-        <label class="skill-set-header mb-3">Technical Skills</label>
-        <div class="flex flex-wrap gap-3">
-            <div *ngFor="let skill of technicalSkills" class="custom-chip-card position-relative">
-                <span class="me-1">{{ skill.skillName }} ({{ skill.proficiencyLevel }})</span>
-                <!-- Close icon -->
-                <i class="bi bi-x-circle" (click)="openDeletePopup(deletepopup, skill, $event)"></i>
+    <div class="card custom-background-card p-4" *ngIf="technicalSkills.length">
+        <div class="custom-label chip">
+            <label class="custom-label mb-3">Technical Skills</label>
+            <div class="flex flex-wrap gap-3">
+                <div *ngFor="let skill of technicalSkills" class="custom-chip-card position-relative">
+                    <span class="me-1">{{ skill.skillName }} ({{ skill.proficiencyLevel }})</span>
+                    <!-- Close icon -->
+                    <i class="bi bi-x-circle" (click)="openDeletePopup(deletepopup, skill, $event)"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -53,7 +55,7 @@
                             optionValue="value" [filter]="true" [showClear]="false" formControlName="skillcategory"
                             placeholder="{{'Please select skill category'}}">
                         </p-select>
-                         <div *ngIf="AddForm.get('skillcategory')?.touched && AddForm.get('skillcategory')?.invalid"
+                        <div *ngIf="AddForm.get('skillcategory')?.touched && AddForm.get('skillcategory')?.invalid"
                             class="error-msg">
                             <div *ngIf="AddForm.get('skillcategory')?.errors?.['required']">{{'Skill category is required'}}</div>
                         </div>

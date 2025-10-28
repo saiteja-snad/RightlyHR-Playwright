@@ -1,15 +1,17 @@
-::ng-deep .p-chip {
-  background-color: white; /* overall chip background */
-  border: 1px solid #ccc;  /* optional border */
-}
+.custom-background-card {
+  border-radius: 0.625rem;
 
-.skill-name {
-  color: rgba(6, 39, 79, 1);
-  font-weight: 500;
-}
+  .skill-set-header {
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    color: #8E8E8E;
+  }
 
-.proficiency {
-  color: #000; /* normal text color */
-  font-weight: normal;
-  margin-left: 2px; /* small spacing */
+  .p-chip {
+    border: 1px solid #DEE8F3 !important;
+    background: #F8FBFF !important;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+    color: var(--primary-color) !important;
+  }
 }

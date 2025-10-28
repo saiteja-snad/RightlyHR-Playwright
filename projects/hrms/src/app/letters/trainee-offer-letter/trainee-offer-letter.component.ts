@@ -191,7 +191,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
       amount: ['',],
-      monthlyammount: ['',],
+      monthlyammount: ['',Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],

@@ -142,7 +142,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.employeeCompensationDetails = res;
         this.traineeEmpData.salary = Employee.salary = res.compensationamount;
         console.log(this.traineeEmpData.salary);
-        
+
       },
       error: (reason: any) => {
         console.log(reason);
@@ -161,6 +161,17 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         Employee.jobRole = res.jobRole;
         Employee.workLocation = res.lopcation;
         Employee.subLocation = res.subLocation;
+        this.getaddress(this.jobDeatils?.locationId, this.jobDeatils?.subLocationId);
+      }
+    })
+  }
+
+  getaddress(locationId: number, sublocationId: number) {
+    this.subscription = this.http.getData(`PreonboardingJobDetails/GetbyJobLocationSubLocationId?joblocid=${locationId}&sublocid=${sublocationId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.traineeEmpData.address = data.address;
+        console.log(this.traineeEmpData.address);
       }
     })
   }
@@ -189,6 +200,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.stipendApplicablecheck = this.getofferdata?.stipendApplicable;
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
+        this.traineeEmpData.address = this.getofferdata.address;
         this.traineeEmpData.note = this.getofferdata.note
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())

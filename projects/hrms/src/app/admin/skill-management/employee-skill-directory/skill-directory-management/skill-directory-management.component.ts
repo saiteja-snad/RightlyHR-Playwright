@@ -272,7 +272,7 @@ export class SkillDirectoryManagementComponent {
   submitExport() {
     this.spinnerLoaderforallrecoders = true;
     const isActive = true;
-    const resourceStatus = this.selectedStatus || '';
+     const resourceStatus =!this.selectedStatus || this.selectedStatus === 'All Status' ? '' : this.selectedStatus;
     const searchQuery = this.searchQuery || '';
     const fromDate = this.monthStartDate ? this.monthStartDate.toISOString() : '';
     const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';

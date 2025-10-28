@@ -184,7 +184,7 @@
         </div>
         <div class="d-flex justify-content-end gap-3 p-3" *ngIf="rbac.allowedToAccess('Active Allocations Tab.create')">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)"
-                >{{'cancel'|translate}}</button>
+                >{{'Cancel'|translate}}</button>
                 <button type="submit" class="custom-btn btn-primary px-5"
                 [disabled]="wfhAllocationForm.invalid ||isloading">
             @if(isloading){

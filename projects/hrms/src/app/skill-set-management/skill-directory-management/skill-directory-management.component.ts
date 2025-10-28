@@ -17,11 +17,12 @@ import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
 
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
-  imports: [TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, 
+  imports: [TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
     DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, SkillEmployeePipe, PaginatorModule],
   templateUrl: './skill-directory-management.component.html',
   styleUrl: './skill-directory-management.component.scss',
@@ -30,10 +31,10 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 
 export class SkillDirectoryManagementComponent {
   filteredTabs: any[] = [];
-  imageUrl: string = 'assets/images/profile1.png';
   columnsPerRow = 3;
   navTabs: any[] = [];
   MySkills: any[] = [];
+  imageUrl:any
   date!: Date[];
   @ViewChild('datePicker') datePicker: any;
   subscription!: Subscription;
@@ -141,6 +142,24 @@ export class SkillDirectoryManagementComponent {
     if (!emp?.skills?.length) return [];
     return emp.skills.filter((s: any) => s.isActive);
   }
+  get employeeStatusDisplay(): string {
+  const emp = this.selectedEmployee;
+  if (!emp) return '-';
+
+  if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
+    const lastProject = emp.projects
+      .filter((p: any) => p.endDate)
+      .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
+    if (lastProject?.endDate) {
+      const formattedDate = new Date(lastProject.endDate).toLocaleDateString('en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      });
+      return `Committed until ${formattedDate}`;
+    }
+  }
+  return emp.employeeProjectStatus || '-';
+}
+
 
   getStatusClass(status: string): string {
     if (!status) return '';

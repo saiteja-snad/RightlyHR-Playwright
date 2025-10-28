@@ -71,7 +71,8 @@
             <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
             <td>
               <div class="d-flex flex-wrap">
-                <p-chip *ngFor="let skill of getActiveSkills(emp)" [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'"></p-chip>
+                <p-chip *ngFor="let skill of getActiveSkills(emp)"
+                  [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'"></p-chip>
                 @if (getActiveSkills(emp).length === 0) {
                 <span>-</span>
                 }
@@ -111,7 +112,8 @@
     <div class="pagination-content">
       <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
         <div class="d-flex align-items-center gap-3 p-2">
-          <select class="form-select custom-pagination-select" [(ngModel)]="rows" (ngModelChange)="onPageSizeChange($event)">
+          <select class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
             <option *ngFor="let option of options" [value]="option.value">
               {{ option.label }}
             </option>
@@ -139,28 +141,33 @@
 
       <div class="profile-content">
         <!--Image-->
-        <div class="text-center mb-3">
-          <img [src]="imageUrl" alt="Profile Image" class="profile-image" />
+          <div class="mb-3">
+          <ng-container *ngIf="imageUrl; else showProfileIcon">
+            <img [src]="imageUrl" alt="Profile Image" class="profile-image">
+          </ng-container>
+          <ng-template #showProfileIcon>
+            <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'" />
+          </ng-template>
         </div>
         <!--Name-->
-        <p class="name m-0">{{ selectedEmployee?.employee?.name }}</p>
+        <p class="name m-0">{{ selectedEmployee?.employee?.name }}({{ selectedEmployee?.employee?.employeeId }})</p>
         <!--Designation-->
         <p class="sub-text department m-0"></p>
         <!--Employee ID-->
-        <p class="sub-text m-0">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
+        <p class="sub-text m-2">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
         <!--Status-->
-        <div class="custom-card-bg project-status mb-2">• Status: {{ selectedEmployee?.employeeProjectStatus }}</div>
+        <div class="custom-card-bg project-status mb-2">• {{ employeeStatusDisplay }}</div>
       </div>
 
       <div class="dashed-border"></div>
-      
+
       <div class="custom-skill-set-tabs w-100">
         <p-tabs value="0">
           <p-tablist>
             <p-tab value="0">Skills</p-tab>
             <p-tab value="1">Projects</p-tab>
           </p-tablist>
-      
+
           <!-- Skills Tab -->
           <p-tabpanel value="0">
             <div class="skill-set-container">
@@ -174,7 +181,7 @@
                 <p class="text-muted m-0">No technical skills</p>
                 }
               </div>
-          
+
               <div class="custom-card-bg skills-section w-100">
                 <p class="skills-title mb-2">Soft Skills</p>
                 @if (selectedEmployee?.softSkills?.length) {
@@ -187,7 +194,7 @@
               </div>
             </div>
           </p-tabpanel>
-      
+
           <!-- Projects Tab -->
           <p-tabpanel value="1">
             <div class="skill-set-container">
@@ -195,7 +202,8 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="custom-card-bg skills-section w-100 mb-3">
                 <div class="skills-title">{{ proj.projectName }}</div>
                 <div class="skill-text">{{ proj.projectDesignation }}</div>
-                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</div>
+                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM
+                  yyyy' }}</div>
               </div>
               } @else {
               <p class="text-muted">No projects available</p>

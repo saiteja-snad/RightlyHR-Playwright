@@ -15,3 +15,36 @@
     color: var(--primary-color) !important;
   }
 }
+
+.soft-skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.custom-chip-card {
+  border: 1px solid #DEE8F3 !important;
+  background: #F8FBFF !important;
+  border-radius: 20px;
+  padding: 8px 30px 8px 15px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: default;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  color: var(--primary-color) !important;
+}
+
+.custom-chip-close-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+

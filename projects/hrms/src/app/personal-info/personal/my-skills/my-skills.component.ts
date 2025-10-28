@@ -221,11 +221,6 @@ export class MySkillsComponent {
     });
   }
 
-  removeSkill(skill: any) {
-    this.technicalSkills = this.technicalSkills.filter(s => s !== skill);
-    this.softSkills = this.softSkills.filter(s => s !== skill);
-  }
-
   openDeletePopup(modal: any, skill: any, event?: MouseEvent) {
     event?.stopPropagation();
     this.selectedSkill = skill;

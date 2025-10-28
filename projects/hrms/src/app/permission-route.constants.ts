@@ -5,7 +5,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   { permission: 'My Info Contact Details.view', route: '/myinfo/personal/contact-details' },
   { permission: 'My Info Emergency Contact Details.view', route: '/myinfo/personal/emergency-contact-details' },
   { permission: 'My Info Education Details.view', route: '/myinfo/personal/education-details' },
-  { permission: 'My Skills.view', route:'/myinfo/personal/my-skills' },
+  { permission: 'My Skills.view', route: '/myinfo/personal/my-skills' },
   { permission: 'My Info Identity Details.view', route: '/myinfo/personal/identity-details' },
   { permission: 'My Info Family Details.view', route: '/myinfo/personal/family-details' },
   { permission: 'My Info Bank Details.view', route: '/myinfo/personal/bank-details' },
@@ -452,7 +452,8 @@ export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
   { permission: 'Employee Info Family Details.view', route: '/personalinfo/personal/family-details' },
   { permission: 'Employee Info Bank Details.view', route: '/personalinfo/personal/bank-details' },
   { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' },
-  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' }
+  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' },
+  { permission: 'Employee My Skills.view', route: '/personalinfo/personal/my-skills' },
 ];
 export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }

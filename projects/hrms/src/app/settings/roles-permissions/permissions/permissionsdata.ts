@@ -606,6 +606,7 @@ export const permissionsData = [
   { fields: 'Employee Info Bank Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Contract Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee My Skills', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Job Sub Tabs Section
   { fields: 'Employee Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },

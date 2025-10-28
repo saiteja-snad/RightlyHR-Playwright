@@ -102,18 +102,6 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
       this.disableBtn = true;
     })
   }
-// isFilterApplied(): boolean {
-//   const formValue = this.MyTimesheetReportForm.value;
-
-//   return (
-//     (formValue.client && formValue.client !== null) ||
-//     (formValue.project && formValue.project !== null) ||
-//     (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-//     (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined) ||
-//     (formValue.dateRange && formValue.dateRange.length > 0)
-//   );
-// }
-
 
 isFilterApplied(): boolean {
   const formValue = this.MyTimesheetReportForm.value;
@@ -394,7 +382,6 @@ isFilterApplied(): boolean {
       complete: () => { }
     });
   }
-
 
 
   navigation() {

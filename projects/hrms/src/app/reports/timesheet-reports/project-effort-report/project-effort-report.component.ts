@@ -106,16 +106,6 @@ export class ProjectEffortReportComponent {
       this.disableBtn = true;
     })
   }
-//      isFilterApplied(): boolean {
-//   const formValue = this.ProjectEffortReportForm.value;
-//   return (
-//     (formValue.clientId && formValue.clientId !== null) ||
-//     (formValue.projectId && formValue.projectId !== null) ||
-//    // (formValue.employeid && formValue.employeid !== null) ||
-//     (formValue.dateRange && formValue.dateRange.length > 0) ||
-//     (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined)
-//   );
-// }
 
 isFilterApplied(): boolean {
   const formValue = this.ProjectEffortReportForm.value;

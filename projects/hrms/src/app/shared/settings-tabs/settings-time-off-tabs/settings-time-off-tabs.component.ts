@@ -56,7 +56,7 @@ export class SettingsTimeOffTabsComponent {
       link: '/settings/timeoff-configurations/flexible-wfh-allocation',
       permission: { feature: 'Flexible WFH Allocation Tab', action: 'view' },
       icon:'/settings-icon/flexible-leave-allocation-icon.png',
-      subjectText:MODULE_INFOS.SETTINGS_LOAD_ENTITLEMENT_MODULE_INFO,
+      subjectText:MODULE_INFOS.SETTINGS_FLEXIBLE_WFH_ALLOCATION_MODULE_INFO,
     }
   ];
 

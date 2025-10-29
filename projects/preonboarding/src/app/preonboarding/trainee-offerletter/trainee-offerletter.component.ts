@@ -100,28 +100,29 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   acceptoffer() {
-    // this.loadingcircle = true;
+    this.loadingcircle = true;
+    const offeraccept = "Offer Letter Accepted";
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    this.downLoadDocument(offerUpdateDetails);
+     this.downLoadDocument(offerUpdateDetails);
+    offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
+   
+   
+
     this.loadingcircle = true;
   }
 
- 
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
-    this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
+    this.subscription = this.http.postData('PreOnboardingTraineeOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
-        this.modalService.dismissAll();
-        this.openPopup.openSuccess('Offer letter accepted successfully');
-        this.loadingcircle = false;
         this.getOfferLetterDetails();
       },
       error: (err) => {
         console.log(err);
       },
-      complete: () => { },
+      complete: () => {
+      },
     })
   }
-
 
   //function to get address details 
   getEmployeeAddress() {
@@ -272,7 +273,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1,pdfContent2']; // Add more content IDs if needed
+    const pdfContents = ['pdfContent1', 'pdfContent2']; // Add more content IDs if needed
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -300,7 +301,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
     }
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_TraineeOfferLetter_Signed.pdf`;
-    //pdf.save(fileName);
+    // pdf.save(fileName);
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
     let d: Date = new Date();
@@ -309,39 +310,49 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     });
     // this.uploadAddressLetter();
     this.generatedfile = file;
-    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
-   
+    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile,offerUpdateDetails);
+    // });
+    // }
   }
 
   //to store file to the azure and return to the url
-  private offerletterUpload(empId: number, file: File, offerUpdateDetails: Iofferletter) {
-    let filePath = `/FusionDocuments/Employee Documents/Offer Letter/${empId}`;
+  private offerletterUpload(empId: number, file: File,offerUpdateDetails:Iofferletter) {
+
+    let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          offerUpdateDetails.documentUrl = data.path;
-          offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
-          this.updateOfferDetailsforAccept(offerUpdateDetails);
+          this.updatedOfferLetterDetails.documentUrl = data.path;
+            offerUpdateDetails.documentUrl = data.path;
+          this.loadingcircle = false;
+          localStorage.setItem('offerletterurl', data.path);
+          this.getOfferLetterDetails();
+          this.modalService.dismissAll();
+          setTimeout(() => {
+            this.openPopup.openSuccess("Offer letter accepted successfully");
+             this.updateOfferDetailsforAccept(offerUpdateDetails);
+          }, 3000);
+          this.loadingcircle = false;
+          //this.updateOfferDetails(data.path);
         }
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.openPopup.openError("Something went wrong");
       },
     });
   }
 
-
   downloadoffer() {
-    const fileurl = this.updatedOfferLetterDetails.documentUrl;
+    const fileurl = this.updatedOfferLetterDetails.documentURL ?? '';
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
-        let blob: Blob = res.body as Blob;
-        let a = document.createElement('a');
-        a.href = window.URL.createObjectURL(blob);
-        let filename = fileurl.split('/')[fileurl.split('/').length - 1];
-        a.download = filename;
+        const blob: Blob = res.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileurl.substring(fileurl.lastIndexOf('/') + 1);
         a.click();
+        window.URL.revokeObjectURL(url);
       },
       error: (reason) => console.log(reason),
     });

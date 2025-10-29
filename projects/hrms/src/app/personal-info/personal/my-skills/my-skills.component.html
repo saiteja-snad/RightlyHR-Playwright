@@ -13,7 +13,7 @@
         <div class="custom-label chip">
             <label class="custom-label mb-3">Technical Skills</label>
             <div class="d-flex flex-wrap gap-2">
-                <div *ngFor="let skill of technicalSkills" class="custom-chip-card position-relative">
+                <div *ngFor="let skill of technicalSkills" class="custom-chip-card">
                     <div class="me-2">{{ skill.skillName }}  <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
                     <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
                 </div>
@@ -25,9 +25,9 @@
             <div class="custom-label chip">
                 <label class="custom-label mb-3">Soft Skills</label>
                 <div class="d-flex flex-wrap gap-2">
-                    <div *ngFor="let skill of softSkills" class="custom-chip-card position-relative">
-                        <div class="me-2">{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel}})</span></div>                       
-                           <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
+                    <div *ngFor="let skill of softSkills" class="custom-chip-card">
+                        <div>{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
+                        <div><img class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div>
                     </div>
                 </div>
             </div>

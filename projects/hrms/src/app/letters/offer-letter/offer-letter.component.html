@@ -367,7 +367,7 @@
           <div class="custom-p-select-content">
             <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()"
               optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
-              class="form-select custom-select" resetFilterOnHide="true" [filter]="true" filterBy="fullName"></p-select>
+              class="form-select custom-select my-dropdown-above" resetFilterOnHide="true" [filter]="true" filterBy="fullName"></p-select>
             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
               <div class="error-msg">Signature authority name is required</div>
             </div>

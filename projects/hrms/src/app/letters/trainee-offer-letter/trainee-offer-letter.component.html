@@ -1,51 +1,45 @@
 <div class="custom-main-component-container">
     <div class="main-letter-content">
         <div class="card letter-fields-content">
-            <form autocomplete="off" [formGroup]="employeeForm"
-                (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
+            <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Select Employee'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Select Employee'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName"
-                            [filter]="true" filterBy="fullName" placeholder="Select employee"
-                            placeholder="Please select employee" (onChange)="onClickValidation($event)"
-                            formControlName="fusionEmpId" resetFilterOnHide="true" class="custom-select w-100">
+                        <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Select employee" placeholder="Please select employee"
+                            (onChange)="onClickValidation($event)" formControlName="fusionEmpId" resetFilterOnHide="true"
+                            class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         <div class="error-msg">Employee is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Personal Email ID'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="email" class="form-control custom-input" formControlName="personalEmail"
                         placeholder="Personal email ID" />
-                    <div
-                        *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched">
+                    <div *ngIf="employeeForm.get('personalEmail')?.invalid && employeeForm.get('personalEmail')?.touched">
                         <div class="error-msg">Personal Email ID is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Salutation'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Salutation'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="titleDetails" optionLabel="titlename" placeholder="Salutation"
-                            formControlName="title" class="form-select custom-select"></p-select>
+                        <p-select [options]="titleDetails" optionLabel="titlename" placeholder="Salutation" formControlName="title"
+                            class="form-select custom-select"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('title')?.invalid && employeeForm.get('title')?.touched">
                         <div class="error-msg">Salutation is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'First Name'|translate}}<span
-                            class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="firstName"
-                        placeholder="First name" />
+                    <label class="form-label custom-label mb-2">{{'First Name'|translate}}<span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="firstName" placeholder="First name" />
                     <div *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched">
                         <div *ngIf="employeeForm.get('firstName')?.errors?.['required']" class="error-msg">
                             First Name is required
@@ -55,21 +49,18 @@
                         </span>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Middle Name'|translate}}</label>
-                    <input type="text" class="form-control custom-input" formControlName="middleName"
-                        placeholder="Middle name" />
+                    <input type="text" class="form-control custom-input" formControlName="middleName" placeholder="Middle name" />
                     <div *ngIf="employeeForm.get('middleName')?.invalid && employeeForm.get('middleName')?.touched">
                         <div class="error-msg">Middle Name is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Last Name'|translate}}<span
-                            class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="lastName"
-                        placeholder="Last name" />
+                    <label class="form-label custom-label mb-2">{{'Last Name'|translate}}<span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="lastName" placeholder="Last name" />
                     <div *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched">
                         <div *ngIf="employeeForm.get('lastName')?.errors?.['required']" class="error-msg">
                             Last Name is required
@@ -79,91 +70,79 @@
                         </span>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Gender'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Gender'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="genderDetails" optionLabel="genderName" placeholder="Gender"
-                            formControlName="gender" class="form-select custom-select"></p-select>
+                        <p-select [options]="genderDetails" optionLabel="genderName" placeholder="Gender" formControlName="gender"
+                            class="form-select custom-select"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('gender')?.invalid && employeeForm.get('gender')?.touched">
                         <div class="error-msg">Gender is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Select Address'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="addressdata" optionValue="value" optionLabel="name"
-                            placeholder="Please select address" formControlName="SelectDropDown"
-                            (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
-                        </p-select>
+                        <p-select [options]="addressdata" optionValue="value" optionLabel="name" placeholder="Please select address"
+                            formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
+                            class="form-select custom-select"></p-select>
                     </div>
-                    <div
-                        *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
+                    <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
                         <div class="error-msg">Address is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span
-                            class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="addressLine1"
-                        placeholder="Address line 1" />
+                    <label class="form-label custom-label mb-2">{{'Address Line 1'|translate}}<span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="addressLine1" placeholder="Address line 1" />
                     <div *ngIf="employeeForm.get('addressLine1')?.invalid && employeeForm.get('addressLine1')?.touched">
                         <div class="error-msg">Address Line 1 is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Address Line 2'|translate}}</label>
-                    <input type="text" class="form-control custom-input" formControlName="addressLine2"
-                        placeholder="Address line 2" />
+                    <input type="text" class="form-control custom-input" formControlName="addressLine2" placeholder="Address line 2" />
                     <div *ngIf="employeeForm.get('addressLine2')?.invalid && employeeForm.get('addressLine2')?.touched">
                         <div class="error-msg">Address Line 2 is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'City'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'City'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="city" placeholder="City" />
                     <div *ngIf="employeeForm.get('city')?.invalid && employeeForm.get('city')?.touched">
                         <div class="error-msg">City is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'State'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'State'|translate}}<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="state" placeholder="State" />
                     <div *ngIf="employeeForm.get('state')?.invalid && employeeForm.get('state')?.touched">
                         <div class="error-msg">State is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Country'|translate}}<span
-                            class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="country"
-                        placeholder="Country" />
+                    <label class="form-label custom-label mb-2">{{'Country'|translate}}<span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="country" placeholder="Country" />
                     <div *ngIf="employeeForm.get('country')?.invalid && employeeForm.get('country')?.touched">
                         <div class="error-msg">Country is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span
-                            class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="pinCode"
-                        placeholder="Pincode" />
+                    <label class="form-label custom-label mb-2">{{'Pincode'|translate}}<span class="error-msg">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="pinCode" placeholder="Pincode" />
                     <div *ngIf="employeeForm.get('pincode')?.invalid && employeeForm.get('pincode')?.touched">
                         <div class="error-msg">Pincode is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Mobile Number with Country Code'|translate}}<span
                             class="error-msg">*</span></label>
@@ -182,133 +161,114 @@
                             formControlName="phoneNumber" />
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2"> {{'Designation'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <input placeholder="Designation" formControlName="jobRoleDetails"
-                            class="form-control custom-input">
-                        <div
-                            *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
+                        <input placeholder="Designation" formControlName="jobRoleDetails" class="form-control custom-input">
+                        <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
                             <div class="error-msg">Designation is required</div>
                         </div>
                     </div>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Stipend/Salary Applicable <span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Stipend/Salary Applicable <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="stipend" optionLabel="name"
-                            placeholder="Please select stipend/salary applicable" formControlName="stipend"
-                            class="form-select custom-select">
+                        <p-select [options]="stipend" optionLabel="name" placeholder="Please select stipend/salary applicable"
+                            formControlName="stipend" class="form-select custom-select">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('stipend')?.invalid && employeeForm.get('stipend')?.touched">
                         <div class="error-msg">Stipend/Salary applicable is required</div>
                     </div>
                 </div>
-
-                <div class="mb-3" >
+        
+                <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Monthly Stipend Salary '|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="monthlyammount"
-                        placeholder="Please enter monthly stipend salary"
-                        (keypress)="formValidation.restrictAlphabets($event)" />
-                    <div
-                        *ngIf="employeeForm.get('monthlyammount')?.invalid && employeeForm.get('monthlyammount')?.touched">
+                        placeholder="Please enter monthly stipend salary" (keypress)="formValidation.restrictAlphabets($event)" />
+                    <div *ngIf="employeeForm.get('monthlyammount')?.invalid && employeeForm.get('monthlyammount')?.touched">
                         <div class="error-msg">Monthly Stipend Salary is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3" *ngIf="employeeForm.get('stipend')?.value?.value===false">
                     <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input"
-                        (keypress)="formValidation.restrictAlphabets($event)" formControlName="amount"
-                         (ngModelChange)="onclickCTC($event)"
-                        placeholder="Please enter salary" />
+                    <input type="text" class="form-control custom-input" (keypress)="formValidation.restrictAlphabets($event)"
+                        formControlName="amount" (ngModelChange)="onclickCTC($event)" placeholder="Please enter salary" />
                     <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                         <div class="error-msg">Salary is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Work Location'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Work Location'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true"
-                            filterBy="name" [showClear]="true" placeholder="Work location" formControlName="locationId"
-                            class="custom-select w-100">
+                        <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true" filterBy="name"
+                            [showClear]="true" placeholder="Work location" formControlName="locationId" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('locationId')?.invalid && employeeForm.get('locationId')?.touched">
                         <div class="error-msg">Work Location is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Sub Location'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                            [filter]="true" filterBy="name" [showClear]="true" placeholder="Sub location"
-                            formControlName="JobSubLocationName" class="custom-select w-100">
+                        <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
+                            filterBy="name" [showClear]="true" placeholder="Sub location" formControlName="JobSubLocationName"
+                            class="custom-select w-100">
                         </p-select>
                     </div>
-                    <div
-                        *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
+                    <div *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
                         <div class="error-msg">Sub Location is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
-                            class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="offerSentDate"
-                        [min]="issuedDatevalidate"
+                    <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span class="error-msg">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="offerSentDate" [min]="issuedDatevalidate"
                         (change)="updateEndDateValidityupdate();updateEndDateValidityForExpectedStartDate();updateEndDateValidity()"
-                        placeholder="Please enter offer issued date" onkeydown="return false;"
-                        (change)="isDataPopulated()" />
-                    <div
-                        *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
+                        placeholder="Please enter offer issued date" onkeydown="return false;" (change)="isDataPopulated()" />
+                    <div *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                         <div class="error-msg">Offer Issued Date is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Expected Start Date'|translate}} <span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                        placeholder="Please enter expected start date" [min]="startDatevalidate"
-                        onkeydown="return false;" (change)="onDateOfJoiningChange()"
-                        (change)="updateEndDateValidityupdate()"
+                        placeholder="Please enter expected start date" [min]="startDatevalidate" onkeydown="return false;"
+                        (change)="onDateOfJoiningChange()" (change)="updateEndDateValidityupdate()"
                         (change)="updateEndDateValidityForExpectedStartDate()" />
-                    <div
-                        *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
+                    <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                         <div class="error-msg">Expected Start Date is required</div>
                     </div>
                     <div *ngIf="!isStartDateValid" class="error-msg">
                         Expected Start Date should be after the Offer Issued Date
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidity()"
-                        onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
-                    <div
-                        *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
+                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidity()" onkeydown="return false;"
+                        min="traineeEmpData.offerIssuedDate" />
+                    <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
                     <div *ngIf="isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
                         Offer Issued Date</div>
                     <!-- <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after the
-                            Expected Start Date</div> -->
+                         Expected Start Date</div> -->
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">
                         {{'Training Period(Months)' | translate}}<span class="error-msg">*</span>
@@ -320,28 +280,25 @@
                             (onChange)="calculateEndDate(employeeForm.get('internshipperiod')?.value)">
                         </p-select>
                     </div>
-                    <div
-                        *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
+                    <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
                         <div class="error-msg">Training Period is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Reporting Manager'|translate}}
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName"
-                            [filter]="true" filterBy="fullName" placeholder="Please select reporting manager"
-                            formControlName="reportingmanagerId" class="custom-select w-100"
-                            (ngModelChange)="selectReportingname($event)" resetFilterOnHide="true">
+                        <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Please select reporting manager" formControlName="reportingmanagerId"
+                            class="custom-select w-100" (ngModelChange)="selectReportingname($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
-                    <div
-                        *ngIf="employeeForm.get('reportingmanagerId')?.invalid && employeeForm.get('reportingmanagerId')?.touched">
+                    <div *ngIf="employeeForm.get('reportingmanagerId')?.invalid && employeeForm.get('reportingmanagerId')?.touched">
                         <div class="error-msg">Reporting Manager is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
@@ -354,43 +311,38 @@
                         <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
-                    <textarea class="form-control custom-input" formControlName="note"
-                        (ngModelChange)="pathValuesFuction()" placeholder="Please enter note"
-                        maxlength="250"></textarea>
+                    <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()"
+                        placeholder="Please enter note" maxlength="250"></textarea>
                     <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                         <div class="error-msg">Note is required</div>
                     </div>
                 </div>
-
+        
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
                         {{'Signature Authority Name'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" placeholder="Please select signature authority"
-                            (onChange)="onclickDesignations($event)" class="form-select custom-select"
-                            formControlName="authorityid" resetFilterOnHide="true"   appendTo="body">
-                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{
-                                emp.lastName }}</ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{
-                                emp?.lastName }}</ng-template>
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            placeholder="Please select signature authority" (onChange)="onclickDesignations($event)"
+                            class="form-select custom-select my-dropdown-above" formControlName="authorityid" resetFilterOnHide="true">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}</ng-template>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
                     </div>
                 </div>
-
+        
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || loading">
                         @if(loading){
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                             <span>{{'Loading...'}}</span>
                         </div>
                         }@else { {{buttonValue}} }
@@ -400,8 +352,7 @@
                         (click)="emailSendingforApprover()">
                         @if(Approvalloader){
                         <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status"
-                                aria-hidden="true"></span>
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                             <span>{{'Loading...'}}</span>
                         </div>
                         }@else { {{'Request For Approval'|translate}} }
@@ -482,7 +433,6 @@
                                                     employment with SNAD. The terms and conditions of full-time
                                                     employment, including compensation and benefits, will be
                                                     communicated at the time of confirmation.
-
                                                 </li>
                                              
                                             </ng-container>

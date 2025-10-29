@@ -1,5 +1,4 @@
 * {
-
     font-family: 'VERDANA', sans-serif !important;
 }
 
@@ -19,17 +18,23 @@ input:focus {
     pointer-events: none;
     opacity: 0.5;
 }
-.font-content{
+
+.font-content {
     font-size: 18px;
 }
 
 .bullet {
-  list-style-type: disc;
-  padding-left: 20px;
+    list-style-type: disc;
+    padding-left: 20px;
 }
-
 
 .p-select-option.p-select-option-selected {
     background: #e8f0fb !important;
     color: #222222 !important;
+}
+
+:host ::ng-deep .my-dropdown-above {
+    .p-overlay.p-component {
+        top: -85px !important;
+    }
 }

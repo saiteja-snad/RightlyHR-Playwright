@@ -303,6 +303,7 @@ export class ExpensesLimitComponent implements OnInit {
           this.allowthresholdLimitForm.get('value')?.disable({ onlySelf: true });
           this.isEditing = false;
           this.setInitialFormState(); // reset view mode
+          this.getdatabyentriy();  // re-fetch the saved data
         },
         error: (err) => console.log('Update failed', err)
       });

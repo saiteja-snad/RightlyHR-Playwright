@@ -875,4 +875,14 @@ export const permissionsData = [
   { fields: 'On Behalf Of WFH All Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of WFH Button', View: false, Update: false, Create: false, Delete: false },
 
+
+  { fields: 'On Behalf Of RemoteLogin', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Waiting For Approval (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancelled (On Behalf Of RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'On Behalf Of RemoteLogin All Employees', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Request On Behalf Of RemoteLogin Button', View: false, Update: false, Create: false, Delete: false },
+
 ];

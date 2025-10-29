@@ -61,7 +61,8 @@ import {
   CONTRACT_REQUEST_SUB_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
-  ON_BEHALF_OF
+  ON_BEHALF_OF,
+  ON_BEHALF_OF_REMOTELOGIN_TABS
 } from '../permission-route.constants';
 
 @Injectable({
@@ -621,6 +622,16 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
           for (const item of ON_BEHALF_OF_WFH_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+        case '/on-behalf-of/on-behalf-of-remotelogin':
+        if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
+          for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1359,6 +1370,17 @@ export class AccessNavigationService {
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
           for (const item of ON_BEHALF_OF_WFH_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+
+        case '/on-behalf-of/on-behalf-of-remotelogin':
+        if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
+          for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

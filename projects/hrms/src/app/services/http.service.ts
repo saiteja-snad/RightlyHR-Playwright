@@ -154,7 +154,11 @@ export class HttpService {
 
   // OnBehalfOf WFH
   onBehlafOfWFHSignal = signal<boolean>(false);
+  onBehlafOfRemoteLoginSignal = signal<boolean>(false);
+
   onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfRemoteLoginSelectedEmp$ = new BehaviorSubject<any>(null);
+
 
 
 
@@ -664,6 +668,10 @@ export class HttpService {
   
   getFilterOnBehalfWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
+  }
+
+  getFilterOnBehalfRemoteLoginDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfRemoteLoginRequests/${employeeId}?year=${params}`);
   }
 
   getFilterRegularizationDataByID(employeeId: number, params?: any) {

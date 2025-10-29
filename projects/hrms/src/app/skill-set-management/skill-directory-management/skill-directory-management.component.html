@@ -49,8 +49,9 @@
         <i class="bi bi-search"></i>
       </span>
       <input type="search" class="form-control custom-search-input" placeholder="Search by Employee or Designation"
-        [(ngModel)]="searchQuery" />
+        [(ngModel)]="searchQuery" (input)="onSearch()" />
     </div>
+
 
     <div class="custom-table-content">
       @if (!spinnerLoaderforallrecoders) {
@@ -65,8 +66,8 @@
           </tr>
         </thead>
         <tbody>
-          @if ((MySkills | skills : searchQuery).length > 0) {
-          <tr *ngFor="let emp of MySkills | skills : searchQuery">
+          @if (MySkills.length > 0) {
+          <tr *ngFor="let emp of MySkills">
             <td>{{ emp.employee?.name || '-' }}</td>
             <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
             <td>
@@ -83,7 +84,9 @@
               </div>
             </td>
             <td class="text-center">
-              <span [ngClass]="getStatusClass(emp.employeeProjectStatus)">{{ emp.employeeProjectStatus || '-' }}</span>
+              <span [ngClass]="getStatusClass(emp.employeeProjectStatus)">
+                {{ emp.employeeProjectStatus || '-' }}
+              </span>
             </td>
             <td class="text-center">
               <div class="dropdown">
@@ -102,10 +105,13 @@
           </tr>
           } @else {
           <tr>
-            <app-no-data-found />
+            <td colspan="5">
+              <app-no-data-found />
+            </td>
           </tr>
           }
         </tbody>
+
       </table>
       } @else {
       <app-data-loader-content />
@@ -220,7 +226,8 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="custom-card-bg skills-section w-100 mb-3">
                 <div class="skills-title">{{ proj.projectName }}</div>
                 <div class="skill-text">{{ proj.projectDesignation }}</div>
-                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</div>
+                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM
+                  yyyy' }}</div>
               </div>
               } @else {
               <div>

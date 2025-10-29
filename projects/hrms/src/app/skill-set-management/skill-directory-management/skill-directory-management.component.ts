@@ -101,8 +101,8 @@ export class SkillDirectoryManagementComponent {
     this.getEmployeeSkills();
   }
 
-  onSearch(value: string) {
-    this.searchQuery = value.trim();
+  onSearch() {
+    this.page = 1;
     this.getEmployeeSkills();
   }
 
@@ -177,15 +177,15 @@ export class SkillDirectoryManagementComponent {
     if (normalized === 'committed') return 'status-committed';
     return '';
   }
-  
+
   getProficiencyClass(level: string): string {
-  switch (level?.toLowerCase()) {
-    case 'beginner': return 'chip-beginner';
-    case 'intermediate': return 'chip-intermediate';
-    case 'expert': return 'chip-expert';
-    default: return 'chip-default';
+    switch (level?.toLowerCase()) {
+      case 'beginner': return 'chip-beginner';
+      case 'intermediate': return 'chip-intermediate';
+      case 'expert': return 'chip-expert';
+      default: return 'chip-default';
+    }
   }
-}
 
 
   openModal(content: any, emp: any) {
@@ -241,12 +241,12 @@ export class SkillDirectoryManagementComponent {
       pageSize: this.pageSize,
     };
 
-    if (this.selectedStatus === 'Committed' || this.selectedStatus === 'Available') {
-      params.resourceStatusList = [this.selectedStatus];
+    if (this.selectedStatus && this.selectedStatus !== 'All Status') {
+      params.resourceStatus = this.selectedStatus;
     }
 
-    if (this.searchQuery) {
-      params.searchQuery = this.searchQuery;
+    if (this.selectedSkills?.length > 0) {
+      params.skillSearch = this.selectedSkills.join(',');
     }
 
     if (this.monthStartDate && this.monthEndDate) {
@@ -254,15 +254,34 @@ export class SkillDirectoryManagementComponent {
       params.toDate = this.monthEndDate.toISOString();
     }
 
-    if (this.selectedSkills && this.selectedSkills.length > 0) {
-      params.skillSearch = this.selectedSkills.join(',');
+    if (this.searchQuery?.trim()) {
+      params.searchQuery = this.searchQuery.trim();
     }
+
     this.spinnerLoaderforallrecoders = true;
+
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).subscribe({
       next: (res: any) => {
-        if (res?.success && res?.data?.items?.length) {
-          this.MySkills = res.data.items;
-          this.totalCount = res.data.totalCount;
+        if (res?.success && Array.isArray(res?.data?.items)) {
+          let filteredData = res.data.items;
+
+          if (this.selectedStatus && this.selectedStatus !== 'All Status') {
+            filteredData = filteredData.filter(
+              (emp: any) =>
+                emp.employeeProjectStatus?.toLowerCase() ===
+                this.selectedStatus.toLowerCase()
+            );
+          }
+          if (this.searchQuery?.trim()) {
+            const searchLower = this.searchQuery.toLowerCase();
+            filteredData = filteredData.filter((emp: any) =>
+              emp.employee?.name?.toLowerCase().includes(searchLower) ||
+              emp.employee?.employeeDesignation?.toLowerCase().includes(searchLower)
+            );
+          }
+
+          this.MySkills = filteredData;
+          this.totalCount = filteredData.length;
         } else {
           this.MySkills = [];
           this.totalCount = 0;
@@ -271,10 +290,11 @@ export class SkillDirectoryManagementComponent {
       error: (err) => {
         console.error('Error fetching employee skills:', err);
         this.MySkills = [];
+        this.totalCount = 0;
       },
       complete: () => {
         this.spinnerLoaderforallrecoders = false;
-      }
+      },
     });
   }
 

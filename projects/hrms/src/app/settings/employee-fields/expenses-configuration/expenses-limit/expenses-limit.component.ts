@@ -302,8 +302,10 @@ export class ExpensesLimitComponent implements OnInit {
           this.conformationPopup.openSuccessModal('Expense threshold updated successfully');
           this.allowthresholdLimitForm.get('value')?.disable({ onlySelf: true });
           this.isEditing = false;
+          this.allowthresholdLimitForm.get('approver')?.reset();
           this.setInitialFormState(); // reset view mode
           this.getdatabyentriy();  // re-fetch the saved data
+
         },
         error: (err) => console.log('Update failed', err)
       });

@@ -47,7 +47,7 @@
             </div>
 
             <!-- Select Approver -->
-            <div class="col-md-6 col-lg-4" *ngIf="approverList && approverList.length > 0">
+            <div class="col-md-6 col-lg-4" *ngIf=" allowthresholdLimitForm.get('approver')?.value">
                 <label class="form-label custom-label mb-2">
                     {{ 'Select Approver' | translate }} <span class="text-danger">*</span>
                 </label>

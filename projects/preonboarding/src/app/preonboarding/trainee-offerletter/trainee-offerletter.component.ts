@@ -143,7 +143,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         let res = data.reverse()[0];
         this.employeeCompensationDetails = res;
-        this.traineeEmpData.salary = Employee.salary = res.compensationamount;
+        this.traineeEmpData.salary = Employee.salary = res?.compensationamount;
         console.log(this.traineeEmpData.salary);
 
       },
@@ -173,7 +173,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`PreonboardingJobDetails/GetbyJobLocationSubLocationId?joblocid=${locationId}&sublocid=${sublocationId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.traineeEmpData.address = data.address;
+        this.traineeEmpData.address = data?.address;
         console.log(this.traineeEmpData.address);
       }
     })
@@ -203,7 +203,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.stipendApplicablecheck = this.getofferdata?.stipendApplicable;
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
-        this.traineeEmpData.address = this.getofferdata.address;
+      
         this.traineeEmpData.note = this.getofferdata.note
         if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())

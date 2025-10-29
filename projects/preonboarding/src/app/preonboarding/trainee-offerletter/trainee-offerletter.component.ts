@@ -100,26 +100,28 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   acceptoffer() {
-    this.loadingcircle = true;
-    const offeraccept = "Offer Letter Accepted";
+    // this.loadingcircle = true;
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
-    offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
-    this.updateOfferDetailsforAccept(offerUpdateDetails);
-    this.downLoadDocument();
+    this.downLoadDocument(offerUpdateDetails);
     this.loadingcircle = true;
   }
 
+ 
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
-    this.subscription = this.http.postData('PreOnboardingTraineeOfferLetter/UPDATE', updatedData).subscribe({
+    this.subscription = this.http.postData('PreonboardingOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.openPopup.openSuccess('Offer letter accepted successfully');
+        this.loadingcircle = false;
+        this.getOfferLetterDetails();
       },
       error: (err) => {
         console.log(err);
       },
-      complete: () => {
-      },
+      complete: () => { },
     })
   }
+
 
   //function to get address details 
   getEmployeeAddress() {
@@ -264,7 +266,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   //download document
-  async downLoadDocument() {
+  async downLoadDocument(offerUpdateDetails: Iofferletter) {
+
     const data = this.traineeEmpData;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
@@ -306,45 +309,40 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     });
     // this.uploadAddressLetter();
     this.generatedfile = file;
-    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile);
+    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
     // });
     // }
   }
 
   //to store file to the azure and return to the url
-  private offerletterUpload(empId: number, file: File) {
-    let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
+  private offerletterUpload(empId: number, file: File, offerUpdateDetails: Iofferletter) {
+    let filePath = `/FusionDocuments/Employee Documents/Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          this.loadingcircle = false;
-          localStorage.setItem('offerletterurl', data.path);
-          this.getOfferLetterDetails();
-          this.modalService.dismissAll();
-          setTimeout(() => {
-            this.openPopup.openSuccess("Offer letter accepted successfully");
-          }, 3000);
-          this.loadingcircle = false;
-          //this.updateOfferDetails(data.path);
+          offerUpdateDetails.documentUrl = data.path;
+          offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
+          this.updateOfferDetailsforAccept(offerUpdateDetails);
         }
       },
       error: (reason: any) => {
-        this.openPopup.openError("Something went wrong");
+        console.log(reason);
       },
     });
   }
 
+
   downloadoffer() {
-    const fileurl = this.updatedOfferLetterDetails.documentURL ?? '';
+    const fileurl = this.updatedOfferLetterDetails.documentUrl;
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
       next: (res: any) => {
-        const blob: Blob = res.body as Blob;
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileurl.substring(fileurl.lastIndexOf('/') + 1);
+        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
+        let blob: Blob = res.body as Blob;
+        let a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        let filename = fileurl.split('/')[fileurl.split('/').length - 1];
+        a.download = filename;
         a.click();
-        window.URL.revokeObjectURL(url);
       },
       error: (reason) => console.log(reason),
     });

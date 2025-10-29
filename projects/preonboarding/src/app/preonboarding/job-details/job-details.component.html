@@ -39,7 +39,7 @@
                             <img src="{{offerLetter}}" alt="right Icon" class="progress-icon mb-3">
                             <p class="progress-text mb-0">Offer Letter</p>
                         </div>
-                        @if(((empdata.empstatus.toLowerCase() == 'prospective contract')&&(empdata.substatus.toLowerCase() == 'nda letter released'||empdata.substatus.toLowerCase() == 'nda letter regenerated' || empdata.substatus.toLowerCase()== 'nda letter accepted'))){
+                        @if(((empdata.empstatus.toLowerCase() == 'prospective contract')&&(empdata?.substatus?.toLowerCase() == 'nda letter released'||empdata?.substatus?.toLowerCase() == 'nda letter regenerated' || empdata?.substatus?.toLowerCase()== 'nda letter accepted'))){
                         <div>
                             <img src="{{ndaletter}}" alt="right Icon" class="progress-icon mb-3">
                             <p class="progress-text mb-0">Non-Disclosure Agreement Letter</p>

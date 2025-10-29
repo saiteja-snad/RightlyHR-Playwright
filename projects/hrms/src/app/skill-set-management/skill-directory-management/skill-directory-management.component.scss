@@ -94,8 +94,12 @@
     margin-bottom: 0.5rem !important;
   }
 
+  .p-tablist-active-bar {
+    background: var(--primary-color) !important;
+  }
+
   .p-tab-active {
-    border-color: none !important;
+    border-color: var(--primary-color) !important;
     color: var(--primary-color) !important;
     border-bottom: 1px solid var(--primary-color) !important;
   }
@@ -124,13 +128,12 @@
     }
 
     .p-chip {
-      border-radius: 0.625rem;
+      border-radius: 1rem;
       font-size: var(--fontsize12) !important;
       padding: 0.325rem 0.75rem !important;
       background: #FFF !important;
       color: var(--primary-color) !important;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
+      gap: 0rem !important;
     }
   }
 }
@@ -172,24 +175,21 @@ p-chip {
 
 .proficiency {
   font-size: 11px;
- color: var(--primary-color);
+  color: var(--primary-color);
 }
-
 
 .chip-beginner {
-  border-color: #F8AF13; 
+  border-color: #F8AF13;
 }
-
 
 .chip-intermediate {
   border-color: #9A00F3;
 }
-
 
 .chip-expert {
   border-color: #00A912;
 }
 
 .chip-default {
-  border-color: #ccc; 
+  border-color: #ccc;
 }

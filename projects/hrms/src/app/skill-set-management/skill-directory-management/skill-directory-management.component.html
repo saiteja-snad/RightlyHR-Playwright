@@ -191,8 +191,10 @@
                 <div class="d-flex flex-wrap gap-1">
                   <p-chip *ngFor="let skill of selectedEmployee.techSkills" [label]="''"
                     [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
-                    <span class="skill-name">{{ skill.skillName }}</span>
-                    <span class="proficiency">({{ skill.proficiencyLevel }})</span>
+                    <div class="d-flex align-items-center gap-1">
+                      <div class="skill-name">{{ skill.skillName }}</div>
+                      <div class="proficiency">({{ skill.proficiencyLevel }})</div>
+                    </div>
                   </p-chip>
                 </div>
               </div>
@@ -204,8 +206,10 @@
                 <div class="d-flex flex-wrap gap-1">
                   <p-chip *ngFor="let skill of selectedEmployee.softSkills" [label]="''"
                     [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
-                    <span class="skill-name">{{ skill.skillName }}</span>
-                    <span class="proficiency">({{ skill.proficiencyLevel }})</span>
+                    <div class="d-flex align-items-center gap-1">
+                      <div class="skill-name">{{ skill.skillName }}</div>
+                      <div class="proficiency">({{ skill.proficiencyLevel }})</div>
+                    </div>
                   </p-chip>
                 </div>
               </div>

@@ -3,7 +3,7 @@
     <!-- Header -->
     <app-reports-header/>
 
-    <form autocomplete="off" [formGroup]="ProjectEffortReportForm" (ngSubmit)="generateProjectEffortReport(page,pageSize)" *ngIf="ProjectEffortReportForm">
+    <form autocomplete="off" [formGroup]="ProjectEffortReportForm" (ngSubmit)="generateProjectEffortReport(page,pageSize,true, true)" *ngIf="ProjectEffortReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Project Effort Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
@@ -85,9 +85,9 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
 
-        <th>Client</th>
-        <th>Project</th>
-        <th>Allocated Hour</th>
+        <th>Client Name</th>
+        <th>Project Name</th>
+        <th>Allocated Hrs</th>
         <th>Billable Hrs</th>
         <th>Non-Billable Hrs</th>
         <th>Total Logged Hrs</th>

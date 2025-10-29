@@ -3,7 +3,7 @@
     <!-- Header -->
     <app-reports-header/>
 
-    <form autocomplete="off" [formGroup]="UtilizationReportForm" (ngSubmit)="generateUtilizationReport(page, pageSize)" *ngIf="UtilizationReportForm">
+    <form autocomplete="off" [formGroup]="UtilizationReportForm" (ngSubmit)="generateUtilizationReport(page, pageSize,true,true)" *ngIf="UtilizationReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Utilization Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
@@ -102,9 +102,9 @@
         <th>Client Name</th>
         <th>Project Name</th>
         <th>Employee ID</th>
-         <th>Employee</th>
-        <th>Dept</th>
-        <th>Total Logged Hours</th>
+         <th>Employee Name</th>
+        <th>Department</th>
+        <th>Total Logged Hrs</th>
         <th>Billable Hrs</th>
         <th>Non-Billable Hrs</th>
         <th>Billable <i class="bi bi-percent"></i></th>

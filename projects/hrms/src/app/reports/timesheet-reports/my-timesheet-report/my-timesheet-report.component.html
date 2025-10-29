@@ -3,8 +3,8 @@
     <!-- Header -->
     <app-reports-header />
 
-    <form autocomplete="off" [formGroup]="MyTimesheetReportForm" (ngSubmit)="generatemytimesheetReport(page,pageSize)"
-      *ngIf="MyTimesheetReportForm">
+    <form autocomplete="off" [formGroup]="MyTimesheetReportForm"
+      (ngSubmit)="generatemytimesheetReport(page, pageSize, true, true)" *ngIf="MyTimesheetReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('My Timesheet Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
@@ -97,11 +97,10 @@
     <table id="leaveReportTable" class="w-100">
       <thead>
         <th>Worked Date</th>
-        <th>Day</th>
         <th>Client Name</th>
         <th>Project Name</th>
         <th>Description</th>
-        <th>Logged hours</th>
+        <th>Logged Hrs</th>
         <th>Billable/Non-Billable</th>
         <th>Submitted Date</th>
         <th>Status</th>
@@ -116,13 +115,12 @@
         @for (record of filteredmytimesheetRecord; track $index) {
         <tr>
           <td>{{ record.date ? (record.date | date) : '-' }}</td>
-          <td>{{ record.date ? (record.date | date: 'EEEE') : '-' }}</td>
           <td>{{ record.client ?? '-' }}</td>
           <td>{{ record.project ?? '-' }}</td>
            <td>
           <div class="d-flex align-items-center gap-1">
                 <!-- Show info icon if description is present -->
-           <ng-container *ngIf="record.description && record.description.trim() !== ''; else noDescription">
+           <ng-container *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
                   <div [ngbPopover]="popContent">
                     <app-info-icon />
                   </div>

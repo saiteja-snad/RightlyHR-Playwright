@@ -4,7 +4,7 @@
     <app-reports-header />
 
     <form autocomplete="off" [formGroup]="TimesheetSummeryReportForm"
-      (ngSubmit)="generatetimesheetSummeryReport(page,pageSize)" *ngIf="TimesheetSummeryReportForm">
+      (ngSubmit)="generatetimesheetSummeryReport(page,pageSize,true,true)" *ngIf="TimesheetSummeryReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Timesheet Summary Monthly Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
@@ -96,10 +96,10 @@
         <th>Department</th>
         <th>Client Name</th>
         <th>Project Name</th>
-        <th>Allocated Hours</th>
-        <th>Total Logged Hours</th>
-        <th>Billable Hours</th>
-        <th>Non-Billable Hours</th>
+        <th>Allocated Hrs</th>
+        <th>Total Logged Hrs</th>
+        <th>Billable Hrs</th>
+        <th>Non-Billable Hrs</th>
       </thead>
       <tbody>
         @if (!filteredtimesheetsummeryRecord || filteredtimesheetsummeryRecord.length === 0) {

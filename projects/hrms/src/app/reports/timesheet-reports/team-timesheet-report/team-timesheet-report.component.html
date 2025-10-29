@@ -3,7 +3,7 @@
     <!-- Header -->
     <app-reports-header/>
 
-    <form autocomplete="off" [formGroup]="TeamTimesheetReportForm" (ngSubmit)="generateteamTimesheetReport(page,pageSize)" *ngIf="TeamTimesheetReportForm">
+    <form autocomplete="off" [formGroup]="TeamTimesheetReportForm" (ngSubmit)="generateteamTimesheetReport(page,pageSize,true,true)" *ngIf="TeamTimesheetReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Team Timesheet Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
@@ -110,11 +110,11 @@
       <thead>
         <th>Worked Date</th>
         <th>Employee ID</th>
-        <th>Employee</th>
-        <th>Client</th>
-        <th>Project</th>
+        <th>Employee Name</th>
+        <th>Client Name</th>
+        <th>Project Name</th>
         <th>Description</th>
-        <th>Logged Hours</th>
+        <th>Logged Hrs</th>
         <th>Billable/Non-Billable</th>
         <th>Status</th>
         <th>Submitted Date</th>
@@ -139,7 +139,7 @@
          <td>
           <div class="d-flex align-items-center gap-1">
                 <!-- Show info icon if description is present -->
-           <ng-container *ngIf="record.description && record.description.trim() !== ''; else noDescription">
+           <ng-container *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
                   <div [ngbPopover]="popContent">
                     <app-info-icon />
                   </div>

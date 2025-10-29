@@ -136,12 +136,15 @@ isFilterApplied(): boolean {
     this.first = 0;
     this.generateResourceAvailabilityReport(this.page, this.pageSize);
   }
+  onGenerate() {
+  this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
+}
 
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateResourceAvailabilityReport(this.page, this.pageSize, false);
+    this.generateResourceAvailabilityReport(this.page, this.pageSize, false,false);
   }
 
   // Called when first size changes
@@ -150,7 +153,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateResourceAvailabilityReport(this.page, this.pageSize, false);
+    this.generateResourceAvailabilityReport(this.page, this.pageSize, true,true);
   }
 
   getProjectsData(): void {
@@ -171,12 +174,12 @@ isFilterApplied(): boolean {
             // 🔹 Optionally add “No Project” choice at the top
             const noProjectExists = this.projectsList.some(p => p.value === 0);
             // Add "No Client/No Project" option
-            if (!noProjectExists) {
-              this.projectsList.unshift({
-                label: 'No Project',
-                value: 0
-              });
-            }
+            // if (!noProjectExists) {
+            //   this.projectsList.unshift({
+            //     label: 'No Project',
+            //     value: 0
+            //   });
+            // }
 
           } else {
             this.projectsList = [];
@@ -206,7 +209,7 @@ isFilterApplied(): boolean {
       this.ResourceAvailabilityReportForm.get('employeid')?.enable();
       this.getAllActiveEmployees();
     } else {
-      this.getTeamManagersDetails();
+      // this.getTeamManagersDetails();
       this.projectId = 0;
       // Wait briefly to ensure getTeamManagersDetails() completes (optional)
       setTimeout(() => {
@@ -342,35 +345,79 @@ isFilterApplied(): boolean {
     return params;
   }
 
-  generateResourceAvailabilityReport(page: number, pageSize: number, showLoader: boolean = true) {
-    if (this.ResourceAvailabilityReportForm.invalid) {
-      return;
+  // generateResourceAvailabilityReport(page: number, pageSize: number, showLoader: boolean = true) {
+  //   if (this.ResourceAvailabilityReportForm.invalid) {
+  //     return;
+  //   }
+  //   if (showLoader) {
+  //     this.spinnerLoader1 = true;
+  //   }
+  //   const params = this.buildTimesheetReportParams();
+  //   const queryString = new URLSearchParams(params).toString();
+  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (res: any) => {
+  //       this.collectionSize = res.data.totalCount;
+  //       this.spinnerLoader1 = false;
+  //       if (res.success && res.data?.items) {
+  //         this.filteredResourceAvailabilityRecord = res.data.items;
+  //         this.disableBtn = false;
+  //       } else {
+  //         this.filteredResourceAvailabilityRecord = [];
+  //       }
+  //     },
+  //     error: (err) => {
+  //       this.spinnerLoader1 = false;
+  //       console.error('Error fetching report:', err);
+  //       this.filteredResourceAvailabilityRecord = [];
+  //       this.disableBtn = true;
+  //     },
+  //   });
+  // }
+
+   generateResourceAvailabilityReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false 
+  ) {
+    if (this.ResourceAvailabilityReportForm.invalid) return;
+    // Only reset pagination when explicitly requested
+    if (resetPagination) {
+      this.page = 1;
+      this.first = 0;
     }
-    if (showLoader) {
-      this.spinnerLoader1 = true;
-    }
+
+    if (showLoader) this.spinnerLoader1 = true;
+
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.collectionSize = res.data.totalCount;
-        this.spinnerLoader1 = false;
-        if (res.success && res.data?.items) {
-          this.filteredResourceAvailabilityRecord = res.data.items;
-          this.disableBtn = false;
-        } else {
+
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.spinnerLoader1 = false;
+
+          if (res.success && res.data?.items) {
+            this.filteredResourceAvailabilityRecord = res.data.items;
+            this.collectionSize = res.data.totalCount || 0;
+
+            // If total count smaller than current offset, go back to first
+            if (this.first >= this.collectionSize) {
+              this.first = 0;
+              this.page = 1;
+            }
+
+            this.disableBtn = false;
+          } else {
+            this.filteredResourceAvailabilityRecord = [];
+            this.collectionSize = 0;
+          }
+        },
+        error: (err) => {
+          this.spinnerLoader1 = false;
+          console.error('Error fetching report:', err);
           this.filteredResourceAvailabilityRecord = [];
-        }
-      },
-      error: (err) => {
-        this.spinnerLoader1 = false;
-        console.error('Error fetching report:', err);
-        this.filteredResourceAvailabilityRecord = [];
-        this.disableBtn = true;
-      },
-    });
-
-
+          this.collectionSize = 0;
+          this.disableBtn = true;
+        },
+      });
   }
 
   exportResourceAvailabilityReport() {

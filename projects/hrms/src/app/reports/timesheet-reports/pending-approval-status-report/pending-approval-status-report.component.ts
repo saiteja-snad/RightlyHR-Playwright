@@ -129,6 +129,10 @@ isFilterApplied(): boolean {
     (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
   );
 }
+onGenerate() {
+  this.generatependingapprovalReport(this.page, this.pageSize, true, true);
+}
+
   // called for pagination 
   onRowsChange() {
     this.page = 1;
@@ -140,7 +144,7 @@ isFilterApplied(): boolean {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generatependingapprovalReport(this.page, this.pageSize, false);
+    this.generatependingapprovalReport(this.page, this.pageSize, false,false);
   }
 
   // Called when first size changes
@@ -149,7 +153,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatependingapprovalReport(this.page, this.pageSize, false);
+    this.generatependingapprovalReport(this.page, this.pageSize,true,true);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -416,37 +420,80 @@ isFilterApplied(): boolean {
     return params;
   }
 
-  generatependingapprovalReport(page: number, pageSize: number, showLoader: boolean = true) {
-    if (this.PendingApprovalReportForm.invalid) {
-      return;
+  // generatependingapprovalReport(page: number, pageSize: number, showLoader: boolean = true) {
+  //   if (this.PendingApprovalReportForm.invalid) {
+  //     return;
+  //   }
+
+  //   if (showLoader) {
+  //     this.spinnerLoader1 = true;
+  //   }
+  //   const params = this.buildTimesheetReportParams();
+  //   const queryString = new URLSearchParams(params).toString();
+  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (res: any) => {
+  //       this.collectionSize = res.data.totalCount;
+  //       this.spinnerLoader1 = false;
+  //       if (res.success && res.data?.items) {
+  //         this.filteredpendingapprovalRecord = res.data.items;
+  //         this.disableBtn = false;
+  //       } else {
+  //         this.filteredpendingapprovalRecord = [];
+  //       }
+  //     },
+  //     error: (err) => {
+  //       this.spinnerLoader1 = false;
+  //       console.error('Error fetching report:', err);
+  //       this.filteredpendingapprovalRecord = [];
+  //       this.disableBtn = true;
+  //     },
+  //   });
+  // }
+ generatependingapprovalReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false 
+  ) {
+    if (this.PendingApprovalReportForm.invalid) return;
+    // Only reset pagination when explicitly requested
+    if (resetPagination) {
+      this.page = 1;
+      this.first = 0;
     }
-    if (showLoader) {
-      this.spinnerLoader1 = true;
-    }
+
+    if (showLoader) this.spinnerLoader1 = true;
+
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.collectionSize = res.data.totalCount;
-        this.spinnerLoader1 = false;
-        if (res.success && res.data?.items) {
-          this.filteredpendingapprovalRecord = res.data.items;
-          this.disableBtn = false;
-        } else {
+
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.spinnerLoader1 = false;
+
+          if (res.success && res.data?.items) {
+            this.filteredpendingapprovalRecord = res.data.items;
+            this.collectionSize = res.data.totalCount || 0;
+
+            // If total count smaller than current offset, go back to first
+            if (this.first >= this.collectionSize) {
+              this.first = 0;
+              this.page = 1;
+            }
+
+            this.disableBtn = false;
+          } else {
+            this.filteredpendingapprovalRecord = [];
+            this.collectionSize = 0;
+          }
+        },
+        error: (err) => {
+          this.spinnerLoader1 = false;
+          console.error('Error fetching report:', err);
           this.filteredpendingapprovalRecord = [];
-        }
-      },
-      error: (err) => {
-        this.spinnerLoader1 = false;
-        console.error('Error fetching report:', err);
-        this.filteredpendingapprovalRecord = [];
-        this.disableBtn = true;
-      },
-    });
-
-
+          this.collectionSize = 0;
+          this.disableBtn = true;
+        },
+      });
   }
-
   exportPendingApprovalReport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();

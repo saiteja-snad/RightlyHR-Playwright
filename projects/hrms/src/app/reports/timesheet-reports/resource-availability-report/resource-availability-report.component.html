@@ -4,7 +4,7 @@
     <app-reports-header />
 
     <form autocomplete="off" [formGroup]="ResourceAvailabilityReportForm"
-      (ngSubmit)="generateResourceAvailabilityReport(page, pageSize)" *ngIf="ResourceAvailabilityReportForm">
+      (ngSubmit)="generateResourceAvailabilityReport(page, pageSize,true,true)" *ngIf="ResourceAvailabilityReportForm">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Resource Availability Report - Generate.view')){
         <button type="button" class="clear-all-btn" [disabled]="
@@ -77,7 +77,7 @@
 
         <th>Employee ID</th>
         <th>Employee Name</th>
-        <th>Dept</th>
+        <th>Department</th>
         <th>Designation</th>
         <th>Project Assigned</th>
         <th>Project Start Date</th>

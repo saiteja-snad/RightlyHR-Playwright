@@ -120,6 +120,9 @@ isFilterApplied(): boolean {
     this.MyTimesheetReportForm.get('project')?.disable();
     this.collectionSize = 0;
   }
+onGenerate() {
+  this.generatemytimesheetReport(this.page, this.pageSize, true, true);
+}
 
   // called for pagination 
   onRowsChange() {
@@ -132,7 +135,7 @@ isFilterApplied(): boolean {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-     this.generatemytimesheetReport(this.page, this.pageSize,false);
+     this.generatemytimesheetReport(this.page, this.pageSize,false,false);
   }
 
   // Called when first size changes
@@ -141,7 +144,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatemytimesheetReport(this.page, this.pageSize, false);
+    this.generatemytimesheetReport(this.page, this.pageSize, true,true);
   }
   //GET CLIENT AND PROJECT
   getResourceData() {
@@ -308,34 +311,82 @@ isFilterApplied(): boolean {
     return params;
   }
 
-  generatemytimesheetReport(page: number, pageSize: number, showLoader: boolean = true) {
-    if (this.MyTimesheetReportForm.invalid) {
-      return;
+  // generatemytimesheetReport(page: number, pageSize: number, showLoader: boolean = true) {
+  //   if (this.MyTimesheetReportForm.invalid) {
+  //     return;
+  //   }
+
+  //    if (showLoader) {
+  //   this.spinnerLoader1 = true;
+  // }
+  //   const params = this.buildTimesheetReportParams();
+  //   const queryString = new URLSearchParams(params).toString();
+  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (res: any) => {
+  //       this.collectionSize = res.data.totalCount;
+  //       this.spinnerLoader1 = false;
+  //       if (res.success && res.data?.items) {
+  //         this.filteredmytimesheetRecord = res.data.items;
+  //         this.disableBtn = false;
+  //       } else {
+  //         this.filteredmytimesheetRecord = [];
+  //       }
+  //     },
+  //     error: (err) => {
+  //       this.spinnerLoader1 = false;
+  //       console.error('Error fetching report:', err);
+  //       this.filteredmytimesheetRecord = [];
+  //       this.disableBtn = true;
+  //     },
+  //   });
+  // }
+
+
+
+  generatemytimesheetReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false // ✅ new flag
+  ) {
+    if (this.MyTimesheetReportForm.invalid) return;
+    // Only reset pagination when explicitly requested
+    if (resetPagination) {
+      this.page = 1;
+      this.first = 0;
     }
 
-     if (showLoader) {
-    this.spinnerLoader1 = true;
-  }
+    if (showLoader) this.spinnerLoader1 = true;
+
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => {
-        this.collectionSize = res.data.totalCount;
-        this.spinnerLoader1 = false;
-        if (res.success && res.data?.items) {
-          this.filteredmytimesheetRecord = res.data.items;
-          this.disableBtn = false;
-        } else {
+
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.spinnerLoader1 = false;
+
+          if (res.success && res.data?.items) {
+            this.filteredmytimesheetRecord = res.data.items;
+            this.collectionSize = res.data.totalCount || 0;
+
+            // If total count smaller than current offset, go back to first
+            if (this.first >= this.collectionSize) {
+              this.first = 0;
+              this.page = 1;
+            }
+
+            this.disableBtn = false;
+          } else {
+            this.filteredmytimesheetRecord = [];
+            this.collectionSize = 0;
+          }
+        },
+        error: (err) => {
+          this.spinnerLoader1 = false;
+          console.error('Error fetching report:', err);
           this.filteredmytimesheetRecord = [];
-        }
-      },
-      error: (err) => {
-        this.spinnerLoader1 = false;
-        console.error('Error fetching report:', err);
-        this.filteredmytimesheetRecord = [];
-        this.disableBtn = true;
-      },
-    });
+          this.collectionSize = 0;
+          this.disableBtn = true;
+        },
+      });
   }
 
   exportmytimesheetreport() {

@@ -171,28 +171,32 @@
 
           <!-- Skills Tab -->
           <p-tabpanel value="0">
-            <div class="skill-set-container">
+            <div class="skill-set-container pt-3">
+              @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) {
+              <!--Technical Skills-->
+              @if (selectedEmployee?.techSkills?.length) {
               <div class="custom-card-bg skills-section w-100 mb-3">
                 <p class="skills-title mb-2">Technical Skills</p>
-                @if (selectedEmployee?.techSkills?.length) {
                 <p-chip *ngFor="let skill of selectedEmployee.techSkills"
                   [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
                 </p-chip>
-                } @else {
-                <p class="project-content m-0"><app-no-data-found /></p>
-                }
               </div>
-
+              }
+              <!--Soft Skills-->
+              @if (selectedEmployee?.softSkills?.length) {
               <div class="custom-card-bg skills-section w-100">
                 <p class="skills-title mb-2">Soft Skills</p>
-                @if (selectedEmployee?.softSkills?.length) {
                 <p-chip *ngFor="let skill of selectedEmployee.softSkills"
                   [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
                 </p-chip>
-                } @else {
-                <p class="project-content"><app-no-data-found /></p>
-                }
               </div>
+              }
+              }
+              @else {
+              <div>
+                <app-no-data-found />
+              </div>
+              }
             </div>
           </p-tabpanel>
 
@@ -206,7 +210,9 @@
                 <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</div>
               </div>
               } @else {
-              <p class="project-content"><app-no-data-found /></p>
+              <div>
+                <app-no-data-found />
+              </div>
               }
             </div>
           </p-tabpanel>

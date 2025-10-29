@@ -111,7 +111,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" [showClear]="false" class="form-select custom-select"
-                            formControlName="employeeName" placeholder="Please select employee"
+                            formControlName="employeeName" placeholder="Please select employee" resetFilterOnHide="true"
                             (onChange)="onSelectedEmployee($event.value, wfhAllocationForm)">
                             <ng-template let-selectedOption #selectedItem>
                                 {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{

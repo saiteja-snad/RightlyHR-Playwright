@@ -30,20 +30,19 @@
 }
 
 .custom-chip-card {
-  border: 1px solid #DEE8F3 !important;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: max-content !important;
   background: #F8FBFF !important;
+  color: var(--primary-color) !important;
+  border: 1px solid #DEE8F3 !important;
   border-radius: 20px;
   padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  position: relative;
-  justify-content: space-between;
-  font-size: 14px;
+  font-size: var(--fontsize14);
   line-height: 1.4;
   cursor: default;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  color: var(--primary-color) !important;
-  width: max-content !important;
 }
 
 .custom-chip-close-icon {

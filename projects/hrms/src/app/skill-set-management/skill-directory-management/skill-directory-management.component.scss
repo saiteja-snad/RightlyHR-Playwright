@@ -10,8 +10,16 @@
   .p-chip {
     border: 1px solid #D1D9E2 !important;
     background: #F8FBFF !important;
-    margin-right: 0.325rem !important;
-    margin-bottom: 0.325rem !important;
+    font-weight: 400;
+    font-size: var(--fontsize14) !important;
+
+    .skill-name {
+      color: var(--primary-color) !important;
+    }
+
+    .skill-level {
+      color: #73809D !important;
+    }
   }
 }
 

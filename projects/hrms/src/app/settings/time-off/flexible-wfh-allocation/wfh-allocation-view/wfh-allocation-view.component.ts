@@ -103,14 +103,16 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
       });
   }
   onPageSizeChange(pageSize: any) {
+    this.pageNumber = 1; 
+    this.first = 0;
     this.pageSize = pageSize;
     this.getAllwfhallocations();
   }
 
   onPageChange(event: any) {
-    this.first = event.first; // update the first record index
+    this.first = event.first;
     this.rows = event.rows;
-    this.pageNumber = event.pageCount;
+    this.pageNumber = event.page + 1; 
     this.getAllwfhallocations();
   }
 //get wfh allocation history

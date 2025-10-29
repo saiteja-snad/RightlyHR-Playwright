@@ -1,96 +1,96 @@
 export interface Iexpensetype {
-    expenseId: any;
-    expensesCode: number;
-    expenseType: string;
-    id: number;
-  }
-  
-  export interface IexpenseItem {
-    item: string;
-    Description: string;
-    expenseDate: string;
-    amount: number;
-    recieptNumber: number;
-    attachment: string;
-    expensestitle: string;
-    additionaldetails: string;
-  }
-  export interface IExpenseItem {
-    submissionDate: string;
-    expenses_ID: number;
-    item_Name: string;
-    item_Description: string;
-    expense_Date: string;
-    expense_Amount: number;
-    receipt_Number: string;
-    attachment_url: string;
-    status: string;
-  }
-  export interface INewExpense {
-attachment_url: any;
-    applied_date: string;
-    expenses_Title: string;
-    expenseId: number;
-    approverEmail: string;
-    additional_details: string;
-    status: string;
-    employeeId: number;
-    expenseItem: IExpenseItem[];
-  }
-  
-  export interface IExpenseHeader {
-    //get by employeeid
-    expenses_ID: number;
-    applied_date: string;
-    expenses_Title: string;
-    additional_details: string;
-    status: string;
-    employeeId: number;
-    totalExpenseAmount: number;
+  expenseId: any;
+  expensesCode: number;
+  expenseType: string;
+  id: number;
+}
 
-    ExpenseApproverComment: ExpenseApproverComment[];
-  }
-  export interface IExpenses{
-    item_expense: any;
-        expenseId: number;
-        Selectedfield: any;
-        expensesCode:string;
-        expenseType:string;
-        isdeleted:string;
-    }
-  
-  export interface ExpenseApproverComment {
-    id: number;
-    pendingItemsId: number;
-    addedBy: number;
-    addedDate: string;
-    comments: string;
-    addedByFusionEmpId: string;
-    addedName: string;
-    action: string;
-    metaData: any;
-    approverRole: any;
-  }
-  
-  export interface IExpense {
-expenseApproverComments: any;
+export interface IexpenseItem {
+  item: string;
+  Description: string;
+  expenseDate: string;
+  amount: number;
+  recieptNumber: number;
+  attachment: string;
+  expensestitle: string;
+  additionaldetails: string;
+}
+export interface IExpenseItem {
+  submissionDate: string;
+  expenses_ID: number;
+  item_Name: string;
+  item_Description: string;
+  expense_Date: string;
+  expense_Amount: number;
+  receipt_Number: string;
+  attachment_url: string;
+  status: string;
+}
+export interface INewExpense {
+  attachment_url: any;
+  applied_date: string;
+  expenses_Title: string;
+  expenseId: number;
+  approverEmail: string;
+  additional_details: string;
+  status: string;
+  employeeId: number;
+  expenseItem: IExpenseItem[];
+}
+
+export interface IExpenseHeader {
+  //get by employeeid
+  expenses_ID: number;
+  applied_date: string;
+  expenses_Title: string;
+  additional_details: string;
+  status: string;
+  employeeId: number;
+  totalExpenseAmount: number;
+
+  ExpenseApproverComment: ExpenseApproverComment[];
+}
+export interface IExpenses {
+  item_expense: any;
+  expenseId: number;
+  Selectedfield: any;
+  expensesCode: string;
+  expenseType: string;
+  isdeleted: string;
+}
+
+export interface ExpenseApproverComment {
+  id: number;
+  pendingItemsId: number;
+  addedBy: number;
+  addedDate: string;
+  comments: string;
+  addedByFusionEmpId: string;
+  addedName: string;
+  action: string;
+  metaData: any;
+  approverRole: any;
+}
+
+export interface IExpense {
+  expenseApproverComments: any;
   entity: ExpenseEntity[];
-  totalExpenseAmount: string|number;
-    //get by expensesid
-    expenses_ID: number;
-    applied_date: string;
-    expenses_Title: string;
-    expenseId: number;
-    approverEmail: string;
-    additional_details: string;
-    status: string;
-    employeeId: number;
-    submissionDate: string;
-    expense_Date:any,
-    expenseitem: IExpenseItem[];
-  }
+  totalExpenseAmount: string | number;
+  //get by expensesid
+  expenses_ID: number;
+  applied_date: string;
+  expenses_Title: string;
+  expenseId: number;
+  approverEmail: string;
+  additional_details: string;
+  status: string;
+  employeeId: number;
+  submissionDate: string;
+  expense_Date: any,
+  expenseitem: IExpenseItem[];
+}
 
-  
+
 export interface ExpenseEntity {
   expenses_ID: number;
   applied_date: string;
@@ -104,178 +104,214 @@ export interface ExpenseEntity {
   pendingheaderId: number;
   expenseApproverComments: any[]; // Replace `any` with specific type if available
 }
-  
-  export interface Inewexpense {
-    additionaldetails: any;
-    submitted: boolean;
-    employeeId: any;
-    expensesCode: string;
-    amount: number;
-    recieptNumber: number;
-    status: string;
-    attachment: string;
-    expensedate: any;
-    employeeName: string;
-    Description: string;
-    isdeeleted: any;
-    expenseName: string;
-    isManagementExpense: any;
-    submissionDate: any;
-    expensetitle: string;
-    expenseItems: IexpenseItem[];
-  }
-  
-  export interface IExpensedatabyid {
-    expensedate: any;
-    amount: number;
-    attachment: any;
-    status: string;
-    expensesCode: number;
-    expenseType: string;
-    description: string;
-    employeeName: string;
-    firstName: string; // <-- Add this line
-    lastName: string;
-    id: number;
-    employeeId: number;
-    isdeeleted: any;
-    isManagementExpense: boolean;
-    expenseName: string;
-    recieptNumber: number;
-    submissionDate: any;
-  }
-  
-  export interface IExpensedata {
-    id: number;
-    employeeId: number;
-    expensedate: Date;
-    expenseType: string;
-    amount: number;
-    invoice: string;
-    status: string;
-    isNotVisible: boolean;
-    employeeName: string;
-    firstName: string; // <-- Add this line
-    lastName: string;
-  }
-  
-  export interface Iinvoices {
-    id: number;
-    employeeId: number;
-    invoicenumber: number;
-    invoicedate: string;
-    // invoiceType: any,
-    attachment: any;
-    money: any;
-    status: string;
-    Description: string;
-    Invoicetype: any;
-    employeeName: string;
-    isNotVisible: boolean;
-    firstName: string; // <-- Add this line
-    lastName: string;
-    isdeleted: string;
-  }
-  
-  export interface Itimesheet {
-    timesheetId: number;
-    empId: number;
-    projectId: number;
-    taskId: number;
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
-    sunday: string;
-    weekStartDate: any;
-    weekEndDate: any;
-    status: string;
-    tstatus: string;
-    lastName: string;
-    firstName: string;
-    projectName: string;
-    employeeId: number;
-    totalHours: string;
-    taskName: string;
-  }
-  
 
-  
-  export interface IExpenseItems {
-    expenseType:any;
-    expenseitem_id: number;
-    expenses_ID: number;
-    item_Name: string;
-    expense_Date: string; // or Date if you will convert
-    expense_Amount: number;
-    receipt_Number: string;
-    status: string;
-    attachment_url: string;
-  }
-  
-  export interface IExpenseHeaders {
-    expenses_ID: number;
-    applied_date: string; // or Date
-    expenses_Title: string;
-    status: string;
-    employeeId: number;
-    submissionDate: string; // or Date
-    expense_Amount: number;
-    approverEmail: string;
-    expenseitem: IExpenseItems[];
-  }
- export interface Event {
-    name: string;
-    date: string;
-    description: string;
-    iconUrl: string;
-    imageUrl: string;
-  }
-  
-  
+export interface Inewexpense {
+  additionaldetails: any;
+  submitted: boolean;
+  employeeId: any;
+  expensesCode: string;
+  amount: number;
+  recieptNumber: number;
+  status: string;
+  attachment: string;
+  expensedate: any;
+  employeeName: string;
+  Description: string;
+  isdeeleted: any;
+  expenseName: string;
+  isManagementExpense: any;
+  submissionDate: any;
+  expensetitle: string;
+  expenseItems: IexpenseItem[];
+}
+
+export interface IExpensedatabyid {
+  expensedate: any;
+  amount: number;
+  attachment: any;
+  status: string;
+  expensesCode: number;
+  expenseType: string;
+  description: string;
+  employeeName: string;
+  firstName: string; // <-- Add this line
+  lastName: string;
+  id: number;
+  employeeId: number;
+  isdeeleted: any;
+  isManagementExpense: boolean;
+  expenseName: string;
+  recieptNumber: number;
+  submissionDate: any;
+}
+
+export interface IExpensedata {
+  id: number;
+  employeeId: number;
+  expensedate: Date;
+  expenseType: string;
+  amount: number;
+  invoice: string;
+  status: string;
+  isNotVisible: boolean;
+  employeeName: string;
+  firstName: string; // <-- Add this line
+  lastName: string;
+}
+
+export interface Iinvoices {
+  id: number;
+  employeeId: number;
+  invoicenumber: number;
+  invoicedate: string;
+  // invoiceType: any,
+  attachment: any;
+  money: any;
+  status: string;
+  Description: string;
+  Invoicetype: any;
+  employeeName: string;
+  isNotVisible: boolean;
+  firstName: string; // <-- Add this line
+  lastName: string;
+  isdeleted: string;
+}
+
+export interface Itimesheet {
+  timesheetId: number;
+  empId: number;
+  projectId: number;
+  taskId: number;
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
+  weekStartDate: any;
+  weekEndDate: any;
+  status: string;
+  tstatus: string;
+  lastName: string;
+  firstName: string;
+  projectName: string;
+  employeeId: number;
+  totalHours: string;
+  taskName: string;
+}
+
+
+
+export interface IExpenseItems {
+  expenseType: any;
+  expenseitem_id: number;
+  expenses_ID: number;
+  item_Name: string;
+  expense_Date: string; // or Date if you will convert
+  expense_Amount: number;
+  receipt_Number: string;
+  status: string;
+  attachment_url: string;
+}
+
+export interface IExpenseHeaders {
+  expenses_ID: number;
+  applied_date: string; // or Date
+  expenses_Title: string;
+  status: string;
+  employeeId: number;
+  submissionDate: string; // or Date
+  expense_Amount: number;
+  approverEmail: string;
+  expenseitem: IExpenseItems[];
+}
+export interface Event {
+  name: string;
+  date: string;
+  description: string;
+  iconUrl: string;
+  imageUrl: string;
+}
+
+
 export interface Entity {
-  data:any
-  entity:any
-  approvalHeader:IApprovalHeader,
-  Expensescomments:ExpenseApproverComment[]
-  module:IMasterModule
+  data: any
+  entity: any
+  approvalHeader: IApprovalHeader,
+  Expensescomments: ExpenseApproverComment[]
+  module: IMasterModule
   lastName: any
   firstName: any
-  middleName : string
-  approvedBy:any
+  middleName: string
+  approvedBy: any
 
 }
-export interface IMasterModule{
-  id:number,
-  moduleName:string,
-  approvalflowRequired:boolean,
-  categoryType:string,
-  normalizedName?:string
+export interface IMasterModule {
+  id: number,
+  moduleName: string,
+  approvalflowRequired: boolean,
+  categoryType: string,
+  normalizedName?: string
 }
 
 export interface ExpenseApproverComment {
   id: number;
   pendingItemsId: number;
   addedBy: number;
-  addedDate: string; 
+  addedDate: string;
   comments: string;
   addedByFusionEmpId: string;
   addedName: string;
   action: string;
-  metaData: any; 
-  approverRole: any; 
+  metaData: any;
+  approverRole: any;
 }
 
-export interface IApprovalHeader{
-  id?:number,
-  moduleId:number
-  referenceEntityId:number,
-  status:string,
-  comment?:string,
-  currentapprovalStage:string,
-  currentApproverId:number,
-  finalapprovalStage:string,
-  requestedBy:number
+export interface IApprovalHeader {
+  id?: number,
+  moduleId: number
+  referenceEntityId: number,
+  status: string,
+  comment?: string,
+  currentapprovalStage: string,
+  currentApproverId: number,
+  finalapprovalStage: string,
+  requestedBy: number
+}
+
+export interface IGlobalExpenses {
+  id?: number,
+  grade_Id?: number,
+  budget?: number,
+  frequency?: string,
+  created_By?: number,
+  created_At?: Date,
+  updated_By?: number,
+  updated_At?: Date,
+  is_Deleted?: boolean,
+  gradeName?: string
+}
+
+export interface ISummary {
+  frequency?: string,
+  requestedAmount?: number,
+  approvedAmount?: number,
+  processedAmount?: number,
+  remainingReimbursement?: number,
+  totalReimbursementLimit?: number,
+  categoryColor?: string,
+}
+
+export interface AttributeItem {
+  id: number;
+  entity: string;
+  attribute: string;
+  value: string;
+  meta: MetaData;
+}
+
+export interface MetaData {
+  Amount: string;
+  Frequency: string;
 }

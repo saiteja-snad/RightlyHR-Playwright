@@ -460,7 +460,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Weekends Published Tab',
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
-  settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
+  settingsManageExpenseTab = [
+    'Expenes Configuartion',
+    'Expense Allowed Days',
+    'Expense Threshold Validation',
+    'Global Expense Configuration'
+  ]
   
     settingsAttendanceLockingTab = [
     'Pending Attendance Locking',

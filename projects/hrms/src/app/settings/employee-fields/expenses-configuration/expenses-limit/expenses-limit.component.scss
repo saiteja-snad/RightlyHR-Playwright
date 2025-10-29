@@ -1,0 +1,48 @@
+.custom-p-select-content {
+    .p-select {
+        border: 1px solid var(--input-border-color) !important;
+        background-color: var(--input-bg-color) !important;
+        border-radius: 0.5rem !important;
+        padding: 0px !important;
+    }
+
+    .p-select-option {
+        white-space: normal !important;
+    }
+
+    .p-select-option.p-select-option-selected.p-focus {
+        background: var(--body-bg-color) !important;
+        background-color: var(--body-bg-color) !important;
+        color: #222222 !important;
+    }
+
+    .p-select-option.p-select-option-selected {
+        background: var(--body-bg-color) !important;
+        background-color: var(--body-bg-color) !important;
+        color: #222222 !important;
+    }
+
+    .p-select:hover {
+        border: 1px solid var(--input-border-color) !important;
+    }
+
+    .p-select.p-disabled {
+        background: var(--input-read-only-color) !important;
+    }
+
+    .p-select-label.p-placeholder {
+        color: var(--search-input-placeholder-color) !important;
+    }
+
+    .p-iconfield {
+        margin: 0.5rem 0rem !important;
+    }
+
+    .p-inputtext:focus {
+        border: 1px solid var(--input-border-color) !important;
+        font-weight: 200;
+        font-size: var(--fontsize12);
+        vertical-align: middle;
+        color: #222222;
+    }
+}

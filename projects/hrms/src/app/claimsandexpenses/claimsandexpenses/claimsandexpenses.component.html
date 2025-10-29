@@ -66,6 +66,39 @@
         <app-module-information [moduleInfo]="moduleinfo" />
     </ng-template>
 
+     <div class="cards-grid-container mb-3" *ngFor="let item of [getExpenseSummaryDetails]">
+        <div class="custom-expense-card d-flex justify-content-between align-items-center gap-3">
+            <div class="expense-card-label">Total Expense</div>
+            <div class="circular-progress" [style.background]="'conic-gradient(var(--primary-color) ' + 
+            getProgress(item) + 'deg, rgba(4, 107, 200, 0.3) 0deg)'">
+                <span class="progress-value">
+                    <span class="avaliable-leaves-text">{{ item?.remainingReimbursement || 0 }}</span>
+                    <span class="total-leaves-text">/{{ item?.totalReimbursementLimit || 0 }}</span>
+                </span>
+            </div>
+        </div>
+        <!--Frequency-->
+        <div class="custom-expense-card display-custom-flex">
+            <div class="expense-card-label mb-2">Frequency</div>
+            <div class="expense-card-text text-capitalize">{{ item?.frequency }}</div>
+        </div>
+        <!--Requested-->
+        <div class="custom-expense-card display-custom-flex">
+            <div class="expense-card-label mb-2">Requested</div>
+            <div class="expense-card-text">{{ item?.requestedAmount || 0 }}</div>
+        </div>
+        <!--Approved-->
+        <div class="custom-expense-card display-custom-flex">
+            <div class="expense-card-label mb-2">Approved</div>
+            <div class="expense-card-text">{{ item?.approvedAmount || 0 }}</div>
+        </div>
+        <!--Processed-->
+        <div class="custom-expense-card display-custom-flex">
+            <div class="expense-card-label mb-2">Processed</div>
+            <div class="expense-card-text">{{ item?.processedAmount || 0 }}</div>
+        </div>
+    </div>
+ 
     <div class="d-flex gap-3 w-100">
         <div class="component-left-tabs-container">
             <app-expenes-header-tabs />

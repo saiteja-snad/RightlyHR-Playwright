@@ -13,6 +13,7 @@ import { HttpService } from '../../services/http.service';
 import { TimeoffYearFilterService } from '../../services/timeoff-year-filter.service';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
+import { ISummary } from '../../Interfaces/claimsandexpenses.model';
 
 @Component({
   selector: 'app-claimsandexpenses',
@@ -24,6 +25,8 @@ import { CommonModule } from '@angular/common';
 export class ClaimsandexpensesComponent implements OnInit {
   moduleinfo: string = '';
   activeEmplist = [] as any;
+   loadingGraph: boolean = false;
+    getExpenseSummaryDetails = {} as ISummary;
   yearSelectionForm!: FormGroup;
   subscription!: Subscription;
   currentYear: number = new Date().getFullYear();
@@ -38,6 +41,7 @@ export class ClaimsandexpensesComponent implements OnInit {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.updateModuleInfo();
+        this.getExpenseSummarybyEmpId(this.empdata?.employeeId);
     this.getTeamManagersDetails();
     this.getAllEmployeeDetails();
     this.router.events
@@ -76,8 +80,10 @@ export class ClaimsandexpensesComponent implements OnInit {
     this.employeeSelected = !!employeedId;
     if (employeedId) {
       this.http.setEmployeeIdExpenses(employeedId);
+       this.getExpenseSummarybyEmpId(employeedId);
     } else {
       this.http.setEmployeeIdExpenses(null);
+       this.getExpenseSummarybyEmpId(employeedId);
     }
   }
 
@@ -127,26 +133,6 @@ export class ClaimsandexpensesComponent implements OnInit {
 
 
 
-  // function to get the data of employees by hierarchy
-
-  // getTeamManagersDetails() {
-  //   const EmployeeId = this.empdata.employeeId;
-  //   this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-  //     next: (response: any) => {
-  //       if (response && response.length) {
-  //         // No filter
-  //         this.getEmployeeInfo = response.map((employee: any) => ({
-  //           ...employee,
-  //           fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-  //             }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-  //             }${employee.lastName}`,
-  //         }));
-  //       }
-  //     },
-  //   });
-  // }
-
-
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
@@ -154,5 +140,46 @@ export class ClaimsandexpensesComponent implements OnInit {
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  getExpenseSummarybyEmpId(employeeId: number) {
+    this.subscription = this.http.getData(`v2/Expenses_Header/summary/${employeeId}`).subscribe({
+      next: (response: any) => {
+        this.getExpenseSummaryDetails = response as ISummary;
+        this.loadingGraph = false;
+      },error: () => {
+        this.loadingGraph = false;
+        this.getExpenseSummaryDetails = {} as ISummary;
+      }
+      
+    })
+  }
+    // For circular progress calculation
+  getExpenseProgress(): number {
+    if (!this.getExpenseSummaryDetails) return 0;
+    const total = this.getExpenseSummaryDetails.totalReimbursementLimit || 0;
+    const remaining = this.getExpenseSummaryDetails.remainingReimbursement || 0;
+    if (total === 0) return 0;
+    const usedPercentage = ((total - remaining) / total) * 360;
+    return usedPercentage;
+  }
+    getTransparentColor(hex: string, opacity: number): string {
+    // Remove leading # if present
+    hex = hex.replace('#', '');
+    // Convert 3-digit hex to 6-digit
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  getProgress(item: any): number {
+    const available = item?.remainingReimbursement;
+    const total = item?.totalReimbursementLimit || 1; // Avoid division by zero
+    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+    return percentage * 360;
   }
 }

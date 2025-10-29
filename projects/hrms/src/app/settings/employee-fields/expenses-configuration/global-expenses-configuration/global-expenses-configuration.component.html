@@ -1,0 +1,280 @@
+<div class="custom-main-component-container">
+
+    <div class="card custom-background-card p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="component-sub-header">{{'Global Expense ' | translate}}</div>
+
+            @if(!buttons){
+            <div>
+                <a type="button" (click)="showButtons()">
+                    <app-edit-icon />
+                </a>
+            </div>
+            }
+
+            @if(buttons){
+            <div class="d-flex justify-content-end gap-2">
+                <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">{{'Cancel' |
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="onSubmit()" [disabled]="globalForm.invalid ">{{'Save' |
+                    translate}}</button>
+            </div>
+            }
+        </div>
+
+        <!--input content-->
+        <form autocomplete="off" [formGroup]="globalForm">
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label for="budget" class="form-label custom-label mb-2">
+                        {{'Budget' | translate}} <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="budget" formControlName="budget"
+                        autocomplete="off" placeholder="Please enter budget" maxlength="15"
+                        (keypress)="formValidation.restrictAlphabets($event)" />
+                    <div class="error-msg"
+                        *ngIf="globalForm.get('budget')?.invalid && (globalForm.get('budget')?.touched)">
+                        Budget is required
+                    </div>
+                    <div *ngIf="globalForm.get('budget')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                </div>
+
+                <div class="col-6  mb-3">
+                    <label for="frequency" class="form-label custom-label mb-2">{{'Frequency' | translate}} <span
+                            class="text-danger">*</span><span placement="bottom" triggers="mouseenter:mouseleave"
+                            [ngbPopover]="popContent"><app-info-icon /></span></label>
+                    <!-- <input type="text" class="form-control custom-input" id="budget" formControlName="frequency"
+                                        autocomplete="off" placeholder="Please enter frequency" /> -->
+                    <div class="custom-p-select-content">
+                        <p-select [options]="frequencyDetails" optionLabel="value" optionValue="value" formControlName="frequency"
+                            placeholder="Please select frequency" class="form-select custom-select">
+                        </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="globalForm.controls['frequency'].invalid && (globalForm.controls['frequency'].touched || globalForm.controls['frequency'].dirty)">
+                        <span class="error-msg" *ngIf="globalForm.controls['frequency'].errors?.['required']">
+                            Frequency is required</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><span class="component-sub-header">{{'Global Expense Configurations'|translate}}</span></div>
+        <div class="custom-add-btn" (click)="openModal(addExpensesmodal)"
+            *ngIf="rbac.allowedToAccess('Global Expense Configuration.create')">
+            <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
+        </div>
+    </div>
+
+
+    <div class="custom-table-content mt-2">
+        <table class="w-100">
+            <thead>
+                <th>{{'Grade Name' |translate}}</th>
+                <th>{{'Budget' |translate}}</th>
+                <th>{{'Frequency' |translate}}</th>
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Global Expense Configuration.update') || 
+                    rbac.allowedToAccess('Global Expense Configuration.delete')">{{'Action' | translate}}</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let exp of globalExpense">
+                    <td>{{exp?.gradeName}}</td>
+                    <td>{{exp?.budget}}</td>
+                    <td>{{exp?.frequency}}</td>
+                    <td class="text-center"
+                        *ngIf="rbac.allowedToAccess('Global Expense Configuration.update') || rbac.allowedToAccess('Global Expense Configuration.delete')">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openupdate(updateexpeses, exp)"
+                                    *ngIf="rbac.allowedToAccess('Global Expense Configuration.update')">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}
+                                    </a>
+                                </li>
+                                <li (click)="opendelete(deleteconformation,exp)"
+                                    *ngIf="rbac.allowedToAccess('Global Expense Configuration.delete')">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-trash3 me-2"></i>{{'Delete' | translate}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+</div>
+
+<ng-template #addExpensesmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Add Global Expense Configuaration' | translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();expenseForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="expenseForm" (ngSubmit)="postExpenses(expenseForm)">
+                <!-- Grade Name Field -->
+                <div class="mb-3">
+                    <label for="gradeId" class="form-label custom-label mb-2">
+                        {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select class="form-select custom-input" [options]="gradedetails" optionLabel="gradeName"
+                            optionValue="gradeId" [filter]="true" [showClear]="false" formControlName="gradeId"
+                            placeholder="{{'Please select grade name' | translate}}">
+                        </p-select>
+                    </div>
+                    <div *ngIf="expenseForm.get('gradeId')?.touched && expenseForm.get('gradeId')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="expenseForm.get('gradeId')?.errors?.['required']">{{'Grade Name is required'|translate}}</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="budget" class="form-label custom-label mb-2">
+                        {{'Budget' | translate}} <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="budget" formControlName="budget"
+                        autocomplete="off" placeholder="Please enter budget" maxlength="15"
+                        (keypress)="formValidation.restrictAlphabets($event)" />
+                    <div class="error-msg"
+                        *ngIf="expenseForm.get('budget')?.invalid && (expenseForm.get('budget')?.touched)">
+                        Budget is required
+                    </div>
+                    <div *ngIf="expenseForm.get('budget')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="frequency" class="form-label custom-label mb-2">{{'Frequency' | translate}} <span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <!-- <p-select [options]="frequencyDetails" optionLabel="value" optionValue="value"
+                            formControlName="frequency" placeholder="Please select frequency"
+                            class="form-select custom-select"></p-select> -->
+                            <input type="text" class="form-control custom-input" id="budget" formControlName="frequency"
+                                        autocomplete="off" placeholder="Please enter frequency" />
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="expenseForm.controls['frequency'].invalid && (expenseForm.controls['frequency'].touched || expenseForm.controls['frequency'].dirty)">
+                        <span class="error-msg" *ngIf="expenseForm.controls['frequency'].errors?.['required']">
+                            Frequency is required</span>
+                    </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary "
+                        (click)="expenseForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary " [disabled]="expenseForm.invalid">{{'Submit' |
+                        translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #updateexpeses let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Update Global Expense Configuaration' | translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="expenseupdateForm" (ngSubmit)="onUpdateSubmit(expenseupdateForm)">
+                <div class="mb-3">
+                    <label for="gradeUpdateId" class="form-label custom-label mb-2">
+                        {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select class="form-select custom-input" [options]="gradedetails" optionLabel="gradeName"
+                            optionValue="gradeId" [filter]="true" [showClear]="false" formControlName="gradeUpdateId"
+                            placeholder="{{'Please select grade name' | translate}}">
+                        </p-select>
+                    </div>
+                    <div *ngIf="expenseupdateForm.get('gradeUpdateId')?.touched && expenseupdateForm.get('gradeUpdateId')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="expenseupdateForm.get('gradeUpdateId')?.errors?.['required']">{{'Grade Name is required'|translate}}</div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="budgetUpdate" class="form-label custom-label mb-2">
+                        {{'Budget' | translate}} <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" id="budget" formControlName="budgetUpdate"
+                        autocomplete="off" placeholder="Please enter budget" maxlength="15"
+                        (keypress)="formValidation.restrictAlphabets($event)" />
+                    <div class="error-msg"
+                        *ngIf="expenseupdateForm.get('budgetUpdate')?.invalid && (expenseupdateForm.get('budgetUpdate')?.touched)">
+                        Budget is required
+                    </div>
+                    <div *ngIf="expenseupdateForm.get('budgetUpdate')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="frequencyUpdate" class="form-label custom-label mb-2">{{'Frequency' | translate}} <span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <!-- <p-select [options]="frequencyDetails" optionLabel="value" optionValue="value"
+                            formControlName="frequencyUpdate" placeholder="Please select reason"
+                            class="form-select custom-select"></p-select> -->
+                            <input type="text" class="form-control custom-input" id="budget" formControlName="frequencyUpdate"
+                                        autocomplete="off" placeholder="Please enter frequency" />
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="expenseupdateForm.controls['frequencyUpdate'].invalid && (expenseupdateForm.controls['frequencyUpdate'].touched || expenseupdateForm.controls['frequencyUpdate'].dirty)">
+                        <span class="error-msg"
+                            *ngIf="expenseupdateForm.controls['frequencyUpdate'].errors?.['required']">
+                            Reason is required</span>
+                    </div>
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary "
+                        (click)="expenseupdateForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary " [disabled]="expenseupdateForm.invalid">
+                        {{'Update' | translate}}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the expense type?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">{{'No'|
+                translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="expemsesDelete()">{{'Yes' |
+                translate}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #popContent>
+    <div>Once a frequency is selected in the Global Expense section, it is automatically applied to all records in the Global Expense Configurations table below.</div>
+</ng-template>

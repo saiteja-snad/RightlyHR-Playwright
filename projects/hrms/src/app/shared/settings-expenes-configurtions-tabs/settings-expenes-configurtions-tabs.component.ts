@@ -15,7 +15,9 @@ export class SettingsExpenesConfigurtionsTabsComponent implements OnInit {
 
   allTabs = [
     { label: 'Expenes Configuartion', route: '/settings/employee-fields/expenes/configuartion', permission: { feature: 'Expenes Configuartion', action: 'view' } },
-    { label: 'Expense Allowed Days', route: '/settings/employee-fields/expenes/allowed-days', permission: { feature: 'Expense Allowed Days', action: 'view' } }
+    { label: 'Expense Allowed Days', route: '/settings/employee-fields/expenes/allowed-days', permission: { feature: 'Expense Allowed Days', action: 'view' } },
+     {label: 'Expense Threshold Validation', route: '/settings/employee-fields/expenes/expenses-limit', permission: { feature: 'Expense Threshold Validation', action: 'view'}},
+    { label: 'Global Expenses Configuration', route: '/settings/employee-fields/expenes/global-expenses-configuration', permission: { feature: 'Global Expense Configuration', action: 'view' } }
   ];
 
   constructor(

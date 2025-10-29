@@ -234,69 +234,54 @@ export class SkillDirectoryManagementComponent {
     });
   }
 
-  getEmployeeSkills(): void {
-    const params: any = {
-      isActive: true,
-      page: this.page,
-      pageSize: this.pageSize,
-    };
+ getEmployeeSkills(): void {
+  const params: any = {
+    isActive: true,
+    page: this.page,
+    pageSize: this.pageSize,
+  };
 
-    if (this.selectedStatus && this.selectedStatus !== 'All Status') {
-      params.resourceStatus = this.selectedStatus;
-    }
+  if (this.selectedStatus && this.selectedStatus !== 'All Status') {
+    params.resourceStatus = this.selectedStatus;
+  }
 
-    if (this.selectedSkills?.length > 0) {
-      params.skillSearch = this.selectedSkills.join(',');
-    }
+  if (this.selectedSkills?.length > 0) {
+    params.skillSearch = this.selectedSkills.join(',');
+  }
 
-    if (this.monthStartDate && this.monthEndDate) {
-      params.fromDate = this.monthStartDate.toISOString();
-      params.toDate = this.monthEndDate.toISOString();
-    }
+  if (this.monthStartDate && this.monthEndDate) {
+    params.fromDate = this.monthStartDate.toISOString();
+    params.toDate = this.monthEndDate.toISOString();
+  }
 
-    if (this.searchQuery?.trim()) {
-      params.searchQuery = this.searchQuery.trim();
-    }
+  if (this.searchQuery?.trim()) {
+    params.searchQuery = this.searchQuery.trim();
+  }
 
-    this.spinnerLoaderforallrecoders = true;
+  this.spinnerLoaderforallrecoders = true;
 
-    this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).subscribe({
-      next: (res: any) => {
-        if (res?.success && Array.isArray(res?.data?.items)) {
-          let filteredData = res.data.items;
-
-          if (this.selectedStatus && this.selectedStatus !== 'All Status') {
-            filteredData = filteredData.filter(
-              (emp: any) =>
-                emp.employeeProjectStatus?.toLowerCase() ===
-                this.selectedStatus.toLowerCase()
-            );
-          }
-          if (this.searchQuery?.trim()) {
-            const searchLower = this.searchQuery.toLowerCase();
-            filteredData = filteredData.filter((emp: any) =>
-              emp.employee?.name?.toLowerCase().includes(searchLower) ||
-              emp.employee?.employeeDesignation?.toLowerCase().includes(searchLower)
-            );
-          }
-
-          this.MySkills = filteredData;
-          this.totalCount = filteredData.length;
-        } else {
-          this.MySkills = [];
-          this.totalCount = 0;
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching employee skills:', err);
+  this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).subscribe({
+    next: (res: any) => {
+      if (res?.success && Array.isArray(res?.data?.items)) {
+        let filteredData = res.data.items;
+        this.MySkills = filteredData;
+        this.totalCount = filteredData.length;
+      } else {
         this.MySkills = [];
         this.totalCount = 0;
-      },
-      complete: () => {
-        this.spinnerLoaderforallrecoders = false;
-      },
-    });
-  }
+      }
+    },
+    error: (err) => {
+      console.error('Error fetching employee skills:', err);
+      this.MySkills = [];
+      this.totalCount = 0;
+      this.spinnerLoaderforallrecoders = false; 
+    },
+    complete: () => {
+      this.spinnerLoaderforallrecoders = false;
+    },
+  });
+}
 
   getMultiskills() {
     this.loader = true;

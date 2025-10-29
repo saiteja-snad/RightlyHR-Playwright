@@ -6,32 +6,39 @@
         </div>
     </div>
 
-    <!-- Technical Skills -->
-    <div class="card custom-background-card p-4" *ngIf="technicalSkills.length">
+    <div class="skill-container">
+    @if (!spinnerLoaderforallrecoders) {
+    @if (technicalSkills.length || softSkills.length) {
+    <div class="card custom-background-card p-4 mb-3" *ngIf="technicalSkills.length">
         <div class="custom-label chip">
             <label class="custom-label mb-3">Technical Skills</label>
-            <div class="flex flex-wrap gap-3">
+            <div class="d-flex flex-wrap gap-2">
                 <div *ngFor="let skill of technicalSkills" class="custom-chip-card position-relative">
-                    <span class="me-1">{{ skill.skillName }} ({{ skill.proficiencyLevel }})</span>
-                    <!-- Close icon -->
-                    <i class="bi bi-x-circle" (click)="openDeletePopup(deletepopup, skill, $event)"></i>
+                    <div class="me-2">{{ skill.skillName }}  <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
+                    <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Soft Skills -->
-    <div class="card custom-background-card p-4" *ngIf="softSkills.length">
-        <div class="custom-label chip">
-            <label class="custom-label mb-3">Soft Skills</label>
-            <div class="d-flex flex-wrap gap-3">
-                <div *ngFor="let skill of softSkills" class="custom-chip-card position-relative">
-                    <span class="me-1">{{ skill.skillName }} ({{ skill.proficiencyLevel }})</span>
-                    <!-- Close icon -->
-                    <i class="bi bi-x-circle" (click)="openDeletePopup(deletepopup, skill, $event)"></i>
+        </div>
+        <!-- Soft Skills -->
+        <div class="card custom-background-card p-4" *ngIf="softSkills.length">
+            <div class="custom-label chip">
+                <label class="custom-label mb-3">Soft Skills</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <div *ngFor="let skill of softSkills" class="custom-chip-card position-relative">
+                        <div class="me-2">{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel
+                                }})</span></div>                       
+                           <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
+                    </div>
                 </div>
             </div>
         </div>
+    } @else {
+    <app-no-data-found />
+    }
+    } @else {
+    <app-data-loader-content />
+    }
     </div>
 </div>
 
@@ -91,8 +98,7 @@
 
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationCancel)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationCancel)">Cancel</button>
                     <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)"
                         [disabled]="AddForm.invalid">{{ 'Add' }}</button>
                 </div>

@@ -130,16 +130,18 @@ export class SkillDirectoryManagementComponent {
     }
   }
 
+
   onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
-    const currentPage = Math.floor(this.first / this.rows) + 1;
-    this.page = currentPage;
+    this.pageSize = event.rows;
+    this.page = Math.floor(this.first / this.rows) + 1;
     this.getEmployeeSkills();
   }
 
   onPageSizeChange(pageSize: number) {
     this.rows = pageSize;
+    this.pageSize = pageSize;
     this.first = 0;
     this.page = 1;
     this.getEmployeeSkills();
@@ -229,10 +231,8 @@ export class SkillDirectoryManagementComponent {
       pageSize: this.pageSize,
     };
 
-    if (this.selectedStatus && this.selectedStatus !== 'All Status') {
-      params.resourceStatus = this.selectedStatus;
-    } else {
-      params.resourceStatusList = ['Committed', 'Available'];
+    if (this.selectedStatus === 'Committed' || this.selectedStatus === 'Available') {
+      params.resourceStatusList = [this.selectedStatus];
     }
 
     if (this.searchQuery) {

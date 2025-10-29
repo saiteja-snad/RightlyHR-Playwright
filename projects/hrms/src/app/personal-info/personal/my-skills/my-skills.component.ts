@@ -12,9 +12,11 @@ import { AuthService } from '../../../services/auth.service';
 import { map, Subject, Subscription, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 @Component({
   selector: 'app-my-skills',
-  imports: [ReactiveFormsModule, Select, ChipModule, CommonModule, NgbModalModule],
+  imports: [ReactiveFormsModule, Select, ChipModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './my-skills.component.html',
   styleUrl: './my-skills.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -30,6 +32,7 @@ export class MySkillsComponent {
   categoryList: any
   spinnerLoader = false;
   subscription!: Subscription;
+  spinnerLoaderforallrecoders = false;
   overridePayload: any;
   @ViewChild('Confirmation') Confirmation!: NgbModal;
   proficiencyoptions = [
@@ -43,7 +46,7 @@ export class MySkillsComponent {
   deleteModalRef: any;
   Status: any;
 
-  constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService, 
+  constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router,
     public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService) { }
 
@@ -59,16 +62,16 @@ export class MySkillsComponent {
     });
   }
 
-   getEmpInfoFromRoute(): void {
+  getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
     console.log('Full path:', fullPath);
-   
+
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
-   
+
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-  
+
     }
   }
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -145,19 +148,19 @@ export class MySkillsComponent {
     }
     this.spinnerLoader = true;
     const formValue = this.AddForm.value;
+    const skillNames = formValue.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s);    
+    const skillsList = skillNames.map((skill: string) => ({
+      skillCategory: formValue.skillcategory,
+      skillName: skill,
+      proficiencyLevel: formValue.proficiencylevel,
+      isActive: true   
+    }));
     const payload = {
       employeeId: this.empinfo.employeeId,
       createdBy: loggedInUser.employeeId,
-      allowOverride: false, // initially false
+      allowOverride: false,
       createdAt: new Date().toISOString(),
-      skills: [
-        {
-          skillCategory: formValue.skillcategory,
-          skillName: formValue.skills,
-          proficiencyLevel: formValue.proficiencylevel,
-          isActive: true
-        }
-      ]
+      skills: skillsList
     };
     this.http.postdata('EmployeeSkills/postSkillSet', payload).subscribe({
       next: (res: any) => {

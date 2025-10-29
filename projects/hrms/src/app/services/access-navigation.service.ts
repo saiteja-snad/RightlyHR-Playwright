@@ -353,7 +353,7 @@ export class AccessNavigationService {
         break;
 
       case '/skill-directory':
-        if (this.rbac.allowedToAccess('Skill Management.view')) {
+        if (this.rbac.allowedToAccess('Skillset Directory.view')) {
           return (route = '/skill-directory');
         }
         break;

@@ -85,10 +85,10 @@
             </li>
             }
             <!--My Info-->
-            @if(this.rbac.allowedToAccess('Skill Management.view')){
+            @if(this.rbac.allowedToAccess('Skillset Directory.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/skill-directory');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/skill-directory')">
-                <img src="/main-menu-icons/brain-02.png" alt="Icon" class="main-menu-icon">Skill Management
+                <img src="/main-menu-icons/brain-02.png" alt="Icon" class="main-menu-icon">Skillset Directory
             </li>
             }
 

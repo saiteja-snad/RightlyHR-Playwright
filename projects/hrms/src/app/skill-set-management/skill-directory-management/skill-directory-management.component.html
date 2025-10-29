@@ -151,7 +151,7 @@
         </div>
 
         <!--Name-->
-        <p class="name m-0">{{ selectedEmployee?.employee?.name }}({{ selectedEmployee?.employee?.employeeId }})</p>
+        <p class="name m-0">{{ selectedEmployee?.employee?.name }}({{ selectedEmployee?.employee?.snadEmployeeId }})</p>
         <!--Designation-->
         <p class="sub-text department m-0"></p>
         <!--Employee ID-->
@@ -179,7 +179,7 @@
                   [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
                 </p-chip>
                 } @else {
-                <p class="text-muted m-0">No technical skills</p>
+                <p class="project-content m-0"><app-no-data-found /></p>
                 }
               </div>
 
@@ -190,7 +190,7 @@
                   [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
                 </p-chip>
                 } @else {
-                <p class="text-muted m-0">No soft skills</p>
+                <p class="project-content"><app-no-data-found /></p>
                 }
               </div>
             </div>
@@ -203,11 +203,10 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="custom-card-bg skills-section w-100 mb-3">
                 <div class="skills-title">{{ proj.projectName }}</div>
                 <div class="skill-text">{{ proj.projectDesignation }}</div>
-                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM
-                  yyyy' }}</div>
+                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</div>
               </div>
               } @else {
-              <p class="text-muted">No projects available</p>
+              <p class="project-content"><app-no-data-found /></p>
               }
             </div>
           </p-tabpanel>

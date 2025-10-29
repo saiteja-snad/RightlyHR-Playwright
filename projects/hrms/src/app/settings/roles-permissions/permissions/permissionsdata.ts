@@ -225,7 +225,7 @@ export const permissionsData = [
   { fields: 'Clients', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Projects', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Skill Management', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Skillset Directory', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },

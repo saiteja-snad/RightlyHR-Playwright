@@ -11,6 +11,7 @@ import { ChipModule } from 'primeng/chip';
 import { AuthService } from '../../../services/auth.service';
 import { map, Subject, Subscription, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-my-skills',
   imports: [ReactiveFormsModule, Select, ChipModule, CommonModule, NgbModalModule],
@@ -43,11 +44,12 @@ export class MySkillsComponent {
   Status: any;
 
   constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService, 
-    private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, 
+    private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router,
     public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getEmpInfoFromRoute()
     this.getCategory()
     this.getSkills()
     this.AddForm = this.fb.group({
@@ -56,6 +58,23 @@ export class MySkillsComponent {
       proficiencylevel: ['', Validators.required],
     });
   }
+
+   getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+   
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+   
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+  
+    }
+  }
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'm', backdrop: 'static' });
@@ -97,7 +116,6 @@ export class MySkillsComponent {
       })
     ).subscribe({
       next: (skills: any[]) => {
-        // Filter & assign
         this.technicalSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('technical') && s.isActive);
         this.softSkills = skills.filter(s => s.skillCategory?.toLowerCase().includes('soft') && s.isActive);
       },
@@ -152,16 +170,12 @@ export class MySkillsComponent {
       error: (error: any) => {
         console.error('Error adding skill:', error);
         this.spinnerLoader = false;
-        //  Handle 409 duplicate skill conflict
         if (error?.status === 409) {
           const message = error?.error?.message || 'This skill already exists. Do you want to override it?';
-          // Show your confirmation modal
           this.Status = message;
           this.openmodelforConfirm(this.Confirmation);
-          // Save payload temporarily if needed for "Yes" click
           this.overridePayload = { ...payload, allowOverride: true };
         } else {
-          // Other errors
           this.conformationPopup.openErrorModal(error?.error?.message || 'Failed to add skill');
         }
       }

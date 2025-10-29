@@ -138,18 +138,23 @@ export class TraineeRelievingLetterComponent implements OnInit, OnDestroy {
   onClickEmployee(event: any) {
     this.managerDetails = null;
     this.selectedEmployee = event.value;
+    console.log(this.selectedEmployee);
+    
     if (this.selectedEmployee.lastworkingday && !this.selectedEmployee.lastworkingday) {
       this.selectedEmployee.lastworkingday = this.selectedEmployee.lastworkingday;
     }
     this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ?? '') + ' ' + this.selectedEmployee.lastName;
-    if (this.selectedEmployee.gender === 'Male') {
+    if (this.selectedEmployee?.gender === 'Male') {
       this.gender = "his";
       this.gender2 = 'he';
       this.gender3 = 'Mr.';
+      console.log(this.gender3);
+      
     } else {
       this.gender = "her";
       this.gender2 = 'she';
       this.gender3 = 'Ms.';
+          console.log(this.gender3);
     }
     this.getJobdetails(this.selectedEmployee.employeeId);
   }

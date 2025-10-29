@@ -177,6 +177,16 @@ export class SkillDirectoryManagementComponent {
     if (normalized === 'committed') return 'status-committed';
     return '';
   }
+  
+  getProficiencyClass(level: string): string {
+  switch (level?.toLowerCase()) {
+    case 'beginner': return 'chip-beginner';
+    case 'intermediate': return 'chip-intermediate';
+    case 'expert': return 'chip-expert';
+    default: return 'chip-default';
+  }
+}
+
 
   openModal(content: any, emp: any) {
     this.selectedEmployee = { ...emp };

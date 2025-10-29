@@ -144,3 +144,44 @@
 .status-committed {
   color: #E0A101;
 }
+
+p-chip {
+  display: inline-flex;
+  align-items: center;
+  margin: 4px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: #fff;
+  font-weight: 500;
+  border: 1.5px solid transparent;
+  color: var(--primary-color);
+}
+
+.skill-name {
+  font-size: 14px;
+  color: var(--primary-color);
+}
+
+.proficiency {
+  font-size: 11px;
+ color: var(--primary-color);
+}
+
+
+.chip-beginner {
+  border-color: #F8AF13; 
+}
+
+
+.chip-intermediate {
+  border-color: #9A00F3;
+}
+
+
+.chip-expert {
+  border-color: #00A912;
+}
+
+.chip-default {
+  border-color: #ccc; 
+}

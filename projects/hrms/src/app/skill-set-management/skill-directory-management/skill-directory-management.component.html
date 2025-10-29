@@ -153,7 +153,8 @@
         <!--Name-->
         <p class="name m-0">{{ selectedEmployee?.employee?.name }}({{ selectedEmployee?.employee?.snadEmployeeId }})</p>
         <!--Designation-->
-        <p class="sub-text department m-0">{{ selectedEmployee?.departmentDetails?.departmentName }} - {{ selectedEmployee?.departmentDetails?.subDepartmentName }}</p>
+        <p class="sub-text department m-0">{{ selectedEmployee?.departmentDetails?.departmentName }} - {{
+          selectedEmployee?.departmentDetails?.subDepartmentName }}</p>
         <!--Employee ID-->
         <p class="sub-text m-2">{{ selectedEmployee?.employee?.employeeDesignation }}</p>
         <!--Status-->
@@ -175,10 +176,12 @@
               @if (selectedEmployee?.techSkills?.length || selectedEmployee?.softSkills?.length) {
               <!--Technical Skills-->
               @if (selectedEmployee?.techSkills?.length) {
-              <div class="custom-card-bg skills-section w-100 mb-3">
+              <div class="custom-card-bg skills-section w-100 ">
                 <p class="skills-title mb-2">Technical Skills</p>
-                <p-chip *ngFor="let skill of selectedEmployee.techSkills"
-                  [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
+                <p-chip *ngFor="let skill of selectedEmployee.techSkills" [label]="''"
+                  [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                  <span class="skill-name">{{ skill.skillName }}</span>
+                  <span class="proficiency">({{ skill.proficiencyLevel }})</span>
                 </p-chip>
               </div>
               }
@@ -186,8 +189,10 @@
               @if (selectedEmployee?.softSkills?.length) {
               <div class="custom-card-bg skills-section w-100">
                 <p class="skills-title mb-2">Soft Skills</p>
-                <p-chip *ngFor="let skill of selectedEmployee.softSkills"
-                  [label]="skill.skillName + ' (' + skill.proficiencyLevel + ')'">
+                 <p-chip *ngFor="let skill of selectedEmployee.softSkills" [label]="''"
+                  [ngClass]="getProficiencyClass(skill.proficiencyLevel)">
+                  <span class="skill-name">{{ skill.skillName }}</span>
+                  <span class="proficiency">({{ skill.proficiencyLevel }})</span>
                 </p-chip>
               </div>
               }
@@ -207,7 +212,8 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="custom-card-bg skills-section w-100 mb-3">
                 <div class="skills-title">{{ proj.projectName }}</div>
                 <div class="skill-text">{{ proj.projectDesignation }}</div>
-                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</div>
+                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM
+                  yyyy' }}</div>
               </div>
               } @else {
               <div>

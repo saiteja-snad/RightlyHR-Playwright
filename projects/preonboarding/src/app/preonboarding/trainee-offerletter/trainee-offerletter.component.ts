@@ -310,8 +310,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     // this.uploadAddressLetter();
     this.generatedfile = file;
     this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile, offerUpdateDetails);
-    // });
-    // }
+   
   }
 
   //to store file to the azure and return to the url

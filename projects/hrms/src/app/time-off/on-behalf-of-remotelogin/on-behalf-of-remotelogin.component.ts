@@ -230,7 +230,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
             this.sharedModalService.openSuccessModal(
               'Remote login processed successfully'
             );
-            this.http.onBehlafOfWFHSignal.set(true);
+            this.http.onBehlafOfRemoteLoginSignal.set(true);
           },
           error: (err: any) => {
             this.spinnerLoader = false;

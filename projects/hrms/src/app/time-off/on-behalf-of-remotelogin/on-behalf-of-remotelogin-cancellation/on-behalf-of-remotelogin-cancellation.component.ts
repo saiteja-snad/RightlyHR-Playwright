@@ -48,7 +48,7 @@ export class OnBehalfOfRemoteloginCancellationComponent {
   }
 
   ngOnInit(): void {
-    this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
+    this.http.onBehalfOfRemoteLoginSelectedEmp$.subscribe((empId: number) => {
       if (empId) {
         this.getRemoteLoginRequests(empId);
       }else{

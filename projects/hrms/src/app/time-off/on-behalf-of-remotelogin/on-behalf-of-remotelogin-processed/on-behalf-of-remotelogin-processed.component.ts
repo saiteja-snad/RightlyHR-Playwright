@@ -38,7 +38,7 @@ export class OnBehalfOfRemoteloginProcessedComponent {
   ) {
     effect(() => {
       if (this.http.onBehlafOfRemoteLoginSignal()) {
-        this.http.onBehalfOfWFHSelectedEmp$.subscribe((empId: number) => {
+        this.http.onBehalfOfRemoteLoginSelectedEmp$.subscribe((empId: number) => {
           if (empId) {
             this.getRemoteLoginRequests(empId);
           }

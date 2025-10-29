@@ -27,7 +27,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-                            formControlName="location" placeholder="Please select location"
+                            formControlName="location" placeholder="Please select location" resetFilterOnHide="true"
                             (onChange)="onLocationChange($event.value)">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
                                 }}</ng-template>
@@ -71,8 +71,8 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
-                            [showClear]="false" formControlName="shift" placeholder="Please select shift"
-                            class="form-select custom-select" (onChange)="categoryenable()">
+                            [showClear]="false" formControlName="shift" placeholder="Please select shift" resetFilterOnHide="true"
+                            class="form-select custom-select" (onChange)="categoryenable()"> 
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>
@@ -90,7 +90,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="categoryDetails" optionLabel="name" [filter]="true" filterBy="name"
-                            [showClear]="false" formControlName="categoryName" class="form-select custom-select"
+                            [showClear]="false" formControlName="categoryName" class="form-select custom-select" resetFilterOnHide="true"
                             placeholder="Please select category name" (onChange)="getAllEmployees()">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
                             <ng-template let-location #item>{{ location.name }}</ng-template>

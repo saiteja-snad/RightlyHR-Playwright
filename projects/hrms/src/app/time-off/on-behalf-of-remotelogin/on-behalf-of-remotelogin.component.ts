@@ -105,7 +105,7 @@ export class OnBehalfOfRemoteloginComponent implements OnInit, OnDestroy{
       .subscribe({
         next: (data: any) => {
           this.employeeiddetails = data
-            // .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
+            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
             .map((emp: any) => {
               const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
               const fullName = `${fusionPart}${emp.firstName ?? ''} ${

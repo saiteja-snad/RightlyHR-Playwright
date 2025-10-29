@@ -141,14 +141,15 @@
 
       <div class="profile-content">
         <!--Image-->
-          <div class="mb-3">
+        <div class="profile-content text-center mb-3">
           <ng-container *ngIf="imageUrl; else showProfileIcon">
             <img [src]="imageUrl" alt="Profile Image" class="profile-image">
           </ng-container>
           <ng-template #showProfileIcon>
-            <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'" />
+            <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'"></app-profile-icon>
           </ng-template>
         </div>
+
         <!--Name-->
         <p class="name m-0">{{ selectedEmployee?.employee?.name }}({{ selectedEmployee?.employee?.employeeId }})</p>
         <!--Designation-->

@@ -18,6 +18,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-skill-directory-management',
@@ -34,7 +35,7 @@ export class SkillDirectoryManagementComponent {
   columnsPerRow = 3;
   navTabs: any[] = [];
   MySkills: any[] = [];
-  imageUrl:any
+  imageUrl: any
   date!: Date[];
   @ViewChild('datePicker') datePicker: any;
   subscription!: Subscription;
@@ -68,12 +69,24 @@ export class SkillDirectoryManagementComponent {
   ]
   displayLabel!: string;
   multiSkillOptions: any[] = [];
+  isloading: boolean = false;
 
-  constructor(private http: HttpService, public formValidation: FormValidationService, 
+  constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
     private readonly modalService: NgbModal, private openmodalservice: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    if (this.empinfo?.employeeId) {
+      this.getEmployeeProfile(this.empinfo.employeeId);
+    }
+    this.http.profliepicadd$.subscribe(() => {
+      if (this.selectedEmployee?.employeeId) {
+        this.getEmployeeProfile(this.selectedEmployee.employeeId);
+      } else {
+        this.getEmployeeProfile(this.empinfo.employeeId);
+      }
+    });
+
     this.selectedStatus = 'All Status';
     this.getEmployeeSkills();
     this.getMultiskills()
@@ -84,41 +97,35 @@ export class SkillDirectoryManagementComponent {
   }
 
   onCheckemployeeStatus(statusValue: any) {
-    // handle clear case or All Status
     this.selectedStatus = !statusValue || statusValue === 'All Status' ? 'All Status' : statusValue;
     this.getEmployeeSkills();
   }
 
   onSearch(value: string) {
     this.searchQuery = value.trim();
-    this.getEmployeeSkills(); // Trigger search on typing or Enter
+    this.getEmployeeSkills();
   }
 
   onSkillSelectionChange(): void {
-    // When skills change, trigger employee search
     this.getEmployeeSkills();
   }
 
   onDateChange(dates: Date[]) {
-    // Reset
     if (!dates || dates.length === 0) {
       this.selectedMonthRange = false;
       this.monthStartDate = this.monthEndDate = undefined!;
       return;
     }
-    // User picked start only
     if (dates.length === 1) {
       this.monthStartDate = dates[0];
       this.monthEndDate = undefined!;
       this.selectedMonthRange = false;
-      return; // don’t call API yet
+      return;
     }
-    // User picked both start and end
     if (dates.length === 2) {
       this.monthStartDate = dates[0];
       this.monthEndDate = dates[1];
       this.selectedMonthRange = true;
-      // Trigger API
       this.getEmployeeSkills();
     }
   }
@@ -142,23 +149,23 @@ export class SkillDirectoryManagementComponent {
     if (!emp?.skills?.length) return [];
     return emp.skills.filter((s: any) => s.isActive);
   }
-  get employeeStatusDisplay(): string {
-  const emp = this.selectedEmployee;
-  if (!emp) return '-';
 
-  if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
-    const lastProject = emp.projects
-      .filter((p: any) => p.endDate)
-      .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
-    if (lastProject?.endDate) {
-      const formattedDate = new Date(lastProject.endDate).toLocaleDateString('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric'
-      });
-      return `Committed until ${formattedDate}`;
+  get employeeStatusDisplay(): string {
+    const emp = this.selectedEmployee;
+    if (!emp) return '-';
+    if (emp.employeeProjectStatus === 'Committed' && emp.projects?.length) {
+      const lastProject = emp.projects
+        .filter((p: any) => p.endDate)
+        .sort((a: any, b: any) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime())[0];
+      if (lastProject?.endDate) {
+        const formattedDate = new Date(lastProject.endDate).toLocaleDateString('en-GB', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        });
+        return `Committed until ${formattedDate}`;
+      }
     }
+    return emp.employeeProjectStatus || '-';
   }
-  return emp.employeeProjectStatus || '-';
-}
 
 
   getStatusClass(status: string): string {
@@ -170,9 +177,12 @@ export class SkillDirectoryManagementComponent {
   }
 
   openModal(content: any, emp: any) {
-    // Clone the selected employee object
     this.selectedEmployee = { ...emp };
-    // Split skills into categories for modal display
+    const employeeId = emp?.employee?.employeeId;
+
+    if (employeeId) {
+      this.getEmployeeProfile(employeeId);
+    }
     const allSkills = emp.skills || [];
     this.selectedEmployee.techSkills = allSkills.filter(
       (s: any) => s.isActive && s.skillCategory.toLowerCase().includes('technical')
@@ -183,28 +193,57 @@ export class SkillDirectoryManagementComponent {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  getEmployeeProfile(employeeId: number) {
+    this.isloading = true;
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.isloading = false;
+        if (data?.profileUrl) {
+          this.downloadEmployeeProfilePic(data.profileUrl);
+        } else {
+          this.imageUrl = null;
+        }
+      },
+      error: (reason) => {
+        this.isloading = false;
+        console.error('Error fetching employee data:', reason);
+      },
+    });
+  }
+
+  downloadEmployeeProfilePic(profileUrl: string) {
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', profileUrl).subscribe({
+      next: (res: any) => {
+        const blob = new Blob([res['body']], { type: 'image/png' });
+        const objectURL = URL.createObjectURL(blob);
+        this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      },
+      error: (reason) => console.error('Error downloading image:', reason),
+    });
+  }
+
   getEmployeeSkills(): void {
     const params: any = {
       isActive: true,
       page: this.page,
       pageSize: this.pageSize,
     };
-    //  Handle status filters
+
     if (this.selectedStatus && this.selectedStatus !== 'All Status') {
       params.resourceStatus = this.selectedStatus;
     } else {
       params.resourceStatusList = ['Committed', 'Available'];
     }
-    //  Handle search text
+
     if (this.searchQuery) {
       params.searchQuery = this.searchQuery;
     }
-    //  Handle date range
+
     if (this.monthStartDate && this.monthEndDate) {
       params.fromDate = this.monthStartDate.toISOString();
       params.toDate = this.monthEndDate.toISOString();
     }
-    // Handle multi-select skills (comma-separated)
+
     if (this.selectedSkills && this.selectedSkills.length > 0) {
       params.skillSearch = this.selectedSkills.join(',');
     }
@@ -235,8 +274,8 @@ export class SkillDirectoryManagementComponent {
       next: (response: any) => {
         if (response?.success && Array.isArray(response.data)) {
           this.multiSkillOptions = response.data.map((skill: any) => ({
-            label: skill.skillName, // text shown in dropdown
-            value: skill.skillName  // actual value stored
+            label: skill.skillName,
+            value: skill.skillName
           }));
         } else {
           this.multiSkillOptions = [];
@@ -293,6 +332,6 @@ export class SkillDirectoryManagementComponent {
         complete: () => {
           this.spinnerLoaderforallrecoders = false;
         },
-    });
+      });
   }
 }

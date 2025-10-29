@@ -110,7 +110,7 @@
                     <label for="reason" class="form-label custom-label mb-2">Reason
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
-                        maxlength="250" placeholder="Reason for WFH"
+                        maxlength="250" placeholder="Reason for Remote login"
                         (input)="formsValidation.validateInput(addRemoteLoginForm.get('reason'))"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ addRemoteLoginForm.get('reason')?.value?.length || 0 }}/250</div>

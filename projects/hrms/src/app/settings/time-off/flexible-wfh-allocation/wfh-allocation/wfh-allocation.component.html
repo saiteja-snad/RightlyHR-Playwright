@@ -49,7 +49,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-                            formControlName="subLocation" placeholder="Please select sub location"
+                            formControlName="subLocation" placeholder="Please select sub location" resetFilterOnHide="true"
                             (onChange)="getAllShifts($event.value)">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
                                 }}</ng-template>

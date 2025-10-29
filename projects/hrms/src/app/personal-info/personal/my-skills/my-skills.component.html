@@ -26,8 +26,7 @@
                 <label class="custom-label mb-3">Soft Skills</label>
                 <div class="d-flex flex-wrap gap-2">
                     <div *ngFor="let skill of softSkills" class="custom-chip-card position-relative">
-                        <div class="me-2">{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel
-                                }})</span></div>                       
+                        <div class="me-2">{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel}})</span></div>                       
                            <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
                     </div>
                 </div>

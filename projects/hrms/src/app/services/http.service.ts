@@ -114,8 +114,8 @@ export class HttpService {
   // Observable for components to subscribe to
   selectedEmployeeIdTimesheet$ = this.selectedEmployeeIdTimesheet.asObservable();
   // Method to update the employeeId
-  setEmployeeIdTimesheet(id: any, projectId: number,request:any): void {
-    this.selectedEmployeeIdTimesheet.next({ id, projectId ,request});
+  setEmployeeIdTimesheet(id: any, projectId: number, request: any): void {
+    this.selectedEmployeeIdTimesheet.next({ id, projectId, request });
   }
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
@@ -353,17 +353,18 @@ export class HttpService {
       responseType: 'blob',
     });
   }
- downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string): Observable<Blob> {
-  let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
+  downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string): Observable<Blob> {
+    let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
 
-  if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
-  if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
-  if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
+    if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
+    if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
+    if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
+    if (skillSearch) apiUrl += `&skillSearch=${encodeURIComponent(skillSearch)}`;
 
-  return this.http.get(apiUrl, {
-    responseType: 'blob',
-  });
-}
+    return this.http.get(apiUrl, {
+      responseType: 'blob',
+    });
+  }
 
 
   getDataWithQuery(url: string, directoryPath: string) {
@@ -471,7 +472,7 @@ export class HttpService {
       responseType: 'blob',
     });
   }
- upadteLateLoginValues(url: string, data: any) {
+  upadteLateLoginValues(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 

@@ -1,9 +1,11 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">My Skills</span></div>
-        <div class="custom-add-btn" (click)="openModal(addnewskill)">
+         @if(canAccess('create','myskills')){
+        <div class="custom-add-btn"  (click)="openModal(addnewskill)">
             <i class="bi bi-plus plus-icon me-1"></i>Add New Skill
         </div>
+    }
     </div>
 
     <div class="skill-container">
@@ -15,7 +17,9 @@
             <div class="d-flex flex-wrap gap-2">
                 <div *ngFor="let skill of technicalSkills" class="custom-chip-card">
                     <div class="me-2">{{ skill.skillName }}  <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
+                    @if(rbac.allowedToAccess('My Skills.delete')){
                     <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
+                    }
                 </div>
             </div>
         </div>
@@ -27,7 +31,9 @@
                 <div class="d-flex flex-wrap gap-2">
                     <div *ngFor="let skill of softSkills" class="custom-chip-card">
                         <div>{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
+                        @if(rbac.allowedToAccess('My Skills.delete')){
                         <div><img class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div>
+                        }
                     </div>
                 </div>
             </div>
@@ -86,7 +92,7 @@
                     <div class="custom-p-select-content">
                         <p-select class="custom-select w-100" [options]="proficiencyoptions" optionLabel="label"
                             optionValue="value" [filter]="true" [showClear]="false" formControlName="proficiencylevel"
-                            placeholder="{{'Please select skill category'}}">
+                            placeholder="{{'Please select proficiency Level'}}">
                         </p-select>
                         <div *ngIf="AddForm.get('proficiencylevel')?.touched && AddForm.get('proficiencylevel')?.invalid"
                             class="error-msg">

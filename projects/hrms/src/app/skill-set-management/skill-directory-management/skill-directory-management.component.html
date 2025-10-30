@@ -6,6 +6,9 @@
 
     <div class="d-flex align-items-center gap-3">
       <!-- Status Filter -->
+         <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+          Clear All
+        </button>
       <div class="custom-p-select-content">
         <p-select [options]="EmpStatus" [(ngModel)]="selectedStatus" [filter]="true" filterBy="label"
           resetFilterOnHide="true" optionLabel="label" optionValue="value" showClear="true" placeholder="Select Status"
@@ -30,7 +33,7 @@
 
       <!-- Export Button -->
       <div>
-        <button type="button" class="custom-btn btn-primary px-4" (click)="submitExport()">
+        <button type="button" class="custom-btn btn-primary px-4" (click)="submitExport()" [disabled]="spinnerLoaderforallrecoders || MySkills.length === 0">
           @if (spinnerLoaderforallrecoders) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           <span>Loading...</span>
@@ -59,6 +62,7 @@
         <thead>
           <tr>
             <th>Employee Name</th>
+            <th>Employee Id</th>
             <th>Title</th>
             <th>Key Skills</th>
             <th class="text-center">Current Status</th>
@@ -69,6 +73,7 @@
           @if (MySkills.length > 0) {
           <tr *ngFor="let emp of MySkills">
             <td>{{ emp.employee?.name || '-' }}</td>
+            <td>{{ emp.employee?.snadEmployeeId || '-' }}</td> 
             <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
             <td>
               <div class="d-flex flex-wrap gap-2">
@@ -96,7 +101,7 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <li>
                     <a class="dropdown-item" (click)="openModal(employeeDetailModal, emp)">
-                      <i class="bi bi-eye-fill me-2"></i>View
+                      <i class="bi bi-eye-fill me-2"></i>View Details
                     </a>
                   </li>
                 </ul>
@@ -230,8 +235,7 @@
               <div *ngFor="let proj of selectedEmployee.projects" class="custom-card-bg skills-section w-100 mb-3">
                 <div class="skills-title">{{ proj.projectName }}</div>
                 <div class="skill-text">{{ proj.projectDesignation }}</div>
-                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM
-                  yyyy' }}</div>
+                <div class="skill-text">{{ proj.startDate | date: 'dd MMM yyyy' }} - {{ proj.endDate | date: 'dd MMM yyyy' }}</div>
               </div>
               } @else {
               <div>

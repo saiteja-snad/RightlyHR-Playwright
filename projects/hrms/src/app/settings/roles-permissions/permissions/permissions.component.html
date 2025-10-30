@@ -3380,7 +3380,7 @@
                                             (change)="onCheckboxChange(per, 'Create')"
                                             [disabled]="!roleToFilter?.id || 
                                         !['Employee Info Education Details','Employee Info Identity Details','Employee Info Family Details',
-                                        'Employee Info Bank Details','Employee Info Visa Details','Employee My Skills'].includes(per.fields)">
+                                        'Employee Info Bank Details','Employee Info Visa Details'].includes(per.fields)">
                                     </td>
                                     <!-- Delete -->
                                     <td>
@@ -3388,7 +3388,7 @@
                                             (change)="onCheckboxChange(per, 'Delete')"
                                             [disabled]="!roleToFilter?.id || 
                                         !['Employee Info Education Details','Employee Info Identity Details','Employee Info Family Details',
-                                        'Employee Info Bank Details','Employee Info Visa Details','Employee Info Documents Verification','Employee My Skills'].includes(per.fields)">
+                                        'Employee Info Bank Details','Employee Info Visa Details','Employee Info Documents Verification'].includes(per.fields)">
                                     </td>
                                 </tr>
                             </ng-container>

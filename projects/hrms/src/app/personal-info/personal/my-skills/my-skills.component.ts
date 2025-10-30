@@ -3,20 +3,20 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { ChipModule } from 'primeng/chip';
 import { AuthService } from '../../../services/auth.service';
 import { map, Subject, Subscription, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+
 @Component({
   selector: 'app-my-skills',
-  imports: [ReactiveFormsModule, Select, ChipModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [ReactiveFormsModule, Select, FormsModule,CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent ],
   templateUrl: './my-skills.component.html',
   styleUrl: './my-skills.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -45,6 +45,7 @@ export class MySkillsComponent {
   softSkills: any[] = [];
   deleteModalRef: any;
   Status: any;
+   values: string[] | undefined;
 
   constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router,
@@ -57,7 +58,7 @@ export class MySkillsComponent {
     this.getSkills()
     this.AddForm = this.fb.group({
       skillcategory: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      skills: ['', Validators.required],
+      skills: [[], Validators.required],
       proficiencylevel: ['', Validators.required],
     });
   }
@@ -77,7 +78,7 @@ export class MySkillsComponent {
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
-
+   
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'm', backdrop: 'static' });
@@ -168,7 +169,7 @@ export class MySkillsComponent {
         this.AddForm.reset();
         this.modalService.dismissAll();
         this.getSkills();
-        this.conformationPopup.openSuccessModal('Skill added successfully');
+        this.conformationPopup.openSuccessModal('Skills added successfully');
       },
       error: (error: any) => {
         console.error('Error adding skill:', error);

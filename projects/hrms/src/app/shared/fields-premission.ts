@@ -39,10 +39,10 @@ export const EMPLOYEE_INFO_CLAIMS = [
     permission: 'visa',
     claim: 'Employee Info Visa Details'
   },
-  {
-    permission: 'myskills',
-    claim: 'Employee My Skills'
-  },
+  // {
+  //   permission: 'myskills',
+  //   claim: 'Employee My Skills'
+  // },
 
   {
     permission: 'preonboarding',

@@ -1137,12 +1137,12 @@ selectAllOnBehalfOf = [
 
 selectAllOnBehalfOfWFH = [
   'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
-  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'Request On Behalf Of WFH Button'
+  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team','Request On Behalf Of WFH Button'
 ]
 
 selectAllOnBehalfOfRemoteLogin = [
   'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
-  , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'Request On Behalf Of RemoteLogin Button'
+  , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team','Request On Behalf Of RemoteLogin Button'
 ]
   // Generic toggle function for checkboxes
   toggleSelectAll(

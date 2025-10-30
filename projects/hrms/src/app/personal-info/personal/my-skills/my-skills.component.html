@@ -17,7 +17,7 @@
             <div class="d-flex flex-wrap gap-2">
                 <div *ngFor="let skill of technicalSkills" class="custom-chip-card">
                     <div class="me-2">{{ skill.skillName }}  <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
-                    @if(rbac.allowedToAccess('My Skills.delete')){
+                    @if(canAccess('delete','myskills')){
                     <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
                     }
                 </div>
@@ -31,7 +31,7 @@
                 <div class="d-flex flex-wrap gap-2">
                     <div *ngFor="let skill of softSkills" class="custom-chip-card">
                         <div>{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
-                        @if(rbac.allowedToAccess('My Skills.delete')){
+                        @if(canAccess('delete','myskills')){
                         <div><img class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div>
                         }
                     </div>
@@ -92,7 +92,7 @@
                     <div class="custom-p-select-content">
                         <p-select class="custom-select w-100" [options]="proficiencyoptions" optionLabel="label"
                             optionValue="value" [filter]="true" [showClear]="false" formControlName="proficiencylevel"
-                            placeholder="{{'Please select proficiency Level'}}">
+                            placeholder="{{'Please select proficiency level'}}">
                         </p-select>
                         <div *ngIf="AddForm.get('proficiencylevel')?.touched && AddForm.get('proficiencylevel')?.invalid"
                             class="error-msg">
@@ -147,7 +147,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to delete?</p>
+            <p class="confirmation-text">Are you sure you want to remove the skill?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="modal.dismiss()" class="custom-btn btn-secondary">No</button>

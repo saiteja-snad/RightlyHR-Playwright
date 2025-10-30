@@ -4095,7 +4095,7 @@
                             </tr>
                             <ng-container *ngFor="let per of permissions">
                                 <tr class="text-align-center"
-                                    *ngIf="per.fields === 'On Behalf Of' || per.fields === 'On Behalf Of WFH'">
+                                    *ngIf="per.fields === 'On Behalf Of' || per.fields === 'On Behalf Of WFH' || per.fields === 'On Behalf Of RemoteLogin'">
                                     <td class="text-align-center">{{ per.fields }}</td>
                                     <td>
                                         <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -4134,6 +4134,46 @@
                                     *ngIf="per.fields === 'Waiting For Approval (On Behalf Of WFH)' || per.fields === 'Approved (On Behalf Of WFH)' || per.fields === 'Processed (On Behalf Of WFH)'
                                      || per.fields === 'Rejected (On Behalf Of WFH)' || per.fields === 'Cancelled (On Behalf Of WFH)' || per.fields === 'On Behalf Of WFH All Employees'
                                      || per.fields === 'Request On Behalf Of WFH Button'">
+                                    <td class="text-align-center">{{ per.fields }}</td>
+                                    <td>
+                                        <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                            (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
+                                            (change)="onCheckboxChange(per, 'Update')" [disabled]="true">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
+                                            (change)="onCheckboxChange(per, 'Create')" [disabled]="true">
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
+                                            (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                    </td>
+                                </tr>
+                            </ng-container>
+
+
+
+                            <!-- On behalf Of RemoteLogin Tabs-->
+                            <tr>
+                                <th colspan="5" class="custom-header">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <input type="checkbox" #selectTabsOnBehalfOfRemoteLogin
+                                            (change)="toggleSelectAll(selectAllOnBehalfOfRemoteLogin,selectTabsOnBehalfOfRemoteLogin?.checked, isOnBehalfOfRemoteLoginTabsCheckboxDisabled.bind(this))"
+                                            [checked]="isAllSelected(selectAllOnBehalfOfRemoteLogin)"
+                                            [indeterminate]="isSomeSelected(selectAllOnBehalfOfRemoteLogin)"
+                                            [disabled]="!roleToFilter?.id">
+                                        <div>On Behalf Of Remote Login Tabs </div>
+                                    </div>
+                                </th>
+                            </tr>
+                            <ng-container *ngFor="let per of permissions">
+                                <tr class="text-align-center"
+                                    *ngIf="per.fields === 'Waiting For Approval (On Behalf Of RemoteLogin)' || per.fields === 'Approved (On Behalf Of RemoteLogin)' || per.fields === 'Processed (On Behalf Of RemoteLogin)'
+                                     || per.fields === 'Rejected (On Behalf Of RemoteLogin)' || per.fields === 'Cancelled (On Behalf Of RemoteLogin)' || per.fields === 'On Behalf Of RemoteLogin All Employees'
+                                     || per.fields === 'Request On Behalf Of RemoteLogin Button'">
                                     <td class="text-align-center">{{ per.fields }}</td>
                                     <td>
                                         <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

@@ -1131,12 +1131,18 @@ selectAllLettersTabs=[
 ]
 
 selectAllOnBehalfOf = [
-  'On Behalf Of', 'On Behalf Of WFH'
+  'On Behalf Of', 'On Behalf Of WFH','On Behalf Of RemoteLogin'
+
 ]
 
 selectAllOnBehalfOfWFH = [
   'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
   , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'Request On Behalf Of WFH Button'
+]
+
+selectAllOnBehalfOfRemoteLogin = [
+  'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
+  , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'Request On Behalf Of RemoteLogin Button'
 ]
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1926,6 +1932,16 @@ selectAllOnBehalfOfWFH = [
   }
 
   isOnBehalfOfWFHTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isOnBehalfOfRemoteLoginTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }

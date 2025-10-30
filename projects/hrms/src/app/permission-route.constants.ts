@@ -579,7 +579,10 @@ export const PROJECTS_ROUTES = [
 
 export const ON_BEHALF_OF = [
   { route: '/on-behalf-of/on-behalf-of-wfh', permission: 'On Behalf Of WFH.view' },
+  { route: '/on-behalf-of/on-behalf-of-remotelogin', permission: 'On Behalf Of RemoteLogin.view' },
 ]
+
+
 
 export const ON_BEHALF_OF_TABS = [
   { route: '/on-behalf-of/on-behalf-of/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of).view' },
@@ -594,4 +597,11 @@ export const ON_BEHALF_OF_WFH_TABS = [
   { route: '/on-behalf-of/on-behalf-of-wfh/processed', permission: 'Processed (On Behalf Of WFH).view' },
   { route: '/on-behalf-of/on-behalf-of-wfh/rejected', permission: 'Rejected (On Behalf Of WFH).view', },
   { route: '/on-behalf-of/on-behalf-of-wfh/cancelled', permission: 'Cancelled (On Behalf Of WFH).view', },
+]
+export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
+  { route: '/on-behalf-of/on-behalf-of-remotelogin/waiting-for-approval', permission: 'Waiting For Approval (On Behalf Of RemoteLogin).view' },
+  { route: '/on-behalf-of/on-behalf-of-remotelogin/approved', permission: 'Approved (On Behalf Of RemoteLogin).view' },
+  { route: '/on-behalf-of/on-behalf-of-remotelogin/processed', permission: 'Processed (On Behalf Of RemoteLogin).view' },
+  { route: '/on-behalf-of/on-behalf-of-remotelogin/rejected', permission: 'Rejected (On Behalf Of RemoteLogin).view', },
+  { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
 ]

@@ -298,6 +298,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     const employeeId = this.empdata.employeeId;
     this.http.getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`).subscribe({
       next: (response: any) => {
+        this.conformationPopup.openSuccessModal('Regenerate credentials generated successfully and shared with the employee via email');
         
       },
       error: (error: any) => {
@@ -317,7 +318,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     };
     this.http.postdata(`CustomEmail/generateCredentialEmail`, data).subscribe({
       next: (res: any) => {
-        this.conformationPopup.openSuccessModal('Regenerate credentials generated successfully and shared with the employee via email');
       },
       error: (error: any) => {
         console.log(error);

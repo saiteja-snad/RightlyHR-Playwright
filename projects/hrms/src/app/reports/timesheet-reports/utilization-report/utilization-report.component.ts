@@ -13,13 +13,8 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
-import dayjs from 'dayjs';
-import { Dayjs } from 'dayjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import * as XLSX from 'xlsx';
-import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import { environment } from '../../../../environments/environment';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Client } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
@@ -75,7 +70,7 @@ export class UtilizationReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-   today: Date = new Date();
+  today: Date = new Date();
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -105,29 +100,17 @@ export class UtilizationReportComponent {
       this.disableBtn = true;
     })
   }
-//      isFilterApplied(): boolean {
-//   const formValue = this.UtilizationReportForm.value;
 
-//   return (
-//     (formValue.clientId && formValue.clientId !== null) ||
-//     (formValue.projectId && formValue.projectId !== null) ||
-//     (formValue.employeid && formValue.employeid !== null) ||
-//     (formValue.dateRange && formValue.dateRange.length > 0) ||
-//     (formValue.billable && formValue.billable !== null && formValue.billable !== undefined)
-//   );
-// }
-
-isFilterApplied(): boolean {
-  const formValue = this.UtilizationReportForm.value;
-
-  return (
-    (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-    (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-    (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-    (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-    (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-  );
-}
+  isFilterApplied(): boolean {
+    const formValue = this.UtilizationReportForm.value;
+    return (
+      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
+      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+      (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
+      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
+    );
+  }
   clearAllFilters(): void {
     this.UtilizationReportForm.reset();
     this.filteredutilizationRecord = [];
@@ -142,13 +125,13 @@ isFilterApplied(): boolean {
     this.generateUtilizationReport(this.page, this.pageSize);
   }
   onGenerate() {
-  this.generateUtilizationReport(this.page, this.pageSize, true, true);
-}
+    this.generateUtilizationReport(this.page, this.pageSize, true, true);
+  }
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateUtilizationReport(this.page, this.pageSize, false,false);
+    this.generateUtilizationReport(this.page, this.pageSize, false, false);
   }
 
   // Called when first size changes
@@ -157,7 +140,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateUtilizationReport(this.page, this.pageSize, true,true);
+    this.generateUtilizationReport(this.page, this.pageSize, true, true);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -423,37 +406,8 @@ isFilterApplied(): boolean {
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
-  // generateUtilizationReport(page: number, pageSize: number, showLoader: boolean = true) {
-  //   if (this.UtilizationReportForm.invalid) {
-  //     return;
-  //   }
-  //   if (showLoader) {
-  //     this.spinnerLoader1 = true;
-  //   }
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
-  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (res: any) => {
-  //       this.collectionSize = res.data.totalCount;
-  //       this.spinnerLoader1 = false;
-  //       if (res.success && res.data?.items) {
-  //         this.filteredutilizationRecord = res.data.items;
-  //         this.disableBtn = false;
-  //       } else {
-  //         this.filteredutilizationRecord = [];
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.spinnerLoader1 = false;
-  //       console.error('Error fetching report:', err);
-  //       this.filteredutilizationRecord = [];
-  //       this.disableBtn = true;
-  //     },
-  //   });
-  // }
 
- generateUtilizationReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false 
-  ) {
+  generateUtilizationReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.UtilizationReportForm.invalid) return;
     // Only reset pagination when explicitly requested
     if (resetPagination) {

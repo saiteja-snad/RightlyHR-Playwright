@@ -413,36 +413,8 @@ onGenerate() {
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
-  // generateProjectEffortReport(page: number, pageSize: number, showLoader: boolean = true) {
-  //   if (this.ProjectEffortReportForm.invalid) {
-  //     return;
-  //   }
-  //   if (showLoader) {
-  //     this.spinnerLoader1 = true;
-  //   }
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
-  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (res: any) => {
-  //       this.collectionSize = res.data.totalCount;
-  //       this.spinnerLoader1 = false;
-  //       if (res.success && res.data?.items) {
-  //         this.filteredpendingapprovalRecord = res.data.items;
-  //         this.disableBtn = false;
-  //       } else {
-  //         this.filteredpendingapprovalRecord = [];
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.spinnerLoader1 = false;
-  //       console.error('Error fetching report:', err);
-  //       this.filteredpendingapprovalRecord = [];
-  //       this.disableBtn = true;
-  //     },
-  //   });
-  // }
- generateProjectEffortReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false 
-  ) {
+ 
+ generateProjectEffortReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false ) {
     if (this.ProjectEffortReportForm.invalid) return;
     // Only reset pagination when explicitly requested
     if (resetPagination) {

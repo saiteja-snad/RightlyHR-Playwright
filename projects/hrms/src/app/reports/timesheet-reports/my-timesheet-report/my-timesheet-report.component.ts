@@ -13,13 +13,8 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
-import dayjs from 'dayjs';
-import { Dayjs } from 'dayjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import * as XLSX from 'xlsx';
-import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import { environment } from '../../../../environments/environment';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Client } from '../../../clients.model';
 import { TimesheetReportTabsComponent } from '../../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -311,40 +306,8 @@ onGenerate() {
     return params;
   }
 
-  // generatemytimesheetReport(page: number, pageSize: number, showLoader: boolean = true) {
-  //   if (this.MyTimesheetReportForm.invalid) {
-  //     return;
-  //   }
-
-  //    if (showLoader) {
-  //   this.spinnerLoader1 = true;
-  // }
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
-  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (res: any) => {
-  //       this.collectionSize = res.data.totalCount;
-  //       this.spinnerLoader1 = false;
-  //       if (res.success && res.data?.items) {
-  //         this.filteredmytimesheetRecord = res.data.items;
-  //         this.disableBtn = false;
-  //       } else {
-  //         this.filteredmytimesheetRecord = [];
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.spinnerLoader1 = false;
-  //       console.error('Error fetching report:', err);
-  //       this.filteredmytimesheetRecord = [];
-  //       this.disableBtn = true;
-  //     },
-  //   });
-  // }
-
-
-
-  generatemytimesheetReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false // ✅ new flag
-  ) {
+  
+  generatemytimesheetReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false) {
     if (this.MyTimesheetReportForm.invalid) return;
     // Only reset pagination when explicitly requested
     if (resetPagination) {

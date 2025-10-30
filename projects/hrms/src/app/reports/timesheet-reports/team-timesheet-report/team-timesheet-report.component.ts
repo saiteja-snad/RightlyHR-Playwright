@@ -14,13 +14,8 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
-import dayjs from 'dayjs';
-import { Dayjs } from 'dayjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import * as XLSX from 'xlsx';
-import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import { environment } from '../../../../environments/environment';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Client } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
@@ -120,29 +115,19 @@ export class TeamTimesheetReportComponent {
       this.disableBtn = true;
     })
   }
-  // isFilterApplied(): boolean {
-  //   const formValue = this.TeamTimesheetReportForm.value;
-  //   return (
-  //     (formValue.clientId && formValue.clientId !== null) ||
-  //     (formValue.projectId && formValue.projectId !== null) ||
-  //     (formValue.employeid && formValue.employeid !== null) ||
-  //     (formValue.dateRange && formValue.dateRange.length > 0) ||
-  //     (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-  //     (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined)
-  //   );
-  // }
-isFilterApplied(): boolean {
-  const formValue = this.TeamTimesheetReportForm.value;
 
-  return (
-    (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-    (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-    (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-     (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-    (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined) ||
-    (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-  );
-}
+  isFilterApplied(): boolean {
+    const formValue = this.TeamTimesheetReportForm.value;
+
+    return (
+      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
+      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+      (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
+      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+      (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined) ||
+      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
+    );
+  }
   clearAllFilters(): void {
     this.TeamTimesheetReportForm.reset();
     this.filteredtimesheetsummeryRecord = [];
@@ -164,31 +149,31 @@ isFilterApplied(): boolean {
     this.collectionSize = 0;
 
   }
- getResourceDetailsByManagerId() {
-  const EmployeeId = this.empinfo?.employeeId;
-  this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
-    next: (res: any) => {
-      if (res?.success) {
-        this.employeeiddetails = res.data
-          // Remove self
-          .filter((emp: any) => emp.id !== EmployeeId)
-          // Add fullName for dropdown
-          .map((emp: any) => ({
-            ...emp,
-            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
-            key: 'team'
-          }));
+  getResourceDetailsByManagerId() {
+    const EmployeeId = this.empinfo?.employeeId;
+    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
+      next: (res: any) => {
+        if (res?.success) {
+          this.employeeiddetails = res.data
+            // Remove self
+            .filter((emp: any) => emp.id !== EmployeeId)
+            // Add fullName for dropdown
+            .map((emp: any) => ({
+              ...emp,
+              fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
+              key: 'team'
+            }));
 
-        // Correct key mapping
-        this.employeeData = this.employeeiddetails.map((e: any) => ({
-          id: e.id,
-          name: e.fullName
-        }));
-      }
-    },
-    error: (err: any) => console.error(err)
-  });
-}
+          // Correct key mapping
+          this.employeeData = this.employeeiddetails.map((e: any) => ({
+            id: e.id,
+            name: e.fullName
+          }));
+        }
+      },
+      error: (err: any) => console.error(err)
+    });
+  }
 
 
   // called for pagination 
@@ -197,15 +182,15 @@ isFilterApplied(): boolean {
     this.first = 0;
     this.generateteamTimesheetReport(this.page, this.pageSize);
   }
-    onGenerate() {
-  this.generateteamTimesheetReport(this.page, this.pageSize, true, true);
-}
+  onGenerate() {
+    this.generateteamTimesheetReport(this.page, this.pageSize, true, true);
+  }
 
- onPageChange(event: any) {
+  onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateteamTimesheetReport(this.page, this.pageSize, false,false);
+    this.generateteamTimesheetReport(this.page, this.pageSize, false, false);
   }
 
   // Called when first size changes
@@ -214,7 +199,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateteamTimesheetReport(this.page, this.pageSize, true,true);
+    this.generateteamTimesheetReport(this.page, this.pageSize, true, true);
   }
 
   getManagerDropdownData(managerId: number): void {
@@ -608,33 +593,20 @@ isFilterApplied(): boolean {
       });
   }
 
-  //  get isLeaveGenerateDisabled(): boolean {
-  //   const { clientId, projectId, employeid, dateRange, billable, status } = this.TeamTimesheetReportForm.value;
-  //   const hasClient = clientId !== null && clientId !== undefined;
-  //   const hasProject = projectId !== null && projectId !== undefined;
-  //   const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
-  //   const hasBillable = billable !== null && billable !== undefined;
-  //   const hasStatus = status !== null && status !== undefined;
-  //   const hasEmployeid = employeid !== null && employeid !== undefined;
-
-  //   return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
-  // }
-
-
   get isLeaveGenerateDisabled(): boolean {
-  const { clientId, projectId, employeid, dateRange, billable, status } =
-    this.TeamTimesheetReportForm.value;
+    const { clientId, projectId, employeid, dateRange, billable, status } =
+      this.TeamTimesheetReportForm.value;
 
-  const hasClient = clientId !== null && clientId !== undefined;
-  const hasProject = projectId !== null && projectId !== undefined;
-  const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
-  const hasBillable = billable !== null && billable !== undefined;
-  const hasStatus = status !== null && status !== undefined;
-  const hasEmployeid = Array.isArray(employeid) && employeid.length > 0;
+    const hasClient = clientId !== null && clientId !== undefined;
+    const hasProject = projectId !== null && projectId !== undefined;
+    const hasDateRange = Array.isArray(dateRange) && dateRange.length === 2 && dateRange[0] && dateRange[1];
+    const hasBillable = billable !== null && billable !== undefined;
+    const hasStatus = status !== null && status !== undefined;
+    const hasEmployeid = Array.isArray(employeid) && employeid.length > 0;
 
-  // Disable if none of them are selected
-  return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
-}
+    // Disable if none of them are selected
+    return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus || hasEmployeid);
+  }
 
   getAllActiveProjects() {
     this.http
@@ -697,56 +669,22 @@ isFilterApplied(): boolean {
     if (formValue.projectId !== null && formValue.projectId !== undefined) {
       params.ProjectIds = formValue.projectId;
     }
-    // if (formValue.employeid !== null && formValue.employeid !== undefined) {
-    //   params.EmployeeIds = formValue.employeid;
-    // }
     if (formValue.employeid?.length) {
-  if (Array.isArray(formValue.employeid)) {
-    // already an array of IDs
-    params.EmployeeIds = formValue.employeid;
-  } else {
-    // if it’s a single selected value (edge case)
-    params.EmployeeIds = [formValue.employeid];
-  }
-}
+      if (Array.isArray(formValue.employeid)) {
+        // already an array of IDs
+        params.EmployeeIds = formValue.employeid;
+      } else {
+        // if it’s a single selected value (edge case)
+        params.EmployeeIds = [formValue.employeid];
+      }
+    }
 
     if (formValue.billable?.value) params.Billable = formValue.billable.value;
     if (formValue.status?.value) params.Statuses = formValue.status.value;
     return params;
   }
-  // generateteamTimesheetReport(page: number, pageSize: number, showLoader: boolean = true) {
-  //   if (this.TeamTimesheetReportForm.invalid) {
-  //     return;
-  //   }
-  //   // 🔹 Prevent multiple fast clicks while loading
-  //   if (this.spinnerLoader1) return;
-  //   if (showLoader) {
-  //     this.spinnerLoader1 = true;
-  //   }
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
-  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (res: any) => {
-  //       this.collectionSize = res.data.totalCount;
-  //       this.spinnerLoader1 = false;
-  //       if (res.success && res.data?.items) {
-  //         this.filteredtimesheetsummeryRecord = res.data.items;
-  //         this.disableBtn = false;
-  //       } else {
-  //         this.filteredtimesheetsummeryRecord = [];
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.spinnerLoader1 = false;
-  //       console.error('Error fetching report:', err);
-  //       this.filteredtimesheetsummeryRecord = [];
-  //       this.disableBtn = true;
-  //     },
-  //   });
-  // }
- 
 
-   generateteamTimesheetReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false 
+  generateteamTimesheetReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false
   ) {
     if (this.TeamTimesheetReportForm.invalid) return;
     // Only reset pagination when explicitly requested

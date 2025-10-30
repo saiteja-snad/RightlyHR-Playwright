@@ -13,13 +13,8 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
-import dayjs from 'dayjs';
-import { Dayjs } from 'dayjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import * as XLSX from 'xlsx';
-import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import { environment } from '../../../../environments/environment';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { Client } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
@@ -99,36 +94,24 @@ export class TimesheetSummeryReportComponent {
       projectId: [{ value: null, disabled: true }],
       employeid: [{ value: null, disabled: true }],
       dateRange: [null],
-      billable: [null],
-      // year: ['']
+      billable: [null]
     });
     this.TimesheetSummeryReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
-//      isFilterApplied(): boolean {
-//   const formValue = this.TimesheetSummeryReportForm.value;
 
-//   return (
-//     (formValue.clientId && formValue.clientId !== null) ||
-//     (formValue.projectId && formValue.projectId !== null) ||
-//     (formValue.employeid && formValue.employeid !== null) ||
-//     (formValue.dateRange && formValue.dateRange.length > 0) ||
-//     (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined)
-//   );
-// }
+  isFilterApplied(): boolean {
+    const formValue = this.TimesheetSummeryReportForm.value;
 
-isFilterApplied(): boolean {
-  const formValue = this.TimesheetSummeryReportForm.value;
-
-  return (
-    (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-    (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-    (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-    (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
-    (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-  );
-}
+    return (
+      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
+      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+      (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
+      (formValue.belaible && formValue.belaible.value !== null && formValue.belaible.value !== undefined) ||
+      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
+    );
+  }
 
   clearAllFilters(): void {
     this.TimesheetSummeryReportForm.reset();
@@ -144,13 +127,13 @@ isFilterApplied(): boolean {
     this.generatetimesheetSummeryReport(this.page, this.pageSize);
   }
   onGenerate() {
-  this.generatetimesheetSummeryReport(this.page, this.pageSize, true, true);
-}
+    this.generatetimesheetSummeryReport(this.page, this.pageSize, true, true);
+  }
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generatetimesheetSummeryReport(this.page, this.pageSize,false,false);
+    this.generatetimesheetSummeryReport(this.page, this.pageSize, false, false);
   }
 
   // Called when first size changes
@@ -159,7 +142,7 @@ isFilterApplied(): boolean {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatetimesheetSummeryReport(this.page, this.pageSize, false,false);
+    this.generatetimesheetSummeryReport(this.page, this.pageSize, false, false);
   }
   getClientsData(): void {
     this.http.getData(`Client/GetAll?status=Active`)
@@ -425,96 +408,65 @@ isFilterApplied(): boolean {
   //   if (formValue.belaible?.value) params.Billable = formValue.belaible.value;
   //   return params;
   // }
- buildTimesheetReportParams() {
-  const formValue = this.TimesheetSummeryReportForm.value;
-  const employeeId = this.empinfo?.employeeId || 0;
+  buildTimesheetReportParams() {
+    const formValue = this.TimesheetSummeryReportForm.value;
+    const employeeId = this.empinfo?.employeeId || 0;
 
-  // Helper to format date as MM/dd/yyyy
-  const formatDate = (date: Date | null) => {
-    if (!date) return null;
-    const d = new Date(date);
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
+    // Helper to format date as MM/dd/yyyy
+    const formatDate = (date: Date | null) => {
+      if (!date) return null;
+      const d = new Date(date);
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
 
-  // Determine startDate and endDate
-  let startDate: string | null = null;
-  let endDate: string | null = null;
+    // Determine startDate and endDate
+    let startDate: string | null = null;
+    let endDate: string | null = null;
 
-  if (formValue.dateRange?.[0] && formValue.dateRange?.[1]) {
-    // Use selected date range
-    startDate = formatDate(formValue.dateRange[0]);
-    endDate = formatDate(formValue.dateRange[1]);
-  } else {
-    // Default to current month's start date and today's date
-    const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    startDate = formatDate(firstDayOfMonth);
-    endDate = formatDate(today);
+    if (formValue.dateRange?.[0] && formValue.dateRange?.[1]) {
+      // Use selected date range
+      startDate = formatDate(formValue.dateRange[0]);
+      endDate = formatDate(formValue.dateRange[1]);
+    } else {
+      // Default to current month's start date and today's date
+      const today = new Date();
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      startDate = formatDate(firstDayOfMonth);
+      endDate = formatDate(today);
+    }
+
+    // Build params
+    const params: any = {
+      ReportType: 'TimesheetSummaryMonth',
+      // EmployeeIds: employeeId,
+      StartDate: startDate,
+      EndDate: endDate
+    };
+
+    // Optional filters
+    if (formValue.clientId !== null && formValue.clientId !== undefined) {
+      params.ClientIds = formValue.clientId;
+    }
+
+    if (formValue.projectId !== null && formValue.projectId !== undefined) {
+      params.ProjectIds = formValue.projectId;
+    }
+
+    if (formValue.employeid !== null && formValue.employeid !== undefined) {
+      params.EmployeeIds = formValue.employeid;
+    }
+
+    if (formValue.billable?.value) {
+      params.Billable = formValue.billable.value;
+    }
+
+    return params;
   }
 
-  // Build params
-  const params: any = {
-    ReportType: 'TimesheetSummaryMonth',
-    // EmployeeIds: employeeId,
-    StartDate: startDate,
-    EndDate: endDate
-  };
-
-  // Optional filters
-  if (formValue.clientId !== null && formValue.clientId !== undefined) {
-    params.ClientIds = formValue.clientId;
-  }
-
-  if (formValue.projectId !== null && formValue.projectId !== undefined) {
-    params.ProjectIds = formValue.projectId;
-  }
-
-  if (formValue.employeid !== null && formValue.employeid !== undefined) {
-    params.EmployeeIds = formValue.employeid;
-  }
-
-  if (formValue.billable?.value) {
-    params.Billable = formValue.billable.value;
-  }
-
-  return params;
-}
-
-  // generatetimesheetSummeryReport(page: number, pageSize: number, showLoader: boolean = true) {
-  //   if (this.TimesheetSummeryReportForm.invalid) {
-  //     return;
-  //   }
-
-  //   if (showLoader) {
-  //     this.spinnerLoader1 = true;
-  //   }
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
-  //   this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${page}&pageSize=${pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
-  //     next: (res: any) => {
-  //       this.collectionSize = res.data.totalCount;
-  //       this.spinnerLoader1 = false;
-  //       if (res.success && res.data?.items) {
-  //         this.filteredtimesheetsummeryRecord = res.data.items;
-  //         this.disableBtn = false;
-  //       } else {
-  //         this.filteredtimesheetsummeryRecord = [];
-  //       }
-  //     },
-  //     error: (err) => {
-  //       this.spinnerLoader1 = false;
-  //       console.error('Error fetching report:', err);
-  //       this.filteredtimesheetsummeryRecord = [];
-  //       this.disableBtn = true;
-  //     },
-  //   });
-  // }
-
-   generatetimesheetSummeryReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false 
-  ) {
+  generatetimesheetSummeryReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.TimesheetSummeryReportForm.invalid) return;
     // Only reset pagination when explicitly requested
     if (resetPagination) {
@@ -558,26 +510,7 @@ isFilterApplied(): boolean {
         },
       });
   }
-  // exportTimesheetSummery() {
-  //   const params = this.buildTimesheetReportParams();
-  //   const queryString = new URLSearchParams(params).toString();
 
-  //   this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
-  //     next: (response: any) => {
-  //       const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  //       const url = window.URL.createObjectURL(blob);
-  //       const link = document.createElement('a');
-  //       link.href = url;
-  //       link.download = `TimesheetSummery.xlsx`;
-  //       link.click();
-  //       this.conformationPopup.openSuccessModal(" Timesheet Summery Report Generated Successfully");
-  //     },
-  //     error: (err: any) => {
-  //       this.conformationPopup.openErrorModal('No records found');
-  //     },
-  //     complete: () => { }
-  //   });
-  // }
   exportTimesheetSummery() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();

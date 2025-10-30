@@ -408,7 +408,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
     console.log(project);
-    
+
     if (!project || !project.days) return [];
     console.log(project);
 
@@ -991,12 +991,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     this.selectedProjectResource = null
     const form = row as FormGroup;
 
-     // Extract previous values (if user is switching projects)
-  const prevClientId = form.get('clientId')?.value;
-  const prevProjectId = form.get('projectId')?.value;
+    // Extract previous values (if user is switching projects)
+    const prevClientId = form.get('clientId')?.value;
+    const prevProjectId = form.get('projectId')?.value;
 
-  
-    
+
+
     // Patch project details
     form.patchValue({
       clientId: client.clientId,
@@ -1011,7 +1011,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
 
-      // Skip redundant selection
+    // Skip redundant selection
     if (prevClientId === client?.clientId && prevProjectId === project?.projectId) {
       console.log('Same project/client selected — no update needed.');
       return;
@@ -1409,6 +1409,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.spinnerLoader = false;
         this.conformationPopup.openErrorModal(err.error.message);
         console.error('Error saving entry', err);
+        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });
   }
@@ -1492,39 +1494,39 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
   }
-canDelete(project?: AbstractControl, index?: number): boolean {
-  if (!project) return false;
+  canDelete(project?: AbstractControl, index?: number): boolean {
+    if (!project) return false;
 
-  const projectId = project.get('projectId')?.value ?? null;
-  const projectName = project.get('projectName')?.value ?? '';
-  const isNoClientProject = project.get('isNoClientProject')?.value ?? false;
+    const projectId = project.get('projectId')?.value ?? null;
+    const projectName = project.get('projectName')?.value ?? '';
+    const isNoClientProject = project.get('isNoClientProject')?.value ?? false;
 
-  // ✅ List of allowed approval statuses for delete
-  const allowedStatuses = ['draft', 'Not Entered', null, '', undefined];
+    // ✅ List of allowed approval statuses for delete
+    const allowedStatuses = ['draft', 'Not Entered', null, '', undefined];
 
-  // ✅ Check approval status for each day
-  const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-  const allDaysEditable = days.every(dayKey => {
-    const dayControl = project.get(dayKey) as FormGroup;
-    if (!dayControl) return true;
+    // ✅ Check approval status for each day
+    const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    const allDaysEditable = days.every(dayKey => {
+      const dayControl = project.get(dayKey) as FormGroup;
+      if (!dayControl) return true;
 
-    const approvalStatus = dayControl.get('approvalStatus')?.value;
-    return allowedStatuses.includes(approvalStatus);
-  });
+      const approvalStatus = dayControl.get('approvalStatus')?.value;
+      return allowedStatuses.includes(approvalStatus);
+    });
 
-  // ✅ If No Client/Project - follow approval logic also
-  if (isNoClientProject === true) {
-    return allDaysEditable;  // ✅ Allow only if no approved days
+    // ✅ If No Client/Project - follow approval logic also
+    if (isNoClientProject === true) {
+      return allDaysEditable;  // ✅ Allow only if no approved days
+    }
+
+    // ❌ Prevent delete for empty row
+    if (!projectId && !projectName) {
+      return false;
+    }
+
+    // ✅ For normal project, same approval rule
+    return allDaysEditable;
   }
-
-  // ❌ Prevent delete for empty row
-  if (!projectId && !projectName) {
-    return false;
-  }
-
-  // ✅ For normal project, same approval rule
-  return allDaysEditable;
-}
 
 
 

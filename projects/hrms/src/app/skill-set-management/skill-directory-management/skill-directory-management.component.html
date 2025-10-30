@@ -61,8 +61,8 @@
       <table class="w-100">
         <thead>
           <tr>
-            <th>Employee Name</th>
             <th>Employee Id</th>
+            <th>Employee Name</th>
             <th>Title</th>
             <th>Key Skills</th>
             <th class="text-center">Current Status</th>
@@ -72,8 +72,8 @@
         <tbody>
           @if (MySkills.length > 0) {
           <tr *ngFor="let emp of MySkills">
+            <td>{{ emp.employee?.snadEmployeeId || '-' }}</td>
             <td>{{ emp.employee?.name || '-' }}</td>
-            <td>{{ emp.employee?.snadEmployeeId || '-' }}</td> 
             <td>{{ emp.employee?.employeeDesignation || '-' }}</td>
             <td>
               <div class="d-flex flex-wrap gap-2">

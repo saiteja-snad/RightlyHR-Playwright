@@ -453,7 +453,7 @@
 
                     <button type="button" class="custom-btn btn-secondary w-100"
                         (click)="openModalforconformation(confirmationpopup)">Cancel</button>
-                    <button type="submit" class="custom-btn btn-primary w-100" [disabled]="spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary w-100" [disabled]="!isDayFormDirtyOrFilled(dayForm) || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}..</span>

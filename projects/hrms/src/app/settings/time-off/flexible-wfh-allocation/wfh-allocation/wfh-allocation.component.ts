@@ -281,6 +281,8 @@ validateEffectiveDate(control: any) {
   // Otherwise valid (current or future)
   return null;
 }
+
+
 validateEffectiveToDate(formGroup: FormGroup) {
   const fromDate = formGroup.get('effectivedate')?.value;
   const toDate = formGroup.get('effectiveto')?.value;
@@ -413,6 +415,7 @@ validateEffectiveToDate(formGroup: FormGroup) {
       frequency: 'Monthly',
       flexibleAllocation: true,
       updatedBy: loggedInUserId.employeeId,
+      status: 'Active',
     }));
     if (!payload.length) {
       this.modal.openErrorModal('No employees to allocate.');

@@ -59,6 +59,7 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
   years: number[] = [];
   employeeId:number | null = null;
   records: IWfhAllocationViewModel[] = [];
+  selectedId:number | null = null;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -191,9 +192,55 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
       });
   }
    onClick(data:any,content: any) {
+    this.selectedId=data.id;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
- 
+   InactiveWFHAllocation() {
+    const payload = {
+      status: 'Inactive',
+    };
+    this.http
+      .putData(`FlexibleWfhAllocation/update/${this.selectedId}`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.modal.openSuccessModal(`${res.data.employeeId.name} WFH allocation has been inactivated.`);
+        },
+        error: (err: any) => {
+          this.modalService.dismissAll();
+          this.modal.openErrorModal(
+            err.error.message
+              ? err.error.message
+              : 'Failed to allocate WFH. Please try again later'
+          );
+        },
+        complete: () => {
+        },
+      });
+  }
+   activeWFHAllocation() {
+    const payload = {
+      status: 'Active',
+    };
+    this.http
+      .putData(`FlexibleWfhAllocation/update/${this.selectedId}`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.modal.openSuccessModal(`${res.data.employeeId.name} WFH allocation has been activated`);
+        },
+        error: (err: any) => {
+          this.modalService.dismissAll();
+          this.modal.openErrorModal(
+            err.error.message
+              ? err.error.message
+              : 'Failed to allocate WFH. Please try again later'
+          );
+        },
+        complete: () => {
+        },
+      });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

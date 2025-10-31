@@ -1,0 +1,84 @@
+.skill-container {
+  position: relative;
+  width: 100%;
+  height: calc(100dvh - 20rem);
+  overflow-y: auto;
+}
+
+.custom-background-card {
+  border-radius: 0.625rem;
+
+  .skill-set-header {
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    color: #8E8E8E;
+  }
+
+  .p-chip {
+    border: 1px solid #DEE8F3 !important;
+    background: #F8FBFF !important;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+    color: var(--primary-color) !important;
+  }
+}
+
+.soft-skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.custom-chip-card {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: max-content !important;
+  background: #F8FBFF !important;
+  color: var(--primary-color) !important;
+  border: 1px solid #DEE8F3 !important;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  font-size: var(--fontsize14);
+  line-height: 1.4;
+  cursor: default;
+}
+
+.custom-chip-close-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.skill-proficiency {
+  font-size: 12px; 
+  color: #6c757d;  
+  font-weight: 400;
+}
+.custom-delete-img {
+  width: 15px !important;         
+  height: 15px !important;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+
+
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.form-control {
+  cursor: text;
+  min-height: 45px;
+}
+
+.badge {
+  font-size: 0.9rem;
+}

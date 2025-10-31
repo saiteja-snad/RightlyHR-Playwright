@@ -229,6 +229,7 @@ export const permissionsData = [
   { fields: 'Clients', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Projects', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Skillset Directory', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -546,6 +547,7 @@ export const permissionsData = [
   { fields: 'My Info Family Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Skills', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
@@ -608,6 +610,7 @@ export const permissionsData = [
   { fields: 'Employee Info Bank Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Info Contract Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee My Skills', View: false, Update: false, Create: false, Delete: false },
 
   //My Info Job Sub Tabs Section
   { fields: 'Employee Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },

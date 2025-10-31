@@ -605,3 +605,9 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/rejected', permission: 'Rejected (On Behalf Of RemoteLogin).view', },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
 ]
+export const CARDS_SUB_TABS = [
+  { route: '/card-management/details', permission: 'Cards Available.view' },
+  { route: '/card-management/expiry', permission: 'Cards Expired.view' },
+  { route: '/card-management/allocated', permission: 'Cards Allocated.view' },
+  { route: '/card-management/hold', permission: 'Cards Hold.view' },
+]

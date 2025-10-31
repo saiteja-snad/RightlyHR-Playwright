@@ -229,6 +229,7 @@ export const permissionsData = [
   { fields: 'Clients', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Projects', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Time Sheet', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -886,5 +887,12 @@ export const permissionsData = [
   { fields: 'On Behalf Of RemoteLogin All Employees', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of RemoteLogin Team', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Of RemoteLogin Button', View: false, Update: false, Create: false, Delete: false },
+   //Cards Management Tabs Section
+  { fields: 'Cards Allocated', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cards Available', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cards Expired', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cards Hold', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Info Card Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Card Details', View: false, Update: false, Create: false, Delete: false },
 
 ];

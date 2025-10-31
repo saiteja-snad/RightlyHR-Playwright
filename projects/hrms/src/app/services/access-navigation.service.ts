@@ -62,7 +62,8 @@ import {
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
-  ON_BEHALF_OF_REMOTELOGIN_TABS
+  ON_BEHALF_OF_REMOTELOGIN_TABS,
+  CARDS_SUB_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -715,6 +716,15 @@ export class AccessNavigationService {
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+        case '/card-management':
+        if (this.rbac.allowedToAccess('Cards Management.view')) {
+          for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }

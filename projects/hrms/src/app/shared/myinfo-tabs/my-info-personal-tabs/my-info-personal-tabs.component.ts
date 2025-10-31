@@ -25,10 +25,10 @@ export class MyInfoPersonalTabsComponent implements OnInit {
       { label: 'Emergency Contacts', link: '/myinfo/personal/emergency-contact-details', icon: '/my-info-icons/emergency-contact-icon.png', permission: { feature: 'My Info Emergency Contact Details', action: 'view' } },
       { label: 'Family Members', link: '/myinfo/personal/family-details', icon: '/my-info-icons/family-icon.png', permission: { feature: 'My Info Family Details', action: 'view' } },
       { label: 'Identity Info', link: '/myinfo/personal/identity-details', icon: '/my-info-icons/identity-verification-icon.png', permission: { feature: 'My Info Identity Details', action: 'view' } },
-      { label: 'Bank info', link: '/myinfo/personal/bank-details', icon: '/my-info-icons/bank-details-icon.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
+      { label: 'Bank Info', link: '/myinfo/personal/bank-details', icon: '/my-info-icons/bank-details-icon.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
       { label: 'Academics', link: '/myinfo/personal/education-details', icon: '/my-info-icons/education-icon.png', permission: { feature: 'My Info Education Details', action: 'view' } },
       // { label: 'Visa Details', link: '/myinfo/personal/visa-details', icon: '/my-info-icons/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
-      { label: 'My Skills', link: '/myinfo/personal/my-skills', icon: '/my-info-icons/skill 1.png' ,permission: { feature: 'My Skills', action: 'view' } },
+      { label: 'Skill Info', link: '/myinfo/personal/my-skills', icon: '/my-info-icons/skill 1.png' ,permission: { feature: 'My Skills', action: 'view' } },
 
     ];
     this.filterTabsByRbac();

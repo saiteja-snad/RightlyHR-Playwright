@@ -206,11 +206,12 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
                 effectiveto: ['',
-                  [Validators.required, this.validateEffectiveDate?.bind(this)],
+                  [Validators.required,],
                 ],
                 createdBy: [loggedInUserName],
                 createdOn: [moment()?.format('YYYY-MM-DD') || ''],
-              })
+              },
+             {validators: this.validateEffectiveToDate})
             );
           });
 
@@ -278,6 +279,21 @@ validateEffectiveDate(control: any) {
     return { invalidDate: true };
   }
   // Otherwise valid (current or future)
+  return null;
+}
+validateEffectiveToDate(formGroup: FormGroup) {
+  const fromDate = formGroup.get('effectivedate')?.value;
+  const toDate = formGroup.get('effectiveto')?.value;
+
+  if (!fromDate || !toDate) return null;
+
+  const from = moment(fromDate, 'YYYY-MM-DD');
+  const to = moment(toDate, 'YYYY-MM-DD');
+
+  if (to.isBefore(from, 'day')) {
+    return { invalidEffectiveToDate: true };
+  }
+
   return null;
 }
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
@@ -424,7 +440,7 @@ validateEffectiveDate(control: any) {
           this.modal.openErrorModal(
             err.error.message
               ? err.error.message
-              : 'Failed to save wfh allocation!'
+              : 'Failed to allocate WFH. Please try again later'
           );
         },
         complete: () => {

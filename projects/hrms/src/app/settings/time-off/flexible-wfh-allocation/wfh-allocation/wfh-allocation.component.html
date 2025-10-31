@@ -111,7 +111,7 @@
                     <div class="custom-p-multiSelect-content">
                         <p-multiSelect [options]="employeeDetails" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" [showClear]="false" class="form-select custom-select"
-                            formControlName="employeeName" placeholder="Please select employee" resetFilterOnHide="true"
+                            formControlName="employeeName" placeholder="Select Employee(s)" resetFilterOnHide="true"
                             (onChange)="onSelectedEmployee($event.value, wfhAllocationForm)">
                             <ng-template let-selectedOption #selectedItem>
                                 {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{
@@ -123,7 +123,7 @@
                     </div>
                     <div *ngIf="wfhAllocationForm.get('employeeName')?.touched && wfhAllocationForm.get('employeeName')?.invalid"
                         class="error-msg">
-                        <div *ngIf="wfhAllocationForm.get('employeeName')?.errors?.['required']">Please select employee
+                        <div *ngIf="wfhAllocationForm.get('employeeName')?.errors?.['required']">Please select at least one employee
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,7 @@
                                 placeholder="Please enter date" />
                             <div *ngIf="emp.get('effectivedate')?.touched && emp.get('effectivedate')?.invalid"
                                 class="error-msg">
-                                <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective from is required
+                                <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective From date is required
                                 </div>
                                 <div *ngIf="emp.get('effectivedate')?.errors?.['invalidDate']">
                                     Date must be from the current month and year
@@ -163,20 +163,21 @@
                          <td>
                             <input type="date" formControlName="effectiveto" class="form-control custom-input mt-2"
                                 placeholder="Please enter date" />
-                            <div *ngIf="emp.get('effectiveto')?.touched && emp.get('effectiveto')?.invalid"
+                            <div *ngIf="emp.get('effectiveto')?.touched && (emp.get('effectiveto')?.invalid || emp.errors?.['invalidEffectiveToDate'])"
                                 class="error-msg">
-                                <div *ngIf="emp.get('effectiveto')?.errors?.['required']">Effective to is required
+                                <div *ngIf="emp.get('effectiveto')?.errors?.['required']">Effective To date is required
                                 </div>
-                                <div *ngIf="emp.get('effectiveto')?.errors?.['invalidDate']">
-                                    Date must be from the current month and year
+                                <!-- Custom validation: To Date must be later than From Date -->
+                                <div *ngIf="emp.errors?.['invalidEffectiveToDate']">
+                                    Effective To date must be later than Effective From
                                 </div>
                             </div>
                         </td>
                         <td>
                             <input type="number" formControlName="days" class="form-control custom-input mt-2"
-                                placeholder="Please enter days" min="0" max="365" (keypress)="validateInput($event)" />
+                                placeholder="Enter number of days" min="0" max="365" (keypress)="validateInput($event)" />
                             <div *ngIf="emp.get('days')?.touched && emp.get('days')?.invalid" class="error-msg">
-                                <div *ngIf="emp.get('days')?.errors?.['required']">Please enter days</div>
+                                <div *ngIf="emp.get('days')?.errors?.['required']">Please enter a valid number of days</div>
                             </div>
                         </td>
 

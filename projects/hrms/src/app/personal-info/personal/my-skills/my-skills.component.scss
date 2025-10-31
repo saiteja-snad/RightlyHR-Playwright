@@ -80,6 +80,7 @@ input:focus {
     border: 1px solid var(--input-border-color) !important;
     background-color: #FFf !important;
     font-weight: 500 !important;
+    line-break:anywhere;    
   }
 
   .inside-input {

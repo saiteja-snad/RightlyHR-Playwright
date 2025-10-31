@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-my-skills',
   imports: [ReactiveFormsModule, Select, FormsModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent],
@@ -47,7 +48,7 @@ export class MySkillsComponent {
   values: string[] | undefined;
 
   constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService,
-    private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router,
+    private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router, public formValidations: FormValidationsService, 
     public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
@@ -57,7 +58,7 @@ export class MySkillsComponent {
     this.getSkills()
     this.AddForm = this.fb.group({
       skillcategory: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      skills: [[], [this.validateSkillArray.bind(this)]],
+      skills: [[], [this.validateSkillArray.bind(this),this.formValidations.maxCharactersValidators(41)]],
       proficiencylevel: ['', Validators.required],
     });
   }
@@ -257,13 +258,13 @@ export class MySkillsComponent {
       if (!skills.includes(value)) {
         skills.push(value);
         this.AddForm.get('skills')?.setValue(skills);
-        this.AddForm.get('skills')?.updateValueAndValidity();
+       this.AddForm.get('skills')?.updateValueAndValidity();
       }
     }
     input.value = '';
     event.preventDefault(); // prevent form submission on Enter
   }
-
+  
   removeSkill(skill: string): void {
     const skills = this.AddForm.get('skills')?.value || [];
     const updatedSkills = skills.filter((s: string) => s !== skill);

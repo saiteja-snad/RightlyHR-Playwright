@@ -127,6 +127,25 @@ export class FormValidationsService {
       return null;
     };
   }
+  maxCharactersValidators(max: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+
+    // If the control is an array (skills)
+    if (Array.isArray(value)) {
+      const hasInvalidSkill = value.some((skill: string) => skill?.trim().length > max);
+      return hasInvalidSkill ? { maxCharacters: true } : null;
+    }
+
+    // If the control is a single string
+    if (typeof value === 'string' && value.trim().length > max) {
+      return { maxCharacters: true };
+    }
+
+    return null;
+  };
+}
+
 
   restrictInputAllowDot(event: KeyboardEvent) {
     const key = event.key;

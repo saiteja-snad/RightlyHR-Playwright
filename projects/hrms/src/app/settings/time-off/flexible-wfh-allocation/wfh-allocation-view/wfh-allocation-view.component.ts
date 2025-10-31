@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormsModule, FormGroup, FormControl } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
@@ -52,6 +52,13 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
     { label: 25, value: 25 },
   ];
   wfh_history=[] as any;
+  yearSelectionForm!: FormGroup;
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  activeEmplist = [] as any;
+  years: number[] = [];
+  employeeId:number | null = null;
+  records: IWfhAllocationViewModel[] = [];
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -61,11 +68,58 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+     // year selection values
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+     // Now initialize the form with the selectedYear
+    this.yearSelectionForm = new FormGroup({
+      selectedYear: new FormControl(this.selectedYear)
+    });
+    this.getAllEmployeeDetails();
     this.getAllwfhallocations();
   }
     openHistoryPopup(content: any, Details: IWfhAllocationViewModel): void {
     this.getWfhallocationHistory(Details.employeeId.id);
     this.modalService.open(content, { centered: true,size:'xl', backdrop: 'static', keyboard: false });
+  }
+  // On year change
+   onYearChange() {
+    const selectedYear = this.yearSelectionForm.get('selectedYear')?.value;
+    this.selectedYear = selectedYear;  // Update the local variable so template sees the change
+    const employeeId = this.http.getCurrentEmployeeIdTimeoff();
+    if (employeeId) {
+      this.onCheckemployee(employeeId);
+    } else {
+      this.getAllwfhallocations();
+    }
+  }
+ onCheckemployee(employeedId: any) {
+    if (employeedId) {
+      this.employeeId = employeedId;
+    this.getAllwfhallocations();
+    } else {
+      this.employeeId = null;
+     this.getAllwfhallocations();
+    }
+  }
+  // get all employee details
+   getAllEmployeeDetails() {
+     const status = ['Active', 'Trainee Active', 'Active Contract'];
+    this.http
+      .getData(`Employeedata/v3/Getallemployees?statuses=${status}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
   }
   // get all wfh allocations
   getAllwfhallocations(): void {
@@ -80,6 +134,12 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
     }
     let url = `FlexibleWfhAllocation/getAll?pageNumber=${this.pageNumber}&pageSize=${this.pageSize}`;
 
+    if (this.selectedYear) {
+      url +=`&year=${this.selectedYear}`;};
+    // Add employeeIds if available
+    if (this.employeeId) {
+      url += `&employeeIds=${encodeURIComponent(this.employeeId)}`;
+    }
     // Only add searchValue if it's not empty/null/undefined
     if (this.searchValue && this.searchValue.trim() !== '') {
       url += `&search=${encodeURIComponent(this.searchValue.trim())}`;
@@ -130,6 +190,10 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
         },
       });
   }
+   onClick(data:any,content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+ 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

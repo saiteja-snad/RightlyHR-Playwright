@@ -7,6 +7,7 @@ createdAt: any
 createdBy: IEmployeeResponse
 effectiveFromDate: string,
 effectiveToDate: string
+isLatest?: boolean
 }
 export interface IEmployeeResponse{
     id: number, 

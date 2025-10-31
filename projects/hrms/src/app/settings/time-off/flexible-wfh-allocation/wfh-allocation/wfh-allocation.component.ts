@@ -185,59 +185,89 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   }
   // get by employee wfh allocations
   getByEmployeewfhallocations(employeeIds: any, form: FormGroup): void {
-    this.isloading = true;
-    //const ids = employeeIds.map((emp: any) => emp.employeeId);
-    let params = new HttpParams();
-    employeeIds.forEach((id: any) => {
-      params = params.append('employeeIds', id.employeeId);
-    });
-    this.http
-      .getDataIncludeParams(`FlexibleWfhAllocation/getAll`,{ params })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.isloading = false;
-          const apiData = res?.data || [];
-          const employeeArray = this.fb.array<FormGroup>([]);
+    this.isloading = false;
+    const loggedInUserId = this.auth.getToken();
+    const loggedInUserName= `${loggedInUserId.firstName ??''} ${loggedInUserId.middleName ??''} ${loggedInUserId.lastName}`;
+     const employeeArray = this.fb.array<FormGroup>([]);
           // Loop through all selected employees
           employeeIds.forEach((selectedEmp: any) => {
             // Try to find matching allocation data from API
-            const existing = apiData?.find(
-              (x: any) => x.employeeId?.id === selectedEmp?.employeeId
-            );
+            // const existing = apiData?.find(
+            //   (x: any) => x.employeeId?.id === selectedEmp?.employeeId
+            // );
 
             // Push either existing or blank form
             employeeArray?.push(
               this.fb.group({
                 employeeId: [selectedEmp?.employeeId],
                 fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
-                days: [existing?.allowedDays || '', [Validators.required]],
-                effectivedate: [
-                  existing?.effectiveFromDate
-                    ? moment(existing?.effectiveFromDate)?.format('YYYY-MM-DD')
-                    : '',
+                days: ['', [Validators.required]],
+                effectivedate: [ '',
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
-                effectiveto: [
-                  existing?.effectiveToDate
-                    ? moment(existing?.effectiveToDate)?.format('YYYY-MM-DD')
-                    : '',
+                effectiveto: ['',
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
-                createdBy: [existing?.createdBy?.name || ''],
-                createdOn: [existing?.createdAt || ''],
+                createdBy: [loggedInUserName],
+                createdOn: [moment()?.format('YYYY-MM-DD') || ''],
               })
             );
           });
 
           // Set the updated employee list in form
           form.setControl('employees', employeeArray);
-        },
-        error: (err) => {
-          this.isloading = false;
-          console.error('Error fetching shifts:', err);
-        },
-      });
+    // //const ids = employeeIds.map((emp: any) => emp.employeeId);
+    // let params = new HttpParams();
+    // employeeIds.forEach((id: any) => {
+    //   params = params.append('employeeIds', id.employeeId);
+    // });
+    // this.http
+    //   .getDataIncludeParams(`FlexibleWfhAllocation/getAll`,{ params })
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({
+    //     next: (res: any) => {
+    //       this.isloading = false;
+    //       const apiData = res?.data || [];
+    //       const employeeArray = this.fb.array<FormGroup>([]);
+    //       // Loop through all selected employees
+    //       employeeIds.forEach((selectedEmp: any) => {
+    //         // Try to find matching allocation data from API
+    //         const existing = apiData?.find(
+    //           (x: any) => x.employeeId?.id === selectedEmp?.employeeId
+    //         );
+
+    //         // Push either existing or blank form
+    //         employeeArray?.push(
+    //           this.fb.group({
+    //             employeeId: [selectedEmp?.employeeId],
+    //             fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
+    //             days: [existing?.allowedDays || '', [Validators.required]],
+    //             effectivedate: [
+    //               existing?.effectiveFromDate
+    //                 ? moment(existing?.effectiveFromDate)?.format('YYYY-MM-DD')
+    //                 : '',
+    //               [Validators.required, this.validateEffectiveDate?.bind(this)],
+    //             ],
+    //             effectiveto: [
+    //               existing?.effectiveToDate
+    //                 ? moment(existing?.effectiveToDate)?.format('YYYY-MM-DD')
+    //                 : '',
+    //               [Validators.required, this.validateEffectiveDate?.bind(this)],
+    //             ],
+    //             createdBy: [existing?.createdBy?.name || ''],
+    //             createdOn: [existing?.createdAt || ''],
+    //           })
+    //         );
+    //       });
+
+    //       // Set the updated employee list in form
+    //       form.setControl('employees', employeeArray);
+    //     },
+    //     error: (err) => {
+    //       this.isloading = false;
+    //       console.error('Error fetching shifts:', err);
+    //     },
+    //   });
   }
 validateEffectiveDate(control: any) {
   if (!control.value) return null;

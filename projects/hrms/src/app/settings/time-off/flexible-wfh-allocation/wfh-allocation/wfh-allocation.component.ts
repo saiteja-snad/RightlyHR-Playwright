@@ -213,8 +213,14 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
                 fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
                 days: [existing?.allowedDays || '', [Validators.required]],
                 effectivedate: [
-                  existing?.effectiveDate
-                    ? moment(existing?.effectiveDate)?.format('YYYY-MM-DD')
+                  existing?.effectiveFromDate
+                    ? moment(existing?.effectiveFromDate)?.format('YYYY-MM-DD')
+                    : '',
+                  [Validators.required, this.validateEffectiveDate?.bind(this)],
+                ],
+                effectiveto: [
+                  existing?.effectiveToDate
+                    ? moment(existing?.effectiveToDate)?.format('YYYY-MM-DD')
                     : '',
                   [Validators.required, this.validateEffectiveDate?.bind(this)],
                 ],
@@ -351,8 +357,11 @@ validateEffectiveDate(control: any) {
     const payload = employees.map((emp: any) => ({
       employeeId: emp.employeeId,
       allowedDays: Number(emp.days) || 0,
-      effectiveDate: emp.effectivedate
+      effectiveFromDate: emp.effectivedate
         ? moment(emp.effectivedate).format('YYYY-MM-DD')
+        : null,
+        effectiveToDate:emp.effectiveto
+        ? moment(emp.effectiveto).format('YYYY-MM-DD')
         : null,
       createdBy: loggedInUserId.employeeId,
       frequency: 'Monthly',

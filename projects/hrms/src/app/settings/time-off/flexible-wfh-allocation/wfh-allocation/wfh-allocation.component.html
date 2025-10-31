@@ -135,7 +135,8 @@
                 <thead>
                     <tr>
                         <th>Employee Name</th>
-                        <th>Effective Date</th>
+                        <th>Effective From</th>
+                        <th>Effective To</th>
                         <th>Days</th>
                         <th>Allocated By</th>
                         <th>Allocated On</th>
@@ -152,9 +153,21 @@
                                 placeholder="Please enter date" />
                             <div *ngIf="emp.get('effectivedate')?.touched && emp.get('effectivedate')?.invalid"
                                 class="error-msg">
-                                <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective date is required
+                                <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective from is required
                                 </div>
                                 <div *ngIf="emp.get('effectivedate')?.errors?.['invalidDate']">
+                                    Date must be from the current month and year
+                                </div>
+                            </div>
+                        </td>
+                         <td>
+                            <input type="date" formControlName="effectiveto" class="form-control custom-input mt-2"
+                                placeholder="Please enter date" />
+                            <div *ngIf="emp.get('effectiveto')?.touched && emp.get('effectiveto')?.invalid"
+                                class="error-msg">
+                                <div *ngIf="emp.get('effectiveto')?.errors?.['required']">Effective to is required
+                                </div>
+                                <div *ngIf="emp.get('effectiveto')?.errors?.['invalidDate']">
                                     Date must be from the current month and year
                                 </div>
                             </div>

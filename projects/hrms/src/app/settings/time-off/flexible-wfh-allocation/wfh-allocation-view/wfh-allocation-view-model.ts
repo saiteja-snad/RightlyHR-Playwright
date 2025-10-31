@@ -5,7 +5,8 @@ flexibleAllocation: boolean,
 allowedDays: 10,
 createdAt: any
 createdBy: IEmployeeResponse
-effectiveDate: string
+effectiveFromDate: string,
+effectiveToDate: string
 }
 export interface IEmployeeResponse{
     id: number, 

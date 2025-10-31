@@ -11,11 +11,11 @@
         <thead>
             <tr>
                 <th>{{'Employee Name'|translate}}</th>
-                <th>{{'Effective Date'|translate}}</th>
+                <th>{{'Effective From'|translate}}</th>
+                <th>{{'Effective To'|translate}}</th>
                 <th>{{'Days'|translate}}</th>
                 <th>{{'Allocated By'|translate}}</th>
                 <th>{{'Allocated On'|translate}}</th>
-                <th>{{'History'|translate}}</th>
                 <!-- <th>Last Updated By</th>
                 <th>Last Updated On</th> -->
             </tr>
@@ -26,20 +26,12 @@
             @for (item of getAllocationDetails; track item) {
             <tr>
                 <td>{{ item?.employeeId?.name || '-' }}</td>
-                <td>{{ item?.effectiveDate ? (item?.effectiveDate | dateformat) : '-' }}</td>
+                <td>{{ item?.effectiveFromDate ? (item?.effectiveFromDate | dateformat) : '-' }}</td>
+                <td>{{ item?.effectiveToDate ? (item?.effectiveToDate | dateformat) : '-' }}</td>
                 <td>{{ item?.allowedDays || '-' }}</td>
                 <td>{{ item?.createdBy?.name || '-' }}</td>
                 <td>{{ item?.createdAt ? (item?.createdAt | dateformat) : '-' }}</td>
-                <td> 
-                <div>
-                    <a type="button" class="info-icon-link" (click)="openHistoryPopup(historyPopup,item)">
-                        <app-info-icon />
-                    </a>
-                    <!-- <ng-template #historyPopupContent>
-                        <p class="mb-0">{{item.additionalComments}}</p>
-                    </ng-template> -->
-                </div>
-                </td>
+                 
             </tr>
             }
             } @else {

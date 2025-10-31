@@ -9,9 +9,10 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { ProjectManagementMainTabsComponent } from "../project-management-tabs/project-management-main-tabs/project-management-main-tabs.component";
 import { OnbehalfofMainTabsComponent } from "../time-off-module-tabs/onbehalfof-main-tabs/onbehalfof-main-tabs.component";
+import { SkillSetMainTabsComponent } from "../skill-set/skill-set-main-tabs/skill-set-main-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ProjectManagementMainTabsComponent, OnbehalfofMainTabsComponent, SkillSetMainTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -135,10 +136,11 @@ export class SidenavComponent implements OnInit {
     // ✅Active for pending-approvals and its subroutes
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
   }
- isActiveskillsetManagement(): boolean {
+
+  isActiveskillsetManagement(): boolean {
     const currentUrl = this.router.url;
     // ✅Active for pending-approvals and its subroutes
-    return currentUrl === '/skillset-management' || currentUrl.startsWith('/skillset-management');
+    return currentUrl === '/skill-management' || currentUrl.startsWith('/skill-management');
   }
 
   resetDropdown(): void {

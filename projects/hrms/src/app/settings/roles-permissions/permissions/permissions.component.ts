@@ -347,7 +347,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
     //     return permission === 'Update'; // Disable only 'Create'
     //   }
-    if (['Asset Management - Under Maintenance','Asset Management - Inactive','Asset Management - Allocated',].includes(field)) {
+    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive', 'Asset Management - Allocated',].includes(field)) {
       return !['View'].includes(permission); // Enable only 'View' and 'Update'
     }
     return false; // Default: all enabled
@@ -461,8 +461,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
   settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
-  
-    settingsAttendanceLockingTab = [
+  settingsAttendanceLockingTab = [
     'Pending Attendance Locking',
     'Published Attendance Locking'
   ]
@@ -499,7 +498,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Draft Forms',
     'Form Settings',
   ];
-   AttendanceTypeFields = [
+  AttendanceTypeFields = [
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
@@ -943,7 +942,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Recall',
     'Employee Early relieving',
   ];
-    employeeContractConversionFields = [
+  employeeContractConversionFields = [
     'Employee Info Contract Conversion Request'
   ];
   employeeNoDueClearanceFields = [
@@ -1003,7 +1002,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Documents History Trainee Offer Letter',
     'Documents History Trainee Appointment Letter',
     'Documents History Non-Disclosure Agreement Letter',
-
   ];
   dashboardGenerateDocumentsFields = [
     'Dashboard Generate Documents Offer Letter',
@@ -1119,7 +1117,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Client Timesheets',
     'Client Documents',
   ];
-    settingProjectManagementConfigFields = [
+  settingProjectManagementConfigFields = [
     'Project Type',
     'Industry Type',
     'Project Document Type',
@@ -1128,24 +1126,22 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Project Management Authority',
     'Letter Frequency Configurations'
   ];
-selectAllLettersTabs=[
-  'NDA Document','MSA Document'
-]
+  selectAllLettersTabs = [
+    'NDA Document', 'MSA Document'
+  ]
+  selectAllOnBehalfOf = [
+    'On Behalf Of', 'On Behalf Of WFH', 'On Behalf Of RemoteLogin'
+  ]
+  selectAllOnBehalfOfWFH = [
+    'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
+    , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team', 'Request On Behalf Of WFH Button'
+  ]
+  selectAllOnBehalfOfRemoteLogin = [
+    'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
+    , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team', 'Request On Behalf Of RemoteLogin Button'
+  ]
+  SkillSetManagementModule = ['Skills Dashboard', 'Skills Directory'];
 
-selectAllOnBehalfOf = [
-  'On Behalf Of', 'On Behalf Of WFH','On Behalf Of RemoteLogin'
-
-]
-
-selectAllOnBehalfOfWFH = [
-  'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
-  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team','Request On Behalf Of WFH Button'
-]
-
-selectAllOnBehalfOfRemoteLogin = [
-  'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
-  , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team','Request On Behalf Of RemoteLogin Button'
-]
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],
@@ -1177,7 +1173,7 @@ selectAllOnBehalfOfRemoteLogin = [
     return filtered.some((per) => per.View) && !this.isAllSelected(fields);
   }
 
-  isSidebarCheckboxDisabled(per: any,action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isSidebarCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1445,7 +1441,7 @@ selectAllOnBehalfOfRemoteLogin = [
     if (!Array.isArray(this.permissions)) return false;
     return this.permissions.filter((per) => this.settingsDynamicFormsFields.includes(per.fields)).every((per) => per.View);
   }
-  
+
   isSomeSelectedDynamicForms(): boolean {
     if (!Array.isArray(this.permissions)) return false;
     const filtered = this.permissions.filter((per) =>
@@ -1483,7 +1479,8 @@ selectAllOnBehalfOfRemoteLogin = [
     }
     return false;
   }
-   isSettingsProjectManagementConfig(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+
+  isSettingsProjectManagementConfig(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1510,7 +1507,7 @@ selectAllOnBehalfOfRemoteLogin = [
     return false;
   }
 
-  isItSupportActionDisabled(per: any,action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isItSupportActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1923,7 +1920,7 @@ selectAllOnBehalfOfRemoteLogin = [
     return false;
   }
 
-  isOnBehalfOfTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+  isOnBehalfOfTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1933,7 +1930,7 @@ selectAllOnBehalfOfRemoteLogin = [
     return false;
   }
 
-  isOnBehalfOfWFHTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+  isOnBehalfOfWFHTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1943,7 +1940,7 @@ selectAllOnBehalfOfRemoteLogin = [
     return false;
   }
 
-  isOnBehalfOfRemoteLoginTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+  isOnBehalfOfRemoteLoginTabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }

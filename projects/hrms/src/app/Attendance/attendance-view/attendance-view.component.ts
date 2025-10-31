@@ -506,15 +506,21 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   extraHoursDuration: { name: string; value: number }[] = [];
   activeForm: string = '';
   extraHrsLoader = false;
+  allowedPastDays = 0;
+  allowedHours = 0;
   getdatabyentriy() {
-    const params = 'ExtraLogHours';
-    const param = 'AllowedHours';
-
-    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+    const entity = 'ExtraLogHours';
+    const attributes = ['AllowedPastDays', 'AllowedHours'];
+    this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, entity, attributes).subscribe({
       next: (data: any) => {
-        const extraHrs  = data[0].value
-        if (extraHrs && !isNaN(extraHrs)) {
-          this.generateDurationOptions(Number(extraHrs));
+        const allowedPastDaysObj = data.find((d: any) => d.attribute === 'AllowedPastDays');
+        const allowedHoursObj = data.find((d: any) => d.attribute === 'AllowedHours');
+
+        this.allowedPastDays = allowedPastDaysObj ? Number(allowedPastDaysObj.value) : 0;
+        this.allowedHours = allowedHoursObj ? Number(allowedHoursObj.value) : 0;
+
+        if (this.allowedHours > 0) {
+          this.generateDurationOptions(this.allowedHours);
         }
       },
       error: (err) => {
@@ -523,45 +529,40 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Generate duration options from 0.5 up to maxHours (in 0.5-hour increments)
-   */
-  generateDurationOptions(maxHours: number): void {
+  generateDurationOptions(maxHours: number) {
     this.extraHoursDuration = [];
     for (let i = 0.5; i <= maxHours; i += 0.5) {
-      this.extraHoursDuration.push({
-        name: i.toString(),
-        value: i,
-      });
+      this.extraHoursDuration.push({ name: `${i}`, value: i });
     }
+  }
+
+  // Restrict calendar between allowedPastDays and today
+  getMinAllowedDate(): string {
+    const today = new Date();
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() - this.allowedPastDays);
+    return minDate.toISOString().split('T')[0];
   }
 
   getCurrentDate(): string {
     return new Date().toISOString().split('T')[0];
   }
 
-  getCurrentMonthStartDate(): string {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    return `${year}-${(month + 1).toString().padStart(2, '0')}-01`;
-  }
-
-onExtraHrsSubmit(form: FormGroup) {
+  onExtraHrsSubmit(form: FormGroup) {
     if (form.valid) {
       const formData = form.value;
       const payLoad = {
         raisedFor: this.empdata.employeeId,
         requestedBy: this.empdata.employeeId,
         requestedDate: formData.date,
-        createdDate: moment().format('YYYY-MM-DD'), 
+        createdDate: moment().format('YYYY-MM-DD'),
         status: 'Waiting for Approval',
         duration: formData.duration.value.toString(),
         notes: formData.description,
         moduleId: environment.extraHoursModuleId,
       };
       this.extraHrsLoader = true;
-      this.http.postData('RegularizationRequests/create', payLoad, {responseType: 'text',})
+      this.http.postData('RegularizationRequests/create', payLoad, { responseType: 'text', })
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
@@ -572,8 +573,27 @@ onExtraHrsSubmit(form: FormGroup) {
           },
           error: (err: any) => {
             this.extraHrsLoader = false;
-            console.error(err);
-            this.conformationPopup.openErrorModal(err.error);
+            console.error('Error:', err);
+
+            let errorMessage = 'An unexpected error occurred. Please try again.';
+
+            try {
+              if (typeof err.error === 'string') {
+                // Sometimes backend sends a raw string message or JSON string
+                const parsed = JSON.parse(err.error);
+                errorMessage = parsed.message || err.error;
+              } else if (err.error?.message) {
+                // Standard object format: { message: '...' }
+                errorMessage = err.error.message;
+              } else if (err.message) {
+                // Fallback for HttpErrorResponse.message
+                errorMessage = err.message;
+              }
+            } catch (e) {
+              errorMessage = typeof err.error === 'string' ? err.error : errorMessage;
+            }
+
+            this.conformationPopup.openErrorModal(errorMessage);
           },
           complete: () => {
             this.extraHrsLoader = false;

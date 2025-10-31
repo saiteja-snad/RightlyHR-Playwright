@@ -43,7 +43,9 @@
             </div>
             }
 
-            <a class="log-extra-hrs" (click)="openModal(extraHoursLodModal)">Log Extra Hours</a>
+            @if(!selectedEmployee && !selectedEmployeeOfHr){
+                <a class="log-extra-hrs" (click)="openModal(extraHoursLodModal)">Log Extra Hours</a>
+            }
 
             @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view') ||
             this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))
@@ -486,7 +488,8 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Date'| translate}}<span class="text-danger">*</span></label>
-                         <input type="date" class="form-control custom-input" formControlName="date" (keypress)="false" [min]="getCurrentMonthStartDate()" [max]="getCurrentDate()">
+                        <input type="date" class="form-control custom-input" formControlName="date" [min]="getMinAllowedDate()"
+                            [max]="getCurrentDate()" />
                         <div class="error-msg" *ngIf="extraHoursForm.get('date')?.invalid && extraHoursForm.get('date')?.touched">
                             Date is required</div>
                     </div>

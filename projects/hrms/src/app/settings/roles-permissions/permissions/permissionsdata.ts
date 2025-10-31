@@ -112,6 +112,7 @@ export const permissionsData = [
   { fields: 'Remote Login Eligibility Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Eligibility Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Late Login Alert Configuration Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Hours Configuration Tab', View: false, Update: false, Create: false, Delete: false },
 
   // Settings Dynamic Forms Section    
   { fields: 'Active Forms', View: false, Update: false, Create: false, Delete: false },

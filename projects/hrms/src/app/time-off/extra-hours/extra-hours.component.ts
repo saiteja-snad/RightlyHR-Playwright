@@ -95,7 +95,7 @@ export class ExtraHoursComponent implements OnInit {
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/regularization': MODULE_INFOS.ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO
+      '/time-off/extra-hours': MODULE_INFOS.ATTENDANCE_EXTRA_HOURS_MODULE_INFO
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';

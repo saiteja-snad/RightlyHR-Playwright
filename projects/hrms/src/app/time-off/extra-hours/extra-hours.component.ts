@@ -22,7 +22,7 @@ import { ExtraHoursTabsComponent } from "../../shared/time-off-module-tabs/extra
   styleUrl: './extra-hours.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class ExtraHoursComponent implements OnInit{
+export class ExtraHoursComponent implements OnInit {
   moduleinfo: string = '';
   subscription!: Subscription;
   ApprovedCount = 0;
@@ -64,12 +64,17 @@ export class ExtraHoursComponent implements OnInit{
 
   getAllEmployeeDetails() {
     const status = ['Active', 'Trainee Active', 'Active Contract'];
+
     this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
       next: (res: any) => {
-        this.activeEmplist = res.map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
+        this.activeEmplist = res
+          // Exclude logged-in employee
+          .filter((employee: any) => employee.employeeId !== this.emp.employeeId)
+          // Then map the remaining
+          .map((employee: any) => ({
+            label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+            value: employee.employeeId
+          }));
       },
     });
   }
@@ -95,35 +100,35 @@ export class ExtraHoursComponent implements OnInit{
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-  
+
   // function to get the data of employees by hierarchy
-getTeamManagersDetails() {
-  const EmployeeId = this.emp.employeeId;
-  this.subscription = this.http
-    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-    .subscribe({
-      next: (response: any) => {
-        if (Array.isArray(response) && response.length) {
-          const myTeam = response.filter((e: any) => e.isAccess);
-          this.getEmployeeInfo = myTeam
-            .map((employee: any) => ({
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
-            }))
-            //  Alphabetical sorting by firstName
-            .sort((a: any, b: any) =>
-              a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
-            );
-        } else {
+  getTeamManagersDetails() {
+    const EmployeeId = this.emp.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          if (Array.isArray(response) && response.length) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam
+              .map((employee: any) => ({
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim(),
+              }))
+              //  Alphabetical sorting by firstName
+              .sort((a: any, b: any) =>
+                a.firstName.localeCompare(b.firstName, 'en', { sensitivity: 'base' })
+              );
+          } else {
+            this.getEmployeeInfo = [];
+          }
+        },
+        error: (err) => {
+          console.error(err);
           this.getEmployeeInfo = [];
-        }
-      },
-      error: (err) => {
-        console.error(err);
-        this.getEmployeeInfo = [];
-      },
-    });
-}
+        },
+      });
+  }
 
   onCheckemployee(employeedId: any) {
     this.http.setEmployeeIdRegularization(employeedId);
@@ -144,7 +149,7 @@ getTeamManagersDetails() {
     // let empId = this.empinfo.employeeId;
     // this.subscription = this.http.getData(`AttendanceRequests/getbyempid/${empId}`).subscribe({
     let empId = employeedId
-    this.subscription =  this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).subscribe({
+    this.subscription = this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).subscribe({
       next: (response: any) => {
         this.regularize = response;
         this.regularize.forEach((element: { status: string }) => {

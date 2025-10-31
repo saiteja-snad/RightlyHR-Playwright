@@ -486,7 +486,7 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Date'| translate}}<span class="text-danger">*</span></label>
-                         <input type="date" class="form-control custom-input" formControlName="date" (keypress)="false">
+                         <input type="date" class="form-control custom-input" formControlName="date" (keypress)="false" [min]="getCurrentMonthStartDate()" [max]="getCurrentDate()">
                         <div class="error-msg" *ngIf="extraHoursForm.get('date')?.invalid && extraHoursForm.get('date')?.touched">
                             Date is required</div>
                     </div>
@@ -509,9 +509,9 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" [maxlength]="250" [minlength]="10" formControlName="description"
-                            placeholder="Please enter description" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
-                        <div class="textarea-count-text">{{ extraHoursForm.get('description')?.value?.length ?? 0 }}/250</div>
+                       <textarea class="form-control custom-input" style="height: 120px;" [maxlength]="500" [minlength]="10" formControlName="description"
+                        placeholder="Please enter description" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                        <div class="textarea-count-text">{{ extraHoursForm.get('description')?.value?.length ?? 0 }}/500</div>
                         <div class="error-msg">
                             <div *ngIf="(extraHoursForm.get('description')?.touched && extraHoursForm.get('description')?.errors?.['required'])">Description is required</div>
                             <div *ngIf="extraHoursForm.get('description')?.invalid && extraHoursForm.get('description')?.errors?.['minlength']">

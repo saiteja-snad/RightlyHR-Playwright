@@ -5,9 +5,9 @@
             <thead>
                 <th>{{'Requested Date' | translate}}</th>
                 <th>{{'Worked Date' |translate}}</th>
-                <th>Duration(In<span class="text-lowercase"> hrs)</span></th>                
+                 <th>{{'Duration(In Hrs)' | translate}}</th>             
                 <th class="text-center">{{'Description'|translate}}</th>
-                <th>{{'Status'|translate}}</th>
+                <th class="text-center">{{'Status'|translate}}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
@@ -25,7 +25,7 @@
                                 </ng-template>
                             </div>
                         </td>
-                        <td>{{permissionRequest.status}}</td>
+                        <td class="text-center">{{permissionRequest.status}}</td>
                     </tr>
                 </ng-container>
 

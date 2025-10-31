@@ -93,7 +93,7 @@ export class ExtraHoursWaitingForApprovalComponent {
   getDataPermissions() {
    let empId = this.empinfo.employeeId;
     this.dataLoad = true;
-    this.http.getFilterRegularizationDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.waitingForApprovalPerimisions = response.filter(
           (element: { status: string }) => element.status === 'Waiting for Approval'

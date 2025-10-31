@@ -4,11 +4,10 @@
         <table class="w-100">
             <thead>
                 <th>{{'Requested Date' |translate}}</th>
-                <th>{{'Regularization Date'|translate}}</th>
-                <th>Duration(In<span class="text-lowercase"> hrs)</span></th> 
-                <th class="text-center">{{'Reason'|translate}}</th>
+                <th>{{'Worked Date'|translate}}</th>
+                <th>{{'Duration(In Hrs)' | translate}}</th>
+                <th class="text-center">{{'Description'|translate}}</th>
                 <th class="text-center">{{'Approver Comments'|translate}}</th>
-                <th>{{'Regularization Type'|translate}}</th>
                 <th>{{'Status'|translate}}</th>
             </thead>
             <tbody>
@@ -41,7 +40,6 @@
                         }@else {
                         <td class="text-center">-</td>
                         }
-                        <td>{{permissionRequest.type}}</td>
                         <td>{{permissionRequest.status}}</td>
                     </tr>
                 </ng-container>

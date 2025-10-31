@@ -29,7 +29,7 @@ export class ExtraHoursTabsComponent implements OnInit, OnDestroy {
      private TimeoffYearFilterService: TimeoffYearFilterService) {
     effect(() => {
       if (this.http.tirggerCountSignal().compOff) {
-        this.getregularizationRequest();
+        this.getRequests();
         this.http.tirggerCountSignal.update((status) => ({
           ...status,
           compOff: false,
@@ -46,11 +46,11 @@ export class ExtraHoursTabsComponent implements OnInit, OnDestroy {
           if (id) {
             // Use the new employee ID here
             this.selectempid = id;
-            this.getregularizationEMPRequest();
+            this.getRequestsEMPRequest();
           }
           else {
             this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-            this.getregularizationRequest();
+            this.getRequests();
           }
         });
       }
@@ -61,7 +61,7 @@ export class ExtraHoursTabsComponent implements OnInit, OnDestroy {
     return this.router.isActive(route, true);
   }
 
-  getregularizationRequest() {
+  getRequests() {
     this.loading = true;
     let empId = this.empinfo.employeeId;
     this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
@@ -89,7 +89,7 @@ export class ExtraHoursTabsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getregularizationEMPRequest() {
+  getRequestsEMPRequest() {
     let empId = this.selectempid;
     this.http.getFilterExtraHoursDataByID(empId, this.selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {

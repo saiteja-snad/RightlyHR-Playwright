@@ -516,10 +516,21 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  durationTypes: any;
-  activeForm: string = '';
-  extraHrsLoader = false;
-  onExtraHrsSubmit(form: FormGroup) {
+getCurrentDate(): string {
+  return new Date().toISOString().split('T')[0];
+}
+
+getCurrentMonthStartDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  return `${year}-${(month + 1).toString().padStart(2, '0')}-01`;
+}
+
+durationTypes: any;
+activeForm: string = '';
+extraHrsLoader = false;
+onExtraHrsSubmit(form: FormGroup) {
     if (form.valid) {
       const formData = form.value;
       const payLoad = {

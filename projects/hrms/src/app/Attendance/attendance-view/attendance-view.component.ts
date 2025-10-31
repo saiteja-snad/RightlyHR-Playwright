@@ -121,20 +121,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   attendanceSummaryOptions: any;
   maxMonth: Date = new Date();
   extraHoursForm!: FormGroup;
-  extraHoursDuration = [
-    { name: 0.5, value: 0.5 },
-    { name: 1, value: 1 },
-    { name: 1.5, value: 1.5 },
-    { name: 2, value: 2 },
-    { name: 2.5, value: 2.5 },
-    { name: 3, value: 3 },
-    { name: 3.5, value: 3.5 },
-    { name: 4, value: 4 },
-    { name: 4.5, value: 4.5 },
-    { name: 5, value: 5 },
-    { name: 5.5, value: 5.5 },
-    { name: 6, value: 6 },
-  ];
 
   constructor(
     private authService: AuthService,
@@ -168,6 +154,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.initliazeExtraHoursForm();
+    this.getdatabyentriy();
   }
 
   initiateUpdateModuleInfo() {
@@ -516,20 +503,50 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     });
   }
 
-getCurrentDate(): string {
-  return new Date().toISOString().split('T')[0];
-}
+  extraHoursDuration: { name: string; value: number }[] = [];
+  activeForm: string = '';
+  extraHrsLoader = false;
+  getdatabyentriy() {
+    const params = 'ExtraLogHours';
+    const param = 'AllowedHours';
 
-getCurrentMonthStartDate(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  return `${year}-${(month + 1).toString().padStart(2, '0')}-01`;
-}
+    this.http.getDatabyentriyvalue(`entityAttributeValues`, params, param).subscribe({
+      next: (data: any) => {
+        const extraHrs  = data[0].value
+        if (extraHrs && !isNaN(extraHrs)) {
+          this.generateDurationOptions(Number(extraHrs));
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      },
+    });
+  }
 
-durationTypes: any;
-activeForm: string = '';
-extraHrsLoader = false;
+  /**
+   * Generate duration options from 0.5 up to maxHours (in 0.5-hour increments)
+   */
+  generateDurationOptions(maxHours: number): void {
+    this.extraHoursDuration = [];
+    for (let i = 0.5; i <= maxHours; i += 0.5) {
+      this.extraHoursDuration.push({
+        name: i.toString(),
+        value: i,
+      });
+    }
+  }
+
+  getCurrentDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  getCurrentMonthStartDate(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    return `${year}-${(month + 1).toString().padStart(2, '0')}-01`;
+  }
+
 onExtraHrsSubmit(form: FormGroup) {
     if (form.valid) {
       const formData = form.value;

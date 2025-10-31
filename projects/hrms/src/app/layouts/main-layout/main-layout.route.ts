@@ -25,6 +25,7 @@ import { ContactDirectoryComponent } from "../../contact-directory/contact-direc
 import { authGuard } from "../../auth/auth-guard/auth.guard";
 import { ProjectManagementLayoutComponent } from "../../project-management/project-management-layout/project-management-layout.component";
 import { SkillDirectoryManagementComponent } from "../../skill-set-management/skill-directory-management/skill-directory-management.component";
+import { SkillsetManagementLayoutComponent } from "../../skill-set-management/skillset-management-layout/skillset-management-layout.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -54,6 +55,7 @@ export default [
     { path: 'phonebook', component: PhonebookComponent, canActivate: [authGuard] },
     { path: 'contacts-directory', component: ContactDirectoryComponent, canActivate: [authGuard] },
     { path: 'project-management', component: ProjectManagementLayoutComponent, loadChildren: () => import('../../project-management/project-management.route') },
+     { path: 'skill-set-management', component: SkillsetManagementLayoutComponent, loadChildren: () => import('../../skill-set-management/skill-set-management.route') },
     { path: 'on-behalf-of', component: TimeOffLayoutComponent, canActivate: [authGuard], loadChildren: () => import('../../time-off/on-behalf-of.route') },
     { path: 'skill-directory', component: SkillDirectoryManagementComponent, canActivate: [authGuard] }
 ] as Route[];

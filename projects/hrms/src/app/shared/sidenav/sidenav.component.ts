@@ -135,6 +135,11 @@ export class SidenavComponent implements OnInit {
     // ✅Active for pending-approvals and its subroutes
     return currentUrl === '/project-management' || currentUrl.startsWith('/project-management');
   }
+ isActiveskillsetManagement(): boolean {
+    const currentUrl = this.router.url;
+    // ✅Active for pending-approvals and its subroutes
+    return currentUrl === '/skillset-management' || currentUrl.startsWith('/skillset-management');
+  }
 
   resetDropdown(): void {
     this.selectedDropdownModule = null;

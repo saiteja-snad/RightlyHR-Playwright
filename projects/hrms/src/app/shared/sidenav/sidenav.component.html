@@ -84,6 +84,18 @@
                 </div>
             </li>
             }
+              @if(this.rbac.allowedToAccess('Skillset Management.view')){
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveskillsetManagement()">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="main-menu-icons/project-management-icon.png" alt="Icon" class="main-menu-icon">Skillset Management
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-project-management-main-tabs />
+                    </ul>
+                </div>
+            </li>
+            }
             <!--My Info-->
             @if(this.rbac.allowedToAccess('Skillset Directory.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/skill-directory');resetDropdown()"

@@ -597,6 +597,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Module',
     'Permissions Module',
     'Regularization Module',
+    'Extra Hours Module',
     'On Behalf Of Module',
     'On Behalf Of Approvals Module',
     'Global Permissions Module',
@@ -653,6 +654,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Processed (Regularization)',
     'My Team (Regularization)',
   ];
+
+  extraHoursModuleSubTabs = [
+    'Waiting For Approval (Extra Hours)',
+    'Approved (Extra Hours)',
+    'Rejected (Extra Hours)',
+    'Processed (Extra Hours)',
+    'My Team (Extra Hours)',
+    'All Employees (Extra Hours)'
+  ];
+
   onBehalfOfModuleSubTabs = [
     'Waiting For Approval (On Behalf Of)',
     'Approved (On Behalf Of)',
@@ -680,6 +691,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Tab',
     'Permissions Tab',
     'Regularization Tab',
+    'Extra Hours Tab',
     'Separation Request Tab',
     'Recall Request Tab',
     'Trainee Details Tab',
@@ -703,6 +715,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   pendingApprovalRegularizationSubTabs = [
     'For You (Regularization)',
     'For Role (Regularization)',
+  ];
+  pendingApprovalExraHoursSubTabs = [
+    'For You (Extra Hours)',
+    'For Role (Extra Hours)',
   ];
   pendingApprovalSeparationRequestsSubTabs = [
     'For You (Separation Requests)',

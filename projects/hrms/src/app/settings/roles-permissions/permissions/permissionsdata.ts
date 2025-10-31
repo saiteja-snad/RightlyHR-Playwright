@@ -237,6 +237,7 @@ export const permissionsData = [
   { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Hours Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },
@@ -297,6 +298,15 @@ export const permissionsData = [
   { fields: 'My Team (Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Regularization)', View: false, Update: false, Create: false, Delete: false },
 
+  // Extra Hours
+  { fields: 'Waiting For Approval (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Approved (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Processed (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Rejected (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'All Employees (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancel (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+
   //On Behalf Of Sub Tabs Section
   { fields: 'Waiting For Approval (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
@@ -324,6 +334,7 @@ export const permissionsData = [
   { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Extra Hours Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Separation Request Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Recall Request Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Trainee Details Tab', View: false, Update: false, Create: false, Delete: false },
@@ -365,6 +376,10 @@ export const permissionsData = [
   //Pending Approval Regularization Tabs Section
   { fields: 'For You (Regularization)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'For Role (Regularization)', View: false, Update: false, Create: false, Delete: false },
+
+   //Pending Approval Extra Hours Tabs Section
+  { fields: 'For You (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'For Role (Extra Hours)', View: false, Update: false, Create: false, Delete: false },
 
   //Pending Approval Seperation Request Tabs Section
   { fields: 'For You (Separation Requests)', View: false, Update: false, Create: false, Delete: false },

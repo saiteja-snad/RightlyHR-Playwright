@@ -26,6 +26,7 @@ import {
   PENDING_APPROVALS_COMP_OFF_SUB_TABS,
   PENDING_APPROVALS_PERMISSIONS_SUB_TABS,
   PENDING_APPROVALS_REGULARIZATION_SUB_TABS,
+  PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS,
   SEPARATION_REQUEST_SUB_TABS,
   RECALL_REQUEST_SUB_TABS,
   DESK_REQUEST_SUB_TABS,
@@ -62,7 +63,8 @@ import {
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
-  ON_BEHALF_OF_REMOTELOGIN_TABS
+  ON_BEHALF_OF_REMOTELOGIN_TABS,
+  EXTRA_HOURS_SUB_TABS
 } from '../permission-route.constants';
 
 @Injectable({
@@ -415,6 +417,14 @@ export class AccessNavigationService {
           }
         }
 
+        if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
+          for (const item of EXTRA_HOURS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
        
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
@@ -497,6 +507,21 @@ export class AccessNavigationService {
                 '/time-off/pending-approvals/regularization-request'
               ) {
                 for (const item of PENDING_APPROVALS_REGULARIZATION_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Extra Hours Tab.view'
+            ) {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/extra-hours-request'
+              ) {
+                for (const item of PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -1346,6 +1371,15 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/time-off/extra-hours':
+        if (this.rbac.allowedToAccess('Extra Hours Module.view')) {
+          for (const item of EXTRA_HOURS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
     
       case '/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {
@@ -1484,6 +1518,21 @@ export class AccessNavigationService {
                 '/time-off/pending-approvals/regularization-request'
               ) {
                 for (const item of PENDING_APPROVALS_REGULARIZATION_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (
+              this.rbac.allowedToAccess(item.permission) &&
+              item.permission === 'Extra Hours Tab.view'
+            ) {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/extra-hours-request'
+              ) {
+                for (const item of PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
                     return item.route;
                   }
@@ -1645,6 +1694,16 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/time-off/pending-approvals/extra-hours-request':
+        if (this.rbac.allowedToAccess('Extra Hours Tab.view')) {
+          for (const item of PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
 
       case '/time-off/pending-approvals/separation-request':
         if (this.rbac.allowedToAccess('Separation Request Tab.view')) {

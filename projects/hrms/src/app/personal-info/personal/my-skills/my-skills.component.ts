@@ -16,7 +16,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 
 @Component({
   selector: 'app-my-skills',
-  imports: [ReactiveFormsModule, Select, FormsModule,CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent ],
+  imports: [ReactiveFormsModule, Select, FormsModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './my-skills.component.html',
   styleUrl: './my-skills.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -45,7 +45,7 @@ export class MySkillsComponent {
   softSkills: any[] = [];
   deleteModalRef: any;
   Status: any;
-   values: string[] | undefined;
+  values: string[] | undefined;
 
   constructor(private readonly modalService: NgbModal, private authService: AuthService, private http: HttpService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, private router: Router,
@@ -58,9 +58,13 @@ export class MySkillsComponent {
     this.getSkills()
     this.AddForm = this.fb.group({
       skillcategory: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      skills: [[], Validators.required],
+      skills: [[], [this.validateSkillArray.bind(this)]],
       proficiencylevel: ['', Validators.required],
     });
+  }
+  validateSkillArray(control: any) {
+    const value = control.value;
+    return value && value.length > 0 ? null : { required: true };
   }
 
   getEmpInfoFromRoute(): void {
@@ -78,7 +82,7 @@ export class MySkillsComponent {
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
-   
+
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'm', backdrop: 'static' });
@@ -149,13 +153,14 @@ export class MySkillsComponent {
     }
     this.spinnerLoader = true;
     const formValue = this.AddForm.value;
-    const skillNames = formValue.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s);    
+    const skillNames = formValue.skills;
     const skillsList = skillNames.map((skill: string) => ({
       skillCategory: formValue.skillcategory,
       skillName: skill,
       proficiencyLevel: formValue.proficiencylevel,
-      isActive: true   
+      isActive: true
     }));
+
     const payload = {
       employeeId: this.empinfo.employeeId,
       createdBy: loggedInUser.employeeId,
@@ -244,4 +249,27 @@ export class MySkillsComponent {
     this.selectedSkill = skill;
     this.deleteModalRef = this.modalService.open(modal, { centered: true, backdrop: 'static' });
   }
+  addSkill(event: any): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+
+    if (value) {
+      const skills = this.AddForm.get('skills')?.value || [];
+      if (!skills.includes(value)) {
+        skills.push(value);
+        this.AddForm.get('skills')?.setValue(skills);
+      }
+    }
+
+    input.value = '';
+    event.preventDefault(); // prevent form submission on Enter
+  }
+
+  removeSkill(skill: string): void {
+    const skills = this.AddForm.get('skills')?.value || [];
+    const updatedSkills = skills.filter((s: string) => s !== skill);
+    this.AddForm.get('skills')?.setValue(updatedSkills);
+  }
+
+
 }

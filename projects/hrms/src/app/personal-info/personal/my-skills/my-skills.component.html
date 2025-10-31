@@ -1,28 +1,30 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">My Skills</span></div>
-         @if(canAccess('create','myskills')){
-        <div class="custom-add-btn"  (click)="openModal(addnewskill)">
+        @if(canAccess('create','myskills')){
+        <div class="custom-add-btn" (click)="openModal(addnewskill)">
             <i class="bi bi-plus plus-icon me-1"></i>Add New Skill
         </div>
-    }
+        }
     </div>
 
     <div class="skill-container">
-    @if (!spinnerLoaderforallrecoders) {
-    @if (technicalSkills.length || softSkills.length) {
-    <div class="card custom-background-card p-4 mb-3" *ngIf="technicalSkills.length">
-        <div class="custom-label chip">
-            <label class="custom-label mb-3">Technical Skills</label>
-            <div class="d-flex flex-wrap gap-2">
-                <div *ngFor="let skill of technicalSkills" class="custom-chip-card">
-                    <div class="me-2">{{ skill.skillName }}  <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
-                    @if(canAccess('delete','myskills')){
-                    <div><img  class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div> 
-                    }
+        @if (!spinnerLoaderforallrecoders) {
+        @if (technicalSkills.length || softSkills.length) {
+        <div class="card custom-background-card p-4 mb-3" *ngIf="technicalSkills.length">
+            <div class="custom-label chip">
+                <label class="custom-label mb-3">Technical Skills</label>
+                <div class="d-flex flex-wrap gap-2">
+                    <div *ngFor="let skill of technicalSkills" class="custom-chip-card">
+                        <div class="me-2">{{ skill.skillName }} <span class="skill-proficiency">({{
+                                skill.proficiencyLevel }})</span></div>
+                        @if(canAccess('delete','myskills')){
+                        <div><img class="custom-delete-img" src="/icons/cross-chip.png"
+                                (click)="openDeletePopup(deletepopup, skill, $event)"></div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
         <!-- Soft Skills -->
         <div class="card custom-background-card p-4" *ngIf="softSkills.length">
@@ -30,20 +32,22 @@
                 <label class="custom-label mb-3">Soft Skills</label>
                 <div class="d-flex flex-wrap gap-2">
                     <div *ngFor="let skill of softSkills" class="custom-chip-card">
-                        <div>{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span></div>
+                        <div>{{ skill.skillName }} <span class="skill-proficiency">({{ skill.proficiencyLevel }})</span>
+                        </div>
                         @if(canAccess('delete','myskills')){
-                        <div><img class="custom-delete-img" src="/icons/cross-chip.png" (click)="openDeletePopup(deletepopup, skill, $event)"></div>
+                        <div><img class="custom-delete-img" src="/icons/cross-chip.png"
+                                (click)="openDeletePopup(deletepopup, skill, $event)"></div>
                         }
                     </div>
                 </div>
             </div>
         </div>
-    } @else {
-    <app-no-data-found />
-    }
-    } @else {
-    <app-data-loader-content />
-    }
+        } @else {
+        <app-no-data-found />
+        }
+        } @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>
 
@@ -76,12 +80,24 @@
 
                 <!-- Skills Field -->
                 <div class="mb-3">
-                    <label for="skills" class="form-label custom-label mb-2">{{'Skill(s)'}}
-                        <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="skills"
-                        placeholder="Please enter Skills separated by commas (e.g.,React,Angular)" />
-                    <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg">
-                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">{{'Skill(s) is required'}}</div>
+                    <label class="form-label">Skills</label>
+                    <div class="form-control d-flex flex-wrap" (click)="skillInput.focus()">
+                        <!-- Existing skills (chips) -->
+                        <span *ngFor="let skill of AddForm.get('skills')?.value"
+                            class="badge bg-primary me-2 mb-2 d-flex align-items-center">
+                            {{ skill }}
+                            <button type="button" class="btn-close btn-close-white ms-2" aria-label="Remove"
+                                (click)="removeSkill(skill)"></button>
+                        </span>
+                        <!-- Input field for new skills -->
+                        <input #skillInput type="text" class="border-0 flex-grow-1"
+                            [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Add a skill and press Enter'"
+                            (keydown.enter)="addSkill($event)" />
+                    </div>
+                    <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg text-danger mt-1">
+                        <div *ngIf="AddForm.get('skills')?.errors?.['required']">
+                            At least one skill is required.
+                        </div>
                     </div>
                 </div>
 
@@ -103,7 +119,8 @@
 
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationCancel)">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationCancel)">Cancel</button>
                     <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)"
                         [disabled]="AddForm.invalid">{{ 'Add' }}</button>
                 </div>

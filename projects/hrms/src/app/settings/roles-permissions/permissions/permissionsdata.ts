@@ -861,6 +861,7 @@ export const permissionsData = [
   { fields: 'Letter Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Project Management Authority', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Letter Frequency Configurations', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Project Role', View: false, Update: false, Create: false, Delete: false },
 
   { fields: 'My Team (Timesheet)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'All Employees (Timesheet)', View: false, Update: false, Create: false, Delete: false },

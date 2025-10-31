@@ -16,6 +16,8 @@ export default [
             { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent), },
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), },
+            { path: 'my-skills', loadComponent: () => import('./personal/my-skills/my-skills.component').then(m => m.MySkillsComponent), },
+
         ]
     },
     {
@@ -43,7 +45,7 @@ export default [
         ]
     },
     {
-        path: 'documents',children: [
+        path: 'documents', children: [
             { path: '', redirectTo: 'general-documents', pathMatch: 'full' },
             { path: 'general-documents', loadComponent: () => import('./documents/documents.component').then((m) => m.DocumentsComponent), data: { permission: 'Employee Info Documents Tab.view' } },
             { path: 'letter-acknowledge-documents', loadComponent: () => import('./letters-acknowledgement/document-acknowledgement-tabs/document-acknowledgement-tabs.component').then((m) => m.DocumentAcknowledgementTabsComponent), data: { permission: 'Employee Info Documents Tab.view' } },

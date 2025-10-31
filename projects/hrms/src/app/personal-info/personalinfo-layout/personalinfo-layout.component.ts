@@ -647,6 +647,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Team Members',
+    'my-skills':'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
     'onboarding-details': 'Onboarding Info',
@@ -705,6 +706,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
       '/myinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
       '/myinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/myinfo/personal/my-skills': MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
       // My Info Job
       '/myinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
@@ -735,6 +737,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
       '/personalinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
       '/personalinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/my-skills': MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
       // Personal Info Job
       '/personalinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,

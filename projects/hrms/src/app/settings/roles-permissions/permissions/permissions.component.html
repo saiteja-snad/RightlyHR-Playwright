@@ -668,7 +668,7 @@
                             || per.fields === 'Org Hierarchy' || per.fields === 'PMS' 
                             || per.fields === 'PMS Configurations' || per.fields === 'Desk Allocation' 
                             || per.fields === 'Asset Management' || per.fields === 'Blood Bank'
-                            || per.fields === 'Holidays' || per.fields === 'Attendance' || per.fields === 'Project Management' 
+                            || per.fields === 'Holidays' || per.fields === 'Attendance' || per.fields === 'Project Management' || per.fields === 'Skillset Directory' 
                             || per.fields === 'Clients' || per.fields === 'Projects' || per.fields === 'Time Sheet'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
@@ -2659,7 +2659,7 @@
                             per.fields === 'My Info Address Details' || per.fields === 'My Info Contact Details' || 
                             per.fields === 'My Info Emergency Contact Details' || per.fields === 'My Info Education Details' || 
                             per.fields === 'My Info Identity Details' || per.fields === 'My Info Family Details' || 
-                            per.fields === 'My Info Bank Details'  || per.fields === 'My Info Visa Details' ">
+                            per.fields === 'My Info Bank Details'  || per.fields === 'My Info Visa Details' || per.fields === 'My Skills'">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <!-- View -->
                                 <td>
@@ -2669,21 +2669,21 @@
                                 <!-- Update -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
-                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                        (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id || per.fields === 'My Skills'">
                                 </td>
                                 <!-- Create -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
                                         (change)="onCheckboxChange(per, 'Create')"
                                         [disabled]="!roleToFilter?.id || !['My Info Education Details','My Info Identity Details',
-                                    'My Info Family Details','My Info Bank Details','My Info Visa Details'].includes(per.fields)">
+                                    'My Info Family Details','My Info Bank Details','My Info Visa Details','My Skills'].includes(per.fields)">
                                 </td>
                                 <!-- Delete -->
                                 <td>
                                     <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
                                         (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id || 
                                     !['My Info Education Details','My Info Identity Details','My Info Family Details','My Info Bank Details',
-                                    'My Info Visa Details'].includes(per.fields)">
+                                    'My Info Visa Details','My Skills'].includes(per.fields)">
                                 </td>
                             </tr>
                         </ng-container>
@@ -3410,7 +3410,7 @@
                             per.fields === 'Employee Info Address Details' || per.fields === 'Employee Info Contact Details' || 
                             per.fields === 'Employee Info Emergency Contact Details' || per.fields === 'Employee Info Education Details' || 
                             per.fields === 'Employee Info Identity Details' || per.fields === 'Employee Info Family Details' || 
-                            per.fields === 'Employee Info Bank Details' || per.fields === 'Employee Info Visa Details'">
+                            per.fields === 'Employee Info Bank Details' || per.fields === 'Employee Info Visa Details' || per.fields === 'Employee My Skills'">
                                     <td class="text-align-center">{{ per.fields }}</td>
                                     <!-- View -->
                                     <td>
@@ -3420,7 +3420,7 @@
                                     <!-- Update -->
                                     <td>
                                         <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
-                                            (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                            (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id || per.fields === 'Employee My Skills'">
                                     </td>
                                     <!-- Create -->
                                     <td>
@@ -3428,7 +3428,7 @@
                                             (change)="onCheckboxChange(per, 'Create')"
                                             [disabled]="!roleToFilter?.id || 
                                         !['Employee Info Education Details','Employee Info Identity Details','Employee Info Family Details',
-                                        'Employee Info Bank Details','Employee Info Visa Details',].includes(per.fields)">
+                                        'Employee Info Bank Details','Employee Info Visa Details'].includes(per.fields)">
                                     </td>
                                     <!-- Delete -->
                                     <td>

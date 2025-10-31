@@ -869,6 +869,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Contact Details',
     'My Info Emergency Contact Details',
     'My Info Education Details',
+    'My Skills',
     'My Info Identity Details',
     'My Info Family Details',
     'My Info Bank Details',
@@ -1110,6 +1111,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Bank Details',
     'Employee Info Visa Details',
     'Employee Info Documents Verification',
+    'Employee My Skills'
   ];
   selectAllProjectManagementTabs = [
     'Project Details Tab',

@@ -84,6 +84,13 @@
                 </div>
             </li>
             }
+            <!--My Info-->
+            @if(this.rbac.allowedToAccess('Skillset Directory.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/skill-directory');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/skill-directory')">
+                <img src="/main-menu-icons/brain-02.png" alt="Icon" class="main-menu-icon">Skillset Directory
+            </li>
+            }
 
             @if(this.rbac.allowedToAccess('On Behalf Of.view')){
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/on-behalf-of')">
@@ -143,7 +150,7 @@
             }
         </ul>
     </div>
-    
+
     <!--Settings content-->
     <div class="sidenav-footer-content">
         <div class="d-flex justify-content-center w-100">

@@ -227,7 +227,14 @@ export class ResourceAvailabilityReportComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
+         // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
+           this.employeeData =
+          res?.data?.map((x: any) => ({
+            id: x.employee?.id,
+            name: x.employee?.fusionEmployeeId
+              ? `${x.employee.fusionEmployeeId} - ${x.employee.name}`
+              : x.employee?.name || 'Unknown'
+          })) ?? [];
           this.ResourceAvailabilityReportForm.get('employeid')?.enable();
         },
         error: (err) => {

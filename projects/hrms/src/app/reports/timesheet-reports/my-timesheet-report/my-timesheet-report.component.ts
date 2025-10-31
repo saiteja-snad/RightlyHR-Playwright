@@ -288,7 +288,7 @@ onGenerate() {
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'MyTimesheet',
-      //EmployeeIds: employeeId,
+      EmployeeIds: employeeId,
       // ClientIds: formValue.client ? formValue.client : 0,   
       //  ProjectIds: formValue.project ? formValue.project : 0 
     };

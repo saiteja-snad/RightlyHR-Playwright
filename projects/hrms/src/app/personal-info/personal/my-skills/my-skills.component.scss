@@ -45,29 +45,18 @@
   cursor: default;
 }
 
-.custom-chip-close-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 14px;
-  color: #666;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
 .skill-proficiency {
-  font-size: 12px; 
-  color: #6c757d;  
+  font-size: 12px;
+  color: #6c757d;
   font-weight: 400;
 }
+
 .custom-delete-img {
-  width: 15px !important;         
+  width: 15px !important;
   height: 15px !important;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
-
-
 
 input:focus {
   outline: none;
@@ -81,4 +70,19 @@ input:focus {
 
 .badge {
   font-size: 0.9rem;
+}
+
+.custom-chip-input:read-only {
+  background-color: var(--input-bg-color) !important;
+
+  .custom-badge {
+    color: #222222 !important;
+    border: 1px solid var(--input-border-color) !important;
+    background-color: #FFf !important;
+    font-weight: 500 !important;
+  }
+
+  .inside-input {
+    background-color: var(--input-bg-color) !important;
+  }
 }

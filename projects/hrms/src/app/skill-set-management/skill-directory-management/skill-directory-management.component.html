@@ -55,7 +55,6 @@
         [(ngModel)]="searchQuery" (input)="onSearch()" />
     </div>
 
-
     <div class="custom-table-content">
       @if (!spinnerLoaderforallrecoders) {
       <table class="w-100">
@@ -116,7 +115,6 @@
           </tr>
           }
         </tbody>
-
       </table>
       } @else {
       <app-data-loader-content />

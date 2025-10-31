@@ -13,7 +13,6 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
-
 @Component({
   selector: 'app-my-skills',
   imports: [ReactiveFormsModule, Select, FormsModule, CommonModule, NgbModalModule, NoDataFoundComponent, DataLoaderContentComponent],
@@ -62,6 +61,7 @@ export class MySkillsComponent {
       proficiencylevel: ['', Validators.required],
     });
   }
+
   validateSkillArray(control: any) {
     const value = control.value;
     return value && value.length > 0 ? null : { required: true };
@@ -69,7 +69,6 @@ export class MySkillsComponent {
 
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
@@ -79,10 +78,10 @@ export class MySkillsComponent {
 
     }
   }
+
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
-
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'm', backdrop: 'static' });
@@ -161,7 +160,6 @@ export class MySkillsComponent {
       proficiencyLevel: formValue.proficiencylevel,
       isActive: true
     }));
-
     const payload = {
       employeeId: this.empinfo.employeeId,
       createdBy: loggedInUser.employeeId,
@@ -250,10 +248,10 @@ export class MySkillsComponent {
     this.selectedSkill = skill;
     this.deleteModalRef = this.modalService.open(modal, { centered: true, backdrop: 'static' });
   }
+
   addSkill(event: any): void {
     const input = event.target as HTMLInputElement;
     const value = input.value.trim();
-
     if (value) {
       const skills = this.AddForm.get('skills')?.value || [];
       if (!skills.includes(value)) {
@@ -262,7 +260,6 @@ export class MySkillsComponent {
         this.AddForm.get('skills')?.updateValueAndValidity();
       }
     }
-
     input.value = '';
     event.preventDefault(); // prevent form submission on Enter
   }
@@ -276,6 +273,7 @@ export class MySkillsComponent {
     control?.markAsTouched(); // 👈 ensures validation visible
     control?.updateValueAndValidity();
   }
+
   onSkillBlur(): void {
     const skillsControl = this.AddForm.get('skills');
     if (skillsControl) {
@@ -283,6 +281,4 @@ export class MySkillsComponent {
       skillsControl.updateValueAndValidity(); // recheck validation
     }
   }
-
-
 }

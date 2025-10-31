@@ -707,7 +707,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private isDeleteModalOpen = false;
   private userClickedNo = false;
   private isModalOpen = false;
-  private autoSaveTimeout: any = null;
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -758,19 +757,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.showDots[rowIndex][dayName] = true;
     }
 
-    // Auto-save only on blur to prevent duplicate calls
-    if (formatted && event.type === 'blur' && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
-      // Clear any existing timeout
-      if (this.autoSaveTimeout) {
-        clearTimeout(this.autoSaveTimeout);
-      }
-      
+    // Auto-save on blur if duration has value
+    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
+
+
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
-        // Add small delay to prevent rapid successive calls
-        this.autoSaveTimeout = setTimeout(() => {
-          this.autoSaveTableEntry(rowIndex, dayName);
-        }, 300);
+        this.autoSaveTableEntry(rowIndex, dayName);
       }
     }
 

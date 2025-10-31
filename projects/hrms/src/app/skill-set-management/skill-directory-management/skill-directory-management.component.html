@@ -55,17 +55,16 @@
         [(ngModel)]="searchQuery" (input)="onSearch()" />
     </div>
 
-
     <div class="custom-table-content">
       @if (!spinnerLoaderforallrecoders) {
       <table class="w-100">
         <thead>
           <tr>
-            <th>Employee Id</th>
+            <th>Employee ID</th>
             <th>Employee Name</th>
-            <th>Title</th>
-            <th>Key Skills</th>
-            <th class="text-center">Current Status</th>
+            <th>Designation</th>
+            <th>Skills</th>
+            <th class="text-center">Status</th>
             <th class="text-center">Action</th>
           </tr>
         </thead>
@@ -116,7 +115,6 @@
           </tr>
           }
         </tbody>
-
       </table>
       } @else {
       <app-data-loader-content />

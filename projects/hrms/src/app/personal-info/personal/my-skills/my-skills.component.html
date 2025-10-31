@@ -80,7 +80,8 @@
 
                 <!-- Skills Field -->
                 <div class="mb-3">
-                    <label class="form-label">Skills</label>
+                    <label for="skills" class="form-label custom-label mb-2">{{'Skill(S)'}}
+                        <span class="error-msg">*</span></label>
                     <div class="form-control d-flex flex-wrap" (click)="skillInput.focus()">
                         <span *ngFor="let skill of AddForm.get('skills')?.value"
                             class="badge bg-primary me-2 mb-2 d-flex align-items-center">

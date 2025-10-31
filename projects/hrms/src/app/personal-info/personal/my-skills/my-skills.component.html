@@ -82,7 +82,6 @@
                 <div class="mb-3">
                     <label class="form-label">Skills</label>
                     <div class="form-control d-flex flex-wrap" (click)="skillInput.focus()">
-                        <!-- Existing skills (chips) -->
                         <span *ngFor="let skill of AddForm.get('skills')?.value"
                             class="badge bg-primary me-2 mb-2 d-flex align-items-center">
                             {{ skill }}
@@ -91,10 +90,11 @@
                         </span>
                         <!-- Input field for new skills -->
                         <input #skillInput type="text" class="border-0 flex-grow-1"
-                            [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Add a skill and press Enter'"
-                            (keydown.enter)="addSkill($event)" />
+                            [placeholder]="AddForm.get('skills')?.value?.length ? '' : 'Please enter one or multiple skills'"
+                            (blur)="onSkillBlur()" (keydown.enter)="addSkill($event)" />
                     </div>
-                    <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid" class="error-msg text-danger mt-1">
+                    <div *ngIf="AddForm.get('skills')?.touched && AddForm.get('skills')?.invalid"
+                        class="error-msg">
                         <div *ngIf="AddForm.get('skills')?.errors?.['required']">
                             At least one skill is required.
                         </div>

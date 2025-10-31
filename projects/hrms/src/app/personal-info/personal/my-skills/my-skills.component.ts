@@ -149,6 +149,7 @@ export class MySkillsComponent {
     const loggedInUser = this.authService.getToken();
     if (this.AddForm.invalid) {
       this.AddForm.markAllAsTouched();
+      this.AddForm.get('skills')?.updateValueAndValidity();
       return;
     }
     this.spinnerLoader = true;
@@ -258,6 +259,7 @@ export class MySkillsComponent {
       if (!skills.includes(value)) {
         skills.push(value);
         this.AddForm.get('skills')?.setValue(skills);
+        this.AddForm.get('skills')?.updateValueAndValidity();
       }
     }
 
@@ -269,6 +271,17 @@ export class MySkillsComponent {
     const skills = this.AddForm.get('skills')?.value || [];
     const updatedSkills = skills.filter((s: string) => s !== skill);
     this.AddForm.get('skills')?.setValue(updatedSkills);
+    this.AddForm.get('skills')?.updateValueAndValidity();
+    const control = this.AddForm.get('skills');
+    control?.markAsTouched(); // 👈 ensures validation visible
+    control?.updateValueAndValidity();
+  }
+  onSkillBlur(): void {
+    const skillsControl = this.AddForm.get('skills');
+    if (skillsControl) {
+      skillsControl.markAsTouched({ onlySelf: true }); // mark it as touched
+      skillsControl.updateValueAndValidity(); // recheck validation
+    }
   }
 
 

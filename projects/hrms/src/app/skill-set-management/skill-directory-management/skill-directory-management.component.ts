@@ -12,19 +12,17 @@ import { PaginatorModule } from "primeng/paginator";
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-import { SkillEmployeePipe } from '../../Pipes/skills.pipe';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
 import { DomSanitizer } from '@angular/platform-browser';
-
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
   imports: [TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
-    DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, SkillEmployeePipe, PaginatorModule],
+    DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule],
   templateUrl: './skill-directory-management.component.html',
   styleUrl: './skill-directory-management.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -71,7 +69,6 @@ export class SkillDirectoryManagementComponent {
   multiSkillOptions: any[] = [];
   isloading: boolean = false;
 
-
   constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
     private readonly modalService: NgbModal, private openmodalservice: OpenModalService) { }
 
@@ -87,7 +84,6 @@ export class SkillDirectoryManagementComponent {
         this.getEmployeeProfile(this.empinfo.employeeId);
       }
     });
-
     this.selectedStatus = 'All Status';
     this.getEmployeeSkills();
     this.getMultiskills()
@@ -131,7 +127,6 @@ export class SkillDirectoryManagementComponent {
     }
   }
 
-
   onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
@@ -170,7 +165,6 @@ export class SkillDirectoryManagementComponent {
     return emp.employeeProjectStatus || '-';
   }
 
-
   getStatusClass(status: string): string {
     if (!status) return '';
     const normalized = status.toLowerCase();
@@ -188,11 +182,9 @@ export class SkillDirectoryManagementComponent {
     }
   }
 
-
   openModal(content: any, emp: any) {
     this.selectedEmployee = { ...emp };
     const employeeId = emp?.employee?.employeeId;
-
     if (employeeId) {
       this.getEmployeeProfile(employeeId);
     }
@@ -241,26 +233,20 @@ export class SkillDirectoryManagementComponent {
       page: this.page,
       pageSize: this.pageSize,
     };
-
     if (this.selectedStatus && this.selectedStatus !== 'All Status') {
       params.resourceStatus = this.selectedStatus;
     }
-
     if (this.selectedSkills?.length > 0) {
       params.skillSearch = this.selectedSkills.join(',');
     }
-
     if (this.monthStartDate && this.monthEndDate) {
       params.fromDate = this.monthStartDate.toISOString();
       params.toDate = this.monthEndDate.toISOString();
     }
-
     if (this.searchQuery?.trim()) {
       params.searchQuery = this.searchQuery.trim();
     }
-
     this.spinnerLoaderforallrecoders = true;
-
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeeSkills', params).subscribe({
       next: (res: any) => {
         if (res?.success && Array.isArray(res?.data?.items)) {
@@ -320,53 +306,45 @@ export class SkillDirectoryManagementComponent {
     modal.dismiss();
   }
 
- submitExport() {
-  this.spinnerLoaderforallrecoders = true;
-  const isActive = true;
-  const resourceStatus = !this.selectedStatus || this.selectedStatus === 'All Status' ? '' : this.selectedStatus;
-  const searchQuery = this.searchQuery || '';
-  const skillSearch = this.selectedSkills?.length ? this.selectedSkills.join(',') : '';
-  const fromDate = this.monthStartDate ? this.monthStartDate.toISOString() : '';
-  const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';
-
-  this.http.downloadEmployeeSkillsReport(
-    'EmployeeSkills/exportEmployeeSkillSet',
-    isActive,
-    resourceStatus,
-    searchQuery,
-    fromDate,
-    toDate,
-    skillSearch
-  ).subscribe({
-    next: (response: any) => {
-      const blob = new Blob([response], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Employee_Skill_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
-      link.click();
-      this.openmodalservice.openSuccessModal('Employee Skill Report Generated Successfully');
-    },
-    error: () => {
-      this.spinnerLoaderforallrecoders = false;
-      this.openmodalservice.openErrorModal('No records found for the selected filters');
-    },
-    complete: () => {
-      this.spinnerLoaderforallrecoders = false;
-    },
-  });
-}
- clearAllFilters(): void {
-  this.selectedStatus = 'All Status';
-  this.selectedSkills = [];
-  this.searchQuery = '';
-  this.displayLabel = '';
-  this.date = []; 
-  this.page = 1;
-  this.first = 0;
-  this.getEmployeeSkills();
-}
-
+  submitExport() {
+    this.spinnerLoaderforallrecoders = true;
+    const isActive = true;
+    const resourceStatus = !this.selectedStatus || this.selectedStatus === 'All Status' ? '' : this.selectedStatus;
+    const searchQuery = this.searchQuery || '';
+    const skillSearch = this.selectedSkills?.length ? this.selectedSkills.join(',') : '';
+    const fromDate = this.monthStartDate ? this.monthStartDate.toISOString() : '';
+    const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';
+    this.http.downloadEmployeeSkillsReport('EmployeeSkills/exportEmployeeSkillSet',
+      isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch).subscribe({
+      next: (response: any) => {
+        const blob = new Blob([response], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Employee_Skill_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        link.click();
+        this.openmodalservice.openSuccessModal('Employee Skill Report Generated Successfully');
+      },
+      error: () => {
+        this.spinnerLoaderforallrecoders = false;
+        this.openmodalservice.openErrorModal('No records found for the selected filters');
+      },
+      complete: () => {
+        this.spinnerLoaderforallrecoders = false;
+      },
+    });
+  }
+  
+  clearAllFilters(): void {
+    this.selectedStatus = 'All Status';
+    this.selectedSkills = [];
+    this.searchQuery = '';
+    this.displayLabel = '';
+    this.date = [];
+    this.page = 1;
+    this.first = 0;
+    this.getEmployeeSkills();
+  }
 }

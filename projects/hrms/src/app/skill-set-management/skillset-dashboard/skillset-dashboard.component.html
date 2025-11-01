@@ -1,0 +1,65 @@
+<div class="dashboard-wrapper">
+    <!-- === Top Summary Cards === -->
+    <div class="summary-cards">
+        <p-card class="summary-card" *ngFor="let card of summaryCards">
+            <div class="summary-title">{{ card.title }}</div>
+            <div class="summary-value">{{ card.value }}</div>
+        </p-card>
+    </div>
+
+    <!-- === Charts Row === -->
+  <div class="chart-cards mt-3">
+  <!-- === Skill Proficiency === -->
+  <p-card class="chart-card">
+    <div class="chart-title">Skill Proficiency</div>
+    <p-chart type="doughnut" [data]="skillData" [options]="chartOptions"></p-chart>
+
+    <div class="chart-counts-grid mt-3">
+      <!-- Row 1: Counts -->
+      <div class="count-row">
+        <div *ngFor="let item of skillProficiencyCounts" class="count-cell">
+          {{ item.count }}
+        </div>
+      </div>
+
+      <!-- Row 2: Labels -->
+      <div class="label-row">
+        <div *ngFor="let item of skillProficiencyCounts" class="count-cell">
+          {{ item.label }}
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- === Skills by Department === -->
+  <p-card class="chart-card">
+    <div class="chart-title">Skills by Department</div>
+    <p-chart type="doughnut" [data]="deptData" [options]="chartOptions"></p-chart>
+
+    <div class="chart-counts-grid mt-3">
+      <!-- Row 1: Counts -->
+      <div class="count-row">
+        <div *ngFor="let dept of deptCounts" class="count-cell">
+          {{ dept.count }}
+        </div>
+      </div>
+
+      <!-- Row 2: Labels -->
+      <div class="label-row">
+        <div *ngFor="let dept of deptCounts" class="count-cell">
+          {{ dept.label }}
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <!-- === Top 5 Skills (Horizontal Bar) === -->
+  <p-card class="chart-card">
+    <div class="chart-title d-flex justify-content-between align-items-center">
+      <span>Top 5 Skills</span>
+    </div>
+    <p-chart type="bar" [data]="topSkillsData" [options]="horizontalBarOptions"></p-chart>
+  </p-card>
+</div>
+
+</div>

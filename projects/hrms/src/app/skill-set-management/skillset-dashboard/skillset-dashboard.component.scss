@@ -1,0 +1,129 @@
+.summary-cards,
+.chart-cards {
+    display: flex;
+
+    gap: 1.5rem;
+}
+
+/* ---- TOP SUMMARY CARDS ---- */
+.summary-card {
+    flex: 1 1 calc(25% - 1.5rem);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+}
+
+.summary-title {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.summary-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.summary-subtext {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.summary-subtext.green {
+    color: #10b981;
+}
+
+/* ---- CHART CARDS ---- */
+.chart-cards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    height: calc(100dvh - 20rem);
+    gap: 1.5rem;
+}
+
+.chart-card {
+    flex: 1 1 calc(33.33% - 1.5rem);
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: calc(100dvh - 20rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.top-skills {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+    font-size: 0.9rem;
+}
+
+.see-all {
+    font-size: 0.85rem;
+    color: #6366f1;
+    text-decoration: none;
+}
+.chart-card p-chart {
+  height: 250px;
+  display: block;
+}
+
+.chart-title {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.chart-counts-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.count-row,
+.label-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  text-align: center;
+}
+
+.count-cell {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.count-row .count-cell {
+  font-weight: 600;
+  color: #2e7d32;
+  font-size: 1.1rem;
+}
+
+.label-row .count-cell {
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}

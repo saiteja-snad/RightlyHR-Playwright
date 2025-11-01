@@ -1,0 +1,210 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content gap-3">
+        <app-reports-header />
+        <form autocomplete="off" [formGroup]="ExpenseReportForm" (ngSubmit)="generateExpenseReport()"
+            *ngIf="ExpenseReportForm">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                @if(rbac.allowedToAccess('Expense Report - Generate.view')){
+                <button type="button" class="clear-all-btn" [disabled]="
+                !ExpenseReportForm.get('employee')?.value &&
+                !ExpenseReportForm.get('dateRange')?.value &&
+                !ExpenseReportForm.get('manager')?.value &&
+                !ExpenseReportForm.get('leaveCategory')?.value &&
+                !ExpenseReportForm.get('team')?.value" (click)="clearAllFilters()">
+                    {{'Clear All' | translate}}
+                </button>
+                <!-- Date Range -->
+                <div class="custom-date-range-picker">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date'" selectionMode="range"
+                        [showIcon]="true" [readonlyInput]="true" />
+                </div>
+
+                <!-- Employee -->
+                @if(rbac.allowedToAccess('Expense Report All Employees List.view')){
+                <div class="custom-p-select-content">
+                    <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+                        formControlName="employee" placeholder="Please select employee"
+                        class="form-select custom-select" filterPlaceholder="Search employee">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                        <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                    </p-select>
+                </div>
+                }
+
+                <!-- Team Manager -->
+                @if(rbac.allowedToAccess('Expense Report Manager List.view')){
+                <div class="custom-p-select-content">
+                    <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
+                        formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+                        filterPlaceholder="Search manager">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                        <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                    </p-select>
+                </div>
+                }
+
+                <!--My Team-->
+                @if(rbac.allowedToAccess('My Team Report(Expenses).view') &&
+                !rbac.allowedToAccess('Expenses All Employees List.view')
+                && !rbac.allowedToAccess('Expenses Team Manager List.view')){
+                <div class="custom-p-select-content">
+                    <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
+                        formControlName="team" placeholder="Please select employee" class="form-select custom-select"
+                        filterPlaceholder="Search employee" (onChange)="onClick($event)">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                        <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+                    </p-select>
+                </div>
+                }
+                <!-- Status -->
+                <div class="custom-p-select-content">
+                    <p-select [options]="expenseStatus" optionLabel="value" optionValue="value" formControlName="status"
+                        placeholder="Please select status" class="form-select custom-select"></p-select>
+                </div>
+                }
+                <div *ngIf="filteredleaveRecord[1]?.totalExpenseAmount" class="d-flex align-items-center gap-2">
+                     <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'
+                    | translate}}:</label>
+               <div >
+              <b>{{ filteredleaveRecord[1]?.totalExpenseAmount }}</b>
+               </div>
+                </div>
+                <!-- Buttons -->
+                <div class="d-flex gap-2">
+                    @if(rbac.allowedToAccess('Expense Report - Generate.view')){
+                    <button type="submit" class="custom-btn btn-secondary " [disabled]="isExpenseGenerateDisabled ">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...' | translate}}</span>
+                        }@else {
+                        <span>{{'Generate' | translate }}</span>
+                        }
+                    </button>
+                    }
+
+                    @if(rbac.allowedToAccess('Expense Report - Generate.view') && rbac.allowedToAccess('Expense Report - Export.view')){
+                    <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
+                        [disabled]="filteredleaveRecord.length == 0 || disableBtn">
+                        @if(spinnerLoader2){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...' | translate}}</span>
+                        }@else {
+                        <span>{{'Export' | translate}}</span>
+                        }
+                    </button>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="custom-table-content">
+        @if (!isLoading) {
+        <table id="expenseReportTable" class="w-100">
+            <thead>
+                <tr>
+                    <th>{{ 'Employee ID' | translate }}</th>
+                    <th>{{ 'Employee Name' | translate }}</th>
+                    <th>{{ 'Department' | translate }}</th>
+                    <th>{{ 'Team Manager' | translate }}</th>
+                    <th>{{ 'Expense Applied Date' | translate }}</th>
+                    <th>{{ 'Expense Title' | translate}}</th>
+                    <th class="text-center">{{ 'Total Amount (USD)' | translate}}</th>
+                    <th>{{ 'Status' | translate}}</th>
+                    <th>{{ 'Details' | translate }}</th>
+                </tr>
+            </thead>
+
+            @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+            <tr>
+                <app-no-data-found />
+            </tr>
+            } @else {
+            @for(record of filteredleaveRecord; track $index) {
+            <tr>
+                <td>{{ record.fusionEmpId ?? '-' }}</td>
+                <td>{{ record.employeeName ?? '-' }}</td>
+                <td>{{ record.department ?? '-' }}</td>
+                <td>{{ record.teamManagerName ?? '-' }}</td>
+                <td class="text-nowrap">
+                    {{ record.appliedDate ? (record.appliedDate | dateformat) : '-' }}
+                </td>
+                <td>{{ record.expenseTitle ?? '-'}}</td>
+                <td class = "text-center">{{( record.totalAmount | number:'1.2-2') ?? '-'}}</td>
+                <td>{{ record.expensesStatus ?? '-' }}</td>
+                <td class="text-start cursor">
+                    <ng-container *ngIf="record.expensesItems?.length; else noDetails">
+                        <u class="clickable-text" (click)="openExpenseDetails(record)">
+                            View Details
+                        </u>
+                    </ng-container>
+                    <ng-template #noDetails>-</ng-template>
+                </td>
+            </tr>
+            }
+            }
+        </table>
+        } @else {
+        <app-data-loader-content />
+        }
+    </div>
+</div>
+
+<ng-template #expenseModal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-main-popup-content">
+            <div class="popup-table-wrapper">
+                <div class="popup-table-scroll-container">
+                    <table class="popup-table">
+                        <thead>
+                            <tr>
+                                <th colspan="7" class="custom-popup-header">
+                                    {{ selectedEmployee?.employeeName }} - Expense Details
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>{{ 'Expense Name' | translate }}</th>
+                                <th>{{ 'Description' | translate }}</th>
+                                <th>{{ 'Expense Type' | translate }}</th>
+                                <th>{{ 'Expense Date' | translate }}</th>
+                                <th>{{ 'Amount (USD)' | translate }}</th>
+                                <th>{{ 'Status' | translate }}</th>
+                                <th>{{ 'Receipt Number' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngIf="!popupData || popupData.length === 0">
+                                <td colspan="7" class="text-center">No data available</td>
+                            </tr>
+                            <tr *ngFor="let item of popupData">
+                                <td>{{ item.expenseItemName ?? '-' }}</td>
+                                <td class="text-center">
+                                    <div>
+                                        <a type="button" [ngbPopover]="reason">
+                                            <app-info-icon />
+                                        </a>
+                                        <ng-template #reason>
+                                            <p class="mb-0">{{item.expenseItemsDescription}}</p>
+                                        </ng-template>
+                                    </div>
+                                </td>
+                                <td>{{ item.expenseType ?? '-' }}</td>
+                                <td class="text-nowrap">
+                                    {{ item.expenseDate ? (item.expenseDate | dateformat) : '-' }}
+                                </td>
+                                <td>{{ (item.expenseAmount | number:'1.2-2') ?? '-' }}</td>
+                                <td>{{ item.status ?? '-' }}</td>
+                                <td>{{ item.receiptNumber ?? '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">
+                    {{ 'Close' | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>

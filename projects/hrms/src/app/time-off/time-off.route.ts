@@ -593,11 +593,11 @@ export default [
         component: ExtraHoursWaitingForApprovalComponent,
         data: { permission: 'Waiting For Approval (Extra Hours).view' },
       },
-      {
-        path: 'approved',
-        component: ExtraHoursApprovalComponent,
-        data: { permission: 'Approved (Extra Hours).view' },
-      },
+      // {
+      //   path: 'approved',
+      //   component: ExtraHoursApprovalComponent,
+      //   data: { permission: 'Approved (Extra Hours).view' },
+      // },
       {
         path: 'process',
         component: ExtraHoursProcessComponent,
@@ -608,11 +608,11 @@ export default [
         component: ExtraHoursRejectComponent,
         data: { permission: 'Rejected (Extra Hours).view' },
       },
-      {
-        path: 'cancelled',
-        component: ExtraHoursCancelComponent,
-        data: { permission: 'Cancelled(Extra Hours).view' },
-      },
+      // {
+      //   path: 'cancelled',
+      //   component: ExtraHoursCancelComponent,
+      //   data: { permission: 'Cancelled(Extra Hours).view' },
+      // },
 
       // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],

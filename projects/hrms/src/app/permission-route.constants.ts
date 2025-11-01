@@ -166,8 +166,8 @@ export const REGULARIZATION_SUB_TABS = [
 
 export const EXTRA_HOURS_SUB_TABS = [
   { route: '/time-off/extra-hours/waiting-for-approval', permission: 'Waiting For Approval (Extra Hours).view' },
-  { route: '/time-off/extra-hours/approved', permission: 'Approved (Extra Hours).view' },
-  { route: '/time-off/extra-hours/processed', permission: 'Processed (Extra Hours).view' },
+  // { route: '/time-off/extra-hours/approved', permission: 'Approved (Extra Hours).view' },
+  { route: '/time-off/extra-hours/process', permission: 'Processed (Extra Hours).view' },
   { route: '/time-off/extra-hours/rejected', permission: 'Rejected (Extra Hours).view', },
 ]
 

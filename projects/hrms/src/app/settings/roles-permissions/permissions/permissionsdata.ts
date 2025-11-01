@@ -453,6 +453,10 @@ export const permissionsData = [
   { fields: 'Attendance Team Manager List(WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(WFH)', View: false, Update: false, Create: false, Delete: false },
 
+  { fields: 'Attendance All Employees List(RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Team Manager List(RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team Report(RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+
   { fields: 'Attendance All Employees List(Permission)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Permission)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(Permission)', View: false, Update: false, Create: false, Delete: false },

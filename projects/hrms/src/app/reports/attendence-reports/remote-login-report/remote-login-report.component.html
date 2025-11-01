@@ -5,7 +5,7 @@
 
     <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
       <div class="d-flex align-items-center gap-3">
-        @if(rbac.allowedToAccess('WFH Report - Generate.view')){
+        @if(rbac.allowedToAccess('Remote Login Report - Generate.view')){
         <button type="reset" class="clear-all-btn" [disabled]="
             !wfhReportForm.get('dateRange')?.value &&
             !wfhReportForm.get('employee')?.value &&
@@ -23,7 +23,7 @@
         </div>
 
         <!-- Employee -->
-        @if(rbac.allowedToAccess('Attendance All Employees List(WFH).view')){
+        @if(rbac.allowedToAccess('Attendance All Employees List(RemoteLogin).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
@@ -37,7 +37,7 @@
         }
 
         <!-- Team Manager -->
-        @if(rbac.allowedToAccess('Attendance Team Manager List(WFH).view')){
+        @if(rbac.allowedToAccess('Attendance Team Manager List(RemoteLogin).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
@@ -50,8 +50,8 @@
         </div>
         }
         <!--My Team  -->
-        @if(rbac.allowedToAccess('My Team Report(WFH).view') &&!rbac.allowedToAccess('Attendance All Employees List(WFH).view')
-        && !rbac.allowedToAccess('Attendance Team Manager List(WFH).view')){
+        @if(rbac.allowedToAccess('My Team Report(RemoteLogin).view') &&!rbac.allowedToAccess('Attendance All Employees List(RemoteLogin).view')
+        && !rbac.allowedToAccess('Attendance Team Manager List(RemoteLogin).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
@@ -67,7 +67,7 @@
 
         <!-- Buttons -->
         <div class="d-flex gap-2">
-          @if(rbac.allowedToAccess('WFH Report - Generate.view')){
+          @if(rbac.allowedToAccess('Remote Login Report - Generate.view')){
           <button type="submit" class="custom-btn btn-secondary" [disabled]="isWFHGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -77,7 +77,7 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('WFH Report - Generate.view') && rbac.allowedToAccess('WFH Report - Export.view')){
+          @if(rbac.allowedToAccess('Remote Login Report - Generate.view') && rbac.allowedToAccess('Remote Login Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()"
             [disabled]="filteredWfhRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){

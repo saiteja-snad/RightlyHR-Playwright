@@ -27,9 +27,9 @@ export class SkillSetMainTabsComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.navTabs = [
-      { label: 'Dashboard', link: '/skill-management/dashboard', icon: 'main-menu-icons/project-management-client.png', 
+      { label: 'Skill Dashboard', link: '/skill-management/dashboard', icon: 'main-menu-icons/skill-dashboard.png', 
         permission: { feature: 'Skills Dashboard', action: 'view' } },
-      { label: 'Directory', link: '/skill-management/directory', icon: 'main-menu-icons/project-management-project.png', 
+      { label: 'Skill Directory', link: '/skill-management/directory', icon: 'main-menu-icons/skill-directory.png', 
         permission: { feature: 'Skills Directory', action: 'view' } },
     ];
     this.filterTabsByRbac();

@@ -11,9 +11,10 @@ import { PmsSettingsTabsComponent } from "../../shared/pms-module-tabs/pms-setti
 import { AccordionModule } from 'primeng/accordion';
 import { Router } from '@angular/router';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { SettingsEmployeeFieldsUpdateConfigurationsComponent } from '../../shared/settings-employee-fields-update-configurations/settings-employee-fields-update-configurations.component';
 @Component({
   selector: 'app-settings-overview',
-  imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,
+  imports: [CommonModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsRolePermissionsModuleTabsComponent,SettingsEmployeeFieldsUpdateConfigurationsComponent,
     SettingsTimeOffTabsComponent, SettingsAssetsConfigurationsTabsComponent, SettingDynamicFormsTabsComponent, PmsSettingsTabsComponent, AccordionModule],
   templateUrl: './settings-overview.component.html',
   styleUrl: './settings-overview.component.scss',

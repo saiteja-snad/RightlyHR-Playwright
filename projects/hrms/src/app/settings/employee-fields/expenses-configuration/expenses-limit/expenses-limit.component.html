@@ -37,7 +37,7 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="approverOptions" optionLabel="label" optionValue="value"
                         placeholder="Select Approver Type" formControlName="approver"
-                        (onChange)="onApproverChange($event.value)" class="custom-select w-100" appendTo="body"
+                        (onChange)="onApproverChange($event.value)" class="custom-select w-100" 
                         [disabled]="!isEditing" />
                 </div>
                 <div *ngIf="allowthresholdLimitForm.get('approver')?.touched && allowthresholdLimitForm.get('approver')?.invalid"

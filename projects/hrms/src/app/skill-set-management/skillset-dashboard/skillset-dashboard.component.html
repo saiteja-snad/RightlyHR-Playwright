@@ -1,65 +1,55 @@
-<div class="dashboard-wrapper">
-    <!-- === Top Summary Cards === -->
-    <div class="summary-cards">
-        <p-card class="summary-card" *ngFor="let card of summaryCards">
-            <div class="summary-title">{{ card.title }}</div>
-            <div class="summary-value">{{ card.value }}</div>
-        </p-card>
-    </div>
-
-    <!-- === Charts Row === -->
-  <div class="chart-cards mt-3">
-  <!-- === Skill Proficiency === -->
-  <p-card class="chart-card">
-    <div class="chart-title">Skill Proficiency</div>
-    <p-chart type="doughnut" [data]="skillData" [options]="chartOptions"></p-chart>
-
-    <div class="chart-counts-grid mt-3">
-      <!-- Row 1: Counts -->
-      <div class="count-row">
-        <div *ngFor="let item of skillProficiencyCounts" class="count-cell">
-          {{ item.count }}
-        </div>
-      </div>
-
-      <!-- Row 2: Labels -->
-      <div class="label-row">
-        <div *ngFor="let item of skillProficiencyCounts" class="count-cell">
-          {{ item.label }}
-        </div>
+<div class="custom-main-component-container">
+  <!--Summary cards-->
+  <div class="cards-grid-container mb-3">
+    <div *ngFor="let card of summaryCards;">
+      <div class="summary-card">
+        <div class="summary-title mb-2">{{ card.title }}</div>
+        <div class="summary-value">{{ card.value }}</div>
       </div>
     </div>
-  </p-card>
+  </div>
 
-  <!-- === Skills by Department === -->
-  <p-card class="chart-card">
-    <div class="chart-title">Skills by Department</div>
-    <p-chart type="doughnut" [data]="deptData" [options]="chartOptions"></p-chart>
-
-    <div class="chart-counts-grid mt-3">
-      <!-- Row 1: Counts -->
-      <div class="count-row">
-        <div *ngFor="let dept of deptCounts" class="count-cell">
-          {{ dept.count }}
-        </div>
-      </div>
-
-      <!-- Row 2: Labels -->
-      <div class="label-row">
-        <div *ngFor="let dept of deptCounts" class="count-cell">
-          {{ dept.label }}
-        </div>
+  <!--Charts content-->
+  <div class="chart-container mb-3">
+    <div class="summary-card pic-chart-content">
+      <div class="graph-header mb-3">Skill Proficiency</div>
+      <div class="d-flex justify-content-center">
+        <p-chart type="doughnut" [data]="skillLevelData" [options]="skillLevelOptions"></p-chart>
       </div>
     </div>
-  </p-card>
 
-  <!-- === Top 5 Skills (Horizontal Bar) === -->
-  <p-card class="chart-card">
-    <div class="chart-title d-flex justify-content-between align-items-center">
-      <span>Top 5 Skills</span>
+    <div class="summary-card pic-chart-content">
+      <div class="graph-header mb-3">Skill Proficiency</div>
+      <div class="d-flex justify-content-center">
+        <p-chart type="doughnut" [data]="skillByDepartmentData" [options]="skillByDepartmentOptions"></p-chart>
+      </div>
     </div>
-    <p-chart type="bar" [data]="topSkillsData" [options]="horizontalBarOptions"></p-chart>
-  </p-card>
-</div>
 
+    <div class="summary-card">
+      <div class="graph-header mb-3">Top 5 Skills</div>
+      <p-chart type="bar" [data]="topSkillsData" [options]="topSkillsOptions"></p-chart>
+    </div>
+  </div>
+
+  <!--table content-->
+  <div class="summary-card p-3 mb-3">
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <th>Skill Name</th>
+          <th>Employee Count</th>
+          <th>Proficiency (Expert/Mid/Beginner)</th>
+          <th>Action</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

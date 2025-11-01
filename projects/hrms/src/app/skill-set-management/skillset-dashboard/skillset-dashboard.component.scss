@@ -1,129 +1,139 @@
-.summary-cards,
-.chart-cards {
-    display: flex;
-
-    gap: 1.5rem;
-}
-
-/* ---- TOP SUMMARY CARDS ---- */
 .summary-card {
-    flex: 1 1 calc(25% - 1.5rem);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    transition: transform 0.2s ease;
-}
+  padding: 1rem;
+  border: 1px solid #DCE3E9;
+  border-radius: 0.625rem;
+  background-color: #FFF;
 
-.summary-card:hover {
-    transform: translateY(-3px);
-}
-
-.summary-title {
+  .summary-title {
     font-size: 0.9rem;
     color: #6b7280;
-}
+  }
 
-.summary-value {
-    font-size: 2rem;
+  .summary-value {
+    font-size: var(--fontsize18);
     font-weight: 700;
-    color: #111827;
+    color: var(--primary-color);
+  }
 }
 
-.summary-subtext {
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
+.chart-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: stretch;
 }
 
-.summary-subtext.green {
-    color: #10b981;
+.graph-header {
+  font-size: var(--fontsize16);
+  font-weight: 700;
+  color: var(--primary-color);
 }
+
+.pic-chart-content {
+  canvas {
+    width: 240px !important;
+    height: 240px !important;
+  }
+}
+
+// .summary-subtext {
+//   font-size: 0.85rem;
+//   margin-top: 0.25rem;
+// }
+
+// .summary-subtext.green {
+//   color: #10b981;
+// }
 
 /* ---- CHART CARDS ---- */
-.chart-cards {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    height: calc(100dvh - 20rem);
-    gap: 1.5rem;
-}
+// .chart-cards {
+//   display: flex;
+//   justify-content: space-between;
+//   flex-wrap: wrap;
+//   height: calc(100dvh - 20rem);
+//   gap: 1.5rem;
+// }
 
-.chart-card {
-    flex: 1 1 calc(33.33% - 1.5rem);
-    border-radius: 12px;
-    padding: 1.5rem;
-    height: calc(100dvh - 20rem);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
+// .chart-card {
+//   flex: 1 1 calc(33.33% - 1.5rem);
+//   border-radius: 12px;
+//   padding: 1.5rem;
+//   height: calc(100dvh - 20rem);
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+// }
 
 
-.chart-legend {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
-    font-size: 0.85rem;
-}
+// .chart-legend {
+//   display: flex;
+//   justify-content: center;
+//   flex-wrap: wrap;
+//   gap: 1rem;
+//   margin-top: 1rem;
+//   font-size: 0.85rem;
+// }
 
-.legend-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 5px;
-}
+// .legend-dot {
+//   display: inline-block;
+//   width: 10px;
+//   height: 10px;
+//   border-radius: 50%;
+//   margin-right: 5px;
+// }
 
-.top-skills {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0 0 0;
-    font-size: 0.9rem;
-}
+// .top-skills {
+//   list-style: none;
+//   padding: 0;
+//   margin: 1rem 0 0 0;
+//   font-size: 0.9rem;
+// }
 
-.see-all {
-    font-size: 0.85rem;
-    color: #6366f1;
-    text-decoration: none;
-}
-.chart-card p-chart {
-  height: 250px;
-  display: block;
-}
+// .see-all {
+//   font-size: 0.85rem;
+//   color: #6366f1;
+//   text-decoration: none;
+// }
 
-.chart-title {
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-.chart-counts-grid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 1rem;
-}
+// .chart-card p-chart {
+//   height: 250px;
+//   display: block;
+// }
 
-.count-row,
-.label-row {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  text-align: center;
-}
+// .chart-title {
+//   font-weight: 600;
+//   font-size: 1rem;
+//   margin-bottom: 1rem;
+// }
 
-.count-cell {
-  flex: 1;
-  font-size: 0.95rem;
-}
+// .chart-counts-grid {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   margin-top: 1rem;
+// }
 
-.count-row .count-cell {
-  font-weight: 600;
-  color: #2e7d32;
-  font-size: 1.1rem;
-}
+// .count-row,
+// .label-row {
+//   display: flex;
+//   justify-content: space-around;
+//   width: 100%;
+//   text-align: center;
+// }
 
-.label-row .count-cell {
-  color: #555;
-  font-size: 0.9rem;
-  margin-top: 0.25rem;
-}
+// .count-cell {
+//   flex: 1;
+//   font-size: 0.95rem;
+// }
+
+// .count-row .count-cell {
+//   font-weight: 600;
+//   color: #2e7d32;
+//   font-size: 1.1rem;
+// }
+
+// .label-row .count-cell {
+//   color: #555;
+//   font-size: 0.9rem;
+//   margin-top: 0.25rem;
+// }

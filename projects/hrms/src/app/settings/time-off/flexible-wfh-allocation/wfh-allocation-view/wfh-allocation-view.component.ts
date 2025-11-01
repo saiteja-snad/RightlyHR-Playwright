@@ -204,7 +204,9 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.getAllwfhallocations();
           this.modal.openSuccessModal(`${res.data.employeeId.name} WFH allocation has been inactivated.`);
+
         },
         error: (err: any) => {
           this.modalService.dismissAll();
@@ -227,6 +229,7 @@ export class WfhAllocationViewComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.getAllwfhallocations();
           this.modal.openSuccessModal(`${res.data.employeeId.name} WFH allocation has been activated`);
         },
         error: (err: any) => {

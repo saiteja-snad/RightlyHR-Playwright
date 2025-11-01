@@ -113,12 +113,15 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   get_Employeelist_forTM = [] as any;
   permissions_list = [] as any;
+  extra_logs = [] as any;
   regularization_list = [] as any;
   currentDate: any;
   date!: Date;
-  attendanceSummaryData : any;
-  attendanceSummaryOptions : any;
+  attendanceSummaryData: any;
+  attendanceSummaryOptions: any;
   maxMonth: Date = new Date();
+  extraHoursForm!: FormGroup;
+
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -128,11 +131,11 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public formsValidation: FormValidationsService,
     public readonly router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get current date
-    const now = moment().startOf('month'); 
+    const now = moment().startOf('month');
     this.date = now.toDate();
     this.currentDate = moment().date();
     // Get current month (1-based)
@@ -150,6 +153,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.initliazeExtraHoursForm();
+    this.getdatabyentriy();
   }
 
   initiateUpdateModuleInfo() {
@@ -271,17 +276,19 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     date: Date,
     totalduration: any,
     permissions: any,
+    logExtraHours: any,
     regularizations: any,
-    permissionduration:any,
-    regularizationduration:any,
-    breakDuration : any,
+    permissionduration: any,
+    regularizationduration: any,
+    breakDuration: any,
   ) {
     this.logsDuration = totalduration;
     this.breakDuration = breakDuration;
-    this.permissionsDuration=permissionduration;
-    this.regularizationAttendDuration=regularizationduration;
+    this.permissionsDuration = permissionduration;
+    this.regularizationAttendDuration = regularizationduration;
     this.selectedDate = date;
     this.permissions_list = permissions;
+    this.extra_logs = logExtraHours;
     this.regularization_list = regularizations;
     if (Value) {
       this.punchPairs = Value;
@@ -375,9 +382,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
-      employee.middleName ? ' ' + employee.middleName : ''
-    }${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
+      }${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
@@ -433,27 +439,27 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   }
 
   // function to get the data of employees by hierarchy
- getAllEmployeeDetails() {
-  const statuses = ['active', 'Trainee Active','Active Contract'];
-  this.subscription = this.http
-    .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
-    .subscribe({
-      next: (response: any) => {
-        if (response) {
-          this.getAllEmployeeInfo = response
-            .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
-            .map((employee: any) => ({
-              ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim()
-            }))
-            .sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
+  getAllEmployeeDetails() {
+    const statuses = ['active', 'Trainee Active', 'Active Contract'];
+    this.subscription = this.http
+      .getData(`Employeedata/v3/Getallemployees?statuses=${statuses}`)
+      .subscribe({
+        next: (response: any) => {
+          if (response) {
+            this.getAllEmployeeInfo = response
+              .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
+              .map((employee: any) => ({
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName ?? ''}`.trim()
+              }))
+              .sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? '')); //  Sort by first name
+          }
+        },
+        error: (error) => {
+          console.log(error);
         }
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    });
-}
+      });
+  }
 
 
   onclickRegularization(date: Date) {
@@ -462,7 +468,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     });
   }
 
-getEmployeeDetails() {
+  getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
     this.subscription = this.http
       .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
@@ -486,6 +492,128 @@ getEmployeeDetails() {
           }
         },
       });
+  }
+
+  initliazeExtraHoursForm() {
+    this.extraHoursForm = this.fb.group({
+      date: [null, Validators.required],
+      duration: [null, [Validators.required]],
+      description: [null, [Validators.required],
+      ],
+    });
+  }
+
+  extraHoursDuration: { name: string; value: number }[] = [];
+  activeForm: string = '';
+  extraHrsLoader = false;
+  allowedPastDays = 0;
+  allowedHours = 0;
+  getdatabyentriy() {
+    const entity = 'ExtraLogHours';
+    const attributes = ['AllowedPastDays', 'AllowedHours'];
+    this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, entity, attributes).subscribe({
+      next: (data: any) => {
+        const allowedPastDaysObj = data.find((d: any) => d.attribute === 'AllowedPastDays');
+        const allowedHoursObj = data.find((d: any) => d.attribute === 'AllowedHours');
+
+        this.allowedPastDays = allowedPastDaysObj ? Number(allowedPastDaysObj.value) : 0;
+        this.allowedHours = allowedHoursObj ? Number(allowedHoursObj.value) : 0;
+
+        if (this.allowedHours > 0) {
+          this.generateDurationOptions(this.allowedHours);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      },
+    });
+  }
+
+  generateDurationOptions(maxHours: number) {
+    this.extraHoursDuration = [];
+    for (let i = 0.5; i <= maxHours; i += 0.5) {
+      this.extraHoursDuration.push({ name: `${i}`, value: i });
+    }
+  }
+
+  // Restrict calendar between allowedPastDays and today
+  getMinAllowedDate(): string {
+    const today = new Date();
+    const minDate = new Date(today);
+    minDate.setDate(today.getDate() - this.allowedPastDays);
+    return minDate.toISOString().split('T')[0];
+  }
+
+  getCurrentDate(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  onExtraHrsSubmit(form: FormGroup) {
+    if (form.valid) {
+      const formData = form.value;
+      const payLoad = {
+        raisedFor: this.empdata.employeeId,
+        requestedBy: this.empdata.employeeId,
+        requestedDate: formData.date,
+        createdDate: moment().format('YYYY-MM-DD'),
+        status: 'Waiting for Approval',
+        duration: formData.duration.value.toString(),
+        notes: formData.description,
+        moduleId: environment.extraHoursModuleId,
+      };
+      this.extraHrsLoader = true;
+      this.http.postData('RegularizationRequests/create', payLoad, { responseType: 'text', })
+        .subscribe({
+          next: (res: any) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Extra hours requested successfully'
+            );
+            this.extraHoursForm.reset();
+          },
+          error: (err: any) => {
+            this.extraHrsLoader = false;
+            console.error('Error:', err);
+
+            let errorMessage = 'An unexpected error occurred. Please try again.';
+
+            try {
+              if (typeof err.error === 'string') {
+                // Sometimes backend sends a raw string message or JSON string
+                const parsed = JSON.parse(err.error);
+                errorMessage = parsed.message || err.error;
+              } else if (err.error?.message) {
+                // Standard object format: { message: '...' }
+                errorMessage = err.error.message;
+              } else if (err.message) {
+                // Fallback for HttpErrorResponse.message
+                errorMessage = err.message;
+              }
+            } catch (e) {
+              errorMessage = typeof err.error === 'string' ? err.error : errorMessage;
+            }
+
+            this.conformationPopup.openErrorModal(errorMessage);
+          },
+          complete: () => {
+            this.extraHrsLoader = false;
+            this.extraHoursForm.reset();
+          },
+        });
+    }
+  }
+
+  setActiveForm(formName: string) {
+    this.activeForm = formName;
+  }
+
+  closeModal() {
+    this.modalService.dismissAll();
+    if (this.activeForm === 'regularization') {
+      this.regularizationForm.reset();
+    } else if (this.activeForm === 'extraHours') {
+      this.extraHoursForm.reset();
+    }
   }
 
   ngOnDestroy(): void {

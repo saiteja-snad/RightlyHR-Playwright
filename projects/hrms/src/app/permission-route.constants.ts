@@ -165,7 +165,12 @@ export const REGULARIZATION_SUB_TABS = [
   { route: '/time-off/regularization/rejected', permission: 'Rejected (Regularization).view', },
 ]
 
-
+export const EXTRA_HOURS_SUB_TABS = [
+  { route: '/time-off/extra-hours/waiting-for-approval', permission: 'Waiting For Approval (Extra Hours).view' },
+  // { route: '/time-off/extra-hours/approved', permission: 'Approved (Extra Hours).view' },
+  { route: '/time-off/extra-hours/process', permission: 'Processed (Extra Hours).view' },
+  { route: '/time-off/extra-hours/rejected', permission: 'Rejected (Extra Hours).view', },
+]
 
 export const STANDARD_REPORTS_TABS = [
   { route: '/reports/standard-reports/employee-data', permission: 'Employee Master Data.view' },
@@ -232,6 +237,7 @@ export const PENDING_APPROVALS_TABS = [
   { route: '/time-off/pending-approvals/comp-off', permission: 'Comp Off Tab.view' },
   { route: '/time-off/pending-approvals/permissions', permission: 'Permissions Tab.view' },
   { route: '/time-off/pending-approvals/regularization-request', permission: 'Regularization Tab.view' },
+  { route: '/time-off/pending-approvals/extra-hours-request', permission: 'Extra Hours Tab.view' },
   { route: '/time-off/pending-approvals/separation-request', permission: 'Separation Request Tab.view' },
   { route: '/time-off/pending-approvals/recall-request', permission: 'Recall Request Tab.view' },
   { route: '/time-off/pending-approvals/trainee-approvals', permission: 'Trainee Details Tab.view' },
@@ -276,6 +282,11 @@ export const PENDING_APPROVALS_PERMISSIONS_SUB_TABS = [
 export const PENDING_APPROVALS_REGULARIZATION_SUB_TABS = [
   { route: '/time-off/pending-approvals/regularization-request/for-you', permission: 'For You (Regularization).view' },
   { route: '/time-off/pending-approvals/regularization-request/for-your-role', permission: 'For Role (Regularization).view' },
+]
+
+export const PENDING_APPROVALS_EXTRA_HOURS_SUB_TABS = [
+  { route: '/time-off/pending-approvals/extra-hours-request/for-you', permission: 'For You (Extra Hours).view' },
+  { route: '/time-off/pending-approvals/extra-hours-request/for-your-role', permission: 'For Role (Extra Hours).view' },
 ]
 
 export const SEPARATION_REQUEST_SUB_TABS = [
@@ -332,7 +343,8 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' },
-  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view' }
+  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view'},
+  { route: '/settings/timeoff-configurations/eligibility-criterias/extra-hours-configuration', permission: 'Extra Hours Configuration Tab.view'}
 ]
 
 export const SETTINGS_PROJECT_MANAGEMENT_TABS = [

@@ -47,7 +47,7 @@ export const environment = {
   attendanceRegularizationModuleId:17,
   mandatoryLeaveCategoryId: 173,
   SeparationrequestmoduleId: 13,
-   timesheetModuleId:30,
+  timesheetModuleId:30,
   RecallrequestmoduleId: 14,
   ProbationrequestmoduleId: 20,
   ProbationNoticePeriodId: 0,
@@ -61,6 +61,7 @@ export const environment = {
   globalPermissionsModuleID:21,
   contractorModuleId:25,
   contractEmployeeConversionModuleId:26,
+  extraHoursModuleId: 31,
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
 
 };

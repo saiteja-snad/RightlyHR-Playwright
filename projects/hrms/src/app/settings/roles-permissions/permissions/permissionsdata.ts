@@ -413,6 +413,8 @@ export const permissionsData = [
   { fields: 'Team Leave Balance', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Team Leave Balance Summary', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Org Leave Balance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Reports', View: false, Update: false, Create: false, Delete: false },
+
 
   //Standard Reports Section
   { fields: 'Employee Master Data', View: false, Update: false, Create: false, Delete: false },
@@ -900,4 +902,11 @@ export const permissionsData = [
   { fields: 'Employee Info Card Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Card Details', View: false, Update: false, Create: false, Delete: false },
 
+  { fields: 'Expense Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Report All Employees List', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Report Manager List', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team Report(Expenses)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expenses All Employees List', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expenses Team Manager List', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Expense Report - Export', View: false, Update: false, Create: false, Delete: false },
 ];

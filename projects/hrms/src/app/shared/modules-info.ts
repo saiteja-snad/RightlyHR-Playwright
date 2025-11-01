@@ -106,6 +106,7 @@ export const MODULE_INFOS = {
 
     //Policies Module Info
     POLICIES_MODULE_INFO: "The Policies page lists all organizational policies for the selected year, including policy name, description, and downloadable attachments. Users can view specific policy documents like leave policies, holiday policies, and workplace conduct guidelines for easy reference.",
+    EXPENSE_REPORTS_MODULE_INFO : "The Expense Report module provides a comprehensive overview of all employee expense claims within a selected date range. It allows users to filter reports by employee, manager, or status to easily track and review expenses.",
 
     //Time off Module Info
     TIME_OFF_LEAVES_MODULE_INFO: "The Leave  section displays the total leaves and categorizes them into statuses like Waiting for Approval, Approved, Processed, Rejected, and Cancelled.Employees can apply for different leave types and track approvals and balances.",

@@ -13,9 +13,14 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
+import dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import { Subject, Subscription, takeUntil } from 'rxjs';
-import { Client } from '../../../clients.model';
+import * as XLSX from 'xlsx';
+import { IAttendanceDetails } from '../../../Interfaces/reports.model';
+import { environment } from '../../../../environments/environment';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
+import { ClientData } from '../../../clients.model';
 import { TimesheetReportTabsComponent } from '../../../shared/reports-tabs/timesheet-report-tabs/timesheet-report-tabs.component';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
@@ -41,7 +46,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
   disableBtn = false;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  clients: Client[] = [];
+  clients: ClientData[] = [];
   projects: TimesheetReportTabsComponent[] = [];
   noclientproject = false;
   BillableOptions = [
@@ -66,7 +71,7 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-   today: Date = new Date();
+  today: Date = new Date();
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -98,26 +103,26 @@ export class MyTimesheetReportComponent implements OnInit, OnDestroy {
     })
   }
 
-isFilterApplied(): boolean {
-  const formValue = this.MyTimesheetReportForm.value;
+  isFilterApplied(): boolean {
+    const formValue = this.MyTimesheetReportForm.value;
+    return (
+      (formValue.client !== null && formValue.client !== undefined && formValue.client !== '') ||
+      (formValue.project !== null && formValue.project !== undefined && formValue.project !== '') ||
+      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+      (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined) ||
+      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
+    );
+  }
 
-  return (
-    (formValue.client !== null && formValue.client !== undefined && formValue.client !== '') ||
-    (formValue.project !== null && formValue.project !== undefined && formValue.project !== '') ||
-    (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-    (formValue.status && formValue.status.value !== null && formValue.status.value !== undefined) ||
-    (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-  );
-}
   clearAllFilters(): void {
     this.MyTimesheetReportForm.reset();
     this.filteredmytimesheetRecord = [];
     this.MyTimesheetReportForm.get('project')?.disable();
     this.collectionSize = 0;
   }
-onGenerate() {
-  this.generatemytimesheetReport(this.page, this.pageSize, true, true);
-}
+  onGenerate() {
+    this.generatemytimesheetReport(this.page, this.pageSize, true, true);
+  }
 
   // called for pagination 
   onRowsChange() {
@@ -130,7 +135,7 @@ onGenerate() {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-     this.generatemytimesheetReport(this.page, this.pageSize,false,false);
+    this.generatemytimesheetReport(this.page, this.pageSize, false, false);
   }
 
   // Called when first size changes
@@ -139,7 +144,7 @@ onGenerate() {
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generatemytimesheetReport(this.page, this.pageSize, true,true);
+    this.generatemytimesheetReport(this.page, this.pageSize, true, true);
   }
   //GET CLIENT AND PROJECT
   getResourceData() {
@@ -149,23 +154,13 @@ onGenerate() {
       .subscribe((res: any) => {
         if (res.success) {
           const rawData = res.data;
-
           // Group projects under each client
           this.clients = rawData.reduce((acc: any[], curr: any) => {
             const existingClient = acc.find((c) => c.clientId === curr.client.clientId);
-
             const projectObj = {
               projectId: curr.project.projectId,
               projectName: curr.project.projectName,
-              startDate: curr.startDate,
-              endDate: curr.endDate,
-              status: curr.status,
-              role: curr.role,
-              isWeekendAllowed: curr.project.isWeekendAllowed || curr.client.isWeekendAllowed,
-              isOverTimeAllowed: curr.project.isOverTimeAllowed || curr.client.isOverTimeAllowed,
-              isBillable: curr.project.isbillable || curr.client.isbillable,
             };
-
             if (existingClient) {
               existingClient.projects.push(projectObj);
             } else {
@@ -173,12 +168,10 @@ onGenerate() {
                 clientId: curr.client.clientId,
                 clientName: curr.client.clientName,
                 projects: [projectObj],
-                shift: curr.shift,
               });
             }
             return acc;
           }, []);
-
           // Add "No Client/No Project" option
           if (!this.noclientproject) {
             this.clients.unshift({
@@ -190,43 +183,9 @@ onGenerate() {
                   projectName: 'No Project',
                   isNoClientProject: true,
                 },
-              ],
-              taxId: '',
-              websiteUrl: '',
-              industryType: '',
-              logoPath: '',
-              address: '',
-              status: '',
-              overtimeEligibile: false,
-              billable: false,
-              weekendWorkAllowed: false,
-              createdBy: {
-                id: 0,
-                name: ''
-              },
-              updatedBy: {
-                id: 0,
-                name: ''
-              },
-              createdAt: '',
-              updatedAt: '',
-              contact: {
-                contactId: 0,
-                entityRefId: 0,
-                name: '',
-                email: '',
-                phoneNumber: '',
-                phoneCountryCode: '',
-                phoneDialCode: '',
-                role: '',
-                primaryContact: false,
-                active: false,
-                createdAt: '',
-                updatedAt: ''
-              }
+              ]
             });
           }
-
           // Prepare dropdown data for <p-select>
           this.clientDropdownList = this.clients.map((c) => ({
             label: c.clientName,
@@ -240,11 +199,10 @@ onGenerate() {
   getAllActiveProjects(event: any) {
     const selectedClientId = event.value;
     const selectedClient = this.clients.find((c) => c.clientId === selectedClientId);
-// Always reset project when client changes
-  const projectControl = this.MyTimesheetReportForm.get('project');
-  projectControl?.reset();
-  this.projectsData = [];
-
+    // Always reset project when client changes
+    const projectControl = this.MyTimesheetReportForm.get('project');
+    projectControl?.reset();
+    this.projectsData = [];
     if (selectedClient && selectedClient.projects) {
       this.projectsData = selectedClient.projects.map((p: any) => ({
         displayprojectName: p.projectName,
@@ -267,13 +225,12 @@ onGenerate() {
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasBillable = billable !== null && billable !== undefined;
     const hasStatus = status !== null && status !== undefined;
-
     return !(hasClient || hasProject || hasDateRange || hasBillable || hasStatus);
   }
+
   buildTimesheetReportParams() {
     const formValue = this.MyTimesheetReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
-
     // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
       if (!date) return null;
@@ -288,14 +245,11 @@ onGenerate() {
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
       ReportType: 'MyTimesheet',
-      EmployeeIds: employeeId,
-      // ClientIds: formValue.client ? formValue.client : 0,   
-      //  ProjectIds: formValue.project ? formValue.project : 0 
+      EmployeeIds:this.empinfo.employeeId
     };
     if (formValue.client !== null && formValue.client !== undefined) {
       params.ClientIds = formValue.client ? formValue.client : 0;
     }
-
     if (formValue.project !== null && formValue.project !== undefined) {
       params.ProjectIds = formValue.project ? formValue.project : 0;
     }
@@ -306,64 +260,51 @@ onGenerate() {
     return params;
   }
 
-  
-  generatemytimesheetReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false) {
+  generatemytimesheetReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.MyTimesheetReportForm.invalid) return;
     // Only reset pagination when explicitly requested
     if (resetPagination) {
       this.page = 1;
       this.first = 0;
     }
-
     if (showLoader) this.spinnerLoader1 = true;
-
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.spinnerLoader1 = false;
-
-          if (res.success && res.data?.items) {
-            this.filteredmytimesheetRecord = res.data.items;
-            this.collectionSize = res.data.totalCount || 0;
-
-            // If total count smaller than current offset, go back to first
-            if (this.first >= this.collectionSize) {
-              this.first = 0;
-              this.page = 1;
-            }
-
-            this.disableBtn = false;
-          } else {
-            this.filteredmytimesheetRecord = [];
-            this.collectionSize = 0;
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.spinnerLoader1 = false;
+        if (res.success && res.data?.items) {
+          this.filteredmytimesheetRecord = res.data.items;
+          this.collectionSize = res.data.totalCount || 0;
+          // If total count smaller than current offset, go back to first
+          if (this.first >= this.collectionSize) {
+            this.first = 0;
+            this.page = 1;
           }
-        },
-        error: (err) => {
-          this.spinnerLoader1 = false;
-          console.error('Error fetching report:', err);
+          this.disableBtn = false;
+        } else {
           this.filteredmytimesheetRecord = [];
           this.collectionSize = 0;
-          this.disableBtn = true;
-        },
-      });
+        }
+      },
+      error: (err) => {
+        this.spinnerLoader1 = false;
+        console.error('Error fetching report:', err);
+        this.filteredmytimesheetRecord = [];
+        this.collectionSize = 0;
+        this.disableBtn = true;
+      },
+    });
   }
 
   exportmytimesheetreport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-
-    this.http.downloadTimesheetReport(
-      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-    ).subscribe({
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         // Extract filename from Content-Disposition
         let filename = 'mytimesheet.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
-
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
           const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
@@ -375,7 +316,6 @@ onGenerate() {
             filename = asciiFilenameMatch[1];
           }
         }
-
         // Download the blob as before
         const blob = new Blob([response.body!], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -386,7 +326,6 @@ onGenerate() {
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
-
         console.log('Downloaded file:', filename);
         this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },
@@ -396,7 +335,6 @@ onGenerate() {
       complete: () => { }
     });
   }
-
 
   navigation() {
     this.router.navigate(['/reports']);

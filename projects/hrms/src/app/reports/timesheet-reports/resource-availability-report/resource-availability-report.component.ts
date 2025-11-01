@@ -101,13 +101,13 @@ export class ResourceAvailabilityReportComponent {
 
   isFilterApplied(): boolean {
     const formValue = this.ResourceAvailabilityReportForm.value;
-
     return (
       (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
       (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
       (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
     );
   }
+
   clearAllFilters(): void {
     this.ResourceAvailabilityReportForm.reset();
     this.filteredResourceAvailabilityRecord = [];
@@ -120,7 +120,6 @@ export class ResourceAvailabilityReportComponent {
     this.first = 0;
     this.generateResourceAvailabilityReport(this.page, this.pageSize);
   }
-
   onGenerate() {
     this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
   }
@@ -131,7 +130,6 @@ export class ResourceAvailabilityReportComponent {
     this.first = event.first;
     this.generateResourceAvailabilityReport(this.page, this.pageSize, false, false);
   }
-
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
@@ -140,39 +138,27 @@ export class ResourceAvailabilityReportComponent {
     this.first = 0;
     this.generateResourceAvailabilityReport(this.page, this.pageSize, true, true);
   }
-
+  // project data will show 
   getProjectsData(): void {
     this.loading = true;
-    this.http.getData(`Project?status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-
-          if (Array.isArray(res?.data)) {
-            // Store the raw project data
-            this.projectsList = res.data.map((project: any) => ({
-              label: project.projectName + (project.client?.clientName ? ` (${project.client.clientName})` : ''),
-              value: project.projectId
-            }));
-
-          } else {
-            this.projectsList = [];
-          }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error fetching projects:', err);
+    this.http.getData(`Project?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (Array.isArray(res?.data)) {
+          // Store the raw project data
+          this.projectsList = res.data.map((project: any) => ({
+            label: project.projectName + (project.client?.clientName ? ` (${project.client.clientName})` : ''),
+            value: project.projectId
+          }));
+        } else {
+          this.projectsList = [];
         }
-      });
-  }
-
-  onClientChange(event: any): void {
-    const clientId = event.value;
-    this.ResourceAvailabilityReportForm.patchValue({ projectId: null }); // reset project
-    this.ResourceAvailabilityReportForm.get('projectId')?.enable();
-    this.ResourceAvailabilityReportForm.get('employeid')?.disable();
-    this.ResourceAvailabilityReportForm.get('employeid')?.setValue([]);
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching projects:', err);
+      }
+    });
   }
 
   /** When project selected */
@@ -199,35 +185,12 @@ export class ResourceAvailabilityReportComponent {
     }
   }
 
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.length) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
-              employeeId: employee.employeeId,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
-            }));
-          } else {
-            this.getEmployeeInfo = [];
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching team manager details:', err);
-          this.getEmployeeInfo = [];
-        }
-      });
-  }
   /** Get all active employees for selected project */
   getAllActiveEmployees() {
     this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
+      .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-         // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
+          // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
            this.employeeData =
           res?.data?.map((x: any) => ({
             id: x.employee?.id,
@@ -235,7 +198,9 @@ export class ResourceAvailabilityReportComponent {
               ? `${x.employee.fusionEmployeeId} - ${x.employee.name}`
               : x.employee?.name || 'Unknown'
           })) ?? [];
+          // if (this.employeeData.length > 0) {
           this.ResourceAvailabilityReportForm.get('employeid')?.enable();
+          // }
         },
         error: (err) => {
           console.error('Error fetching employees:', err);
@@ -243,55 +208,18 @@ export class ResourceAvailabilityReportComponent {
         }
       });
   }
-
-  getAllActiveProjects() {
-    this.http
-      .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const projects = res?.data || [];
-
-          this.projectsData = projects.map((p: any) => ({
-            ...p,
-            displayName: `${p.client?.clientName || 'Unknown Client'}`,
-            displayprojectName: `${p.projectName || 'Unnamed Project'}`
-          }));
-
-          this.projectsData.unshift({
-            projectId: 0,
-            displayName: 'No Client',
-            displayprojectName: 'No Project'
-          });
-        },
-        error: (err) => {
-          console.error('Error fetching projects:', err);
-
-          this.projectsData = [
-            {
-              projectId: 0,
-              displayName: 'No Client',
-              displayprojectName: 'No Project'
-            }
-          ];
-        },
-      });
-  }
-
+  // generate,export button click call method for shoe,hide
   get isLeaveGenerateDisabled(): boolean {
     const { projectId, employeid, dateRange } = this.ResourceAvailabilityReportForm.value;
-
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasEmployeid = employeid !== null && employeid !== undefined;
-
     return !(hasProject || hasDateRange || hasEmployeid);
   }
-
+  // payload for resouce availability
   buildTimesheetReportParams() {
     const formValue = this.ResourceAvailabilityReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
-
     // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
       if (!date) return null;
@@ -323,7 +251,7 @@ export class ResourceAvailabilityReportComponent {
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
-
+  // generate ther report
   generateResourceAvailabilityReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.ResourceAvailabilityReportForm.invalid) return;
     // Only reset pagination when explicitly requested
@@ -331,63 +259,56 @@ export class ResourceAvailabilityReportComponent {
       this.page = 1;
       this.first = 0;
     }
+
     if (showLoader) this.spinnerLoader1 = true;
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.spinnerLoader1 = false;
-          if (res.success && res.data?.items) {
-            this.filteredResourceAvailabilityRecord = res.data.items;
-            this.collectionSize = res.data.totalCount || 0;
-            // If total count smaller than current offset, go back to first
-            if (this.first >= this.collectionSize) {
-              this.first = 0;
-              this.page = 1;
-            }
-
-            this.disableBtn = false;
-          } else {
-            this.filteredResourceAvailabilityRecord = [];
-            this.collectionSize = 0;
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.spinnerLoader1 = false;
+        if (res.success && res.data?.items) {
+          this.filteredResourceAvailabilityRecord = res.data.items;
+          this.collectionSize = res.data.totalCount || 0;
+          // If total count smaller than current offset, go back to first
+          if (this.first >= this.collectionSize) {
+            this.first = 0;
+            this.page = 1;
           }
-        },
-        error: (err) => {
-          this.spinnerLoader1 = false;
-          console.error('Error fetching report:', err);
+
+          this.disableBtn = false;
+        } else {
           this.filteredResourceAvailabilityRecord = [];
           this.collectionSize = 0;
-          this.disableBtn = true;
-        },
-      });
+        }
+      },
+      error: (err) => {
+        this.spinnerLoader1 = false;
+        console.error('Error fetching report:', err);
+        this.filteredResourceAvailabilityRecord = [];
+        this.collectionSize = 0;
+        this.disableBtn = true;
+      },
+    });
   }
-
+  // export the report
   exportResourceAvailabilityReport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-
-    this.http.downloadTimesheetReport(
-      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-    ).subscribe({
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         // Extract filename from Content-Disposition
         let filename = 'ResourceAvailabilityReport.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
-
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
           const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
           const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-
           if (utf8FilenameMatch && utf8FilenameMatch[1]) {
             filename = decodeURIComponent(utf8FilenameMatch[1]);
           } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
             filename = asciiFilenameMatch[1];
           }
         }
-
         //  Download the blob as before
         const blob = new Blob([response.body!], {
           type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -398,7 +319,6 @@ export class ResourceAvailabilityReportComponent {
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
-
         console.log('Downloaded file:', filename);
         this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },

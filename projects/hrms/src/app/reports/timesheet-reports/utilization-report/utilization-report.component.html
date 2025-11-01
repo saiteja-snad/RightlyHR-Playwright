@@ -93,56 +93,55 @@
     </form>
   </div>
 
-
   <div class="custom-table-content">
     @if (!isLoading) {
     <table id="leaveReportTable" class="w-100">
       <thead>
-       
+  
         <th>Client Name</th>
         <th>Project Name</th>
         <th>Employee ID</th>
-         <th>Employee Name</th>
+        <th>Employee Name</th>
         <th>Department</th>
+        <th>Total Allocated Hrs</th>
         <th>Total Logged Hrs</th>
-        <th>Billable Hrs</th>
-        <th>Non-Billable Hrs</th>
-        <th>Billable <i class="bi bi-percent"></i></th>
-        <th>Non-Billable <i class="bi bi-percent"></i></th>
+       <th>Billable Hrs</th> 
+       <th>Non-Billable Hrs</th> 
+        <th>Utilization <i class="bi bi-percent"></i></th>
       </thead>
-     <tbody>
-  @if (!filteredutilizationRecord || filteredutilizationRecord.length === 0) {
-    <tr>
-      <td colspan="9" class="text-center">
-        <app-no-data-found />
-      </td>
-    </tr>
-  }
-  @else {
-    @for (record of filteredutilizationRecord; track $index) {
-      <tr>
-        <td>{{ record.clientName ?? '-' }}</td>
-        <td>{{ record.projectName ?? '-' }}</td>
-        <td>{{ record.fusionEmpId ?? '-' }}</td>
-        <td>{{ record.employeeName ?? '-' }}</td>
-        <td>{{ record.department ?? '-' }}</td>
-        <td>{{ record.totalLoggedHours ?? '-' }}</td>
-        <td>{{ record.billableHours ?? '-' }}</td>
-        <td>{{ record.nonBillableHours ?? '-' }}</td>
-        <td>{{ record.billablePercent ?? '-' }}</td>
-        <td>{{ record.nonBillablePercent ?? '-' }}</td>
-      </tr>
-    }
-  }
-</tbody>
+      <tbody>
+        @if (!filteredutilizationRecord || filteredutilizationRecord.length === 0) {
+        <tr>
+          <td colspan="9" class="text-center">
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+        @else {
+        @for (record of filteredutilizationRecord; track $index) {
+        <tr>
+          <td>{{ record.clientName ?? '-' }}</td>
+          <td>{{ record.projectName ?? '-' }}</td>
+          <td>{{ record.fusionEmpId ?? '-' }}</td>
+          <td>{{ record.employeeName ?? '-' }}</td>
+          <td>{{ record.department ?? '-' }}</td>
+          <td>{{ record.allocatedHours ?? '-' }}</td>
+          <td>{{ record.totalLoggedHours ?? '-' }}</td>
+          <td>{{ record.billableHours ?? '-' }}</td>
+          <td>{{ record.nonBillableHours ?? '-' }}</td>
+          <td>{{ record.utilizationPercent ?? '-' }}</td>
 
-
+        </tr>
+        }
+        }
+      </tbody>
     </table>
     }
     @else{
     <app-data-loader-content />
     }
   </div>
+
   @if(collectionSize > 0){
   <div class="pagination-content">
     <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -161,4 +160,4 @@
     </div>
   </div>
   }
-</div>
+  </div>

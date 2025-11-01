@@ -54,15 +54,12 @@ export interface Project {
   isNoClientProject?: boolean;
 }
 
-export interface Client {
+export interface ClientData {
   clientId: number;
   clientName: string;
-  isWeekendAllowed?: boolean;
-  isOverTimeAllowed?: boolean;
-  isbillable?: boolean;
-  shift?: any;
 
   // 👇 Add this line
   projects?: Project[];
 }
+
 

@@ -15,7 +15,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { DropdownModule } from 'primeng/dropdown';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { Subject, Subscription, takeUntil } from 'rxjs';
-import { Client } from '../../../clients.model';
+import { ClientData } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -40,7 +40,7 @@ export class UtilizationReportComponent {
   filteredleaveRecords = false;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  clients: Client[] = [];
+  clients: ClientData[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
   projectsList: any[] = [];
@@ -83,7 +83,6 @@ export class UtilizationReportComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.loggedInUser = this.authService.getToken();
     this.initializeForm();
     this.getClientsData();
   }
@@ -100,7 +99,6 @@ export class UtilizationReportComponent {
       this.disableBtn = true;
     })
   }
-
   isFilterApplied(): boolean {
     const formValue = this.UtilizationReportForm.value;
     return (
@@ -111,6 +109,7 @@ export class UtilizationReportComponent {
       (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
     );
   }
+
   clearAllFilters(): void {
     this.UtilizationReportForm.reset();
     this.filteredutilizationRecord = [];
@@ -133,7 +132,6 @@ export class UtilizationReportComponent {
     this.first = event.first;
     this.generateUtilizationReport(this.page, this.pageSize, false, false);
   }
-
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
@@ -142,116 +140,44 @@ export class UtilizationReportComponent {
     this.first = 0;
     this.generateUtilizationReport(this.page, this.pageSize, true, true);
   }
+  // get all client
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-          if (Array.isArray(res?.data)) {
-            this.clients = res.data;
-
-            // 🔹 Add "No Client" option only once
-            const noClientExists = this.clients.some((c: any) => c.clientId === 0);
-            // Add "No Client/No Project" option
-            if (!this.noclientproject) {
-              this.clients.unshift({
-                clientId: 0,
-                clientName: 'No Client',
-                projects: [
-                  {
-                    projectId: 0,
-                    projectName: 'No Project',
-                    isNoClientProject: true,
-                  },
-                ],
-                taxId: '',
-                websiteUrl: '',
-                industryType: '',
-                logoPath: '',
-                address: '',
-                status: '',
-                overtimeEligibile: false,
-                billable: false,
-                weekendWorkAllowed: false,
-                createdBy: {
-                  id: 0,
-                  name: ''
+    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (Array.isArray(res?.data)) {
+          this.clients = res.data;
+          // Add "No Client/No Project" option
+          if (!this.noclientproject) {
+            this.clients.unshift({
+              clientId: 0,
+              clientName: 'No Client',
+              projects: [
+                {
+                  projectId: 0,
+                  projectName: 'No Project',
+                  isNoClientProject: true,
                 },
-                updatedBy: {
-                  id: 0,
-                  name: ''
-                },
-                createdAt: '',
-                updatedAt: '',
-                contact: {
-                  contactId: 0,
-                  entityRefId: 0,
-                  name: '',
-                  email: '',
-                  phoneNumber: '',
-                  phoneCountryCode: '',
-                  phoneDialCode: '',
-                  role: '',
-                  primaryContact: false,
-                  active: false,
-                  createdAt: '',
-                  updatedAt: ''
-                }
-              });
-            }
-            // 🔹 Create dropdown list
-            this.clientDropdownList = this.clients.map((client: any) => ({
-              label: client.clientName,
-              value: client.clientId
-            }));
-          } else {
-            this.clients = [];
-            this.clientDropdownList = [];
+              ]
+            });
           }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error fetching clients:', err);
+          // 🔹 Create dropdown list
+          this.clientDropdownList = this.clients.map((client: any) => ({
+            label: client.clientName,
+            value: client.clientId
+          }));
+        } else {
+          this.clients = [];
+          this.clientDropdownList = [];
         }
-      });
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching clients:', err);
+      }
+    });
   }
-
-  getProjectsByClientId(clientId: number): void {
-    //If "No Client" selected, show only "No Project"
-    if (clientId === 0) {
-      this.projectsList = [
-        { label: 'No Project', value: 0 }
-      ];
-      return;
-    }
-
-    if (!clientId) return;
-    this.loading = true;
-
-    this.http.getData(`Project?clientId=${clientId}&status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-          if (Array.isArray(res?.data)) {
-            this.projectsList = res.data.map((project: any) => ({
-              label: project.projectName,
-              value: project.projectId
-            }));
-          } else {
-            this.projectsList = [];
-          }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error fetching projects:', err);
-        }
-      });
-  }
-
-
-
+  // client onchange call method
   onClientChange(event: any): void {
     const clientId = event.value;
     this.UtilizationReportForm.patchValue({ projectId: null }); // reset project
@@ -260,6 +186,37 @@ export class UtilizationReportComponent {
     this.UtilizationReportForm.get('employeid')?.setValue([]);
     this.getProjectsByClientId(clientId);
   }
+  // get project by client onchange
+  getProjectsByClientId(clientId: number): void {
+    //If "No Client" selected, show only "No Project"
+    if (clientId === 0) {
+      this.projectsList = [
+        { label: 'No Project', value: 0 }
+      ]; return;
+    }
+
+    if (!clientId) return;
+    this.loading = true;
+    this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (Array.isArray(res?.data)) {
+          this.projectsList = res.data.map((project: any) => ({
+            label: project.projectName,
+            value: project.projectId
+          }));
+        } else {
+          this.projectsList = [];
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching projects:', err);
+      }
+    });
+  }
+
+
   /** When project selected */
   onProjectChange(event: any) {
     const selectedProjectId = event.value;
@@ -284,36 +241,12 @@ export class UtilizationReportComponent {
       }, 300);
     }
   }
-
-  getTeamManagersDetails() {
-    const EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe({
-        next: (response: any) => {
-          if (response && response.length) {
-            const myTeam = response.filter((e: any) => e.isAccess);
-            this.getEmployeeInfo = myTeam.map((employee: any) => ({
-              employeeId: employee.employeeId,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
-            }));
-          } else {
-            this.getEmployeeInfo = [];
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching team manager details:', err);
-          this.getEmployeeInfo = [];
-        }
-      });
-  }
   /** Get all active employees for selected project */
   getAllActiveEmployees() {
     this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
+      .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-        //  this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
+          // this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
            this.employeeData =
           res?.data?.map((x: any) => ({
             id: x.employee?.id,
@@ -332,41 +265,28 @@ export class UtilizationReportComponent {
       });
   }
 
-  getAllActiveProjects() {
-    this.http
-      .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const projects = res?.data || [];
-
-          this.projectsData = projects.map((p: any) => ({
-            ...p,
-            //  displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
-            displayName: `${p.client?.clientName || 'Unknown Client'}`,
-            displayprojectName: `${p.projectName || 'Unnamed Project'}`
+  // no project select call method to get resouces
+  getTeamManagersDetails() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (response: any) => {
+        if (response && response.length) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => ({
+            employeeId: employee.employeeId,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
           }));
-
-          this.projectsData.unshift({
-            projectId: 0,
-            displayName: 'No Client',
-            displayprojectName: 'No Project'
-          });
-        },
-        error: (err) => {
-          console.error('Error fetching projects:', err);
-
-          this.projectsData = [
-            {
-              projectId: 0,
-              displayName: 'No Client',
-              displayprojectName: 'No Project'
-            }
-          ];
-        },
-      });
+        } else {
+          this.getEmployeeInfo = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching team manager details:', err);
+        this.getEmployeeInfo = [];
+      }
+    });
   }
-
+  // generate,export button for calling method for show/hide
   get isLeaveGenerateDisabled(): boolean {
     const { clientId, projectId, employeid, dateRange, billable } = this.UtilizationReportForm.value;
     const hasClient = clientId !== null && clientId !== undefined;
@@ -374,13 +294,12 @@ export class UtilizationReportComponent {
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasBillable = billable !== null && billable !== undefined;
     const hasEmployeid = employeid !== null && employeid !== undefined;
-
     return !(hasClient || hasProject || hasDateRange || hasBillable || hasEmployeid);
   }
+  // payload for utilization report
   buildTimesheetReportParams() {
     const formValue = this.UtilizationReportForm.value;
     const employeeId = this.empinfo?.employeeId || 0;
-
     // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
       if (!date) return null;
@@ -390,8 +309,6 @@ export class UtilizationReportComponent {
       const year = d.getFullYear();
       return `${month}/${day}/${year}`;
     };
-
-
     const startDate = formValue.dateRange?.[0] ? formatDate(formValue.dateRange[0]) : null;
     const endDate = formValue.dateRange?.[1] ? formatDate(formValue.dateRange[1]) : null;
     const params: any = {
@@ -413,7 +330,7 @@ export class UtilizationReportComponent {
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
-
+  // generate the report
   generateUtilizationReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.UtilizationReportForm.invalid) return;
     // Only reset pagination when explicitly requested
@@ -421,61 +338,49 @@ export class UtilizationReportComponent {
       this.page = 1;
       this.first = 0;
     }
-
     if (showLoader) this.spinnerLoader1 = true;
-
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
 
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.spinnerLoader1 = false;
-
-          if (res.success && res.data?.items) {
-            this.filteredutilizationRecord = res.data.items;
-            this.collectionSize = res.data.totalCount || 0;
-
-            // If total count smaller than current offset, go back to first
-            if (this.first >= this.collectionSize) {
-              this.first = 0;
-              this.page = 1;
-            }
-
-            this.disableBtn = false;
-          } else {
-            this.filteredutilizationRecord = [];
-            this.collectionSize = 0;
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.spinnerLoader1 = false;
+        if (res.success && res.data?.items) {
+          this.filteredutilizationRecord = res.data.items;
+          this.collectionSize = res.data.totalCount || 0;
+          // If total count smaller than current offset, go back to first
+          if (this.first >= this.collectionSize) {
+            this.first = 0;
+            this.page = 1;
           }
-        },
-        error: (err) => {
-          this.spinnerLoader1 = false;
-          console.error('Error fetching report:', err);
+          this.disableBtn = false;
+        } else {
           this.filteredutilizationRecord = [];
           this.collectionSize = 0;
-          this.disableBtn = true;
-        },
-      });
+        }
+      },
+      error: (err) => {
+        this.spinnerLoader1 = false;
+        console.error('Error fetching report:', err);
+        this.filteredutilizationRecord = [];
+        this.collectionSize = 0;
+        this.disableBtn = true;
+      },
+    });
   }
-
+  // export the report
   exportUtilizationReport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-
-    this.http.downloadTimesheetReport(
-      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-    ).subscribe({
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         // Extract filename from Content-Disposition
         let filename = 'UtilizationReport.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
-
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
           const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
           const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-
           if (utf8FilenameMatch && utf8FilenameMatch[1]) {
             filename = decodeURIComponent(utf8FilenameMatch[1]);
           } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {
@@ -493,7 +398,6 @@ export class UtilizationReportComponent {
         link.download = filename;
         link.click();
         window.URL.revokeObjectURL(url);
-
         console.log('Downloaded file:', filename);
         this.conformationPopup.openSuccessModal("Report Exported Successfully");
       },

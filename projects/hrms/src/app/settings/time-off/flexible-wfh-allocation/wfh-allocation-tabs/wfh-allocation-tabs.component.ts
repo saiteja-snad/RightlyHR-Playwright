@@ -15,7 +15,7 @@ import { RbacService } from '../../../../services/rbac.service';
 export class WfhAllocationTabsComponent implements OnInit {
   navTabs: any[] = [
     {
-      label: 'Active Allocations',
+      label: 'WFH Allocations',
       icon: '/settings-icon/active-allocation.png',
       route:
         '/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation',

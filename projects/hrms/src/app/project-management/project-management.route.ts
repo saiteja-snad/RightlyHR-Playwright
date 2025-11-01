@@ -28,6 +28,9 @@ import { ClientTimesheetSummaryComponent } from './clients/client-time-sheets/cl
 import { ClientTimesheetDetailedComponent } from './clients/client-time-sheets/client-timesheet-detailed/client-timesheet-detailed.component';
 import { ProjectTimesheetSummaryComponent } from './projects/project-timesheets/project-timesheet-summary/project-timesheet-summary.component';
 import { ProjectTimesheetDetailedComponent } from './projects/project-timesheets/project-timesheet-detailed/project-timesheet-detailed.component';
+import { TimesheetsLayoutComponent } from './time-sheets/timesheets-layout/timesheets-layout.component';
+import { TeamTimesheetsComponent } from './time-sheets/team-timesheets/team-timesheets.component';
+import { TimesheetsSummaryViewComponent } from './time-sheets/timesheets-summary-view/timesheets-summary-view.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -98,5 +101,13 @@ export default [
             }
         ],
     },
-    { path: 'time-sheet', component: TimeSheetViewComponent },
+    {
+        path: 'timesheet', component: TimesheetsLayoutComponent,
+        children: [
+            { path: '', redirectTo: '/timesheet/mytimesheet', pathMatch: 'full' },
+            { path: 'mytimesheet', component: TimeSheetViewComponent },
+            { path: 'teamtimesheet', component: TeamTimesheetsComponent },
+            { path: 'summary', component: TimesheetsSummaryViewComponent },
+        ],
+    },
 ] as Route[];

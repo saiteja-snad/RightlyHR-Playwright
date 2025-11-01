@@ -24,6 +24,9 @@ import { SettingsLoaderComponent } from '../../../../shared/settings-loader/sett
 import { SettingsUpdateIconComponent } from '../../../../icons/settings-update-icon/settings-update-icon.component';
 import { EditIconComponent } from '../../../../icons/edit-icon/edit-icon.component';
 import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.component';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { Ipersonal } from '../../../../Interfaces/personal-modal';
+import { Iroles } from '../../../roles-permissions/roles/roles.model';
 
 @Component({
   selector: 'app-global-expenses-configuration',
@@ -37,6 +40,7 @@ import { InfoIconComponent } from '../../../../icons/info-icon/info-icon.compone
     SettingsUpdateIconComponent,
     EditIconComponent,
     InfoIconComponent,
+    NoDataFoundComponent
   ],
   templateUrl: './global-expenses-configuration.component.html',
   styleUrl: './global-expenses-configuration.component.scss',
@@ -46,16 +50,53 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
   gradedetails = [] as any;
   frequency = [] as any;
   frequencyDetails: any[] = [];
+  rolesdetails: Iroles[] = [];
   loading = false;
+  empdata = {} as Ipersonal;
   selectedExpensesId: any;
+  getAllEmployeeInfo = [] as any;
   buttons = false;
   expenseForm!: FormGroup;
   expenseupdateForm!: FormGroup;
   globalForm!: FormGroup;
   globalExpenseDetails: AttributeItem[] = [];
   dataload = false;
+  approverList: { label: string; value: any }[] = [];
+  approverOptions = [
+    { label: 'Employee', value: 'EMP' },
+    // { label: 'Manager', value: 'Manager' },
+    { label: 'Role', value: 'Role' },
+  ];
+  currentYear: number = new Date().getFullYear();
+  selectedYear: number = this.currentYear;
+  years: number[] = [];
   subscription!: Subscription;
   empinfo = {} as any;
+
+  get approverLabel(): string {
+    const selectedType = this.expenseupdateForm?.get('approverupdate')?.value
+    if (selectedType === 'EMP') {
+      return 'Select Employee';
+    } else if (selectedType === 'Role') {
+      return 'Select Role';
+    }
+    return 'Select ';
+  }
+
+
+
+  get approverLabelforadd(): string {
+    const selectedType = this.expenseForm?.get('approver')?.value
+    if (selectedType === 'EMP') {
+      return 'Select Employee';
+    } else if (selectedType === 'Role') {
+      return 'Select Role';
+    }
+    return 'Select ';
+  }
+
+
+
   constructor(
     public router: Router,
     private modalService: NgbModal,
@@ -64,7 +105,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
     private http: HttpService,
     public formValidation: FormValidationService,
     public rbac: RbacService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -74,24 +115,28 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
     this.intiationalupdatefrom();
     this.intiationalglobalform();
     this.getdatabyentriy();
+
+    this.currentYear = new Date().getFullYear();
+    this.selectedYear = this.currentYear; // Move this up
+    // Populate years list
+    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+      this.years.push(i);
+    }
+    // Now initialize the form with the selectedYear
+    ;
   }
 
   intiationalfrom() {
     this.expenseForm = this.fb.group({
-      gradeId: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(/^[^\s].*$/),
-        ],
-      ],
+      selectedYear: [(this.selectedYear)],
+      approver: [null, [Validators.required]],
+      approverValue: [null, [Validators.required]],
       budget: [
         '',
         [
           Validators.required,
           Validators.maxLength(50),
-          Validators.pattern(/^[^\s].*$/),
+            Validators.pattern(/^\d+(\.\d{1,2})?$/)
         ],
       ],
       frequency: [
@@ -99,34 +144,23 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.maxLength(50),
-          Validators.pattern(/^[^\s].*$/),
+       
         ],
       ],
     });
   }
 
-  intiationalglobalform() {
-    this.globalForm = this.fb.group({
-      budget: [{ value: null, disabled: true }, [Validators.required]],
-      frequency: [{ value: null, disabled: true }, [Validators.required]],
-    });
-  }
   intiationalupdatefrom() {
     this.expenseupdateForm = this.fb.group({
-      gradeUpdateId: [
-        { value: null, disabled: true },
-        [
-          Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(/^[^\s].*$/),
-        ],
-      ],
+      selectedYear: ['', [Validators.required]],
+      approverupdate: [null, [Validators.required]],
+      approverValueupdate: [null, [Validators.required]],
       budgetUpdate: [
         '',
         [
           Validators.required,
           Validators.maxLength(50),
-          Validators.pattern(/^[^\s].*$/),
+         Validators.pattern(/^\d+(\.\d{1,2})?$/)
         ],
       ],
       frequencyUpdate: [
@@ -139,7 +173,90 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
       ],
     });
   }
+  intiationalglobalform() {
+    this.globalForm = this.fb.group({
+      budget: [{ value: null, disabled: true }, [Validators.required,Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      frequency: [{ value: null, disabled: true }, [Validators.required]],
+    });
+  }
 
+
+
+
+
+  onApproverChange(selectedType: string, restoreValue?: any) {
+    // this.allowthresholdLimitForm.patchValue({ approverValue: null });
+    this.expenseupdateForm.get('approverValueupdate')?.reset()
+    this.approverList = [];
+    if (selectedType === 'EMP') {
+      this.getAllEmployees(restoreValue);
+    } else if (selectedType === 'Manager') {
+      this.getManagers(restoreValue);
+    } else if (selectedType === 'Role') {
+      this.getRoles(restoreValue);
+    }
+  }
+
+
+  getAllEmployees(restoreValue?: any) {
+    const satus = ['active', 'Trainee Active'];
+    this.subscription = this.http.getData(`Employeedata/Getallemployees?statuses=${satus}`).subscribe({
+      next: (response: any) => {
+        if (response) {
+          this.getAllEmployeeInfo = response
+            // .filter((employee: any) => employee.employeeId !== this.empdata.employeeId)
+            .map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} 
+                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`.trim(),
+            }));
+          this.approverList = this.getAllEmployeeInfo.map((emp: any) => ({
+            label: emp.fullName,
+            value: emp.employeeId
+          }));
+          // restore approverValue after list populated
+          // if (restoreValue !== undefined && restoreValue !== null && restoreValue !== '') {
+          //   // ensure types match (string vs number)
+          //   const match = this.approverList.find(a => `${a.value}` === `${restoreValue}`);
+          //   if (match) this.allowthresholdLimitForm.patchValue({ approverValue: match.value });
+          // }
+        }
+      },
+      error: () => {
+        this.approverList = [];
+      }
+    });
+  }
+
+  getManagers(restoreValue?: any) {
+    this.approverList = [
+      { label: 'Reporting Manager (RM)', value: 'RM' },
+      { label: 'Team Manager (TM)', value: 'TM' },
+    ];
+    // if (restoreValue !== undefined && restoreValue !== null && restoreValue !== '') {
+    //   const match = this.approverList.find(a => `${a.value}` === `${restoreValue}`);
+    //   if (match) this.allowthresholdLimitForm.patchValue({ approverValue: match.value });
+    // }
+  }
+
+  getRoles(restoreValue?: any) {
+    this.subscription = this.http.getData("FusionRole").subscribe({
+      next: (data: any) => {
+        this.rolesdetails = data as Iroles[];
+        this.approverList = this.rolesdetails.map((role: any) => ({
+          label: role.name,
+          value: role.id
+        }));
+        // if (restoreValue !== undefined && restoreValue !== null && restoreValue !== '') {
+        //   const match = this.approverList.find(a => `${a.value}` === `${restoreValue}`);
+        //   if (match) this.allowthresholdLimitForm.patchValue({ approverValue: match.value });
+        // }
+      },
+      error: () => {
+        this.approverList = [];
+      }
+    });
+  }
   getExpenses() {
     this.dataload = true;
     this.subscription = this.http
@@ -249,6 +366,45 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+onAmountInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
+    // Replace multiple decimals with a single one
+    const decimalCheck = sanitizedValue.split('.');
+    if (decimalCheck.length > 2) {
+      sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
+    }
+    // Set the sanitized value back to the input
+    inputElement.value = sanitizedValue;
+    // Update the form control value only if the value contains digits or a valid decimal
+    if (/^\d*\.?\d*$/.test(sanitizedValue)) {
+      this.globalForm.get('budget')?.setValue(sanitizedValue);
+    }
+    // Calculate total expenses amount if valid
+   
+  }
+  
+  onBudgetInput(event: Event, formType: 'add' | 'update'): void {
+    const inputElement = event.target as HTMLInputElement;
+    let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
+    // Replace multiple decimals with a single one
+    const decimalCheck = sanitizedValue.split('.');
+    if (decimalCheck.length > 2) {
+      sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
+    }
+    // Set the sanitized value back to the input
+    inputElement.value = sanitizedValue;
+    // Update the form control value only if the value contains digits or a valid decimal
+    if (/^\d*\.?\d*$/.test(sanitizedValue)) {
+      if (formType === 'add') {
+        this.expenseForm.get('budget')?.setValue(sanitizedValue);
+      } else {
+        this.expenseupdateForm.get('budgetUpdate')?.setValue(sanitizedValue);
+      }
+    }
+  }
+
+
   postExpenses(f: FormGroup) {
     if (f.invalid) return;
     const raw = f.getRawValue();
@@ -256,11 +412,14 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
       raw.frequency ?? this.globalForm?.get('frequency')?.value ?? null;
 
     const payload = {
-      grade_Id: f.value.gradeId,
+
       budget: f.value.budget,
+      applicable_Year: f.value.selectedYear,
       frequency: frequency,
       created_By: parseInt(this.empinfo.employeeId),
       is_Deleted: false,
+      emp_Type: f.value.approver,
+      emp_Type_ReferenceId: f.value.approverValue.toString(),
     };
 
     this.subscription = this.http
@@ -269,46 +428,81 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
-            'Global Expense Configuration added successfully'
+            'Budget configuration added successfully'
           );
           this.getExpenses();
           f.reset();
         },
         error: (reason: any) => {
           console.log(reason);
-          
-          this.conformationPopup.openErrorModal(reason.error.message);
+
+          this.conformationPopup.openErrorModal(reason?.error?.message);
         },
       });
   }
 
   openupdate(content: any, expenses: any): void {
     console.log(expenses);
-    this.selectedExpensesId = expenses.id;
 
+    this.selectedExpensesId = expenses.id;
+    if (expenses.emp_Type === 'EMP') {
+      this.onApproverChange(expenses.emp_Type, expenses.emp_Type_ReferenceId);
+      // Set approverValue after the list is populated
+      setTimeout(() => {
+        const approverValue = expenses.emp_Type === 'EMP' || 'Emp' ? parseInt(expenses.emp_Type_ReferenceId) : expenses.emp_Type_ReferenceId;
+        this.expenseupdateForm.patchValue({
+          approverValueupdate: approverValue
+        });
+        console.log('approverValue set in timeout:', approverValue);
+      }, 100);
+    }
+    else if (expenses.emp_Type === 'ROLE' || expenses.emp_Type === 'Role') {
+      console.log('gg');
+      this.onApproverChange('Role', expenses.emp_Type_ReferenceId);
+      setTimeout(() => {
+        this.expenseupdateForm.patchValue({
+          approverValueupdate: expenses.emp_Type_ReferenceId
+        });
+      }, 100);
+    }
+    const approverType = expenses.emp_Type === 'ROLE' ? 'Role' : expenses.emp_Type;
     this.expenseupdateForm.patchValue({
-      gradeUpdateId: expenses.grade_Id,
+      selectedYear: expenses.applicable_Year,
+      approverupdate: approverType,
       budgetUpdate: expenses.budget,
       frequencyUpdate: expenses.frequency,
     });
+
+    // Manually trigger approver change to populate the list
+
 
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   onUpdateSubmit(f: FormGroup) {
-    if (this.expenseupdateForm.invalid) return;
+    if (this.expenseupdateForm.invalid) {
+      this.expenseupdateForm.markAllAsTouched();
+      return;
+    }
 
+    const selectedYear = this.expenseupdateForm.get('selectedYear')?.value;
+    console.log('Selected Year:', selectedYear);
+    
     const payload = {
       id: this.selectedExpensesId,
-      grade_Id: this.expenseupdateForm.get('gradeUpdateId')?.value,
+      applicable_Year: selectedYear,
+      emp_Type: this.expenseupdateForm.get('approverupdate')?.value,
+      emp_Type_ReferenceId: this.expenseupdateForm.get('approverValueupdate')?.value.toString(),
       budget: this.expenseupdateForm.get('budgetUpdate')?.value,
       frequency: this.expenseupdateForm.get('frequencyUpdate')?.value,
       updated_By: parseInt(this.empinfo.employeeId),
       is_Deleted: false,
     };
+    console.log('Payload:', payload);
+    
 
     this.subscription = this.http
-      .postdata('GlobalExpenseBudgetConfigurations/Update', payload)
+      .putData('GlobalExpenseBudgetConfigurations/Update', payload)
       .subscribe({
         next: (res) => {
           if (res) {
@@ -316,12 +510,12 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.getExpenses();
             this.conformationPopup.openSuccessModal(
-              'Global Expense Configuration updated successfully'
+              'Budget configuration updated successfully'
             );
           }
         },
         error: (err) => {
-          this.conformationPopup.openErrorModal(err.error.Message);
+          this.conformationPopup.openErrorModal(err?.error?.message);
         },
       });
   }
@@ -343,7 +537,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.getExpenses();
             this.conformationPopup.openSuccessModal(
-              'Global Expense Configuration deleted successfully'
+              'Budget configuration deleted successfully'
             );
           }
         },
@@ -355,7 +549,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
 
   showButtons(): void {
     this.buttons = !this.buttons;
-     this.getforallemplpoyes();
+    this.getforallemplpoyes();
     if (this.buttons) {
       this.globalForm.get('budget')?.enable();
       this.globalForm.get('frequency')?.enable();
@@ -395,7 +589,7 @@ export class GlobalExpensesConfigurationComponent implements OnInit, OnDestroy {
             this.buttons = !this.buttons;
             this.getExpenses();
             this.conformationPopup.openSuccessModal(
-              'Global Expense Configuration updated successfully'
+              'Budget configuration updated successfully'
             );
           }
         },

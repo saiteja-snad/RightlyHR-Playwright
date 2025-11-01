@@ -299,7 +299,7 @@ export class ExpensesLimitComponent implements OnInit {
       }
       this.subscription = this.http.postdata(`entityAttributeValues/update`, payload).subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Expense threshold updated successfully');
+          this.conformationPopup.openSuccessModal('Expense limit configuration updated successfully');
           this.allowthresholdLimitForm.get('value')?.disable({ onlySelf: true });
           this.isEditing = false;
           this.allowthresholdLimitForm.get('approver')?.reset();

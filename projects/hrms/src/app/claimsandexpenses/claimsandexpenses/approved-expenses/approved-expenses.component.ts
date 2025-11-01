@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { ExpenseEntity, IExpenseHeaders, } from '../../../Interfaces/claimsandexpenses.model';
+import { ExpenseEntity, IExpense, IExpenseHeaders, } from '../../../Interfaces/claimsandexpenses.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -14,8 +14,8 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { DownloadExpenseComponent } from '../../download-expense/download-expense.component';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
-import { DownloadExpenseComponent } from "../../download-expense/download-expense.component";
 @Component({
   selector: 'app-approved-expenses',
   imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, InfoIconComponent, DownloadExpenseComponent],
@@ -32,20 +32,27 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   loading = false
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
-  selectedData={} as any;
+  seletedMouthly: any
   searchTerm: any = ''
-     selectemp: any;
- selectedYear: any;
-  expenesEmplyeedata = new BehaviorSubject<ExpenseEntity[]>([])
+  selectemp: any;
+  selectedYear: any;
+  selectedData = {} as any;
+  @Input() downloadData: any;
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
 
-  constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
+  constructor(public router: Router, private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
 
- 
   ngOnInit(): void {
-     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
+        this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;
+    
+          }
+        })
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
@@ -71,28 +78,28 @@ export class ApprovedExpensesComponent implements OnInit, OnDestroy {
   comments_Function(comments: any) {
     this.commentsrecivced = comments
   }
- //download expenses popup open function
+  //download expenses popup open function
   openpopupforDownload(content: any, expenseDetails: any) {
-     this.selectedData = expenseDetails;
+    this.selectedData = expenseDetails;
     this.modalService.open(content, { size: 'xl', centered: true });
   }
 
   getexpensesheaderbyemployeeid(): void {
-    let empId = this.selectemp ?? this.empinfo.employeeId;
+    let empId = this.selectemp ?? this.empinfo?.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Approved&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Approved&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loading = false
-          this.expenesEmplyeedata.next(data)
+         const filteredData = data.filter((item: any) => !item.expenseSummary);
+            this.expenesEmplyeedata.next(filteredData)
 
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http

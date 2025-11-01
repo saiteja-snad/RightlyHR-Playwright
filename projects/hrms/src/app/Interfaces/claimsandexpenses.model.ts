@@ -20,7 +20,7 @@ export interface IExpenseItem {
   expenses_ID: number;
   item_Name: string;
   item_Description: string;
-  expense_Date: string;
+  expense_Date: any;
   expense_Amount: number;
   receipt_Number: string;
   attachment_url: string;
@@ -87,9 +87,17 @@ export interface IExpense {
   employeeId: number;
   submissionDate: string;
   expense_Date: any,
-  expenseitem: IExpenseItem[];
+  expenseitem?: IExpenseItem[];
+   pendingApprovalHeader: IPendingApprovalHeader;
 }
 
+export interface IPendingApprovalHeader {
+  id: number;
+  moduleId: number;
+  referenceEntityId: number;
+  requestedBy: number;
+  approver_Name: string;
+}
 
 export interface ExpenseEntity {
   expenses_ID: number;
@@ -176,7 +184,6 @@ export interface Iinvoices {
   lastName: string;
   isdeleted: string;
 }
-
 export interface Itimesheet {
   timesheetId: number;
   empId: number;
@@ -200,9 +207,6 @@ export interface Itimesheet {
   totalHours: string;
   taskName: string;
 }
-
-
-
 export interface IExpenseItems {
   expenseType: any;
   expenseitem_id: number;
@@ -214,7 +218,6 @@ export interface IExpenseItems {
   status: string;
   attachment_url: string;
 }
-
 export interface IExpenseHeaders {
   expenses_ID: number;
   applied_date: string; // or Date
@@ -233,8 +236,6 @@ export interface Event {
   iconUrl: string;
   imageUrl: string;
 }
-
-
 export interface Entity {
   data: any
   entity: any
@@ -254,7 +255,6 @@ export interface IMasterModule {
   categoryType: string,
   normalizedName?: string
 }
-
 export interface ExpenseApproverComment {
   id: number;
   pendingItemsId: number;
@@ -267,7 +267,6 @@ export interface ExpenseApproverComment {
   metaData: any;
   approverRole: any;
 }
-
 export interface IApprovalHeader {
   id?: number,
   moduleId: number
@@ -279,7 +278,6 @@ export interface IApprovalHeader {
   finalapprovalStage: string,
   requestedBy: number
 }
-
 export interface IGlobalExpenses {
   id?: number,
   grade_Id?: number,
@@ -290,9 +288,13 @@ export interface IGlobalExpenses {
   updated_By?: number,
   updated_At?: Date,
   is_Deleted?: boolean,
-  gradeName?: string
+  gradeName?: string,
+  referenceIdName?: string,
+  emp_Type?: string,
+  emp_Type_ReferenceId?: string,
+  applicable_Year?: string,
+  budgetFormatted:any
 }
-
 export interface ISummary {
   frequency?: string,
   requestedAmount?: number,
@@ -301,8 +303,16 @@ export interface ISummary {
   remainingReimbursement?: number,
   totalReimbursementLimit?: number,
   categoryColor?: string,
+  utilisedPercentage?: any,
+  resetOn?: any,
+  utilisedReimbursement?: number,
+  remainingReimbursementFormatted:any,
+  requestedAmountFormatted:any,
+  processedAmountFormatted:any,
+  utilisedPercentageFormatted:any,
+  totalReimbursementLimitFormatted:any,
+  approvedAmountFormatted:any
 }
-
 export interface AttributeItem {
   id: number;
   entity: string;
@@ -310,8 +320,8 @@ export interface AttributeItem {
   value: string;
   meta: MetaData;
 }
-
 export interface MetaData {
   Amount: string;
   Frequency: string;
 }
+

@@ -61,6 +61,7 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
   searchTerm: any = '';
   selectedYear: any;
   loader = false
+  seletedMouthly: any
   selectemp: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   expense: IExpenses[] = [];
@@ -81,6 +82,12 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
+        this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;;
+            this.getexpensesheaderbyemployeeid();
+          }
+        })
 
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
@@ -233,7 +240,7 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
     });
   }
   fileuploadhide: any;
-      markFileTouched(index: number): void {
+  markFileTouched(index: number): void {
     const control = this.expenseItems.at(index)?.get('attachment_url');
     if (!control?.value) {
       control?.markAsTouched();
@@ -241,13 +248,13 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
       control?.updateValueAndValidity();
     }
   }
-  
+
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
     //if (!file) return;
-      const control = this.expenseItems.at(index)?.get('attachment_url');
+    const control = this.expenseItems.at(index)?.get('attachment_url');
     if (!file) {
-   control?.reset();
+      control?.reset();
       control?.setErrors({ required: true });
       control?.markAsTouched();
       control?.updateValueAndValidity();
@@ -375,6 +382,7 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.getexpensesheaderbyemployeeid();
+          
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal(error.error.message)
@@ -506,17 +514,16 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
     this.loader = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Draft&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Draft&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loader = false
-          this.expenesEmplyeedata.next(data)
-
+          const filteredData = data.filter((item: any) => !item.expenseSummary);
+          this.expenesEmplyeedata.next(filteredData)
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http

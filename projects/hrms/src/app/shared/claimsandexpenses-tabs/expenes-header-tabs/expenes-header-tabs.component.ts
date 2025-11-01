@@ -6,10 +6,12 @@ import { IExpense } from '../../../Interfaces/claimsandexpenses.model';
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffYearFilterService } from '../../../services/timeoff-year-filter.service';
+
 @Component({
   selector: 'app-expenes-header-tabs',
-  imports: [CommonModule, RouterModule, TabsModule],
+  imports: [CommonModule, RouterModule, TabsModule,TranslateModule],
   templateUrl: './expenes-header-tabs.component.html',
   styleUrl: './expenes-header-tabs.component.scss'
 })
@@ -28,22 +30,23 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   pendingCount = 0;
   rejectedCount = 0;
   draftsCount = 0;
-    selectemp: any;
+   selectemp: any;
  selectedYear: any;
+  seletedMouthly: any;
   public navTabs: any[] = [];
   public defaultRoute: string = '';
   private allTabs = [
     { label: 'Draft', link: '/claimsandexpenses/expenses/draft', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Draft Tab', action: 'view' }, count: this.draftsCount },
     { label: 'Approved', link: '/claimsandexpenses/expenses/approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved Tab', action: 'view' }, count: this.ApprovedCount },
-    { label: 'Waiting For Approval ', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
+    { label: 'Pending', link: '/claimsandexpenses/expenses/pending', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Pending Tab', action: 'view' }, count: this.pendingCount },
     { label: 'Processed', link: '/claimsandexpenses/expenses/processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed Tab', action: 'view' }, count: this.processedCount },
     { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tab', action: 'view' }, count: this.rejectedCount }
   ];
 
-  constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
+  constructor(private http: HttpService, private rbac: RbacService, private router: Router,private SelectedyeartimeOffService:TimeoffYearFilterService ) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+  
     this.navTabs = this.allTabs.filter(tab =>
       tab.permission &&
       tab.permission.feature &&
@@ -63,9 +66,15 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
     if (!isAllowed && this.defaultRoute) {
       this.router.navigateByUrl(this.defaultRoute);
     }
- this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
+    this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
+           this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;
+          
+          }
+        })
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
@@ -85,9 +94,8 @@ export class ExpenesHeaderTabsComponent implements OnInit, OnDestroy {
   }
 
   getexpensesheaderbyemployeeid(): void {
-   
-     let empId = this.selectemp ?? this.empinfo.employeeId;
-    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&year=${this.selectedYear}`,).subscribe({
+     let empId = this.selectemp ?? this.empinfo?.employeeId;
+    this.subscription = this.http.getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&month=${this.seletedMouthly}&year=${this.selectedYear}`,).subscribe({
       next: (data: any) => {
         this.expenesEmplyeedata.next(data);
         this.updateAllFilteredExpenses();

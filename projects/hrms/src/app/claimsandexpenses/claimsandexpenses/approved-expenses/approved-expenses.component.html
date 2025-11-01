@@ -1,8 +1,9 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search by expense title / total amount" aria-label="Username"
-      [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()" aria-describedby="basic-addon1">
+    <input type="search" class="form-control custom-search-input" placeholder="Search by expense title / total amount"
+      aria-label="Username" [(ngModel)]="searchTerm" (ngModelChange)="getexpensesheaderbyemployeeid()"
+      aria-describedby="basic-addon1">
   </div>
 
   <div class="custom-table-content">
@@ -10,23 +11,27 @@
     <table class="w-100">
       <thead>
         <th>{{'Expense Title' | translate}}</th>
+
         <th>{{'Expense Date' | translate}}</th>
+        <th>{{"Applied Date"}}</th>
         <th>{{'Total Amount' | translate}}</th>
         <th>{{'Status' | translate}}</th>
         <th class="text-center">{{'Approver Comments' | translate}}</th>
-        <th class="text-center">{{'View Details ' | translate}}</th>
+        <th class="text-center">{{'View Details' | translate}}</th>
       </thead>
       <tbody>
         <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
           <tr *ngFor="let exp of expenesEmplyeedata | async">
             <td>{{ exp.expenses_Title }}</td>
-            <td>{{ exp.applied_date | dateformat }}</td>
-            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+            <td class="text-nowrap">{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
+            <td class="text-nowrap">{{ exp?.applied_date | dateformat }}</td>
+            <td class="text-nowrap"><span class="me-1" *ngIf="exp.totalExpenseAmount">$</span> {{ exp.totalExpenseAmount
+              | number : "1.0-0" }}</td>
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
             <td class="text-center">
-              <app-info-icon *ngIf="exp.expenseApproverComments.length>0; else na"
-                 (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)"/>
+              <app-info-icon *ngIf="exp?.expenseApproverComments?.length>0; else na"
+                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" class="cursor" />
               <ng-template #na>N/A</ng-template>
             </td>
             <td class="text-center">
@@ -36,12 +41,12 @@
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <li><a class="dropdown-item" (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-                      <i class="bi bi-eye-fill me-2"></i>View</a></li>
-                   <li>
-                      <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
-                        <i class="bi bi-download me-1"></i>Download
-                      </a>
-                    </li>   
+                      <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}</a></li>
+                  <li>
+                    <a class="dropdown-item" (click)="openpopupforDownload(openpopupForDownload,exp)">
+                      <i class="bi bi-download me-1"></i>Download
+                    </a>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -66,7 +71,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">{{'Expenses Details' | translate}}</p>
+        <p class="popup-heading mb-0">{{'Expense Details' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -82,13 +87,13 @@
       <div class="custom-table">
         <table class="w-100">
           <thead>
-            <th>Expense Type</th>
-            <th>Expense Name</th>
-            <th>Expense Date</th>
-            <th>Expense Amount</th>
-            <th>Status</th>
-            <th>Receipt Number</th>
-            <th class="text-center">Action</th>   
+            <th>{{ 'Expense Type' | translate }}</th>
+            <th>{{ 'Expense Name' | translate }}</th>
+            <th>{{ 'Expense Date' | translate }}</th>
+            <th>{{ 'Expense Amount' | translate }}</th>
+            <th>{{ 'Status' | translate }}</th>
+            <th>{{ 'Receipt Number' | translate }}</th>
+            <th class="text-center">{{ 'Action' | translate }}</th>
           </thead>
           <tbody>
             <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
@@ -102,19 +107,19 @@
                 <div class="d-flex gap-2">
                   <a type="button" class="me-2 download-text text-nowrap"
                     (click)="onSelectDownload(item?.attachment_url)">
-                    <i class="bi bi-download me-2"></i>Download
+                    <i class="bi bi-download me-2"></i>{{'Download' | translate}}
                   </a>
                   <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
                     (click)="onViewAttachement(item?.attachment_url)">
-                    <i class="bi bi-eye-fill me-2"></i>View
-                  </a>             
+                    <i class="bi bi-eye-fill me-2"></i>{{"View" | translate}}
+                  </a>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="text-center mt-3">
-          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+          <b>{{"Total Amount" | translate}} : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
         </div>
       </div>
     </div>
@@ -126,7 +131,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">{{'Expenses Details' | translate}}</p>
+        <p class="popup-heading mb-0">{{'Expense Details' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss();openupdateModal(viewDetailsModal); ExpenseViewURL = null; ExpenseImageUrl = null"><img
@@ -148,37 +153,37 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Approver Comments</p>
+        <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    
+
     <div class="custom-main-popup-content">
-      <div >
+      <div>
         <div *ngFor="let comment of commentsrecivced" class="card p-3 mb-3">
           <div class="mb-0">
-            <p><b>Commented by:</b> {{ comment.addedName }} </p>
-            <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
-            <p><b> Date:</b> {{ comment.addedDate | date: 'short' }} </p>
-            <p><b>Status:</b> {{ comment.action }}</p>
-            <p><b>Comments:</b> {{ comment.comments }} </p>
+            <p><b>{{ 'Commented by' | translate }}:</b> {{ comment?.addedName }}</p>
+            <p><b>{{ 'Commented by ID' | translate }}:</b> {{ comment?.addedByFusionEmpId }}</p>
+            <p><b>{{ 'Date' | translate }}:</b> {{ comment?.addedDate | date: 'short' }}</p>
+            <p><b>{{ 'Status' | translate }}:</b> {{ comment?.action }}</p>
+            <p><b>{{ 'Comments' | translate }}:</b> {{ comment.comments }}</p>
+
           </div>
         </div>
       </div>
     </div>
   </div>
 </ng-template>
-
- <ng-template #openpopupForDownload let-modal>
-        <div class="popup-container" ngbAutofocus>
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal-basic-title">Expense</h4>
-                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-            </div>
-            <div class="popup-content">
-                <app-download-expense [downloadData]="selectedData" />
-            </div>
-        </div>
-    </ng-template>
+<ng-template #openpopupForDownload let-modal>
+  <div class="popup-container" ngbAutofocus>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Expense</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="popup-content">
+      <app-download-expense [downloadData]="selectedData" />
+    </div>
+  </div>
+</ng-template>

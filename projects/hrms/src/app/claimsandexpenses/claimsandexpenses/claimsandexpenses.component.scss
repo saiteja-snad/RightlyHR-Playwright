@@ -1,75 +1,105 @@
 .component-left-tabs-container {
-    height: calc(100dvh - 17rem) !important;
+  height: calc(100dvh - 17rem) !important;
 }
 
 .custom-table-content {
-    height: calc(100dvh - 20.5rem);
-    min-height: 50vh !important;
+  height: calc(100dvh - 20.5rem);
+  min-height: 50vh !important;
 }
 
-.cards-grid-container {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-}
+.graph-grid {
+  .total-leave-balance-graph-content {
+    width: 16rem !important;
+    justify-content: space-around !important;
 
-.custom-expense-card {
-    width: 100%;
-    height: 100%;
-    background-color: var(--white-color);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 0px 0px 5px 0px #0B3A831A;
+    .total-count-content {
+      text-align: center !important;
+      top: 45% !important;
 
-    .expense-card-label {
-        font-size: var(--fontsize14);
+      .count {
+        font-size: var(--fontsize12) !important;
+      }
+
+      .text-context {
+        font-weight: 400;
+        font-size: 9px !important;
+        color: #999999;
+      }
+    }
+  }
+
+  .employee-category-container {
+    width: 100% !important;
+
+    .expense-grid-card {
+      display: flex;
+      align-items: center;
+      width: 16rem !important;
+      padding: 1rem 0.75rem;
+      border: 1px solid var(--content-border-color) !important;
+      background-color: #FFF !important;
+      border-radius: 0.625rem;
+      margin: 0.25rem;
+
+      .icon {
+        width: 3.5rem !important;
+        height: 3.5rem !important;
+      }
+
+      .content-text {
+        font-weight: 500 !important;
+        color: #8B8B8B !important;
+        font-size: var(--fontsize14) !important;
+      }
+
+      .amount-value {
         font-weight: 600;
-        color: var(--primary-color);
+        font-size: var(--fontsize16) !important;
+        color: #000000 !important;
+      }
+
+      .frequency-value {
+        font-weight: 500 !important;
+        font-size: var(--fontsize13) !important;
+        color: #8B8B8B !important;
+      }
     }
 
-    .expense-card-text {
-        font-size: var(--fontsize13);
-        color: #8d8d8d;
+    .p-tab {
+      padding: 0rem !important;
     }
-
-    .circular-progress {
-        position: relative;
-        height: 6rem;
-        width: 6rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &::before {
-            content: "";
-            position: absolute;
-            height: 5rem;
-            width: 5rem;
-            border-radius: 50%;
-            background: #FFFFFF;
-        }
-
-        .progress-value {
-            position: relative;
-            font-weight: 600;
-        }
-
-        .avaliable-leaves-text {
-            font-weight: 600;
-            font-size: 10px;
-        }
-
-        .total-leaves-text {
-            font-weight: 400;
-            font-size: 10px;
-        }
-    }
+  }
 }
 
-.display-custom-flex {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.custom-year-month-picker {
+  width: 15rem;
+
+  .p-inputtext {
+    border: 1px solid #DEE8F3 !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: 400 !important;
+    font-size: var(--fontsize14) !important;
+    vertical-align: middle !important;
+    color: #222222 !important;
+    background-color: #F8FBFF !important;
+    cursor: pointer !important;
+    border-top-right-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
+  }
+
+  .p-datepicker-month-selected {
+    color: var(--p-datepicker-date-selected-color);
+    background: var(--primary-color) !important;
+  }
+
+  .p-button-text {
+    background: transparent;
+    border-color: transparent;
+    color: var(--primary-color) !important;
+  }
+
+  .p-datepicker-month {
+    font-size: var(--fontsize14) !important;
+  }
 }

@@ -462,7 +462,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Weekends Published Tab',
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
-  settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
+  settingsManageExpenseTab = [
+    'Expenes Configuartion',
+    'Expense Allowed Days',
+    'Expense Threshold Validation',
+    'Global Expense Configuration'
+  ]
   
     settingsAttendanceLockingTab = [
     'Pending Attendance Locking',
@@ -767,6 +772,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Org Leave Balance',
     'Team Leave Balance Summary',
     'Team Leave Balance',
+    'Expense Reports'
   ];
   standardReportsTabsFields = [
     'Employee Master Data',
@@ -835,6 +841,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Team Manager List(Regularization)',
     'My Team Report(Regularization)',
   ];
+    expenseReportsEmployeeTeamTabsFields = [
+    'Expense Report - Generate',
+    'Expense Report All Employees List',
+    'Expense Report Manager List',
+    'My Team Report(Expenses)',
+    'Expenses All Employees List',
+    'Expenses Team Manager List',
+    'Expense Report - Export'
+  ]
+
   assetManagementTabsFields = [
     'Asset Management - Create',
     'Asset Management - All',

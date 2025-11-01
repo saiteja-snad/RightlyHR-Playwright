@@ -3,7 +3,6 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
-
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -59,7 +58,7 @@ export class ClientTimesheetSummaryComponent {
       datasets: [
         {
           label: 'Resource Count', // optional but good practice
-          data: [60, 50, 70, 30, 40], // 👈 added the 5th value
+          data: [60, 50, 70, 30, 40], // added the 5th value
           backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
           barThickness: 10
         }
@@ -70,7 +69,7 @@ export class ClientTimesheetSummaryComponent {
       indexAxis: 'y', // Horizontal bar
       plugins: {
         legend: {
-          display: false // 👈 hides the top "Resource Count" label
+          display: false // hides the top "Resource Count" label
         }
       },
       scales: {
@@ -109,14 +108,14 @@ export class ClientTimesheetSummaryComponent {
       cutout: '75%',
       plugins: {
         legend: {
-          display: false // 👈 hides the top "Resource Count" label
+          display: false // hides the top "Resource Count" label
         }
       },
     };
   }
 
   loadCharts() {
-    // === Project Type (Pie) ===
+    // Project Type (Pie)
     this.projectTypeData = {
       labels: ['Implementation', 'Development', 'Migration', 'Integration', 'Support', 'Design'],
       datasets: [
@@ -133,7 +132,7 @@ export class ClientTimesheetSummaryComponent {
       },
     };
 
-    // === Estimated vs Actual Hours (Grouped Bar) ===
+    // Estimated vs Actual Hours (Grouped Bar)
     this.estimatedVsActualData = {
       labels: ['Softkill E-commerce', 'Admin App', 'E-commerce', 'Web app', 'Mobile App'],
       datasets: [
@@ -192,8 +191,7 @@ export class ClientTimesheetSummaryComponent {
       }
     };
 
-
-    // === Billable vs Non-Billable Hours (Stacked Bar) ===
+    // Billable vs Non-Billable Hours (Stacked Bar)
     this.billableData = {
       labels: ['Project Management', 'Development', 'Design', 'QA'],
       datasets: [
@@ -220,7 +218,7 @@ export class ClientTimesheetSummaryComponent {
       },
     };
 
-    // === Project Burndown Chart (Line) ===
+    // Project Burndown Chart (Line)
     this.burndownData = {
       labels: ['1', '5', '10', '15', '20', '25', '30'],
       datasets: [

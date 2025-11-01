@@ -20,7 +20,6 @@ export class ClientTimesheetSummaryComponent {
     { projectId: 4, projectName: 'E-commerce Platform' },
     { projectId: 5, projectName: 'Data Migration' }
   ];
-
   statusOptions = [
     { label: 'Not Started', value: 'not_started' },
     { label: 'In Progress', value: 'in_progress' },
@@ -59,7 +58,8 @@ export class ClientTimesheetSummaryComponent {
       labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
       datasets: [
         {
-          data: [60, 50, 70, 30],
+          label: 'Resource Count', // optional but good practice
+          data: [60, 50, 70, 30, 40], // 👈 added the 5th value
           backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
           barThickness: 10
         }
@@ -68,6 +68,11 @@ export class ClientTimesheetSummaryComponent {
 
     this.projectResourceOptions = {
       indexAxis: 'y', // Horizontal bar
+      plugins: {
+        legend: {
+          display: false // 👈 hides the top "Resource Count" label
+        }
+      },
       scales: {
         x: {
           title: {
@@ -104,13 +109,9 @@ export class ClientTimesheetSummaryComponent {
       cutout: '75%',
       plugins: {
         legend: {
-          position: 'right',
-          labels: {
-            usePointStyle: true,
-            boxWidth: 2
-          }
-        },
-      }
+          display: false // 👈 hides the top "Resource Count" label
+        }
+      },
     };
   }
 

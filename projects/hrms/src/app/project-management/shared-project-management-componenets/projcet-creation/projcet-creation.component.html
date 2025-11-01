@@ -48,13 +48,20 @@
           </div>
         </div>
 
-        <!-- Project Description -->
-        <div class="col-md-6 mb-3">
-          <label for="projectDescription" class="form-label custom-label mb-2">Project Description</label>
-          <textarea id="projectDescription" (input)="formValidation.validateInput(addprojectform.get('projectDescription'))"
-            maxlength="500" formControlName="projectDescription" class="form-control custom-input"
-            placeholder="Please enter project description"></textarea>
-          <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
+         <!-- Department Name Field -->
+         <div class="col-md-6 mb-3">
+          <label for="department" class="form-label custom-label mb-2">
+            {{ 'Department' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+              defaultLabel="Please select department name" formControlName="department"
+              class="form-select custom-select"></p-multiSelect>
+        </div>
+          <div *ngIf="addprojectform.get('department')?.touched && addprojectform.get('department')?.invalid" class="error-msg">
+            <div *ngIf="addprojectform.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
+            </div>
+          </div>
         </div>
 
         <!-- Start Date -->
@@ -150,21 +157,17 @@
             Timesheet Approval Authority is required
           </div>
         </div>
-           <!-- Department Name Field -->
-         <div class="col-md-6 mb-3">
-          <label for="department" class="form-label custom-label mb-2">
-            {{ 'Department' | translate }} <span class="error-msg">*</span>
-          </label>
-          <div class="custom-p-multiSelect-content">
-            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
-              defaultLabel="Please select department name" formControlName="department"
-              class="form-select custom-select"></p-multiSelect>
+
+         <!-- Project Description -->
+        <div class="col-md-6 mb-3">
+          <label for="projectDescription" class="form-label custom-label mb-2">Project Description</label>
+          <textarea id="projectDescription" (input)="formValidation.validateInput(addprojectform.get('projectDescription'))"
+            maxlength="500" formControlName="projectDescription" class="form-control custom-input"
+            placeholder="Please enter project description"></textarea>
+          <div class="textarea-count-text">{{ addprojectform.get("projectDescription")?.value?.length || 0}}/500</div>
         </div>
-          <div *ngIf="addprojectform.get('department')?.touched && addprojectform.get('department')?.invalid" class="error-msg">
-            <div *ngIf="addprojectform.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
-            </div>
-          </div>
-        </div>
+
+          
 
         <!-- Switches -->
         <div class="col-md-12 mb-3">

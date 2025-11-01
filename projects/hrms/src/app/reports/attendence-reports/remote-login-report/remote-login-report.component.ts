@@ -33,21 +33,21 @@ moduleinfo: string = '';
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
   uniqueEmployees: { fusionEmpId: number; employeeName: string }[] = [];
-  filteredWfhEmployees: { fusionEmpId: number; employeeName: string }[] = [];
+  filteredRemoteEmployees: { fusionEmpId: number; employeeName: string }[] = [];
   selectedDate: string | null = null;
   selectedDateRange: { startDate: any; endDate: any } | null = null;
   searchTerm: string = '';
   selectedEmployeeId: any = null;
   isDropdownOpen: boolean = false;
   isFilterGivenwfh: boolean = false;
-  filteredWfhRecord: any[] = [];
+  filteredRemoteRecord: any[] = [];
   employeeMasterData: any[] = [];
   employeeiddetails: any[] = [];
   teamdetails = [] as any[];
   isDropdownOpenwfh: boolean = false;
   selectedWfhManager: string | null = null;
   selectedMonth: number | null = null;
-  wfhReportForm!: FormGroup;
+  remoteReportForm!: FormGroup;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
@@ -91,19 +91,19 @@ moduleinfo: string = '';
   }
 
   initializeForm() {
-    this.wfhReportForm = this.fb.group({
+    this.remoteReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
       dateRange: [null],
       team: [null]
     });
-    this.wfhReportForm.valueChanges.subscribe(() => {
+    this.remoteReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
 
-  get isWFHGenerateDisabled(): boolean {
-    const { employee, manager, dateRange, leaveCategory, team } = this.wfhReportForm.value;
+  get isRemoteGenerateDisabled(): boolean {
+    const { employee, manager, dateRange, leaveCategory, team } = this.remoteReportForm.value;
     // Check if any field has a value
     return !(employee || manager || (dateRange && (dateRange.startDate || dateRange.endDate)) || leaveCategory || team);
   }
@@ -153,7 +153,7 @@ moduleinfo: string = '';
   generateWfhReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
-    const formValue = this.wfhReportForm.value;
+    const formValue = this.remoteReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
     const dateRangeArray = formValue.dateRange || [];
     const startDate: Dayjs | null = dateRangeArray[0] ? dayjs(dateRangeArray[0]) : null;
@@ -164,7 +164,7 @@ moduleinfo: string = '';
     if (noFilterProvided) {
       this.spinnerLoader1 = false;
       this.isLoading = false;
-      this.filteredWfhRecord = [];
+      this.filteredRemoteRecord = [];
       return;
     }
 
@@ -199,15 +199,15 @@ moduleinfo: string = '';
     }
 
     // Single API call
-    this.reportsService.getWfhReports(request).subscribe({
+    this.reportsService.getRemoteReports(request).subscribe({
       next: (response: any) => {
-        this.filteredWfhRecord = response ?? [];
+        this.filteredRemoteRecord = response ?? [];
       },
       error: (error) => {
         this.spinnerLoader1 = false;
         this.disableBtn = true;
         this.isLoading = false;
-        this.filteredWfhRecord = [];
+        this.filteredRemoteRecord = [];
       },
       complete: () => {
         this.spinnerLoader1 = false;
@@ -218,8 +218,8 @@ moduleinfo: string = '';
   }
 
   clearAllFilters(): void {
-    this.wfhReportForm.reset();
-    this.filteredWfhRecord = [];
+    this.remoteReportForm.reset();
+    this.filteredRemoteRecord = [];
   }
 
   formatDate(date: Date): string {
@@ -262,7 +262,7 @@ moduleinfo: string = '';
     ];
 
     // Modify data with renamed headers and new sequence
-    const modifiedData = this.filteredWfhRecord.map((record) => {
+    const modifiedData = this.filteredRemoteRecord.map((record) => {
       const modifiedRecord: any = {};
       NEW_SEQUENCE.forEach((columnName) => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(
@@ -291,13 +291,13 @@ moduleinfo: string = '';
     // Create a new empty worksheet
     const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([[]]);
 
-    // Merge cells for WFH Report row from A1 to I1
+    // Merge cells for remote Report row from A1 to I1
     ws['!merges'] = [
       { s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } },
     ];
 
-    // Add WFH Report row
-    XLSX.utils.sheet_add_aoa(ws, [['WFH REPORT']], { origin: 'A1' });
+    // Add remote Report row
+    XLSX.utils.sheet_add_aoa(ws, [['REMOTE LOGIN REPORT']], { origin: 'A1' });
 
     // Add header row
     const headerRow = NEW_SEQUENCE.map(
@@ -308,14 +308,14 @@ moduleinfo: string = '';
     // Add data rows
     XLSX.utils.sheet_add_json(ws, modifiedData, { origin: 'A3' });
 
-    // Apply styles to WFH Report row
-    const wfhReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
-    wfhReportCell.s = {
+    // Apply styles to remote Report row
+    const remoteReportCell = ws['A1'] || { t: '', v: '' }; // Get the cell or create a new one if it doesn't exist
+    remoteReportCell.s = {
       font: { bold: true },
       alignment: { horizontal: 'center' },
       fill: { bgColor: { rgb: 'FFFF00' } },
     };
-    ws['A1'] = wfhReportCell; // Assign the styled cell back to the worksheet
+    ws['A1'] = remoteReportCell; // Assign the styled cell back to the worksheet
 
     // Apply styles to column headers
     NEW_SEQUENCE.forEach((columnName, index) => {
@@ -343,8 +343,8 @@ moduleinfo: string = '';
 
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'WFH Report');
-    XLSX.writeFile(wb, 'WFH_Report.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'Remote Login Report');
+    XLSX.writeFile(wb, 'RemoteLogin_Report.xlsx');
     this.spinnerLoader2 = false;
   }
 

@@ -3,14 +3,14 @@
     <!--header-->
     <app-reports-header/>
 
-    <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
+    <form autocomplete="off" [formGroup]="remoteReportForm" (ngSubmit)="generateWfhReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Remote Login Report - Generate.view')){
         <button type="reset" class="clear-all-btn" [disabled]="
-            !wfhReportForm.get('dateRange')?.value &&
-            !wfhReportForm.get('employee')?.value &&
-            !wfhReportForm.get('manager')?.value  &&
-            !wfhReportForm.get('team')?.value" (click)="clearAllFilters()">
+            !remoteReportForm.get('dateRange')?.value &&
+            !remoteReportForm.get('employee')?.value &&
+            !remoteReportForm.get('manager')?.value  &&
+            !remoteReportForm.get('team')?.value" (click)="clearAllFilters()">
           Clear All
         </button>
 
@@ -68,7 +68,7 @@
         <!-- Buttons -->
         <div class="d-flex gap-2">
           @if(rbac.allowedToAccess('Remote Login Report - Generate.view')){
-          <button type="submit" class="custom-btn btn-secondary" [disabled]="isWFHGenerateDisabled">
+          <button type="submit" class="custom-btn btn-secondary" [disabled]="isRemoteGenerateDisabled">
             @if(spinnerLoader1){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -79,7 +79,7 @@
           }
           @if(rbac.allowedToAccess('Remote Login Report - Generate.view') && rbac.allowedToAccess('Remote Login Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()"
-            [disabled]="filteredWfhRecord.length === 0 || disableBtn">
+            [disabled]="filteredRemoteRecord.length === 0 || disableBtn">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
@@ -108,8 +108,8 @@
         <th>Duration</th>
       </thead>
       <tbody>
-        @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
-        @for (record of filteredWfhRecord; track record) {
+        @if (filteredRemoteRecord && filteredRemoteRecord.length > 0) {
+        @for (record of filteredRemoteRecord; track record) {
         <tr>
           <td>{{ record.fusionEmpId ?? '-' }}</td>
           <td>{{ record.employeeName ?? '-' }}</td>

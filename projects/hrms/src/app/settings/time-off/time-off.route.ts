@@ -35,4 +35,12 @@ export default [
     { path: 'updateleavecategory', loadComponent: () => import('./leave-categoery/update-leavecategory/update-leavecategory.component').then((m) => m.UpdateLeavecategoryComponent) },
     { path: 'cloneleavecategory', loadComponent: () => import('./leave-categoery/clone-leavecategory/clone-leavecategory.component').then((m) => m.CloneLeavecategoryComponent) },
     { path: 'viewleavecategory', loadComponent: () => import('./leave-categoery/view-leavecategory/view-leavecategory.component').then((m) => m.ViewLeavecategoryComponent) },
+    {
+        path: 'flexible-wfh-allocation', children: [
+            { path: '', redirectTo: 'wfh-allocation', pathMatch: 'full' },
+            { path: 'wfh-allocation', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation/wfh-allocation.component').then((m) => m.WfhAllocationComponent) },
+            { path: 'wfh-allocation-view', loadComponent: () => import('./flexible-wfh-allocation/wfh-allocation-view/wfh-allocation-view.component').then((m) => m.WfhAllocationViewComponent) },
+        
+        ]
+    },
 ] as Route[];

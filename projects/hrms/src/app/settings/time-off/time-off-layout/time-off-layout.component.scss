@@ -11,7 +11,11 @@
     border: 1px solid var(--table-header-bg-color);
 }
 
-.fields-data-container{
+.fields-data-container {
     height: calc(100vh - 12rem) !important;
     padding: 1rem !important;
+}
+
+.component-left-tabs-container {
+    height: calc(100dvh - 8.5rem) !important;
 }

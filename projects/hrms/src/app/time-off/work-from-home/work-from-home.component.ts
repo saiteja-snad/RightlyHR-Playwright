@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
@@ -74,7 +74,20 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     public formsValidation: FormValidationsService,
     public readonly router: Router,
     private TimeoffYearFilterService: TimeoffYearFilterService
-  ) { }
+  ) { 
+    effect(() => {
+      if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
+       this.getWFHBal();
+        this.http.tirggerCountSignal.update((status) => ({
+          ...status,
+          wfh: false,
+        }));
+        this.http.wfhTriggerSignal.set(false);
+      } else {
+        this.getWFHBal();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

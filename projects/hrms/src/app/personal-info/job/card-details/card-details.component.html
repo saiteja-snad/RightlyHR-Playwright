@@ -1,0 +1,68 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <span class="component-sub-header">{{'Cards'  | translate}}</span>
+            </div>
+        </div>
+    <div class="custom-table-content">
+        @if (!loader) {
+        <table class="w-100">
+            <thead>
+                <th>{{'Issued Date'|translate}}</th>
+                <th>{{'Card Number'|translate}}</th>
+                <th>{{'Card Type'|translate}}</th>
+                <th>{{'Card Holder Name'|translate}}</th>
+                <th>{{'Bank Name'|translate}}</th>
+                <!-- <th>{{'Card Expiry Month'|translate}}</th>
+                <th>{{'Card Expiry Year'|translate}}</th> -->
+                <th>{{'Expiry Date' | translate}}</th>
+                <th>{{'Allocated By'|translate}}</th>
+                <th>{{'Allocated On'|translate}}</th>
+                <th>{{'Released On'|translate}}</th>
+                <th>{{'Status'|translate}}</th>
+                <!-- <th>{{'Allocation Status'|translate}}</th> -->
+               
+            </thead>
+            <tbody>
+                @if( cardDetails.length > 0){
+                <tr *ngFor="let item of cardDetails ">
+                    <!-- issued date -->
+                    <td>{{item?.card?.issuedDate?(item?.card?.issuedDate| dateformat ):'-'}}</td>
+                    <!-- card number -->
+                    <td>{{item?.card?.cardNumberMasked?item?.card?.cardNumberMasked:'-'}}</td>
+                    <!-- card type -->
+                    <td>{{item?.card?.cardType?item?.card?.cardType:'-'}}</td>
+                    <!--Card Holder Name-->
+                    <td>{{item?.card?.cardHolderName ? item?.card?.cardHolderName:'-'}}</td>
+                    <!-- bank name -->
+                    <td>{{item?.card?.issuedBankName ? item?.card?.issuedBankName:'-'}}</td>
+                    <!-- expiry month -->
+                    <!-- <td>{{item?.card?.expiryMonth?item?.card?.expiryMonth:'-'}}</td> -->
+                    <!-- expity year -->
+                    <!-- <td>{{item?.card?.expiryYear?item?.card?.expiryYear:'-'}}</td> -->
+                     <td>{{ `${item?.card?.expiryMonth?item?.card?.expiryMonth:'-'} / ${item?.card?.expiryYear?item?.card?.expiryYear:'-'} `}}</td>
+                    <!-- allocated to -->
+                    <td>{{item?.assignedBy?.name?item?.assignedBy?.name : '-'}}</td>
+                    <!-- allocated on -->
+                    <td>{{item?.allocatedDate?(item.allocatedDate| dateformat ):'-'}}</td>
+                      <!-- released on -->
+                    <td>{{item?.releasedDate?(item.releasedDate| dateformat ):'-'}}</td>
+                    <!-- status -->
+                    <!-- <td>{{item?.card?.status ? item?.card?.status:'-'}}</td> -->
+                    <!-- allocation status -->
+                    <td>{{item?.allocationStatus ? item?.allocationStatus:'-'}}</td>
+                    
+                </tr>
+                }
+                @if (cardDetails.length === 0) {
+                <tr>
+                    <app-no-data-found />
+                </tr>
+                }
+            </tbody>
+        </table>
+        } @else {
+        <app-data-loader-content />
+        }
+    </div>
+    </div>

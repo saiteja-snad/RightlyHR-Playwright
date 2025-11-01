@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
@@ -15,9 +15,10 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule,NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
+  encapsulation: ViewEncapsulation.None,
   providers: [DatePipe]
 })
 
@@ -97,19 +98,19 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   navigateMyexpenses() {
     this.router.navigate(['/claimsandexpenses/expenses/draft'])
   }
-  
-  initiateUpdateModuleInfo(){
+
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
     const routeToInfoMap: { [key: string]: string } = {
-      '/claimsandexpenses/addexpense':MODULE_INFOS.EXPENSES_MODULE_INFO
+      '/claimsandexpenses/addexpense': MODULE_INFOS.EXPENSES_MODULE_INFO
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
@@ -232,75 +233,83 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
     });
   }
-fileuploadhide :any;
-fileupload(event: any, index: number): void {
-  const file = event.target.files[0]; // Get the selected file
 
-  const control = this.expenseItems.at(index)?.get('attachment_url');
+  fileupload(event: any, index: number): void {
+    const file = event.target.files[0]; // Get the selected file
 
-  // Handle file dialog cancel or no file selected
-  if (!file) {
-    this.fileuploadhide = true;
-    control?.reset();
-    control?.setErrors({ required: true });
-    control?.markAsTouched();
-    control?.updateValueAndValidity();
-    return;
-  }
+    const control = this.expenseItems.at(index)?.get('attachment_url');
 
-  const allowedTypes = [
-    'image/jpeg',
-    'image/png',
-    'application/pdf'
-  ];
-  const maxSizeInMB = 25;
-  const fileSizeInMB = file.size / (1024 * 1024);
+    // Handle file dialog cancel or no file selected
+    if (!file) {
 
-  // File type validation
-  if (!allowedTypes.includes(file.type)) {
-    this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
-    control?.reset();
-    control?.markAsTouched();
-    control?.updateValueAndValidity();
-    event.target.value = ''; // Reset the file input
-    return;
-  }
-
-  // File size validation
-  if (fileSizeInMB > maxSizeInMB) {
-    this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-    control?.reset();
-    control?.markAsTouched();
-    control?.updateValueAndValidity();
-    event.target.value = ''; // Reset the file input
-    return;
-  }
-
-  const filepath = `/Expenses/${this.empinfo.employeeId}`;
-  // Upload the file
-  const fileUpload$ = this.http.uploadFileWithQuery(
-    'FileSystem/uploadfiletodirectory',
-    filepath,
-    file
-  );
-
-  fileUpload$.subscribe({
-    next: (data: any) => {
-      const uploadedFilePath = data.path;
-      control?.setValue(uploadedFilePath);
-      control?.markAsTouched();
-      control?.updateValueAndValidity();
-    },
-    error: (error: any) => {
-      console.error('Error uploading file:', error);
-      this.conformationPopup.openErrorModal('Error uploading file.');
-      control?.reset(); // Reset the control if upload fails
+      control?.reset();
       control?.setErrors({ required: true });
       control?.markAsTouched();
       control?.updateValueAndValidity();
+      return;
     }
-  });
-}
+
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'application/pdf'
+    ];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
+
+    // File type validation
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      control?.reset();
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+      event.target.value = ''; // Reset the file input
+      return;
+    }
+
+    // File size validation
+    if (fileSizeInMB > maxSizeInMB) {
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      control?.reset();
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+      event.target.value = ''; // Reset the file input
+      return;
+    }
+
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    // Upload the file
+    const fileUpload$ = this.http.uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filepath,
+      file
+    );
+
+    fileUpload$.subscribe({
+      next: (data: any) => {
+        const uploadedFilePath = data.path;
+        control?.setValue(uploadedFilePath);
+        control?.markAsTouched();
+        control?.updateValueAndValidity();
+      },
+      error: (error: any) => {
+        console.error('Error uploading file:', error);
+        this.conformationPopup.openErrorModal('Error uploading file.');
+        control?.reset(); // Reset the control if upload fails
+        control?.setErrors({ required: true });
+        control?.markAsTouched();
+        control?.updateValueAndValidity();
+      }
+    });
+  }
+  markFileTouched(index: number): void {
+    const control = this.expenseItems.at(index)?.get('attachment_url');
+    if (!control?.value) {
+      control?.markAsTouched();
+      control?.setErrors({ required: true });
+      control?.updateValueAndValidity();
+    }
+  }
 
   onchangeexpnes(event: any, index: number) {
     const selectedId = event.value;
@@ -347,7 +356,7 @@ fileupload(event: any, index: number): void {
       // Check if there is any file to upload
       if (this.Myexpense) {
         const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
-         filepath, this.Myexpense);
+          filepath, this.Myexpense);
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
@@ -364,7 +373,8 @@ fileupload(event: any, index: number): void {
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
+              this.conformationPopup.openSuccessModal('Your expense request has been submitted');
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.getexpensesheaderbyid(this.empinfo.employeeId);
             }
           },
@@ -380,8 +390,9 @@ fileupload(event: any, index: number): void {
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Your expense request has been submitted!');
+              this.conformationPopup.openSuccessModal('Your expense request has been submitted');
               this.newExpenseForm.reset();
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
               this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
@@ -452,6 +463,7 @@ fileupload(event: any, index: number): void {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal(' Expense request saved as draft ');
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
               // this.filterAllExpenses()
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
@@ -472,6 +484,8 @@ fileupload(event: any, index: number): void {
           next: (data: any) => {
             if (data) {
               this.conformationPopup.openSuccessModal('Expense request saved as draft');
+              this.router.navigate(['/claimsandexpenses/expenses/draft'])
+              this.http.setnewcountDetails();
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

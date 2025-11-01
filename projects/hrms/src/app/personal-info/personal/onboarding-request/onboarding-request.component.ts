@@ -223,8 +223,13 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   submitRejectReason(data: any) {
     this.rejectionData = data;
   }
-
-  updaterejectdocs() {
+isSubmitting = false;
+  updaterejectdocs(modal: any) {
+    this.isSubmitting = true;
+     if (this.rejectDocument.invalid) {
+    this.rejectDocument.markAllAsTouched();
+    return;
+  }
     // Setting the status for Reject button
     let loggedInUser = this.authService.getToken();
     this.rejectionData.status = 'Rejected';
@@ -232,15 +237,17 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
     this.rejectionData.reason = this.rejectDocument.get('comments')?.value;
     this.http.postdata('OnBoardingDocuments/Update', this.rejectionData).subscribe({
       next: (updatedData: any) => {
-        this.conformationPopup.openSuccessModal('Document rejected successfully');
+         this.isSubmitting = false;
+        modal.close(); 
         setTimeout(() => {
-          this.rejectDocument.reset();
-          this.modalService.dismissAll();
-          this.getdocumentdeatilsbyempid();
-          this.getEmployeeId();
-        }, 2000);
+        this.conformationPopup.openSuccessModal('Document rejected successfully');
+        this.rejectDocument.reset();
+        this.getdocumentdeatilsbyempid();
+        this.getEmployeeId();
+      }, 150);
       },
       error: (reason: any) => {
+         this.isSubmitting = false;
         this.conformationPopup.openErrorModal(reason.error.Message
         );
       },

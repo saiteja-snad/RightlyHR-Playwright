@@ -303,7 +303,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Inactive',
       'Desk Allocation - Create',
       'Team Tickets Tab',
-      'Late Login Alert Configuration Tab'
+      'Late Login Alert Configuration Tab',
+      'Extra Hours Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&
@@ -491,6 +492,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
+    'Extra Hours Configuration Tab'
   ];
   settingsAssetConfigurationFields = [
     'Vendor Details',
@@ -529,6 +531,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Blood Bank',
     'Phone Book',
     'Contacts Directory',
+    'Cards Management',
   ];
   expensesModuleTabs = [
     'Draft Tab',
@@ -562,6 +565,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Under Maintenance',
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
+  ];
+   cardsModuleFields = [
+    'Cards Allocated',
+    'Cards Available',
+    'Cards Expired',
+    'Cards Hold',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',
@@ -602,6 +611,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Module',
     'Permissions Module',
     'Regularization Module',
+    'Extra Hours Module',
     'On Behalf Of Module',
     'On Behalf Of Approvals Module',
     'Global Permissions Module',
@@ -658,6 +668,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Processed (Regularization)',
     'My Team (Regularization)',
   ];
+
+  extraHoursModuleSubTabs = [
+    'Waiting For Approval (Extra Hours)',
+    'Approved (Extra Hours)',
+    'Rejected (Extra Hours)',
+    'Processed (Extra Hours)',
+    'My Team (Extra Hours)',
+    'All Employees (Extra Hours)'
+  ];
+
   onBehalfOfModuleSubTabs = [
     'Waiting For Approval (On Behalf Of)',
     'Approved (On Behalf Of)',
@@ -685,6 +705,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Tab',
     'Permissions Tab',
     'Regularization Tab',
+    'Extra Hours Tab',
     'Separation Request Tab',
     'Recall Request Tab',
     'Trainee Details Tab',
@@ -708,6 +729,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   pendingApprovalRegularizationSubTabs = [
     'For You (Regularization)',
     'For Role (Regularization)',
+  ];
+  pendingApprovalExraHoursSubTabs = [
+    'For You (Extra Hours)',
+    'For Role (Extra Hours)',
   ];
   pendingApprovalSeparationRequestsSubTabs = [
     'For You (Separation Requests)',
@@ -867,6 +892,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Contact Details',
     'My Info Emergency Contact Details',
     'My Info Education Details',
+    'My Skills',
     'My Info Identity Details',
     'My Info Family Details',
     'My Info Bank Details',
@@ -886,6 +912,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Desk Details',
     'My Info Asset Details',
     'My Info Separation Request Button',
+    'My Info Card Details',
   ];
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
@@ -915,6 +942,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Separation Request',
     'No Due Form',
     'Employee Info Contract Conversion Request',
+    'Employee Info Card Details'
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',
@@ -1106,6 +1134,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Bank Details',
     'Employee Info Visa Details',
     'Employee Info Documents Verification',
+    'Employee My Skills'
   ];
   selectAllProjectManagementTabs = [
     'Project Details Tab',
@@ -1136,12 +1165,18 @@ selectAllLettersTabs=[
 ]
 
 selectAllOnBehalfOf = [
-  'On Behalf Of', 'On Behalf Of WFH'
+  'On Behalf Of', 'On Behalf Of WFH','On Behalf Of RemoteLogin'
+
 ]
 
 selectAllOnBehalfOfWFH = [
   'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
-  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'Request On Behalf Of WFH Button'
+  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team','Request On Behalf Of WFH Button'
+]
+
+selectAllOnBehalfOfRemoteLogin = [
+  'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
+  , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team','Request On Behalf Of RemoteLogin Button'
 ]
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1550,7 +1585,15 @@ selectAllOnBehalfOfWFH = [
     }
     return false;
   }
-
+ iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
   isdeskallActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
@@ -1931,6 +1974,16 @@ selectAllOnBehalfOfWFH = [
   }
 
   isOnBehalfOfWFHTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isOnBehalfOfRemoteLoginTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }

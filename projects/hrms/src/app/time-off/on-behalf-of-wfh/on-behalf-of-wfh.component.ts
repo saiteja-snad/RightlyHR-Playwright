@@ -41,6 +41,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   spinnerLoader = false;
   employeeiddetails = [] as any;
+  myTeamData = [] as any;
   selectedOtherEmployee: any = null;
   selectedEmpName!: string;
   selectedEmpFusionId!: string;
@@ -63,6 +64,7 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
     this.initiateUpdateModuleInfo();
     this.intializewfhForm();
     this.getEmployeeId();
+    this.getMyTeam();
     this.handleAvailingChange();
   }
 
@@ -106,6 +108,47 @@ export class OnBehalfOfWfhComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.employeeiddetails = data
+            .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
+            .map((emp: any) => {
+              const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';
+              const fullName = `${fusionPart}${emp.firstName ?? ''} ${
+                emp.middleName ? emp.middleName + ' ' : ''
+              }${emp.lastName ?? ''}`.trim();
+              const leaveRequestName = `${emp.firstName ?? ''} ${
+                emp.middleName ? emp.middleName + ' ' : ''
+              }${emp.lastName ?? ''} ${
+                emp.fusionEmpId ? `(${emp.fusionEmpId})` : ''
+              }`.trim();
+              return {
+                ...emp,
+                fullName,
+                leaveRequestName,
+              };
+            })
+
+            // Alphabetical sorting by firstName
+            .sort((a: any, b: any) =>
+              a.firstName.localeCompare(b.firstName, 'en', {
+                sensitivity: 'base',
+              })
+            );
+        },
+        error: (reason: any) => {
+          console.error(reason);
+        },
+      });
+  }
+
+
+  // Method to get the Reportess list
+  getMyTeam() {
+    let loggedInUser = this.authService.getToken();
+    this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${loggedInUser.employeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.myTeamData = data
             .filter((emp: any) => emp.employeeId != loggedInUser.employeeId)
             .map((emp: any) => {
               const fusionPart = emp.fusionEmpId ? `${emp.fusionEmpId} - ` : '';

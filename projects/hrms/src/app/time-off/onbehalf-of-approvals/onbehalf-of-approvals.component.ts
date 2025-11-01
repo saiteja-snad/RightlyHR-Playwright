@@ -118,7 +118,8 @@ export class OnbehalfOfApprovalsComponent {
 
   getEmployeeId() {
     const loggedInUser = this.authService.getToken();
-    this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+    const statuses = 'Active';
+    this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
       next: (data: any) => {
         // this.employeeiddetails = data as IemployeeDetails[];
         const employeedata = data.map((employee: any) => {

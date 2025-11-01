@@ -11,6 +11,7 @@ import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { projectRoleDATA } from './project-role-modal';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-project-role',
@@ -33,6 +34,7 @@ export class ProjectRoleComponent {
   AddForm!: FormGroup;
   empinfo: any;
   updateForm!: FormGroup;
+  loggedinuser: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -40,11 +42,13 @@ export class ProjectRoleComponent {
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
+    private authService: AuthService,
   ) {
 
   }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');// assuming user details stored here
+      this.loggedinuser = this.authService.getToken();
     this.AddForm = this.fb.group({
       Addprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       department: ['', Validators.required],
@@ -152,8 +156,8 @@ export class ProjectRoleComponent {
       entityType: this.selectedDeleteRole.entityType || 'department',
       entityReferenceId: this.selectedDeleteRole.entityReferenceId || 0, // department id
       isActive: false,
-      createdBy: this.empinfo?.employeeId || 0,
-      updatedBy: this.empinfo?.employeeId || 0
+      // createdBy: this.empinfo?.employeeId || 0,
+      updatedBy: this.loggedinuser.employeeId || 0
     };
     //  this.http.putData(`ProjectManagementAuthority/${this.selectedAuthority.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
     this.subscription = this.http.putData(`ProjectRoles/${this.selectedDeleteRole.id}`, payload).subscribe({
@@ -197,8 +201,8 @@ export class ProjectRoleComponent {
       entityType: 'department',
       entityReferenceId: Number(this.updateForm.value.Updatedepartment),
       isActive: true,
-      createdBy: this.empinfo?.employeeId || 0,
-      updatedBy: this.empinfo?.employeeId || 0
+      // createdBy: this.empinfo?.employeeId || 0,
+      updatedBy: this.loggedinuser.employeeId || 0
     };
 
     this.subscription = this.http.putData(`ProjectRoles/${this.selectedId}`, payload).subscribe({

@@ -74,7 +74,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('datePicker') datePicker: any;
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
-
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService) { }
 
@@ -146,7 +145,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     );
 
     const resourcestartdate = matchedResource?.startDate
-      ? new Date(matchedResource.startDate) : null;
+      ? new Date(matchedResource.startDate)
+      : null;
 
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
@@ -157,8 +157,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     let isEffective = false;
     if (matchedResource && !matchedResource?.isNoClientProject) {
-      isEffective = resourcestartdate && entryDateObj ? entryDateObj.getTime() 
-      >= resourcestartdate.getTime() : false;
+      isEffective =
+        resourcestartdate && entryDateObj
+          ? entryDateObj.getTime() >= resourcestartdate.getTime()
+          : false;
     } else {
       // No-client/no-project → always effective
       isEffective = true;
@@ -167,8 +169,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const isWeekendAllowedProject = matchedResource?.weekendWorkAllowed;
 
     //enable/disable
-    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && 
-    !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
+    const shouldEnable = isProjectSelected && !isLeave && !isFutureDate && isEffective && !approvedStatus && (this.employeeId === this.empdata?.employeeId) ?
       isBlocked ? isWeekend && isWeekendAllowedProject : true : false;
     // Duration control setup
     const billablecheck = !!(matchedResource?.billable || this.selectedProjectResource?.billable);
@@ -327,7 +328,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       sun: false,
     };
   }
-
   isReportee = false;
   onCheckemployee(employeed: any, dropdownType?: string) {
     this.employeeSelected = !!employeed;
@@ -402,11 +402,15 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   getDraftEntryIdsByProject(projectIndex: number): number[] {
     const project = this.timesheetdata?.projects?.[projectIndex];
+    console.log(project);
 
     if (!project || !project.days) return [];
+    console.log(project);
 
-    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' ||
-      day.approvalStatus?.toLowerCase() === 'not entered') && !!day.entryId).map((day: any) => day.entryId);
+    return project.days.filter((day: any) => (day.approvalStatus?.toLowerCase() === 'draft' || day.approvalStatus?.toLowerCase() === 'not entered') &&
+      !!day.entryId).map((day: any) => day.entryId);
+
+
   }
 
   openModalforsubmit(content: any) {
@@ -429,7 +433,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.http.DeleteData('Timesheet/delete-entries', payload).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Row deleted successfully');
+          this.conformationPopup.openSuccessModal('Draft entries deleted successfully');
           this.projects.removeAt(index);
           this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
           this.getTimeSheetEntriesbyEmployeeId(
@@ -707,6 +711,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   private isDeleteModalOpen = false;
   private userClickedNo = false;
   private isModalOpen = false;
+  private autoSaveTimeout: any = null;
 
   // Check if user is trying to clear duration for draft entries
   checkClearDuration(event: KeyboardEvent, dayName: string, rowIndex: number) {
@@ -757,13 +762,19 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       this.showDots[rowIndex][dayName] = true;
     }
 
-    // Auto-save on blur if duration has value
-    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
-
-
+    // Auto-save only on blur to prevent duplicate calls
+    if (formatted && event.type === 'blur' && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
+      // Clear any existing timeout
+      if (this.autoSaveTimeout) {
+        clearTimeout(this.autoSaveTimeout);
+      }
+      
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
-        this.autoSaveTableEntry(rowIndex, dayName);
+        // Add small delay to prevent rapid successive calls
+        this.autoSaveTimeout = setTimeout(() => {
+          this.autoSaveTableEntry(rowIndex, dayName);
+        }, 300);
       }
     }
 
@@ -961,7 +972,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       isLeave: existingDayData?.isLeave || false
     };
   }
-
   onDropdownClick(event: MouseEvent) {
     if (!this.employeeSelected) {
       event.stopPropagation(); // stop event bubbling
@@ -971,6 +981,8 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   selectedProject: { clientName: string; projectName: string } | null = null;
   selectProjectForRow(row: AbstractControl, client: any, project: any) {
+    console.log("ahsd");
+
     this.selectedProjectResource = null
     const form = row as FormGroup;
     // Extract previous values (if user is switching projects)
@@ -992,7 +1004,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
     // Skip redundant selection
     if (prevClientId === client?.clientId && prevProjectId === project?.projectId) {
-     
+      console.log('Same project/client selected — no update needed.');
       return;
     }
     const selectedResource = this.resourcesArrayList.find(
@@ -1013,20 +1025,21 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       previousClientId: prevClientId || null,
     };
 
-    //  Add projectId only if not 0
+    // ✅ Add projectId only if not 0
     if (project?.projectId && project.projectId !== 0) {
       payload.projectId = project.projectId;
     }
 
-    //  Add clientId only if not 0
+    // ✅ Add clientId only if not 0
     if (client?.clientId && client.clientId !== 0) {
       payload.clientId = client.clientId;
     }
 
-    // Now call API
+    // ✅ Now call API
     this.http.postdata('Timesheet/select-project', payload).subscribe({
       next: (res) => {
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
+        console.log('Project state saved successfully');
       },
       error: (err) => console.error('Error saving project state:', err)
     });
@@ -1370,12 +1383,11 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
       error: (err) => {
-             console.error('Error saving entry', err);
         this.spinnerLoader = false;
         this.conformationPopup.openErrorModal(err.error.message);
-          this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
+        console.error('Error saving entry', err);
+        this.formattedweakendStart = moment(this.start).format('YYYY-MM-DD');
         this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
-   
       },
     });
   }
@@ -1441,7 +1453,9 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.spinnerLoaderforallrecoders = false
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Timesheet submitted successfully');
+        this.conformationPopup.openSuccessModal(
+          'Timesheet submitted successfully'
+        );
         this.selectedclientid = null;
         this.selectedprojectid = null;
         this.selectedProjectName = null;
@@ -1457,7 +1471,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       },
     });
   }
-
   canDelete(project?: AbstractControl, index?: number): boolean {
     if (!project) return false;
     const projectId = project.get('projectId')?.value ?? null;
@@ -1498,6 +1511,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Check if any of the fields in the day form are filled
+  isDayFormDirtyOrFilled(form: FormGroup): boolean {
+    const duration = form.get('duration')?.value;
+    return !!duration; // Only checks duration now
+  }
+ 
+
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
     const status = control?.getRawValue()?.approvalStatus;
@@ -1534,11 +1554,6 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   private pad(num: number): string {
     return num.toString().padStart(2, '0');
-  }
-
-  isDayFormDirtyOrFilled(form: FormGroup): boolean {
-    const duration = form.get('duration')?.value;
-    return !!duration; // Only checks duration now
   }
 
   ngOnDestroy() {

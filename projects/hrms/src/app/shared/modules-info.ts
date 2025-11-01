@@ -175,6 +175,8 @@ export const MODULE_INFOS = {
     PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO: "The Family Members section enables employees to add and manage information about their family members, including Name, Relationship, Date of Birth, and Dependent status. Users can add new entries and perform actions such as edit or delete existing records.",
     PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO: "The Bank Info section allows employees to add and manage their bank accounts by providing Bank Name, Account Holder's Name, Account Number, IFSC Code, and uploading proof documents. Users can designate a primary bank account and perform actions like edit or delete records.",
     PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO: "The Visa Details section enables employees to add and manage visa information including Visa Type, Issue Date, Expiry Date, Issued Country, and Status. Users can add new visa records and perform actions such as edit or delete existing entries.",
+    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+
 
     //My info Job Module info 
     JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO: "The Pre Onboarding Info section captures key milestones like offer, appointment, and trainee offer dates, along with the sender's name and current status. It helps track the progression of onboarding documents.",
@@ -219,4 +221,9 @@ export const MODULE_INFOS = {
     Project_Timesheet_INFO: 'Monitor hours logged by your project team. Review submitted entries, approve timesheets, and maintain accurate records to keep projects on track and ensure accountability.',
     Inactive_Documents_Project: "Store and access inactive project-related documents in a single location. Upload key deliverables, reference materials, and signed files, keeping your team organized and ensuring everyone has the resources they need.",
     Inactive_CLIENT_Documents_INFO: "Store and access Inactive client-related documents in a single, secure location. Upload MSAs, NDAs, and other critical files, track signed copies, and ensure your team can quickly retrieve documents whenever needed for smooth operations.",
+     JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO:"The Cards section in My Info allows employees to view all cards currently allocated to them. Employees can check key details such as card number, issued date, and expiry month. This ensures transparency and helps employees stay informed about their assigned company cards.",
+    JOB_MODULE_PERSONAL_CARD_MODULE_INFO:"The Cards section in Employee Info allows employees to view all cards currently allocated to them. Employees can check key details such as card number, issued date, and expiry month. This ensures transparency and helps employees stay informed about their assigned company cards.",
+    //Cards Management Module Info
+    CARDS_MANAGEMENT_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
+    CARDS_HISTORY_MODULE_INFO:"The Cards Management module enables admins to register and manage company-issued cards. Cards can be allocated, released, put on hold, or marked as expired based on usage and validity. This ensures accurate tracking, accountability, and secure handling of all cards within the organization.",
 }

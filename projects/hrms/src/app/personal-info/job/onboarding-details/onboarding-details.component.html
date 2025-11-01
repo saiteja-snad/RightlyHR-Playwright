@@ -6,8 +6,7 @@
                 <span class="component-sub-header">Onboarding Info</span>
             </div>
             @if(canAccess('view','onboarding')){
-            @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
-            'trainee inactive' )){
+            @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !=='trainee inactive' )){
     
             @if(canAccess('update','onboarding')){
             <div>

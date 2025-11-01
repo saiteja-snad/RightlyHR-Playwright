@@ -5,6 +5,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   { permission: 'My Info Contact Details.view', route: '/myinfo/personal/contact-details' },
   { permission: 'My Info Emergency Contact Details.view', route: '/myinfo/personal/emergency-contact-details' },
   { permission: 'My Info Education Details.view', route: '/myinfo/personal/education-details' },
+  { permission: 'My Skills.view', route: '/myinfo/personal/my-skills' },
   { permission: 'My Info Identity Details.view', route: '/myinfo/personal/identity-details' },
   { permission: 'My Info Family Details.view', route: '/myinfo/personal/family-details' },
   { permission: 'My Info Bank Details.view', route: '/myinfo/personal/bank-details' },
@@ -57,7 +58,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_TABS = [
   { route: '/settings/employee-fields/manage-dsts', permission: 'Manage DST Tab.view' },
   { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' },
   { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' },
-{ route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
+  { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
 
 ]
 
@@ -353,7 +354,7 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/project-document-type', permission: 'Project Document Type.view' },
   { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
-    { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
+  { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -463,7 +464,8 @@ export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
   { permission: 'Employee Info Family Details.view', route: '/personalinfo/personal/family-details' },
   { permission: 'Employee Info Bank Details.view', route: '/personalinfo/personal/bank-details' },
   { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' },
-  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' }
+  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' },
+  { permission: 'Employee My Skills.view', route: '/personalinfo/personal/my-skills' },
 ];
 export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
   { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
@@ -616,4 +618,10 @@ export const ON_BEHALF_OF_REMOTELOGIN_TABS = [
   { route: '/on-behalf-of/on-behalf-of-remotelogin/processed', permission: 'Processed (On Behalf Of RemoteLogin).view' },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/rejected', permission: 'Rejected (On Behalf Of RemoteLogin).view', },
   { route: '/on-behalf-of/on-behalf-of-remotelogin/cancelled', permission: 'Cancelled (On Behalf Of RemoteLogin).view', },
+]
+export const CARDS_SUB_TABS = [
+  { route: '/card-management/details', permission: 'Cards Available.view' },
+  { route: '/card-management/expiry', permission: 'Cards Expired.view' },
+  { route: '/card-management/allocated', permission: 'Cards Allocated.view' },
+  { route: '/card-management/hold', permission: 'Cards Hold.view' },
 ]

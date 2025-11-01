@@ -201,11 +201,11 @@ export class EmployeOffBoardingComponent {
          
             this.conformationPopup.openSuccessModal('Employee Inactived successfully')
             if (this.offBoardingEmp.empstatus === 'Inactive') {
-              this.router.navigate(['/employee-management/inactive-employees']);
+              this.router.navigate(['/employee-management/inactive/employees']);
               //this.InactiveEmail(this.empinfo.employeeId);
             }
             else if (this.offBoardingEmp.empstatus === 'Trainee Inactive') {
-              this.router.navigate(['/employee-management/inactive-interns']);
+              this.router.navigate(['/employee-management/inactive/interns']);
             }
  
           } else if (res.statusCode === 409) {

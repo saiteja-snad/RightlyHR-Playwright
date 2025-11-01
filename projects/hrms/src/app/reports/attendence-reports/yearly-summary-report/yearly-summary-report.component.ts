@@ -131,7 +131,8 @@ export class YearlySummaryReportComponent implements OnInit,OnDestroy {
 
 
   getTeam() {
-  this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
+  const statuses = 'Active';
+  this.subscription = this.http.getData(`PendingApprovalsAuthority/getAll?statuses=${encodeURIComponent(statuses)}`).subscribe({
     next: (data: any) => {
       this.teamdetails = data
         .map((employee: any) => {

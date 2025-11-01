@@ -526,6 +526,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Blood Bank',
     'Phone Book',
     'Contacts Directory',
+    'Cards Management',
   ];
   expensesModuleTabs = [
     'Draft Tab',
@@ -559,6 +560,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Under Maintenance',
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
+  ];
+   cardsModuleFields = [
+    'Cards Allocated',
+    'Cards Available',
+    'Cards Expired',
+    'Cards Hold',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',
@@ -880,6 +887,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Contact Details',
     'My Info Emergency Contact Details',
     'My Info Education Details',
+    'My Skills',
     'My Info Identity Details',
     'My Info Family Details',
     'My Info Bank Details',
@@ -899,6 +907,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Desk Details',
     'My Info Asset Details',
     'My Info Separation Request Button',
+    'My Info Card Details',
   ];
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
@@ -928,6 +937,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Separation Request',
     'No Due Form',
     'Employee Info Contract Conversion Request',
+    'Employee Info Card Details'
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',
@@ -1119,6 +1129,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Bank Details',
     'Employee Info Visa Details',
     'Employee Info Documents Verification',
+    'Employee My Skills'
   ];
   selectAllProjectManagementTabs = [
     'Project Details Tab',
@@ -1569,7 +1580,15 @@ selectAllOnBehalfOfRemoteLogin = [
     }
     return false;
   }
-
+ iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
   isdeskallActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;

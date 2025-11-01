@@ -15,6 +15,7 @@ import { IAddress, ICountry, IEmployee, IGender, IJobtype, IRole, IServe, ITitle
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-trainee-offer-letter',
   imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, TranslateModule,
@@ -123,7 +124,13 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   issuedDatevalidate: any;
   startDatevalidate: any;
   expiryDatevalidate: any;
-  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router,
+
+
+  stipend: { name: string, value: boolean }[] = [
+    { name: 'Yes', value: true },
+    { name: 'No', value: false }
+  ];
+  constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router, public formValidation: FormValidationService,
     private authService: AuthService, private conformationPopup: OpenModalService,) {
     this.initializeForm();
   }
@@ -145,6 +152,24 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     this.getAllWorkLocation();
     this.getAuthorityDetails();
     this.getEmployeeIdforReporting();
+
+    this.employeeForm.get('stipend')?.valueChanges.subscribe(selected => {
+      const amountControl = this.employeeForm.get('amount');
+
+      if (selected?.value === false) {
+
+        amountControl?.setValidators([Validators.required]);
+
+      } else {
+
+        amountControl?.clearValidators();
+        amountControl?.setValue(null); // Optional: clear amount
+      }
+
+
+      amountControl?.updateValueAndValidity();
+    });
+
   }
 
   initializeForm() {
@@ -165,7 +190,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       pinCode: [{ value: null, disabled: true }],
       phoneNumber: [{ value: null, disabled: true }],
       jobRoleDetails: [{ value: null, disabled: true }],
-      amount: ['', Validators.required],
+      amount: ['',],
+      monthlyammount: ['',Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerSentDate: ['', Validators.required],
@@ -176,10 +202,12 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       reportingmanagerId: [null, Validators.required],
       documentType: ['', Validators.required],
       internshipperiod: [null, Validators.required],
+      stipend: [null, Validators.required]
     });
     this.employeeForm.get('internshipperiod')?.valueChanges.subscribe((value: string) => {
       this.calculateEndDate(value);
     });
+
   }
 
   onclickcheckempidnull(empidValue: any) {
@@ -264,6 +292,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
             };
           }).sort((a: any, b: any) => (a.firstName ?? '').localeCompare(b.firstName ?? ''));
         }
+        console.log(this.getAllEmployeeInfo);
+
       },
     });
   }
@@ -465,7 +495,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       jobRoleDetails: data?.jobRole,
       esic: data?.esic,
       pf: data?.pf,
-      amount: data?.amount,
+
       isVariablePay: data?.isVariablePay,
       variablePayAmount: data?.variablePayAmount,
       locationId: this.LocationDropDownData.find((x: any) => x.jobLocationName === data?.workLocation),
@@ -673,6 +703,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       approvedBy: null,
       approver: null,
       comments: null,
+      stipendAmount: this.employeeForm.get('monthlyammount')?.value,
+      stipendApplicable: this.employeeForm.get('stipend')?.value?.value,
       requestedDate: new Date(),
       offerExpiryDate: this.employeeForm.get('offerExpiryDate')?.value,
       authoritySignature: this.employeeForm.get('authorityid')?.value.employeeId,
@@ -694,8 +726,12 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
 
   //function to updated the data
   updateTraineeOfferLetterFieldsDetails(f: FormGroup) {
+    console.log(f.value);
+
     const data = JSON.parse(JSON.stringify(this.traineeEmpData));
     this.loading = true;
+
+    this.traineeEmpData.jobRole = this.jobRoleDetails;
     this.traineeEmpData.employeeId = this.traineeEmpData.empId,
       this.traineeEmpData.empId = this.traineeEmpData.empId?.toString(),
       this.traineeEmpData.firstName = data.firstName,
@@ -727,6 +763,8 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
     else {
       this.traineeEmpData.substatus = 'Offer Letter Generated';
     }
+    console.log(this.traineeEmpData);
+
     this.subscription = this.http.postdata('Employeedata/UPDATER', this.traineeEmpData).subscribe({
       next: (res: any) => {
         this.result = res.employeeData;
@@ -825,7 +863,7 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
   generatepostingtorepectivefields() {
     let data = this.traineeEmpData;
     const Compensationdata = {
-      // id: data.compensationId,
+      id: data.compensationId,
       employeeId: data.empId,
       compeffectivedate: data.dateOfJoining,
       overtimeeligibility: null,
@@ -846,12 +884,18 @@ export class TraineeOfferLetterComponent implements OnInit, OnDestroy {
       gradeId: null,
       isdeleted: 'Active',
     };
-    this.subscription = this.http.postdata('Compensationdata', Compensationdata).subscribe({
-      next: (data: any) => {
-        //alert("comp data successfully added")
-      },
-      error: (Reason) => console.log(Reason),
-    });
+
+    if (this.traineeEmpData?.amount != null && this.employeeForm.get('amount')?.value != null) {
+      this.subscription = this.http.postdata('Compensationdata', Compensationdata).subscribe({
+        next: (data: any) => {
+          console.log("comp data successfully added");
+        },
+        error: (Reason) => console.log(Reason),
+      });
+    } else {
+      console.log('no ctc data available');
+    }
+
     this.subscription = this.http.postdata('Employementtype', employmentdata).subscribe({
       next: (data: any) => {
         this.disableFieldsForApproval = false;

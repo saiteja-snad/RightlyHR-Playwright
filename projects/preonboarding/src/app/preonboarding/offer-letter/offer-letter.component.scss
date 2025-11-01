@@ -27,17 +27,13 @@
 }
 
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table,th,td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th,td {
         padding: 0.5rem 0.625rem;
         text-align: center;
         color: #000;
@@ -63,14 +59,13 @@
     }
 }
 
-.letter-header{
+.letter-header {
     font-size: 18px;
     font-weight: 600;
 }
-.salary-details-table {
 
-    .mytable,
-    .secondtable {
+.salary-details-table {
+    .mytable,.secondtable {
         th {
             background: #e7f0fd;
         }
@@ -105,8 +100,8 @@ textarea:focus {
         width: 270mm;
         padding-top: 7% !important;
         position: relative;
-        background-image: url('/images/snad-letter-bg.jpg') !important;
-        background-size: 100% 100%;
+        background-image: url('/images/snad-new-letter-bg.png') !important;
+        background-size: 103% 102.5%;
         background-repeat: no-repeat;
         background-position: center;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -119,8 +114,6 @@ textarea:focus {
             line-height: 18px;
             text-align: justify;
         }
-
-
     }
 }
 
@@ -134,7 +127,7 @@ textarea:focus {
     font-family: "autographsignatureFont" !important;
 }
 
-.box-serpately{
+.box-serpately {
     display: inline-block;
     width: 91px;
     height: 19px;

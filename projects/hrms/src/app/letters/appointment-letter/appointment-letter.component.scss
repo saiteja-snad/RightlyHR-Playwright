@@ -1,8 +1,6 @@
 * {
-   
     font-family: 'VERDANA', sans-serif !important;
 }
-
 
 input:focus {
     outline: none !important;
@@ -15,17 +13,19 @@ input:focus {
     pointer-events: none;
     opacity: 0.5;
 }
-.soft-copy-letter {
-    background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top: 12.5rem !important;
 
+.soft-copy-letter {
+    background-image: url('/images/snad-new-letter-bg.png') !important;
+    padding-top: 12.5rem !important;
 }
+
 .authorized-signatory {
     font-size: 16px;
     font-weight: 700;
 }
+
 .roman-numbers-fornt li::marker {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .letter-signature {

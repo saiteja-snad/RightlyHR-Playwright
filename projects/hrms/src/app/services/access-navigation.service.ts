@@ -64,7 +64,8 @@ import {
   ON_BEHALF_OF_WFH_TABS,
   ON_BEHALF_OF,
   ON_BEHALF_OF_REMOTELOGIN_TABS,
-  EXTRA_HOURS_SUB_TABS
+  EXTRA_HOURS_SUB_TABS,
+  CARDS_SUB_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -357,6 +358,12 @@ export class AccessNavigationService {
       case '/attendance':
         if (this.rbac.allowedToAccess('Attendance.view')) {
           return (route = '/attendance');
+        }
+        break;
+
+      case '/skill-directory':
+        if (this.rbac.allowedToAccess('Skillset Directory.view')) {
+          return (route = '/skill-directory');
         }
         break;
 
@@ -740,6 +747,15 @@ export class AccessNavigationService {
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+        case '/card-management':
+        if (this.rbac.allowedToAccess('Cards Management.view')) {
+          for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1629,7 +1645,7 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
-           if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
             return (route = '/time-off/pending-approvals/time-sheets');
           }
 
@@ -1734,7 +1750,7 @@ export class AccessNavigationService {
           }
         }
         break;
-        case '/time-off/pending-approvals/contractors-request':
+      case '/time-off/pending-approvals/contractors-request':
         if (this.rbac.allowedToAccess('Contractor Details Tab.view')) {
           for (const item of CONTRACT_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

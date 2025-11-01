@@ -6,6 +6,9 @@ import {
   FormBuilder,
   Validators,
   FormArray,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -211,7 +214,7 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
                 createdBy: [loggedInUserName],
                 createdOn: [moment()?.format('YYYY-MM-DD') || ''],
               },
-             {validators: this.validateEffectiveToDate})
+             {validators: [this.validateEffectiveToDate,this.validateDaysWithinRange()]})
             );
           });
 
@@ -282,7 +285,7 @@ validateEffectiveDate(control: any) {
   return null;
 }
 
-
+// Validator to ensure effectiveToDate is not before effectiveFromDate
 validateEffectiveToDate(formGroup: FormGroup) {
   const fromDate = formGroup.get('effectivedate')?.value;
   const toDate = formGroup.get('effectiveto')?.value;
@@ -298,6 +301,35 @@ validateEffectiveToDate(formGroup: FormGroup) {
 
   return null;
 }
+// Validator to ensure days do not exceed the range between effective dates
+validateDaysWithinRange(): ValidatorFn {
+  return (group: AbstractControl): ValidationErrors | null => {
+    const fromDate = group.get('effectivedate')?.value;
+    const toDate = group.get('effectiveto')?.value;
+    const days = group.get('days')?.value;
+
+    if (!fromDate || !toDate || !days) {
+      return null; // skip validation if values are missing
+    }
+
+    const start = new Date(fromDate);
+    const end = new Date(toDate);
+
+    if (end < start) {
+      return { invalidEffectiveToDate: true }; // Already handled in your template
+    }
+
+    const diffInMs = end.getTime() - start.getTime();
+    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24)) + 1; // include both dates
+
+    if (days > diffInDays) {
+      return { invalidDaysRange: true }; // custom error key
+    }
+
+    return null;
+  };
+}
+//method to handle selected employees from multi select
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
     this.selectedEmployees = selectedList || [];
     this.getByEmployeewfhallocations(this.selectedEmployees, form);

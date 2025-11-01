@@ -176,8 +176,11 @@
                         <td>
                             <input type="number" formControlName="days" class="form-control custom-input mt-2"
                                 placeholder="Enter number of days" min="0" max="365" (keypress)="validateInput($event)" />
-                            <div *ngIf="emp.get('days')?.touched && emp.get('days')?.invalid" class="error-msg">
+                            <div *ngIf="emp.get('days')?.touched && (emp.get('days')?.invalid|| emp.errors?.['invalidDaysRange'])" class="error-msg">
                                 <div *ngIf="emp.get('days')?.errors?.['required']">Please enter a valid number of days</div>
+                                <div *ngIf="emp.errors?.['invalidDaysRange']" class="error-msg">
+                                    Days cannot exceed date range
+                                </div>
                             </div>
                         </td>
 

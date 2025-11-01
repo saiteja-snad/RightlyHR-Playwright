@@ -85,14 +85,14 @@ export class ExtraHoursConfigurationComponent implements OnInit, OnDestroy {
       case 'AllowedPastDays': {
         const intVal = parseInt(value, 10);
         if (isNaN(intVal) || intVal < 1 || intVal > 31) {
-          return 'Allowed Past Days should be between 1 and 31';
+          return 'You cannot select a date beyond the 31-day limit';
         }
         break;
       }
       case 'AllowedHours': {
         const floatVal = parseFloat(value);
         if (isNaN(floatVal) || floatVal < 0.5 || floatVal > 6) {
-          return 'Allowed Hours should be between 0.5 and 6 (inclusive)';
+          return 'Entry cannot exceed 6 hours';
         }
         break;
       }

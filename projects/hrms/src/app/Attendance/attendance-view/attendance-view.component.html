@@ -400,23 +400,33 @@
 
                 @if(extra_logs.length>0){
                 <p-accordion-panel value="3">
-                    <p-accordion-header>Extra Logs</p-accordion-header>
+                    <p-accordion-header>Extra Hours</p-accordion-header>
                     <p-accordion-content>
                         <div class="popup-table-wrapper">
                             <div class="popup-table-scroll-container">
                                 <table class="popup-table">
                                     <thead>
                                         <tr>
-                                            <!-- <th>Type</th> -->
                                             <th>Duration</th>
                                             <th>Status</th>
+                                            <th>Description</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let log of extra_logs">
-                                            <!-- <td class="log-time">{{ log.type?log.type:'-' }}</td> -->
                                             <td class="duration-time">{{ log.duration ? log.duration + ' Hrs' : '-' }}</td>
                                             <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
+                                            <td>
+                                                <a [ngbPopover]="desprictionContent">
+                                                    <app-info-icon />
+                                                </a>
+                                                <!--Module Information-->
+                                                <ng-template #desprictionContent>
+                                                    <div>
+                                                        {{log.notes}}
+                                                    </div>
+                                                </ng-template>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -540,7 +550,7 @@
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <img src="/icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">

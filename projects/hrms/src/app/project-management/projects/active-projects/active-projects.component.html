@@ -279,6 +279,22 @@
           </div>
           
           </div>
+
+              <!-- Department Name Field -->
+         <div class="col-md-6 mb-3">
+          <label for="department" class="form-label custom-label mb-2">
+            {{ 'Department' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="departmentlist" optionLabel="departmentName" optionValue="sno" [filter]="true"
+              defaultLabel="Please select department name" formControlName="updatedepartment"
+              class="form-select custom-select"></p-multiSelect>
+        </div>
+          <div *ngIf="updateprojectform.get('department')?.touched && updateprojectform.get('department')?.invalid" class="error-msg">
+            <div *ngIf="updateprojectform.get('department')?.errors?.['required']">{{'Department name is required'|translate}}
+            </div>
+          </div>
+        </div>
           
           
 

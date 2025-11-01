@@ -4,6 +4,10 @@ export interface IProjectResponse {
   message: string;
   data: Project[];
 }
+export interface Department {
+  departmentId: number;
+  departmentName: string;
+}
 
 export interface Project {
   projectId: number;
@@ -24,6 +28,7 @@ export interface Project {
   client: Client;
   pendingApprovalAuthority: Authority;
   createdBy: Authority;
+   departments?: Department[]; 
 }
 
 export interface Client {

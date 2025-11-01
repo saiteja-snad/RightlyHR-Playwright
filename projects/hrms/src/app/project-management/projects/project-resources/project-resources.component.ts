@@ -33,6 +33,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   selectedEmployee: any;
   employeeFullname!: string;
   loading: boolean = true;
+  projectRoleDropdown: any[] = [];
   frequencyTypes = [
     { label: 'Per month', value: 'Per month' },
     { label: 'Per week', value: 'Per week' },
@@ -47,7 +48,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   startDatevalidate: any;
   endDatevalidate: any;
   inactiveStatus: any;
-
+  loader: boolean | undefined;
+  departmentIds: number[] = [];
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
     public formValidation: FormValidationsService,) { }
@@ -74,6 +76,15 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       this.StartndendDateValidation();
     });
   }
+selectedRoleId: number = 0;
+selectedEntityRefId: number = 0;
+
+onRoleChange(selectedValue: any) {
+  if (selectedValue) {
+    this.selectedRoleId = selectedValue.roleId;
+    this.selectedEntityRefId = selectedValue.entityReferenceId;
+  }
+}
 
   initializeForms() {
     this.updateResourceForm = this.fb.group({
@@ -90,8 +101,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
-      resourceRole: [null, [Validators.required, Validators.maxLength(50),
-      Validators.minLength(2),]]
+      resourceRole: [null,Validators.required]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -101,6 +111,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsData = res?.data ?? [];
+          this.departmentIds = this.projectsData[0].departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
         if (project) {
           this.projectStartDate = new Date(project.startDate);
@@ -108,6 +119,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
           // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
           // this.updateResourceForm.updateValueAndValidity();
         }
+         this.getJobrole();
         this.inactiveStatus = (res?.data ?? []).some((p: any) =>
           p.status?.toLowerCase() === 'inactive' || p.client?.status?.toLowerCase() === 'inactive'
         ) ? 'inactive' : 'active';
@@ -118,7 +130,32 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       },
     });
   }
+getJobrole() {
+  this.loader = true;
+  const departmentParam = this.departmentIds?.join(',') || '';
 
+  this.subscription = this.http
+    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
+    .subscribe({
+      next: (response: any) => {
+        this.loader = false;
+        if (response && response.success && Array.isArray(response.data)) {
+          this.projectRoleDropdown = response.data.map((item: any) => ({
+            label: `${item.roleName}`,
+            value: {
+              roleId: item.id,
+              entityReferenceId: item.entity?.entityReferenceId || 0
+            }
+          }));
+        } else {
+          this.projectRoleDropdown = [];
+        }
+      },
+      error: () => {
+        this.loader = false;
+      },
+    });
+}
   // validateAllocationHours(project: any): ValidatorFn {
   //   return (control: AbstractControl): ValidationErrors | null => {
   //     const form = control as FormGroup;
@@ -176,6 +213,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
 
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
+    const selectedRole = this.projectRoleDropdown.find(
+  (r: any) => r.label === data.projectRoleName
+);
+
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
@@ -190,8 +231,9 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         endDate: this.formatDateToLocal(data.endDate),
         // allocatedFrequencyType: data?.allocatedFrequencyType,
       billable: data.billable,
+
       allowweekendWork: data.weekendWorkAllowed,
-      resourceRole: data.role
+        resourceRole: selectedRole ? selectedRole.value : null
     });
   }
 
@@ -263,6 +305,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       return;
     }
     const formValue = this.updateResourceForm.value;
+       const projectRoleId = formValue.resourceRole.roleId;
+   const  projectDepartmentId =formValue.resourceRole.entityReferenceId;
     const payload = {
       entityType: "project",
       entityRefId: this.projectId,
@@ -276,7 +320,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
       weekendWorkAllowed: formValue.allowweekendWork,
       status: "Active",
       allocatedBy: this.empinfo.employeeId,
-      role: formValue.resourceRole
+      //role: formValue.resourceRole,
+    projectRoleId: projectRoleId,
+    projectDepartmentId: projectDepartmentId,
+
     };
     this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({
       next: (res) => {

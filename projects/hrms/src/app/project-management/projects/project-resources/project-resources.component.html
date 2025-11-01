@@ -31,7 +31,7 @@
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
-                            <td>{{ data?.role || '-' }}</td>
+                            <td>{{ data?.projectRoleName || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
                             <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber
                                 ||'' }}</td>
@@ -112,22 +112,26 @@
                             class="form-control custom-input" placeholder="Designation" readonly />
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Role<span
-                                class="text-danger">*</span></label>
-                        <input type="text" formControlName="resourceRole"
-                            (keydown)="formValidation.restrictInitialSpace($event)" class="form-control custom-input"
-                            placeholder="Please enter role" />
-                        <div class="error-msg">
+               
+
+                     <div class="col-md-6 mb-3">
+                <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+                <div class="custom-p-select-content">
+                <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value" [filter]="true"
+                    [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole" placeholder="Please select role"
+                    class="form-select custom-select" (onChange)="onRoleChange($event.value)">
+                </p-select>
+
+
+                </div>
+                <div class="error-msg">
                             <div
                                 *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
                             <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || 
-                            updateResourceForm.get('resourceRole')?.errors?.['maxlength'] || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] 
-                            || updateResourceForm.get('resourceRole')?.errors?.['minlength']">{{ 'Role must be between
-                                2-50 characters characters' | translate }}</div>
+                            updateResourceForm.get('resourceRole')?.errors?.['maxlength'] || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">{{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
-                    </div>
+            </div>
 
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">

@@ -791,6 +791,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Regularization Report',
     'Regularization Report - Generate',
     'Regularization Report - Export',
+    'Remote Login Report',
+    'Remote Login Report - Generate',
+    'Remote Login Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',

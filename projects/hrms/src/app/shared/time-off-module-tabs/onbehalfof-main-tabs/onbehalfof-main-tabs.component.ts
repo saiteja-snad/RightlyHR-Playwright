@@ -28,10 +28,13 @@ export class OnbehalfofMainTabsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.allowedWfh = this.empinfo.allowWFH;
     this.allowRemoteLogin = this.empinfo.allowRemoteLogin;
+    
     this.navTabs = [
             { label: 'Leaves', link: '/on-behalf-of/on-behalf-of',icon:'/time-off-icon/on-behalf-of-icon.png', permission: { feature: 'On Behalf Of Module', action: 'view' } },
 
       { label: 'WFH', link: '/on-behalf-of/on-behalf-of-wfh', icon: '/time-off-icon/WFH-icon.png', permission: { feature: 'On Behalf Of WFH', action: 'view' } },
+
+      { label: 'RemoteLogin', link: '/on-behalf-of/on-behalf-of-remotelogin', icon: '/time-off-icon/RemoteLogin-icon.png', permission: { feature: 'On Behalf Of RemoteLogin', action: 'view' } },
       // { label: 'Regularization', link: '/time-off/regularization', icon: '/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },
     ];
     this.filterTabsByRbac();

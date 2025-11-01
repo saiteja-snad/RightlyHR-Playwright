@@ -61,7 +61,9 @@ import {
   CONTRACT_REQUEST_SUB_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
-  ON_BEHALF_OF
+  ON_BEHALF_OF,
+  ON_BEHALF_OF_REMOTELOGIN_TABS,
+  CARDS_SUB_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -357,6 +359,12 @@ export class AccessNavigationService {
         }
         break;
 
+      case '/skill-directory':
+        if (this.rbac.allowedToAccess('Skillset Directory.view')) {
+          return (route = '/skill-directory');
+        }
+        break;
+
       case '/claimsandexpenses':
         for (const item of EXPENSE_TABS) {
           if (this.rbac.allowedToAccess(item.permission)) {
@@ -628,6 +636,16 @@ export class AccessNavigationService {
         }
         break;
 
+        case '/on-behalf-of/on-behalf-of-remotelogin':
+        if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
+          for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
       case '/it-support':
         if (this.rbac.allowedToAccess('My Tickets Tab.view')) {
           return (route = '/it-support/mytickets');
@@ -704,6 +722,15 @@ export class AccessNavigationService {
       case '/holidays':
         if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+        case '/card-management':
+        if (this.rbac.allowedToAccess('Cards Management.view')) {
+          for (const item of CARDS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -1366,6 +1393,17 @@ export class AccessNavigationService {
         }
         break;
 
+
+        case '/on-behalf-of/on-behalf-of-remotelogin':
+        if (this.rbac.allowedToAccess('On Behalf Of RemoteLogin.view')) {
+          for (const item of ON_BEHALF_OF_REMOTELOGIN_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
       case 'attendance':
         if (this.rbac.allowedToAccess('Attendance.view')) {
           return (route = '/attendance');
@@ -1558,7 +1596,7 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
-           if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
             return (route = '/time-off/pending-approvals/time-sheets');
           }
 
@@ -1653,7 +1691,7 @@ export class AccessNavigationService {
           }
         }
         break;
-        case '/time-off/pending-approvals/contractors-request':
+      case '/time-off/pending-approvals/contractors-request':
         if (this.rbac.allowedToAccess('Contractor Details Tab.view')) {
           for (const item of CONTRACT_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

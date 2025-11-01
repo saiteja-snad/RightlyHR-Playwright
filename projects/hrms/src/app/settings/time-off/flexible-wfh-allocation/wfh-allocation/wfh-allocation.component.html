@@ -150,7 +150,7 @@
                         <td>{{ emp.get('fullName')?.value }}</td>
                         <td>
                             <input type="date" formControlName="effectivedate" class="form-control custom-input mt-2"
-                                placeholder="Please enter date" />
+                                placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
                             <div *ngIf="emp.get('effectivedate')?.touched && emp.get('effectivedate')?.invalid"
                                 class="error-msg">
                                 <div *ngIf="emp.get('effectivedate')?.errors?.['required']">Effective From date is required
@@ -162,7 +162,7 @@
                         </td>
                          <td>
                             <input type="date" formControlName="effectiveto" class="form-control custom-input mt-2"
-                                placeholder="Please enter date" />
+                                placeholder="Please enter date" [min]="minYearDate"[max]="maxYearDate" />
                             <div *ngIf="emp.get('effectiveto')?.touched && (emp.get('effectiveto')?.invalid || emp.errors?.['invalidEffectiveToDate'])"
                                 class="error-msg">
                                 <div *ngIf="emp.get('effectiveto')?.errors?.['required']">Effective To date is required

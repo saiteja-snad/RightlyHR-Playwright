@@ -57,7 +57,9 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   isloading = false;
   minEffectiveDate!: string;
   maxEffectiveDate!: string;
-
+  selectedYear: number | null = null;
+  minYearDate!: string;
+  maxYearDate!: string;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -100,6 +102,18 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   enableLocation(): void {
     if (this.wfhAllocationForm.get('year')?.value) {
       this.wfhAllocationForm.get('location')?.enable();
+      const selectedYear = this.wfhAllocationForm.get('year')?.value;
+      if (selectedYear) {
+        this.minYearDate = `${selectedYear}-01-01`;
+        this.maxYearDate = `${selectedYear}-12-31`;
+
+        // Re-validate all employees’ effective dates
+        const employees = this.wfhAllocationForm.get('employees') as FormArray;
+        employees.controls.forEach((emp) => {
+          emp.get('effectivedate')?.updateValueAndValidity();
+          emp.get('effectiveto')?.updateValueAndValidity();
+        });
+      }
     }
   }
 
@@ -190,36 +204,44 @@ export class WfhAllocationComponent implements OnInit, OnDestroy {
   getByEmployeewfhallocations(employeeIds: any, form: FormGroup): void {
     this.isloading = false;
     const loggedInUserId = this.auth.getToken();
-    const loggedInUserName= `${loggedInUserId.firstName ??''} ${loggedInUserId.middleName ??''} ${loggedInUserId.lastName}`;
-     const employeeArray = this.fb.array<FormGroup>([]);
-          // Loop through all selected employees
-          employeeIds.forEach((selectedEmp: any) => {
-            // Try to find matching allocation data from API
-            // const existing = apiData?.find(
-            //   (x: any) => x.employeeId?.id === selectedEmp?.employeeId
-            // );
+    const loggedInUserName = `${loggedInUserId.firstName ?? ''} ${
+      loggedInUserId.middleName ?? ''
+    } ${loggedInUserId.lastName}`;
+    const employeeArray = this.fb.array<FormGroup>([]);
+    // Loop through all selected employees
+    employeeIds.forEach((selectedEmp: any) => {
+      // Try to find matching allocation data from API
+      // const existing = apiData?.find(
+      //   (x: any) => x.employeeId?.id === selectedEmp?.employeeId
+      // );
 
-            // Push either existing or blank form
-            employeeArray?.push(
-              this.fb.group({
-                employeeId: [selectedEmp?.employeeId],
-                fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
-                days: ['', [Validators.required]],
-                effectivedate: [ '',
-                  [Validators.required, this.validateEffectiveDate?.bind(this)],
-                ],
-                effectiveto: ['',
-                  [Validators.required,],
-                ],
-                createdBy: [loggedInUserName],
-                createdOn: [moment()?.format('YYYY-MM-DD') || ''],
-              },
-             {validators: [this.validateEffectiveToDate,this.validateDaysWithinRange()]})
-            );
-          });
+      // Push either existing or blank form
+      employeeArray?.push(
+        this.fb.group(
+          {
+            employeeId: [selectedEmp?.employeeId],
+            fullName: [selectedEmp?.name || selectedEmp?.fullName || '-'],
+            days: ['', [Validators.required]],
+            effectivedate: [
+             { value: '', disabled: !this.wfhAllocationForm.get('year')?.value },
+              [Validators.required, this.validateEffectiveDate?.bind(this)],
+            ],
+            effectiveto: [{ value: '', disabled: !this.wfhAllocationForm.get('year')?.value }, [Validators.required]],
+            createdBy: [loggedInUserName],
+            createdOn: [moment()?.format('YYYY-MM-DD') || ''],
+          },
+          {
+            validators: [
+              this.validateEffectiveToDate,
+              this.validateDaysWithinRange(),
+            ],
+          }
+        )
+      );
+    });
 
-          // Set the updated employee list in form
-          form.setControl('employees', employeeArray);
+    // Set the updated employee list in form
+    form.setControl('employees', employeeArray);
     // //const ids = employeeIds.map((emp: any) => emp.employeeId);
     // let params = new HttpParams();
     // employeeIds.forEach((id: any) => {
@@ -285,51 +307,51 @@ validateEffectiveDate(control: any) {
   return null;
 }
 
-// Validator to ensure effectiveToDate is not before effectiveFromDate
-validateEffectiveToDate(formGroup: FormGroup) {
-  const fromDate = formGroup.get('effectivedate')?.value;
-  const toDate = formGroup.get('effectiveto')?.value;
+  // Validator to ensure effectiveToDate is not before effectiveFromDate
+  validateEffectiveToDate(formGroup: FormGroup) {
+    const fromDate = formGroup.get('effectivedate')?.value;
+    const toDate = formGroup.get('effectiveto')?.value;
 
-  if (!fromDate || !toDate) return null;
+    if (!fromDate || !toDate) return null;
 
-  const from = moment(fromDate, 'YYYY-MM-DD');
-  const to = moment(toDate, 'YYYY-MM-DD');
+    const from = moment(fromDate, 'YYYY-MM-DD');
+    const to = moment(toDate, 'YYYY-MM-DD');
 
-  if (to.isBefore(from, 'day')) {
-    return { invalidEffectiveToDate: true };
-  }
-
-  return null;
-}
-// Validator to ensure days do not exceed the range between effective dates
-validateDaysWithinRange(): ValidatorFn {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const fromDate = group.get('effectivedate')?.value;
-    const toDate = group.get('effectiveto')?.value;
-    const days = group.get('days')?.value;
-
-    if (!fromDate || !toDate || !days) {
-      return null; // skip validation if values are missing
-    }
-
-    const start = new Date(fromDate);
-    const end = new Date(toDate);
-
-    if (end < start) {
-      return { invalidEffectiveToDate: true }; // Already handled in your template
-    }
-
-    const diffInMs = end.getTime() - start.getTime();
-    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24)) + 1; // include both dates
-
-    if (days > diffInDays) {
-      return { invalidDaysRange: true }; // custom error key
+    if (to.isBefore(from, 'day')) {
+      return { invalidEffectiveToDate: true };
     }
 
     return null;
-  };
-}
-//method to handle selected employees from multi select
+  }
+  // Validator to ensure days do not exceed the range between effective dates
+  validateDaysWithinRange(): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const fromDate = group.get('effectivedate')?.value;
+      const toDate = group.get('effectiveto')?.value;
+      const days = group.get('days')?.value;
+
+      if (!fromDate || !toDate || !days) {
+        return null; // skip validation if values are missing
+      }
+
+      const start = new Date(fromDate);
+      const end = new Date(toDate);
+
+      if (end < start) {
+        return { invalidEffectiveToDate: true }; // Already handled in your template
+      }
+
+      const diffInMs = end.getTime() - start.getTime();
+      const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24)) + 1; // include both dates
+
+      if (days > diffInDays) {
+        return { invalidDaysRange: true }; // custom error key
+      }
+
+      return null;
+    };
+  }
+  //method to handle selected employees from multi select
   onSelectedEmployee(selectedList: any[], form: FormGroup) {
     this.selectedEmployees = selectedList || [];
     this.getByEmployeewfhallocations(this.selectedEmployees, form);
@@ -414,7 +436,7 @@ validateDaysWithinRange(): ValidatorFn {
       .get('categoryName')
       ?.valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        resetOnly(['employeeName','employees']);
+        resetOnly(['employeeName', 'employees']);
         (this.wfhAllocationForm.get('employees') as FormArray).clear();
       });
 
@@ -427,7 +449,7 @@ validateDaysWithinRange(): ValidatorFn {
   }
 
   publishWFHAllocation(form: FormGroup): void {
-    this.isloading=true;
+    this.isloading = true;
     const loggedInUserId = this.auth.getToken();
     if (form.invalid) return;
     // this.modalService.open(this.stagingLoadingModal, { centered: true });
@@ -440,7 +462,7 @@ validateDaysWithinRange(): ValidatorFn {
       effectiveFromDate: emp.effectivedate
         ? moment(emp.effectivedate).format('YYYY-MM-DD')
         : null,
-        effectiveToDate:emp.effectiveto
+      effectiveToDate: emp.effectiveto
         ? moment(emp.effectiveto).format('YYYY-MM-DD')
         : null,
       createdBy: loggedInUserId.employeeId,
@@ -458,7 +480,7 @@ validateDaysWithinRange(): ValidatorFn {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.isloading=false;
+          this.isloading = false;
           this.selectedEmployees = [];
           this.wfhAllocationForm.reset();
           (this.wfhAllocationForm.get('employees') as FormArray).clear();
@@ -470,7 +492,7 @@ validateDaysWithinRange(): ValidatorFn {
           this.modal.openSuccessModal('Flexible WFH allocated successfully');
         },
         error: (err: any) => {
-          this.isloading=false;
+          this.isloading = false;
           this.modalService.dismissAll();
           this.modal.openErrorModal(
             err.error.message
@@ -487,7 +509,7 @@ validateDaysWithinRange(): ValidatorFn {
   cancle() {
     this.wfhAllocationForm.reset();
     // clear employees array
-  (this.wfhAllocationForm.get('employees') as FormArray).clear();
+    (this.wfhAllocationForm.get('employees') as FormArray).clear();
     this.wfhAllocationForm.get('subLocation')?.disable();
     this.wfhAllocationForm.get('location')?.disable();
     this.wfhAllocationForm.get('shiftName')?.disable();

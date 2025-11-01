@@ -144,11 +144,11 @@ export class DraftsExpensesComponent implements OnInit, OnDestroy {
   }
 
   calculateTotalExpensesAmount(): void {
-    this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
-      return total + parseFloat(item.get('expense_Amount')?.value || null);
-    }, 0);
-  }
-
+  this.totalexpensesamount = this.expenseItems.controls.reduce((total, item) => {
+    const value = Number(item.get('expense_Amount')?.value) || 0;
+    return total + value;
+  }, 0);
+}
   getExpensestypestopatch() {
     this.subscription = this.http.getData("Expense").subscribe({
       next: (data: any) => {

@@ -62,11 +62,11 @@
                         placeholder="Please select status" class="form-select custom-select"></p-select>
                 </div>
                 }
-                <div *ngIf="filteredleaveRecord[1]?.totalExpenseAmount" class="d-flex align-items-center gap-2">
+                <div *ngIf="filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount" class="d-flex align-items-center gap-2">
                      <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Total Amount'
                     | translate}}:</label>
                <div >
-              <b><span class="me-1">₹</span>{{ filteredleaveRecord[1]?.totalExpenseAmount }}</b>
+              <b><span class="me-1">₹</span>{{ filteredleaveRecord?.[filteredleaveRecord.length - 1]?.totalExpenseAmount }}</b>
                </div>
                 </div>
                 <!-- Buttons -->

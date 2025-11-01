@@ -90,7 +90,7 @@
                         <td>{{exp?.emp_Type}}</td>
                         <td>{{exp?.referenceIdName}}</td>
                         <td>{{exp?.applicable_Year}}</td>
-                        <td><span *ngIf="exp?.budgetFormatted" class="me-1">$</span>{{exp?.budgetFormatted}}</td>
+                        <td><span *ngIf="exp?.budgetFormatted" class="me-1">₹</span>{{exp?.budgetFormatted}}</td>
                         <td>{{exp?.frequency}}</td>
                         <td class="text-center"
                             *ngIf="rbac.allowedToAccess('Global Expense Configuration.update') || rbac.allowedToAccess('Global Expense Configuration.delete')">

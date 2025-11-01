@@ -120,7 +120,7 @@
                             <div>
                                 <p class="content-text m-0">{{ tab.label }}</p>
                                 <p class="m-0">
-                                    <span class="amount-value me-2">{{ tab.count }}</span><span class="frequency-value">$ {{ tab.value }}</span>
+                                    <span class="amount-value me-2">{{ tab.count }}</span><span class="frequency-value">₹ {{ tab.value }}</span>
                                     <span class="frequency-value" *ngIf="tab.showFrequency && getExpenseSummaryDetails?.frequency">
                                         / <b> {{ getExpenseSummaryDetails.frequency }}</b></span>
                                 </p>

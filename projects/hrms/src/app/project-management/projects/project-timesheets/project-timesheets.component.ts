@@ -4,16 +4,18 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpService } from '../../../services/http.service';
 import { DailyData, MonthlySummaryItem, TimesheetEntry, TimesheetSummaryResponse } from '../../../Interfaces/timesheetsummary';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
+import { ProjectTimesheetTabsComponent } from "../../../shared/project-management-tabs/project-timesheet-tabs/project-timesheet-tabs.component";
 @Component({
   selector: 'app-project-timesheets',
-  imports: [CommonModule, TranslateModule, ChartModule,NgbPopover, DataLoaderContentComponent, NoDataFoundComponent, DateformatPipe, InfoIconComponent],
+  imports: [CommonModule, TranslateModule, ChartModule, NgbPopover, DataLoaderContentComponent, NoDataFoundComponent, DateformatPipe, InfoIconComponent,
+    RouterModule, ProjectTimesheetTabsComponent],
   templateUrl: './project-timesheets.component.html',
   styleUrl: './project-timesheets.component.scss',
   encapsulation: ViewEncapsulation.None

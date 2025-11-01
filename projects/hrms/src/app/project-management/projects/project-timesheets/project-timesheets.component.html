@@ -1,21 +1,31 @@
-<div class="d-flex gap-3">
+<div class="main-content d-flex w-100 gap-3">
+    <div class="component-left-tabs-container">
+        <app-project-timesheet-tabs />
+    </div>
+
+    <div class="w-100">
+        <router-outlet />
+    </div>
+</div>
+
+<!-- <div class="d-flex gap-3">
     <div class="custom-table-content attendance-log-content">
         @if (!loading) {
         <table class="w-100">
             <thead>
-                   <!-- <th class="max-width">{{'Project Name' | translate}}</th> -->
+                   <th class="max-width">{{'Project Name' | translate}}</th>
                  <th class="max-width">{{'Employee ID' | translate}}</th>
                 <th class="max-width">{{'Employee Name' | translate}}</th>
                 <th class="max-width">{{'Date' | translate}}</th>
                 <th class="max-width">{{'Logged Hours' | translate }}</th>
                    <th class="max-width">{{'Task Description' | translate }}</th>
                 <th class="max-width">{{'Status' | translate }}</th>
-                <!-- <th class="max-width">{{'Summary' | translate}}</th> -->
+                <th class="max-width">{{'Summary' | translate}}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                     <tr *ngFor="let row of attendanceSummaryData">
-                        <!-- <td>{{row.entries[0]?.projectName || '-'}}</td> -->
+                        <td>{{row.entries[0]?.projectName || '-'}}</td>
                         <td>{{row.fusionEmployeeId}}</td>
                         <td>{{row.resourceName}}</td>
                         <td>{{row.date | dateformat }}</td>
@@ -82,7 +92,7 @@
             </ng-template>
         </div>
 
-        <!-- utilization summery chats -->
+        utilization summery chats
         <div class="attendance-summary-card">
             <div>
                 <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
@@ -113,10 +123,10 @@
             </ng-template>
         </div>
     </div>
-</div>
+</div> -->
 
 <!--Summary-->
-<ng-template #summaryforlogs let-modal>
+<!-- <ng-template #summaryforlogs let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
@@ -150,10 +160,10 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- <div class="popup-table-footer">
+                <div class="popup-table-footer">
                     {{"Logged Hours" | translate}}: <b>8:00hrs</b>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
-</ng-template>
+</ng-template> -->

@@ -24,6 +24,10 @@ import { ProjectResourcesComponent } from './projects/project-resources/project-
 import { ProjectDetailesComponent } from './projects/project-detailes/project-detailes.component';
 import { InactiveClientDocumentsComponent } from './clients/inactive-client-documents/inactive-client-documents.component';
 import { InactiveProjectDocumentsComponent } from './projects/inactive-project-documents/inactive-project-documents.component';
+import { ClientTimesheetSummaryComponent } from './clients/client-time-sheets/client-timesheet-summary/client-timesheet-summary.component';
+import { ClientTimesheetDetailedComponent } from './clients/client-time-sheets/client-timesheet-detailed/client-timesheet-detailed.component';
+import { ProjectTimesheetSummaryComponent } from './projects/project-timesheets/project-timesheet-summary/project-timesheet-summary.component';
+import { ProjectTimesheetDetailedComponent } from './projects/project-timesheets/project-timesheet-detailed/project-timesheet-detailed.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -42,9 +46,16 @@ export default [
                     { path: 'projects', component: ActiveProjectsComponent },
                     { path: 'inactiveprojects', component: InacitveProjectsComponent },
                     { path: 'resources', component: ClientResourcesComponent },
-                    { path: 'timesheet', component: ClientTimeSheetsComponent },
+                    {
+                        path: 'timesheet', component: ClientTimeSheetsComponent,
+                        children: [
+                            { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
+                            { path: 'summary', component: ClientTimesheetSummaryComponent },
+                            { path: 'detailed', component: ClientTimesheetDetailedComponent },
+                        ],
+                    },
                     { path: 'documents', component: ClientDocumentsComponent },
-                    {path: 'inactivedocuments', component: InactiveClientDocumentsComponent}
+                    { path: 'inactivedocuments', component: InactiveClientDocumentsComponent }
                 ],
             },
             {
@@ -73,7 +84,14 @@ export default [
                     { path: 'information', component: ProjectDetailesComponent },
                     { path: 'contact-info', component: ProjectContactsComponent },
                     { path: 'resources', component: ProjectResourcesComponent },
-                    { path: 'timesheet', component: ProjectTimesheetsComponent },
+                    {
+                        path: 'timesheet', component: ProjectTimesheetsComponent,
+                        children: [
+                            { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
+                            { path: 'summary', component: ProjectTimesheetSummaryComponent },
+                            { path: 'detailed', component: ProjectTimesheetDetailedComponent },
+                        ],
+                    },
                     { path: 'documents', component: ProjectDocumentsComponent },
                     { path: 'inactivedocuments', component: InactiveProjectDocumentsComponent },
                 ],

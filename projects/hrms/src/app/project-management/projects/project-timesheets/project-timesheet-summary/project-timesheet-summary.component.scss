@@ -1,0 +1,84 @@
+.time-sheet-graph-card {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1.52px solid #FFFFFF;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+}
+
+.summary-header {
+    font-weight: 500;
+    font-size: var(--fontsize12);
+    color: #222222;
+}
+
+.custom-p-select-content {
+    min-width: 9rem !important;
+
+    .p-select {
+        font-size: 9px !important;
+    }
+
+    .p-inputtext:focus {
+        font-size: 9px !important;
+    }
+}
+
+.project-summary-table {
+    height: 18rem !important;
+
+    th, td {
+        padding: 0.75rem !important;
+        font-size: var(--fontsize12) !important;
+    }
+
+    th {
+        color: #3B3B3B !important;
+    }
+
+    .project-name {
+        font-weight: 700;
+        font-style: Bold;
+        text-decoration: none;
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+}
+
+.gauge-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
+.needle {
+  position: absolute;
+  bottom: 46%;
+  left: 50%;
+  width: 3px;
+  height: 80px;
+  background: #333;
+  transform-origin: bottom center;
+  transition: transform 1s ease-in-out;
+}
+
+.needle-base {
+  position: absolute;
+  bottom: 44%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: #333;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+.gauge-label {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 16px;
+  font-weight: 600;
+}
+

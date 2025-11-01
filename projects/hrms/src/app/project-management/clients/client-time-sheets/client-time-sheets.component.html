@@ -1,4 +1,13 @@
-<div class="d-flex gap-3">
+<div class="custom-main-component-container">
+    <div class="mb-3">
+        <app-client-timesheet-tabs />
+    </div>
+    <div>
+        <router-outlet />
+    </div>
+</div>
+
+<!-- <div class="d-flex gap-3">
     <div class="custom-table-content attendance-log-content">
         @if (!loading) {
         <table class="w-100">
@@ -11,7 +20,7 @@
                 <th class="max-width">{{'Logged Hours' | translate }}</th>
                 <th class="max-width">{{'Task Description' | translate }}</th>
                 <th class="max-width">{{'Status' | translate }}</th>
-                <!-- <th class="max-width">{{'Summary' | translate}}</th> -->
+                <th class="max-width">{{'Summary' | translate}}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
@@ -83,7 +92,7 @@
             </ng-template>
         </div>
 
-        <!-- utilization summery chats -->
+        utilization summery chats
         <div class="attendance-summary-card">
             <div>
                 <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
@@ -117,7 +126,7 @@
     </div>
 </div>
 
-<!--Summary-->
+Summary
 <ng-template #summaryforlogs let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
@@ -152,10 +161,10 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- <div class="popup-table-footer">
+                <div class="popup-table-footer">
                     {{"Logged Hours" | translate}}: <b>8:00hrs</b>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
-</ng-template>
+</ng-template> -->

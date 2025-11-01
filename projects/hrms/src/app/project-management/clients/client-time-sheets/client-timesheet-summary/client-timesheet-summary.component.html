@@ -1,0 +1,121 @@
+<div class="custom-main-component-container time-sheet">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="summary-header">Project Summary</div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="custom-p-select-content">
+                            <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                                [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
+                                formControlName="projectId" placeholder="Please select project"
+                                class="form-select custom-select"></p-select>
+                        </div>
+
+                        <div class="custom-p-select-content">
+                            <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
+                                formControlName="status" placeholder="Please select status"
+                                class="form-select custom-select"></p-select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="custom-table-content project-summary-table">
+                    <table class="w-100">
+                        <thead>
+                            <th>{{'Project Name'|translate}}</th>
+                            <th>{{'Total Hours'|translate}}</th>
+                            <th>{{'Status'|translate}}</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a class="project-name cursor">Project</a>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-2">Project wise Resource Count</div>
+                <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="summary-header">Department wise Contribution</div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
+                            formControlName="projectId" placeholder="Please select project"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                </div>
+                <p-chart type="doughnut" [data]="departmentContributionData"
+                    [options]="departmentContributionOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-2">Project Type</div>
+                <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="summary-header">Estimated vs Actual Hours</div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
+                            formControlName="projectId" placeholder="Please select project"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                </div>
+                <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="summary-header">Billable vs Non-Billable Hours</div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
+                            formControlName="projectId" placeholder="Please select project"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                </div>
+                <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="summary-header">Project Burndown Chart</div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
+                            formControlName="projectId" placeholder="Please select project"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                </div>
+                <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+            </div>
+        </div>
+    </div>
+</div>

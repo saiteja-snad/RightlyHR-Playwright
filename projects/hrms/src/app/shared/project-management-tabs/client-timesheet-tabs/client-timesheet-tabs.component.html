@@ -1,0 +1,12 @@
+<div class="component-nav-tabs-container card">
+    <p-tabs value="0" scrollable>
+        <p-tablist>
+            <ng-container *ngFor="let tab of filteredTabs;">
+                <p-tab [value]="tab.link">
+                    <a [routerLink]="[tab.link]" [queryParamsHandling]="'preserve'" class="nav-link" 
+                    [class.active-nav-link]="isDocumentTabActive(tab.link)">{{ tab.label | translate }}</a>
+                </p-tab>
+            </ng-container>
+        </p-tablist>
+    </p-tabs>
+</div>

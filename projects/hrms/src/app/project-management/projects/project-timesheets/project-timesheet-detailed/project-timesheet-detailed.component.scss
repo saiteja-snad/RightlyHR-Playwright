@@ -1,0 +1,36 @@
+.total-hrs {
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    color: var(--primary-color);
+}
+
+.custom-table-content {
+    border: 1px solid #E1E7F2 !important;
+
+    td {
+        border: 1px solid #E1E7F2 !important;
+    }
+
+    th {
+        border: 1px solid #FFFF !important;
+        border-top: 0px !important;
+    }
+
+    th:first-child {
+        border-top-left-radius: 0.45rem;
+        border-left: 0px !important;
+    }
+
+    th:last-child {
+        border-top-right-radius: 0.45rem;
+        border-right: 0px !important;
+    }
+
+    td:first-child {
+        border-left: 0px !important;
+    }
+
+    td:last-child {
+        border-right: 0px !important;
+    }
+}

@@ -31,7 +31,7 @@ export class ClientTabsComponent {
       permission: { feature: 'Client Resources', action: 'view' }
     },
     {
-      label: 'Timesheets', link: '/project-management/clients/details/timesheet', icon: 'main-menu-icons/project-management-timesheet.png',
+      label: 'Timesheets', link: '/project-management/clients/details/timesheet/summary', icon: 'main-menu-icons/project-management-timesheet.png',
       permission: { feature: 'Client Timesheets', action: 'view' }
     },
     {
@@ -73,5 +73,4 @@ export class ClientTabsComponent {
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }
-
 }

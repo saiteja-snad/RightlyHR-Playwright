@@ -231,7 +231,7 @@ export class ClaimsandexpensesComponent implements OnInit {
     // { label: 'Frequency', icon: 'expenses-icons/frequency-icon.png', key: 'frequency', },
     { label: 'Requested', icon: 'expenses-icons/requested-icon.png', key: 'requestedAmountFormatted', value: 0 ,count:0},
     { label: 'Approved', icon: 'expenses-icons/approved-icon.png', key: 'approvedAmountFormatted', value: 0 ,count:0},
-    { label: 'Processed', icon: 'expenses-icons/processed-icon.png', key: 'rejectAmountFormatted', value: 0,count:0 },
+    { label: 'Processed', icon: 'expenses-icons/processed-icon.png', key: 'processedAmountFormatted', value: 0,count:0 },
        { label: 'Rejected', icon: 'expenses-icons/reject-icon.png', key: 'rejectAmountFormatted', value: 0,count:0 },
 
   ];

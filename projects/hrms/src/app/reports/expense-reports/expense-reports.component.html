@@ -24,7 +24,7 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
                         formControlName="employee" placeholder="Please select employee"
-                        class="form-select custom-select" filterPlaceholder="Search employee">
+                        class="form-select custom-select" filterPlaceholder="Search employee" [resetFilterOnHide]="true">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                         <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                     </p-select>
@@ -36,7 +36,7 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName" filterBy="fullName"
                         formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-                        filterPlaceholder="Search manager">
+                        filterPlaceholder="Search manager" [resetFilterOnHide]="true">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                         <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                     </p-select>
@@ -50,7 +50,7 @@
                 <div class="custom-p-select-content">
                     <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName" filterBy="fullName"
                         formControlName="team" placeholder="Please select employee" class="form-select custom-select"
-                        filterPlaceholder="Search employee" (onChange)="onClick($event)">
+                        filterPlaceholder="Search employee" (onChange)="onClick($event)" [resetFilterOnHide]="true">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                         <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                     </p-select>

@@ -33,12 +33,10 @@
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber
-                                ||'' }}</td>
+                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources
-                            Tab.delete'))
+                            @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">

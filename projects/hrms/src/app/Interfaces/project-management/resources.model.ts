@@ -16,6 +16,8 @@ export interface IResource {
         designation: any,
         workPhoneCountryCode: any,
         workPhoneNumber: any,
+        mobilePhoneNumber: any,
+        mobilePhoneCountryCode: any,
     },
     startDate: any,
     endDate: any,

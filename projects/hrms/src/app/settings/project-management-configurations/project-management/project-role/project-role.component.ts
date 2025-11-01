@@ -14,29 +14,29 @@ import { projectRoleDATA } from './project-role-modal';
 
 @Component({
   selector: 'app-project-role',
-    imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, DataLoaderContentComponent],
   templateUrl: './project-role.component.html',
   styleUrl: './project-role.component.scss'
 })
 export class ProjectRoleComponent {
   subscription!: Subscription;
-  gradedetails = [] as any;
+  departmentlist = [] as any;
   loader = false;
-  JobroleDetails = [] as any;
+  ProjectroleDetails = [] as any;
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
   @ViewChild('addpopup') addpopup: any;
-    @ViewChild('updatepopup') updatepopup: any;
+  @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
-  isActive= 'true';
+  isActive = 'true';
   AddForm!: FormGroup;
-   empinfo: any;
+  empinfo: any;
   updateForm!: FormGroup;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -44,43 +44,43 @@ export class ProjectRoleComponent {
 
   }
   ngOnInit(): void {
-       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');// assuming user details stored here
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');// assuming user details stored here
     this.AddForm = this.fb.group({
-      Addprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
+      Addprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       department: ['', Validators.required],
     });
 
-    // this.updateForm = this.fb.group({
-    //   Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
-    //   updategradeId: ['', Validators.required],
-    // });
-    // this.getgradeid();
+    this.updateForm = this.fb.group({
+      Updateprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
+      Updatedepartment: [{value: '', disabled: true}, Validators.required],
+    });
+    this.DepartmentList();
     this.getJobrole();
   }
-getJobrole() {
-  this.loader = true;
-  this.subscription = this.http.getData('ProjectRoles?isActive=true').subscribe({
-    next: (response: any) => {
-      this.loader = false;
-      if (response && response.success && Array.isArray(response.data)) {
-        this.JobroleDetails = response.data.map((item: any) => ({
-          id: item.id,
-          projectrole: item.roleName,                // Job role name
-          entityname: item.entity?.entityName || '-',      // Department name
-          entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
-          entityType: item.entityType || 'department',    // Entity type
-          isActive: item.isActive
-        }));
-        this.sortDesignations();
-      } else {
-        this.JobroleDetails = [];
+  getJobrole() {
+    this.loader = true;
+    this.subscription = this.http.getData('ProjectRoles?isActive=true').subscribe({
+      next: (response: any) => {
+        this.loader = false;
+        if (response && response.success && Array.isArray(response.data)) {
+          this.ProjectroleDetails = response.data.map((item: any) => ({
+            id: item.id,
+            projectrole: item.roleName,                // Job role name
+            entityname: item.entity?.entityName || '-',      // Department name
+            entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
+            entityType: item.entityType || 'department',    // Entity type
+            isActive: item.isActive
+          }));
+          this.sortDesignations();
+        } else {
+          this.ProjectroleDetails = [];
+        }
+      },
+      error: () => {
+        this.loader = false;
       }
-    },
-    error: () => {
-      this.loader = false;
-    }
-  });
-}
+    });
+  }
 
 
   // Method to open the add modal dialog
@@ -90,48 +90,48 @@ getJobrole() {
       centered: true
     });
   }
-  // getgradeid() {
-  //   this.subscription = this.http.getData('Department').subscribe({
-  //     next: (data: any) => {
-  //       // console.log(data);
-  //       this.gradedetails = data;
-  //     },
-  //   });
-  // }
+  DepartmentList() {
+    this.subscription = this.http.getData('Department').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.departmentlist = data;
+      },
+    });
+  }
   sortedDesignations: any[] = [];
   sortDesignations() {
     // Sort designations alphabetically based on the 'designation' field
-    this.sortedDesignations = this.JobroleDetails.sort((a: { designationName: number; }, b: { designationName: number; }) => {
+    this.sortedDesignations = this.ProjectroleDetails.sort((a: { designationName: number; }, b: { designationName: number; }) => {
       if (a.designationName < b.designationName) return -1;
       if (a.designationName > b.designationName) return 1;
       return 0;
     });
   }
   //ADD
-addjobrole(modal: any) {
-  if (this.AddForm.invalid) return;
+  addjobrole(modal: any) {
+    if (this.AddForm.invalid) return;
 
-  const request = {
-    roleName: this.AddForm.value.Addprojectrole.trim(),
-    entityType: 'department',
-    entityReferenceId: Number(this.AddForm.value.department), // selected department id
-    isActive: true,
-    createdBy: this.empinfo?.employeeId || 0 // fallback if user not found
-  };
+    const request = {
+      roleName: this.AddForm.value.Addprojectrole.trim(),
+      entityType: 'department',
+      entityReferenceId: Number(this.AddForm.value.department), // selected department id
+      isActive: true,
+      createdBy: this.empinfo?.employeeId || 0 // fallback if user not found
+    };
 
-  this.subscription = this.http.postdata('ProjectRoles', request).subscribe({
-    next: () => {
-      this.getJobrole();
-      modal.close();
-      this.conformationPopup.openSuccessModal('project Role added successfully');
-      this.resetForm();
-    },
-    error: (error: any) => {
-      const errorMessage = error.error?.Message || 'Failed to add job role';
-      this.conformationPopup.openErrorModal(errorMessage);
-    }
-  });
-}
+    this.subscription = this.http.postdata('ProjectRoles', request).subscribe({
+      next: () => {
+        this.getJobrole();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Project role added successfully');
+        this.resetForm();
+      },
+      error: (error: any) => {
+        const errorMessage = error.error?.Message || 'Failed to add job role';
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
+  }
 
   close(modal: any) {
     modal.close();
@@ -143,111 +143,77 @@ addjobrole(modal: any) {
     this.selectedDeleteRole = jobroletypelist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
-onDelete(modal: any) {
-  if (!this.selectedDeleteRole) return;
+  onDelete(modal: any) {
+    if (!this.selectedDeleteRole) return;
 
-  const payload = {
-    id: this.selectedDeleteRole.id,
-    roleName: this.selectedDeleteRole.designationName || '',
-    entityType: this.selectedDeleteRole.entityType || 'department',
-    entityReferenceId: this.selectedDeleteRole.entityReferenceId || 0, // department id
-    isActive: false,
-    createdBy: this.empinfo?.employeeId || 0,
-    updatedBy: this.empinfo?.employeeId || 0
-  };
-//  this.http.putData(`ProjectManagementAuthority/${this.selectedAuthority.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
-  this.subscription = this.http.putData(`ProjectRoles/${this.selectedDeleteRole.id}`,payload).subscribe({
-    next: () => {
-      modal.close();
-      this.getJobrole();
-      this.conformationPopup.openSuccessModal('Project Role deleted successfully');
-    },
-    error: (error: any) => {
-      const errorMessage = error.error?.Message || 'Something went wrong!';
-      this.conformationPopup.openErrorModal(errorMessage);
-    }
-  });
-}
+    const payload = {
+      id: this.selectedDeleteRole.id,
+      roleName: this.selectedDeleteRole.projectrole || '',
+      entityType: this.selectedDeleteRole.entityType || 'department',
+      entityReferenceId: this.selectedDeleteRole.entityReferenceId || 0, // department id
+      isActive: false,
+      createdBy: this.empinfo?.employeeId || 0,
+      updatedBy: this.empinfo?.employeeId || 0
+    };
+    //  this.http.putData(`ProjectManagementAuthority/${this.selectedAuthority.id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
+    this.subscription = this.http.putData(`ProjectRoles/${this.selectedDeleteRole.id}`, payload).subscribe({
+      next: () => {
+        modal.close();
+        this.getJobrole();
+        this.conformationPopup.openSuccessModal('Project role deleted successfully');
+      },
+      error: (error: any) => {
+        const errorMessage = error.error?.Message || 'Something went wrong!';
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
+  }
 
 
   closeDelete(modal: any) {
     modal.dismiss();
   };
 
- // Method to open the update modal dialog
-  openupdateDialog(jobroletypelist: any) {
-    this.selectedId = jobroletypelist.id;
-    this.updateForm.patchValue({ updatedepartment: jobroletypelist.entityname });
-    this.updateForm.patchValue({ Updateprojectrole: jobroletypelist.projectrole });
-    this.modalService.open(this.updatepopup, {
-      backdrop: 'static',
-      centered: true
+
+
+  //  UPDATE
+  // Open Update popup
+  openupdateDialog(jobrole: any) {
+    this.selectedId = jobrole.id;
+    this.updateForm.patchValue({
+      Updateprojectrole: jobrole.projectrole,
+      Updatedepartment: jobrole.entityReferenceId,
+    });
+    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+
+  // Call PUT API
+  updateJobroletype(modal: any) {
+    if (this.updateForm.invalid || !this.selectedId) return;
+
+    const payload = {
+      id: this.selectedId,
+      roleName: this.updateForm.value.Updateprojectrole.trim(),
+      entityType: 'department',
+      entityReferenceId: Number(this.updateForm.value.Updatedepartment),
+      isActive: true,
+      createdBy: this.empinfo?.employeeId || 0,
+      updatedBy: this.empinfo?.employeeId || 0
+    };
+
+    this.subscription = this.http.putData(`ProjectRoles/${this.selectedId}`, payload).subscribe({
+      next: () => {
+        this.getJobrole();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Project role updated successfully');
+        this.updateForm.reset();
+      },
+      error: (error: any) => {
+        const errorMessage = error.error?.Message || 'Failed to update Project Role';
+        this.conformationPopup.openErrorModal(errorMessage);
+      },
     });
   }
-
-  
-  //  UPDATE
-  updateJobroletype(modal: any) {
-    if (this.updateForm.valid && this.selectedId) {
-      const request: projectRoleDATA = {
-        id: this.selectedId,
-        rolename: this.updateForm.value.Updatejobrole.trim(),
-        departmentid: Number(this.updateForm.value.updategradeId)
-      };
-
-      this.subscription = this.http.postdata('ProjectRoles', request).subscribe({
-        next: () => {
-
-          this.getJobrole();
-          modal.close();
-          this.conformationPopup.openSuccessModal('Job Role updated successfully');
-          this.resetForm();
-        },
-        error: (error: any) => {
-          const errorMessage = error.error?.Message;
-          this.conformationPopup.openErrorModal(errorMessage);
-        }
-      });
-    }
-  }
-
-
-  // Open Update popup
-// openupdateDialog(jobrole: any) {
-//   this.selectedId = jobrole.id;
-//   this.updateForm.patchValue({
-//     Updateprojectrole: jobrole.projectrole,
-//     updatedepartment: jobrole.entityReferenceId,
-//   });
-//   this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
-// }
-
-// Call PUT API
-updateProjectRole(modal: any) {
-  if (this.updateForm.invalid || !this.selectedId) return;
-
-  const payload = {
-    id: this.selectedId,
-    roleName: this.updateForm.value.Updateprojectrole.trim(),
-    entityType: 'department',
-    entityReferenceId: Number(this.updateForm.value.updatedepartment),
-    isActive: true,
-    updatedBy: this.empinfo?.employeeId || 0,
-  };
-
-  this.subscription = this.http.putData(`ProjectRoles/${this.selectedId}`, payload).subscribe({
-    next: () => {
-      this.getJobrole();
-      modal.close();
-      this.conformationPopup.openSuccessModal('Project Role updated successfully');
-      this.updateForm.reset();
-    },
-    error: (error: any) => {
-      const errorMessage = error.error?.Message || 'Failed to update Project Role';
-      this.conformationPopup.openErrorModal(errorMessage);
-    },
-  });
-}
   resetForm() {
     this.AddForm.reset();
     this.isEditMode = false;

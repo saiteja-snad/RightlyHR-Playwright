@@ -19,21 +19,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 
 export class ProjectTimesheetSummaryComponent {
-  projectsDataDropdown = [
-    { projectId: 1, projectName: 'Website Redesign' },
-    { projectId: 2, projectName: 'Mobile App Development' },
-    { projectId: 3, projectName: 'CRM Integration' },
-    { projectId: 4, projectName: 'E-commerce Platform' },
-    { projectId: 5, projectName: 'Data Migration' }
-  ];
-
-  statusOptions = [
-    { label: 'Not Started', value: 'not_started' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'On Hold', value: 'on_hold' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' }
-  ];
+  projectResourceSummaryData: any;
   // Project wise Resource Count variables
   projectResourceData: any;
   projectResourceOptions: any;
@@ -53,11 +39,14 @@ export class ProjectTimesheetSummaryComponent {
   gaugeData: any;
   gaugeOptions: any;
   completionRate = 100;
- destroy$: Subject<boolean> = new Subject<boolean>();
-   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute) { }
+
   ngOnInit() {
+    this.projectResourceSummary();
     this.projectWiseResourceCountGraph();
     this.departmentWiseContributionGraph();
     this.createGaugeChart();
@@ -66,63 +55,59 @@ export class ProjectTimesheetSummaryComponent {
     this.burnDownChart();
   }
 
-  // Project wise Resource Count
-  // projectWiseResourceCountGraph() {
-  //   this.projectResourceData = {
-  //     labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
-  //     datasets: [
-  //       {
-  //         data: [60, 50, 70, 30],
-  //         backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-  //         barThickness: 10
-  //       }
-  //     ]
-  //   };
-
-  //   this.projectResourceOptions = {
-  //     indexAxis: 'y', // Horizontal bar
-  //     scales: {
-  //       x: {
-  //         title: {
-  //           display: true,
-  //           text: 'Resource Count'
-  //         },
-  //         grid: { display: false }
-  //       },
-  //       y: {
-  //         title: {
-  //           display: true,
-  //           text: 'Projects'
-  //         },
-  //         grid: { display: false }
-  //       }
-  //     }
-  //   };
-  // }
-
-  projectWiseResourceCountGraph(): void {
-     const fullPath = this.router.url;
-      this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
-        const projectid = params['id'];
-        if (!projectid) {
-          // console.warn('No project id in query params');
-          this.projectResourceData = [];
-          return;
+  projectResourceSummary(): void {
+    const fullPath = this.router.url;
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+      const projectid = params['id'];
+      if (!projectid) {
+        this.projectResourceSummaryData = [];
+        return;
+      }
+      this.http.getData(`ProjectManagementGraph/project/resource-summary/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          // this.projectResourceData.get('clientName')?.enable();
+          this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
+        },
+        error: (err) => {
+          console.error('Error fetching clients:', err);
         }
+      });
+    });
+  }
 
-        this.http.getData(`ProjectManagementGraph/project/resource-summary/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
-       
-          next: (res: any) => {
-            // this.projectResourceData.get('clientName')?.enable();
-            this.projectResourceData = Array.isArray(res?.data) ? res.data : [];
+  // Project wise Resource Count
+  projectWiseResourceCountGraph() {
+    this.projectResourceData = {
+      labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
+      datasets: [
+        {
+          data: [60, 50, 70, 30],
+          backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
+          barThickness: 10
+        }
+      ]
+    };
+
+    this.projectResourceOptions = {
+      indexAxis: 'y', // Horizontal bar
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Resource Count'
           },
-          error: (err) => {
-            console.error('Error fetching clients:', err);
-          }
-        });
-          });
-    }
-  
+          grid: { display: false }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Projects'
+          },
+          grid: { display: false }
+        }
+      }
+    };
+  }
 
   // Department wise Contribution
   departmentWiseContributionGraph() {

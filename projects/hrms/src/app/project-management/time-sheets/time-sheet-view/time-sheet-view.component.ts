@@ -1462,7 +1462,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
 
   navigation(){
      this.router.navigate(
-      ['project-management/teamtimesheet'],
+      ['project-management/timesheet/teamtimesheet'],
       { queryParams: { id:  this.loggedinuser?.employeeId } }
     );
   }

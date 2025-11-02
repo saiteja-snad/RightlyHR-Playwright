@@ -164,7 +164,7 @@ export class DownloadExpenseComponent implements OnInit, OnDestroy {
     pdf.save(fileName);
     this.isLoading = false;
     const blob = pdf.output('blob');
-       this.conformationPopup.openSuccessModal(' Expense Downloaded Successfully ');
+       this.conformationPopup.openSuccessModal('Expense statement downloaded successfully ');
   }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true });

@@ -25,6 +25,8 @@ export class ViewReportsComponent {
   teamLeaveSummary = MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_SUMMARY_MODULE_INFO;
   teamLeaveSummaryModuleInfo = MODULE_INFOS.TIME_OFF_LEAVES_ORG_LEAVE_BALANCE_MODULE_INFO;
   timesheetReports = MODULE_INFOS.SETTINGS_TIMESHEET_REPORT_MODULE_INFO;
+  expenseReportsModuleInfo = MODULE_INFOS.EXPENSE_REPORTS_MODULE_INFO;
+
 
   constructor(public rbac: RbacService) { }
 }

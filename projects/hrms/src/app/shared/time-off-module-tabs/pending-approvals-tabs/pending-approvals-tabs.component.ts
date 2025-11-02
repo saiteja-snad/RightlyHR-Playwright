@@ -52,6 +52,13 @@ export class PendingApprovalsTabsComponent {
       permission: { feature: 'Regularization Tab', action: 'view' },
     },
     {
+      label: 'Extra Hours',
+      route: '/time-off/pending-approvals/extra-hours-request',
+      moduleId: environment.extraHoursModuleId,
+      icon: '/time-off-icon/extra-logs.png',
+      permission: { feature: 'Extra Hours Tab', action: 'view' },
+    },
+    {
       label: 'Permissions',
       route: '/time-off/pending-approvals/permissions',
       moduleId: environment.permissionsModuleId,

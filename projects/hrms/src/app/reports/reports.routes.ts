@@ -30,6 +30,8 @@ export default [
             { path: 'yearly-summary-report', loadComponent: () => import('./attendence-reports/yearly-summary-report/yearly-summary-report.component').then((m) => m.YearlySummaryReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Yearly Summary Report.view' } },
             { path: 'permission-report', loadComponent: () => import('./attendence-reports/permission-reports/permission-reports.component').then((m) => m.PermissionReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Permission Report.view' } },
             { path: 'regularization-report', loadComponent: () => import('./attendence-reports/regularization-reports/regularization-reports.component').then((m) => m.RegularizationReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Regularization Report.view' } },
+            { path: 'remotelogin-report', loadComponent: () => import('./attendence-reports/remote-login-report/remote-login-report.component').then((m) => m.RemoteLoginReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Remote Login Report.view' } },
+        
         ]
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
@@ -41,6 +43,7 @@ export default [
     { path: 'team-leave-balance', loadComponent: () => import('./team-leave-balance/team-leave-balance.component').then((m) => m.TeamLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance.view' } },
     { path: 'team-leave-summary', loadComponent: () => import('./team-leave-summary/team-leave-summary.component').then((m) => m.TeamLeaveSummaryComponent), canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance Summary.view' } },
     { path: 'org-leave-balance', loadComponent: () => import('./org-leave-balance//org-leave-balance.component').then((m) => m.OrgLeaveBalanceComponent), canActivate: [PermissionsGuard], data: { permission: 'Org Leave Balance.view' } },
+
      {
         path: 'timesheet-reports', children: [
             //    { path: '',redirectTo: 'leave-report', pathMatch: 'full' },
@@ -54,6 +57,8 @@ export default [
             { path: 'attendance-vs-timesheet-report', loadComponent: () => import('./timesheet-reports/attendance-vs-timesheet-report/attendance-vs-timesheet-report.component').then((m) => m.AttendanceVsTimesheetReportComponent), canActivate: [PermissionsGuard], data: { permission: 'Attendance vs Timesheet Report.view' } },
         ]
     },
+
+        { path: 'expense-reports', loadComponent: () => import('./expense-reports/expense-reports.component').then((m) => m.ExpenseReportsComponent), canActivate: [PermissionsGuard], data: { permission: 'Monthly Attendance Reports.view' } },
 
 
 ] as Route[];

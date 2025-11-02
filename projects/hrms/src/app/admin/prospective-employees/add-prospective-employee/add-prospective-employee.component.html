@@ -9,7 +9,7 @@
     </div>
 
     <div class="custom-main-popup-content">
-        <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postEmpData()">
+        <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postEmpData(employeeForm.value)">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'First Name'|translate}}
@@ -137,3 +137,27 @@
   </div>
 </ng-template>
 <!-- modal end to close the nodue -->
+ <!-- loading popup end -->
+<ng-template #Confirmation let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div class="text-center">
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <h5 class="popup-header pt-2 pb-4">{{Status}}</h5>
+        </div>
+
+        <div class="popup-scroller pt-3">
+            <div *ngFor="let item of RevokeComments">
+                <div class="mb-3" *ngIf="item.comments">
+                    <label for="Descriptiondetails" type="Notes" class="form-label custom-label d-flex mb-2">
+                        <b>Reason</b> - {{item.personName}} </label>
+                    <div class="comments-area">{{item.comments}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center gap-3 pt-4" *ngIf="RevokeComments">
+            <button type="button" class="custom-btn btn-secondary" data-bs-dismiss="modal"
+                (click)="model.dismiss('Cross click')">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="UpdateEmpData(this.formvalue)"> Yes</button>
+        </div>
+    </div>
+</ng-template>

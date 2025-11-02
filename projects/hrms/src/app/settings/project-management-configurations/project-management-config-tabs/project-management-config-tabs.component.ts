@@ -20,7 +20,9 @@ export class ProjectManagementConfigTabsComponent {
     { label: 'Project Document Type', route: '/settings/project-management-config/project-document-type', permission: { feature: 'Project Document Type', action: 'view' }},
     { label: 'Letter Configurations', route: '/settings/project-management-config/letter-type', permission: { feature: 'Letter Configurations', action: 'view' }},
     { label: 'Frequency Configurations', route: '/settings/project-management-config/letter-frequency', permission: { feature: 'Letter Frequency Configurations', action: 'view' }},
-    { label: 'Project Management Authority', route: '/settings/project-management-config/signature-authority', permission: { feature: 'Project Management Authority', action: 'view' }}
+    { label: 'Project Management Authority', route: '/settings/project-management-config/signature-authority', permission: { feature: 'Project Management Authority', action: 'view' }},
+    { label: 'Project Role', route: '/settings/project-management-config/project-role', permission: { feature: 'Project Role', action: 'view' }},
+
   ];
 
   constructor(public rbac: RbacService) { }

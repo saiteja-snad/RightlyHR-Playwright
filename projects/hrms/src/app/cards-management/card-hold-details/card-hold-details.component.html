@@ -1,0 +1,189 @@
+<div class="custom-main-component-container">
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" (ngModelChange)="this.getCardDetails()"
+            class="form-control custom-search-input" placeholder="Search" aria-label="Username"
+            aria-describedby="basic-addon1">
+    </div>
+
+    <div class="custom-table-content">
+        @if (!loader) {
+        <table class="w-100">
+            <thead>
+                <th>{{'Issued Date'|translate}}</th>
+                <th>{{'Card Number'|translate}}</th>
+                <th>{{'Card Type'|translate}}</th>
+                <th>{{'Card Holder Name'|translate}}</th>
+                <th>{{'Bank Name'|translate}}</th>
+                <!-- <th>{{'Card Expiry Month'|translate}}</th>
+                <th>{{'Card Expiry Year'|translate}}</th> -->
+                <th>{{'Expiry Date' | translate}}</th>
+                <!-- <th>{{'Allocated History'|translate}}</th> -->
+                <th>{{'Status'|translate}}</th>
+                <th *ngIf="rbac.allowedToAccess('Cards Hold.update') ||rbac.allowedToAccess('Cards Hold.view')">{{'Actions'|translate}}</th>
+            </thead>
+            <tbody>
+                @if( cardDetails.length > 0){
+                <tr *ngFor="let item of cardDetails ">
+                    <!-- issued date -->
+                    <td>{{item?.issuedDate?(item.issuedDate| dateformat ):'-'}}</td>
+                    <!-- card number -->
+                    <td>{{item?.cardNumberMasked?item?.cardNumberMasked:'-'}}</td>
+                    <!-- card type -->
+                    <td>{{item?.cardType?item?.cardType:'-'}}</td>
+                    <!--Card Holder Name-->
+                    <td>{{item?.cardHolderName ? item?.cardHolderName:'-'}}</td>
+                    <!-- bank name -->
+                    <td>{{item?.issuedBankName ? item?.issuedBankName:'-'}}</td>
+                    <!-- expiry month -->
+                    <!-- <td>{{item?.expiryMonth?item?.expiryMonth:'-'}}</td> -->
+                    <!-- expity year -->
+                    <!-- <td>{{item?.expiryYear?item?.expiryYear:'-'}}</td> -->
+                     <td>{{ `${item?.expiryMonth?item?.expiryMonth:'-'} / ${item?.expiryYear?item?.expiryYear:'-'} `}}</td>
+                    <!-- allocated history -->
+                    <!-- <td>
+                         @if (item.allocations) {
+                    <div id="tooltip" (click)="approverHistoryFunction(item,historyPopup)" class="cursor">
+                        <app-info-icon />
+                    </div>
+                    
+                    }
+                    @else{-}
+                    </td> -->
+                    <!-- status -->
+                    <td>{{item?.status ? item?.status:'-'}}</td>
+                    <td >
+                        <div class="dropdown">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li *ngIf="rbac.allowedToAccess('Cards Hold.update')">
+                                    <a class="dropdown-item" (click)="updatePopup(available,item)">Mark as Available</a>
+                                </li >
+                                <li *ngIf="rbac.allowedToAccess('Cards Hold.view')">
+                                    <a class="dropdown-item" (click)="navigateToAsset(item.cardId)">View History</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                }
+                @if (cardDetails?.length === 0) {
+                <tr>
+                    <app-no-data-found />
+                </tr>
+                }
+            </tbody>
+        </table>
+        } @else {
+        <app-data-loader-content />
+        }
+    </div>
+
+    <div class="pagination-content" *ngIf="cardDetails.length > 0">
+        <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+            <div class="d-flex align-items-center gap-3 p-2">
+                <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                    (ngModelChange)="onPageSizeChange($event)">
+                    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+                </select>
+                <span class="pagination-label text-nowrap">
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize :
+                    (+first + + rows) }} of {{ collectionSize }}
+                </span>
+            </div>
+            <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                (onPageChange)="onPageChange($event)"></p-paginator>
+        </div>
+    </div>
+</div>
+
+<!--Avaliable popup-->
+<ng-template #available let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to make this card available?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="availCards()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+<!-- View comments Modal -->
+<ng-template #historyPopup let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'History Details' | translate}}</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+     <div class="custom-main-popup-content">
+      <div class="custom-table-content custom-height">
+        <table class="w-100">
+          <thead>
+            <tr>
+             <th class="text-nowrap">{{'Allocated By' | translate}}</th>
+              <th class="text-nowrap">{{'Allocated To' | translate}}</th>
+              <th class="text-nowrap">{{'Allocated On' | translate}}</th>
+              <th class="text-nowrap">{{'Released On' | translate}}</th>
+              <th class="text-nowrap">{{'Release Reason' |translate}}</th>
+              <th class="text-nowrap">{{'Additional Comments' |translate}}</th>
+              <th class="text-nowrap">{{'Status' | translate}}</th>
+            </tr>
+          </thead>
+          <tbody>
+              @if(allocated_history.length>0){
+            <tr *ngFor="let item of allocated_history">
+              <td>{{item?.assignedBy?.name?item?.assignedBy?.name:'-'}}</td>
+              <td>{{item?.employee?.name?item.employee.name:'-'}}</td>
+              <td>{{item?.allocatedDate?(item?.allocatedDate| dateformat) :'-'}}</td>
+              <td>{{item?.releasedDate?(item?.releasedDate|dateformat):'-'}}</td>
+             <td>
+                @if (item.reason) {
+                <div>
+                    <a type="button" [ngbPopover]="reason">
+                        <app-info-icon />
+                    </a>
+                    <ng-template #reason>
+                        <p class="mb-0">{{item.reason}}</p>
+                    </ng-template>
+                </div>
+                }
+                @else{-}
+            </td>
+            <td>
+                @if (item.additionalComments) {
+                <div>
+                    <a type="button" [ngbPopover]="additionalcomments">
+                        <app-info-icon />
+                    </a>
+                    <ng-template #additionalcomments>
+                        <p class="mb-0">{{item.additionalComments}}</p>
+                    </ng-template>
+                </div>
+                }
+                @else{-}
+            </td>
+              <td>{{item?.allocationStatus?item?.allocationStatus:'-'}}</td>
+            </tr>
+            }
+            
+            @else {
+            <tr>
+              <app-no-data-found />
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -2,6 +2,7 @@ export interface IResource {
     resourceId: any,
     entityType: any,
     entityRefId: any,
+
     project: {
         projectId: any,
         projectName: any,
@@ -17,6 +18,7 @@ export interface IResource {
         workPhoneCountryCode: any,
         workPhoneNumber: any,
     },
+        projectRoleName:any;
     startDate: any,
     endDate: any,
     allocatedHours: any,

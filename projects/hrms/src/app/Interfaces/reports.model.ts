@@ -262,3 +262,66 @@ export interface ICompoffDetails{
   employeeId?:string;
   teamManagerID? : any;
 }
+
+export interface IExpenseReportsRequestDetails{
+  employeeId?: number;
+  fusionEmpId?: string;
+  employeeName?:string;
+  department?:string;
+  teamManagerId?:number;
+  teamId?:number;
+  teamManagerFusionId?:string;
+  teamManagerName?:string;
+  location?:string;
+  subLocation?:string;
+  shift?:string;
+  appliedDate?:string;
+  expenseTitle?:string;
+  expenseItemName?:string;
+  expenseItemDescription?:string;
+  expenseItemStatus?:string;
+  expenseDate?:string;
+  receiptNumber?:string;
+  startDate?:string;
+  endDate?:string;
+}
+
+export interface IExpenseReportsDetails {
+  expenseId?: number;
+  fusionEmpId?: string;
+  employeeId?: number;
+  employeeName?: string;
+  department?: string;
+  teamManagerID?: number;
+  teamManagerFusionEmpId?: string;
+  teamManagerName?: string;
+  shift?: string;
+  location?: string;
+  subLocation?: string;
+  appliedDate?: string;
+  expenseTitle?:string;
+  expensesStatus?: string;
+  totalAmount?: number;
+  expensesItems?: IExpenseItemDetails[];
+  startDate?: string;
+  endDate?: string;
+    
+    totalExpenseAmount: number;
+  totalExpenseCount: number;
+  totalItemsCount: number;
+
+}
+
+export interface IExpenseItemDetails {
+  expenseItemId?: number;
+  expenseHeaderId?: number;
+  expenseItemName?: string;
+  expenseType?: string;
+  expenseItemsDescription?: string;
+  expenseDate?: string;
+  expenseAmount?: number;
+  receiptNumber?: string;
+  status?: string;
+  attachmentURL?: string;
+  expanded?: boolean;
+}

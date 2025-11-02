@@ -25,7 +25,7 @@
                     <p><b>Applied On:</b> {{selectedItems.applied_date | dateformat:'mediumDate'}}</p>
                 </div>
                 <div>
-                    <p><b>Approver Email:</b> {{selectedItems.approverEmail?selectedItems.approverEmail:'NA'}}</p>
+                    <!-- <p><b>Approver Email:</b> {{selectedItems.approverEmail?selectedItems.approverEmail:'NA'}}</p> -->
                     <p><b>Amount:</b> {{ (downloadData.totalExpenseAmount?downloadData.totalExpenseAmount:'NA') |
                         currency:currencyCode }}</p>
                 </div>

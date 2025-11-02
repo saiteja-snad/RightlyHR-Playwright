@@ -1,5 +1,4 @@
 * {
-
     font-family: 'VERDANA', sans-serif !important;
 }
 
@@ -11,8 +10,8 @@
         width: 270mm;
         padding-top: 12rem;
         position: relative;
-         background-image: url('/images/snad-letter-bg.jpg') !important;
-        background-size: 100% 100%;
+        background-image: url('/images/snad-new-letter-bg.png') !important;
+        background-size: 103% 102.5%;
         background-repeat: no-repeat;
         background-position: center;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
@@ -25,8 +24,6 @@
             line-height: 18px;
             text-align: justify;
         }
-
-
     }
 }
 
@@ -37,16 +34,17 @@
 .list-style-disc {
     list-style: disc;
 }
+
 .letter-sub-header {
     font-size: var(--fontsize16) !important;
     font-weight: 700;
     color: #000;
 }
-.letter-header{
+
+.letter-header {
     font-size: 18px;
     font-weight: 600;
 }
-
 
 .letter-signature {
     font-size: var(--fontsize32) !important;
@@ -60,5 +58,4 @@
 
 .name {
     font-size: 18px;
-   
 }

@@ -6,8 +6,7 @@
 
         <div class="d-flex align-items-center gap-3">
 
-            <div class="total-hrs">{{"Total Hours" }}:<span class="total-duration ms-1">{{ totalDuration}} Hrs</span>
-            </div>
+            <div class="total-hrs">{{"My Summary view" }}</div>
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
                     <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
@@ -348,7 +347,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>Total Hours</td>
+                            <td>Total Hours  :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
                             <td>{{ getTotalPerDay('mon') }}</td>
                             <td>{{ getTotalPerDay('tue') }}</td>
                             <td>{{ getTotalPerDay('wed') }}</td>

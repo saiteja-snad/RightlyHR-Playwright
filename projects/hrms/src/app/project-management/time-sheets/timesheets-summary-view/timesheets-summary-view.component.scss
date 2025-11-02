@@ -1,0 +1,17 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 8rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 8rem) !important;
+}
+
+.timeshett-graph-content {
+    width: 40rem !important;
+    height: calc(100dvh - 8rem) !important;
+    border-radius: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
+}

@@ -820,6 +820,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Regularization Report',
     'Regularization Report - Generate',
     'Regularization Report - Export',
+    'Remote Login Report',
+    'Remote Login Report - Generate',
+    'Remote Login Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -834,6 +837,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(WFH)',
     'Attendance Team Manager List(WFH)',
     'My Team Report(WFH)',
+     'Attendance All Employees List(RemoteLogin)',
+    'Attendance Team Manager List(RemoteLogin)',
+    'My Team Report(RemoteLogin)',
     'Attendance All Employees List(Permission)',
     'Attendance Team Manager List(Permission)',
     'My Team Report(Permission)',

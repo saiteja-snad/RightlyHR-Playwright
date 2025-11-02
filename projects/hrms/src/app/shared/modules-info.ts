@@ -95,7 +95,11 @@ export const MODULE_INFOS = {
     ATTENDANCE_YEARLY_SUMMARY_REPORTS_MODULE_INFO: "Provides an annual summary of attendance, leaves, permissions, and other related activities for each employee. Helps HR analyze yearly trends and employee availability.",
     ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO: "Lists all short-duration permissions taken by employees (e.g., late arrivals, early exits), including timing, reason, and manager approval status.",
     ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO: "Monitor attendance regularization requests submitted by employees and their approval status.Shows requests for attendance regularization submitted by employees for missed or incorrect entries. Includes dates, corrections made, and approval status.",
+
+    ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO: "The Remote Login Report enables HR to generate and review detailed records of employees who have applied for remote login. It provides complete visibility of application dates and durations for accurate tracking purposes.",
+
     ATTENDANCE_EXTRA_HOURS_MODULE_INFO:"This section allows employees to submit requests for extra hours worked beyond their regular shift. Employees can provide the required details for the additional time spent. Once submitted, the request is sent to the approver for review and necessary action.",
+
     //Monthly Attendance Report Module Info
     MONTHLY_ATTENDANCE_REPORT_MODULE_INFO: "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
 

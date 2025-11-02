@@ -2377,7 +2377,7 @@
                             || per.fields === 'Inactive Empolyee Report' || per.fields === 'Inactive Empolyee Report - Generate' || per.fields === 'Inactive Empolyee Report - Export'
                             || per.fields === 'Yearly Summary Report' || per.fields === 'Yearly Summary Report - Generate' || per.fields === 'Yearly Summary Report - Export'
                             || per.fields === 'Permission Report' || per.fields === 'Permission Report - Generate' || per.fields === 'Permission Report - Export'
-                            || per.fields === 'Regularization Report' || per.fields === 'Regularization Report - Generate' || per.fields === 'Regularization Report - Export' ">
+                            || per.fields === 'Regularization Report' || per.fields === 'Regularization Report - Generate' || per.fields === 'Regularization Report - Export' || per.fields === 'Remote Login Report'|| per.fields === 'Remote Login Report - Generate' || per.fields === 'Remote Login Report - Export' ">
                                 <td class="text-align-center">{{ per.fields }}</td>
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2469,7 +2469,8 @@
                             per.fields === 'My Team Report(Leave Summary)' || per.fields === 'Attendance All Employees List(Compoff)' || 
                             per.fields === 'Attendance Team Manager List(Compoff)' || per.fields === 'My Team Report(Compoff)' || 
                             per.fields === 'Attendance All Employees List(WFH)' || per.fields === 'Attendance Team Manager List(WFH)' || 
-                            per.fields === 'My Team Report(WFH)' || per.fields === 'Attendance All Employees List(Permission)' || 
+                            per.fields === 'My Team Report(WFH)'||per.fields === 'Attendance All Employees List(RemoteLogin)' || per.fields === 'Attendance Team Manager List(RemoteLogin)' || 
+                            per.fields === 'My Team Report(RemoteLogin)' || per.fields === 'Attendance All Employees List(Permission)' || 
                             per.fields === 'Attendance Team Manager List(Permission)' || per.fields === 'My Team Report(Permission)' || 
                             per.fields === 'Attendance All Employees List(Regularization)' || per.fields === 'Attendance Team Manager List(Regularization)' || 
                             per.fields === 'My Team Report(Regularization)'">

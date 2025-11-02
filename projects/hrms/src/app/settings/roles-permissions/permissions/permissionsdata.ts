@@ -474,6 +474,10 @@ export const permissionsData = [
   { fields: 'Attendance Team Manager List(WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(WFH)', View: false, Update: false, Create: false, Delete: false },
 
+  { fields: 'Attendance All Employees List(RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance Team Manager List(RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Team Report(RemoteLogin)', View: false, Update: false, Create: false, Delete: false },
+
   { fields: 'Attendance All Employees List(Permission)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Team Manager List(Permission)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Team Report(Permission)', View: false, Update: false, Create: false, Delete: false },
@@ -507,7 +511,10 @@ export const permissionsData = [
   { fields: 'Regularization Report', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Report - Generate', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
-
+  // Remote Login Report Section
+  { fields: 'Remote Login Report', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Report - Generate', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Remote Login Report - Export', View: false, Update: false, Create: false, Delete: false },
   //Asset Management Sub Tabs Section
   { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
   // { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },

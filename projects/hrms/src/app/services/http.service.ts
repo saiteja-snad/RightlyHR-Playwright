@@ -729,4 +729,27 @@ export class HttpService {
   DeleteData(url: string, body?: any) {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
+  // DATE RANGE
+ private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+
+  // Set date range
+  setDateRange(startDate: string | null, endDate: string | null) {
+    this.dateRangeSubject.next({ startDate, endDate });
+  }
+
+  // Get as observable (for subscription)
+  getDateRangeObservable() {
+    return this.dateRangeSubject.asObservable();
+  }
+
+  //  Get current value (synchronous)
+  getCurrentDateRange() {
+    return this.dateRangeSubject.getValue();
+  }
+
+  //  Example API call
+  getDatEdATA(url: string) {
+    return this.http.get(url);
+  }
+
 }

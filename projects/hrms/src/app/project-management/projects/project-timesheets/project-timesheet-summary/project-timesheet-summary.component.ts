@@ -1,14 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
 import { FormValidationsService } from '../../../../services/form-validations.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OpenModalService } from '../../../../services/open-modal.service';
 import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-project-timesheet-summary',
@@ -19,10 +16,8 @@ import { Subject, takeUntil } from 'rxjs';
 })
 
 export class ProjectTimesheetSummaryComponent {
+  // Project Resource Data variable
   projectResourceSummaryData: any;
-  // Project wise Resource Count variables
-  projectResourceData: any;
-  projectResourceOptions: any;
   // Department wise Contribution variables
   departmentContributionData: any;
   departmentContributionOptions: any;
@@ -38,24 +33,38 @@ export class ProjectTimesheetSummaryComponent {
   //Gauge Data
   gaugeData: any;
   gaugeOptions: any;
-  completionRate = 100;
+  completionRate = 0;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
-    public formValidation: FormValidationsService, private http: HttpService,
-    private conformationPopup: OpenModalService, private route: ActivatedRoute) { }
+  constructor(private router: Router, public formValidation: FormValidationsService, 
+    private http: HttpService,private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.projectResourceSummary();
-    this.projectWiseResourceCountGraph();
-    this.departmentWiseContributionGraph();
-    this.createGaugeChart();
-    this.estimatedActualChart();
-    this.billableChart();
-    this.burnDownChart();
+   this.http.getDateRangeObservable().pipe(takeUntil(this.destroy$)).subscribe(dateRange => {
+
+      if (dateRange && dateRange.startDate && dateRange.endDate) {
+        console.log('Received new date range:', dateRange);
+        // Call APIs with date range
+        this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
+         this.departmentWiseContributionGraph(dateRange.startDate, dateRange.endDate); 
+          this.createGaugeChart(); 
+          this.estimatedActualChart(); 
+          this.billableChart(); 
+         this.burnDownChart(dateRange.startDate, dateRange.endDate);
+      } else {
+        console.log('No date range set — loading default data');
+        this.projectResourceSummary();
+         this.departmentWiseContributionGraph();
+        this.createGaugeChart(); 
+        this.estimatedActualChart(); 
+        this.billableChart(); 
+        this.burnDownChart(); 
+      }
+  });
+  // Now pass optional arguments
   }
 
-  projectResourceSummary(): void {
+ projectResourceSummary(startDate?: string, endDate?: string): void {
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
@@ -63,7 +72,18 @@ export class ProjectTimesheetSummaryComponent {
         this.projectResourceSummaryData = [];
         return;
       }
-      this.http.getData(`ProjectManagementGraph/project/resource-summary/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+      // ✅ Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
+
+      // ✅ Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/resource-summary/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // this.projectResourceData.get('clientName')?.enable();
           this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
@@ -75,59 +95,59 @@ export class ProjectTimesheetSummaryComponent {
     });
   }
 
-  // Project wise Resource Count
-  projectWiseResourceCountGraph() {
-    this.projectResourceData = {
-      labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
-      datasets: [
-        {
-          data: [60, 50, 70, 30],
-          backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-          barThickness: 10
-        }
-      ]
-    };
-
-    this.projectResourceOptions = {
-      indexAxis: 'y', // Horizontal bar
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Resource Count'
-          },
-          grid: { display: false }
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Projects'
-          },
-          grid: { display: false }
-        }
-      }
-    };
-  }
-
   // Department wise Contribution
-  departmentWiseContributionGraph() {
-    this.departmentContributionData = {
-      labels: ['BA Team', 'Design Team', 'Development Team', 'Testing Team', 'DevOps Team', 'Sales Team'],
-      datasets: [
-        {
-          data: [40.2, 33, 44.5, 50, 50, 60],
-          backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-          hoverBackgroundColor: ['#FFB74D', '#F06292', '#5C6BC0', '#81C784', '#26A69A', '#64B5F6']
-        }
-      ]
-    };
+  departmentWiseContributionGraph(startDate?: string, endDate?: string) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+      const projectid = params['id'];
+      if (!projectid) {
+        this.departmentContributionData = [];
+        return;
+      }
+       //  Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
 
-    this.departmentContributionOptions = {
-      cutout: '75%',
-      plugins: {
-        legend: { position: 'right', labels: { usePointStyle: true } },
-      },
-    };
+      // Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/rolewisehours/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const apiData = res?.data?.data || [];
+          if (!Array.isArray(apiData) || apiData.length === 0) {
+            this.departmentContributionData = [];
+            return;
+          }
+          const labels = apiData.map((item: any) => item.name);
+          const dataValues = [20, 30];
+          this.departmentContributionData = {
+            labels: labels,
+            datasets: [
+              {
+                data: dataValues,
+                backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+                hoverBackgroundColor: ['#FFB74D', '#F06292', '#5C6BC0', '#81C784', '#26A69A', '#64B5F6']
+              }
+            ]
+          };
+
+          this.departmentContributionOptions = {
+            cutout: '75%',
+            plugins: {
+              legend: { position: 'right', labels: { usePointStyle: true } },
+            },
+          };
+        },
+
+        error: (err) => {
+          console.error('Error fetching Role-wise hours:', err);
+          this.departmentContributionData = [];
+        }
+      });
+    });
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
@@ -183,121 +203,226 @@ export class ProjectTimesheetSummaryComponent {
 
   // Billable vs Non-Billable Hours (Stacked Bar)
   billableChart() {
-    this.billableData = {
-      labels: ['Project Management', 'Development', 'Design', 'QA'],
-      datasets: [
-        {
-          label: 'Billable',
-          backgroundColor: '#283593',
-          data: [900, 600, 700, 500],
-        },
-        {
-          label: 'Non-Billable',
-          backgroundColor: '#9FA8DA',
-          data: [300, 200, 150, 100],
-        },
-      ],
-    };
-    this.billableOptions = {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } },
-      },
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-    };
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const projectid = params['id'];
+      if (!projectid) {
+        this.billableData = [];
+        return;
+      }
+
+      this.http.getData(`ProjectManagementGraph/project/billable-non-billable/${projectid}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('Billable chart response:', res);
+
+            // ✅ Correct extraction based on your actual structure
+            const apiData = res?.data?.data || res?.data || [];
+
+            if (!Array.isArray(apiData) || apiData.length === 0) {
+              console.warn('No valid billable data found:', apiData);
+              this.billableData = [];
+              return;
+            }
+
+            // ✅ Extract data safely
+            const labels = apiData.map((item: any) => item.name || 'N/A');
+            const billable = apiData.map((item: any) => item.billableHours || 0);
+            const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
+
+            // ✅ Chart data
+            this.billableData = {
+              labels,
+              datasets: [
+                {
+                  label: 'Billable',
+                  backgroundColor: '#283593',
+                  data: billable,
+                  stack: 'combined'
+                },
+                {
+                  label: 'Non-Billable',
+                  backgroundColor: '#9FA8DA',
+                  data: nonBillable,
+                  stack: 'combined'
+                },
+              ],
+            };
+
+            // ✅ Chart options
+            this.billableOptions = {
+              responsive: true,
+              scales: {
+                x: { stacked: true },
+                y: {
+                  stacked: true,
+                  beginAtZero: true,
+                  title: { display: true, text: 'Hours' },
+                  ticks: { stepSize: 50 } // optional: split by 50s
+                },
+              },
+              plugins: {
+                legend: {
+                  display: true, // set false if you want to hide legend
+                  position: 'top',
+                },
+              },
+            };
+          },
+          error: (err) => {
+            console.error('Error fetching billable chart:', err);
+          }
+        });
+    });
   }
 
   // Project Burndown Chart (Line)
-  burnDownChart() {
-    this.burndownData = {
-      labels: ['1', '5', '10', '15', '20', '25', '30'],
-      datasets: [
-        {
-          label: 'E-commerce',
-          data: [500, 480, 400, 300, 200, 120, 100],
-          borderColor: '#FFD54F',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Admin App',
-          data: [300, 280, 200, 180, 220, 260, 300],
-          borderColor: '#E91E63',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'E-commerce (Softkill)',
-          data: [800, 750, 700, 600, 500, 400, 300],
-          borderColor: '#2196F3',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Web app',
-          data: [400, 390, 380, 300, 250, 200, 180],
-          borderColor: '#4CAF50',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Mobile App',
-          data: [100, 120, 110, 100, 90, 80, 70],
-          borderColor: '#FFEB3B',
-          fill: false,
-          tension: 0.3,
-        },
-      ],
-    };
+  burnDownChart(startDate?: string, endDate?: string) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const projectid = params['id'];
+      if (!projectid) {
+        this.burndownData = [];
+        return;
+      }
+       // Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
 
-    this.burndownOptions = {
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        x: { title: { display: true, text: 'Days of Month' } },
-        y: { title: { display: true, text: 'No. of Hours' }, beginAtZero: true },
-      },
-    };
+      // Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/burndownchart/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          //  Define a proper interface for type safety
+          interface LineData {
+            date: string;
+            remainingHours: number;
+          }
+
+          const idealLine: LineData[] = res?.data?.idealLine || [];
+          const actualLine: LineData[] = res?.data?.actualLine || [];
+
+          // Generate labels from ideal line dates
+          const labels = idealLine.map((item: LineData) =>
+            new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          );
+
+          //  Extract remaining hours
+          const idealData = idealLine.map((item: LineData) => item.remainingHours);
+          const actualData = actualLine.map((item: LineData) => item.remainingHours);
+
+          // Chart.js dataset
+          this.burndownData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Ideal Line',
+                data: idealData,
+                borderColor: '#2196F3',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3,
+                pointBackgroundColor: '#2196F3',
+              },
+              {
+                label: 'Actual Line',
+                data: actualData,
+                borderColor: '#E91E63',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3,
+                pointBackgroundColor: '#E91E63',
+              },
+            ],
+          };
+
+          // ✅ Chart options
+          this.burndownOptions = {
+            plugins: {
+              legend: {
+                display: false,
+                position: 'top',
+                labels: { boxWidth: 12, color: '#333' }
+              },
+              tooltip: { mode: 'index', intersect: false }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Date', color: '#333' },
+                grid: { display: false }
+              },
+              y: {
+                title: { display: true, text: 'Remaining Hours', color: '#333' },
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 1, // 👈 adds 100-unit intervals
+                },
+                grid: {
+                  color: '#e0e0e0'
+                }
+              }
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching burndown chart:', err);
+          this.burndownData = [];
+        },
+      });
+    });
   }
 
   createGaugeChart() {
-    // Create 10 colored segments for smoother gradient effect
-    const dataValues = new Array(6).fill(6);
-    const colors = [
-      '#FF5656', '#FF8888', '#FEE114', '#D1D80F',
-      '#84BD32', '#30AD43',
-    ];
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+      const projectid = params['id'];
+      if (!projectid) {
+        this.completionRate = 0;
+        return;
+      }
+      this.http.getData(`ProjectManagementGraph/project/completion-rate/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const percent = Number(res?.data?.completionPercent) || 0;
+          this.completionRate = percent;
+          // Create 10 colored segments for smoother gradient effect
+          const dataValues = new Array(6).fill(6);
+          const colors = [
+            '#FF5656', '#FF8888', '#FEE114', '#D1D80F',
+            '#84BD32', '#30AD43',
+          ];
+          this.gaugeData = {
+            datasets: [
+              {
+                data: dataValues,
+                backgroundColor: colors,
+                borderWidth: 0,
+                circumference: 180,
+                rotation: -90,
+                cutout: '90%',
+              }
+            ]
+          };
 
-    this.gaugeData = {
-      datasets: [
-        {
-          data: dataValues,
-          backgroundColor: colors,
-          borderWidth: 0,
-          circumference: 180,
-          rotation: -90,
-          cutout: '90%',
+          this.gaugeOptions = {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false }
+            },
+            rotation: -90,
+            circumference: 180,
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching project completion rate:', err);
+          this.completionRate = 0;
         }
-      ]
-    };
-
-    this.gaugeOptions = {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: false }
-      },
-      rotation: -90,
-      circumference: 180,
-    };
+      });
+    });
   }
 
   // calculate needle rotation based on % value

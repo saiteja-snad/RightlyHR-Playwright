@@ -3,6 +3,9 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
+import { HttpService } from '../../../../services/http.service';
+import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -44,6 +47,9 @@ export class ClientTimesheetSummaryComponent {
   // Burn Down Data variables
   burndownData: any;
   burndownOptions: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
+  constructor(private http: HttpService,private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.projectWiseResourceCountGraph();
@@ -56,42 +62,74 @@ export class ClientTimesheetSummaryComponent {
 
   // Project wise Resource Count
   projectWiseResourceCountGraph() {
-    this.projectResourceData = {
-      labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
-      datasets: [
-        {
-          label: 'Resource Count', // optional but good practice
-          data: [60, 50, 70, 30, 40], // added the 5th value
-          backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-          barThickness: 10
-        }
-      ]
-    };
-
-    this.projectResourceOptions = {
-      indexAxis: 'y', // Horizontal bar
-      plugins: {
-        legend: {
-          display: false // hides the top "Resource Count" label
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Resource Count'
-          },
-          grid: { display: false }
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Projects'
-          },
-          grid: { display: false }
-        }
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.projectResourceData = [];
+        return;
       }
-    };
+
+      this.http.getData(`ProjectManagementGraph/client/project-wise-resource/${clientID}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('Project-wise Resource Count Response:', res);
+
+            if (res?.length) {
+              const responseData = res;
+
+              // ✅ Use correct property names from your response
+              const labels = responseData.map((item: any) => item.projectName);
+              const resourceCounts = responseData.map((item: any) => item.resourceCount || 0);
+
+              this.projectResourceData = {
+                labels,
+                datasets: [
+                  {
+                    label: 'Resource Count',
+                    data: resourceCounts,
+                    backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
+                    barThickness: 10
+                  }
+                ]
+              };
+            } else {
+              // Fallback dummy data if API returns empty
+              this.projectResourceData = {
+                labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
+                datasets: [
+                  {
+                    label: 'Resource Count',
+                    data: [60, 50, 70, 30, 40],
+                    backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
+                    barThickness: 10
+                  }
+                ]
+              };
+            }
+
+            this.projectResourceOptions = {
+              indexAxis: 'y', // Horizontal bar
+              plugins: {
+                legend: { display: false }
+              },
+              scales: {
+                x: {
+                  title: { display: true, text: 'Resource Count' },
+                  grid: { display: false }
+                },
+                y: {
+                  title: { display: true, text: 'Projects' },
+                  grid: { display: false }
+                }
+              }
+            };
+          },
+          error: (err) => {
+            console.error('Error fetching project-wise resource count chart:', err);
+          }
+        });
+    });
   }
 
   // Department wise Contribution
@@ -134,53 +172,79 @@ export class ClientTimesheetSummaryComponent {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    this.estimatedVsActualData = {
-      labels: ['Softkill E-commerce', 'Admin App', 'E-commerce', 'Web app', 'Mobile App'],
-      datasets: [
-        {
-          label: 'Estimated Hours',
-          backgroundColor: '#1A237E',
-          data: [850, 950, 700, 880, 900],
-          stack: 'Estimated' // separate stack
-        },
-        {
-          label: 'Actual Hours',
-          backgroundColor: '#90CAF9',
-          data: [800, 700, 450, 850, 700],
-          stack: 'ActualOverdue' // stacked with Overdue
-        },
-        {
-          label: 'Over Due',
-          backgroundColor: '#FF5252',
-          data: [100, 0, 0, 80, 0],
-          stack: 'ActualOverdue' // stacked on top of Actual
-        }
-      ]
-    };
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
 
-    this.estimatedVsActualOptions = {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        x: {
-          stacked: false, // show two separate bars per project (Estimated vs Actual+Overdue)
-          grid: { display: false },
-          title: { display: false }
-        },
-        y: {
-          stacked: true, // stack Actual + Overdue vertically
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Hours'
-          },
-        }
+      const clientID = params['id'];
+      if (!clientID) {
+        this.estimatedVsActualData = [];
+        return;
       }
-    };
+
+      this.http.getData(`ProjectManagementGraph/client/allocated-vs-actual/${clientID}?groupBy=project`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          if (res?.success && res?.data?.data?.length) {
+            const chartData = res.data.data;
+            const labels = chartData.map((item: any) => item.name);
+            const estimatedHours = chartData.map((item: any) => item.allocateHours);
+            const actualHours = chartData.map((item: any) => item.actualHours);
+            const overdueHours = chartData.map((item: any) => item.overDue ? (item.allocateHours - item.actualHours) : 0);
+
+            this.estimatedVsActualData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Estimated Hours',
+                  backgroundColor: '#1A237E',
+                  data: estimatedHours,
+                  stack: 'Estimated'
+                },
+                {
+                  label: 'Actual Hours',
+                  backgroundColor: '#90CAF9',
+                  data: actualHours,
+                  stack: 'ActualOverdue'
+                },
+                {
+                  label: 'Over Due',
+                  backgroundColor: '#FF5252',
+                  data: overdueHours,
+                  stack: 'ActualOverdue'
+                }
+              ]
+            };
+
+            this.estimatedVsActualOptions = {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: false,
+                  position: 'top'
+                },
+              },
+              scales: {
+                x: {
+                  stacked: false, // show Estimated vs Actual+Overdue as separate bars
+                  grid: { display: false },
+                },
+                y: {
+                  stacked: true,
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: 'Hours'
+                  }
+                }
+              }
+            };
+          } else {
+            this.estimatedVsActualData = [];
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching estimated vs actual chart:', err);
+        }
+      });
+    });
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)

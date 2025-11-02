@@ -14,14 +14,9 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { DropdownModule } from 'primeng/dropdown';
-import dayjs from 'dayjs';
-import { Dayjs } from 'dayjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import * as XLSX from 'xlsx';
-import { IAttendanceDetails } from '../../../Interfaces/reports.model';
-import { environment } from '../../../../environments/environment';
-import { filter, Subject, Subscription, takeUntil } from 'rxjs';
-import { Client } from '../../../clients.model';
+import { Subject, Subscription, takeUntil } from 'rxjs';
+import { ClientData } from '../../../clients.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { PaginatorModule } from 'primeng/paginator';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -46,7 +41,7 @@ export class ProjectEffortReportComponent {
   filteredleaveRecords = false;
   destroy$ = new Subject<boolean>();
   empinfo: any;
-  clients: Client[] = [];
+  clients: ClientData[] = [];
   clientsData: any[] = [];
   clientDropdownList: { label: string; value: number }[] = [];
   projectsList: any[] = [];
@@ -76,7 +71,7 @@ export class ProjectEffortReportComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
-   today: Date = new Date();
+  today: Date = new Date();
   constructor(
     public authService: AuthService,
     private reportsService: ReportsService,
@@ -98,7 +93,7 @@ export class ProjectEffortReportComponent {
     this.ProjectEffortReportForm = this.fb.group({
       clientId: [null],
       projectId: [{ value: null, disabled: true }],
-     // employeid: [{ value: null, disabled: true }],
+      // employeid: [{ value: null, disabled: true }],
       dateRange: [null],
       billable: [null]
     });
@@ -107,22 +102,19 @@ export class ProjectEffortReportComponent {
     })
   }
 
-isFilterApplied(): boolean {
-  const formValue = this.ProjectEffortReportForm.value;
-
-  return (
-    (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
-    (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-   // (formValue.employeid && formValue.employeid.value !== null && formValue.employeid.value !== undefined) ||
-    (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
-    (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
-  );
-}
+  isFilterApplied(): boolean {
+    const formValue = this.ProjectEffortReportForm.value;
+    return (
+      (formValue.clientId !== null && formValue.clientId !== undefined && formValue.clientId !== '') ||
+      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+      (formValue.billable && formValue.billable.value !== null && formValue.billable.value !== undefined) ||
+      (formValue.dateRange && Array.isArray(formValue.dateRange) && formValue.dateRange.length > 0)
+    );
+  }
   clearAllFilters(): void {
     this.ProjectEffortReportForm.reset();
     this.filteredpendingapprovalRecord = [];
     this.ProjectEffortReportForm.get('projectId')?.disable();
-   // this.ProjectEffortReportForm.get('employeid')?.disable();
     this.collectionSize = 0;
   }
   // called for pagination 
@@ -131,99 +123,68 @@ isFilterApplied(): boolean {
     this.first = 0;
     this.generateProjectEffortReport(this.page, this.pageSize);
   }
-onGenerate() {
-  this.generateProjectEffortReport(this.page, this.pageSize, true, true);
-}
+  onGenerate() {
+    this.generateProjectEffortReport(this.page, this.pageSize, true, true);
+  }
   onPageChange(event: any) {
     this.page = event.page + 1;
     this.pageSize = event.rows;
     this.first = event.first;
-    this.generateProjectEffortReport(this.page, this.pageSize, false,false);
+    this.generateProjectEffortReport(this.page, this.pageSize, false, false);
   }
-
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
     this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
-    this.generateProjectEffortReport(this.page, this.pageSize, true,true);
+    this.generateProjectEffortReport(this.page, this.pageSize, true, true);
   }
+  // get client data
   getClientsData(): void {
-    this.http.getData(`Client/GetAll?status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-          if (Array.isArray(res?.data)) {
-            this.clients = res.data;
-
-            // 🔹 Add "No Client" option only once
-            const noClientExists = this.clients.some((c: any) => c.clientId === 0);
-            // Add "No Client/No Project" option
-            if (!this.noclientproject) {
-              this.clients.unshift({
-                clientId: 0,
-                clientName: 'No Client',
-                projects: [
-                  {
-                    projectId: 0,
-                    projectName: 'No Project',
-                    isNoClientProject: true,
-                  },
-                ],
-                taxId: '',
-                websiteUrl: '',
-                industryType: '',
-                logoPath: '',
-                address: '',
-                status: '',
-                overtimeEligibile: false,
-                billable: false,
-                weekendWorkAllowed: false,
-                createdBy: {
-                  id: 0,
-                  name: ''
+    this.http.getData(`Client/GetAll?status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (Array.isArray(res?.data)) {
+          this.clients = res.data;
+          // Add "No Client/No Project" option
+          if (!this.noclientproject) {
+            this.clients.unshift({
+              clientId: 0,
+              clientName: 'No Client',
+              projects: [
+                {
+                  projectId: 0,
+                  projectName: 'No Project',
+                  isNoClientProject: true,
                 },
-                updatedBy: {
-                  id: 0,
-                  name: ''
-                },
-                createdAt: '',
-                updatedAt: '',
-                contact: {
-                  contactId: 0,
-                  entityRefId: 0,
-                  name: '',
-                  email: '',
-                  phoneNumber: '',
-                  phoneCountryCode: '',
-                  phoneDialCode: '',
-                  role: '',
-                  primaryContact: false,
-                  active: false,
-                  createdAt: '',
-                  updatedAt: ''
-                }
-              });
-            }
-            // 🔹 Create dropdown list
-            this.clientDropdownList = this.clients.map((client: any) => ({
-              label: client.clientName,
-              value: client.clientId
-            }));
-          } else {
-            this.clients = [];
-            this.clientDropdownList = [];
+              ],
+            });
           }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error fetching clients:', err);
+          // 🔹 Create dropdown list
+          this.clientDropdownList = this.clients.map((client: any) => ({
+            label: client.clientName,
+            value: client.clientId
+          }));
+        } else {
+          this.clients = [];
+          this.clientDropdownList = [];
         }
-      });
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching clients:', err);
+      }
+    });
   }
-
+  // onchange of client 
+  onClientChange(event: any): void {
+    const clientId = event.value;
+    this.ProjectEffortReportForm.patchValue({ projectId: null }); // reset project
+    this.ProjectEffortReportForm.get('projectId')?.enable();
+    this.getProjectsByClientId(clientId);
+  }
+  // call the method to get project based on client 
   getProjectsByClientId(clientId: number): void {
     //If "No Client" selected, show only "No Project"
     if (clientId === 0) {
@@ -232,158 +193,39 @@ onGenerate() {
       ];
       return;
     }
-
     if (!clientId) return;
     this.loading = true;
-
-    this.http.getData(`Project?clientId=${clientId}&status=Active`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.loading = false;
-          if (Array.isArray(res?.data)) {
-            this.projectsList = res.data.map((project: any) => ({
-              label: project.projectName,
-              value: project.projectId
-            }));
-          } else {
-            this.projectsList = [];
-          }
-        },
-        error: (err) => {
-          this.loading = false;
-          console.error('Error fetching projects:', err);
-        }
-      });
-  }
-
-
-
-  onClientChange(event: any): void {
-    const clientId = event.value;
-    this.ProjectEffortReportForm.patchValue({ projectId: null }); // reset project
-    this.ProjectEffortReportForm.get('projectId')?.enable();
-   // this.ProjectEffortReportForm.get('employeid')?.disable();
-   // this.ProjectEffortReportForm.get('employeid')?.setValue([]);
-    this.getProjectsByClientId(clientId);
-  }
-  /** When project selected */
-  // onProjectChange(event: any) {
-  //   const selectedProjectId = event.value;
-  //   this.employeeData = [];
-  //   this.ProjectEffortReportForm.get('employeid')?.setValue([]);
-  //   if (selectedProjectId && selectedProjectId !== 0) {
-  //     this.projectId = selectedProjectId;
-  //     this.ProjectEffortReportForm.get('employeid')?.enable();
-  //     this.getAllActiveEmployees();
-  //   } else {
-  //     this.getTeamManagersDetails();
-  //     this.projectId = 0;
-  //     // Wait briefly to ensure getTeamManagersDetails() completes (optional)
-  //     setTimeout(() => {
-  //       if (this.getEmployeeInfo?.length) {
-  //         this.employeeData = this.getEmployeeInfo.map((emp: any) => ({
-  //           id: emp.employeeId,
-  //           name: emp.fullName
-  //         }));
-  //         this.ProjectEffortReportForm.get('employeid')?.enable();
-  //       }
-  //     }, 300);
-  //   }
-  // }
-
-  // getTeamManagersDetails() {
-  //   const EmployeeId = this.empinfo.employeeId;
-  //   this.subscription = this.http
-  //     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-  //     .subscribe({
-  //       next: (response: any) => {
-  //         if (response && response.length) {
-  //           const myTeam = response.filter((e: any) => e.isAccess);
-  //           this.getEmployeeInfo = myTeam.map((employee: any) => ({
-  //             employeeId: employee.employeeId,
-  //             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`,
-  //           }));
-  //         } else {
-  //           this.getEmployeeInfo = [];
-  //         }
-  //       },
-  //       error: (err) => {
-  //         console.error('Error fetching team manager details:', err);
-  //         this.getEmployeeInfo = [];
-  //       }
-  //     });
-  // }
-  /** Get all active employees for selected project */
-  // getAllActiveEmployees() {
-  //   this.http.getData(`ProjectResource?status=Active&entityType=project&entityRefId=${this.projectId}&isDistinct=${this.isDistinct}`)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (res: any) => {
-  //         this.employeeData = res?.data?.map((x: any) => x.employee) ?? [];
-  //         // if (this.employeeData.length > 0) {
-  //         this.ProjectEffortReportForm.get('employeid')?.enable();
-  //         // }
-  //       },
-  //       error: (err) => {
-  //         console.error('Error fetching employees:', err);
-  //         this.employeeData = [];
-  //       }
-  //     });
-  // }
-
-  getAllActiveProjects() {
-    this.http
-      .getData(`Project?status=Active&projectAuthorityId=${this.empinfo.employeeId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          const projects = res?.data || [];
-
-          this.projectsData = projects.map((p: any) => ({
-            ...p,
-            //  displayName: `${p.client?.clientName || 'Unknown Client'} - ${p.projectName || 'Unnamed Project'}`
-            displayName: `${p.client?.clientName || 'Unknown Client'}`,
-            displayprojectName: `${p.projectName || 'Unnamed Project'}`
+    this.http.getData(`Project?clientId=${clientId}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        if (Array.isArray(res?.data)) {
+          this.projectsList = res.data.map((project: any) => ({
+            label: project.projectName,
+            value: project.projectId
           }));
-
-          this.projectsData.unshift({
-            projectId: 0,
-            displayName: 'No Client',
-            displayprojectName: 'No Project'
-          });
-        },
-        error: (err) => {
-          console.error('Error fetching projects:', err);
-
-          this.projectsData = [
-            {
-              projectId: 0,
-              displayName: 'No Client',
-              displayprojectName: 'No Project'
-            }
-          ];
-        },
-      });
+        } else {
+          this.projectsList = [];
+        }
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error fetching projects:', err);
+      }
+    });
   }
-
+  // generate,export button show,hide
   get isLeaveGenerateDisabled(): boolean {
     const { clientId, projectId, dateRange, billable } = this.ProjectEffortReportForm.value;
-
     const hasClient = clientId !== null && clientId !== undefined;
     const hasProject = projectId !== null && projectId !== undefined;
     const hasDateRange = dateRange && (dateRange.startDate || dateRange.endDate);
     const hasbillable = billable !== null && billable !== undefined;
-  //  const hasEmployeid = employeid !== null && employeid !== undefined;
-
     return !(hasClient || hasProject || hasDateRange || hasbillable);
   }
-
+  // payload for report
   buildTimesheetReportParams() {
     const formValue = this.ProjectEffortReportForm.value;
-   // const employeeId = this.empinfo?.employeeId || 0;
-
-     // format date as MM/dd/yyyy
+    // format date as MM/dd/yyyy
     const formatDate = (date: Date | null) => {
       if (!date) return null;
       const d = new Date(date);
@@ -403,18 +245,14 @@ onGenerate() {
     if (formValue.clientId !== null && formValue.clientId !== undefined) {
       params.ClientIds = formValue.clientId;
     }
-
     if (formValue.projectId !== null && formValue.projectId !== undefined) {
       params.ProjectIds = formValue.projectId;
     }
-    // if (formValue.employeid !== null && formValue.employeid !== undefined) {
-    //   params.EmployeeIds = formValue.employeid;
-    // }
     if (formValue.billable?.value) params.billable = formValue.billable.value;
     return params;
   }
- 
- generateProjectEffortReport(page: number,pageSize: number,showLoader: boolean = true,resetPagination: boolean = false ) {
+  // generate button for method calling
+  generateProjectEffortReport(page: number, pageSize: number, showLoader: boolean = true, resetPagination: boolean = false) {
     if (this.ProjectEffortReportForm.invalid) return;
     // Only reset pagination when explicitly requested
     if (resetPagination) {
@@ -423,58 +261,47 @@ onGenerate() {
     }
 
     if (showLoader) this.spinnerLoader1 = true;
-
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-
-    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.spinnerLoader1 = false;
-
-          if (res.success && res.data?.items) {
-            this.filteredpendingapprovalRecord = res.data.items;
-            this.collectionSize = res.data.totalCount || 0;
-
-            // If total count smaller than current offset, go back to first
-            if (this.first >= this.collectionSize) {
-              this.first = 0;
-              this.page = 1;
-            }
-
-            this.disableBtn = false;
-          } else {
-            this.filteredpendingapprovalRecord = [];
-            this.collectionSize = 0;
+    this.http.getDataIncludeParams(`TimesheetReport/get?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.spinnerLoader1 = false;
+        if (res.success && res.data?.items) {
+          this.filteredpendingapprovalRecord = res.data.items;
+          this.collectionSize = res.data.totalCount || 0;
+          // If total count smaller than current offset, go back to first
+          if (this.first >= this.collectionSize) {
+            this.first = 0;
+            this.page = 1;
           }
-        },
-        error: (err) => {
-          this.spinnerLoader1 = false;
-          console.error('Error fetching report:', err);
+          this.disableBtn = false;
+        } else {
           this.filteredpendingapprovalRecord = [];
           this.collectionSize = 0;
-          this.disableBtn = true;
-        },
-      });
+        }
+      },
+      error: (err) => {
+        this.spinnerLoader1 = false;
+        console.error('Error fetching report:', err);
+        this.filteredpendingapprovalRecord = [];
+        this.collectionSize = 0;
+        this.disableBtn = true;
+      },
+    });
   }
+  // export button calling method
   exportProjectEffortReport() {
     const params = this.buildTimesheetReportParams();
     const queryString = new URLSearchParams(params).toString();
-
-    this.http.downloadTimesheetReport(
-      `TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`
-    ).subscribe({
+    this.http.downloadTimesheetReport(`TimesheetReport/export-report?${queryString}&page=${this.page}&pageSize=${this.pageSize}`).subscribe({
       next: (response: HttpResponse<Blob>) => {
         // Extract filename from Content-Disposition
         let filename = 'ProjectEffortReport.xlsx';
         const contentDisposition = response.headers.get('content-disposition');
-
         if (contentDisposition) {
           // Handle both regular and UTF-8 encoded filenames
           const utf8FilenameMatch = contentDisposition.match(/filename\*\=UTF\-8''([^;]+)/);
           const asciiFilenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-
           if (utf8FilenameMatch && utf8FilenameMatch[1]) {
             filename = decodeURIComponent(utf8FilenameMatch[1]);
           } else if (asciiFilenameMatch && asciiFilenameMatch[1]) {

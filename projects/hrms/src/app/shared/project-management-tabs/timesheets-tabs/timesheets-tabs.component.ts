@@ -16,11 +16,11 @@ export class TimesheetsTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
     {
-      label: 'My Timesheets', link: '/project-management/timesheet/mytimesheet', icon: '/my-info-icons/basic-info-icon.png',
+      label: 'My Timesheets', link: '/project-management/timesheet/mytimesheet', icon: '/icons/my-timesheet-icon.png',
       permission: { feature: 'Client Information', action: 'view' }
     },
     {
-      label: 'Team Timesheets', link: '/project-management/timesheet/teamtimesheet', icon: '/my-info-icons/contact-icon.png',
+      label: 'Team Timesheets', link: '/project-management/timesheet/teamtimesheet', icon: '/icons/team-timesheet-icon.png',
       permission: { feature: 'Contact Information', action: 'view' }
     },
   ];

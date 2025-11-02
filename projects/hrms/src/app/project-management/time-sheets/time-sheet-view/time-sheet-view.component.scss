@@ -4,9 +4,10 @@
 }
 
 .total-hrs {
-    color: #858991;
+    color: var(--primary-color);
     font-weight: 500;
-    font-size: var(--fontsize12);
+    font-size: var(--fontsize14);
+    cursor: pointer;
 }
 
 .total-duration {

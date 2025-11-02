@@ -24,7 +24,8 @@ import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-timesheets-summary-view',
-  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, NgbPopover, TranslateModule, CommonModule, ProjectManagementModuleInfoComponent, Select, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent],
+  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, NgbPopover, TranslateModule,
+    CommonModule, ProjectManagementModuleInfoComponent, Select, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss'
 })
@@ -60,23 +61,33 @@ export class TimesheetsSummaryViewComponent {
   totalEntries = 0;
   loading = false;
   resourcesList: IResourceDetail[] = [];
+  // Project Type Data variables
+  projectTypeData: any;
+  projectTypeGraphData: any;
+  projectTypeGraphOptions: any;
+  // Estimated Vs ActualData variables
+  estimatedVsActualData: any;
+  estimatedVsActualGraphData: any;
+  estimatedVsActualGraphOptions: any;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public rbac: RbacService, private router: Router,private route: ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute) { }
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
-        this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
         this.getProjectSummary(resoureID)
-       
+
       }
     });
-    
+
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-   
+    this.projectTypeChart();
+    this.estimatedActualChart();
+
   }
 
   createDatepickerForm() {
@@ -135,12 +146,12 @@ export class TimesheetsSummaryViewComponent {
 
     // ✅ Trigger your existing API call
     this.page = 1; // Reset to first page on new filter apply
-   const resoureID=  this.datepickerForm.get('resourceId')?.value
+    const resoureID = this.datepickerForm.get('resourceId')?.value
     this.getProjectSummary(resoureID);
   }
 
 
-  getProjectSummary(resoureID:any) {
+  getProjectSummary(resoureID: any) {
 
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
@@ -159,82 +170,23 @@ export class TimesheetsSummaryViewComponent {
       next: (res: any) => {
         this.loading = false
         const data: TimesheetSummaryResponse = res?.data;
+        this.projectTypeData = res?.data.graphSummary.projectWiseSummary;
+        this.estimatedVsActualData = res?.data.graphSummary.allocatedVsActualSummary;
+        console.log( this.estimatedVsActualData);
         // this.attendanceSummaryData = data?.dailyData ?? [];
-        const resourceName = data?.resource;
+        console.log(data);
+        this.projectTypeChart();
+        this. estimatedActualChart();
+
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
-        entries: item.entries ?? []
+          entries: item.entries ?? []
 
 
         }));
-        const monthlySummary = data?.monthlySummary;
-        const summaryItems = monthlySummary?.items ?? [];
-        this.statusCounts$.next(summaryItems);
-        this.totalEntries = monthlySummary?.totalEntries ?? 0;
-        // utiliztionsummery charts
-        const utilizationSummary = data?.utilizationSummary;
-        const overall = utilizationSummary?.overall;
-        const utilizationArray = (() => {
-          if (!overall || !overall.loggedHHMM) return [];
-          const hhmm = overall.loggedHHMM as string;
-          // If exactly "0:00" or "00:00", return empty array
-          if (hhmm === '0:00' || hhmm === '00:00') return [];
-          // Split by ":" and convert to numbers
-          const parts = hhmm.split(':').map(Number);
-          // If parsing fails or less than 2 parts, return empty array
-          if (parts.length < 2 || parts.some(isNaN)) return [];
-          const h = parts[0];
-          const m = parts[1];
-          // 🧠 Format display string: omit minutes if 00
-          const loggedHHMM = m === 0 ? `${h}h` : `${h}h ${m}m`;
-          return [
-            {
-              key: 'loggedHours',
-              label: 'Logged Hours',
-              value: parseFloat(`${h}.${m.toString().padStart(2, '0')}`),
-              loggedHHMM, // formatted display value
-              loggedISO: overall.loggedISO,
-            },
-          ];
-        })();
-        this.utilizationcount$.next(utilizationArray);
-        // time sheet summary charts data
-        this.timesheetSummaryChartData = {
-          datasets: [
-            {
-              data: summaryItems.map((i) => i.value),
-              backgroundColor: summaryItems.map((i) => i.colour),
-              borderWidth: 0,
-            },
-          ],
-        };
-        // utiliztionsummery charts data
-        this.timesheetutilizeSummaryChartData = {
-          datasets: [
-            {
-              data: utilizationArray.map((i) => i.value),
-              backgroundColor: ['#4CAF50', '#FF9800'],
-              borderWidth: 0,
-            },
-          ],
-        };
-        this.timesheetSummaryOptions = {
-          cutout: '70%',
-        };
-        this.timesheetUtilizeSummaryOptions = {
-          cutout: '70%',
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (context: any) => {
-                  const dataIndex = context.dataIndex;
-                  const utilizationData = this.utilizationcount$.value;
-                  return utilizationData[dataIndex]?.loggedHHMM || '';
-                }
-              }
-            }
-          }
-        };
+
+
+
       },
       error: err => {
         this.loading = false
@@ -249,6 +201,109 @@ export class TimesheetsSummaryViewComponent {
     });
   }
 
+  openModal(entries: TimesheetEntry[], content?: any) {
+    this.selectedEntries = entries;
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+
+  // Project Type (Pie)
+  projectTypeChart() {
+    if (!this.projectTypeData || this.projectTypeData.length === 0) return;
+
+    // Extract labels and data from API response
+    const labels = this.projectTypeData.map((item: any) => item.projectName);
+    const data = this.projectTypeData.map((item: any) => item.hours);
+
+    // Generate random colors for each project (optional)
+    const backgroundColors = [
+      '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
+    ].slice(0, this.projectTypeData.length); // adjust for number of items
+
+    // Assign chart data dynamically
+    this.projectTypeGraphData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Project Hours',
+          data: data,
+          backgroundColor: backgroundColors,
+        },
+      ],
+    };
+
+    // Chart options
+    this.projectTypeGraphOptions = {
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { usePointStyle: true }
+        },
+      },
+    };
+  }
+
+
+  // Estimated vs Actual Hours (Grouped Bar)
+  estimatedActualChart() {
+  if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
+
+  // Extract project names and corresponding data
+  const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
+  const estimatedData = this.estimatedVsActualData.map((item: any) => item.estimatedHours);
+  const actualData = this.estimatedVsActualData.map((item: any) => item.actualHours);
+  const overdueData = this.estimatedVsActualData.map((item: any) => item.overDue);
+
+  // Create chart datasets
+  this.estimatedVsActualGraphData = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Estimated Hours',
+        backgroundColor: '#1A237E',
+        data: estimatedData,
+        stack: 'Estimated' // separate stack
+      },
+      {
+        label: 'Actual Hours',
+        backgroundColor: '#90CAF9',
+        data: actualData,
+        stack: 'ActualOverdue' // stacked with Overdue
+      },
+      {
+        label: 'Over Due',
+        backgroundColor: '#FF5252',
+        data: overdueData,
+        stack: 'ActualOverdue' // stacked on top of Actual
+      }
+    ]
+  };
+
+  // Chart options
+  this.estimatedVsActualGraphOptions = {
+    responsive: true,
+     plugins: {
+        legend: {
+          display: false // hides the top "Resource Count" label
+        }
+      },
+    scales: {
+      x: {
+        stacked: false, // Estimated shown separately from Actual+Overdue
+        grid: { display: false },
+        title: { display: false }
+      },
+      y: {
+        stacked: true, // Actual + Overdue stacked vertically
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Hours'
+        },
+      }
+    }
+  };
+}
 
 
 }

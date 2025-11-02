@@ -15,14 +15,16 @@
                                 selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                         </div>
                     </div>
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
+                    Team(Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                                optionLabel="label" formControlName="resourceId" optionValue="value" [showClear]="false"
-                                placeholder="please select employee" class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                resetFilterOnHide="true" optionLabel="label" formControlName="resourceId"
+                                optionValue="value" [showClear]="false" placeholder="please select employee"
+                                class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -31,9 +33,10 @@
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-                                optionLabel="label" optionValue="value" formControlName="resourceId" [showClear]="false"
-                                placeholder="please select employee" class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                resetFilterOnHide="true" optionLabel="label" optionValue="value"
+                                formControlName="resourceId" [showClear]="false" placeholder="please select employee"
+                                class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -41,9 +44,10 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                placeholder="please select employee" formControlName="resourceId" [filter]="true" resetFilterOnHide="true"
-                                class="form-select custom-select" [autoDisplayFirst]="false" required>
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
+                                name="myteamemployees" placeholder="please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" required>
                             </p-select>
                         </div>
                     </div>
@@ -66,30 +70,26 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th class="max-width">{{'Date' | translate}}</th>
-                        <th class="max-width">{{'Logged Hours' | translate }}</th>
-                        <th class="max-width">{{'Summary' | translate}}</th>
+                        <th class="text-center" >{{'Date' | translate}}</th>
+                        <th class="text-center">{{'Logged Hours' | translate }}</th>
+                        <th class="text-center">{{'Summary' | translate}}</th>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let row of attendanceSummaryData">
 
-                                <td>{{row.date | dateformat }}</td>
+                                <td class="text-center">{{row.date | dateformat }}</td>
 
-                                <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
+                                <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
                                     row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                                 <td class="text-center">
-                                    <ng-container *ngIf="row.entries[0]?.summary; else noEntries">
-                                        <a type="button" [ngbPopover]="description">
-                                            <app-info-icon />
+                                    <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
+                                        <a>
+                                            <app-info-icon class="cursor"
+                                                (click)="openModal(row.entries, summaryforlogs)" />
                                         </a>
-                                        <ng-template #description>
-                                            <p class="mb-0">{{ row.entries[0]?.summary }}</p>
-                                        </ng-template>
                                     </ng-container>
-                                    <ng-template #noEntries>
-                                        -
-                                    </ng-template>
+                                    <ng-template #noEntries>-</ng-template>
                                 </td>
 
 
@@ -108,67 +108,21 @@
                 }
             </div>
 
-            <div class="timeshett-graph-content">
-                <!-- <div class="attendance-summary-card mb-3">
-                    <div>
-                        <p class="summary-header mb-2">{{'Summary' | translate}}</p>
+            <div class="timesheet-graph-content">
+                
+                <div class="time-sheet-graph-card mb-3">
+                    <div class="summary-header mb-2">Project Wise Hours Summary</div>
+                    <div class="circular-chart">
+                        <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
                     </div>
-                    <ng-container *ngIf="(statusCounts$.value.length ?? 0) > 0; else nolistTemplate">
-                        <div class="chart-content">
-                            <p-chart type="doughnut" [data]="timesheetSummaryChartData"
-                                [options]="timesheetSummaryOptions" />
-                        </div>
-                        <ul class="list-style-none ps-0 pt-3 mb-0">
-                            @if(statusCounts$.value){
-                            @for (status of statusCounts$ |async ; track $index) {
-                            <li>
-                                <div class="d-flex justify-content-between summart-text">
-                                    <div class="summary-name" [ngStyle]="{ color: status.colour }">{{ status.status }}
-                                    </div>
-                                    <div>{{ status.value }}</div>
-                                </div>
-                            </li>
-                            }
-                            }
-                        </ul>
-                    </ng-container>
-                    <ng-template #nolistTemplate>
-                        <div class="custom-placeholder-content">
-                            <app-no-data-found />
-                        </div>
-                    </ng-template>
-                </div> -->
+                </div>
 
-                <!-- utilization summery chats -->
-                <!-- <div class="attendance-summary-card">
-                    <div>
-                        <p class="summary-header mb-2">{{ 'Utilization Summary' | translate }}</p>
+                <div class="time-sheet-graph-card">
+                    <div class="summary-header">Allocated vs Actual Hours</div>
+                    <div class="bar-chart">
+                        <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                     </div>
-                    <ng-container *ngIf="(utilizationcount$.value?.length ?? 0) > 0; else nolistTemplateUtilization">
-                        <div class="chart-content">
-                            <p-chart type="doughnut" [data]="timesheetutilizeSummaryChartData"
-                                [options]="timesheetUtilizeSummaryOptions"></p-chart>
-                        </div>
-                        <ul class="list-style-none ps-0 pt-3 mb-0">
-                            @if (utilizationcount$ | async; as utilizationList) {
-                            @for (item of utilizationList; track $index) {
-                            <li>
-                                <div class="d-flex justify-content-between summart-text">
-                                    <div class="summary-name">{{ item.label }}</div>
-                                    <div>{{ item.loggedHHMM }}</div>
-                                </div>
-                            </li>
-                            }
-                            }
-                        </ul>
-                    </ng-container>
-
-                    <ng-template #nolistTemplateUtilization>
-                        <div class="custom-placeholder-content">
-                            <app-no-data-found />
-                        </div>
-                    </ng-template>
-                </div> -->
+                </div>
             </div>
         </div>
 
@@ -192,7 +146,7 @@
                                         <th>Client Name</th>
                                         <th>Project Name</th>
                                         <th>Logged Hours</th>
-                                        <th>Allocated Hours</th>
+
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -200,8 +154,7 @@
                                     <tr *ngFor="let entry of selectedEntries">
                                         <td>{{ entry.clientName }}</td>
                                         <td>{{ entry.projectName }}</td>
-                                        <td>{{ entry.loggedHours | number:'1.2-2' }} hrs</td>
-                                        <td>{{ entry.allocatedHours }}</td>
+                                        <td>{{ entry.loggedHours }} hrs</td>
                                         <td>{{ entry.status }}</td>
                                     </tr>
                                 </tbody>

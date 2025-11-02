@@ -4,7 +4,7 @@
             <app-project-management-module-info />
         </div>
 
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-3" *ngIf="this.employeeId !== this.empdata?.employeeId" >
             <div class="total-hrs">{{"Total Hours" }}</div>
 
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">

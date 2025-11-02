@@ -6,7 +6,7 @@
 
         <div class="d-flex align-items-center gap-3">
 
-            <div class="total-hrs"><u (click)="navigation()">My Summary</u></div>
+
             <div class="d-flex week-picker-content">
                 <div class="custom-date-range-picker me-2">
                     <p-datepicker #datePicker [(ngModel)]="date" selectionMode="range" [showIcon]="true"
@@ -23,7 +23,7 @@
                     <i class="bi bi-chevron-right"></i>
                 </button>
             </div>
-
+            <!-- 
             @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team (Timesheet).view'))
             {
             <div class="d-flex align-items-center gap-2">
@@ -61,7 +61,8 @@
 
                 </div>
             </div>
-            }
+            } -->
+            <div class="total-hrs"><u (click)="navigation()">My Summary</u></div>
 
             <div *ngIf="employeeSelected">
                 <button type="button" class="custom-btn btn-primary px-4" (click)="mytimesheet()">
@@ -80,6 +81,7 @@
                     }
                 </button>
             </div>
+            
         </div>
     </div>
 
@@ -87,7 +89,7 @@
         <div class="component-left-tabs-container">
             <app-timesheets-tabs />
         </div>
-    
+
         <div class="custom-table-content">
             @if (!loading) {
             <form [formGroup]="timesheetForm">
@@ -126,7 +128,8 @@
                                                         <p-accordion-header>
                                                             {{ client.clientName | titlecase }}
                                                             <small class="text-muted ms-2">
-                                                                ({{ showprojectlength(client.projects,selectedProjectIds)
+                                                                ({{
+                                                                showprojectlength(client.projects,selectedProjectIds)
                                                                 }}Projects)
                                                             </small>
                                                         </p-accordion-header>
@@ -153,8 +156,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('mon'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'mon', i)"
                                             (keyup.enter)="formatTime($event, 'mon', i, 'duration')"
                                             (blur)="formatTime($event, 'mon', i, 'duration')">
@@ -180,8 +183,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('tue'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'tue', i)"
                                             (keyup.enter)="formatTime($event, 'tue', i, 'duration')"
                                             (blur)="formatTime($event, 'tue', i, 'duration')">
@@ -207,8 +210,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('wed'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'wed', i)"
                                             (keyup.enter)="formatTime($event, 'wed', i, 'duration')"
                                             (blur)="formatTime($event, 'wed', i, 'duration')">
@@ -234,8 +237,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('thu'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'thu', i)"
                                             (keyup.enter)="formatTime($event, 'thu', i, 'duration')"
                                             (blur)="formatTime($event, 'thu', i, 'duration')">
@@ -261,8 +264,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('fri'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'fri', i)"
                                             (keyup.enter)="formatTime($event, 'fri', i, 'duration')"
                                             (blur)="formatTime($event, 'fri', i, 'duration')">
@@ -288,8 +291,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('sat'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'sat', i)"
                                             (keyup.enter)="formatTime($event, 'sat', i, 'duration')"
                                             (blur)="formatTime($event, 'sat', i, 'duration')">
@@ -315,8 +318,8 @@
                                     <div class="input-group custom-input-group"
                                         [ngClass]="getApprovalClass(project.get('sun'))">
                                         <input type="text" formControlName="duration"
-                                            class="form-control custom-input border-none" placeholder="HH:MM" maxlength="4"
-                                            (keypress)="allowNumbersOnly($event)"
+                                            class="form-control custom-input border-none" placeholder="HH:MM"
+                                            maxlength="4" (keypress)="allowNumbersOnly($event)"
                                             (keydown)="checkClearDuration($event, 'sun', i)"
                                             (keyup.enter)="formatTime($event, 'sun', i, 'duration')"
                                             (blur)="formatTime($event, 'sun', i, 'duration')">
@@ -347,7 +350,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>Total Hours  :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
+                            <td>Total Hours :<span class="total-duration ms-1">{{ totalDuration}} Hrs</span></td>
                             <td>{{ getTotalPerDay('mon') }}</td>
                             <td>{{ getTotalPerDay('tue') }}</td>
                             <td>{{ getTotalPerDay('wed') }}</td>
@@ -361,9 +364,10 @@
                 </table>
                 <div class="d-flex justify-content-between align-items-center p-3">
                     <div [style.visibility]="!employeeSelected ? 'visible' : 'hidden'">
-                        <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add Row</button>
+                        <button type="button" class="custom-btn btn-primary px-4" (click)="addProject()">+ Add
+                            Row</button>
                     </div>
-    
+
                     <div class="d-flex  align-items-center gap-3">
                         <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-green"></div>

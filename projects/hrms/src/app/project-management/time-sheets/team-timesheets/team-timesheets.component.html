@@ -69,7 +69,7 @@
                 <table class="w-100">
                     <thead>
                         <th>Employee Name</th>
-                        <th *ngFor="let date of dateHeaders">{{ date }}</th>
+                       <th *ngFor="let date of dateHeaders" [innerHTML]="date"></th>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">

@@ -17,7 +17,6 @@ import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.mo
 import { ActivatedRoute, Router } from '@angular/router';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-team-timesheets',
@@ -32,9 +31,7 @@ export class TeamTimesheetsComponent {
   activeEmplist = [] as any;
   dateHeaders: string[] = [];
   subscription!: Subscription;
-    loggedinuser = {} as any;
   routeResourceId: any
-  showdropdown=false
   ranges: any;
   datepickerForm!: FormGroup;
   page = 1;
@@ -50,16 +47,14 @@ export class TeamTimesheetsComponent {
   ];
   resourcesList: IResourceDetail[] = [];
 
-  constructor(private fb: FormBuilder, public authService: AuthService, private modalService: NgbModal, private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, public rbac: RbacService, private router: Router, private route: ActivatedRoute) { }
   ngOnInit() {
-       this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createDatepickerForm();
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
     this.route.queryParams.subscribe(params => {
-     
       this.routeResourceId = params['id']; // store route ID if exists
       this.getteamsummary(); // always call once
     });
@@ -129,10 +124,11 @@ export class TeamTimesheetsComponent {
 
   getteamsummary() {
 
+
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
-    const activeResourceId = this.routeResourceId || formValue.resourceId;
-    const resourceIdParam = activeResourceId ? `&resourceId=${activeResourceId}` : '';
+
+    const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
     const start = startDate
       ? dayjs(startDate).format('YYYY-MM-DD')
       : dayjs().startOf('month').format('YYYY-MM-DD');
@@ -141,7 +137,7 @@ export class TeamTimesheetsComponent {
       ? dayjs(endDate).format('YYYY-MM-DD')
       : dayjs().endOf('month').format('YYYY-MM-DD');
 
-    const url = `Timesheet/teamsummary?startDate=${start}&endDate=${end}${resourceIdParam}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    const url = `Timesheet/teamsummary?startDate=${start}&endDate=${end}${resourceId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     this.loading = true
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
@@ -153,7 +149,7 @@ export class TeamTimesheetsComponent {
           // ✅ Extract dates for header dynamically (use first record)
           if (this.teamSummaryData.length > 0) {
             this.dateHeaders = this.teamSummaryData[0].dailyData.map(d =>
-              dayjs(d.date).format('ddd MMM D') // e.g., "Wed Oct 1"
+              dayjs(d.date).format('ddd<br>MMM D')
             );
           }
         }
@@ -163,7 +159,6 @@ export class TeamTimesheetsComponent {
       }
     });
   }
-
 
 
 

@@ -67,6 +67,7 @@ export class TimesheetsSummaryViewComponent {
   // Project Type Data variables
   projectTypeData: any;
   projectTypeGraphData: any;
+  employeeId:any
   projectTypeGraphOptions: any;
   // Estimated Vs ActualData variables
   estimatedVsActualData: any;
@@ -86,10 +87,14 @@ export class TimesheetsSummaryViewComponent {
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+ 
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
+           this.employeeId = parseInt(resoureID)
+           console.log(this.employeeId);
+           
         this.getProjectSummary(resoureID);
       }
     });

@@ -711,6 +711,10 @@ export class HttpService {
     return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
   }
 
+  getFilterExtraHoursDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/loggedextrahours/${employeeId}?year=${params}`);
+  }
+
   getFilterPermissionDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}RegularizationRequests/${employeeId}?year=${params}`);
   }

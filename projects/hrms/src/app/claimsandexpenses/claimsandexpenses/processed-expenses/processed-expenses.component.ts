@@ -32,18 +32,25 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
   updataid!: number;
   selectedYear: any;
   selectemp: any;
-
-  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
-  constructor(
-    private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
   searchTerm: any = ''
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   draftsCount: number = 0;
   loading = false
+    seletedMouthly: any;
+  @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  constructor(
+    private http: HttpService, private SelectedyeartimeOffService: TimeoffYearFilterService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+
   ngOnInit(): void {
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
+           this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;
+
+          }
+        })
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
@@ -75,15 +82,20 @@ export class ProcessedExpensesComponent implements OnInit, OnDestroy {
 
 
 
+ 
   getexpensesheaderbyemployeeid(): void {
-    let empId = this.selectemp ?? this.empinfo.employeeId;
+    let empId = this.selectemp ?? this.empinfo?.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Processed&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Processed&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loading = false
-          this.expenesEmplyeedata.next(data)
+          if (data) {
+            // Filter out expenseSummary object
+            const filteredData = data.filter((item: any) => !item.expenseSummary);
+            this.expenesEmplyeedata.next(filteredData)
+          }
 
         }, error(err) {
           console.log("expensesheadererror", err)

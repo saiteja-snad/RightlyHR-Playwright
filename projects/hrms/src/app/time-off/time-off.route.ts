@@ -93,6 +93,15 @@ import { OnBehalfOfWhfApprovedComponent } from './on-behalf-of-wfh/on-behalf-of-
 import { OnBehalfOfWhfProcessedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-processed/on-behalf-of-wfh-processed.component';
 import { OnBehalfOfWhfRejectedComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-rejected/on-behalf-of-wfh-rejected.component';
 import { OnBehalfOfWhfCancellationComponent } from './on-behalf-of-wfh/on-behalf-of-wfh-cancellation/on-behalf-of-wfh-cancellation.component';
+import { ExtraHoursComponent } from './extra-hours/extra-hours.component';
+import { ExtraHoursApprovalComponent } from './extra-hours/extra-hours-approval/extra-hours-approval.component';
+import { ExtraHoursWaitingForApprovalComponent } from './extra-hours/extra-hours-waiting-for-approval/extra-hours-waiting-for-approval.component';
+import { ExtraHoursProcessComponent } from './extra-hours/extra-hours-process/extra-hours-process.component';
+import { ExtraHoursRejectComponent } from './extra-hours/extra-hours-reject/extra-hours-reject.component';
+import { ExtraHoursCancelComponent } from './extra-hours/extra-hours-cancel/extra-hours-cancel.component';
+import { ExtraHoursRequestComponent } from './pending-approvals/extra-hours-request/extra-hours-request.component';
+import { ExtraHoursForYouComponent } from './pending-approvals/extra-hours-for-you/extra-hours-for-you.component';
+import { ExtraHoursForYourRoleComponent } from './pending-approvals/extra-hours-for-your-role/extra-hours-for-your-role.component';
 
 
 export default [
@@ -395,6 +404,24 @@ export default [
           // { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
+
+      {
+        path: 'extra-hours-request',
+        component: ExtraHoursRequestComponent,
+        children: [
+          {
+            path: 'for-you',
+            component: ExtraHoursForYouComponent,
+            data: { permission: 'For You (Extra Hours).view' },
+          },
+          {
+            path: 'for-your-role',
+            component: ExtraHoursForYourRoleComponent,
+            data: { permission: 'For Role (Extra Hours).view' },
+          },
+        ],
+      },
+
       {
         path: 'claimsandexpenses-request',
         component: ClaimsandexpensesRequestComponent,
@@ -557,4 +584,37 @@ export default [
   //     { path: 'cancelled', component: OnBehalfOfWhfCancellationComponent }
   //   ],
   // },
+    {
+    path: 'extra-hours',
+    component: ExtraHoursComponent,
+    children: [
+      {
+        path: 'waiting-for-approval',
+        component: ExtraHoursWaitingForApprovalComponent,
+        data: { permission: 'Waiting For Approval (Extra Hours).view' },
+      },
+      // {
+      //   path: 'approved',
+      //   component: ExtraHoursApprovalComponent,
+      //   data: { permission: 'Approved (Extra Hours).view' },
+      // },
+      {
+        path: 'process',
+        component: ExtraHoursProcessComponent,
+        data: { permission: 'Processed (Extra Hours).view' },
+      },
+      {
+        path: 'rejected',
+        component: ExtraHoursRejectComponent,
+        data: { permission: 'Rejected (Extra Hours).view' },
+      },
+      // {
+      //   path: 'cancelled',
+      //   component: ExtraHoursCancelComponent,
+      //   data: { permission: 'Cancelled(Extra Hours).view' },
+      // },
+
+      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+    ],
+  },
 ] as Route[];

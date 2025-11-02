@@ -15,29 +15,25 @@
                                 selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
                         </div>
                     </div>
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
-                    Team(Timesheet).view'))
-                    {
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
-                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select
-                            Employee'| translate}}</label>
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
-                                [resetFilterOnHide]="true" optionLabel="label" formControlName="resourceId"
-                                optionValue="value" [showClear]="true" placeholder="please select employee"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
+                                optionLabel="label" formControlName="resourceId" optionValue="value" [showClear]="true"
+                                placeholder="please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
                     @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
-                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">{{'Select
-                            Employee'| translate}}</label>
+                        <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
+                            {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
-                                [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
-                                formControlName="resourceId" [showClear]="true" placeholder="please select employee"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
+                                optionLabel="label" optionValue="value" formControlName="resourceId" [showClear]="true"
+                                placeholder="please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -45,12 +41,10 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
-                                name="myteamemployees" placeholder="please select employee" formControlName="resourceId"
-                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" required>
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
+                                placeholder="please select employee" formControlName="resourceId" [filter]="true" resetFilterOnHide="true"
+                                class="form-select custom-select" [autoDisplayFirst]="false" required>
                             </p-select>
-
                         </div>
                     </div>
                     }
@@ -60,8 +54,6 @@
                     </div>
                 </div>
             </form>
-
-
         </div>
     </div>
 
@@ -70,7 +62,7 @@
             <app-timesheets-tabs />
         </div>
 
-        <div>
+        <div class="w-100">
             <div class="custom-table-content">
                 @if (!loading) {
                 <table class="w-100">
@@ -81,20 +73,11 @@
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let emp of teamSummaryData">
-                                <a class="project-name cursor" (click)="navigateView(emp.employee.id)">
-                                    {{ emp.employee.name}}
-                                </a>
-
+                                <a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{ emp.employee.name}}</a>
                                 <td *ngFor="let day of emp.dailyData" [style.color]="day.dailySummary.colour">
-                                    {{
-                                    (day.dailySummary.status && day.dailySummary.status !== '-' &&
-                                    day.dailySummary.status
-                                    !==
-                                    'Not Logged' && day.dailySummary.loggedHHMM
-                                    === '0:00')
-                                    ? day.dailySummary.status
-                                    : day.dailySummary.loggedHHMM
-                                    }}
+                                    {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !==
+                                    'Not Logged' && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status :
+                                    day.dailySummary.loggedHHMM }}
                                 </td>
                             </tr>
                         </ng-container>
@@ -105,7 +88,7 @@
                         </ng-template>
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-between align-items-center p-3">
+                <div class="d-flex justify-content-between align-items-center p-3" *ngIf="(teamSummaryData?.length ?? 0) > 0">
                     <div class="d-flex  align-items-center gap-3">
                         <div class="d-flex align-items-center gap-1">
                             <div class="circular-dot circle-green"></div>
@@ -126,6 +109,7 @@
                 <app-data-loader-content />
                 }
             </div>
+           
             <div class="pagination-content" *ngIf="teamSummaryData.length > 0">
                 <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
                     <div class="d-flex align-items-center gap-3 p-2">
@@ -135,17 +119,13 @@
                             </option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
-                            +rows)
-                            }} of {{
-                            collectionSize }}
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} 
+                            of {{ collectionSize }}
                         </span>
                     </div>
-                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                        (onPageChange)="onPageChange($event)"></p-paginator>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)"></p-paginator>
                 </div>
             </div>
         </div>
-
-
     </div>
+</div>

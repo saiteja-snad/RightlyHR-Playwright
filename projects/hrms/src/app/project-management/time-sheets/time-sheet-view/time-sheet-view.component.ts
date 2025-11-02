@@ -19,6 +19,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { Select } from 'primeng/select';
 import { RbacService } from '../../../services/rbac.service';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
@@ -77,7 +78,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('employeeDropdown') employeeDropdown: any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
-    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService) { }
+    public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -1459,6 +1460,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
+  navigation(){
+     this.router.navigate(
+      ['project-management/teamtimesheet'],
+      { queryParams: { id:  this.loggedinuser?.employeeId } }
+    );
+  }
   canDelete(project?: AbstractControl, index?: number): boolean {
     if (!project) return false;
     const projectId = project.get('projectId')?.value ?? null;

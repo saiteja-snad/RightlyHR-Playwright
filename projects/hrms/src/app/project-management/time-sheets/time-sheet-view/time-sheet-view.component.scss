@@ -131,21 +131,15 @@
     border-radius: 6px;
 }
 
-
-
 .rejected {
     border: 1px solid rgba(234, 54, 44, 1) !important;
     border-radius: 6px;
 }
 
-
-
 .waiting {
     border: 1px solid rgba(252, 185, 16, 1) !important;
     border-radius: 6px;
 }
-
-
 
 .circular-dot {
     width: 12px;
@@ -175,8 +169,13 @@
     width: 1rem;
 }
 
+.component-left-tabs-container {
+    height: calc(100dvh - 8rem) !important;
+}
+
 .custom-table-content {
     border: 1px solid #CCDAEC !important;
+    height: calc(100dvh - 8rem) !important;
 
     td {
         border: 1px solid #CCDAEC !important;
@@ -218,7 +217,8 @@
             }
         }
 
-        td:first-child, td:last-child {
+        td:first-child,
+        td:last-child {
             background-color: #FFFF !important;
         }
     }
@@ -231,7 +231,7 @@
 }
 
 .custom-select-btn.disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: auto; /* so click still triggers stopPropagation */
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: auto;
 }

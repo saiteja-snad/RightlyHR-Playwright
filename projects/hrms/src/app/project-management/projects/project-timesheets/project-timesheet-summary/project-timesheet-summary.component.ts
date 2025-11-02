@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
   templateUrl: './project-timesheet-summary.component.html',
-  styleUrl: './project-timesheet-summary.component.scss'
+  styleUrl: './project-timesheet-summary.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ProjectTimesheetSummaryComponent {
@@ -33,9 +32,7 @@ export class ProjectTimesheetSummaryComponent {
   projectResourceOptions: any;
   // Department wise Contribution variables
   departmentContributionData: any;
-  // Project Type Data variables
-  projectTypeData: any;
-  projectTypeOptions: any;
+  departmentContributionOptions: any;
   // Estimated Vs ActualData variables
   estimatedVsActualData: any;
   estimatedVsActualOptions: any;
@@ -45,18 +42,18 @@ export class ProjectTimesheetSummaryComponent {
   // Burn Down Data variables
   burndownData: any;
   burndownOptions: any;
-  departmentContributionOptions: any;
-
+  //Gauge Data
   gaugeData: any;
   gaugeOptions: any;
   completionRate = 100;
 
-
   ngOnInit() {
     this.projectWiseResourceCountGraph();
     this.departmentWiseContributionGraph();
-    this.loadCharts();
     this.createGaugeChart();
+    this.estimatedActualChart();
+    this.billableChart();
+    this.burnDownChart();
   }
 
   // Project wise Resource Count
@@ -109,36 +106,13 @@ export class ProjectTimesheetSummaryComponent {
     this.departmentContributionOptions = {
       cutout: '75%',
       plugins: {
-        legend: {
-          position: 'right',
-          labels: {
-            usePointStyle: true,
-            boxWidth: 2
-          }
-        },
-      }
+        legend: { position: 'right', labels: { usePointStyle: true } },
+      },
     };
   }
 
-  loadCharts() {
-    // === Project Type (Pie) ===
-    this.projectTypeData = {
-      labels: ['Implementation', 'Development', 'Migration', 'Integration', 'Support', 'Design'],
-      datasets: [
-        {
-          data: [10, 5, 3, 2, 1, 4],
-          backgroundColor: ['#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5'],
-        },
-      ],
-    };
-    this.projectTypeOptions = {
-      plugins: {
-        legend: { position: 'right', labels: { usePointStyle: true } },
-        title: { display: true, text: 'Project Type' },
-      },
-    };
-
-    // === Estimated vs Actual Hours (Grouped Bar) ===
+  // Estimated vs Actual Hours (Grouped Bar)
+  estimatedActualChart() {
     this.estimatedVsActualData = {
       labels: ['Softkill E-commerce', 'Admin App', 'E-commerce', 'Web app', 'Mobile App'],
       datasets: [
@@ -166,17 +140,8 @@ export class ProjectTimesheetSummaryComponent {
     this.estimatedVsActualOptions = {
       responsive: true,
       plugins: {
-        title: {
-          display: true,
-          text: 'Estimated vs Actual Hours',
-          font: { size: 16 }
-        },
         legend: {
-          position: 'top',
-          labels: {
-            usePointStyle: true,
-            boxWidth: 10
-          }
+          display: false
         }
       },
       scales: {
@@ -192,13 +157,13 @@ export class ProjectTimesheetSummaryComponent {
             display: true,
             text: 'Hours'
           },
-          grid: { color: '#eee' }
         }
       }
     };
+  }
 
-
-    // === Billable vs Non-Billable Hours (Stacked Bar) ===
+  // Billable vs Non-Billable Hours (Stacked Bar)
+  billableChart() {
     this.billableData = {
       labels: ['Project Management', 'Development', 'Design', 'QA'],
       datasets: [
@@ -215,17 +180,21 @@ export class ProjectTimesheetSummaryComponent {
       ],
     };
     this.billableOptions = {
-      plugins: {
-        title: { display: true, text: 'Billable vs Non-Billable Hours' },
-      },
       responsive: true,
       scales: {
         x: { stacked: true },
         y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } },
       },
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
     };
+  }
 
-    // === Project Burndown Chart (Line) ===
+  // Project Burndown Chart (Line)
+  burnDownChart() {
     this.burndownData = {
       labels: ['1', '5', '10', '15', '20', '25', '30'],
       datasets: [
@@ -268,7 +237,9 @@ export class ProjectTimesheetSummaryComponent {
     };
     this.burndownOptions = {
       plugins: {
-        title: { display: true, text: 'Project Burndown Chart' },
+        legend: {
+          display: false
+        }
       },
       scales: {
         x: { title: { display: true, text: 'Days of Month' } },

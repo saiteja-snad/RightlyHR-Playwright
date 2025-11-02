@@ -1,117 +1,97 @@
-<div class="custom-main-component-container time-sheet">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="time-sheet-graph-card">
-                <div class="summary-header mb-2">Resource Summary</div>
-
-                <div class="custom-table-content project-summary-table">
-                    <table class="w-100">
-                        <thead>
-                            <th>{{'Resource Name'|translate}}</th>
-                            <th>{{'Role'|translate}}</th>
-                            <th>{{'Hours Utilized'|translate}}</th>
-                            <th>{{'total Hours'|translate}}</th>
-                            <th>{{'Utilization (%)'|translate}}</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <a class="project-name cursor">Project</a>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+<div class="custom-main-component-container time-sheet-summary-container">
+    <div class="grid-display-row1 mb-3">
+        <div class="time-sheet-graph-card">
+            <div class="summary-header mb-2">Resource Summary</div>
+    
+            <div class="custom-table-content project-summary-table">
+                <table class="w-100">
+                    <thead>
+                        <th>{{'Resource Name'|translate}}</th>
+                        <th>{{'Role'|translate}}</th>
+                        <th>{{'Hours Utilized'|translate}}</th>
+                        <th>{{'total Hours'|translate}}</th>
+                        <th>{{'Utilization (%)'|translate}}</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a class="project-name cursor">Project</a>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <div class="col-md-4">
-            <div class="time-sheet-graph-card">
-                <div class="summary-header mb-2">Department wise Contribution</div>
-        
-                <div class="gauge-container">
-                    <p-chart type="doughnut" [data]="gaugeData" [options]="gaugeOptions" style="width: 100%; height: 220px;"></p-chart>
-                
-                    <!-- needle -->
-                    <div class="needle" [style.transform]="getNeedleRotation()"></div>
-                
-                    <!-- center circle -->
-                    <div class="needle-base"></div>
-                
-                    <!-- percentage label -->
-                    <div class="gauge-label">{{ completionRate.toFixed(2) }}%</div>
-                </div>
-
-
+    
+        <div class="time-sheet-graph-card">
+            <div class="summary-header mb-2">Department wise Contribution</div>
+    
+            <div class="gauge-container">
+                <p-chart type="doughnut" [data]="gaugeData" [options]="gaugeOptions" />
+    
+                <!-- needle -->
+                <!-- <div class="needle" [style.transform]="getNeedleRotation()"></div> -->
+    
+                <!-- center circle -->
+                <!-- <div class="needle-base"></div> -->
+    
+                <!-- percentage label -->
+                <!-- <div class="gauge-label">{{ completionRate.toFixed(2) }}%</div> -->
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="summary-header">Role wise Hours</div>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            formControlName="projectId" placeholder="Please select project"
-                            class="form-select custom-select"></p-select>
-                    </div>
-                </div>
-                <p-chart type="doughnut" [data]="departmentContributionData"
-                    [options]="departmentContributionOptions" />
+    <div class="grid-display-row2 mb-3">
+        <div class="time-sheet-graph-card">
+            <div class="summary-header mb-2">Project Type</div>
+            <div class="circular-chart">
+                <p-chart type="pie" [data]="departmentContributionData" [options]="departmentContributionOptions" />
             </div>
         </div>
-        <div class="col-md-8">
-            <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="summary-header">Allocated vs Actual Hours</div>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            formControlName="projectId" placeholder="Please select project"
-                            class="form-select custom-select"></p-select>
-                    </div>
+    
+        <div class="time-sheet-graph-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="summary-header">Estimated vs Actual Hours</div>
+                <div class="custom-p-select-content">
+                    <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
+                        placeholder="Please select project" class="form-select custom-select"></p-select>
                 </div>
+            </div>
+    
+            <div class="bar-chart">
                 <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="summary-header">Billable vs Non-Billable Hours</div>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            formControlName="projectId" placeholder="Please select project"
-                            class="form-select custom-select"></p-select>
-                    </div>
+    <div class="grid-display-row3 mb-3">
+        <div class="time-sheet-graph-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="summary-header">Billable vs Non-Billable Hours</div>
+                <div class="custom-p-select-content">
+                    <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
+                        placeholder="Please select project" class="form-select custom-select"></p-select>
                 </div>
-                <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
             </div>
+            <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
         </div>
 
-        <div class="col-md-6">
-            <div class="time-sheet-graph-card">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="summary-header">Project Burndown Chart</div>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            formControlName="projectId" placeholder="Please select project"
-                            class="form-select custom-select"></p-select>
-                    </div>
+        <div class="time-sheet-graph-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div class="summary-header">Project Burndown Chart</div>
+                <div class="custom-p-select-content">
+                    <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
+                        placeholder="Please select project" class="form-select custom-select"></p-select>
                 </div>
-                <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
             </div>
+            <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
         </div>
     </div>
 </div>

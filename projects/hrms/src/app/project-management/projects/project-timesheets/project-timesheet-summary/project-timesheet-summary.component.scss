@@ -1,9 +1,26 @@
+.time-sheet-summary-container {
+    width: 100%;
+    overflow-x: hidden;
+    height: calc(100dvh - 12rem) !important;
+    overflow-y: auto;
+}
+
+.grid-display-row1 {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    grid-template-rows: auto;
+    gap: 1rem;
+    align-items: stretch;
+}
+
 .time-sheet-graph-card {
     width: 100%;
     padding: 0.5rem;
     border: 1.52px solid #FFFFFF;
     border-radius: 0.5rem;
     background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    display: flex;
+    flex-direction: column;
 }
 
 .summary-header {
@@ -27,7 +44,8 @@
 .project-summary-table {
     height: 18rem !important;
 
-    th, td {
+    th,
+    td {
         padding: 0.75rem !important;
         font-size: var(--fontsize12) !important;
     }
@@ -45,40 +63,81 @@
     }
 }
 
+.grid-display-row2 {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    grid-template-rows: auto;
+    gap: 1rem;
+}
+
+.grid-display-row3 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    gap: 1rem;
+}
+
+.circular-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        height: 304px !important;
+    }
+}
+
+.bar-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        height: 290px !important;
+    }
+}
+
 .gauge-container {
-  position: relative;
-  width: 100%;
-  height: 220px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 18rem;
+
+    canvas {
+        height: 18rem !important;
+    }
 }
 
 .needle {
-  position: absolute;
-  bottom: 46%;
-  left: 50%;
-  width: 3px;
-  height: 80px;
-  background: #333;
-  transform-origin: bottom center;
-  transition: transform 1s ease-in-out;
+    position: absolute;
+    bottom: 46%;
+    left: 50%;
+    width: 3px;
+    height: 80px;
+    background: #333;
+    transform-origin: bottom center;
+    transition: transform 1s ease-in-out;
 }
 
 .needle-base {
-  position: absolute;
-  bottom: 44%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  background: #333;
-  border-radius: 50%;
-  transform: translateX(-50%);
+    position: absolute;
+    bottom: 44%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: #333;
+    border-radius: 50%;
+    transform: translateX(-50%);
 }
 
 .gauge-label {
-  position: absolute;
-  bottom: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 16px;
-  font-weight: 600;
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 600;
 }
-

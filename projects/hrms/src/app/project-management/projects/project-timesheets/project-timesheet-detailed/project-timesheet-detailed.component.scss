@@ -1,3 +1,11 @@
+.custom-component-right-content {
+    height: calc(100dvh - 12rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 18rem) !important;
+}
+
 .total-hrs {
     font-weight: 600;
     font-size: var(--fontsize16);

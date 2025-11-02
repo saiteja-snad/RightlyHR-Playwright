@@ -31,6 +31,7 @@ export class ClientTimesheetSummaryComponent {
   projectResourceOptions: any;
   // Department wise Contribution variables
   departmentContributionData: any;
+  departmentContributionOptions: any;
   // Project Type Data variables
   projectTypeData: any;
   projectTypeOptions: any;
@@ -43,12 +44,14 @@ export class ClientTimesheetSummaryComponent {
   // Burn Down Data variables
   burndownData: any;
   burndownOptions: any;
-  departmentContributionOptions: any;
 
   ngOnInit() {
     this.projectWiseResourceCountGraph();
     this.departmentWiseContributionGraph();
-    this.loadCharts();
+    this.projectTypeChart();
+    this.estimatedActualChart();
+    this.billableChart();
+    this.burnDownChart();
   }
 
   // Project wise Resource Count
@@ -99,7 +102,6 @@ export class ClientTimesheetSummaryComponent {
         {
           data: [40.2, 33, 44.5, 50, 50, 60],
           backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-          hoverBackgroundColor: ['#FFB74D', '#F06292', '#5C6BC0', '#81C784', '#26A69A', '#64B5F6']
         }
       ]
     };
@@ -107,15 +109,13 @@ export class ClientTimesheetSummaryComponent {
     this.departmentContributionOptions = {
       cutout: '75%',
       plugins: {
-        legend: {
-          display: false // hides the top "Resource Count" label
-        }
+        legend: { position: 'right', labels: { usePointStyle: true } },
       },
     };
   }
 
-  loadCharts() {
-    // Project Type (Pie)
+  // Project Type (Pie)
+  projectTypeChart() {
     this.projectTypeData = {
       labels: ['Implementation', 'Development', 'Migration', 'Integration', 'Support', 'Design'],
       datasets: [
@@ -128,11 +128,12 @@ export class ClientTimesheetSummaryComponent {
     this.projectTypeOptions = {
       plugins: {
         legend: { position: 'right', labels: { usePointStyle: true } },
-        title: { display: true, text: 'Project Type' },
       },
     };
+  }
 
-    // Estimated vs Actual Hours (Grouped Bar)
+  // Estimated vs Actual Hours (Grouped Bar)
+  estimatedActualChart() {
     this.estimatedVsActualData = {
       labels: ['Softkill E-commerce', 'Admin App', 'E-commerce', 'Web app', 'Mobile App'],
       datasets: [
@@ -160,17 +161,8 @@ export class ClientTimesheetSummaryComponent {
     this.estimatedVsActualOptions = {
       responsive: true,
       plugins: {
-        title: {
-          display: true,
-          text: 'Estimated vs Actual Hours',
-          font: { size: 16 }
-        },
         legend: {
-          position: 'top',
-          labels: {
-            usePointStyle: true,
-            boxWidth: 10
-          }
+          display: false
         }
       },
       scales: {
@@ -186,12 +178,13 @@ export class ClientTimesheetSummaryComponent {
             display: true,
             text: 'Hours'
           },
-          grid: { color: '#eee' }
         }
       }
     };
+  }
 
-    // Billable vs Non-Billable Hours (Stacked Bar)
+  // Billable vs Non-Billable Hours (Stacked Bar)
+  billableChart() {
     this.billableData = {
       labels: ['Project Management', 'Development', 'Design', 'QA'],
       datasets: [
@@ -208,17 +201,21 @@ export class ClientTimesheetSummaryComponent {
       ],
     };
     this.billableOptions = {
-      plugins: {
-        title: { display: true, text: 'Billable vs Non-Billable Hours' },
-      },
       responsive: true,
       scales: {
         x: { stacked: true },
         y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } },
       },
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
     };
+  }
 
-    // Project Burndown Chart (Line)
+  // Project Burndown Chart (Line)
+  burnDownChart() {
     this.burndownData = {
       labels: ['1', '5', '10', '15', '20', '25', '30'],
       datasets: [
@@ -261,7 +258,9 @@ export class ClientTimesheetSummaryComponent {
     };
     this.burndownOptions = {
       plugins: {
-        title: { display: true, text: 'Project Burndown Chart' },
+        legend: {
+          display: false
+        }
       },
       scales: {
         x: { title: { display: true, text: 'Days of Month' } },

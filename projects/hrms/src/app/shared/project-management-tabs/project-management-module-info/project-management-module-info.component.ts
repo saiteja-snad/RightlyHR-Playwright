@@ -77,7 +77,8 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/details/resources': MODULE_INFOS.Resources_Project,
       '/project-management/clients/details/timesheet/summary': MODULE_INFOS.CLIENT_Timesheet_INFO,
       '/project-management/clients/details/timesheet/detailed': MODULE_INFOS.CLIENT_Timesheet_INFO,
-      '/project-management/projects/details/timesheet': MODULE_INFOS.Project_Timesheet_INFO,
+      '/project-management/projects/details/timesheet/summary': MODULE_INFOS.Project_Timesheet_INFO,
+      '/project-management/projects/details/timesheet/detailed': MODULE_INFOS.Project_Timesheet_INFO,
       '/project-management/projects/details/inactivedocuments': MODULE_INFOS.Inactive_Documents_Project,
       '/project-management/clients/details/inactivedocuments': MODULE_INFOS.Inactive_CLIENT_Documents_INFO
     };
@@ -134,7 +135,7 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/projects/details/resources') {
       this.componentname = 'Resources';
     }
-    else if (currentUrl === '/project-management/projects/details/timesheet') {
+    else if (currentUrl === '/project-management/projects/details/timesheet/summary' || currentUrl === '/project-management/projects/details/timesheet/detailed') {
       this.componentname = 'Timesheets';
     }
     else if (currentUrl === '/project-management/projects/details/documents') {

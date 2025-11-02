@@ -1,6 +1,7 @@
 .time-sheet-summary-container {
     width: 100%;
-    height: calc(100dvh - 14rem) !important;
+    overflow-x: hidden;
+    height: calc(100dvh - 12rem) !important;
     overflow-y: auto;
 }
 
@@ -41,10 +42,9 @@
 }
 
 .project-summary-table {
-    height: 20rem !important;
+    height: 18rem !important;
 
-    th,
-    td {
+    th, td {
         padding: 0.75rem !important;
         font-size: var(--fontsize12) !important;
     }
@@ -62,9 +62,36 @@
     }
 }
 
+.grid-display-row2 {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    grid-template-rows: auto;
+    gap: 1rem;
+}
+
 .grid-display-row3 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto;
-    gap: 1rem;   
+    gap: 1rem;
+}
+
+.circular-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        height: 304px !important;
+    }
+}
+
+.bar-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        height: 290px !important;
+    }
 }

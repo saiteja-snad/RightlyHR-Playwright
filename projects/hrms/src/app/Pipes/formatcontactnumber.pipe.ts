@@ -12,12 +12,12 @@ export class FormatcontactnumberPipe implements PipeTransform {
   try {
   
     const phoneNumber = parsePhoneNumber(phoneValue + '', country as CountryCode);
-    return "+" + phoneNumber.countryCallingCode + " " + phoneNumber.formatNational();
+    return "+" + phoneNumber.countryCallingCode + " " + phoneNumber.nationalNumber;
   } catch (error1) {
     try {
       // If the provided country fails, fallback to US
       const phoneNumber = parsePhoneNumber(phoneValue + '', defaultCountry);
-      return "+" + phoneNumber.countryCallingCode + " " + phoneNumber.formatNational();
+      return "+" + phoneNumber.countryCallingCode + " " + phoneNumber.nationalNumber;
     } catch (error2) {
       // If parsing fails entirely, return the raw value
       return country + phoneValue;

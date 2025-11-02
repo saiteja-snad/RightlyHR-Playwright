@@ -2,19 +2,20 @@
 
     <div class="component-header-content">
         <div class="heading-content">
-            <div class="commpoment-name" (click)="navigateMyexpenses()">Expenses<span class="ms-1">
-                <i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="commpoment-name navigator" (click)="navigateMyexpenses()">Expenses<span class="ms-1">
+                    <i class="bi bi-chevron-double-right"></i></span></div>
             <div class="component-header">{{'Create Expense' | translate}}s</div>
             <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
             </div>
         </div>
     </div>
 
     <!--Module Information-->
-        <ng-template #popContent>
-            <app-module-information [moduleInfo]="moduleinfo" />
-        </ng-template>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
     <div class="card custom-card ">
         <div class="p-3">
@@ -71,13 +72,16 @@
                         <div class="row mb-3">
                             <!-- Expense Type -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span
+                                        class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="expensetype" optionValue="expenseId" optionLabel="expenseType"
-                                        (onChange)="onchangeexpnes($event, i)" appendTo="body" placeholder="Please select expense type"
-                                        formControlName="item_expense" class="form-select custom-select"></p-select>
+                                        (onChange)="onchangeexpnes($event, i)" appendTo="body"
+                                        placeholder="Please select expense type" formControlName="item_expense"
+                                        class="form-select custom-select" ></p-select>
                                 </div>
-                                <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched" class="error-msg">
+                                <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
+                                    class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
                                         Expense Type is required</div>
                                 </div>
@@ -90,15 +94,15 @@
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                                <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty && item.get('item_Name')?.touched)"
+                                <div *ngIf="item.get('item_Name')?.invalid && item.get('item_Name')?.touched"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
-                                        Expense item is required</div>
+                                        Expense Item is required</div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
-                                        Expense item must be less than 50 characters
+                                        Expense Item must be less than 50 characters
                                     </div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
-                                        Expense title must not contain only spaces
+                                        Expense Item must not contain only spaces
                                     </div>
                                 </div>
 
@@ -210,19 +214,20 @@
                                 <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="file" class="form-control custom-input px-0" accept=".pdf, image/*"
-                                    (change)="fileupload($event, i)" />
-                                    <div *ngIf="fileuploadhide">
-                                <div class="error-msg"
-                                    *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
-                                    File is required
-                                </div>
+                                    (change)="fileupload($event, i)" (blur)="markFileTouched(i)" />
+                                <div>
+                                    <div class="error-msg"
+                                        *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
+                                        File is required
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
-                        <b>Total Amount : </b>{{ totalexpensesamount > 0 ? totalexpensesamount : '' }}
+                   <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
+                        <b>{{ 'Total Amount' | translate }}: </b>
+                            {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'INR':'symbol':'1.2-2') : '' }}
                     </div>
                 </div>
 

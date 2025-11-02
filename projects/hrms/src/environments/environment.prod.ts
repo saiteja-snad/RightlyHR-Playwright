@@ -56,6 +56,7 @@ export const environment = {
   globalPermissionsModuleID:21,
   contractorModuleId:25,
   contractEmployeeConversionModuleId:26,
+  extraHoursModuleId: 31,
   oldVersionUrl:'https://snad.rightlyhr.com/uservalidation'
 
 };

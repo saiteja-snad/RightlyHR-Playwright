@@ -105,7 +105,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Time Off';
       this.componentName = 'Load Entitlements';
     }
-
+   else if(url.startsWith('/settings/timeoff-configurations/flexible-wfh-allocation')){
+    this.moduleName='Time Off';
+    this.componentName='Flexible WFH Allocation';
+   }
     // Assets Configuration
     else if (url.startsWith('/settings/assets-configuration/vendor-detiles')) {
       this.moduleName = 'Assets Configuration';

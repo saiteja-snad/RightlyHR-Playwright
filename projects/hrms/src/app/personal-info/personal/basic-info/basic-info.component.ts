@@ -14,10 +14,6 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 import {Router } from '@angular/router';
 import { Skeleton } from 'primeng/skeleton';
 
-
-
-
-
 @Component({
   selector: 'app-basic-info',
   imports: [CommonModule, ReactiveFormsModule, Select,Skeleton],

@@ -74,5 +74,8 @@ export class ReportsHeaderComponent implements OnInit {
     else if (this.router.url === '/reports/org-leave-balance') {
       this.componentname = 'Org Leave Balance';
     }
+    else if(this.router.url === '/reports/expense-reports'){
+      this.componentname = 'Expense Report'
+    }
   }
 }

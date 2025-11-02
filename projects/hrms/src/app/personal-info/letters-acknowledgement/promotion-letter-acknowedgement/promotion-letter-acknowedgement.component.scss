@@ -1,74 +1,74 @@
   * {
-        font-family: 'VERDANA', sans-serif !important;
-}
-  
-  
+      font-family: 'VERDANA', sans-serif !important;
+  }
+
+
   .letter-data-content {
-     width: 100%;
-     flex: 1;
-     height: calc(100dvh - 8rem);
-     overflow: auto;
-     padding: 1.125rem;
-     text-align: justify;
+      width: 100%;
+      flex: 1;
+      height: calc(100dvh - 8rem);
+      overflow: auto;
+      padding: 1.125rem;
+      text-align: justify;
 
-     .letter-sub-data-content {
-         display: flex;
-         justify-content: center;
-         width: 100%;
-         min-width: 280mm;
-     }
+      .letter-sub-data-content {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          min-width: 280mm;
+      }
 
-     .letter-page-content {
-         height: 380mm;
-         width: 270mm;
-         position: relative;
+      .letter-page-content {
+          height: 380mm;
+          width: 270mm;
+          position: relative;
 
-         background-repeat: no-repeat;
-         background-size: cover;
-         background-position: center;
-         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-         overflow: hidden;
+          background-repeat: no-repeat;
+          background-size: cover;
+          background-position: center;
+          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+          overflow: hidden;
 
-         .letter-page-sub-content {
+          .letter-page-sub-content {
               padding: 20px 110px;
-                font-size: 16px;
-                color: #000000;
-                line-height: 18px;
-                text-align: justify;
-         }
-
-        
-     }
- }
-
- .soft-copy-letter {
-    background-image: url('/images/snad-letter-bg.jpg') !important;
-    padding-top: 8rem !important;
-
-}
-
-.salary-details-table {
-    .mytable,
-    .secondtable {
-        th {
-            background: #e7f0fd !important;
-        }
-    }
-}
+              font-size: 16px;
+              color: #000000;
+              line-height: 18px;
+              text-align: justify;
+          }
 
 
-.letter-signature {
-    font-size: var(--fontsize32) !important;
-    font-family: "autographsignatureFont" !important;
-}
+      }
+  }
+
+  .soft-copy-letter {
+      background-image: url('/images/snad-new-letter-bg.png') !important;
+      padding-top: 8rem !important;
+
+  }
+
+  .salary-details-table {
+
+      .mytable,
+      .secondtable {
+          th {
+              background: #e7f0fd !important;
+          }
+      }
+  }
 
 
-.letter-signature {
-    font-size: var(--fontsize32) !important;
-    font-family: "autographsignatureFont" !important;
-}
- .letter-data-content {
-     height: calc(100dvh - 16rem) !important;
- }
+  .letter-signature {
+      font-size: var(--fontsize32) !important;
+      font-family: "autographsignatureFont" !important;
+  }
 
- 
+
+  .letter-signature {
+      font-size: var(--fontsize32) !important;
+      font-family: "autographsignatureFont" !important;
+  }
+
+  .letter-data-content {
+      height: calc(100dvh - 16rem) !important;
+  }

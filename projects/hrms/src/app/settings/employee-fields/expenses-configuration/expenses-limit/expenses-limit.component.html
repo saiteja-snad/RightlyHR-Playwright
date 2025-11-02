@@ -1,0 +1,91 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="component-sub-header">Expense Limit Configuration</span>
+        <div *ngIf="rbac.allowedToAccess('Expense Threshold Validation.update') && !isEditing">
+            <a (click)="toggleEditing()"><app-edit-icon /></a>
+        </div>
+    </div>
+
+    <form autocomplete="off" [formGroup]="allowthresholdLimitForm" (ngSubmit)="onSubmit(allowthresholdLimitForm)">
+        <!-- Toggle Switch (optional, for enabling threshold) -->
+        <div class="form-check form-switch py-3">
+            <input id="expenses-value" class="form-check-input" type="checkbox" formControlName="value"
+                (change)="onToggleChange($event)" [disabled]="!isEditing" />
+            <label for="expenses-value" class="form-label custom-toggle-label">Allow Expense Limit Configuration</label>
+        </div>
+
+        <!-- Threshold Details -->
+        <div class="row g-3" *ngIf="isThresholdEnabled">
+            <!-- Amount Field -->
+            <div class="col-md-6 col-lg-4">
+                <label class="form-label custom-label mb-2">{{ 'Budget Amount' | translate }}<span
+                        class="text-danger">*</span></label>
+                <input type="text" class="form-control custom-input" formControlName="thresholdAmount"
+                    (keydown)="formValidation.restrictAlphabets($event)" placeholder="Please enter budget amount"
+                    [disabled]="!isEditing" />
+                <div *ngIf="allowthresholdLimitForm.get('thresholdAmount')?.touched && 
+                            allowthresholdLimitForm.get('thresholdAmount')?.invalid" class="error-msg">
+                   Budget Amount is required.
+                </div>
+            </div>
+
+            <!-- Approver Type -->
+            <div class="col-md-6 col-lg-4">
+                <label class="form-label custom-label mb-2">
+                    {{ 'Approver Type' | translate }} <span class="text-danger">*</span>
+                </label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="approverOptions" optionLabel="label" optionValue="value"
+                        placeholder="Select Approver Type" formControlName="approver"
+                        (onChange)="onApproverChange($event.value)" class="custom-select w-100" 
+                        [disabled]="!isEditing" />
+                </div>
+                <div *ngIf="allowthresholdLimitForm.get('approver')?.touched && allowthresholdLimitForm.get('approver')?.invalid"
+                    class="error-msg">
+                    Approver type is required.
+                </div>
+            </div>
+
+            <!-- Select Approver -->
+            <div class="col-md-6 col-lg-4" *ngIf=" allowthresholdLimitForm.get('approver')?.value">
+                <label class="form-label custom-label mb-2">
+                    {{ 'Select Approver' | translate }} <span class="text-danger">*</span>
+                </label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="approverList" optionLabel="label" [filter]="true" [resetFilterOnHide]="true" optionValue="value"
+                        placeholder="Select Approver" filterBy="label" formControlName="approverValue" 
+                        class="form-select custom-select " [disabled]="!isEditing" />
+                </div>
+                <div *ngIf="allowthresholdLimitForm.get('approverValue')?.touched && allowthresholdLimitForm.get('approverValue')?.invalid"
+                    class="error-msg">
+                    Approver selection is required.
+                </div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div *ngIf="isEditing" class="d-flex justify-content-end align-items-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="openModal(cancel)">
+                {{ 'Cancel' | translate }}
+            </button>
+            <button type="submit" class="custom-btn btn-primary"
+                [disabled]="!isEditing || allowthresholdLimitForm.invalid">
+                {{ 'Update' | translate }}
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Close Confirmation popup -->
+<ng-template #cancel let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="resetform()">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

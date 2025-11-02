@@ -1,5 +1,5 @@
 * {
-        font-family: 'VERDANA', sans-serif !important;
+    font-family: 'VERDANA', sans-serif !important;
 }
 
 .letter-data-content {
@@ -29,11 +29,11 @@
         overflow: hidden;
 
         .letter-page-sub-content {
-               padding: 20px 110px;
-                font-size: 16px;
-                color: #000000;
-                line-height: 18px;
-                text-align: justify;
+            padding: 20px 110px;
+            font-size: 16px;
+            color: #000000;
+            line-height: 18px;
+            text-align: justify;
         }
 
 
@@ -41,7 +41,7 @@
 }
 
 .soft-copy-letter {
-    background-image: url('/images/snad-letter-bg.jpg') !important;
+    background-image: url('/images/snad-new-letter-bg.png') !important;
     padding-top: 12.5rem !important;
 
 }
@@ -54,6 +54,7 @@
 .roman-numbers-fornt li::marker {
     font-weight: bold;
 }
+
 .letter-signature {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;

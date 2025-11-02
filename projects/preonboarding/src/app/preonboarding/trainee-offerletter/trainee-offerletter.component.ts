@@ -43,7 +43,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
-
+  stipendApplicablecheck!: boolean;
+  stipendAmountmonthly!: number;
   constructor(private http: HttpService, private router: Router, config: NgbModalConfig, private modalService: NgbModal,
     private fb: FormBuilder, private openPopup: PopupService,) {
     config.backdrop = 'static';
@@ -75,7 +76,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   openReject() {
-    this.modalService.open(this.rejectpopup, { centered: true});
+    this.modalService.open(this.rejectpopup, { centered: true });
   }
 
   //function to navigate to the previous page
@@ -99,18 +100,21 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   acceptoffer() {
-    this.loadingcircle=true;
+    this.loadingcircle = true;
     const offeraccept = "Offer Letter Accepted";
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
+     this.downLoadDocument(offerUpdateDetails);
     offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
-    this.updateOfferDetailsforAccept(offerUpdateDetails);
-    this.downLoadDocument();
+   
+   
+
     this.loadingcircle = true;
   }
 
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
     this.subscription = this.http.postData('PreOnboardingTraineeOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
+        this.getOfferLetterDetails();
       },
       error: (err) => {
         console.log(err);
@@ -139,7 +143,9 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         let res = data.reverse()[0];
         this.employeeCompensationDetails = res;
-        this.traineeEmpData.salary = Employee.salary = res.compensationamount;
+        this.traineeEmpData.salary = Employee.salary = res?.compensationamount;
+        console.log(this.traineeEmpData.salary);
+
       },
       error: (reason: any) => {
         console.log(reason);
@@ -158,6 +164,17 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         Employee.jobRole = res.jobRole;
         Employee.workLocation = res.lopcation;
         Employee.subLocation = res.subLocation;
+        this.getaddress(this.jobDeatils?.locationId, this.jobDeatils?.subLocationId);
+      }
+    })
+  }
+
+  getaddress(locationId: number, sublocationId: number) {
+    this.subscription = this.http.getData(`PreonboardingJobDetails/GetbyJobLocationSubLocationId?joblocid=${locationId}&sublocid=${sublocationId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.traineeEmpData.address = data?.address;
+        console.log(this.traineeEmpData.address);
       }
     })
   }
@@ -182,10 +199,13 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.getofferdata = data
         this.getOfferDetailsByOfferId(parseInt(this.getofferdata.id))
         let url = this.getofferdata.documentUrl
+        this.stipendAmountmonthly = this.getofferdata?.stipendAmount;
+        this.stipendApplicablecheck = this.getofferdata?.stipendApplicable;
         this.traineeEmpData.offerSentDate = this.getofferdata.offerSentDate
         this.traineeEmpData.offerExpiryDate = this.getofferdata.offerExpiryDate
+      
         this.traineeEmpData.note = this.getofferdata.note
-        if (this.employeeaddress.employeeAddresses.length > 0) {
+        if (this.employeeaddress?.employeeAddresses?.length > 0) {
           this.address = this.employeeaddress.employeeAddresses.find((address: IAddress) => address.type.toLowerCase() == this.getofferdata.addressType.toLowerCase())
         }
         this.traineeEmpData.addressLine1 = this.address.addressLine1
@@ -215,30 +235,26 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     })
   }
 
-
   getTrainingDurationInMonths(start: Date, end: Date): number {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
 
-  let months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
-  months += endDate.getMonth() - startDate.getMonth();
+    let months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
+    months += endDate.getMonth() - startDate.getMonth();
 
-  // If end day is before start day, reduce by 1
-  if (endDate.getDate() < startDate.getDate()) {
-    months--;
+    // If end day is before start day, reduce by 1
+    if (endDate.getDate() < startDate.getDate()) {
+      months--;
+    }
+
+    return months >= 0 ? months : 0;
   }
-
-  return months >= 0 ? months : 0;
-}
-
 
   getOfferDetailsByOfferId(offerId: number) {
     this.subscription = this.http.getData(`PreOnboardingTraineeOfferLetter/getbyid/${offerId}`).subscribe({
       next: (respone) => {
         if (respone) {
-          this.updatedOfferLetterDetails = respone as Iofferletter
-          console.log(this.updatedOfferLetterDetails);
-          
+          this.updatedOfferLetterDetails = respone as Iofferletter;
         }
       },
       error: (reason: any) => {
@@ -251,12 +267,13 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   //download document
-  async downLoadDocument() {
+  async downLoadDocument(offerUpdateDetails: Iofferletter) {
+
     const data = this.traineeEmpData;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
-    const pdfContents = ['pdfContent1,pdfContent2']; // Add more content IDs if needed
+    const pdfContents = ['pdfContent1', 'pdfContent2']; // Add more content IDs if needed
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;
@@ -284,7 +301,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       pdf.addImage(lastImageData.imgData, 'PNG', 0, 0, imgWidth, lastImageData.imgHeight, '', 'FAST');
     }
     const fileName = `${data.firstName}_${data.middleName ?? ''}_${data.lastName ?? ''}_${new Date().getTime()}_TraineeOfferLetter_Signed.pdf`;
-    //pdf.save(fileName);
+    // pdf.save(fileName);
     const blob = pdf.output('blob');
     //creating form file to upload into AZure
     let d: Date = new Date();
@@ -293,25 +310,28 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     });
     // this.uploadAddressLetter();
     this.generatedfile = file;
-    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile);
+    this.offerletterUpload(this.prosempdata.employeeId, this.generatedfile,offerUpdateDetails);
     // });
     // }
   }
 
   //to store file to the azure and return to the url
-  private offerletterUpload(empId: number, file: File) {
+  private offerletterUpload(empId: number, file: File,offerUpdateDetails:Iofferletter) {
+
     let filePath = `/FusionDocuments/Employee Documents/Trainee Offer Letter/${empId}`;
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          this.loadingcircle=false;
+          this.updatedOfferLetterDetails.documentUrl = data.path;
+            offerUpdateDetails.documentUrl = data.path;
+          this.loadingcircle = false;
           localStorage.setItem('offerletterurl', data.path);
           this.getOfferLetterDetails();
           this.modalService.dismissAll();
           setTimeout(() => {
             this.openPopup.openSuccess("Offer letter accepted successfully");
+             this.updateOfferDetailsforAccept(offerUpdateDetails);
           }, 3000);
-          
           this.loadingcircle = false;
           //this.updateOfferDetails(data.path);
         }
@@ -384,7 +404,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
         this.loadingcircle = false;
         this.modalService.dismissAll();
         this.getOfferLetterDetails();
-          this.openPopup.openSuccess("Offer letter rejected successfully");
+        this.openPopup.openSuccess("Offer letter rejected successfully");
       },
       error: (err: any) => {
         console.log(err);

@@ -298,7 +298,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     const employeeId = this.empdata.employeeId;
     this.http.getData(`PreonboardingEmployeedata/regeneratePassword/${employeeId}`).subscribe({
       next: (response: any) => {
-        this.conformationPopup.openSuccessModal('Password updated successfully');
+        this.conformationPopup.openSuccessModal('Regenerate credentials generated successfully and shared with the employee via email');
+        
       },
       error: (error: any) => {
         console.log(error);
@@ -646,6 +647,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'onboarding-verification': 'Onboarding Verification',
     'emergency-contact-details': 'Emergency Contacts',
     'team-members': 'Team Members',
+    'my-skills':'My Skills',
     // Job Info
     'pre-onboarding-details': 'Pre-Onboarding Info',
     'onboarding-details': 'Onboarding Info',
@@ -662,6 +664,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     'employee-off-boarding': 'Employee Offboarding',
     'trainee-onboarding-requests': 'Trainee Onboarding Verification',
     'contactor-info': "Contractor Info",
+    'cards': 'Cards',
     // Documents
     'general-documents': 'Documents',
     'letter-acknowledge-documents': 'Letter Acknowledgement',
@@ -703,6 +706,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
       '/myinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
       '/myinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/myinfo/personal/my-skills': MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
       // My Info Job
       '/myinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
@@ -717,6 +721,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/myinfo/job/assets-details': MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/myinfo/job/employmentType': MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
       '/myinfo/job/team-members': MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+      '/myinfo/job/cards': MODULE_INFOS.JOB_MODULE_EMPlOYEE_CARD_MODULE_INFO,
+
+
       // My Info Documents
       '/myinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
       // Personal Info perosnal
@@ -730,6 +737,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
       '/personalinfo/personal/bank-details': MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
       '/personalinfo/personal/visa-details': MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/my-skills': MODULE_INFOS.PERSONAL_MODULE_MY_SKILLS_MODULE_INFO,
       // Personal Info Job
       '/personalinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
       '/personalinfo/job/onboarding-details': MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
@@ -748,6 +756,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/contactor-info': MODULE_INFOS.CONTRACT_EMPLOYEES_MODULE_INFO,
       // Personal Info documents
       '/personalinfo/documents': MODULE_INFOS.DOCUMENTS_MODULE_INFO,
+      '/personalinfo/job/cards': MODULE_INFOS.JOB_MODULE_PERSONAL_CARD_MODULE_INFO,
+
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';

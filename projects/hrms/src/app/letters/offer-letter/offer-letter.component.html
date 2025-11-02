@@ -367,7 +367,7 @@
           <div class="custom-p-select-content">
             <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()"
               optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
-              class="form-select custom-select" resetFilterOnHide="true" [filter]="true" filterBy="fullName"></p-select>
+              class="form-select custom-select my-dropdown-above" resetFilterOnHide="true" [filter]="true" filterBy="fullName"></p-select>
             <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
               <div class="error-msg">Signature authority name is required</div>
             </div>
@@ -462,7 +462,9 @@
                 the globe. We are a core team of engineers with a mindset to excel as a family under the guidance of our
                 superior leadership.</p>
 
-              <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, Your date of joining
+              <p class="mb-4">Your reporting location will be <b> SNAD Developers India Pvt Ltd, 
+               {{prospectiveEmpData.address}}.
+                Your date of joining
                   would
                   be {{employeeForm.get('dateOfJoining')?.value | dateformat}}.</b></p>
 

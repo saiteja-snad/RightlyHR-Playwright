@@ -1174,6 +1174,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Client Document Type',
     'Letter Configurations',
     'Project Management Authority',
+    'Project Role',
     'Letter Frequency Configurations'
   ];
 selectAllLettersTabs=[

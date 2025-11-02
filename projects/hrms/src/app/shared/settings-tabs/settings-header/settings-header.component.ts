@@ -194,6 +194,10 @@ export class SettingsHeaderComponent implements OnInit {
       this.moduleName = 'Attendance Configuration';
       this.componentName = 'Published';
     }
+     else if (url.startsWith('/settings/project-management-config/project-role')) {
+      this.moduleName = 'Project Management Configurations';
+      this.componentName = 'Project Role';
+    }
   }
 
   navigateToSettings() {

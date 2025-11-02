@@ -13,14 +13,14 @@
                         <th>{{'Utilization (%)'|translate}}</th>
                     </thead>
                     <tbody>
-                        <tr>
+                         <tr *ngFor="let roles of projectResourceData">
                             <td>
-                                <a class="project-name cursor">Project</a>
+                                <a class="project-name cursor">{{roles.employeeName}}</a>
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{roles.projectRole}}</td>
+                            <td>{{roles.totalAllocatedHours}}</td>
+                            <td>{{roles.totalLoggedHours}}</td>
+                            <td>{{roles.utilizationPercent}}</td>
                         </tr>
                     </tbody>
                 </table>

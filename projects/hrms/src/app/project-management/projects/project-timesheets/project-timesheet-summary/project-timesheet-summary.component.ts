@@ -1,8 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
+import { FormValidationsService } from '../../../../services/form-validations.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HttpService } from '../../../../services/http.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -46,7 +53,10 @@ export class ProjectTimesheetSummaryComponent {
   gaugeData: any;
   gaugeOptions: any;
   completionRate = 100;
-
+ destroy$: Subject<boolean> = new Subject<boolean>();
+   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
+    public formValidation: FormValidationsService, private http: HttpService,
+    private conformationPopup: OpenModalService, private route: ActivatedRoute) { }
   ngOnInit() {
     this.projectWiseResourceCountGraph();
     this.departmentWiseContributionGraph();
@@ -57,38 +67,62 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   // Project wise Resource Count
-  projectWiseResourceCountGraph() {
-    this.projectResourceData = {
-      labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
-      datasets: [
-        {
-          data: [60, 50, 70, 30],
-          backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-          barThickness: 10
-        }
-      ]
-    };
+  // projectWiseResourceCountGraph() {
+  //   this.projectResourceData = {
+  //     labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
+  //     datasets: [
+  //       {
+  //         data: [60, 50, 70, 30],
+  //         backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
+  //         barThickness: 10
+  //       }
+  //     ]
+  //   };
 
-    this.projectResourceOptions = {
-      indexAxis: 'y', // Horizontal bar
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Resource Count'
-          },
-          grid: { display: false }
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Projects'
-          },
-          grid: { display: false }
+  //   this.projectResourceOptions = {
+  //     indexAxis: 'y', // Horizontal bar
+  //     scales: {
+  //       x: {
+  //         title: {
+  //           display: true,
+  //           text: 'Resource Count'
+  //         },
+  //         grid: { display: false }
+  //       },
+  //       y: {
+  //         title: {
+  //           display: true,
+  //           text: 'Projects'
+  //         },
+  //         grid: { display: false }
+  //       }
+  //     }
+  //   };
+  // }
+
+  projectWiseResourceCountGraph(): void {
+     const fullPath = this.router.url;
+      this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+        const projectid = params['id'];
+        if (!projectid) {
+          // console.warn('No project id in query params');
+          this.projectResourceData = [];
+          return;
         }
-      }
-    };
-  }
+
+        this.http.getData(`ProjectManagementGraph/project/resource-summary/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+       
+          next: (res: any) => {
+            // this.projectResourceData.get('clientName')?.enable();
+            this.projectResourceData = Array.isArray(res?.data) ? res.data : [];
+          },
+          error: (err) => {
+            console.error('Error fetching clients:', err);
+          }
+        });
+          });
+    }
+  
 
   // Department wise Contribution
   departmentWiseContributionGraph() {

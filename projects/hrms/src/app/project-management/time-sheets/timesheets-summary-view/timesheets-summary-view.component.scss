@@ -27,13 +27,9 @@
 }
 
 .summary-header {
-    font-family: Roboto Flex;
     font-weight: 600;
-    font-style: SemiBold;
-    font-size: 13.93px;
-    vertical-align: middle;
-  color: var(--primary-color) !important;
-
+    font-size: var(--fontsize14);
+    color: var(--primary-color) !important;
 }
 
 .circular-chart {
@@ -42,7 +38,7 @@
     align-items: center;
 
     canvas {
-        height: 304px !important;
+        height: 270px !important;
     }
 }
 
@@ -52,6 +48,33 @@
     align-items: center;
 
     canvas {
-        height: 290px !important;
+        width: 20rem !important;
     }
+}
+
+.dashed-line {
+    width: 100%;
+    height: 1px;
+    border: 1px dashed #C9D3DD;
+}
+
+.stacked-progress-container {
+  position: relative;
+}
+
+.stacked-progress-overlay {
+    width: 100%;
+    height: 1.125rem;
+    border-radius: 1rem;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fontsize10);
+  font-weight: 500;
+}
+
+.label {
+  white-space: nowrap;
 }

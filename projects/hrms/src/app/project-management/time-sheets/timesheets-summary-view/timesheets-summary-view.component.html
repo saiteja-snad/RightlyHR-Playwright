@@ -9,22 +9,19 @@
 
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
-                    <div>
-                        <div class="custom-date-range-picker">
-                            <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'"
-                                selectionMode="range" [showIcon]="true" [readonlyInput]="true" />
-                        </div>
+                    <div class="custom-date-range-picker">
+                        <p-datepicker formControlName="dateRange" [placeholder]="'Please Select Date range'" selectionMode="range"
+                            [showIcon]="true" [readonlyInput]="true" />
                     </div>
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
-                    Team(Timesheet).view')) {
+
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view')) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
-                                resetFilterOnHide="true" optionLabel="label" formControlName="resourceId"
-                                optionValue="value" [showClear]="false" placeholder="please select employee"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                                optionLabel="label" formControlName="resourceId" optionValue="value" [showClear]="false"
+                                placeholder="please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -33,10 +30,9 @@
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
-                                resetFilterOnHide="true" optionLabel="label" optionValue="value"
-                                formControlName="resourceId" [showClear]="false" placeholder="please select employee"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+                                optionLabel="label" optionValue="value" formControlName="resourceId" [showClear]="false"
+                                placeholder="please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
@@ -44,10 +40,9 @@
                     <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
-                                name="myteamemployees" placeholder="please select employee" formControlName="resourceId"
-                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
-                                [autoDisplayFirst]="false" required>
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
+                                placeholder="please select employee" formControlName="resourceId" [filter]="true" resetFilterOnHide="true"
+                                class="form-select custom-select" [autoDisplayFirst]="false" required>
                             </p-select>
                         </div>
                     </div>
@@ -70,29 +65,28 @@
                 @if (!loading) {
                 <table class="w-100">
                     <thead>
-                        <th class="text-center" >{{'Date' | translate}}</th>
+                        <th class="text-center">{{'Date' | translate}}</th>
                         <th class="text-center">{{'Logged Hours' | translate }}</th>
                         <th class="text-center">{{'Summary' | translate}}</th>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let row of attendanceSummaryData">
-
+        
                                 <td class="text-center">{{row.date | dateformat }}</td>
-
+        
                                 <td class="text-center">{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' :
                                     row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                                 <td class="text-center">
                                     <ng-container *ngIf="row.entries && row.entries.length > 0; else noEntries">
                                         <a>
-                                            <app-info-icon class="cursor"
-                                                (click)="openModal(row.entries, summaryforlogs)" />
+                                            <app-info-icon class="cursor" (click)="openModal(row.entries, summaryforlogs)" />
                                         </a>
                                     </ng-container>
                                     <ng-template #noEntries>-</ng-template>
                                 </td>
-
-
+        
+        
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
@@ -107,18 +101,40 @@
                 <app-data-loader-content />
                 }
             </div>
-
-            <div class="timesheet-graph-content">
-                
-                <div class="time-sheet-graph-card mb-3">
+        
+            <div class="timesheet-graph-content p-3">
+                <div class="time-sheet-graph-card">
+                    <div class="summary-header mb-2">Project Wise Hours Summary</div>
+                    <div class="stacked-progress-container py-4">
+                        <!-- overlay color bar -->
+                        <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + 
+                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                            + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
+                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                        </div>
+        
+                        <div class="progress-labels">
+                            <div class="label" [style.color]="approvedColor">Approved: {{ approved }}h</div>
+                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ submitted }}h</div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: {{ rejected }}h</div>
+                        </div>
+                    </div>
+        
+                </div>
+        
+                <div class="dashed-line my-3"></div>
+        
+                <div class="time-sheet-graph-card">
                     <div class="summary-header mb-2">Project Wise Hours Summary</div>
                     <div class="circular-chart">
                         <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
                     </div>
                 </div>
-
+        
+                <div class="dashed-line my-3"></div>
+        
                 <div class="time-sheet-graph-card">
-                    <div class="summary-header">Allocated vs Actual Hours</div>
+                    <div class="summary-header mb-4">Allocated vs Actual Hours</div>
                     <div class="bar-chart">
                         <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                     </div>

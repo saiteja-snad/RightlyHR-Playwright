@@ -40,15 +40,31 @@ export class ProjectTimesheetSummaryComponent {
     private http: HttpService,private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.projectResourceSummary();
-    this.departmentWiseContributionGraph();
-    this.createGaugeChart();
-    this.estimatedActualChart();
-    this.billableChart();
-    this.burnDownChart();
+   this.http.getDateRangeObservable().pipe(takeUntil(this.destroy$)).subscribe(dateRange => {
+
+      if (dateRange && dateRange.startDate && dateRange.endDate) {
+        console.log('Received new date range:', dateRange);
+        // Call APIs with date range
+        this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
+         this.departmentWiseContributionGraph(dateRange.startDate, dateRange.endDate); 
+          this.createGaugeChart(); 
+          this.estimatedActualChart(); 
+          this.billableChart(); 
+         this.burnDownChart(dateRange.startDate, dateRange.endDate);
+      } else {
+        console.log('No date range set — loading default data');
+        this.projectResourceSummary();
+         this.departmentWiseContributionGraph();
+        this.createGaugeChart(); 
+        this.estimatedActualChart(); 
+        this.billableChart(); 
+        this.burnDownChart(); 
+      }
+  });
+  // Now pass optional arguments
   }
 
-  projectResourceSummary(): void {
+ projectResourceSummary(startDate?: string, endDate?: string): void {
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
@@ -56,7 +72,18 @@ export class ProjectTimesheetSummaryComponent {
         this.projectResourceSummaryData = [];
         return;
       }
-      this.http.getData(`ProjectManagementGraph/project/resource-summary/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+      // ✅ Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
+
+      // ✅ Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/resource-summary/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           // this.projectResourceData.get('clientName')?.enable();
           this.projectResourceSummaryData = Array.isArray(res?.data) ? res.data : [];
@@ -69,15 +96,25 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   // Department wise Contribution
-  departmentWiseContributionGraph() {
+  departmentWiseContributionGraph(startDate?: string, endDate?: string) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
       if (!projectid) {
         this.departmentContributionData = [];
         return;
       }
+       //  Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
 
-      this.http.getData(`ProjectManagementGraph/project/rolewisehours/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+      // Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/rolewisehours/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           const apiData = res?.data?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
@@ -240,16 +277,26 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   // Project Burndown Chart (Line)
-  burnDownChart() {
+  burnDownChart(startDate?: string, endDate?: string) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const projectid = params['id'];
       if (!projectid) {
         this.burndownData = [];
         return;
       }
-      this.http.getData(`ProjectManagementGraph/project/burndownchart/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
+       // Get stored date range from HttpService
+      const dateRange = this.http.getCurrentDateRange();
+      const startDate = dateRange?.startDate ?? null;
+      const endDate = dateRange?.endDate ?? null;
+
+      // Build the API URL conditionally
+      let url = `ProjectManagementGraph/project/burndownchart/${projectid}`;
+      if (startDate && endDate) {
+        url += `?startDate=${startDate}&endDate=${endDate}`;
+      }
+      this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          // ✅ Define a proper interface for type safety
+          //  Define a proper interface for type safety
           interface LineData {
             date: string;
             remainingHours: number;
@@ -258,16 +305,16 @@ export class ProjectTimesheetSummaryComponent {
           const idealLine: LineData[] = res?.data?.idealLine || [];
           const actualLine: LineData[] = res?.data?.actualLine || [];
 
-          // ✅ Generate labels from ideal line dates
+          // Generate labels from ideal line dates
           const labels = idealLine.map((item: LineData) =>
             new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
           );
 
-          // ✅ Extract remaining hours
+          //  Extract remaining hours
           const idealData = idealLine.map((item: LineData) => item.remainingHours);
           const actualData = actualLine.map((item: LineData) => item.remainingHours);
 
-          // ✅ Chart.js dataset
+          // Chart.js dataset
           this.burndownData = {
             labels: labels,
             datasets: [

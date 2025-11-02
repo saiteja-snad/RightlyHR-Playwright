@@ -31,6 +31,7 @@ export class ProjectViewComponent implements OnInit {
   addContactForm!: FormGroup;
   addDocumentForm!: FormGroup;
   datepickerForm!: FormGroup;
+   datepickerFormData!: FormGroup;
   ranges: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourcesData = [] as IResource[];
@@ -47,6 +48,7 @@ export class ProjectViewComponent implements OnInit {
     this.createDatepickerForm();
     // this.setDefaultRanges();
     // this.setDefaultWeek();
+       this.datepickerFormdata();
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
@@ -63,9 +65,10 @@ export class ProjectViewComponent implements OnInit {
   }
 
   resetForm() {
-    this.datepickerForm.get('dateRange')?.reset();
-    this.datepickerForm.get('resourceId')?.disable();
+    this.datepickerFormData.get('dateRange')?.reset();
+    this.datepickerFormData.get('resourceId')?.disable();
     this.http.setRequest(null);
+    this.http.setDateRange(null,null);
   }
 
   createContactForm() {
@@ -82,7 +85,21 @@ export class ProjectViewComponent implements OnInit {
       documentattachment: [null, Validators.required]
     });
   }
+   datepickerFormdata(){
+   this.datepickerFormData = this.fb.group({
+      dateRange: [null]
+    });
 
+     // detect when user selects date range
+    this.datepickerFormData.get('dateRange')?.valueChanges.subscribe(val => {
+      if (val && val.length === 2) {
+        const startDate = dayjs(val[0]).format('YYYY-MM-DDTHH:mm:ss');
+        const endDate = dayjs(val[1]).format('YYYY-MM-DDTHH:mm:ss');
+        // this.dateRangeService.setDateRange(startDate, endDate);
+      }
+    });
+  }
+  
   // Create a single contact form group
   createContactGroup(): FormGroup {
     return this.fb.group({
@@ -120,9 +137,13 @@ export class ProjectViewComponent implements OnInit {
     this.modalService.open(ResourceCreationComponent, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
+  // isFormCompletelyValid(): boolean {
+  //   const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+  //   return !!formValue.dateRange && !!formValue.resourceId;
+  // }
   isFormCompletelyValid(): boolean {
-    const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
-    return !!formValue.dateRange && !!formValue.resourceId;
+    const formValue = this.datepickerFormData.getRawValue();
+    return !!formValue.dateRange;
   }
 
   isActive(route: string): boolean {
@@ -130,7 +151,7 @@ export class ProjectViewComponent implements OnInit {
   }
 
   isFilterApplied(): boolean {
-    const formValue = this.datepickerForm.value;
+    const formValue = this.datepickerFormData.value;
     // Check if any field has value
     return (
       (formValue.dateRange && formValue.dateRange.length > 0) ||
@@ -239,17 +260,22 @@ export class ProjectViewComponent implements OnInit {
 
   onSubmit() {
     this.getProjects(this.projectId.toString());
-    const dateRangeArray = this.datepickerForm.value.dateRange || [];
+    const dateRangeArray = this.datepickerFormData.value.dateRange || [];
     const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
     const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : startDate;
-    const request = {
-      dateRange: { startDate, endDate },
-      resourceId: this.datepickerForm.value.resourceId,
-      clientId: this.clientsId,
-      projectId: this.projectId
-    };
-    this.http.setRequest(request);
+
+       this.http.setDateRange(startDate, endDate);
+
+    // const request = {
+    //   dateRange: { startDate, endDate },
+    //   resourceId: this.datepickerFormData.value.resourceId,
+    //   clientId: this.clientsId,
+    //   projectId: this.projectId
+    // };
+    // this.http.setRequest(request);
+    
   }
+  
 
   navigationtoinactivedocuments() {
     this.router.navigate(

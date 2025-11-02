@@ -70,11 +70,11 @@
         <div class="time-sheet-graph-card">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="summary-header">Estimated vs Actual Hours</div>
-                <div class="custom-p-select-content">
+                <!-- <div class="custom-p-select-content">
                     <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
                         [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
                         placeholder="Please select project" class="form-select custom-select"></p-select>
-                </div>
+                </div> -->
             </div>
     
             <div class="bar-chart">
@@ -83,29 +83,20 @@
         </div>
     </div>
 
-    <div class="grid-display-row3 mb-3">
+     <div class="grid-display-row3 mb-3">
         <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="summary-header">Billable vs Non-Billable Hours</div>
-                <div class="custom-p-select-content">
-                    <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                        placeholder="Please select project" class="form-select custom-select"></p-select>
-                </div>
+            <div class="summary-header mb-3">Billable vs Non-Billable Hours</div>
+            <div class="burndown-chart">
+                <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
             </div>
-            <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
         </div>
 
         <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="summary-header">Project Burndown Chart</div>
-                <div class="custom-p-select-content">
-                    <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                        placeholder="Please select project" class="form-select custom-select"></p-select>
-                </div>
+            <div class="summary-header mb-3">Project Burndown Chart</div>
+
+            <div class="burndown-chart">
+                <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
             </div>
-            <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
         </div>
     </div>
 </div>

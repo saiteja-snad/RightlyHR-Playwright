@@ -32,15 +32,16 @@
     
             <div class="gauge-container">
                 <p-chart type="doughnut" [data]="gaugeData" [options]="gaugeOptions" />
-    
+                <div class="guage-background"></div>
                 <!-- needle -->
-                <!-- <div class="needle" [style.transform]="getNeedleRotation()"></div> -->
-    
+                <div class="needle" [style.transform]="getNeedleRotation()">
+                    <!-- <img src="images\speedo-needle.png" alt="Speedo Needle" class="speedo-needle"> -->
+                </div>
                 <!-- center circle -->
-                <!-- <div class="needle-base"></div> -->
+                <div class="needle-base"></div>
     
                 <!-- percentage label -->
-                <!-- <div class="gauge-label">{{ completionRate.toFixed(2) }}%</div> -->
+                <div class="gauge-label">{{ completionRate.toFixed(2) }}%</div>
             </div>
         </div>
     </div>

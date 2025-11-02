@@ -235,6 +235,7 @@ export class ProjectTimesheetSummaryComponent {
         },
       ],
     };
+
     this.burndownOptions = {
       plugins: {
         legend: {
@@ -250,11 +251,10 @@ export class ProjectTimesheetSummaryComponent {
 
   createGaugeChart() {
     // Create 10 colored segments for smoother gradient effect
-    const dataValues = new Array(10).fill(10);
+    const dataValues = new Array(6).fill(6);
     const colors = [
-      '#e53935', '#ef5350', '#fbc02d', '#ffee58',
-      '#c6ff00', '#9ccc65', '#8bc34a', '#66bb6a',
-      '#43a047', '#2e7d32'
+      '#FF5656', '#FF8888', '#FEE114', '#D1D80F',
+      '#84BD32', '#30AD43',
     ];
 
     this.gaugeData = {
@@ -265,7 +265,7 @@ export class ProjectTimesheetSummaryComponent {
           borderWidth: 0,
           circumference: 180,
           rotation: -90,
-          cutout: '75%',
+          cutout: '90%',
         }
       ]
     };

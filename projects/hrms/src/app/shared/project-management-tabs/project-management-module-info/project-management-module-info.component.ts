@@ -141,8 +141,15 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/projects/details/documents') {
       this.componentname = 'Documents';
     }
-    else if (currentUrl === '/project-management/time-sheet') {
+    else if (currentUrl === '/project-management/timesheet/mytimesheet') {
       this.componentname = 'Timesheets';
+    }
+
+    else if (currentUrl === '/project-management/timesheet/teamtimesheet') {
+      this.componentname = 'Team Timesheets';
+    }
+    else if (currentUrl === '/project-management/timesheet/summary') {
+      this.componentname = 'Timesheet Summary';
     }
   }
 

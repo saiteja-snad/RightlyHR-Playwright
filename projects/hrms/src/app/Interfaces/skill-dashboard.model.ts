@@ -48,7 +48,7 @@ export interface TopSkill {
 export interface SkillSummary {
   skillName: string;
   skillCount: number;
-  proficiencyCounts: SkillProficiencyCounts;
+   proficiencyCounts: SkillProficiencyCounts;
 }
 
 // Chart dataset (used in PrimeNG p-chart or Chart.js)
@@ -64,4 +64,16 @@ export interface ChartData {
   datasets: ChartDataset[];
 }
 
+export interface EmployeeSkill {
+  employeeName: string;
+  fusionEmployeeId: string;
+  departmentId: number;
+  departmentName: string;
+  subDepartmentId: number;
+  subDepartmentName: string;
+  skillName: string;
+  proficiencyLevel: string;
+ profileImage?: string;   
+  imageUrl?: string;
+}
 

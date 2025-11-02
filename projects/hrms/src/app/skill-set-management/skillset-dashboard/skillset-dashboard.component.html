@@ -12,8 +12,13 @@
     <div class="chart-container mb-3">
         <div class="summary-card pic-chart-content">
             <div class="graph-header mb-3">Skill Proficiency</div>
-            <div class="d-flex justify-content-center">
-                <p-chart type="doughnut" [data]="skillLevelData" [options]="skillLevelOptions"></p-chart>
+            <div class="d-flex justify-content-center skill-chart-container">
+                <p-chart type="doughnut" [data]="skillLevelData" [options]="skillLevelOptions">
+                </p-chart>
+                <div class="skill-chart-center-text">
+                    <span class="skill-chart-count">{{ totalSkillCount }}</span>
+                    <p class="skill-chart-label mt-3">Total Skills</p>
+                </div>
             </div>
             <div class="chart-counts-grid mt-3">
                 <!-- Row 1: Counts -->
@@ -33,17 +38,22 @@
 
         <div class="summary-card pic-chart-content">
             <div class="graph-header mb-3">Skill By Department</div>
-            <div class="d-flex justify-content-center">
-                <p-chart type="doughnut" [data]="skillByDepartmentData" [options]="skillByDepartmentOptions"></p-chart>
+            <div class="skill-chart-container d-flex justify-content-center">
+                <p-chart type="doughnut" [data]="skillByDepartmentData" [options]="skillByDepartmentOptions">
+                </p-chart>
+
+                <div class="skill-chart-center-text">
+                    <span class="skill-chart-count">{{ totalDepartmentSkillCount }}</span>
+                    <p class="skill-chart-label mt-3">Total Unique Skills</p>
+                </div>
             </div>
+
             <div class="chart-counts-grid mt-3">
-                <!-- Row 1: Counts -->
                 <div class="count-row">
                     <div *ngFor="let dept of deptCounts" class="count-cell">
                         {{ dept.count }}
                     </div>
                 </div>
-                <!-- Row 2: Labels -->
                 <div class="label-row">
                     <div *ngFor="let dept of deptCounts" class="count-cell">
                         {{ dept.label }}
@@ -55,59 +65,84 @@
             <div class="graph-header mb-3">Top Skills</div>
             <!-- Horizontal scroll -->
             <div class="chart-scroll-x-container">
-                <p-chart type="bar" [data]="topSkillsData" [options]="topSkillsOptions"
-></p-chart>
+                <p-chart type="bar" class="cavas-grap" [data]="topSkillsData" [options]="topSkillsOptions"></p-chart>
             </div>
         </div>
     </div>
 
     <!--table content-->
     <div class="summary-card p-3 mb-3">
+        @if (!noDataFound) {
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <th>Skill Name</th>
-                    <th>Employee Count</th>
-                    <th>Proficiency (Expert/Mid/Beginner)</th>
-                    <th>Action</th>
+                    <tr>
+                        <th>Skill Name</th>
+                        <th>Employee Count</th>
+                        <th>Proficiency (Expert/Intermediate/Beginner)</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
                 <tbody>
+                    @for (skill of skillSummaryList; track skill.skillName) {
                     <tr>
-                        <td>JavaScript</td>
-                        <td>30</td>
-                        <td>Expert</td>
+                        <td>{{ skill?.skillName }}</td>
+                        <td>{{ skill?.skillCount }}</td>
+                        <td>{{ getProficiencyText(skill.proficiencyCounts) }}</td>
                         <td>
-                            <span class="view-link" (click)="openEnd(content)">View Employees</span>
+                            <span class="view-link" (click)="openEnd(content, skill.skillName)">View Employees</span>
+
                         </td>
                     </tr>
+                    }
                 </tbody>
             </table>
         </div>
+        } @else {
+        <div class="d-flex justify-content-center align-items-center py-5">
+            <app-no-data-found />
+        </div>
+        }
     </div>
+
 </div>
 <ng-template #content let-offcanvas>
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Employees With Javascript</h5>
+        <h5 class="offcanvas-title">
+            Employees with {{ selectedSkillName }}
+            <span *ngIf="employeeList?.length">({{ employeeList.length }})</span>
+        </h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
     </div>
-    <div class="offcanvas-body">
 
-        <div class="profile-content mb-3">
-            <ng-container *ngIf="imageUrl; else showProfileIcon">
-                <img [src]="imageUrl" alt="Profile Image" class="profile-image">
-            </ng-container>
-            <ng-template #showProfileIcon>
-                <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'"></app-profile-icon>
-            </ng-template>
+    <div class="offcanvas-body chart-scroll-container">
+        <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
 
-            <div class="profile-info">
-                <div class="name">Name</div>
-                <div class="designation">ffgfgfg </div>
+        <div *ngFor="let emp of employeeList" class="profile-content mb-3">
+            <div class="profile-content text-center mb-3">
+                <ng-container *ngIf="emp.profileImage; else showProfileIcon">
+                    <img [src]="emp.profileImage" alt="Profile Image" class="profile-image">
+                </ng-container>
+                <ng-template #showProfileIcon>
+                    <app-profile-icon [iconWidth]="'68'" [iconHeight]="'68'"></app-profile-icon>
+                </ng-template>
             </div>
-
-            <div class="skill-level">
-                gfjjgfgfg
+            <div class="profile-info ms-3">
+                <div class="name">{{ emp.employeeName }}</div>
+                <div class="sub-text department">
+                    {{ emp.departmentName || 'No Department' }}
+                    <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span>
+                </div>
+                <div class="sub-text" [ngClass]="{
+                     'beginner-text': emp.proficiencyLevel === 'Beginner',
+                      'intermediate-text': emp.proficiencyLevel === 'Intermediate',
+                       'expert-text': emp.proficiencyLevel === 'Expert' }">
+                    {{ emp.proficiencyLevel }}
+                </div>
             </div>
+        </div>
+        <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">
+            No employees found for this skill.
         </div>
     </div>
 </ng-template>

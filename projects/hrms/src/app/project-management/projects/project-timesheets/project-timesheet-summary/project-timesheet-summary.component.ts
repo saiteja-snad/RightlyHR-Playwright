@@ -36,35 +36,31 @@ export class ProjectTimesheetSummaryComponent {
   completionRate = 0;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private router: Router, public formValidation: FormValidationsService, 
-    private http: HttpService,private route: ActivatedRoute) { }
+  constructor(private router: Router, public formValidation: FormValidationsService,
+    private http: HttpService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-   this.http.getDateRangeObservable().pipe(takeUntil(this.destroy$)).subscribe(dateRange => {
-
+    this.http.getDateRangeObservable().pipe(takeUntil(this.destroy$)).subscribe(dateRange => {
       if (dateRange && dateRange.startDate && dateRange.endDate) {
-        console.log('Received new date range:', dateRange);
         // Call APIs with date range
         this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
-         this.departmentWiseContributionGraph(dateRange.startDate, dateRange.endDate); 
-          this.createGaugeChart(); 
-          this.estimatedActualChart(); 
-          this.billableChart(); 
-         this.burnDownChart(dateRange.startDate, dateRange.endDate);
+        this.departmentWiseContributionGraph(dateRange.startDate, dateRange.endDate);
+        this.createGaugeChart();
+        this.estimatedActualChart();
+        this.billableChart();
+        this.burnDownChart(dateRange.startDate, dateRange.endDate);
       } else {
-        console.log('No date range set — loading default data');
         this.projectResourceSummary();
-         this.departmentWiseContributionGraph();
-        this.createGaugeChart(); 
-        this.estimatedActualChart(); 
-        this.billableChart(); 
-        this.burnDownChart(); 
+        this.departmentWiseContributionGraph();
+        this.createGaugeChart();
+        this.estimatedActualChart();
+        this.billableChart();
+        this.burnDownChart();
       }
-  });
-  // Now pass optional arguments
+    });
   }
 
- projectResourceSummary(startDate?: string, endDate?: string): void {
+  projectResourceSummary(startDate?: string, endDate?: string): void {
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
@@ -72,12 +68,12 @@ export class ProjectTimesheetSummaryComponent {
         this.projectResourceSummaryData = [];
         return;
       }
-      // ✅ Get stored date range from HttpService
+      // Get stored date range from HttpService
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;
 
-      // ✅ Build the API URL conditionally
+      // Build the API URL conditionally
       let url = `ProjectManagementGraph/project/resource-summary/${projectid}`;
       if (startDate && endDate) {
         url += `?startDate=${startDate}&endDate=${endDate}`;
@@ -103,7 +99,7 @@ export class ProjectTimesheetSummaryComponent {
         this.departmentContributionData = [];
         return;
       }
-       //  Get stored date range from HttpService
+      //  Get stored date range from HttpService
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;
@@ -152,53 +148,78 @@ export class ProjectTimesheetSummaryComponent {
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
-    this.estimatedVsActualData = {
-      labels: ['Softkill E-commerce', 'Admin App', 'E-commerce', 'Web app', 'Mobile App'],
-      datasets: [
-        {
-          label: 'Estimated Hours',
-          backgroundColor: '#1A237E',
-          data: [850, 950, 700, 880, 900],
-          stack: 'Estimated' // separate stack
-        },
-        {
-          label: 'Actual Hours',
-          backgroundColor: '#90CAF9',
-          data: [800, 700, 450, 850, 700],
-          stack: 'ActualOverdue' // stacked with Overdue
-        },
-        {
-          label: 'Over Due',
-          backgroundColor: '#FF5252',
-          data: [100, 0, 0, 80, 0],
-          stack: 'ActualOverdue' // stacked on top of Actual
-        }
-      ]
-    };
-
-    this.estimatedVsActualOptions = {
-      responsive: true,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        x: {
-          stacked: false, // show two separate bars per project (Estimated vs Actual+Overdue)
-          grid: { display: false },
-          title: { display: false }
-        },
-        y: {
-          stacked: true, // stack Actual + Overdue vertically
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Hours'
-          },
-        }
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const projectid = params['id'];
+      if (!projectid) {
+        this.estimatedVsActualData = [];
+        return;
       }
-    };
+
+      this.http.getData(`ProjectManagementGraph/project/allocated-vs-actual/${projectid}?groupBy=role`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          if (res?.success && res?.data?.data?.length) {
+            const chartData = res.data.data;
+            const labels = chartData.map((item: any) => item.name);
+            const estimatedHours = chartData.map((item: any) => item.allocateHours);
+            const actualHours = chartData.map((item: any) => item.actualHours);
+            const overdueHours = chartData.map((item: any) => item.overDue ? (item.allocateHours - item.actualHours) : 0);
+
+            this.estimatedVsActualData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Estimated Hours',
+                  backgroundColor: '#1A237E',
+                  data: estimatedHours,
+                  stack: 'Estimated'
+                },
+                {
+                  label: 'Actual Hours',
+                  backgroundColor: '#90CAF9',
+                  data: actualHours,
+                  stack: 'ActualOverdue'
+                },
+                {
+                  label: 'Over Due',
+                  backgroundColor: '#FF5252',
+                  data: overdueHours,
+                  stack: 'ActualOverdue'
+                }
+              ]
+            };
+
+            this.estimatedVsActualOptions = {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: false,
+                  position: 'top'
+                },
+              },
+              scales: {
+                x: {
+                  stacked: false, // show Estimated vs Actual+Overdue as separate bars
+                  grid: { display: false },
+                },
+                y: {
+                  stacked: true,
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: 'Hours'
+                  }
+                }
+              }
+            };
+          } else {
+            this.estimatedVsActualData = [];
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching estimated vs actual chart:', err);
+        }
+      });
+    });
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
@@ -210,13 +231,9 @@ export class ProjectTimesheetSummaryComponent {
         return;
       }
 
-      this.http.getData(`ProjectManagementGraph/project/billable-non-billable/${projectid}`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
+      this.http.getData(`ProjectManagementGraph/project/billable-non-billable/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
           next: (res: any) => {
-            console.log('Billable chart response:', res);
-
-            // ✅ Correct extraction based on your actual structure
+            // Correct extraction based on your actual structure
             const apiData = res?.data?.data || res?.data || [];
 
             if (!Array.isArray(apiData) || apiData.length === 0) {
@@ -225,12 +242,12 @@ export class ProjectTimesheetSummaryComponent {
               return;
             }
 
-            // ✅ Extract data safely
+            // Extract data safely
             const labels = apiData.map((item: any) => item.name || 'N/A');
             const billable = apiData.map((item: any) => item.billableHours || 0);
             const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
 
-            // ✅ Chart data
+            // Chart data
             this.billableData = {
               labels,
               datasets: [
@@ -249,7 +266,7 @@ export class ProjectTimesheetSummaryComponent {
               ],
             };
 
-            // ✅ Chart options
+            // Chart options
             this.billableOptions = {
               responsive: true,
               scales: {
@@ -263,8 +280,7 @@ export class ProjectTimesheetSummaryComponent {
               },
               plugins: {
                 legend: {
-                  display: true, // set false if you want to hide legend
-                  position: 'top',
+                  display: false,
                 },
               },
             };
@@ -284,7 +300,7 @@ export class ProjectTimesheetSummaryComponent {
         this.burndownData = [];
         return;
       }
-       // Get stored date range from HttpService
+      // Get stored date range from HttpService
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;

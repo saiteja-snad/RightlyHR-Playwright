@@ -229,7 +229,8 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}` : ''
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
+      ${this.selectedEmployee.contactnumber ?? ''}` : ''
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
   }

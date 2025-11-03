@@ -507,12 +507,13 @@ export class SkillsetDashboardComponent {
 
 
   clearAllFilters(): void {
-    this.selectedStatus = [];
+    this.selectedStatus = ['All Proficiencies'];
     this.selectedSkills = [];
     this.skilllevelGraph();
     this.skillByDepartmentGraph()
     this.getSkillSetTableData()
     this.topSkillsGraph()
+  
 
   }
 

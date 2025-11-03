@@ -1,46 +1,60 @@
-/* --- Summary Card --- */
-.summary-card {
-  padding: 1rem;
-  border: 1px solid #DCE3E9;
-  border-radius: 0.625rem;
-  background-color: #FFF;
-  transition: all 0.2s ease-in-out;
+.cards-grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
+
+  .summary-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 1.18px solid #DCE3E9;
+    border-radius: 0.625rem;
+    background-color: #FFF;
+    gap: 1rem;
+    box-shadow: 0px 0px 5px 0px #0B3A831A;
+
+    .icon {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    .summary-title {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    .summary-value {
+      font-size: var(--fontsize18);
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+  }
 }
 
-.summary-card .summary-title {
-  font-size: 0.9rem;
-  color: #6b7280;
-}
-
-.summary-card .summary-value {
-  font-size: var(--fontsize18);
-  font-weight: 700;
-  color: var(--primary-color);
-}
-
-/* --- Chart Container Grid --- */
-.chart-container {
+.grid-display-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  grid-template-rows: auto;
+  gap: 1rem;
   align-items: stretch;
 }
 
-/* --- Header --- */
+.graph-card {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #FFFFFF;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+  display: flex;
+  flex-direction: column;
+}
+
 .graph-header {
-  font-size: var(--fontsize16);
-  font-weight: 700;
-  color: var(--primary-color);
+  font-weight: 500;
+  font-size: var(--fontsize14) !important;
+  color: #222222;
 }
 
-/* --- Skill Proficiency Pie Chart --- */
-.pic-chart-content canvas {
-  width: 260px !important;
-  height: 260px !important;
-}
-
-/* ✅ Chart + Legend Layout (horizontal like Image 2) */
 .skill-chart-horizontal {
   display: flex;
   align-items: center;
@@ -56,7 +70,6 @@
   height: 260px;
 }
 
-/* Right Legend Section */
 .skill-chart-right {
   flex: 1;
   display: flex;
@@ -64,6 +77,14 @@
   justify-content: center;
   gap: 0.6rem;
   min-width: 180px;
+}
+
+.skill-proficiency-content {
+  justify-content: space-around;
+
+  .skill-chart-right {
+    max-width: 180px !important;
+  }
 }
 
 /* Legend Items */
@@ -98,76 +119,77 @@
   text-align: right;
 }
 
-/* --- Chart Count Grid (for bottom aligned counts if needed) --- */
-.chart-counts-grid {
-  display: grid;
-  gap: 6px;
-  margin-top: 1rem;
+//  Table chips styles 
+.custom-table-content {
+  height: calc(100dvh - 15rem) !important;
+  border-bottom-left-radius: 0rem !important;
+  border-bottom-right-radius: 0rem !important;
+
+  .p-chip {
+    border: 1px solid #D1D9E2 !important;
+    background: #F8FBFF !important;
+    font-weight: 400;
+    font-size: var(--fontsize14) !important;
+
+    .skill-name {
+      color: var(--primary-color) !important;
+    }
+
+    .skill-level {
+      color: #73809D !important;
+    }
+  }
 }
 
-.count-row,
-.label-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
-  text-align: center;
+// offcanvas stylings
+.offcanvas-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
 }
 
-.count-row .count-cell {
+.offcanvas-title {
   font-weight: 600;
+  font-size: var(--fontsize16);
   color: var(--primary-color);
 }
 
-.label-row .count-cell {
-  color: #555;
-  font-size: 0.9rem;
+.offcanvas-body {
+  padding-top: 1rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 90dvh;
 }
 
-/* --- Profile Section --- */
 .profile-content {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  color: var(--primary-color);
-  background-color: #f9fafb;
-  border-radius: 0.625rem;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
   gap: 1rem;
-  transition: background-color 0.2s ease-in-out;
-}
+  border: 1px solid #FFFFFF;
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+  border: 1px solid #DCE3E9;
+  box-shadow: 0px 0px 5px 0px #0B3A831A;
 
-.profile-content:hover {
-  background-color: #f3f4f6;
-}
+  .profile-image {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0px 0px 10px #0b3a8333;
+    object-fit: cover;
+  }
 
-.profile-image {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0px 0px 10px #0b3a8333;
-  object-fit: cover;
-}
+  .name {
+    font-size: var(--fontsize14);
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--primary-color);
+  }
 
-.profile-info {
-  flex: 1;
-}
-
-.profile-info .name {
-  color: #111827;
-  font-size: var(--fontsize16);
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.profile-info .designation {
-  color: #6b7280;
-  font-size: var(--fontsize14);
-}
-
-.profile-info .emp-id {
-  color: #9ca3af;
-  font-size: 0.8rem;
+  .designation {
+    color: #6b7280;
+    font-size: var(--fontsize12);
+  }
 }
 
 /* --- Skill Level Colors --- */
@@ -187,19 +209,6 @@
 
 .skill-level.text-warning {
   color: #f59e0b;
-}
-
-/* --- Pie Chart Center Text (disabled for image 2 layout) --- */
-.skill-chart-container {
-  position: relative;
-  width: 260px;
-  height: 260px;
-  margin: 0 auto;
-}
-
-.skill-chart-center-text {
-  display: none;
-  /* hide center total like image 2 */
 }
 
 /* --- Proficiency Text Colors --- */
@@ -231,97 +240,10 @@
   font-weight: 500;
 }
 
-.view-link:hover {
-  color: var(--primary-color);
-}
-
-.no-data-text {
-  text-align: center;
-  color: #9ca3af;
-  font-size: var(--fontsize14);
-  margin-top: 2rem;
-}
-
-/* --- Offcanvas Styles --- */
-.offcanvas-header {
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.75rem;
-}
-
-.offcanvas-title {
-  font-weight: 700;
-  font-size: var(--fontsize18);
-  color: var(--primary-color);
-}
-
-.offcanvas-body {
-  padding-top: 1rem;
-  overflow-y: auto;
-  max-height: 80vh;
-}
-
-.offcanvas-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.offcanvas-body::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 4px;
-}
-
-.offcanvas-body::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
-}
-
-.top-skills {
-  width: 100%;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.graph-header {
-  font-weight: 700;
-  font-size: 1rem;
-  color: #1F2937;
-}
-
 .project-resource-graph canvas {
   height: 250px !important;
 }
 
-//  Table chips styles 
-.custom-table-content {
-  height: calc(100dvh - 15rem) !important;
-  border-bottom-left-radius: 0rem !important;
-  border-bottom-right-radius: 0rem !important;
-
-  .p-chip {
-    border: 1px solid #D1D9E2 !important;
-    background: #F8FBFF !important;
-    font-weight: 400;
-    font-size: var(--fontsize14) !important;
-
-    .skill-name {
-      color: var(--primary-color) !important;
-    }
-
-    .skill-level {
-      color: #73809D !important;
-    }
-  }
-}
-
-.icon-circle {
-  background-color: #1e3a8a;
-  /* dark blue */
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-
-}
 .custom-p-multiSelect-content {
   min-width: 200px !important;
 }

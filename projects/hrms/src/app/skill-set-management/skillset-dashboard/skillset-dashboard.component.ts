@@ -1,14 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ChartModule } from 'primeng/chart';
 import { CardModule } from 'primeng/card';
 import { SidebarModule } from 'primeng/sidebar';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { ChartData, DepartmentCount, SkillProficiencyCount, SummaryCard, SkillSummary, EmployeeSkill, TopSkill } from '../../Interfaces/skill-dashboard.model';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { environment } from '../../../environments/environment.dev';
@@ -16,10 +16,14 @@ import { Chip } from 'primeng/chip';
 import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { Select } from 'primeng/select';
-
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-skillset-dashboard',
-  imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent, NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, Select],
+  imports: [CommonModule, ChartModule, RouterModule, CardModule, SidebarModule, ProfileIconComponent,
+    NoDataFoundComponent, Chip, FormsModule, MultiSelectModule, Select, NgbPopoverModule,
+    ModuleInformationComponent, TranslateModule],
   templateUrl: './skillset-dashboard.component.html',
   styleUrl: './skillset-dashboard.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -54,15 +58,45 @@ export class SkillsetDashboardComponent {
   searchQuery: string = '';
   selectedStatus: string = 'All Status';
   selectedSkills: string[] = [];
-  constructor(private http: HttpService, public formValidation: FormValidationService, private offcanvasService: NgbOffcanvas) { }
+  //moduleinfo
+  moduleinfo: string = '';
+  routeToInfoMap!: { [key: string]: string };
+  componentname: string = '';
+
+  constructor(private http: HttpService, public formValidation: FormValidationService,
+    private offcanvasService: NgbOffcanvas, private router: Router) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.topSkillsGraph();
-    this.getSkillSummary()
-    this.getSkillSetTableData()
+    this.getSkillSummary();
+    this.getSkillSetTableData();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    this.ComponentnameDisplay();
+    this.routeToInfoMap = {
+      '/skill-management/dashboard': MODULE_INFOS.SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO,
+    };
+    const matchedEntry = Object.entries(this.routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  ComponentnameDisplay() {
+    if (this.router.url === '/skill-management/dashboard') {
+      this.componentname = 'Skill Set Dashboard';
+    }
   }
 
   openEnd(content: TemplateRef<any>, skillName: string): void {
@@ -70,10 +104,8 @@ export class SkillsetDashboardComponent {
     this.offcanvasService.open(content, { position: 'end' });
     this.getViewSkillDetails(skillName);
   }
-  onCheckemployeeProficiency(statusValue: any) {
 
-  }
-
+  onCheckemployeeProficiency(statusValue: any) { }
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -175,7 +207,7 @@ export class SkillsetDashboardComponent {
           ]
         };
         this.skillByDepartmentOptions = {
-          cutout: '55%', // thinner center hole
+          cutout: '60%', // thinner center hole
           plugins: {
             legend: {
               display: false // hide default legend
@@ -231,7 +263,6 @@ export class SkillsetDashboardComponent {
                 label: 'Employee Count',
                 data: counts,
                 backgroundColor: colors,
-                borderRadius: 10,
                 barThickness: 20,
               }
             ]
@@ -319,8 +350,6 @@ export class SkillsetDashboardComponent {
             ...emp,
             profileImage: this.getImageUrl(emp.profileImage)
           }));
-
-          console.log('Employee list with images:', this.employeeList);
         } else {
           this.employeeList = [];
         }
@@ -344,10 +373,8 @@ export class SkillsetDashboardComponent {
     }
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
-  clearAllFilters(): void {
 
-  }
-  onSkillSelectionChange(): void {
+  clearAllFilters(): void { }
 
-  }
+  onSkillSelectionChange(): void { }
 }

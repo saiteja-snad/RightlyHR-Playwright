@@ -1,0 +1,179 @@
+import { CommonModule } from '@angular/common';
+import { Component, effect, OnDestroy, OnInit } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
+import { TabsModule } from 'primeng/tabs';
+import { Subject, takeUntil } from 'rxjs';
+import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
+import { SidetabsloadersComponent } from '../../sidetabsloaders/sidetabsloaders.component';
+
+@Component({
+  selector: 'app-on-behalf-of-remotelogin-tabs',
+  imports: [RouterModule, CommonModule, TabsModule, SidetabsloadersComponent],
+  templateUrl: './on-behalf-of-remotelogin-tabs.component.html',
+  styleUrl: './on-behalf-of-remotelogin-tabs.component.scss'
+})
+export class OnBehalfOfRemoteloginTabsComponent implements OnInit, OnDestroy{
+filteredTabs: any[] = [];
+  loading = false
+  rejectedRemoteLoginRequestsCount = 0;
+  waitingForApprovalRemoteLoginCount = 0;
+  approvedRemoteLoginRequestsCount = 0;
+  processedRemoteLoginRequestsCount = 0;
+  cancelRemoteLoginRequestsCount = 0;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
+  navTabs: any[] = [
+    {
+      label: 'Waiting For Approval',
+      link: 'waiting-for-approval',
+      icon: '/time-off-icon/waiting-for-approval-icon.png',
+      permission: { feature: 'Waiting For Approval (On Behalf Of RemoteLogin)', action: 'view' },
+    },
+    {
+      label: 'Approved',
+      link: 'approved',
+      icon: '/time-off-icon/approved-icon.png',
+      permission: { feature: 'Approved (On Behalf Of RemoteLogin)', action: 'view' },
+    },
+    {
+      label: 'Processed',
+      link: 'processed',
+      icon: '/time-off-icon/processed-icon.png',
+      permission: { feature: 'Processed (On Behalf Of RemoteLogin)', action: 'view' },
+    },
+    {
+      label: 'Rejected',
+      link: 'rejected',
+      icon: '/time-off-icon/rejected-icon.png',
+      permission: { feature: 'Rejected (On Behalf Of RemoteLogin)', action: 'view' },
+    },
+    {
+      label: 'Cancelled',
+      link: 'cancelled',
+      icon: '/time-off-icon/cancelled-icon.png',
+      permission: { feature: 'Cancelled (On Behalf Of RemoteLogin)', action: 'view' },
+    },
+  ];
+
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    public rbac: RbacService
+  ) {
+    effect(() => {
+      if (this.http.onBehlafOfRemoteLoginSignal()) {
+        this.http.onBehalfOfRemoteLoginSelectedEmp$.subscribe((emp: number) => {
+          if (emp) {
+            this.getRemoteLoginRequest(emp);
+          } else {
+            this.resetWFHCounts();
+          }
+        });
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+
+  getRemoteLoginRequest(employeeId: number) {
+    this.loading = true
+    const selectedYear = new Date().getFullYear();
+    this.http.getFilterOnBehalfRemoteLoginDataByID(employeeId, selectedYear).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        console.log('remote login data', response);
+        if (Array.isArray(response)) {
+          const waiting = response.filter((item: { status: string; }) => item.status === 'Waiting for Approval');
+          const approved = response.filter((item: { status: string; }) => item.status === 'Approved');
+          const rejected = response.filter((item: { status: string; }) => item.status === 'Rejected');
+          const processed = response.filter((item: { status: string; }) => item.status === 'Processed');
+          const cancelled = response.filter((item: { status: string; }) => item.status === 'Cancelled');
+
+          // Count Assign
+          this.waitingForApprovalRemoteLoginCount = waiting.length;
+          this.approvedRemoteLoginRequestsCount = approved.length;
+          this.rejectedRemoteLoginRequestsCount = rejected.length;
+          this.processedRemoteLoginRequestsCount = processed.length;
+          this.cancelRemoteLoginRequestsCount = cancelled.length
+          this.updateNavTabs();
+          this.loading = false
+        } else {
+          console.error('Invalid response format');
+        }
+      },
+      error: (reason: any) => {
+        this.loading = true;
+        console.log('remote login data', reason);
+      }
+    });
+  }
+
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    });
+  }
+
+  updateNavTabs() {
+    this.navTabs = [
+      {
+        label: 'Waiting For Approval',
+        link: 'waiting-for-approval',
+        icon: '/time-off-icon/waiting-for-approval-icon.png',
+        count: this.waitingForApprovalRemoteLoginCount,
+        permission: { feature: 'Waiting For Approval (On Behalf Of RemoteLogin)', action: 'view' },
+      },
+      {
+        label: 'Approved',
+        link: 'approved',
+        icon: '/time-off-icon/approved-icon.png',
+        count: this.approvedRemoteLoginRequestsCount,
+        permission: { feature: 'Approved (On Behalf Of RemoteLogin)', action: 'view' },
+      },
+      {
+        label: 'Processed',
+        link: 'processed',
+        icon: '/time-off-icon/processed-icon.png',
+        count: this.processedRemoteLoginRequestsCount,
+        permission: { feature: 'Processed (On Behalf Of RemoteLogin)', action: 'view' },
+      },
+      {
+        label: 'Rejected',
+        link: 'rejected',
+        icon: '/time-off-icon/rejected-icon.png',
+        count: this.rejectedRemoteLoginRequestsCount,
+        permission: { feature: 'Rejected (On Behalf Of RemoteLogin)', action: 'view' },
+      },
+      {
+        label: 'Cancelled',
+        link: 'cancelled',
+        icon: '/time-off-icon/cancelled-icon.png',
+        count: this.cancelRemoteLoginRequestsCount,
+        permission: { feature: 'Cancelled (On Behalf Of RemoteLogin)', action: 'view' },
+      },
+    ];
+    this.filterTabsByRbac();
+  }
+
+  resetWFHCounts(): void {
+    this.waitingForApprovalRemoteLoginCount = 0;
+    this.approvedRemoteLoginRequestsCount = 0;
+    this.rejectedRemoteLoginRequestsCount = 0;
+    this.processedRemoteLoginRequestsCount = 0;
+    this.cancelRemoteLoginRequestsCount = 0;
+    this.loading = false;
+    this.updateNavTabs();
+  }
+
+  ngOnDestroy(): void {
+    this.http.onBehalfOfWFHSelectedEmp$.next(null);
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+}

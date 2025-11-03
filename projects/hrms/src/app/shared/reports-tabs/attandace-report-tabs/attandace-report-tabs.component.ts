@@ -72,6 +72,13 @@ export class AttandaceReportTabsComponent {
       description: MODULE_INFOS.ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO,
       permission: { feature: 'Regularization Report', action: 'view' }
     },
+    {
+      label: 'Remote Login Report',
+      route: '/reports/attendence-reports/remotelogin-report',
+      icon: '/time-off-icon/WFH-icon.png',
+      description: MODULE_INFOS.ATTENDANCE_REMOTE_LOGIN_REPORTS_MODULE_INFO,
+      permission: { feature: 'Remote Login Report', action: 'view' }
+    },
   ];
 
   constructor(public rbac: RbacService) { }

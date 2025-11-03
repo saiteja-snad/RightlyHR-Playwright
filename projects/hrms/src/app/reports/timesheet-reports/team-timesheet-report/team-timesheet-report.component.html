@@ -1,0 +1,192 @@
+<div class="custom-main-component-container">
+  <div class="component-header-content">
+    <!-- Header -->
+    <app-reports-header/>
+
+    <form autocomplete="off" [formGroup]="TeamTimesheetReportForm" (ngSubmit)="generateteamTimesheetReport(page,pageSize,true,true)" *ngIf="TeamTimesheetReportForm">
+      <div class="d-flex align-items-center gap-3">
+        @if(rbac.allowedToAccess('Team Timesheet Report - Generate.view')){
+        <button type="button" class="clear-all-btn" [disabled]="
+           TeamTimesheetReportForm.get('clientId')?.value == null &&
+          TeamTimesheetReportForm.get('projectId')?.value == null &&
+           TeamTimesheetReportForm.get('employeid')?.value == null &&
+          TeamTimesheetReportForm.get('dateRange')?.value == null &&
+          TeamTimesheetReportForm.get('billable')?.value == null &&
+          TeamTimesheetReportForm.get('status')?.value == null
+        " (click)="clearAllFilters()">
+          @if(isFilterApplied()) {
+          Clear All
+         }
+        </button>
+          <!-- Client-->
+         <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="clientDropdownList" optionLabel="label" optionValue="value" [filter]="true"
+              formControlName="clientId" placeholder="Please select client" class="form-select custom-select"
+              (onChange)="onClientChange($event)">
+            </p-select>
+          </div>
+        </div>      
+
+        <!-- Project-->
+       <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="projectsList" optionLabel="label" optionValue="value" [filter]="true"
+              placeholder="Please select project" formControlName="projectId" class="form-select custom-select"
+              (onChange)="onProjectChange($event)">
+            </p-select>
+          </div>
+        </div>
+        <!-- Employee-->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-multiSelect-content">
+            <p-multiSelect [options]="employeeData" optionLabel="name" optionValue="id" [filter]="true"
+              defaultLabel="Please select resource" formControlName="employeid"
+              class="form-select custom-select"></p-multiSelect>
+          </div>
+        </div>
+        <!-- Date Range -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-date-range-picker">
+            <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'" selectionMode="range"
+              [showIcon]="true" [readonlyInput]="true" [maxDate]="today" />
+          </div>
+        </div>
+      
+
+        <!-- Belaible -->
+         <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="BillableOptions"optionLabel="key" filterBy="key"
+              formControlName="billable" placeholder="Please select billable" class="form-select custom-select"
+              filterPlaceholder="Search leave type">
+            </p-select>
+          </div>
+        </div>
+     
+        <!-- Status-->
+       <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="TimesheetStatus" [filter]="true" optionLabel="key" filterBy="key"
+              formControlName="status" placeholder="Please select status" class="form-select custom-select"
+              filterPlaceholder="Search leave type">
+            </p-select>
+          </div>
+        </div>   
+           }
+        <!-- Buttons -->
+            <!-- Buttons -->
+        <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Team Timesheet Report - Generate.view')){
+          <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled ">
+            @if(spinnerLoader1){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
+            }
+          </button>
+          }
+
+          @if(rbac.allowedToAccess('Team Timesheet Report - Generate.view') && rbac.allowedToAccess('Team Timesheet Report - Export.view')){
+          <button type="button" class="custom-btn btn-primary" (click)="exportTeamTimesheetReport()"
+            [disabled]="filteredtimesheetsummeryRecord.length == 0 || disableBtn">
+            @if(spinnerLoader2){
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
+          </button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="custom-table-content">
+    @if (!isLoading) {
+    <table id="leaveReportTable" class="w-100">
+      <thead>
+        <th>Worked Date</th>
+        <th>Employee ID</th>
+        <th>Employee Name</th>
+        <th>Client Name</th>
+        <th>Project Name</th>
+        <th>Description</th>
+        <th>Logged Hrs</th>
+        <th>Billable/Non-Billable</th>
+        <th>Status</th>
+        <th>Submitted Date</th>
+        <th>Approved By</th>
+      </thead>
+      <tbody>
+  @if (!filteredtimesheetsummeryRecord || filteredtimesheetsummeryRecord.length === 0) {
+    <tr>
+      <td colspan="10" class="text-center">
+        <app-no-data-found />
+      </td>
+    </tr>
+  }
+  @else {
+    @for (record of filteredtimesheetsummeryRecord; track $index) {
+      <tr>
+        <td>{{ record.date ? (record.date | date) : '-' }}</td>
+        <td>{{ record.fusionEmpId ?? '-' }}</td>
+        <td>{{ record.employee ?? '-' }}</td>
+        <td>{{ record.client ?? '-' }}</td>
+        <td>{{ record.project ?? '-' }}</td>
+         <td>
+          <div class="d-flex align-items-center gap-1">
+                <!-- Show info icon if description is present -->
+           <ng-container *ngIf="record.description && record.description.trim() !== '' && record.description.trim() !== '-'; else noDescription">
+                  <div [ngbPopover]="popContent">
+                    <app-info-icon />
+                  </div>
+                </ng-container>
+              
+                <!-- Fallback when no description -->
+                <ng-template #noDescription>
+                  <div>-</div>
+                </ng-template>
+              
+                <!-- Popover content -->
+                <ng-template #popContent>
+                  {{ record.description }}
+                </ng-template>
+              </div>                 
+          </td>
+        <td>{{ record.hoursWorked ?? '-' }}</td>
+        <td>{{ record.billableStatus ?? '-' }}</td>
+       <td>{{ record.approvalStatus === 'Processed' ? 'Approved' : (record.approvalStatus ?? '-') }}</td>
+        <td>{{ record.submittedDate ? (record.submittedDate | date) : '-' }}</td>
+        <td>{{ record.approvedBy ?? '-' }}</td>
+      </tr>
+    }
+  }
+</tbody>
+    </table>
+    }
+    @else{
+    <app-data-loader-content />
+    }
+  </div>
+  @if(collectionSize > 0){
+  <div class="pagination-content">
+    <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center gap-3 p-2">
+        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+          (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <span class="pagination-label text-nowrap">
+          Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)}}
+          of {{collectionSize }}
+        </span>
+      </div>
+      <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+        (onPageChange)="onPageChange($event)"></p-paginator>
+    </div>
+  </div>
+  }
+</div>

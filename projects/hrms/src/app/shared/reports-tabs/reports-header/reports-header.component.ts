@@ -74,5 +74,37 @@ export class ReportsHeaderComponent implements OnInit {
     else if (this.router.url === '/reports/org-leave-balance') {
       this.componentname = 'Org Leave Balance';
     }
+
+    else if (this.router.url === '/reports/timesheet-reports/my-timesheet-report') {
+      this.componentname = 'My Timesheet';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/timesheet-summary-monthly-report') {
+      this.componentname = 'Timesheet Summary';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/team-timesheet-report') {
+      this.componentname = 'Team Timesheet';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/pending-approval-status-report') {
+      this.componentname = 'Pending Approval Status';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/project-effort-report') {
+      this.componentname = 'Project Effort';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/utilization-report') {
+      this.componentname = 'Utilization';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/resource-availability-report') {
+      this.componentname = 'Resource Availability';
+    }
+     else if (this.router.url === '/reports/timesheet-reports/attendance-vs-timesheet-report') {
+      this.componentname = 'Attendance vs Timesheet';
+     }
+    else if (this.router.url === '/reports/attendence-reports/remotelogin-report') {
+      this.componentname = 'Remote Login Report';
+    }
+    else if(this.router.url === '/reports/expense-reports'){
+      this.componentname = 'Expense Report'
+
+    }
   }
 }

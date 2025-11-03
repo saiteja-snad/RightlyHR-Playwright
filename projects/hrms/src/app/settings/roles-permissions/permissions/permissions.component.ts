@@ -282,6 +282,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     const viewOnlyFields = [
       'Leave Allocation Tab',
       'Flexible Leave Allocation Tab',
+      'Flexible WFH Allocation Tab',
       'Load Entitlements Tab',
       'Attendance Eligibility Criteria Tab',
       'Comp Off Entitlement Tab',
@@ -302,7 +303,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Desk Allocation - Inactive',
       'Desk Allocation - Create',
       'Team Tickets Tab',
-      'Late Login Alert Configuration Tab'
+      'Late Login Alert Configuration Tab',
+      'Extra Hours Configuration Tab'
     ];
     return (
       viewOnlyFields.includes(field) &&
@@ -460,7 +462,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Weekends Published Tab',
   ];
   settingsManageDSTTab = ['DST Pending Tab', 'DST Published Tab'];
-  settingsManageExpenseTab = ['Expenes Configuartion', 'Expense Allowed Days'];
+  settingsManageExpenseTab = [
+    'Expenes Configuartion',
+    'Expense Allowed Days',
+    'Expense Threshold Validation',
+    'Global Expense Configuration'
+  ]
   
     settingsAttendanceLockingTab = [
     'Pending Attendance Locking',
@@ -477,6 +484,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Leave Category Pending Tab',
     'Leave Category Published Tab',
   ];
+  flexibleWFHTabsFields=[
+    'Active Allocations Tab',
+    'Allocation History Tab'
+  ]
   attendanceEligibilityFields = [
     'Comp Off Entitlement Tab',
     'WFH Entitlement Tab',
@@ -486,6 +497,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Regularization Tab',
     'Attendance Regularization Eligibility Tab',
     'Eligibility Global Permissions Tab',
+    'Extra Hours Configuration Tab'
   ];
   settingsAssetConfigurationFields = [
     'Vendor Details',
@@ -524,6 +536,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Blood Bank',
     'Phone Book',
     'Contacts Directory',
+    'Cards Management',
   ];
   expensesModuleTabs = [
     'Draft Tab',
@@ -557,6 +570,12 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Desk Allocation - Under Maintenance',
     'Desk Allocation - Inactive',
     'Desk Allocation - Waiting For Approval',
+  ];
+   cardsModuleFields = [
+    'Cards Allocated',
+    'Cards Available',
+    'Cards Expired',
+    'Cards Hold',
   ];
   deskAllocationAllTabActions = [
     'Request for Allocation',
@@ -597,6 +616,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Module',
     'Permissions Module',
     'Regularization Module',
+    'Extra Hours Module',
     'On Behalf Of Module',
     'On Behalf Of Approvals Module',
     'Global Permissions Module',
@@ -653,6 +673,16 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Processed (Regularization)',
     'My Team (Regularization)',
   ];
+
+  extraHoursModuleSubTabs = [
+    'Waiting For Approval (Extra Hours)',
+    'Approved (Extra Hours)',
+    'Rejected (Extra Hours)',
+    'Processed (Extra Hours)',
+    'My Team (Extra Hours)',
+    'All Employees (Extra Hours)'
+  ];
+
   onBehalfOfModuleSubTabs = [
     'Waiting For Approval (On Behalf Of)',
     'Approved (On Behalf Of)',
@@ -680,6 +710,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Comp Off Tab',
     'Permissions Tab',
     'Regularization Tab',
+    'Extra Hours Tab',
     'Separation Request Tab',
     'Recall Request Tab',
     'Trainee Details Tab',
@@ -703,6 +734,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   pendingApprovalRegularizationSubTabs = [
     'For You (Regularization)',
     'For Role (Regularization)',
+  ];
+  pendingApprovalExraHoursSubTabs = [
+    'For You (Extra Hours)',
+    'For Role (Extra Hours)',
   ];
   pendingApprovalSeparationRequestsSubTabs = [
     'For You (Separation Requests)',
@@ -737,6 +772,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Org Leave Balance',
     'Team Leave Balance Summary',
     'Team Leave Balance',
+    'Timesheet Reports',
+    'Expense Reports'
   ];
   standardReportsTabsFields = [
     'Employee Master Data',
@@ -784,6 +821,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Regularization Report',
     'Regularization Report - Generate',
     'Regularization Report - Export',
+    'Remote Login Report',
+    'Remote Login Report - Generate',
+    'Remote Login Report - Export',
   ];
   attendanceReportsEmployeeTeamTabsFields = [
     'Attendance All Employees List(Leaves)',
@@ -798,6 +838,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance All Employees List(WFH)',
     'Attendance Team Manager List(WFH)',
     'My Team Report(WFH)',
+     'Attendance All Employees List(RemoteLogin)',
+    'Attendance Team Manager List(RemoteLogin)',
+    'My Team Report(RemoteLogin)',
     'Attendance All Employees List(Permission)',
     'Attendance Team Manager List(Permission)',
     'My Team Report(Permission)',
@@ -805,6 +848,48 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Team Manager List(Regularization)',
     'My Team Report(Regularization)',
   ];
+
+  timesheetReportsTabsFields = [
+    'My Timesheet Report',
+    'My Timesheet Report - Generate',
+    'My Timesheet Report - Export',
+    'My Timesheet Report - Summary',
+    'My Timesheet Report - Summary - Generate',
+    'My Timesheet Report - Summary - Export',
+    'Timesheet Summary Monthly Report',
+    'Timesheet Summary Monthly Report - Generate',
+    'Timesheet Summary Monthly Report - Export',
+    'Team Timesheet Report',
+    'Team Timesheet Report - Generate',
+    'Team Timesheet Report - Export',
+    'Team Timesheet Report - Admin-Approval',
+    'Pending Approval Status Report',
+    'Pending Approval Status Report - Generate',
+    'Pending Approval Status Report - Export',
+    'Project Effort Report',
+    'Project Effort Report - Generate',
+    'Project Effort Report - Export',
+    'Utilization Report',
+    'Utilization Report - Generate',
+    'Utilization Report - Export',
+    'Resource Availability Report',
+    'Resource Availability Report - Generate',
+    'Resource Availability Report - Export',
+    // 'Attendance vs Timesheet Report',
+    // 'Attendance vs Timesheet Report - Generate',
+    // 'Attendance vs Timesheet Report - Export',
+  ];
+
+    expenseReportsEmployeeTeamTabsFields = [
+    'Expense Report - Generate',
+    'Expense Report All Employees List',
+    'Expense Report Manager List',
+    'My Team Report(Expenses)',
+    'Expenses All Employees List',
+    'Expenses Team Manager List',
+    'Expense Report - Export'
+  ]
+
   assetManagementTabsFields = [
     'Asset Management - Create',
     'Asset Management - All',
@@ -862,6 +947,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Contact Details',
     'My Info Emergency Contact Details',
     'My Info Education Details',
+    'My Skills',
     'My Info Identity Details',
     'My Info Family Details',
     'My Info Bank Details',
@@ -881,6 +967,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'My Info Desk Details',
     'My Info Asset Details',
     'My Info Separation Request Button',
+    'My Info Card Details',
   ];
   myInfoSeparationRequestFields = ['Raise No Due', 'Recall', 'Early relieving'];
   myInfoNoDueClearanceFields = [
@@ -910,6 +997,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Separation Request',
     'No Due Form',
     'Employee Info Contract Conversion Request',
+    'Employee Info Card Details'
   ];
   employeeInfoJobModuleUpdateDisabledFields = [
     'Employee Info Asset Details',
@@ -1101,6 +1189,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Employee Info Bank Details',
     'Employee Info Visa Details',
     'Employee Info Documents Verification',
+    'Employee My Skills'
   ];
   selectAllProjectManagementTabs = [
     'Project Details Tab',
@@ -1124,6 +1213,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Client Document Type',
     'Letter Configurations',
     'Project Management Authority',
+    'Project Role',
     'Letter Frequency Configurations'
   ];
 selectAllLettersTabs=[
@@ -1131,12 +1221,18 @@ selectAllLettersTabs=[
 ]
 
 selectAllOnBehalfOf = [
-  'On Behalf Of', 'On Behalf Of WFH'
+  'On Behalf Of', 'On Behalf Of WFH','On Behalf Of RemoteLogin'
+
 ]
 
 selectAllOnBehalfOfWFH = [
   'Waiting For Approval (On Behalf Of WFH)', 'Approved (On Behalf Of WFH)', 'Processed (On Behalf Of WFH)', 'Rejected (On Behalf Of WFH)'
-  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'Request On Behalf Of WFH Button'
+  , 'Cancelled (On Behalf Of WFH)', 'On Behalf Of WFH All Employees', 'On Behalf Of WFH Team','Request On Behalf Of WFH Button'
+]
+
+selectAllOnBehalfOfRemoteLogin = [
+  'Waiting For Approval (On Behalf Of RemoteLogin)', 'Approved (On Behalf Of RemoteLogin)', 'Processed (On Behalf Of RemoteLogin)', 'Rejected (On Behalf Of RemoteLogin)'
+  , 'Cancelled (On Behalf Of RemoteLogin)', 'On Behalf Of RemoteLogin All Employees', 'On Behalf Of RemoteLogin Team','Request On Behalf Of RemoteLogin Button'
 ]
   // Generic toggle function for checkboxes
   toggleSelectAll(
@@ -1545,7 +1641,15 @@ selectAllOnBehalfOfWFH = [
     }
     return false;
   }
-
+ iscardsDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
   isdeskallActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
@@ -1926,6 +2030,16 @@ selectAllOnBehalfOfWFH = [
   }
 
   isOnBehalfOfWFHTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isOnBehalfOfRemoteLoginTabsCheckboxDisabled(per:any, action: 'View' | 'Update' | 'Create' | 'Delete') : boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }

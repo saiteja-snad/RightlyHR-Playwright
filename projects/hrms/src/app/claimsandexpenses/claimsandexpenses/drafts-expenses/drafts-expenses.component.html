@@ -13,6 +13,7 @@
             <thead>
                 <th>{{'Expense Title' | translate}}</th>
                 <th>{{'Expense Date' | translate}}</th>
+                <th>{{"Applied Date"}}</th>
                 <th>{{'Total Amount' | translate}}</th>
                 <th>{{'Status' | translate}}</th>
                 @if(rbac.allowedToAccess('Draft Tab.update')){
@@ -23,8 +24,9 @@
                 <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let exp of expenesEmplyeedata | async">
                         <td>{{ exp.expenses_Title }}</td>
+                        <td >{{ exp?.expenseitem?.[0]?.expense_Date | dateformat }}</td>
                         <td>{{ exp.applied_date | dateformat }}</td>
-                        <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+                        <td><span *ngIf="exp.totalExpenseAmount" class="me-1">₹</span>{{ exp.totalExpenseAmount }}</td>
                         <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
                         </td>
                         @if(rbac.allowedToAccess('Draft Tab.update')){
@@ -34,7 +36,7 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item"
+                                    <li *ngIf="!selectemp"><a class="dropdown-item"
                                             (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
                                             <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
                                     </li>
@@ -131,13 +133,12 @@
                             <div class="col-md-3">
                                 <label class="form-label custom-label">{{'Expense Type' | translate}}
                                     <span class="text-danger">*</span></label>
-                                <select class="form-select custom-select" formControlName="expenseId"
-                                    (change)="onchangeexpnes()">
-                                    <option [ngValue]="null" disabled>Select Expense Type</option>
-                                    <option *ngFor="let item of expense | async" [value]="item.expenseId">
-                                        {{ item.expenseType }}
-                                    </option>
-                                </select>
+                                <div class="custom-p-select-content">
+                                    <p-select [options]="expense" optionLabel="expenseType" optionValue="expenseId"
+                                        placeholder="Select Expense Type" formControlName="expenseId" [filter]="true"
+                                        [resetFilterOnHide]="true" filterBy="expenseType" (change)="onchangeexpnes()"
+                                        class="form-select custom-select"></p-select>
+                                </div>
                                 <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('expenseId')?.errors?.['required']">
@@ -152,21 +153,17 @@
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                                <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
+                                <div *ngIf="item.get('item_Name')?.invalid &&  item.get('item_Name')?.touched"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
-                                        Expense item is required</div>
+                                        Expense Item is required</div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
-                                        Expense item must be less than 50 characters
+                                        Expense Item must be less than 50 characters
                                     </div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
-                                        Expense title must not contain only spaces
+                                        Expense Item must not contain only spaces
                                     </div>
-                                    <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
-                                        class="error-msg">
-                                        <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
-                                            Expense Type is required</div>
-                                    </div>
+
                                 </div>
                             </div>
 
@@ -176,6 +173,10 @@
                                         class="text-danger">*</span></label>
                                 <input type="date" class="form-control custom-input" formControlName="expense_Date"
                                     onkeypress="return false;" [min]="joiningDate" [max]="currentDate" />
+                                <div class="error-msg"
+                                    *ngIf="item.get('expense_Date')?.errors?.['required'] && item.get('expense_Date')?.touched">
+                                    Expense Date is required
+                                </div>
                             </div>
 
                             <!-- Amount -->
@@ -251,9 +252,9 @@
                                         class="text-danger">*</span></label>
 
                                 <input type="file" class="form-control custom-input px-0" accept=".pdf, image/*"
-                                    (change)="fileupload($event, i)">
+                                    (change)="fileupload($event, i)" (blur)="markFileTouched(i)">
 
-                                <div *ngIf="fileuploadhide">
+                                <div>
                                     <div class="error-msg"
                                         *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
                                         File is required
@@ -276,8 +277,7 @@
                         </div>
                     </div>
                     <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
-                        <b>Total Amount : </b>{{
-                        totalexpensesamount > 0 ? totalexpensesamount : '' }}
+                        <b>Total Amount : </b> {{ totalexpensesamount > 0 ? (totalexpensesamount | currency:'INR':'symbol':'1.2-2') : '' }}
                     </div>
                 </div>
                 <div class="custom-modal-footer" *ngIf="expenseItems.length > 0">

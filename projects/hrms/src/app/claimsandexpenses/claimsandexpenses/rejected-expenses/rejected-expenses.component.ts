@@ -22,7 +22,7 @@ import { DownloadExpenseComponent } from "../../download-expense/download-expens
   styleUrl: './rejected-expenses.component.scss'
 })
 
-export class RejectedExpensesComponent implements OnInit ,OnDestroy {
+export class RejectedExpensesComponent implements OnInit, OnDestroy {
   empinfo: any
   subscription!: Subscription;
   ExpenseImageUrl: any;
@@ -35,15 +35,23 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   searchTerm: any = '';
   selectemp: any;
   selectedYear: any;
-  selectedData={} as any;
+  seletedMouthly: any;
+  selectedData = {} as any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
-  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,private SelectedyeartimeOffService: TimeoffYearFilterService) { }
+  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, private SelectedyeartimeOffService: TimeoffYearFilterService) { }
 
   ngOnInit(): void {
     this.SelectedyeartimeOffService.selectedYear$.subscribe(year => {
       if (year !== null) {
         this.selectedYear = year;
+        this.SelectedyeartimeOffService.selectedMounthly$.subscribe(mounthly => {
+          if (mounthly !== null) {
+            this.seletedMouthly = mounthly;
+
+          }
+        })
+
         this.http.selectedEmployeeIdExpenses$.subscribe((id) => {
           if (id) {
             this.selectemp = id;
@@ -70,26 +78,27 @@ export class RejectedExpensesComponent implements OnInit ,OnDestroy {
   }
   //download expenses popup open function
   openpopupforDownload(content: any, expenseDetails: any) {
-     this.selectedData = expenseDetails;
+    this.selectedData = expenseDetails;
     this.modalService.open(content, { size: 'xl', centered: true });
   }
 
   getexpensesheaderbyemployeeid(): void {
-    let empId = this.selectemp ?? this.empinfo.employeeId;
+    let empId = this.selectemp ?? this.empinfo?.employeeId;
     this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Rejected&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${empId}&status=Rejected&month=${this.seletedMouthly}&year=${this.selectedYear}&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.loading = false
-          this.expenesEmplyeedata.next(data)
+          const filteredData = data.filter((item: any) => !item.expenseSummary);
+          this.expenesEmplyeedata.next(filteredData)
 
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
-
+  
   viewItem(expid: number,) {
     this.updataid = expid;
     this.subscription = this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({

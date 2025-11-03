@@ -36,13 +36,11 @@
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
-                            <td>{{ data?.employee?.workPhoneCountryCode || '-' }} {{ data?.employee?.workPhoneNumber ||
-                                '' }}</td>
+                            <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{data?.project?.projectName}}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client
-                            Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
+                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">

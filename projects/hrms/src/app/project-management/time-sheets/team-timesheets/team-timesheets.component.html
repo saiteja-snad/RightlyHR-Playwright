@@ -5,7 +5,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <div class="total-hrs" >{{"Total Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
+            <div class="total-hrs">{{"Total Hours" }} :<span class="total-duration ms-1">{{ totalhrs}} Hrs</span></div>
 
             <form [formGroup]="datepickerForm" (ngSubmit)="onSubmit()">
                 <div class="d-flex gap-3 align-items-center">
@@ -16,42 +16,48 @@
                         </div>
                     </div>
 
-                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My Team(Timesheet).view') ) {
+                    @if(rbac.allowedToAccess('All Employees (Timesheet).view') && rbac.allowedToAccess('My
+                    Team(Timesheet).view') ) {
                     <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
-                                optionLabel="label" formControlName="resourceId" optionValue="value" (onChange)="onCheckemployee($event.value)"  [showClear]="true"
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="label" formControlName="resourceId"
+                                optionValue="value" (onChange)="onCheckemployee($event.value)" [showClear]="true"
                                 placeholder="please select employee" class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
                     @else if(rbac.allowedToAccess('All Employees (Timesheet).view')) {
-                    <div class="d-flex align-items-center gap-2" >
+                    <div class="d-flex align-items-center gap-2">
                         <label for="education" class="form-label custom-label text-nowrap filter-labels m-0">
                             {{'Select Employee'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label" [resetFilterOnHide]="true"
-                                optionLabel="label" optionValue="value" formControlName="resourceId" (onChange)="onCheckemployee($event.value)" [showClear]="true"
-                                placeholder="please select employee" class="form-select custom-select"></p-select>
+                            <p-select [options]="activeEmplist" [filter]="true" filterBy="label"
+                                [resetFilterOnHide]="true" optionLabel="label" optionValue="value"
+                                formControlName="resourceId" (onChange)="onCheckemployee($event.value)"
+                                [showClear]="true" placeholder="please select employee"
+                                class="form-select custom-select"></p-select>
                         </div>
                     </div>
                     }
                     @else if(rbac.allowedToAccess('My Team (Timesheet).view')) {
-                    <div class="d-flex align-items-center gap-2" >
+                    <div class="d-flex align-items-center gap-2">
                         <label class="form-label filter-labels m-0">{{'My Team'| translate}}</label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false" name="myteamemployees"
-                                placeholder="please select employee" formControlName="resourceId" [filter]="true" resetFilterOnHide="true"
-                                class="form-select custom-select" [autoDisplayFirst]="false" required>
+                            <p-select [options]="resourcesList" optionLabel="fullName" [showClear]="false"
+                                name="myteamemployees" placeholder="please select employee" formControlName="resourceId"
+                                [filter]="true" resetFilterOnHide="true" class="form-select custom-select"
+                                [autoDisplayFirst]="false" required>
                             </p-select>
                         </div>
                     </div>
                     }
 
                     <div>
-                        <button class="custom-btn btn-primary" type="submit" [disabled]="datepickerForm.invalid">Apply</button>
+                        <button class="custom-btn btn-primary" type="submit"
+                            [disabled]="datepickerForm.invalid">Apply</button>
                     </div>
                 </div>
             </form>
@@ -69,14 +75,16 @@
                 <table class="w-100">
                     <thead>
                         <th>Employee Name</th>
-                       <th *ngFor="let date of dateHeaders" [innerHTML]="date"></th>
+                        <th *ngFor="let date of dateHeaders" [innerHTML]="date"></th>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(teamSummaryData?.length ?? 0) > 0; else noDataTemplate">
                             <tr *ngFor="let emp of teamSummaryData">
-                                <td><a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{ emp.employee.name}}</a></td>
+                                <td><a class="project-name cursor" (click)="navigateView(emp.employee.id)">{{
+                                        emp.employee.name}}</a></td>
                                 <td *ngFor="let day of emp.dailyData" [style.color]="day.dailySummary.colour">
-                                    {{(day.dailySummary.status && day.dailySummary.status !== '-' && day.dailySummary.status !==
+                                    {{(day.dailySummary.status && day.dailySummary.status !== '-' &&
+                                    day.dailySummary.status !==
                                     'Not Logged' && day.dailySummary.loggedHHMM === '0:00') ? day.dailySummary.status :
                                     day.dailySummary.loggedHHMM }}
                                 </td>
@@ -95,23 +103,34 @@
                 }
             </div>
 
-            <div class="downdisplay-content d-flex justify-content-end align-items-center py-2 px-3" *ngIf="(teamSummaryData?.length ?? 0) > 0">
+            <div class="downdisplay-content d-flex justify-content-end align-items-center py-2 px-3"
+                *ngIf="(teamSummaryData?.length ?? 0) > 0">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="d-flex align-items-center gap-1">
-                        <div class="circular-dot circle-green"></div>
-                        <div class="status-text">Approved</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-weakend"></div>
+                        <div class="status-text">Weekend</div>
                     </div>
                     <div class="d-flex align-items-center gap-1">
+                        <div class="circular-dot circle-holiday "></div>
+                        <div class="status-text">Holidays</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-leave"></div>
+                        <div class="status-text">Leaves</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="circular-dot circle-blue"></div>
+                        <div class="status-text">Draft</div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
                         <div class="circular-dot circle-red"></div>
-                        <div class="status-text">Rejected</div>
+                        <div class="status-text">Pending</div>
                     </div>
-                    <div class="d-flex align-items-center gap-1">
-                        <div class="circular-dot circle-yellow"></div>
-                        <div class="status-text">Waiting for Approval</div>
-                    </div>
+
                 </div>
             </div>
-           
+
             <div class="pagination-content" *ngIf="teamSummaryData.length > 0">
                 <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
                     <div class="d-flex align-items-center gap-3 p-2">
@@ -121,11 +140,13 @@
                             </option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} 
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
+                            +rows) }}
                             of {{ collectionSize }}
                         </span>
                     </div>
-                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize" (onPageChange)="onPageChange($event)"></p-paginator>
+                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                        (onPageChange)="onPageChange($event)"></p-paginator>
                 </div>
             </div>
         </div>

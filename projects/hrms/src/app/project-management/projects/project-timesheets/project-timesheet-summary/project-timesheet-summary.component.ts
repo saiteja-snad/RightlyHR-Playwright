@@ -7,6 +7,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { backgroundSize } from 'html2canvas/dist/types/css/property-descriptors/background-size';
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -35,6 +36,15 @@ export class ProjectTimesheetSummaryComponent {
   gaugeOptions: any;
   completionRate = 0;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  estimatedlabels = [
+    { label: 'Allocated Hours', color: '#0F358A' },
+    { label: 'Actual Hours', color: '#A2B5E2' },
+    { label: 'Over Due', color: '#FF4848' }
+  ];
+  billablelabels = [
+    { label: 'Billable', color: '#0F358A' },
+    { label: 'Non-Billable', color: '#A2B5E2' },
+  ];
 
   constructor(private router: Router, public formValidation: FormValidationsService,
     private http: HttpService, private route: ActivatedRoute) { }
@@ -190,10 +200,10 @@ export class ProjectTimesheetSummaryComponent {
 
             this.estimatedVsActualOptions = {
               responsive: true,
+              barThickness: 30,
               plugins: {
                 legend: {
                   display: false,
-                  position: 'top'
                 },
               },
               scales: {
@@ -232,63 +242,64 @@ export class ProjectTimesheetSummaryComponent {
       }
 
       this.http.getData(`ProjectManagementGraph/project/billable-non-billable/${projectid}`).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (res: any) => {
-            // Correct extraction based on your actual structure
-            const apiData = res?.data?.data || res?.data || [];
+        next: (res: any) => {
+          // Correct extraction based on your actual structure
+          const apiData = res?.data?.data || res?.data || [];
 
-            if (!Array.isArray(apiData) || apiData.length === 0) {
-              console.warn('No valid billable data found:', apiData);
-              this.billableData = [];
-              return;
-            }
-
-            // Extract data safely
-            const labels = apiData.map((item: any) => item.name || 'N/A');
-            const billable = apiData.map((item: any) => item.billableHours || 0);
-            const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
-
-            // Chart data
-            this.billableData = {
-              labels,
-              datasets: [
-                {
-                  label: 'Billable',
-                  backgroundColor: '#283593',
-                  data: billable,
-                  stack: 'combined'
-                },
-                {
-                  label: 'Non-Billable',
-                  backgroundColor: '#9FA8DA',
-                  data: nonBillable,
-                  stack: 'combined'
-                },
-              ],
-            };
-
-            // Chart options
-            this.billableOptions = {
-              responsive: true,
-              scales: {
-                x: { stacked: true },
-                y: {
-                  stacked: true,
-                  beginAtZero: true,
-                  title: { display: true, text: 'Hours' },
-                  ticks: { stepSize: 50 } // optional: split by 50s
-                },
-              },
-              plugins: {
-                legend: {
-                  display: false,
-                },
-              },
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching billable chart:', err);
+          if (!Array.isArray(apiData) || apiData.length === 0) {
+            console.warn('No valid billable data found:', apiData);
+            this.billableData = [];
+            return;
           }
-        });
+
+          // Extract data safely
+          const labels = apiData.map((item: any) => item.name || 'N/A');
+          const billable = apiData.map((item: any) => item.billableHours || 0);
+          const nonBillable = apiData.map((item: any) => item.nonBillableHours || 0);
+
+          // Chart data
+          this.billableData = {
+            labels,
+            datasets: [
+              {
+                label: 'Billable',
+                backgroundColor: '#283593',
+                data: billable,
+                stack: 'combined'
+              },
+              {
+                label: 'Non-Billable',
+                backgroundColor: '#9FA8DA',
+                data: nonBillable,
+                stack: 'combined'
+              },
+            ],
+          };
+
+          // Chart options
+          this.billableOptions = {
+            responsive: true,
+            barThickness: 30,
+            scales: {
+              x: { stacked: true, },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                title: { display: true, text: 'Hours' },
+                ticks: { stepSize: 50 } // optional: split by 50s
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching billable chart:', err);
+        }
+      });
     });
   }
 
@@ -312,7 +323,6 @@ export class ProjectTimesheetSummaryComponent {
       }
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          //  Define a proper interface for type safety
           interface LineData {
             date: string;
             remainingHours: number;
@@ -321,18 +331,45 @@ export class ProjectTimesheetSummaryComponent {
           const idealLine: LineData[] = res?.data?.idealLine || [];
           const actualLine: LineData[] = res?.data?.actualLine || [];
 
-          // Generate labels from ideal line dates
-          const labels = idealLine.map((item: LineData) =>
-            new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-          );
+          // Group by week (based on Monday–Sunday)
+          const groupByWeek = (data: LineData[]) => {
+            const weeks: { label: string; avgHours: number }[] = [];
+            if (!data.length) return weeks;
 
-          //  Extract remaining hours
-          const idealData = idealLine.map((item: LineData) => item.remainingHours);
-          const actualData = actualLine.map((item: LineData) => item.remainingHours);
+            const grouped: Record<string, LineData[]> = {};
+            data.forEach(item => {
+              const date = new Date(item.date);
+              const firstDayOfWeek = new Date(date);
+              firstDayOfWeek.setDate(date.getDate() - date.getDay()); // Sunday-based week start
+              const key = firstDayOfWeek.toISOString().split('T')[0];
+              if (!grouped[key]) grouped[key] = [];
+              grouped[key].push(item);
+            });
 
-          // Chart.js dataset
+            Object.entries(grouped).forEach(([weekStart, items]) => {
+              const start = new Date(weekStart);
+              const end = new Date(start);
+              end.setDate(start.getDate() + 6);
+              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+              const avgHours = items.reduce((sum, i) => sum + i.remainingHours, 0) / items.length;
+              weeks.push({ label, avgHours });
+            });
+
+            return weeks;
+          };
+
+          // Apply grouping
+          const idealWeeks = groupByWeek(idealLine);
+          const actualWeeks = groupByWeek(actualLine);
+
+          // Labels and data
+          const labels = idealWeeks.map(w => w.label);
+          const idealData = idealWeeks.map(w => w.avgHours);
+          const actualData = actualWeeks.map(w => w.avgHours);
+
+          //  Chart.js dataset
           this.burndownData = {
-            labels: labels,
+            labels,
             datasets: [
               {
                 label: 'Ideal Line',
@@ -355,31 +392,26 @@ export class ProjectTimesheetSummaryComponent {
             ],
           };
 
-          // ✅ Chart options
+          // Chart options
           this.burndownOptions = {
             plugins: {
               legend: {
-                display: false,
+                display: true,
                 position: 'top',
-                labels: { boxWidth: 12, color: '#333' }
+                labels: { boxWidth: 12, color: '#333' },
               },
-              tooltip: { mode: 'index', intersect: false }
+              tooltip: { mode: 'index', intersect: false },
             },
             scales: {
               x: {
-                title: { display: true, text: 'Date', color: '#333' },
-                grid: { display: false }
+                title: { display: true, text: 'Weeks', color: '#333' },
+                grid: { display: false },
               },
               y: {
                 title: { display: true, text: 'Remaining Hours', color: '#333' },
                 beginAtZero: true,
-                ticks: {
-                  stepSize: 1, // 👈 adds 100-unit intervals
-                },
-                grid: {
-                  color: '#e0e0e0'
-                }
-              }
+                grid: { color: '#e0e0e0' },
+              },
             },
             responsive: true,
             maintainAspectRatio: false,

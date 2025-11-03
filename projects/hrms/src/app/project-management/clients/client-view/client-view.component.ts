@@ -99,7 +99,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   // initialization of form
   resetForm() {
     this.datepickerForm.reset();
-    this.datepickerForm.get('projectId')?.disable();
+    //this.datepickerForm.get('projectId')?.disable();
     this.datepickerForm.get('resourceId')?.disable();
     this.http.clearRequestclienttimesheet();
     this.http.setRequestclienttimesheet(null);
@@ -412,9 +412,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   // Create reactive form
   createDatepickerForm() {
     this.datepickerForm = this.fb.group({
-      dateRange: [null, Validators.required],
-      projectId: [{ value: null, disabled: true }, Validators.required],
-      resourceId: [{ value: null, disabled: true }, Validators.required]
+      dateRange: [null],
+      projectId: [{ value: null}, Validators.required],
+      resourceId: [{ value: null }, Validators.required]
     });
   }
 

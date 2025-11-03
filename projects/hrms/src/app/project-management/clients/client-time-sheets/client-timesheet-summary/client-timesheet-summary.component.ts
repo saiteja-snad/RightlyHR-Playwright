@@ -441,8 +441,6 @@ export class ClientTimesheetSummaryComponent {
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
             const actualHours = chartData.map((item: any) => item.actualHours);
             const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
-
-
             this.estimatedVsActualData = {
               labels: labels,
               datasets: [
@@ -469,6 +467,7 @@ export class ClientTimesheetSummaryComponent {
 
             this.estimatedVsActualOptions = {
               responsive: true,
+              barThickness: 30,
               plugins: {
                 legend: {
                   display: false,
@@ -524,7 +523,6 @@ export class ClientTimesheetSummaryComponent {
 
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
-          console.log('API Response:', res);
           const chartData = res?.data?.data || [];
           if (!chartData.length) {
             this.billableData = { labels: [], datasets: [] };
@@ -563,6 +561,7 @@ export class ClientTimesheetSummaryComponent {
           // Chart options
           this.billableOptions = {
             responsive: true,
+            barThickness: 30,
             scales: {
               x: { stacked: true, title: { display: true, text: 'Projects' } },
               y: {
@@ -602,24 +601,19 @@ export class ClientTimesheetSummaryComponent {
         this.burndownData = [];
         return;
       }
-      // Base URL
+
       let apiUrl = `ProjectManagementGraph/client/burndownchart/${clientID}`;
-      // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-      // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
 
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
           const data = res?.data;
           const projectCharts = data?.projectBurndownCharts || [];
           if (!projectCharts.length) {
@@ -627,21 +621,44 @@ export class ClientTimesheetSummaryComponent {
             return;
           }
 
-          // Get the first project’s burndown data
           const project = projectCharts[0];
           const projectName = project.projectName || 'Project';
 
-          // Extract labels and datasets
-          const labels = project.idealLine.map((item: any) =>
-            new Date(item.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
-          );
+          // --- Group by Week ---
+          const idealLine = project.idealLine.map((item: any) => ({
+            date: new Date(item.date),
+            remainingHours: item.remainingHours
+          }));
+          const actualLine = project.actualLine.map((item: any) => ({
+            date: new Date(item.date),
+            remainingHours: item.remainingHours
+          }));
 
-          const idealValues = project.idealLine.map((item: any) => item.remainingHours);
-          const actualValues = project.actualLine.map((item: any) => item.remainingHours);
+          // Group by week (starting Monday)
+          const groupByWeek = (line: any[]) => {
+            const weeks: Record<string, number> = {};
+            line.forEach((item) => {
+              const d = new Date(item.date);
+              const monday = new Date(d);
+              monday.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Monday of that week
+              const sunday = new Date(monday);
+              sunday.setDate(monday.getDate() + 6);
+              const label = `${monday.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}-${sunday.toLocaleDateString('en-GB', 
+                { day: '2-digit', month: 'short' })}`;
+              weeks[label] = item.remainingHours;
+            });
+            return weeks;
+          };
 
-          // Chart data
+          const idealByWeek = groupByWeek(idealLine);
+          const actualByWeek = groupByWeek(actualLine);
+
+          const labels = Object.keys(idealByWeek);
+          const idealValues = Object.values(idealByWeek);
+          const actualValues = Object.values(actualByWeek);
+
           this.burndownData = {
-            labels: labels,
+            labels,
             datasets: [
               {
                 label: `${projectName} - Ideal Line`,
@@ -663,12 +680,9 @@ export class ClientTimesheetSummaryComponent {
             ]
           };
 
-          // Chart options
           this.burndownOptions = {
             plugins: {
-              legend: {
-                display: false,
-              },
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   label: (context: any) => {
@@ -680,8 +694,9 @@ export class ClientTimesheetSummaryComponent {
             },
             scales: {
               x: {
-                title: { display: true, text: 'Date' },
-                grid: { display: false }
+                title: { display: true, text: 'Weeks' },
+                grid: { display: false },
+                ticks: { autoSkip: true, maxRotation: 45, minRotation: 45 }
               },
               y: {
                 title: { display: true, text: 'Remaining Hours' },

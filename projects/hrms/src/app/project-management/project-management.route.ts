@@ -108,6 +108,7 @@ export default [
             { path: 'mytimesheet', component: TimeSheetViewComponent },
             { path: 'teamtimesheet', component: TeamTimesheetsComponent },
             { path: 'summary', component: TimesheetsSummaryViewComponent },
+            { path: 'mysummary', component: TimesheetsSummaryViewComponent },
         ],
     },
 ] as Route[];

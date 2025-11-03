@@ -27,7 +27,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 export class TeamTimesheetsComponent {
   empdata = {} as any;
   loading = false;
-  totalhrs:any
+  totalhrs: any
   teamSummaryData: TimeTrackingData[] = [];
   activeEmplist = [] as any;
   dateHeaders: string[] = [];
@@ -55,7 +55,7 @@ export class TeamTimesheetsComponent {
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-      this.getteamsummary(); // always call once
+    this.getteamsummary(); // always call once
 
 
   }
@@ -107,6 +107,15 @@ export class TeamTimesheetsComponent {
       },
     });
   }
+  onCheckemployee(employeed: any) {
+    console.log(employeed);
+
+    if (employeed === null) {
+      this.page = 1;
+      this.datepickerForm.get('resourceId')?.setValue(null);
+      this.getteamsummary();
+    }
+  }
 
   onSubmit() {
     // Check if form is valid (optional)
@@ -120,7 +129,6 @@ export class TeamTimesheetsComponent {
   }
 
   getteamsummary() {
-
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
 
@@ -141,9 +149,9 @@ export class TeamTimesheetsComponent {
         if (res?.success) {
 
           this.teamSummaryData = res.data;
-          this.totalhrs=res?.data?.totalLoggedHHMM
+          this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
           console.log(this.totalhrs);
-          
+
           this.collectionSize = res.pagination.totalRecords;
 
           // ✅ Extract dates for header dynamically (use first record)

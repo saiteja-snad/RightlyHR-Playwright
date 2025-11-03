@@ -151,6 +151,9 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/summary') {
       this.componentname = 'Timesheet Summary';
     }
+    else if (currentUrl === '/project-management/timesheet/mysummary') {
+      this.componentname = 'My Timesheet Summary';
+    }
   }
 
   isShowClientRoute(): boolean {
@@ -168,6 +171,21 @@ export class ProjectManagementModuleInfoComponent {
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
+
+
+  isShowtimesheetforteamRoute(): boolean {
+    const showPaths = [
+      '/project-management/timesheet/summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  isShowtimesheetformyRoute(): boolean {
+    const showPaths = [
+      '/project-management/timesheet/mysummary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
   isHideInfo(): boolean {
     const hidePaths = [
       '/project-management/clients/add'
@@ -180,6 +198,13 @@ export class ProjectManagementModuleInfoComponent {
     localStorage.removeItem('clientProjectId');
   }
 
+  navigatetoteam() {
+    this.router.navigate(['project-management/timesheet/teamtimesheet']);
+  }
+
+  navigatetomy() {
+    this.router.navigate(['project-management/timesheet/mytimesheet']);
+  }
   navigateProject() {
     const clientProjectId = localStorage.getItem('clientProjectId');
     if (clientProjectId) {

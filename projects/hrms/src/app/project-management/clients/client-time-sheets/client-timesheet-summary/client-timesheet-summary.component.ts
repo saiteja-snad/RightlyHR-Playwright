@@ -117,19 +117,19 @@ export class ClientTimesheetSummaryComponent {
     });
   }
   // clear button show/hilde
-  isFilterApplied(): boolean {
-    const { projectId, status } = this.datepickerForm.value;
+  // isFilterApplied(): boolean {
+  //   const { projectId, status } = this.datepickerForm.value;
 
-    return (
-      (projectId !== null && projectId !== undefined && projectId !== '') ||
-      (status !== null && status !== undefined && status !== '')
-    );
-  }
-  // clear the field
-  resetForm() {
-    this.datepickerForm.reset();
-    this.projectSummery();
-  }
+  //   return (
+  //     (projectId !== null && projectId !== undefined && projectId !== '') ||
+  //     (status !== null && status !== undefined && status !== '')
+  //   );
+  // }
+  // // clear the field
+  // resetForm() {
+  //   this.datepickerForm.reset();
+  //   this.projectSummery();
+  // }
   // apply button disable condition
   isFormCompletelyValid(): boolean {
     const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
@@ -138,60 +138,26 @@ export class ClientTimesheetSummaryComponent {
       (formValue.status !== null && formValue.status !== undefined && formValue.status !== '')
     );
   }
-  // onsubmit data 
-  onSubmit() {
-    this.projectSummerydata();
+  //   onProjectChange(event: any) {
+  //  this.projectSummerydata();
+  // }
+
+  filters: any = {
+    projectId: null,
+    status: null,
+    dateRange: null // optional if you have date filters
+  };
+
+  onProjectChange(event: any) {
+    this.filters.projectId = event?.value || null;
+    this.projectSummery(this.filters);
   }
 
-  projectSummerydata() {
-    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
-      const clientID = params['id'];
-      if (!clientID) {
-        this.projectSummeryData = [];
-        return;
-      }
-
-      // Base URL
-      let apiUrl = `ProjectManagementGraph/client/project-summary/${clientID}`;
-
-      // Get form values
-      const formValue = this.datepickerForm.getRawValue();
-
-      // Build query params dynamically if values exist
-      const queryParams: any = {};
-
-      if (formValue.projectId) {
-        queryParams.projectId = formValue.projectId;
-      }
-
-      if (formValue.status) {
-        queryParams.status = formValue.status;
-      }
-
-      // If query params exist, append them to API URL
-      const queryString = Object.keys(queryParams).length
-        ? '?' + new URLSearchParams(queryParams).toString()
-        : '';
-
-      // Final URL
-      apiUrl += queryString;
-
-      console.log('Final API URL:', apiUrl);
-
-      this.http
-        .getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-            this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
-          },
-          error: (err) => {
-            console.error('Error fetching project summary:', err);
-          },
-        });
-    });
+  onStatusChange(event: any) {
+    this.filters.status = event?.value || null;
+    this.projectSummery(this.filters);
   }
+ 
  // Project wise Resource Count
   projectSummery(request?: any) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
@@ -202,21 +168,19 @@ export class ClientTimesheetSummaryComponent {
       }
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/project-summary/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
 
+      if (request?.status) {
+        queryParams.push(`status=${request.status}`);
+      }
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
@@ -248,12 +212,12 @@ export class ClientTimesheetSummaryComponent {
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
 
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
+      // if (request?.projectId) {
+      //   queryParams.push(`projectId=${request.projectId}`);
+      // }
+      // if (request?.resourceId) {
+      //   queryParams.push(`resourceId=${request.resourceId}`);
+      // }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
@@ -322,6 +286,12 @@ export class ClientTimesheetSummaryComponent {
       });
     });
   }
+    onDeptProjectChange(event: any) {
+  // event is the selected projectId
+  const selectedProjectId = event?.value;
+  const request = { projectId: selectedProjectId };
+  this.departmentWiseContributionGraph(request);
+}
 
   // Department wise Contribution
   departmentWiseContributionGraph(request?: any) {
@@ -336,23 +306,18 @@ export class ClientTimesheetSummaryComponent {
 
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
       }
 
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -408,23 +373,14 @@ export class ClientTimesheetSummaryComponent {
 
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -435,7 +391,6 @@ export class ClientTimesheetSummaryComponent {
             this.projectTypeData = { labels: [], datasets: [] };
             return;
           }
-
           // Extract project type names and their counts
           const labels = data.map((item: any) => item.projectType);
           const counts = data.map((item: any) => item.projectTypeCount);
@@ -491,29 +446,18 @@ export class ClientTimesheetSummaryComponent {
         this.estimatedVsActualData = [];
         return;
       }
-
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/allocated-vs-actual/${clientID}?groupBy=project`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           if (res?.success && res?.data?.data?.length) {
@@ -589,24 +533,14 @@ export class ClientTimesheetSummaryComponent {
         this.billableData = [];
         return;
       }
-
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
@@ -694,21 +628,12 @@ export class ClientTimesheetSummaryComponent {
       }
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/burndownchart/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;

@@ -198,9 +198,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const formValue = this.datepickerForm.value;
     // Check if any field has value
     return (
-      (formValue.dateRange && formValue.dateRange.length > 0) ||
-      formValue.projectId !== null && formValue.projectId !== undefined ||
-      (formValue.resourceId && formValue.resourceId.length > 0)
+      (formValue.dateRange && formValue.dateRange.length > 0) 
+    //  formValue.projectId !== null && formValue.projectId !== undefined ||
+    //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
   opencontactModal(content: any) {
@@ -476,9 +476,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : startDate;
     const request = {
       dateRange: { startDate, endDate },
-      resourceId: this.datepickerForm.value.resourceId,
-      clientId: this.clientsId,
-      projectId: this.projectId
+      // resourceId: this.datepickerForm.value.resourceId,
+      // clientId: this.clientsId,
+      // projectId: this.projectId
     };
     this.http.setRequestclienttimesheet(request);
     // Send `request` to API if needed

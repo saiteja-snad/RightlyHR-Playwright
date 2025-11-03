@@ -1,23 +1,25 @@
 <div class="custom-main-component-container time-sheet-summary-container">
     <div class="grid-display-row1 mb-3">
         <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="summary-header">Project Summary</div>
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                            [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                            placeholder="Please select project" class="form-select custom-select"></p-select>
-                    </div>
-    
-                    <div class="custom-p-select-content">
-                        <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                            formControlName="status" placeholder="Please select status"
-                            class="form-select custom-select"></p-select>
+            <form [formGroup]="datepickerForm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="summary-header">Project Summary</div>
+                    <div class="d-flex gap-2 align-items-center">                      
+                        <div class="custom-p-select-content">
+                            <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
+                                [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId" [showClear]="!!datepickerForm.get('projectId')?.value"
+                                placeholder="Please select project" class="form-select custom-select" (onChange)="onProjectChange($event)" ></p-select>
+                        </div>
+        
+                        <div class="custom-p-select-content">
+                            <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
+                                formControlName="status" placeholder="Please select status"   [showClear]="!!datepickerForm.get('status')?.value"
+                                class="form-select custom-select"(onChange)="onStatusChange($event)"></p-select>
+                        </div>                      
                     </div>
                 </div>
-            </div>
-    
+            </form>
+        
             <div class="custom-table-content project-summary-table">
                 <table class="w-100">
                     <thead>
@@ -27,16 +29,15 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <tr *ngFor="let roles of projectSummeryData">
-                             <td>{{roles.project.projectName}}</td>
-                             <td>{{roles.allocatedHours}}</td>
-                             <td>{{roles.status}}</td>                          
+                        <tr *ngFor="let roles of projectSummeryData">
+                            <td>{{roles.project.projectName}}</td>
+                            <td>{{roles.allocatedHours}}</td>
+                            <td>{{roles.status}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    
         <div class="time-sheet-graph-card">
             <div class="summary-header mb-4">Project wise Resource Count</div>
             <div class="project-resource-graph">
@@ -48,9 +49,9 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="summary-header">Department wise Contribution</div>
                 <div class="custom-p-select-content">
-                    <p-select [options]="projectsDataDropdown" optionLabel="projectName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                        placeholder="Please select project" class="form-select custom-select"></p-select>
+                    <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName" optionValue="projectId"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"  [showClear]="!!selectedDeptProjectId"
+                        placeholder="Please select project" class="form-select custom-select" (onChange)="onDeptProjectChange($event)"></p-select>
                 </div>
             </div>
 

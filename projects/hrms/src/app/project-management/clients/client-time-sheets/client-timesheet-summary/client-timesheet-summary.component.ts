@@ -6,28 +6,22 @@ import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Project } from '../../../../Interfaces/projects.model';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
+  imports: [CommonModule, SelectModule,ReactiveFormsModule,TranslateModule,FormsModule, ChartModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class ClientTimesheetSummaryComponent {
-  projectsDataDropdown = [
-    { projectId: 1, projectName: 'Website Redesign' },
-    { projectId: 2, projectName: 'Mobile App Development' },
-    { projectId: 3, projectName: 'CRM Integration' },
-    { projectId: 4, projectName: 'E-commerce Platform' },
-    { projectId: 5, projectName: 'Data Migration' }
-  ];
   statusOptions = [
-    { label: 'Not Started', value: 'not_started' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'On Hold', value: 'on_hold' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' }
+    { label: 'Not Started', value: 'Not Started' },
+    { label: 'On Track', value: 'On Track' },
+    { label: 'Delayed', value: 'Delayed' },
+    { label: 'Inactive/Closed', value: 'Inactive/Closed' }
   ];
   // Project wise Resource Count variables
   projectResourceData: any;
@@ -48,11 +42,20 @@ export class ClientTimesheetSummaryComponent {
   burndownData: any;
   burndownOptions: any;
   projectSummeryData:any;
+   datepickerForm!: FormGroup;
+  projectsDataDrown: Project[] = [];
+  clientsId!: any;
+  selectedDeptProjectId: any = null;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private http: HttpService,private route: ActivatedRoute) { }
+  constructor(private http: HttpService,private route: ActivatedRoute,private fb: FormBuilder) { }
 
   ngOnInit() {
+      this.createClientForm();
+   this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
+    const clientID = params['id'];
+    this.getprojectbyid(clientID);
+   });
     this.http.requestclienttimesheetdata$
     .pipe(takeUntil(this.destroy$))
     .subscribe((request) => {
@@ -73,12 +76,62 @@ export class ClientTimesheetSummaryComponent {
         this.projectTypeChart();
         this.estimatedActualChart();
         this.billableChart();
-         this.burnDownChart();
+         this.burnDownChart();    
+         // 🧹 Reset form dropdowns here
+        this.datepickerForm.reset({
+          projectId: '',
+          status: ''
+        });
+        this.selectedDeptProjectId = null;    
       }
     });
   }
+  
+  // get all project based on client for filter use
+  getprojectbyid(clientID: any): void {
+    this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDataDrown = Array.isArray(res?.data) ? res.data : [];
+        // store the clientId from the first project if exists
+        const statuses = this.projectsDataDrown.map(p => p.status);
 
+        if (this.projectsDataDrown.length > 0) {
+          const project = this.projectsDataDrown[0];
+          this.clientsId = project?.client?.clientId ?? null;
+        } else {
+          this.clientsId = null; // No projects returned
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+        this.projectsDataDrown = [];
+        this.clientsId = null;
+      }
+    });
+  }
+  // initialization of form
+  createClientForm() {
+    this.datepickerForm = this.fb.group({
+      projectId: [''],
+      status: ['']
+    });
+  }
+  filters: any = {
+    projectId: null,
+    status: null,
+    dateRange: null // optional if you have date filters
+  };
 
+  onProjectChange(event: any) {
+    this.filters.projectId = event?.value || null;
+    this.projectSummery(this.filters);
+  }
+
+  onStatusChange(event: any) {
+    this.filters.status = event?.value || null;
+    this.projectSummery(this.filters);
+  }
+ 
  // Project wise Resource Count
   projectSummery(request?: any) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
@@ -89,21 +142,19 @@ export class ClientTimesheetSummaryComponent {
       }
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/project-summary/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
 
+      if (request?.status) {
+        queryParams.push(`status=${request.status}`);
+      }
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
@@ -135,12 +186,12 @@ export class ClientTimesheetSummaryComponent {
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
 
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
+      // if (request?.projectId) {
+      //   queryParams.push(`projectId=${request.projectId}`);
+      // }
+      // if (request?.resourceId) {
+      //   queryParams.push(`resourceId=${request.resourceId}`);
+      // }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
@@ -209,6 +260,13 @@ export class ClientTimesheetSummaryComponent {
       });
     });
   }
+    onDeptProjectChange(event: any) {
+  // event is the selected projectId
+  const selectedProjectId = event?.value;
+  const request = { projectId: selectedProjectId };
+  this.selectedDeptProjectId = selectedProjectId;
+  this.departmentWiseContributionGraph(request);
+}
 
   // Department wise Contribution
   departmentWiseContributionGraph(request?: any) {
@@ -223,23 +281,18 @@ export class ClientTimesheetSummaryComponent {
 
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
       }
 
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -295,23 +348,14 @@ export class ClientTimesheetSummaryComponent {
 
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -322,7 +366,6 @@ export class ClientTimesheetSummaryComponent {
             this.projectTypeData = { labels: [], datasets: [] };
             return;
           }
-
           // Extract project type names and their counts
           const labels = data.map((item: any) => item.projectType);
           const counts = data.map((item: any) => item.projectTypeCount);
@@ -378,29 +421,18 @@ export class ClientTimesheetSummaryComponent {
         this.estimatedVsActualData = [];
         return;
       }
-
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/allocated-vs-actual/${clientID}?groupBy=project`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
-        apiUrl += `?${queryParams.join('&')}`;
+        apiUrl += `&${queryParams.join('&')}`;
       }
-
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           if (res?.success && res?.data?.data?.length) {
@@ -408,7 +440,8 @@ export class ClientTimesheetSummaryComponent {
             const labels = chartData.map((item: any) => item.name);
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
             const actualHours = chartData.map((item: any) => item.actualHours);
-            const overdueHours = chartData.map((item: any) => item.overDue ? (item.allocateHours - item.actualHours) : 0);
+            const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
+
 
             this.estimatedVsActualData = {
               labels: labels,
@@ -476,24 +509,14 @@ export class ClientTimesheetSummaryComponent {
         this.billableData = [];
         return;
       }
-
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
@@ -581,21 +604,12 @@ export class ClientTimesheetSummaryComponent {
       }
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/burndownchart/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
-
-      if (request?.projectId) {
-        queryParams.push(`projectId=${request.projectId}`);
-      }
-      if (request?.resourceId) {
-        queryParams.push(`resourceId=${request.resourceId}`);
-      }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
       }
-
       // Append query parameters if any exist
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;

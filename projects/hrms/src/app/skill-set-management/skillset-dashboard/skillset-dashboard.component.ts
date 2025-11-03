@@ -137,12 +137,12 @@ export class SkillsetDashboardComponent {
         this.isloading = false;
         if (res?.data) {
           const summary = res.data;
-            this.summaryCards = [
-          { title: 'Total Employees', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
-          { title: 'Committed Employees', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
-          { title: 'Available Employees', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
-          { title: 'Upcoming Available Resources', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
-        ];
+          this.summaryCards = [
+            { title: 'Total Employees', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
+            { title: 'Committed Employees', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
+            { title: 'Available Employees', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
+            { title: 'Upcoming Available Resources', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
+          ];
         }
       },
       error: (reason) => {
@@ -430,9 +430,17 @@ export class SkillsetDashboardComponent {
 
     const params: any = { skillName };
 
-    // Add proficiency filter if not "All Proficiencies"
-    if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
-      params.proficiencies = this.selectedStatus.join(',');
+    // Always send proficiency — if "All Proficiencies" is selected, send all values
+    if (this.selectedStatus?.length) {
+      if (this.selectedStatus.includes('All Proficiencies')) {
+        // Send all available proficiencies
+        const allProficiencies = this.EmpProficiency
+          .filter((p: any) => p.value !== 'All Proficiencies')
+          .map((p: any) => p.value);
+        params.proficiencies = allProficiencies.join(',');
+      } else {
+        params.proficiencies = this.selectedStatus.join(',');
+      }
     }
 
     // Add skills filter if any skill is selected
@@ -463,7 +471,6 @@ export class SkillsetDashboardComponent {
       }
     });
   }
-
 
   private getImageUrl(imagePath: string): string | null {
     if (!imagePath) {

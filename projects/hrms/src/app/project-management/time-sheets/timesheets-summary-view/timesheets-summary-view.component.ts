@@ -94,7 +94,6 @@ export class TimesheetsSummaryViewComponent {
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
         console.log(this.employeeId);
-
         this.getProjectSummary(resoureID);
       }
     });
@@ -154,7 +153,7 @@ export class TimesheetsSummaryViewComponent {
 
     // ✅ Trigger your existing API call
     this.page = 1; // Reset to first page on new filter apply
-    const resoureID = this.datepickerForm.get('resourceId')?.value
+    const resoureID = this.datepickerForm.get('resourceId')?.value ||   this.employeeId
     this.getProjectSummary(resoureID);
   }
 

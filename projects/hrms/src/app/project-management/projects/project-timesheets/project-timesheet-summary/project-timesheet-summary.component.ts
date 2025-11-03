@@ -162,7 +162,7 @@ export class ProjectTimesheetSummaryComponent {
             const labels = chartData.map((item: any) => item.name);
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
             const actualHours = chartData.map((item: any) => item.actualHours);
-            const overdueHours = chartData.map((item: any) => item.overDue ? (item.allocateHours - item.actualHours) : 0);
+            const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
 
             this.estimatedVsActualData = {
               labels: labels,

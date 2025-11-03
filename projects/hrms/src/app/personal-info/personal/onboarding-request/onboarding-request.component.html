@@ -139,7 +139,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
+            <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs(modal)">
                 <div class="mb-3">
                     <label for="rejectReason" class="form-label custom-label mb-2">Reject Reason<span
                             class="error-msg">*</span></label>
@@ -156,7 +156,9 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid || isSubmitting">
+                        {{ isSubmitting ? 'Submitting...' : ('Submit' | translate) }}
+                    </button>
                 </div>
             </form>
         </div>

@@ -11,6 +11,12 @@ import { OnBeHalfOfCancelComponent } from './on-be-half-of/on-be-half-of-cancel/
 import { OnBeHalfOfApprovalComponent } from './on-be-half-of/on-be-half-of-approval/on-be-half-of-approval.component';
 import { OnBeHalfOfWaitingForApprovalComponent } from './on-be-half-of/on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component';
 import { OnBeHalfOfComponent } from './on-be-half-of/on-be-half-of.component';
+import { OnBehalfOfRemoteloginComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin.component';
+import { OnBehalfOfRemoteloginWaitingForApprovalComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-waiting-for-approval/on-behalf-of-remotelogin-waiting-for-approval.component';
+import { OnBehalfOfRemoteloginApprovedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-approved/on-behalf-of-remotelogin-approved.component';
+import { OnBehalfOfRemoteloginProcessedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-processed/on-behalf-of-remotelogin-processed.component';
+import { OnBehalfOfRemoteloginRejectedComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-rejected/on-behalf-of-remotelogin-rejected.component';
+import { OnBehalfOfRemoteloginCancellationComponent } from './on-behalf-of-remotelogin/on-behalf-of-remotelogin-cancellation/on-behalf-of-remotelogin-cancellation.component';
 
 export default [
     { path: '', redirectTo: '/on-behalf-of/on-behalf-of', pathMatch: 'full' },
@@ -39,6 +45,17 @@ export default [
             { path: 'processed', component: OnBehalfOfWhfProcessedComponent },
             { path: 'rejected', component: OnBehalfOfWhfRejectedComponent },
             { path: 'cancelled', component: OnBehalfOfWhfCancellationComponent }
+        ],
+    },
+
+    {
+        path: 'on-behalf-of-remotelogin', component: OnBehalfOfRemoteloginComponent,
+        children: [
+            { path: 'waiting-for-approval', component: OnBehalfOfRemoteloginWaitingForApprovalComponent, },
+            { path: 'approved', component: OnBehalfOfRemoteloginApprovedComponent },
+            { path: 'processed', component: OnBehalfOfRemoteloginProcessedComponent },
+            { path: 'rejected', component: OnBehalfOfRemoteloginRejectedComponent },
+            { path: 'cancelled', component: OnBehalfOfRemoteloginCancellationComponent }
         ],
     },
 

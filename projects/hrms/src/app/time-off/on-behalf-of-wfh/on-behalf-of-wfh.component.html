@@ -24,6 +24,18 @@
                 </div>
             </div>
             }
+            @else if (rbac.allowedToAccess('On Behalf Of WFH Team.view')) {
+            <div class="d-flex align-items-center gap-3">
+                <label class="form-label filter-labels m-0">Select Reportee</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="myTeamData" optionLabel="fullName"
+                        [(ngModel)]="selectedOtherEmployee" [filter]="true" [resetFilterOnHide]="true" filterBy="fullName"
+                        [showClear]="true" placeholder="Please select reportee" (onChange)="onEmployeeChange($event)"
+                        (onClear)="onClearEmployee()" class="form-select custom-select">
+                    </p-select>
+                </div>
+            </div>
+            }
 
             @if(rbac.allowedToAccess('Request On Behalf Of WFH Button.view') ) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)" [disabled]="!selectedOtherEmployee"

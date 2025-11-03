@@ -22,5 +22,8 @@ export default [
     },
     {
         path: 'letter-frequency', loadComponent: () => import('./project-management/letter-frequency/letter-frequency.component').then(m => m.LetterFrequencyComponent), canActivate: [PermissionsGuard], data: { permission: 'Letter Frequency Configurations.view' },
+    },
+    {
+        path: 'project-role', loadComponent: () => import('./project-management/project-role/project-role.component').then(m => m.ProjectRoleComponent), canActivate: [PermissionsGuard], data: { permission: 'Project Role.view' },
     }
 ]

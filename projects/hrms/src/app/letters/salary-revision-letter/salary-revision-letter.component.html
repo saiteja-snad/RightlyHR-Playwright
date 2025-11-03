@@ -33,9 +33,7 @@
                     <div *ngIf="employeeForm.get('dateofAppraisal')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')">{{'Date is required'|
                             translate }}</div>
-                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end
-                            date'|
-                            translate }}</div>
+                        <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end date'|translate }}</div>
                     </div>
                 </div>
 

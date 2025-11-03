@@ -20,6 +20,14 @@
             @if(isActive('/settings/timeoff-configurations/leave-categoery')) {
             <app-leave-category-tabs />
             }
+        
+        </div>
+        }
+
+        @if(isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation') ||
+        isActive('/settings/timeoff-configurations/flexible-wfh-allocation/wfh-allocation-view')) {
+        <div class="component-left-tabs-container">
+            <app-wfh-allocation-tabs />
         </div>
         }
 

@@ -26,6 +26,8 @@ export class PreOnBoardingDocumentsComponent {
   loader = false;
   selectedId: number | null = null;
   displayforbothforfresher: number | null = null;
+  displayForBothForContractEmployee: number | null = null;
+
   displayforbothforexperience: number | null = null;
   displayforbothfortrainee: number | null = null;
   selectedDeleteRole: any = null;
@@ -54,6 +56,8 @@ export class PreOnBoardingDocumentsComponent {
         ],
       ],
       isApplicableFresher: [false],
+      isApplicableForContractEmployee: [false],
+
       isApplicableTrainee: [false],
       isApplicableExperienced: [false],
       isManadatory: [false],
@@ -103,6 +107,12 @@ export class PreOnBoardingDocumentsComponent {
     this.AddForm.patchValue({ isApplicableFresher: !isChecked });
   }
 
+  onClickContractEmployeeToggle() {
+    const isChecked = this.AddForm.value.isApplicableForContractEmployee;
+    this.displayForBothForContractEmployee = isChecked ? 0 : 1;
+    this.AddForm.patchValue({ isApplicableForContractEmployee: !isChecked });
+  }
+
   onClickExperiencedToggle() {
     const isChecked = this.AddForm.value.isApplicableExperienced;
     this.displayforbothforexperience = isChecked ? 0 : 1;
@@ -123,8 +133,10 @@ export class PreOnBoardingDocumentsComponent {
       isApplicableExperienced: false,
       isApplicableTrainee: false,
       isApplicableFresher: false,
+      isApplicableForContractEmployee:false
     });
     this.displayforbothforfresher = null;
+    this.displayForBothForContractEmployee = null;
     this.displayforbothforexperience = null;
     this.displayforbothfortrainee = null;
   }
@@ -135,6 +147,8 @@ export class PreOnBoardingDocumentsComponent {
     if (this.AddForm.value.isApplicableFresher) applicableCodes.push('1');
     if (this.AddForm.value.isApplicableExperienced) applicableCodes.push('2');
     if (this.AddForm.value.isApplicableTrainee) applicableCodes.push('3');
+    if (this.AddForm.value.isApplicableForContractEmployee) applicableCodes.push('5');
+
     if (applicableCodes.length === 3) {
       isApplicable = '0'; //if all the check boxes are selected related to the fresher,experince,trinee we nned to send 0(zero)
     } else if (applicableCodes.length > 0) {
@@ -273,5 +287,3 @@ export class PreOnBoardingDocumentsComponent {
     }
   }
 }
-
-

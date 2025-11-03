@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -51,7 +51,7 @@ export class HttpService {
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<boolean>(false);
-
+  cardsregisterSignal=signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -65,7 +65,12 @@ export class HttpService {
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
-
+//setting cards count
+ private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
+  counts$ = this.CardcountsSource.asObservable();
+  updateCount(counts: { [key: string]: number }) {
+    this.CardcountsSource.next(counts);
+  }
   // Function to set the communication service data for basic info
   basicDetailes = new Subject<void>();
   basicDetailesadded$ = this.basicDetailes.asObservable();
@@ -114,8 +119,8 @@ export class HttpService {
   // Observable for components to subscribe to
   selectedEmployeeIdTimesheet$ = this.selectedEmployeeIdTimesheet.asObservable();
   // Method to update the employeeId
-  setEmployeeIdTimesheet(id: any, projectId: number,request:any): void {
-    this.selectedEmployeeIdTimesheet.next({ id, projectId ,request});
+  setEmployeeIdTimesheet(id: any, projectId: number, request: any): void {
+    this.selectedEmployeeIdTimesheet.next({ id, projectId, request });
   }
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);
@@ -154,7 +159,11 @@ export class HttpService {
 
   // OnBehalfOf WFH
   onBehlafOfWFHSignal = signal<boolean>(false);
+  onBehlafOfRemoteLoginSignal = signal<boolean>(false);
+
   onBehalfOfWFHSelectedEmp$ = new BehaviorSubject<any>(null);
+  onBehalfOfRemoteLoginSelectedEmp$ = new BehaviorSubject<any>(null);
+
 
 
 
@@ -359,6 +368,19 @@ export class HttpService {
       responseType: 'blob',
     });
   }
+  downloadEmployeeSkillsReport(url: string, isActive: boolean, resourceStatus?: string, searchQuery?: string, fromDate?: string, toDate?: string, skillSearch?: string): Observable<Blob> {
+    let apiUrl = `${this.ApiUrl}${url}?isActive=${isActive}`;
+
+    if (resourceStatus) apiUrl += `&resourceStatus=${resourceStatus}`;
+    if (searchQuery) apiUrl += `&searchQuery=${encodeURIComponent(searchQuery)}`;
+    if (fromDate && toDate) apiUrl += `&fromDate=${fromDate}&toDate=${toDate}`;
+    if (skillSearch) apiUrl += `&skillSearch=${encodeURIComponent(skillSearch)}`;
+
+    return this.http.get(apiUrl, {
+      responseType: 'blob',
+    });
+  }
+
 
   getDataWithQuery(url: string, directoryPath: string) {
     return this.http.get(`${this.ApiUrl}${url}?directoryPath=${directoryPath}`);
@@ -465,7 +487,7 @@ export class HttpService {
       responseType: 'blob',
     });
   }
- upadteLateLoginValues(url: string, data: any) {
+  upadteLateLoginValues(url: string, data: any) {
     return this.http.post(`${this.ApiUrl}${url}`, data);
   }
 
@@ -497,7 +519,22 @@ export class HttpService {
   deleteData(url: string) {
     return this.http.delete(`${this.ApiUrl}${url}`);
   }
-
+//get card details
+ getcardDetails(
+    url: string,
+    pagenum: number,
+    pagesize: number,
+    searchparam?: string,
+    status?: string,
+  ): Observable<any> {
+    let params = new HttpParams()
+      .set('pageNumber', pagenum.toString())
+      .set('pageSize', pagesize.toString());
+    if (searchparam) params = params.set('search', searchparam);
+    if (status) params = params.set('status', status);
+    
+    return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
+  }
   getDataWithQueryParams(url: string, queryParams: any) {
     const params = new URLSearchParams();
     for (let key in queryParams) {
@@ -525,6 +562,13 @@ export class HttpService {
       responseType: 'blob', // Set response type to 'blob' to handle file download
     });
   }
+downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
+  const apiurl = `${this.ApiUrl}${url}`;
+  return this.http.get(apiurl, {
+    responseType: 'blob',
+    observe: 'response'  // 👈 allows access to headers
+  });
+}
 
   // PMS Form Submission
   // getReviewCycles(url:string, searchQuery: string, page: number, pageSize: number): Observable<any> {
@@ -666,8 +710,16 @@ export class HttpService {
     return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
 
+  getFilterOnBehalfRemoteLoginDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfRemoteLoginRequests/${employeeId}?year=${params}`);
+  }
+
   getFilterRegularizationDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}RegularizationRequests/attendance/${employeeId}?year=${params}`);
+  }
+
+  getFilterExtraHoursDataByID(employeeId: number, params?: any) {
+    return this.http.get(`${this.ApiUrl}RegularizationRequests/loggedextrahours/${employeeId}?year=${params}`);
   }
 
   getFilterPermissionDataByID(employeeId: number, params?: any) {

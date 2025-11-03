@@ -1,0 +1,68 @@
+.custom-p-multiSelect-content {
+    .p-multiselect {
+        width: 300px !important;
+    }
+}
+
+.custom-table-content {
+    height: calc(100vh - 12rem) !important;
+}
+
+
+
+
+.pagination-content {
+    width: 100%;
+    background-color: var(--white-color);
+
+    .custom-pagination-select {
+        font-size: var(--fontsize14);
+    }
+
+    .custom-pagination-select:focus {
+        outline: none;
+        box-shadow: none;
+        border: 1px solid #C0C0C0;
+    }
+
+    .p-paginator {
+        .p-paginator-pages {
+            .p-paginator-page {
+                border-radius: 50%;
+                margin: 0rem;
+                color: #333;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                font-size: var(--fontsize12);
+            }
+
+            .p-paginator-page:hover {
+                color: var(--white-color);
+                background-color: var(--primary-color) !important;
+            }
+
+            .p-paginator-page-selected {
+                color: var(--white-color);
+                background-color: var(--primary-color) !important;
+            }
+        }
+
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
+            border-radius: 50%;
+            margin: 0rem;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}

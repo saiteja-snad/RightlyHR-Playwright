@@ -437,9 +437,9 @@ export class SkillsetDashboardComponent {
         const allProficiencies = this.EmpProficiency
           .filter((p: any) => p.value !== 'All Proficiencies')
           .map((p: any) => p.value);
-        params.proficiencies = allProficiencies.join(',');
+        params.proficiencyLevel = allProficiencies.join(',');
       } else {
-        params.proficiencies = this.selectedStatus.join(',');
+        params.proficiencyLevel = this.selectedStatus.join(',');
       }
     }
 

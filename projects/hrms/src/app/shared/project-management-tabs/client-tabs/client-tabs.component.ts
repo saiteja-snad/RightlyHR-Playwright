@@ -70,6 +70,11 @@ export class ClientTabsComponent {
         currentUrl.includes('/project-management/clients/details/inactiveprojects');
     }
 
+      if (link === '/project-management/clients/details/timesheet/summary') {
+      return currentUrl.includes('/project-management/clients/details/timesheet/detailed') ||
+        currentUrl.includes('/project-management/clients/details/timesheet/summary');
+    }
+
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }

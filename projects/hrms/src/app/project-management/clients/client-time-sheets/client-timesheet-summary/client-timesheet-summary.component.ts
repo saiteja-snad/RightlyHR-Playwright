@@ -431,7 +431,7 @@ export class ClientTimesheetSummaryComponent {
       }
       // Append query parameters if any exist
       if (queryParams.length > 0) {
-        apiUrl += `?${queryParams.join('&')}`;
+        apiUrl += `&${queryParams.join('&')}`;
       }
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {

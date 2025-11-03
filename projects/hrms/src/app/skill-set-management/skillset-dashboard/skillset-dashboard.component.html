@@ -52,7 +52,7 @@
             <div class="skill-chart-horizontal skill-proficiency-content">
                 <!-- Pie Chart -->
                 <div class="skill-chart-left">
-                    <p-chart type="pie" [data]="skillLevelData" [options]="skillLevelOptions" class="w-full md:w-[30rem]" />
+                    <p-chart type="pie" [data]="skillLevelData" [options]="skillLevelOptions" />
                 </div>
                 <!-- Legend with Counts -->
                 <div class="skill-chart-right">
@@ -67,8 +67,8 @@
 
         <!-- Top Skiils Chart -->
         <div class="graph-card">
-            <div class="graph-header mb-4">Top 5 Skills</div>
-            <div class="chart-scroll-x-container scrollable-chart">
+            <div class="graph-header mb-3">Top 5 Skills</div>
+            <div class="bar-chart">
                 <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData" [options]="topSkillsOptions" />
             </div>
         </div>

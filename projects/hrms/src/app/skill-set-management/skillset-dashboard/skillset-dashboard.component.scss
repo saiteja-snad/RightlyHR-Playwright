@@ -45,8 +45,6 @@
   border: 1px solid #FFFFFF;
   border-radius: 0.5rem;
   background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
-  display: flex;
-  flex-direction: column;
 }
 
 .graph-header {
@@ -63,13 +61,6 @@
   flex-wrap: wrap;
 }
 
-/* Left Chart Section */
-.skill-chart-left {
-  flex: 0 0 auto;
-  width: 260px;
-  height: 260px;
-}
-
 .skill-chart-right {
   flex: 1;
   display: flex;
@@ -80,10 +71,16 @@
 }
 
 .skill-proficiency-content {
-  justify-content: space-around;
+  justify-content: space-around !important;
 
   .skill-chart-right {
     max-width: 180px !important;
+  }
+}
+
+.skill-chart-left {
+  canvas {
+    width: 240px !important;
   }
 }
 
@@ -227,12 +224,6 @@
   font-weight: 500;
 }
 
-/* --- Scroll & Misc Styles --- */
-.scrollable-chart {
-  max-height: 450px;
-  overflow-y: auto;
-}
-
 .view-link {
   color: var(--primary-color);
   cursor: pointer;
@@ -246,4 +237,8 @@
 
 .custom-p-multiSelect-content {
   min-width: 200px !important;
+}
+
+.custom-table-content {
+  height: 45vh !important;
 }

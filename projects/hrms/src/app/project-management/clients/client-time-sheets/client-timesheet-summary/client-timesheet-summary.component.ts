@@ -61,7 +61,8 @@ export class ClientTimesheetSummaryComponent {
     this.billableChart();
     this.burnDownChart();
   }
- // Project wise Resource Count
+
+  // Project wise Resource Count
   projectSummery() {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
@@ -69,20 +70,17 @@ export class ClientTimesheetSummaryComponent {
         this.projectSummeryData = [];
         return;
       }
-
-      this.http.getData(`ProjectManagementGraph/client/project-summary/${clientID}`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-            this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
-          },
-          error: (err) => {
-            console.error('Error fetching project-wise resource count chart:', err);
-          }
-        });
+      this.http.getData(`ProjectManagementGraph/client/project-summary/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+        },
+        error: (err) => {
+          console.error('Error fetching project-wise resource count chart:', err);
+        }
+      });
     });
   }
+
   // Project wise Resource Count
   projectWiseResourceCountGraph() {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
@@ -92,63 +90,57 @@ export class ClientTimesheetSummaryComponent {
         return;
       }
 
-      this.http.getData(`ProjectManagementGraph/client/project-wise-resource/${clientID}`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-
-            const data = res?.data || [];
-            if (!data.length) {
-              this.projectResourceData = {
-                labels: [],
-                datasets: []
-              };
-              return;
-            }
-
-            // ✅ Extract data from API response
-            const labels = data.map((item: any) => item.projectName);
-            const resourceCounts = data.map((item: any) => item.resourceCount);
-
-            // ✅ Assign chart data
+      this.http.getData(`ProjectManagementGraph/client/project-wise-resource/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const data = res?.data || [];
+          if (!data.length) {
             this.projectResourceData = {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Resource Count',
-                  data: resourceCounts,
-                  backgroundColor: [
-                    '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
-                    '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
-                  ],
-                  barThickness: 10
-                }
-              ]
+              labels: [],
+              datasets: []
             };
-
-            // ✅ Chart options
-            this.projectResourceOptions = {
-              indexAxis: 'y', // Horizontal bar
-              plugins: {
-                legend: { display: false }
-              },
-              scales: {
-                x: {
-                  title: { display: true, text: 'Resource Count' },
-                  grid: { display: false }
-                },
-                y: {
-                  title: { display: true, text: 'Projects' },
-                  grid: { display: false }
-                }
-              }
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching project-wise resource count chart:', err);
+            return;
           }
-        });
+          // Extract data from API response
+          const labels = data.map((item: any) => item.projectName);
+          const resourceCounts = data.map((item: any) => item.resourceCount);
+          // Assign chart data
+          this.projectResourceData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Resource Count',
+                data: resourceCounts,
+                backgroundColor: [
+                  '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
+                  '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
+                ],
+                barThickness: 10
+              }
+            ]
+          };
+
+          // Chart options
+          this.projectResourceOptions = {
+            indexAxis: 'y', // Horizontal bar
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Resource Count' },
+                grid: { display: false }
+              },
+              y: {
+                title: { display: true, text: 'Projects' },
+                grid: { display: false }
+              }
+            }
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching project-wise resource count chart:', err);
+        }
+      });
     });
   }
 
@@ -160,45 +152,38 @@ export class ClientTimesheetSummaryComponent {
         this.departmentContributionData = [];
         return;
       }
-
-      this.http.getData(`ProjectManagementGraph/client/deptwisecontribution/${clientid}`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            const apiData = res?.data?.data || [];
-            if (!Array.isArray(apiData) || apiData.length === 0) {
-              this.departmentContributionData = [];
-              return;
-            }
-
-            // Extract chart data
-            const labels = apiData.map((item: any) => item.name);
-            const dataValues = apiData.map((item: any) => item.percentage);
-
-
-
-            this.departmentContributionData = {
-              labels: labels,
-              datasets: [
-                {
-                  data: dataValues,
-                  backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-                }
-              ]
-            };
-
-            this.departmentContributionOptions = {
-              cutout: '75%',
-              plugins: {
-                legend: { position: 'right', labels: { usePointStyle: true } },
-              },
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching Role-wise hours:', err);
+      this.http.getData(`ProjectManagementGraph/client/deptwisecontribution/${clientid}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const apiData = res?.data?.data || [];
+          if (!Array.isArray(apiData) || apiData.length === 0) {
             this.departmentContributionData = [];
+            return;
           }
-        });
+          // Extract chart data
+          const labels = apiData.map((item: any) => item.name);
+          const dataValues = apiData.map((item: any) => item.percentage);
+          this.departmentContributionData = {
+            labels: labels,
+            datasets: [
+              {
+                data: dataValues,
+                backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+              }
+            ]
+          };
+
+          this.departmentContributionOptions = {
+            cutout: '75%',
+            plugins: {
+              legend: { position: 'right', labels: { usePointStyle: true } },
+            },
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching Role-wise hours:', err);
+          this.departmentContributionData = [];
+        }
+      });
     });
   }
 
@@ -211,69 +196,66 @@ export class ClientTimesheetSummaryComponent {
         return;
       }
 
-      this.http.getData(`ProjectManagementGraph/client/project-type-summary/${clientID}`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
+      this.http.getData(`ProjectManagementGraph/client/project-type-summary/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          console.log('API Response:', res);
 
-            const data = res?.data || [];
-            if (!data.length) {
-              this.projectTypeData = { labels: [], datasets: [] };
-              return;
-            }
+          const data = res?.data || [];
+          if (!data.length) {
+            this.projectTypeData = { labels: [], datasets: [] };
+            return;
+          }
 
-            // ✅ Extract project type names and their counts
-            const labels = data.map((item: any) => item.projectType);
-            const counts = data.map((item: any) => item.projectTypeCount);
+          // Extract project type names and their counts
+          const labels = data.map((item: any) => item.projectType);
+          const counts = data.map((item: any) => item.projectTypeCount);
 
-            // ✅ Assign chart data dynamically
-            this.projectTypeData = {
-              labels: labels,
-              datasets: [
-                {
-                  data: counts,
-                  backgroundColor: [
-                    '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
-                    '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
-                  ],
-                  hoverBackgroundColor: [
-                    '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
-                  ]
-                }
-              ]
-            };
+          // Assign chart data dynamically
+          this.projectTypeData = {
+            labels: labels,
+            datasets: [
+              {
+                data: counts,
+                backgroundColor: [
+                  '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
+                  '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
+                ],
+                hoverBackgroundColor: [
+                  '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
+                ]
+              }
+            ]
+          };
 
-            // ✅ Chart options
-            this.projectTypeOptions = {
-              plugins: {
-                legend: {
-                  position: 'right',
-                  labels: { usePointStyle: true }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: (context: any) => {
-                      const label = context.label || '';
-                      const value = context.parsed;
-                      return `${label}: ${value}`;
-                    }
+          // Chart options
+          this.projectTypeOptions = {
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { usePointStyle: true }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const label = context.label || '';
+                    const value = context.parsed;
+                    return `${label}: ${value}`;
                   }
                 }
               }
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching project type summary chart:', err);
-          }
-        });
+            }
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching project type summary chart:', err);
+        }
+      });
     });
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
-
       const clientID = params['id'];
       if (!clientID) {
         this.estimatedVsActualData = [];
@@ -349,33 +331,83 @@ export class ClientTimesheetSummaryComponent {
 
   // Billable vs Non-Billable Hours (Stacked Bar)
   billableChart() {
-    this.billableData = {
-      labels: ['Project Management', 'Development', 'Design', 'QA'],
-      datasets: [
-        {
-          label: 'Billable',
-          backgroundColor: '#283593',
-          data: [900, 600, 700, 500],
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.billableData = [];
+        return;
+      }
+
+      this.http.getData(`ProjectManagementGraph/client/billable-non-billable/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          console.log('API Response:', res);
+          const chartData = res?.data?.data || [];
+          if (!chartData.length) {
+            this.billableData = { labels: [], datasets: [] };
+            return;
+          }
+
+          // Utility to convert "HH:mm" to decimal hours
+          const convertToHours = (timeStr: string): number => {
+            if (!timeStr) return 0;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours + minutes / 60;
+          };
+
+          // Extract dynamic labels and data
+          const labels = chartData.map((item: any) => item.name);
+          const billable = chartData.map((item: any) => convertToHours(item.billableHours));
+          const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
+
+          // Assign dynamic chart data
+          this.billableData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Billable Hours',
+                backgroundColor: '#283593',
+                data: billable,
+              },
+              {
+                label: 'Non-Billable Hours',
+                backgroundColor: '#9FA8DA',
+                data: nonBillable,
+              },
+            ],
+          };
+
+          // Chart options
+          this.billableOptions = {
+            responsive: true,
+            scales: {
+              x: { stacked: true, title: { display: true, text: 'Projects' } },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                title: { display: true, text: 'Total Hours' },
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const value = context.parsed.y;
+                    return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                  },
+                },
+              },
+            },
+            maintainAspectRatio: false,
+          };
         },
-        {
-          label: 'Non-Billable',
-          backgroundColor: '#9FA8DA',
-          data: [300, 200, 150, 100],
-        },
-      ],
-    };
-    this.billableOptions = {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } },
-      },
-      plugins: {
-        legend: {
-          display: false
+        error: (err) => {
+          console.error('Error fetching billable/non-billable chart data:', err);
         }
-      },
-    };
+      });
+    });
   }
 
   // Project Burndown Chart (Line)
@@ -387,89 +419,84 @@ export class ClientTimesheetSummaryComponent {
         return;
       }
 
-      this.http.getData(`ProjectManagementGraph/client/burndownchart/${clientID}`)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
+      this.http.getData(`ProjectManagementGraph/client/burndownchart/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const data = res?.data;
+          const projectCharts = data?.projectBurndownCharts || [];
+          if (!projectCharts.length) {
+            this.burndownData = { labels: [], datasets: [] };
+            return;
+          }
 
-            const data = res?.data;
-            const projectCharts = data?.projectBurndownCharts || [];
-            if (!projectCharts.length) {
-              this.burndownData = { labels: [], datasets: [] };
-              return;
-            }
+          // Get the first project’s burndown data
+          const project = projectCharts[0];
+          const projectName = project.projectName || 'Project';
 
-            // ✅ Get the first project’s burndown data
-            const project = projectCharts[0];
-            const projectName = project.projectName || 'Project';
+          // Extract labels and datasets
+          const labels = project.idealLine.map((item: any) =>
+            new Date(item.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+          );
 
-            // ✅ Extract labels and datasets
-            const labels = project.idealLine.map((item: any) =>
-              new Date(item.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
-            );
+          const idealValues = project.idealLine.map((item: any) => item.remainingHours);
+          const actualValues = project.actualLine.map((item: any) => item.remainingHours);
 
-            const idealValues = project.idealLine.map((item: any) => item.remainingHours);
-            const actualValues = project.actualLine.map((item: any) => item.remainingHours);
+          // Chart data
+          this.burndownData = {
+            labels: labels,
+            datasets: [
+              {
+                label: `${projectName} - Ideal Line`,
+                data: idealValues,
+                borderColor: '#42A5F5',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                fill: false,
+                tension: 0.3
+              },
+              {
+                label: `${projectName} - Actual Line`,
+                data: actualValues,
+                borderColor: '#E91E63',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3
+              }
+            ]
+          };
 
-            // ✅ Chart data
-            this.burndownData = {
-              labels: labels,
-              datasets: [
-                {
-                  label: `${projectName} - Ideal Line`,
-                  data: idealValues,
-                  borderColor: '#42A5F5',
-                  borderWidth: 2,
-                  borderDash: [5, 5],
-                  fill: false,
-                  tension: 0.3
-                },
-                {
-                  label: `${projectName} - Actual Line`,
-                  data: actualValues,
-                  borderColor: '#E91E63',
-                  borderWidth: 2,
-                  fill: false,
-                  tension: 0.3
-                }
-              ]
-            };
-
-            // ✅ Chart options
-            this.burndownOptions = {
-              plugins: {
-                legend: {
-                  position: 'top',
-                  labels: { usePointStyle: true }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: (context: any) => {
-                      const value = context.parsed.y;
-                      return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
-                    }
+          // Chart options
+          this.burndownOptions = {
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const value = context.parsed.y;
+                    return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
                   }
                 }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Date' },
+                grid: { display: false }
               },
-              scales: {
-                x: {
-                  title: { display: true, text: 'Date' },
-                  grid: { display: false }
-                },
-                y: {
-                  title: { display: true, text: 'Remaining Hours' },
-                  beginAtZero: true,
-                  grid: { color: '#f0f0f0' }
-                }
-              },
-              maintainAspectRatio: false
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching burndown chart data:', err);
-          }
-        });
+              y: {
+                title: { display: true, text: 'Remaining Hours' },
+                beginAtZero: true,
+                grid: { color: '#f0f0f0' }
+              }
+            },
+            maintainAspectRatio: false
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching burndown chart data:', err);
+        }
+      });
     });
   }
 }

@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-timesheets-tabs',
@@ -17,7 +18,7 @@ export class TimesheetsTabsComponent {
   navTabs: any[] = [
     {
       label: 'My Timesheets', link: '/project-management/timesheet/mytimesheet', icon: '/icons/my-timesheet-icon.png',
-      permission: { feature: 'My Time Sheet', action: 'view' }
+      permission: { feature: 'Time Sheet', action: 'view' }
     },
     {
       label: 'Team Timesheets', link: '/project-management/timesheet/teamtimesheet', icon: '/icons/team-timesheet-icon.png',
@@ -25,7 +26,7 @@ export class TimesheetsTabsComponent {
     },
   ];
 
-  constructor(public rbac: RbacService, private router: Router) { }
+  constructor(public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.filterTabsByRbac();
@@ -38,6 +39,14 @@ export class TimesheetsTabsComponent {
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+  }
+    navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   isTabActive(link: string): boolean {

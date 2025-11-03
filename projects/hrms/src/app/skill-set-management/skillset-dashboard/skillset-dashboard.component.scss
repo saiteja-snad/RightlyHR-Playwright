@@ -145,7 +145,7 @@
 }
 
 .offcanvas-title {
-  font-weight: 600;
+  font-weight: 500;
   font-size: var(--fontsize16);
   color: var(--primary-color);
 }
@@ -255,4 +255,8 @@
 
 .clear-all-btn:focus {
     outline: none;
+}
+
+.p-chart {
+  overflow-x: auto;
 }

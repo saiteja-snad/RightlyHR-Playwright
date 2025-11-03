@@ -89,6 +89,7 @@ export class SkillsetDashboardComponent {
     this.initiateUpdateModuleInfo();
     this.getMultiskills();
   }
+  
 
   updateModuleInfo() {
     const url = this.router.url;
@@ -300,11 +301,11 @@ export class SkillsetDashboardComponent {
   topSkillsGraph(): void {
     this.isloading = true;
     const params: any = {};
-    // Add proficiency filter if not "All Proficiencies"
+
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    // Add skills filter if any skill is selected
+
     if (this.selectedSkills?.length > 0) {
       params.skills = this.selectedSkills.join(',');
     }
@@ -315,31 +316,38 @@ export class SkillsetDashboardComponent {
 
         if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
           const skills: TopSkill[] = res.data;
-
-          // Sort and take only Top 5
           const top5 = skills.sort((a, b) => b.employeeCount - a.employeeCount).slice(0, 5);
 
-          // Prepare chart data
-          const labels = top5.map(s => s.skillName.charAt(0).toUpperCase() + s.skillName.slice(1));
+          const labels = top5.map((s: TopSkill) => {
+            const name = s.skillName.charAt(0).toUpperCase() + s.skillName.slice(1);
+            if (name.length > 15) {
+              const chunks = name.match(/.{1,15}/g) || [name];
+              return chunks;
+            }
+            return [name];
+          });
+
           const counts = top5.map(s => s.employeeCount);
           const colors = top5.map(s => s.colorCode || '#42A5F5');
 
+          //  Prepare data in PrimeNG Chart format
           this.topSkillsData = {
-            labels,
+            labels: labels as any, // PrimeNG supports string[] for multiline
             datasets: [
               {
                 label: 'Employee Count',
                 data: counts,
                 backgroundColor: colors,
                 barThickness: 20,
-              }
-            ]
+              },
+            ],
           };
 
-          // Chart options for horizontal clean layout
+          //  Chart options
           this.topSkillsOptions = {
             indexAxis: 'y',
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
               title: {
@@ -365,19 +373,23 @@ export class SkillsetDashboardComponent {
                   text: 'Employee Count',
                   color: '#6B7280',
                   font: { size: 13 },
-                }
+                },
               },
               y: {
                 grid: { display: false },
-                ticks: { color: '#111827', font: { size: 13, weight: '500' } },
+                ticks: {
+                  color: '#111827',
+                  font: { size: 13, weight: '500' },
+                  autoSkip: false, // ensures all labels show even if wrapped
+                },
                 title: {
                   display: true,
                   text: 'Skills',
                   color: '#6B7280',
                   font: { size: 13 },
-                }
-              }
-            }
+                },
+              },
+            },
           };
         } else {
           this.topSkillsData = { labels: [], datasets: [] };
@@ -387,9 +399,10 @@ export class SkillsetDashboardComponent {
         console.error('Error fetching top skills:', err);
         this.isloading = false;
         this.topSkillsData = { labels: [], datasets: [] };
-      }
+      },
     });
   }
+
 
   getSkillSetTableData(): void {
     this.isloading = true;
@@ -513,8 +526,6 @@ export class SkillsetDashboardComponent {
     this.skillByDepartmentGraph()
     this.getSkillSetTableData()
     this.topSkillsGraph()
-  
-
   }
 
   onSkillSelectionChange(): void {
@@ -523,4 +534,5 @@ export class SkillsetDashboardComponent {
     this.getSkillSetTableData()
     this.topSkillsGraph()
   }
+  
 }

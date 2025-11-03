@@ -149,8 +149,7 @@
 <!-- view Details Content  -->
 <ng-template #content let-offcanvas>
     <div class="offcanvas-header">
-        <p class="offcanvas-title">Employees with {{ selectedSkillName }} <span *ngIf="employeeList?.length">({{
-                employeeList.length }})</span></p>
+        <p class="offcanvas-title">Employees with {{ selectedSkillName }} <span *ngIf="employeeList?.length">({{employeeList.length }})</span></p>
         <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
     </div>
 

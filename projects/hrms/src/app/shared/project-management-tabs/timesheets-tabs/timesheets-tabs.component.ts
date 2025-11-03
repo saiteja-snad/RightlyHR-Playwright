@@ -40,20 +40,24 @@ export class TimesheetsTabsComponent {
     });
   }
 
-  isDocumentTabActive(link: string): boolean {
+  isTabActive(link: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
 
-    // For Documents tab, check both documents and inactivedocuments routes
-    if (link === '/project-management/clients/details/documents') {
-      return currentUrl.includes('/project-management/clients/details/documents') ||
-        currentUrl.includes('/project-management/clients/details/inactivedocuments');
+    // For My Timesheets tab, include summary page
+    if (link === '/project-management/timesheet/mytimesheet') {
+      return currentUrl === link || 
+             (currentUrl === '/project-management/timesheet/summary' && 
+              document.referrer.includes('/project-management/timesheet/mytimesheet'));
     }
 
-    // For Projects tab, check both projects and inactiveprojects routes
-    if (link === '/project-management/clients/details/projects') {
-      return currentUrl.includes('/project-management/clients/details/projects') ||
-        currentUrl.includes('/project-management/clients/details/inactiveprojects');
+    // For Team Timesheets tab, include summary page
+    if (link === '/project-management/timesheet/teamtimesheet') {
+      return currentUrl === link || 
+             (currentUrl === '/project-management/timesheet/summary' && 
+              document.referrer.includes('/project-management/timesheet/teamtimesheet'));
     }
+
+
 
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');

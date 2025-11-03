@@ -6,28 +6,29 @@ import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Project } from '../../../../Interfaces/projects.model';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
+  imports: [CommonModule, SelectModule,ReactiveFormsModule,TranslateModule, ChartModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class ClientTimesheetSummaryComponent {
-  projectsDataDropdown = [
-    { projectId: 1, projectName: 'Website Redesign' },
-    { projectId: 2, projectName: 'Mobile App Development' },
-    { projectId: 3, projectName: 'CRM Integration' },
-    { projectId: 4, projectName: 'E-commerce Platform' },
-    { projectId: 5, projectName: 'Data Migration' }
-  ];
+  // projectsDataDropdown = [
+  //   { projectId: 1, projectName: 'Website Redesign' },
+  //   { projectId: 2, projectName: 'Mobile App Development' },
+  //   { projectId: 3, projectName: 'CRM Integration' },
+  //   { projectId: 4, projectName: 'E-commerce Platform' },
+  //   { projectId: 5, projectName: 'Data Migration' }
+  // ];
   statusOptions = [
-    { label: 'Not Started', value: 'not_started' },
-    { label: 'In Progress', value: 'in_progress' },
-    { label: 'On Hold', value: 'on_hold' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'Cancelled', value: 'cancelled' }
+    { label: 'Not Started', value: 'Not Started' },
+    { label: 'On Track', value: 'On Track' },
+    { label: 'Delayed', value: 'Delayed' },
+    { label: 'Inactive/Closed', value: 'Inactive/Closed' }
   ];
   // Project wise Resource Count variables
   projectResourceData: any;
@@ -48,11 +49,19 @@ export class ClientTimesheetSummaryComponent {
   burndownData: any;
   burndownOptions: any;
   projectSummeryData:any;
+  datepickerForm!: FormGroup;
+  projectsDataDrown: Project[] = [];
+  clientsId!: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private http: HttpService,private route: ActivatedRoute) { }
+  constructor(private http: HttpService,private route: ActivatedRoute,private fb: FormBuilder) { }
 
   ngOnInit() {
+     this.createClientForm();
+   this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
+    const clientID = params['id'];
+    this.getprojectbyid(clientID);
+   });
     this.http.requestclienttimesheetdata$
     .pipe(takeUntil(this.destroy$))
     .subscribe((request) => {
@@ -77,8 +86,112 @@ export class ClientTimesheetSummaryComponent {
       }
     });
   }
+  
+  // get all project based on client for filter use
+  getprojectbyid(clientID: any): void {
+    this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.projectsDataDrown = Array.isArray(res?.data) ? res.data : [];
+        // store the clientId from the first project if exists
+        const statuses = this.projectsDataDrown.map(p => p.status);
 
+        if (this.projectsDataDrown.length > 0) {
+          const project = this.projectsDataDrown[0];
+          this.clientsId = project?.client?.clientId ?? null;
+        } else {
+          this.clientsId = null; // No projects returned
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching clients:', err);
+        this.projectsDataDrown = [];
+        this.clientsId = null;
+      }
+    });
+  }
+  // initialization of form
+  createClientForm() {
+    this.datepickerForm = this.fb.group({
+      projectId: [''],
+      status: ['']
+    });
+  }
+  // clear button show/hilde
+  isFilterApplied(): boolean {
+    const { projectId, status } = this.datepickerForm.value;
 
+    return (
+      (projectId !== null && projectId !== undefined && projectId !== '') ||
+      (status !== null && status !== undefined && status !== '')
+    );
+  }
+  // clear the field
+  resetForm() {
+    this.datepickerForm.reset();
+    this.projectSummery();
+  }
+  // apply button disable condition
+  isFormCompletelyValid(): boolean {
+    const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
+    return (
+      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
+      (formValue.status !== null && formValue.status !== undefined && formValue.status !== '')
+    );
+  }
+  // onsubmit data 
+  onSubmit() {
+    this.projectSummerydata();
+  }
+
+  projectSummerydata() {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.projectSummeryData = [];
+        return;
+      }
+
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/project-summary/${clientID}`;
+
+      // Get form values
+      const formValue = this.datepickerForm.getRawValue();
+
+      // Build query params dynamically if values exist
+      const queryParams: any = {};
+
+      if (formValue.projectId) {
+        queryParams.projectId = formValue.projectId;
+      }
+
+      if (formValue.status) {
+        queryParams.status = formValue.status;
+      }
+
+      // If query params exist, append them to API URL
+      const queryString = Object.keys(queryParams).length
+        ? '?' + new URLSearchParams(queryParams).toString()
+        : '';
+
+      // Final URL
+      apiUrl += queryString;
+
+      console.log('Final API URL:', apiUrl);
+
+      this.http
+        .getData(apiUrl)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+            this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+          },
+          error: (err) => {
+            console.error('Error fetching project summary:', err);
+          },
+        });
+    });
+  }
  // Project wise Resource Count
   projectSummery(request?: any) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {

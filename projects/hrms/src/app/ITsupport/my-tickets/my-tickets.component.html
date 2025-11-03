@@ -194,7 +194,37 @@
                             <div class="error-msg">{{'Team is required' | translate}}</div>
                         </div>
                     </div>
+                     <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Category' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="categoryDetails" resetFilterOnHide="true" [filter]="true"
+                                filterBy="value" optionLabel="value"
+                                placeholder="Please select category" formControlName="categoryId"
+                                class="custom-select w-100" (onChange)="getsubcategoryName($event.value)">
+                            </p-select>
+                        </div>
+                        <div
+                            *ngIf="itSupportForm.get('categoryId')?.invalid && itSupportForm.get('categoryId')?.touched">
+                            <div class="error-msg">{{'Category is required' | translate}}</div>
+                        </div>
+                    </div>
 
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Sub-Category' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="subCategoryDetails" resetFilterOnHide="true" [filter]="true"
+                                filterBy="value" optionLabel="value"
+                                placeholder="Please select Sub-Category" formControlName="subcategoryId" class="custom-select w-100"
+                                >
+                            </p-select>
+                        </div>
+                        <div *ngIf="itSupportForm.get('subcategoryId')?.invalid && itSupportForm.get('subcategoryId')?.touched">
+                            <div class="error-msg">{{'Sub-Category is required' | translate}}</div>
+                        </div>
+                    </div>
+<!-- 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
                                 class="text-danger">*</span></label>
@@ -206,7 +236,7 @@
                         <div *ngIf="itSupportForm.get('type')?.invalid && itSupportForm.get('type')?.touched">
                             <div class="error-msg">{{'Type is required' | translate}}</div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span

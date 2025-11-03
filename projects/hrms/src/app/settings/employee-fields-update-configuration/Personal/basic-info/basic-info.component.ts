@@ -1,11 +1,245 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
+import { HttpService } from '../../../../services/http.service';
+import { OpenModalService } from '../../../../services/open-modal.service';
+import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
+import { FormValidationsService } from '../../../../services/form-validations.service';
+import { RbacService } from '../../../../services/rbac.service';
+import { SelectModule } from 'primeng/select';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { jobRoleDATA } from '../../../employee-fields/job/jobrole/jobrole-model';
+
 
 @Component({
   selector: 'app-basic-info',
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, MultiSelectModule, ToggleSwitchModule, DataLoaderContentComponent],
   templateUrl: './basic-info.component.html',
   styleUrl: './basic-info.component.scss'
 })
 export class BasicInfoComponent {
+  subscription!: Subscription;
+  gradedetails = [] as any;
+  loader = false;
+  JobroleDetails = [] as any;
+  isEditMode = false;
+  selectedId: number | null = null;
+  selectedDeleteRole: any = null;
+  @ViewChild('addpopup') addpopup: any;
+  @ViewChild('updatepopup') updatepopup: any;
+  @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
+  AddForm!: FormGroup;
+  updateForm!: FormGroup;
+  fieldConfigForm!: FormGroup;
+  
+  // Static data for the popup fields
+  fieldOptions = [
+    { name: 'First Name', value: 'firstName' },
+    { name: 'Last Name', value: 'lastName' },
+    { name: 'Email', value: 'email' },
+    { name: 'Phone Number', value: 'phoneNumber' },
+    { name: 'Department', value: 'department' }
+  ];
+  
+  approvalTypeOptions = [
+    { label: 'Employee', value: 'employee' },
+    { label: 'Role', value: 'role' }
+  ];
+  
+  employeeOptions = [
+    { name: 'John Doe', id: 1 },
+    { name: 'Jane Smith', id: 2 },
+    { name: 'Mike Johnson', id: 3 },
+    { name: 'Sarah Wilson', id: 4 }
+  ];
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
+    public formValidations: FormValidationsService,
+    public rbac: RbacService,
+  ) {
 
+  }
+  ngOnInit(): void {
+    this.AddForm = this.fb.group({
+      Addjobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
+      gradeId: ['', Validators.required],
+    });
+
+    this.updateForm = this.fb.group({
+      Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
+      updategradeId: ['', Validators.required],
+    });
+    
+    this.fieldConfigForm = this.fb.group({
+      fieldNames: [[], Validators.required],
+      approvalRequired: [false],
+      approvalType: [''],
+      managerType: [''],
+      selectedEmployee: ['']
+    });
+    this.getgradeid();
+    this.getJobrole();
+  }
+
+  getJobrole() {
+    this.loader = true;
+    this.subscription = this.http
+      .getData('DesignationGradeMapper?sort=designationName')
+      .subscribe({
+        next: (data: any) => {
+          this.loader = false;
+          this.JobroleDetails = data;
+          this.sortDesignations();
+        },
+        error: (error: any) => {
+          this.loader = false;
+
+        }
+      });
+  }
+  getgradeid() {
+    this.subscription = this.http.getData('GradeTable').subscribe({
+      next: (data: any) => {
+        // console.log(data);
+        this.gradedetails = data;
+      },
+    });
+  }
+  sortedDesignations: any[] = [];
+  sortDesignations() {
+    // Sort designations alphabetically based on the 'designation' field
+    this.sortedDesignations = this.JobroleDetails.sort((a: { designationName: number; }, b: { designationName: number; }) => {
+      if (a.designationName < b.designationName) return -1;
+      if (a.designationName > b.designationName) return 1;
+      return 0;
+    });
+  }
+  //ADD
+  addjobrole(modal: any) {
+    const request: jobRoleDATA = {
+      designationName: this.AddForm.value.Addjobrole.trim(),
+      gradeId: Number(this.AddForm.value.gradeId)
+    };
+
+    this.subscription = this.http.postdata('DesignationGradeMapper', request).subscribe({
+      next: () => {
+
+        this.getJobrole();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Job Role added successfully');
+        this.resetForm();
+      },
+      error: (error: any) => {
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
+  }
+
+  close(modal: any) {
+    modal.close();
+  }
+
+  // Method to open the update modal dialog
+  openupdateDialog(jobroletypelist: any) {
+    this.selectedId = jobroletypelist.id;
+    this.updateForm.patchValue({ Updatejobrole: jobroletypelist.designationName });
+    this.updateForm.patchValue({ updategradeId: jobroletypelist.gradeId });
+    this.modalService.open(this.updatepopup, {
+      backdrop: 'static',
+      centered: true
+    });
+  }
+  //  UPDATE
+  updateJobroletype(modal: any) {
+    if (this.updateForm.valid && this.selectedId) {
+      const request: jobRoleDATA = {
+        id: this.selectedId,
+        designationName: this.updateForm.value.Updatejobrole.trim(),
+        gradeId: Number(this.updateForm.value.updategradeId)
+      };
+
+      this.subscription = this.http.postdata('DesignationGradeMapper/UPDATER', request).subscribe({
+        next: () => {
+
+          this.getJobrole();
+          modal.close();
+          this.conformationPopup.openSuccessModal('Job Role updated successfully');
+          this.resetForm();
+        },
+        error: (error: any) => {
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
+        }
+      });
+    }
+  }
+  // Method to open the delete modal dialog
+  // DELETE
+  opendelete(jobroletypelist: any) {
+    this.selectedDeleteRole = jobroletypelist;
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+  onDelete(modal: any) {
+    if (!this.selectedDeleteRole) return;
+
+    this.subscription = this.http
+      .getData(`DesignationGradeMapper/deleteById/${this.selectedDeleteRole.id}`)
+      .subscribe({
+        next: () => {
+          modal.close();
+          this.getJobrole();
+          this.conformationPopup.openSuccessModal('Job Role deleted successfully');
+
+        },
+        error: (error: any) => {
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
+
+        }
+      });
+  }
+  closeDelete(modal: any) {
+    modal.dismiss();
+  };
+
+
+  resetForm() {
+    this.AddForm.reset();
+    this.isEditMode = false;
+    this.selectedId = null;
+  }
+  
+  // Method to open field configuration popup
+  openFieldConfigDialog() {
+    this.modalService.open(this.fieldConfigpopup, {
+      backdrop: 'static',
+      centered: true
+    });
+  }
+  
+  // Method to save field configuration
+  saveFieldConfig(modal: any) {
+    if (this.fieldConfigForm.valid) {
+      console.log('Field Configuration:', this.fieldConfigForm.value);
+      // Add your save logic here
+      modal.close();
+      this.conformationPopup.openSuccessModal('Field configuration saved successfully');
+      this.fieldConfigForm.reset();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

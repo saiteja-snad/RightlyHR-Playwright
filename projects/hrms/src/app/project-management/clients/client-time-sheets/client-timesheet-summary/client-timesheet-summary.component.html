@@ -27,11 +27,10 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <a class="project-name cursor">Project</a>
-                            </td>
-                            <td></td>
-                            <td></td>
+                            <tr *ngFor="let roles of projectSummeryData">
+                             <td>{{roles.project.projectName}}</td>
+                             <td>{{roles.allocatedHours}}</td>
+                             <td>{{roles.status}}</td>                          
                         </tr>
                     </tbody>
                 </table>
@@ -40,7 +39,9 @@
     
         <div class="time-sheet-graph-card">
             <div class="summary-header mb-4">Project wise Resource Count</div>
-            <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
+            <div class="project-resource-graph">
+                <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
+            </div>
         </div>
 
         <div class="time-sheet-graph-card">

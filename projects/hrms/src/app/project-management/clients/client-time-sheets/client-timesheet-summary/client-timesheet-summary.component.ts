@@ -47,83 +47,73 @@ export class ClientTimesheetSummaryComponent {
   // Burn Down Data variables
   burndownData: any;
   burndownOptions: any;
+  projectSummeryData:any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService,private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.projectWiseResourceCountGraph();
-    this.departmentWiseContributionGraph();
-    this.projectTypeChart();
-    this.estimatedActualChart();
-    this.billableChart();
-    this.burnDownChart();
+    this.http.requestclienttimesheetdata$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((request) => {
+      if (request && request.dateRange) {
+        // Call API with date filter (if BehaviorSubject has data)
+        this.projectSummery(request);
+        this.projectWiseResourceCountGraph(request);
+        this.departmentWiseContributionGraph(request);
+        this.projectTypeChart(request);
+        this.estimatedActualChart(request);
+         this.billableChart(request);
+        this.burnDownChart(request);
+      } else {
+        // Call API without any date filter
+        this.projectSummery();
+        this.projectWiseResourceCountGraph();
+        this.departmentWiseContributionGraph();
+        this.projectTypeChart();
+        this.estimatedActualChart();
+        this.billableChart();
+         this.burnDownChart();
+      }
+    });
   }
 
-  // Project wise Resource Count
-  projectWiseResourceCountGraph() {
+
+ // Project wise Resource Count
+  projectSummery(request?: any) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
       if (!clientID) {
-        this.projectResourceData = [];
+        this.projectSummeryData = [];
         return;
       }
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/project-summary/${clientID}`;
 
-      this.http.getData(`ProjectManagementGraph/client/project-wise-resource/${clientID}`)
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
+
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+      this.http.getData(apiUrl)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
-            console.log('Project-wise Resource Count Response:', res);
-
-            if (res?.length) {
-              const responseData = res;
-
-              // ✅ Use correct property names from your response
-              const labels = responseData.map((item: any) => item.projectName);
-              const resourceCounts = responseData.map((item: any) => item.resourceCount || 0);
-
-              this.projectResourceData = {
-                labels,
-                datasets: [
-                  {
-                    label: 'Resource Count',
-                    data: resourceCounts,
-                    backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-                    barThickness: 10
-                  }
-                ]
-              };
-            } else {
-              // Fallback dummy data if API returns empty
-              this.projectResourceData = {
-                labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
-                datasets: [
-                  {
-                    label: 'Resource Count',
-                    data: [60, 50, 70, 30, 40],
-                    backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-                    barThickness: 10
-                  }
-                ]
-              };
-            }
-
-            this.projectResourceOptions = {
-              indexAxis: 'y', // Horizontal bar
-              plugins: {
-                legend: { display: false }
-              },
-              scales: {
-                x: {
-                  title: { display: true, text: 'Resource Count' },
-                  grid: { display: false }
-                },
-                y: {
-                  title: { display: true, text: 'Projects' },
-                  grid: { display: false }
-                }
-              }
-            };
+            console.log('API Response:', res);
+            this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
           },
           error: (err) => {
             console.error('Error fetching project-wise resource count chart:', err);
@@ -132,55 +122,286 @@ export class ClientTimesheetSummaryComponent {
     });
   }
 
-  // Department wise Contribution
-  departmentWiseContributionGraph() {
-    this.departmentContributionData = {
-      labels: ['BA Team', 'Design Team', 'Development Team', 'Testing Team', 'DevOps Team', 'Sales Team'],
-      datasets: [
-        {
-          data: [40.2, 33, 44.5, 50, 50, 60],
-          backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-        }
-      ]
-    };
+  // Project wise Resource Count
+  projectWiseResourceCountGraph(request?: any) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.projectResourceData = [];
+        return;
+      }
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/project-wise-resource/${clientID}`;
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
 
-    this.departmentContributionOptions = {
-      cutout: '75%',
-      plugins: {
-        legend: { position: 'right', labels: { usePointStyle: true } },
-      },
-    };
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+
+      this.http.getData(apiUrl)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+
+            const data = res?.data || [];
+            if (!data.length) {
+              this.projectResourceData = {
+                labels: [],
+                datasets: []
+              };
+              return;
+            }
+
+            // Extract data from API response
+            const labels = data.map((item: any) => item.projectName);
+            const resourceCounts = data.map((item: any) => item.resourceCount);
+          // Assign chart data
+          this.projectResourceData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Resource Count',
+                data: resourceCounts,
+                backgroundColor: [
+                  '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
+                  '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
+                ],
+                barThickness: 10
+              }
+            ]
+          };
+
+          // Chart options
+          this.projectResourceOptions = {
+            indexAxis: 'y', // Horizontal bar
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Resource Count' },
+                grid: { display: false }
+              },
+              y: {
+                title: { display: true, text: 'Projects' },
+                grid: { display: false }
+              }
+            }
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching project-wise resource count chart:', err);
+        }
+      });
+    });
+  }
+
+  // Department wise Contribution
+  departmentWiseContributionGraph(request?: any) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.departmentContributionData = [];
+        return;
+      }
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/deptwisecontribution/${clientID}`;
+
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
+
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+
+      this.http.getData(apiUrl)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            const apiData = res?.data?.data || [];
+            if (!Array.isArray(apiData) || apiData.length === 0) {
+              this.departmentContributionData = [];
+              return;
+            }
+
+            // Extract chart data
+            const labels = apiData.map((item: any) => item.name);
+            const dataValues = apiData.map((item: any) => item.percentage);
+
+
+
+            this.departmentContributionData = {
+              labels: labels,
+              datasets: [
+                {
+                  data: dataValues,
+                  backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+                }
+              ]
+            };
+
+            this.departmentContributionOptions = {
+              cutout: '75%',
+              plugins: {
+                legend: { position: 'right', labels: { usePointStyle: true } },
+              },
+            };
+          },
+          error: (err) => {
+            console.error('Error fetching Role-wise hours:', err);
+          this.departmentContributionData = [];
+        }
+      });
+    });
   }
 
   // Project Type (Pie)
-  projectTypeChart() {
-    this.projectTypeData = {
-      labels: ['Implementation', 'Development', 'Migration', 'Integration', 'Support', 'Design'],
-      datasets: [
-        {
-          data: [10, 5, 3, 2, 1, 4],
-          backgroundColor: ['#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5'],
+  projectTypeChart(request?: any) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.projectTypeData = [];
+        return;
+      }
+
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/project-type-summary/${clientID}`;
+
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
+
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+
+      this.http.getData(apiUrl)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+          const data = res?.data || [];
+          if (!data.length) {
+            this.projectTypeData = { labels: [], datasets: [] };
+            return;
+          }
+
+          // Extract project type names and their counts
+          const labels = data.map((item: any) => item.projectType);
+          const counts = data.map((item: any) => item.projectTypeCount);
+
+          // Assign chart data dynamically
+          this.projectTypeData = {
+            labels: labels,
+            datasets: [
+              {
+                data: counts,
+                backgroundColor: [
+                  '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
+                  '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
+                ],
+                hoverBackgroundColor: [
+                  '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
+                ]
+              }
+            ]
+          };
+
+          // Chart options
+          this.projectTypeOptions = {
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { usePointStyle: true }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const label = context.label || '';
+                    const value = context.parsed;
+                    return `${label}: ${value}`;
+                  }
+                }
+              }
+            }
+          };
         },
-      ],
-    };
-    this.projectTypeOptions = {
-      plugins: {
-        legend: { position: 'right', labels: { usePointStyle: true } },
-      },
-    };
+        error: (err) => {
+          console.error('Error fetching project type summary chart:', err);
+        }
+      });
+    });
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
-  estimatedActualChart() {
+  estimatedActualChart(request?: any) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
-
       const clientID = params['id'];
       if (!clientID) {
         this.estimatedVsActualData = [];
         return;
       }
 
-      this.http.getData(`ProjectManagementGraph/client/allocated-vs-actual/${clientID}?groupBy=project`).pipe(takeUntil(this.destroy$)).subscribe({
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/allocated-vs-actual/${clientID}?groupBy=project`;
+
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
+
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           if (res?.success && res?.data?.data?.length) {
             const chartData = res.data.data;
@@ -248,88 +469,219 @@ export class ClientTimesheetSummaryComponent {
   }
 
   // Billable vs Non-Billable Hours (Stacked Bar)
-  billableChart() {
-    this.billableData = {
-      labels: ['Project Management', 'Development', 'Design', 'QA'],
-      datasets: [
-        {
-          label: 'Billable',
-          backgroundColor: '#283593',
-          data: [900, 600, 700, 500],
+  billableChart(request?: any) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.billableData = [];
+        return;
+      }
+
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}`;
+
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
+
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          console.log('API Response:', res);
+          const chartData = res?.data?.data || [];
+          if (!chartData.length) {
+            this.billableData = { labels: [], datasets: [] };
+            return;
+          }
+
+          // Utility to convert "HH:mm" to decimal hours
+          const convertToHours = (timeStr: string): number => {
+            if (!timeStr) return 0;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours + minutes / 60;
+          };
+
+          // Extract dynamic labels and data
+          const labels = chartData.map((item: any) => item.name);
+          const billable = chartData.map((item: any) => convertToHours(item.billableHours));
+          const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
+
+          // Assign dynamic chart data
+          this.billableData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Billable Hours',
+                backgroundColor: '#283593',
+                data: billable,
+              },
+              {
+                label: 'Non-Billable Hours',
+                backgroundColor: '#9FA8DA',
+                data: nonBillable,
+              },
+            ],
+          };
+
+          // Chart options
+          this.billableOptions = {
+            responsive: true,
+            scales: {
+              x: { stacked: true, title: { display: true, text: 'Projects' } },
+              y: {
+                stacked: true,
+                beginAtZero: true,
+                title: { display: true, text: 'Total Hours' },
+              },
+            },
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const value = context.parsed.y;
+                    return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                  },
+                },
+              },
+            },
+            maintainAspectRatio: false,
+          };
         },
-        {
-          label: 'Non-Billable',
-          backgroundColor: '#9FA8DA',
-          data: [300, 200, 150, 100],
-        },
-      ],
-    };
-    this.billableOptions = {
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Hours' } },
-      },
-      plugins: {
-        legend: {
-          display: false
+        error: (err) => {
+          console.error('Error fetching billable/non-billable chart data:', err);
         }
-      },
-    };
+      });
+    });
   }
 
   // Project Burndown Chart (Line)
-  burnDownChart() {
-    this.burndownData = {
-      labels: ['1', '5', '10', '15', '20', '25', '30'],
-      datasets: [
-        {
-          label: 'E-commerce',
-          data: [500, 480, 400, 300, 200, 120, 100],
-          borderColor: '#FFD54F',
-          fill: false,
-          tension: 0.3,
+  burnDownChart(request?: any) {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.burndownData = [];
+        return;
+      }
+      // Base URL
+      let apiUrl = `ProjectManagementGraph/client/burndownchart/${clientID}`;
+
+      // Prepare query parameters if BehaviorSubject data exists
+      const queryParams: string[] = [];
+
+      if (request?.projectId) {
+        queryParams.push(`projectId=${request.projectId}`);
+      }
+      if (request?.resourceId) {
+        queryParams.push(`resourceId=${request.resourceId}`);
+      }
+      if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
+        queryParams.push(`startDate=${request.dateRange.startDate}`);
+        queryParams.push(`endDate=${request.dateRange.endDate}`);
+      }
+
+      // Append query parameters if any exist
+      if (queryParams.length > 0) {
+        apiUrl += `?${queryParams.join('&')}`;
+      }
+
+      this.http.getData(apiUrl)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+          const data = res?.data;
+          const projectCharts = data?.projectBurndownCharts || [];
+          if (!projectCharts.length) {
+            this.burndownData = { labels: [], datasets: [] };
+            return;
+          }
+
+          // Get the first project’s burndown data
+          const project = projectCharts[0];
+          const projectName = project.projectName || 'Project';
+
+          // Extract labels and datasets
+          const labels = project.idealLine.map((item: any) =>
+            new Date(item.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+          );
+
+          const idealValues = project.idealLine.map((item: any) => item.remainingHours);
+          const actualValues = project.actualLine.map((item: any) => item.remainingHours);
+
+          // Chart data
+          this.burndownData = {
+            labels: labels,
+            datasets: [
+              {
+                label: `${projectName} - Ideal Line`,
+                data: idealValues,
+                borderColor: '#42A5F5',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                fill: false,
+                tension: 0.3
+              },
+              {
+                label: `${projectName} - Actual Line`,
+                data: actualValues,
+                borderColor: '#E91E63',
+                borderWidth: 2,
+                fill: false,
+                tension: 0.3
+              }
+            ]
+          };
+
+          // Chart options
+          this.burndownOptions = {
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const value = context.parsed.y;
+                    return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Date' },
+                grid: { display: false }
+              },
+              y: {
+                title: { display: true, text: 'Remaining Hours' },
+                beginAtZero: true,
+                grid: { color: '#f0f0f0' }
+              }
+            },
+            maintainAspectRatio: false
+          };
         },
-        {
-          label: 'Admin App',
-          data: [300, 280, 200, 180, 220, 260, 300],
-          borderColor: '#E91E63',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'E-commerce (Softkill)',
-          data: [800, 750, 700, 600, 500, 400, 300],
-          borderColor: '#2196F3',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Web app',
-          data: [400, 390, 380, 300, 250, 200, 180],
-          borderColor: '#4CAF50',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Mobile App',
-          data: [100, 120, 110, 100, 90, 80, 70],
-          borderColor: '#FFEB3B',
-          fill: false,
-          tension: 0.3,
-        },
-      ],
-    };
-    this.burndownOptions = {
-      plugins: {
-        legend: {
-          display: false
+        error: (err) => {
+          console.error('Error fetching burndown chart data:', err);
         }
-      },
-      scales: {
-        x: { title: { display: true, text: 'Days of Month' } },
-        y: { title: { display: true, text: 'No. of Hours' }, beginAtZero: true },
-      },
-    };
+      });
+    });
   }
 }

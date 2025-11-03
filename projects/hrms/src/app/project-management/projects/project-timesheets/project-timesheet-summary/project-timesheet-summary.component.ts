@@ -19,8 +19,8 @@ export class ProjectTimesheetSummaryComponent {
   // Project Resource Data variable
   projectResourceSummaryData: any;
   // Department wise Contribution variables
-  departmentContributionData: any;
-  departmentContributionOptions: any;
+  roleWiseHoursData: any;
+  roleWiseHoursOptions: any;
   // Estimated Vs ActualData variables
   estimatedVsActualData: any;
   estimatedVsActualOptions: any;
@@ -44,14 +44,14 @@ export class ProjectTimesheetSummaryComponent {
       if (dateRange && dateRange.startDate && dateRange.endDate) {
         // Call APIs with date range
         this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
-        this.departmentWiseContributionGraph(dateRange.startDate, dateRange.endDate);
+        this.roleWiseHoursGraph(dateRange.startDate, dateRange.endDate);
         this.createGaugeChart();
         this.estimatedActualChart();
         this.billableChart();
         this.burnDownChart(dateRange.startDate, dateRange.endDate);
       } else {
         this.projectResourceSummary();
-        this.departmentWiseContributionGraph();
+        this.roleWiseHoursGraph();
         this.createGaugeChart();
         this.estimatedActualChart();
         this.billableChart();
@@ -92,11 +92,11 @@ export class ProjectTimesheetSummaryComponent {
   }
 
   // Department wise Contribution
-  departmentWiseContributionGraph(startDate?: string, endDate?: string) {
+  roleWiseHoursGraph(startDate?: string, endDate?: string) {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
       const projectid = params['id'];
       if (!projectid) {
-        this.departmentContributionData = [];
+        this.roleWiseHoursData = [];
         return;
       }
       //  Get stored date range from HttpService
@@ -114,12 +114,12 @@ export class ProjectTimesheetSummaryComponent {
         next: (res: any) => {
           const apiData = res?.data?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
-            this.departmentContributionData = [];
+            this.roleWiseHoursData = [];
             return;
           }
           const labels = apiData.map((item: any) => item.name);
-          const dataValues = [20, 30];
-          this.departmentContributionData = {
+          const dataValues = apiData.map((item: any) => item.percentage);
+          this.roleWiseHoursData = {
             labels: labels,
             datasets: [
               {
@@ -130,7 +130,7 @@ export class ProjectTimesheetSummaryComponent {
             ]
           };
 
-          this.departmentContributionOptions = {
+          this.roleWiseHoursOptions = {
             cutout: '75%',
             plugins: {
               legend: { position: 'right', labels: { usePointStyle: true } },
@@ -140,7 +140,7 @@ export class ProjectTimesheetSummaryComponent {
 
         error: (err) => {
           console.error('Error fetching Role-wise hours:', err);
-          this.departmentContributionData = [];
+          this.roleWiseHoursData = [];
         }
       });
     });

@@ -204,20 +204,70 @@ export class ClientTimesheetSummaryComponent {
 
   // Project Type (Pie)
   projectTypeChart() {
-    this.projectTypeData = {
-      labels: ['Implementation', 'Development', 'Migration', 'Integration', 'Support', 'Design'],
-      datasets: [
-        {
-          data: [10, 5, 3, 2, 1, 4],
-          backgroundColor: ['#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5'],
-        },
-      ],
-    };
-    this.projectTypeOptions = {
-      plugins: {
-        legend: { position: 'right', labels: { usePointStyle: true } },
-      },
-    };
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.projectTypeData = [];
+        return;
+      }
+
+      this.http.getData(`ProjectManagementGraph/client/project-type-summary/${clientID}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+
+            const data = res?.data || [];
+            if (!data.length) {
+              this.projectTypeData = { labels: [], datasets: [] };
+              return;
+            }
+
+            // ✅ Extract project type names and their counts
+            const labels = data.map((item: any) => item.projectType);
+            const counts = data.map((item: any) => item.projectTypeCount);
+
+            // ✅ Assign chart data dynamically
+            this.projectTypeData = {
+              labels: labels,
+              datasets: [
+                {
+                  data: counts,
+                  backgroundColor: [
+                    '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
+                    '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
+                  ],
+                  hoverBackgroundColor: [
+                    '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
+                  ]
+                }
+              ]
+            };
+
+            // ✅ Chart options
+            this.projectTypeOptions = {
+              plugins: {
+                legend: {
+                  position: 'right',
+                  labels: { usePointStyle: true }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (context: any) => {
+                      const label = context.label || '';
+                      const value = context.parsed;
+                      return `${label}: ${value}`;
+                    }
+                  }
+                }
+              }
+            };
+          },
+          error: (err) => {
+            console.error('Error fetching project type summary chart:', err);
+          }
+        });
+    });
   }
 
   // Estimated vs Actual Hours (Grouped Bar)
@@ -330,56 +380,96 @@ export class ClientTimesheetSummaryComponent {
 
   // Project Burndown Chart (Line)
   burnDownChart() {
-    this.burndownData = {
-      labels: ['1', '5', '10', '15', '20', '25', '30'],
-      datasets: [
-        {
-          label: 'E-commerce',
-          data: [500, 480, 400, 300, 200, 120, 100],
-          borderColor: '#FFD54F',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Admin App',
-          data: [300, 280, 200, 180, 220, 260, 300],
-          borderColor: '#E91E63',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'E-commerce (Softkill)',
-          data: [800, 750, 700, 600, 500, 400, 300],
-          borderColor: '#2196F3',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Web app',
-          data: [400, 390, 380, 300, 250, 200, 180],
-          borderColor: '#4CAF50',
-          fill: false,
-          tension: 0.3,
-        },
-        {
-          label: 'Mobile App',
-          data: [100, 120, 110, 100, 90, 80, 70],
-          borderColor: '#FFEB3B',
-          fill: false,
-          tension: 0.3,
-        },
-      ],
-    };
-    this.burndownOptions = {
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        x: { title: { display: true, text: 'Days of Month' } },
-        y: { title: { display: true, text: 'No. of Hours' }, beginAtZero: true },
-      },
-    };
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.burndownData = [];
+        return;
+      }
+
+      this.http.getData(`ProjectManagementGraph/client/burndownchart/${clientID}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+
+            const data = res?.data;
+            const projectCharts = data?.projectBurndownCharts || [];
+            if (!projectCharts.length) {
+              this.burndownData = { labels: [], datasets: [] };
+              return;
+            }
+
+            // ✅ Get the first project’s burndown data
+            const project = projectCharts[0];
+            const projectName = project.projectName || 'Project';
+
+            // ✅ Extract labels and datasets
+            const labels = project.idealLine.map((item: any) =>
+              new Date(item.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+            );
+
+            const idealValues = project.idealLine.map((item: any) => item.remainingHours);
+            const actualValues = project.actualLine.map((item: any) => item.remainingHours);
+
+            // ✅ Chart data
+            this.burndownData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: `${projectName} - Ideal Line`,
+                  data: idealValues,
+                  borderColor: '#42A5F5',
+                  borderWidth: 2,
+                  borderDash: [5, 5],
+                  fill: false,
+                  tension: 0.3
+                },
+                {
+                  label: `${projectName} - Actual Line`,
+                  data: actualValues,
+                  borderColor: '#E91E63',
+                  borderWidth: 2,
+                  fill: false,
+                  tension: 0.3
+                }
+              ]
+            };
+
+            // ✅ Chart options
+            this.burndownOptions = {
+              plugins: {
+                legend: {
+                  position: 'top',
+                  labels: { usePointStyle: true }
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (context: any) => {
+                      const value = context.parsed.y;
+                      return `${context.dataset.label}: ${value.toFixed(2)} hrs`;
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  title: { display: true, text: 'Date' },
+                  grid: { display: false }
+                },
+                y: {
+                  title: { display: true, text: 'Remaining Hours' },
+                  beginAtZero: true,
+                  grid: { color: '#f0f0f0' }
+                }
+              },
+              maintainAspectRatio: false
+            };
+          },
+          error: (err) => {
+            console.error('Error fetching burndown chart data:', err);
+          }
+        });
+    });
   }
 }

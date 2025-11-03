@@ -40,7 +40,9 @@
     
         <div class="time-sheet-graph-card">
             <div class="summary-header mb-4">Project wise Resource Count</div>
-            <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
+            <div class="project-resource-graph">
+                <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
+            </div>
         </div>
 
         <div class="time-sheet-graph-card">

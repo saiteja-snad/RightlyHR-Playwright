@@ -73,41 +73,38 @@ export class ClientTimesheetSummaryComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
-            console.log('Project-wise Resource Count Response:', res);
+            console.log('API Response:', res);
 
-            if (res?.length) {
-              const responseData = res;
-
-              // ✅ Use correct property names from your response
-              const labels = responseData.map((item: any) => item.projectName);
-              const resourceCounts = responseData.map((item: any) => item.resourceCount || 0);
-
+            const data = res?.data || [];
+            if (!data.length) {
               this.projectResourceData = {
-                labels,
-                datasets: [
-                  {
-                    label: 'Resource Count',
-                    data: resourceCounts,
-                    backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-                    barThickness: 10
-                  }
-                ]
+                labels: [],
+                datasets: []
               };
-            } else {
-              // Fallback dummy data if API returns empty
-              this.projectResourceData = {
-                labels: ['E-commerce', 'Admin App', 'User App', 'Web App', 'Mobile App'],
-                datasets: [
-                  {
-                    label: 'Resource Count',
-                    data: [60, 50, 70, 30, 40],
-                    backgroundColor: ['#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3'],
-                    barThickness: 10
-                  }
-                ]
-              };
+              return;
             }
 
+            // ✅ Extract data from API response
+            const labels = data.map((item: any) => item.projectName);
+            const resourceCounts = data.map((item: any) => item.resourceCount);
+
+            // ✅ Assign chart data
+            this.projectResourceData = {
+              labels: labels,
+              datasets: [
+                {
+                  label: 'Resource Count',
+                  data: resourceCounts,
+                  backgroundColor: [
+                    '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
+                    '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
+                  ],
+                  barThickness: 10
+                }
+              ]
+            };
+
+            // ✅ Chart options
             this.projectResourceOptions = {
               indexAxis: 'y', // Horizontal bar
               plugins: {

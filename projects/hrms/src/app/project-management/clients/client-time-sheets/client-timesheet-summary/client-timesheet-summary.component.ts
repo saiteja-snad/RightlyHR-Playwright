@@ -6,24 +6,17 @@ import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../../services/http.service';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Project } from '../../../../Interfaces/projects.model';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule,ReactiveFormsModule,TranslateModule, ChartModule],
+  imports: [CommonModule, SelectModule,ReactiveFormsModule,TranslateModule,FormsModule, ChartModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class ClientTimesheetSummaryComponent {
-  // projectsDataDropdown = [
-  //   { projectId: 1, projectName: 'Website Redesign' },
-  //   { projectId: 2, projectName: 'Mobile App Development' },
-  //   { projectId: 3, projectName: 'CRM Integration' },
-  //   { projectId: 4, projectName: 'E-commerce Platform' },
-  //   { projectId: 5, projectName: 'Data Migration' }
-  // ];
   statusOptions = [
     { label: 'Not Started', value: 'Not Started' },
     { label: 'On Track', value: 'On Track' },
@@ -49,15 +42,16 @@ export class ClientTimesheetSummaryComponent {
   burndownData: any;
   burndownOptions: any;
   projectSummeryData:any;
-  datepickerForm!: FormGroup;
+   datepickerForm!: FormGroup;
   projectsDataDrown: Project[] = [];
   clientsId!: any;
+  selectedDeptProjectId: any = null;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService,private route: ActivatedRoute,private fb: FormBuilder) { }
 
   ngOnInit() {
-     this.createClientForm();
+      this.createClientForm();
    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [key: string]: any }) => {
     const clientID = params['id'];
     this.getprojectbyid(clientID);
@@ -82,7 +76,13 @@ export class ClientTimesheetSummaryComponent {
         this.projectTypeChart();
         this.estimatedActualChart();
         this.billableChart();
-         this.burnDownChart();
+         this.burnDownChart();    
+         // 🧹 Reset form dropdowns here
+        this.datepickerForm.reset({
+          projectId: '',
+          status: ''
+        });
+        this.selectedDeptProjectId = null;    
       }
     });
   }
@@ -116,32 +116,6 @@ export class ClientTimesheetSummaryComponent {
       status: ['']
     });
   }
-  // clear button show/hilde
-  // isFilterApplied(): boolean {
-  //   const { projectId, status } = this.datepickerForm.value;
-
-  //   return (
-  //     (projectId !== null && projectId !== undefined && projectId !== '') ||
-  //     (status !== null && status !== undefined && status !== '')
-  //   );
-  // }
-  // // clear the field
-  // resetForm() {
-  //   this.datepickerForm.reset();
-  //   this.projectSummery();
-  // }
-  // apply button disable condition
-  isFormCompletelyValid(): boolean {
-    const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
-    return (
-      (formValue.projectId !== null && formValue.projectId !== undefined && formValue.projectId !== '') ||
-      (formValue.status !== null && formValue.status !== undefined && formValue.status !== '')
-    );
-  }
-  //   onProjectChange(event: any) {
-  //  this.projectSummerydata();
-  // }
-
   filters: any = {
     projectId: null,
     status: null,
@@ -290,6 +264,7 @@ export class ClientTimesheetSummaryComponent {
   // event is the selected projectId
   const selectedProjectId = event?.value;
   const request = { projectId: selectedProjectId };
+  this.selectedDeptProjectId = selectedProjectId;
   this.departmentWiseContributionGraph(request);
 }
 

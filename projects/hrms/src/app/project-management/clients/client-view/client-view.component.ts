@@ -100,7 +100,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   resetForm() {
     this.datepickerForm.reset();
     //this.datepickerForm.get('projectId')?.disable();
-    this.datepickerForm.get('resourceId')?.disable();
+    //this.datepickerForm.get('resourceId')?.disable();
     this.http.clearRequestclienttimesheet();
     this.http.setRequestclienttimesheet(null);
   }
@@ -467,7 +467,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   isFormCompletelyValid(): boolean {
     const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
-    return !!formValue.dateRange && !!formValue.projectId && !!formValue.resourceId;
+    return !!formValue.dateRange;
   }
 
   onSubmit() {

@@ -4,10 +4,7 @@
             <form [formGroup]="datepickerForm">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div class="summary-header">Project Summary</div>
-                    <div class="d-flex gap-2 align-items-center">
-                        <!-- @if(isFilterApplied()) {
-                        <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
-                        } -->
+                    <div class="d-flex gap-2 align-items-center">                      
                         <div class="custom-p-select-content">
                             <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
                                 [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId" showClear="true"
@@ -18,9 +15,7 @@
                             <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
                                 formControlName="status" placeholder="Please select status" showClear="true"
                                 class="form-select custom-select"(onChange)="onStatusChange($event)"></p-select>
-                        </div>
-                        <!-- <button class="custom-btn btn-primary" type="submit"
-                            [disabled]="!isFormCompletelyValid()">Apply</button> -->
+                        </div>                      
                     </div>
                 </div>
             </form>
@@ -54,7 +49,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="summary-header">Department wise Contribution</div>
                 <div class="custom-p-select-content">
-                    <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
+                    <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName" optionValue="projectId"
                         [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" showClear="true"
                         placeholder="Please select project" class="form-select custom-select" (onChange)="onDeptProjectChange($event)"></p-select>
                 </div>

@@ -43,18 +43,14 @@ export class TimesheetsTabsComponent {
   isTabActive(link: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
 
-    // For My Timesheets tab, include summary page
+    // For My Timesheets tab, include mysummary page
     if (link === '/project-management/timesheet/mytimesheet') {
-      return currentUrl === link || 
-             (currentUrl === '/project-management/timesheet/summary' && 
-              document.referrer.includes('/project-management/timesheet/mytimesheet'));
+      return currentUrl === link || currentUrl === '/project-management/timesheet/mysummary';
     }
 
     // For Team Timesheets tab, include summary page
     if (link === '/project-management/timesheet/teamtimesheet') {
-      return currentUrl === link || 
-             (currentUrl === '/project-management/timesheet/summary' && 
-              document.referrer.includes('/project-management/timesheet/teamtimesheet'));
+      return currentUrl === link || currentUrl === '/project-management/timesheet/summary';
     }
 
 

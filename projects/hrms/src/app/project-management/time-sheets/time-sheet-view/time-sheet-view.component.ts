@@ -772,6 +772,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         clearTimeout(this.autoSaveTimeout);
       }
       
+      
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         // Add small delay to prevent rapid successive calls
@@ -1475,9 +1476,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     });
   }
 
-  navigation() {
-    this.router.navigate(['project-management/timesheet/summary'],
-      { queryParams: { id: this.loggedinuser?.employeeId } }
+
+  navigation(){
+     this.router.navigate(
+      ['project-management/timesheet/mysummary'],
+      { queryParams: { id:  this.loggedinuser?.employeeId } }
+
     );
   }
 

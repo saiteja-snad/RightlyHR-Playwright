@@ -9,6 +9,7 @@ export interface TimesheetSummaryResponse {
   monthlySummary: MonthlySummary;
   utilizationSummary: UtilizationSummary;
   resourceName?: string;
+  totalLoggedHHMML:any
 }
 
 export interface Client {

@@ -1,1 +1,201 @@
-<p>itsupport-add-subcategory works!</p>
+<div class="custom-main-component-container">
+    <div class="mb-3">
+    <button type="button" (click)="openDialog()" class="custom-btn btn-primary me-2"
+      *ngIf="rbac.allowedToAccess('IT Support Sub-Category.create')">{{'Add' | translate}}</button>
+  </div>
+
+    <!--Data Content-->
+
+    <div class="custom-table-content">
+        @if(!loader){
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Category Name'|translate}}</th>
+                    <th>{{'Sub-Category Name'|translate}}</th>
+                    <th *ngIf="rbac.allowedToAccess('IT Support Sub-Category.update')" class="text-center">{{'Action'|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- @if (subCategoryDetails.length>0) { -->
+                @for (item of subCategoryDetails; track $index) {
+                <tr>
+                    <td>{{item.meta.value}}</td>
+                    <td>{{ item.value}}</td>
+                    <td class="text-center"
+                *ngIf="rbac.allowedToAccess('IT Support Sub-Category.update')">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openupdate(item)" *ngIf="rbac.allowedToAccess('IT Support Sub-Category.update')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <!-- <li (click)="opendelete(teams)" *ngIf="rbac.allowedToAccess('Team.delete')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li> -->
+                  </ul>
+                </div>
+              
+                </tr>
+                }
+                <!-- }
+                @else {
+                <tr><app-no-data-found /></tr>
+                } -->
+            </tbody>
+        </table>
+        }
+        @else {
+        <app-settings-loader />
+        }
+    </div>
+</div>
+<!-- Add Popup Modal  -->
+<ng-template #addpopup let-modal>
+  <form autocomplete="off" [formGroup]="subcategoryForm" (ngSubmit)="addcategoryName()">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">{{ 'Sub-Category' | translate }}</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss();subcategoryForm.reset()">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <!-- category dropdown -->
+        <div class="mb-3">
+          <label for="Categoryid" class="form-label custom-label mb-2">
+            {{ 'Category Name' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select formControlName="categoryId"  [options]="categoryDetails"
+              optionLabel="value" placeholder="Select Category" class="custom-select w-100" [filter]="true"
+              filterBy="value">
+            </p-select>
+          </div>
+          <div *ngIf="subcategoryForm.get('categoryId')?.touched && subcategoryForm.get('categoryId')?.invalid" class="error-msg">
+            {{ 'Category Name is required' | translate }}
+          </div>
+        </div>
+
+        <!-- sub category Name field -->
+        <div class="mb-3">
+          <label for="subCategoryname1" class="form-label custom-label mb-2">
+            {{ 'Sub-Category Name' | translate }} <span class="error-msg">*</span>
+          </label>
+          <input type="text" class="form-control custom-input" formControlName="subCategoryname"
+            placeholder="Please enter sub-category name" maxlength="101"
+            (keydown)="formValidations.restrictInitialSpace($event)" />
+          <div *ngIf="subcategoryForm.get('subCategoryname')?.touched && subcategoryForm.get('subCategoryname')?.invalid" class="error-msg">
+            <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['required']">
+              {{ 'Sub-Category Name is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
+          </div>
+          <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();subcategoryForm.reset()">
+            {{ 'Cancel' | translate }}
+          </button>
+          <button type="submit" class="custom-btn btn-primary"  [disabled]="!subcategoryForm.valid">
+            {{ 'Add' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<!--Update popup-->
+<ng-template #updatepopup let-modal>
+    <form autocomplete="off" [formGroup]="updateForm">
+        <div class="custom-main-popup-container" ngbAutofocus>
+            <div class="custom-poup-header-content popup-header-border">
+                <div>
+                    <p class="popup-heading mb-0">{{'Update Category'|translate}}</p>
+                </div>
+                <div>
+                    <a (click)="close(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                </div>
+            </div>
+            <div class="custom-main-popup-content">
+                <!-- category dropdown -->
+                <div class="mb-3">
+                    <label for="Categoryid" class="form-label custom-label mb-2">
+                        {{ 'Category Name' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select formControlName="categoryId" [options]="categoryDetails" id="Categoryid"
+                            optionLabel="value" placeholder="Select Category" class="custom-select w-100" [filter]="true"
+                            filterBy="value">
+                        </p-select>
+                    </div>
+                    <div *ngIf="subcategoryForm.get('categoryId')?.touched && subcategoryForm.get('categoryId')?.invalid"
+                        class="error-msg">
+                        {{ 'Category Name is required' | translate }}
+                    </div>
+                </div>
+                
+                <!-- sub category Name field -->
+                <div class="mb-3">
+                    <label for="subCategoryname1" class="form-label custom-label mb-2">
+                        {{ 'Sub-Category Name' | translate }} <span class="error-msg">*</span>
+                    </label>
+                    <input type="text" class="form-control custom-input" formControlName="subCategoryname"
+                        placeholder="Please enter sub-category name" maxlength="101"
+                        (keydown)="formValidations.restrictInitialSpace($event)" />
+                    <div *ngIf="subcategoryForm.get('subCategoryname')?.touched && subcategoryForm.get('subCategoryname')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['required']">
+                            {{ 'Sub-Category Name is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
+                    </div>
+                    <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                </div>
+
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updatecategoryName(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-template>
+
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
+    </div>
+</ng-template>

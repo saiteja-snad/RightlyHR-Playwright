@@ -9,11 +9,12 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { SettingsLoaderComponent } from '../../../../shared/settings-loader/settings-loader.component';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
   selector: 'app-itsupport-add-category',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SettingsLoaderComponent, NoDataFoundComponent],
   templateUrl: './itsupport-add-category.component.html',
   styleUrl: './itsupport-add-category.component.scss'
 })
@@ -40,15 +41,15 @@ export class ItsupportAddCategoryComponent {
   }
   ngOnInit(): void {
     this.categoryForm = this.fb.group({
-      categoryName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
+      categoryName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      categoryName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
+      categoryName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getcategoryName();
   }
-
+//get category
   getcategoryName() {
     this.loader = true;
     this.subscription = this.http.getData('entityAttributeValues/getv1?entity=ItSupport&attribute=Category').subscribe({

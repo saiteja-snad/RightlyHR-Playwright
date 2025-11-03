@@ -6,7 +6,7 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter category name"
                     formControlName="categoryName" aria-label="categoryName" aria-describedby="categoryName"
-                    (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
+                    (keydown)="formValidations.restrictInitialSpace($event)" maxlength="101">
                 <span class="input-group-text" id="categoryName">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="categoryForm.invalid">{{'Add'|translate}}</button>
@@ -36,7 +36,9 @@
                 </tr>
             </thead>
             <tbody>
+                @if(categoryDetails.length>0){
                 @for (job of categoryDetails; track $index) {
+                
                 <tr>
                     <td class="w-75">{{ job.value}}</td>
                     <td class="w-25">
@@ -49,13 +51,19 @@
                             </div>
                             <!--Delete-->
                             <!-- <div>
-                                <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Job Type.delete')">
-                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
-                                </a>
-                            </div> -->
+                                                                    <a (click)="opendelete(job)" *ngIf="rbac.allowedToAccess('Job Type.delete')">
+                                                                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                                                    </a>
+                                                                </div> -->
                         </div>
                     </td>
                 </tr>
+                
+                
+                }
+                }
+                @else {
+                <tr><app-no-data-found /></tr>
                 }
             </tbody>
         </table>
@@ -84,7 +92,7 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="categoryName"
                         placeholder="Please enter job type"
-                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
+                        (keydown)="formValidations.restrictInitialSpace($event)" maxlength="101">
                     <div *ngIf="updateForm.get('categoryName')?.touched && updateForm.get('categoryName')?.invalid"
                         class="error-msg">
                         <div *ngIf="updateForm.get('categoryName')?.errors?.['required']">

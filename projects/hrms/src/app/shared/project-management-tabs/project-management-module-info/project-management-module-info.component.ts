@@ -151,6 +151,9 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/summary') {
       this.componentname = 'Timesheet Summary';
     }
+     else if (currentUrl === '/project-management/timesheet/mysummary') {
+      this.componentname = 'My Timesheet Summary';
+    }
   }
 
   isShowClientRoute(): boolean {

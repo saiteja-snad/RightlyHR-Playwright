@@ -236,7 +236,7 @@ export const permissionsData = [
   { fields: 'Cards Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Skillset Directory', View: false, Update: false, Create: false, Delete: false },
 
-  { fields: 'My Time Sheet', View: false, Update: false, Create: false, Delete: false },
+
   { fields: 'Team Time Sheet', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section

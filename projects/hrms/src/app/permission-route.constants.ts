@@ -612,7 +612,7 @@ export const PROJECTS_ROUTES = [
 ];
 
 export const TIME_SHEETS_TABS = [
-  { route: '/project-management/timesheet/mytimesheet', permission: 'My Time Sheet.view' },
+  { route: '/project-management/timesheet/mytimesheet', permission: 'Time Sheet.view' },
   { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
 ]
 

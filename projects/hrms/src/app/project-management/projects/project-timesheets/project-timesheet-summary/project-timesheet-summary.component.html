@@ -52,8 +52,16 @@
         </div>
     
         <div class="time-sheet-graph-card">
-            <div class="summary-header mb-3">Estimated vs Actual Hours</div>
-    
+            <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="summary-header">Estimated vs Actual Hours</div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
+                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                        <span class="legend-label">{{ item.label }}</span>
+                    </div>
+                </div>
+            </div>
+            
             <div class="bar-chart">
                 <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
             </div>
@@ -62,7 +70,15 @@
 
     <div class="grid-display-row3 mb-3">
         <div class="time-sheet-graph-card">
-            <div class="summary-header mb-3">Billable vs Non-Billable Hours</div>
+            <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="summary-header">Billable vs Non-Billable Hours</div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
+                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                        <span class="legend-label">{{ item.label }}</span>
+                    </div>
+                </div>
+            </div>
             <div class="burndown-chart">
                 <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
             </div>

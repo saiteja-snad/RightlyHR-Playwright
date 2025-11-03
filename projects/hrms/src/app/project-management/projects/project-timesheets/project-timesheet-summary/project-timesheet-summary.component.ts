@@ -36,6 +36,15 @@ export class ProjectTimesheetSummaryComponent {
   gaugeOptions: any;
   completionRate = 0;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  estimatedlabels = [
+    { label: 'Allocated Hours', color: '#0F358A' },
+    { label: 'Actual Hours', color: '#A2B5E2' },
+    { label: 'Over Due', color: '#FF4848' }
+  ];
+  billablelabels = [
+    { label: 'Billable', color: '#0F358A' },
+    { label: 'Non-Billable', color: '#A2B5E2' },
+  ];
 
   constructor(private router: Router, public formValidation: FormValidationsService,
     private http: HttpService, private route: ActivatedRoute) { }

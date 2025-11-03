@@ -47,6 +47,15 @@ export class ClientTimesheetSummaryComponent {
   clientsId!: any;
   selectedDeptProjectId: any = null;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  estimatedlabels = [
+    { label: 'Allocated Hours', color: '#0F358A' },
+    { label: 'Actual Hours', color: '#A2B5E2' },
+    { label: 'Over Due', color: '#FF4848' }
+  ];
+  billablelabels = [
+    { label: 'Billable', color: '#0F358A' },
+    { label: 'Non-Billable', color: '#A2B5E2' },
+  ];
 
   constructor(private http: HttpService,private route: ActivatedRoute,private fb: FormBuilder) { }
 

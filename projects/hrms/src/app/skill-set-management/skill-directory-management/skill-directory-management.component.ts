@@ -1,8 +1,8 @@
 import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { Chip } from "primeng/chip";
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { CalendarModule } from 'primeng/calendar';
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PaginatorModule } from "primeng/paginator";
 import { MultiSelectModule } from 'primeng/multiselect';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -18,11 +18,15 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { ProfileIconComponent } from '../../icons/profile-icon/profile-icon.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInformationComponent } from '../../shared/module-information/module-information.component';
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-skill-directory-management',
   standalone: true,
   imports: [TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
-    DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule],
+    DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule,NgbPopoverModule,
+        ModuleInformationComponent, TranslateModule],
   templateUrl: './skill-directory-management.component.html',
   styleUrl: './skill-directory-management.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -68,9 +72,12 @@ export class SkillDirectoryManagementComponent {
   displayLabel!: string;
   multiSkillOptions: any[] = [];
   isloading: boolean = false;
+  componentname: string = '';
+  moduleinfo: string = '';
+  routeToInfoMap!: { [key: string]: string };
 
   constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
-    private readonly modalService: NgbModal, private openmodalservice: OpenModalService) { }
+    private readonly modalService: NgbModal, private openmodalservice: OpenModalService,private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -87,12 +94,34 @@ export class SkillDirectoryManagementComponent {
     this.selectedStatus = 'All Status';
     this.getEmployeeSkills();
     this.getMultiskills()
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
     this.navTabs = [
       { label: 'Skills' },
       { label: 'Projects' },
     ];
   }
+  updateModuleInfo() {
+    const url = this.router.url;
+    this.ComponentnameDisplay();
+    this.routeToInfoMap = {
+      'skill-management/directory': MODULE_INFOS.SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO,
+    };
+    const matchedEntry = Object.entries(this.routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
 
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+  ComponentnameDisplay() {
+    if (this.router.url === '/skill-management/directory') {
+      this.componentname = 'Skill Set Directory';
+    }
+  }
+  
   onCheckemployeeStatus(statusValue: any) {
     this.selectedStatus = !statusValue || statusValue === 'All Status' ? 'All Status' : statusValue;
     this.getEmployeeSkills();
@@ -316,27 +345,27 @@ export class SkillDirectoryManagementComponent {
     const toDate = this.monthEndDate ? this.monthEndDate.toISOString() : '';
     this.http.downloadEmployeeSkillsReport('EmployeeSkills/exportEmployeeSkillSet',
       isActive, resourceStatus, searchQuery, fromDate, toDate, skillSearch).subscribe({
-      next: (response: any) => {
-        const blob = new Blob([response], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `Employee_Skill_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
-        link.click();
-        this.openmodalservice.openSuccessModal('Employee Skill Report Generated Successfully');
-      },
-      error: () => {
-        this.spinnerLoaderforallrecoders = false;
-        this.openmodalservice.openErrorModal('No records found for the selected filters');
-      },
-      complete: () => {
-        this.spinnerLoaderforallrecoders = false;
-      },
-    });
+        next: (response: any) => {
+          const blob = new Blob([response], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `Employee_Skill_Report_${new Date().toISOString().slice(0, 10)}.xlsx`;
+          link.click();
+          this.openmodalservice.openSuccessModal('Employee Skill Report Generated Successfully');
+        },
+        error: () => {
+          this.spinnerLoaderforallrecoders = false;
+          this.openmodalservice.openErrorModal('No records found for the selected filters');
+        },
+        complete: () => {
+          this.spinnerLoaderforallrecoders = false;
+        },
+      });
   }
-  
+
   clearAllFilters(): void {
     this.selectedStatus = 'All Status';
     this.selectedSkills = [];

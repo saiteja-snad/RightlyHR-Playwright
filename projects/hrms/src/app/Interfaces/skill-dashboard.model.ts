@@ -4,6 +4,7 @@ export interface SummaryCard {
   value: number | string;
   subtext?: string;
   subtextClass?: string;
+   icons?: string; 
 }
 
 // Skill Summary Totals

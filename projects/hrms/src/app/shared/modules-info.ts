@@ -223,7 +223,7 @@ export const MODULE_INFOS = {
     Inactive_CLIENT_Documents_INFO: "Store and access Inactive client-related documents in a single, secure location. Upload MSAs, NDAs, and other critical files, track signed copies, and ensure your team can quickly retrieve documents whenever needed for smooth operations.",
 
     //Skillset Info
-        SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+        SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Dashboard provides a comprehensive overview of employee skills and proficiency levels across the organization. It displays key insights such as total employee count, committed and available employees, skill proficiency distribution, top skills, and department-wise skill breakdown. The dashboard helps management identify skill strengths, resource availability, and training needs efficiently.",
         SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
 
 }

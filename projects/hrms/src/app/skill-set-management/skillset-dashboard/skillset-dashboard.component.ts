@@ -56,18 +56,30 @@ export class SkillsetDashboardComponent {
   totalSkillCount: number = 0;
   totalDepartmentSkillCount: number = 0;
   searchQuery: string = '';
-  selectedStatus: string = 'All Status';
+  selectedStatus: string[] = ['All Proficiencies'];
   selectedSkills: string[] = [];
+  MySkills: any[] = [];
+  totalCount!: number;
   //moduleinfo
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   componentname: string = '';
+
+  EmpProficiency = [
+    { label: 'All Proficiencies', value: 'All Proficiencies' },
+    { label: 'Beginner', value: 'Beginner' },
+    { label: 'Intermediate', value: 'Intermediate' },
+    { label: 'Expert', value: 'Expert' },
+  ];
+  spinnerLoaderforallrecoders = false;
+  loader!: boolean;
 
   constructor(private http: HttpService, public formValidation: FormValidationService,
     private offcanvasService: NgbOffcanvas, private router: Router) { }
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.onCheckemployeeProficiency(this.selectedStatus);
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.topSkillsGraph();
@@ -75,6 +87,7 @@ export class SkillsetDashboardComponent {
     this.getSkillSetTableData();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getMultiskills();
   }
 
   updateModuleInfo() {
@@ -105,7 +118,13 @@ export class SkillsetDashboardComponent {
     this.getViewSkillDetails(skillName);
   }
 
-  onCheckemployeeProficiency(statusValue: any) { }
+  onCheckemployeeProficiency(statusValue: any) {
+    this.selectedStatus = !statusValue || statusValue === 'All Proficiencies' ? 'All Proficiencies' : statusValue;
+    this.skilllevelGraph();
+    this.skillByDepartmentGraph()
+    this.getSkillSetTableData()
+    this.topSkillsGraph()
+  }
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -118,12 +137,12 @@ export class SkillsetDashboardComponent {
         this.isloading = false;
         if (res?.data) {
           const summary = res.data;
-          this.summaryCards = [
-            { title: 'Total Employee Count', value: summary.totalEmployees ?? 0 },
-            { title: 'Employees Committed Count', value: summary.allocatedEmployees ?? 0 },
-            { title: 'Employees Available Count', value: summary.availableEmployees ?? 0 },
-            { title: 'Soon to be Available', value: summary.nextMonthAvailableEmployees ?? 0 }
-          ];
+            this.summaryCards = [
+          { title: 'Total Employees', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
+          { title: 'Committed Employees', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
+          { title: 'Available Employees', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
+          { title: 'Upcoming Available Resources', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
+        ];
         }
       },
       error: (reason) => {
@@ -135,15 +154,22 @@ export class SkillsetDashboardComponent {
 
   skilllevelGraph(): void {
     this.isloading = true;
-    this.http.getData(`EmployeeSkills/getSkillSummary`).subscribe({
+    const params: any = {};
+    if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
+      params.proficiencies = this.selectedStatus.join(',');
+    }
+    if (this.selectedSkills?.length > 0) {
+      params.skills = this.selectedSkills.join(',');
+    }
+    this.http.getDataIncludeParams('EmployeeSkills/getSkillSummary', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
         if (res?.data) {
           const { expertCount, intermediateCount, beginnerCount, totalSkillCount } = res.data;
           this.totalSkillCount = totalSkillCount;
-          // Color palette — 
+
           const colors = ['#00A912', '#9A00F3', '#F8AF13'];
-          /** 1. PIE CHART DATA **/
+
           this.skillLevelData = {
             labels: ['Expert', 'Intermediate', 'Beginner'],
             datasets: [
@@ -155,12 +181,10 @@ export class SkillsetDashboardComponent {
               },
             ],
           };
-          /**  2. CHART OPTIONS — Legend OFF **/
+
           this.skillLevelOptions = {
             plugins: {
-              legend: {
-                display: false, // hide default legend
-              },
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   label: (context: any) => {
@@ -174,7 +198,7 @@ export class SkillsetDashboardComponent {
             responsive: true,
             maintainAspectRatio: false,
           };
-          /**  3. CUSTOM LEGEND COUNTS (for right side) **/
+
           this.skillProficiencyCounts = [
             { label: 'Expert', count: expertCount, color: colors[0] },
             { label: 'Intermediate', count: intermediateCount, color: colors[1] },
@@ -186,76 +210,120 @@ export class SkillsetDashboardComponent {
     });
   }
 
+
   skillByDepartmentGraph(): void {
-    this.http.getData(`EmployeeSkills/getDepartmentSkillSummary`).subscribe((res: any) => {
-      if (res?.data?.length) {
-        const validDepartments = res.data.filter((d: any) => d.departmentName?.trim());
-        const counts = validDepartments.map((d: any) => d.uniqueSkillCount);
-        const labels = validDepartments.map((d: any) => d.departmentName);
-        const colors = validDepartments.map((d: any) => d.colorCode);
-        this.totalDepartmentSkillCount = counts.reduce((a: number, b: number) => a + b, 0);
-        this.skillByDepartmentData = {
-          labels,
-          datasets: [
-            {
-              data: counts,
-              backgroundColor: colors,
-              borderColor: '#fff',
-              borderWidth: 3,
-              hoverOffset: 10
-            }
-          ]
-        };
-        this.skillByDepartmentOptions = {
-          cutout: '60%', // thinner center hole
-          plugins: {
-            legend: {
-              display: false // hide default legend
-            },
-            tooltip: {
-              callbacks: {
-                label: (context: any) => {
-                  const dataset = context.dataset;
-                  const total = dataset.data.reduce((sum: number, val: number) => sum + val, 0);
-                  const value = dataset.data[context.dataIndex];
-                  const percentage = ((value / total) * 100).toFixed(1) + '%';
-                  return `${context.label}: ${value} (${percentage})`;
+    this.isloading = true;
+    const params: any = {};
+
+    // Only send proficiencies if not "All Proficiencies"
+    if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
+      params.proficiencies = this.selectedStatus.join(',');
+    }
+
+    //  Only send selected skills if any are chosen
+    if (this.selectedSkills?.length > 0) {
+      params.skills = this.selectedSkills.join(',');
+    }
+
+    this.http.getDataIncludeParams('EmployeeSkills/getDepartmentSkillSummary', params).subscribe({
+      next: (res: any) => {
+        this.isloading = false;
+
+        if (res?.data?.length) {
+          const validDepartments = res.data.filter((d: any) => d.departmentName?.trim());
+          const counts = validDepartments.map((d: any) => d.uniqueSkillCount);
+          const labels = validDepartments.map((d: any) => d.departmentName);
+          const colors = validDepartments.map((d: any) => d.colorCode);
+
+          this.totalDepartmentSkillCount = counts.reduce((a: number, b: number) => a + b, 0);
+
+          /**  Department Chart Data **/
+          this.skillByDepartmentData = {
+            labels,
+            datasets: [
+              {
+                data: counts,
+                backgroundColor: colors,
+                borderColor: '#fff',
+                borderWidth: 3,
+                hoverOffset: 10
+              }
+            ]
+          };
+
+          /**  Chart Options **/
+          this.skillByDepartmentOptions = {
+            cutout: '60%',
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const dataset = context.dataset;
+                    const total = dataset.data.reduce((sum: number, val: number) => sum + val, 0);
+                    const value = dataset.data[context.dataIndex];
+                    const percentage = ((value / total) * 100).toFixed(1) + '%';
+                    return `${context.label}: ${value} (${percentage})`;
+                  }
                 }
               }
-            }
-          },
-          elements: {
-            arc: {
-              borderWidth: 3,
-              borderColor: '#fff'
-            }
-          },
-          responsive: true,
-          maintainAspectRatio: false
-        };
-        this.deptCounts = validDepartments.map((d: any) => ({
-          label: d.departmentName,
-          count: d.uniqueSkillCount,
-          color: d.colorCode,
-          percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
-        }));
+            },
+            elements: {
+              arc: { borderWidth: 3, borderColor: '#fff' }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+          };
+
+          /**  Department Count Summary **/
+          this.deptCounts = validDepartments.map((d: any) => ({
+            label: d.departmentName,
+            count: d.uniqueSkillCount,
+            color: d.colorCode,
+            percentage: ((d.uniqueSkillCount / this.totalDepartmentSkillCount) * 100).toFixed(1)
+          }));
+        } else {
+          this.skillByDepartmentData = { labels: [], datasets: [] };
+          this.deptCounts = [];
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching department skills:', err);
+        this.isloading = false;
+        this.skillByDepartmentData = { labels: [], datasets: [] };
+        this.deptCounts = [];
       }
     });
   }
 
+
   topSkillsGraph(): void {
     this.isloading = true;
-    this.http.getData('EmployeeSkills/getMostCommonSkills').subscribe({
+    const params: any = {};
+    // Add proficiency filter if not "All Proficiencies"
+    if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
+      params.proficiencies = this.selectedStatus.join(',');
+    }
+    // Add skills filter if any skill is selected
+    if (this.selectedSkills?.length > 0) {
+      params.skills = this.selectedSkills.join(',');
+    }
+
+    this.http.getDataIncludeParams('EmployeeSkills/getMostCommonSkills', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
-        if (res?.data?.length) {
+
+        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
           const skills: TopSkill[] = res.data;
+
           // Sort and take only Top 5
           const top5 = skills.sort((a, b) => b.employeeCount - a.employeeCount).slice(0, 5);
+
           // Prepare chart data
           const labels = top5.map(s => s.skillName.charAt(0).toUpperCase() + s.skillName.slice(1));
           const counts = top5.map(s => s.employeeCount);
           const colors = top5.map(s => s.colorCode || '#42A5F5');
+
           this.topSkillsData = {
             labels,
             datasets: [
@@ -267,6 +335,7 @@ export class SkillsetDashboardComponent {
               }
             ]
           };
+
           // Chart options for horizontal clean layout
           this.topSkillsOptions = {
             indexAxis: 'y',
@@ -310,6 +379,8 @@ export class SkillsetDashboardComponent {
               }
             }
           };
+        } else {
+          this.topSkillsData = { labels: [], datasets: [] };
         }
       },
       error: (err) => {
@@ -320,12 +391,23 @@ export class SkillsetDashboardComponent {
     });
   }
 
-  getSkillSetTableData() {
+  getSkillSetTableData(): void {
     this.isloading = true;
-    this.http.getData('EmployeeSkills/getSkillSummaryCountAsync').subscribe({
+    const params: any = {};
+    // Add proficiency filter if not "All Proficiencies"
+    if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
+      params.proficiencies = this.selectedStatus.join(',');
+    }
+    //  Add skills filter if any skill is selected
+    if (this.selectedSkills?.length > 0) {
+      params.skills = this.selectedSkills.join(',');
+    }
+
+    this.http.getDataIncludeParams('EmployeeSkills/getSkillSummaryCountAsync', params).subscribe({
       next: (res: any) => {
         this.isloading = false;
-        if (res.success && res.data?.length) {
+
+        if (res?.success && Array.isArray(res.data) && res.data.length) {
           this.skillSummaryList = res.data as SkillSummary[];
           this.noDataFound = false;
         } else {
@@ -333,7 +415,8 @@ export class SkillsetDashboardComponent {
           this.noDataFound = true;
         }
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error fetching skill summary table:', err);
         this.isloading = false;
         this.skillSummaryList = [];
         this.noDataFound = true;
@@ -341,25 +424,46 @@ export class SkillsetDashboardComponent {
     });
   }
 
+
   getViewSkillDetails(skillName: string): void {
-    const params = { skillName };
+    this.isloading = true;
+
+    const params: any = { skillName };
+
+    // Add proficiency filter if not "All Proficiencies"
+    if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
+      params.proficiencies = this.selectedStatus.join(',');
+    }
+
+    // Add skills filter if any skill is selected
+    if (this.selectedSkills?.length > 0) {
+      params.skills = this.selectedSkills.join(',');
+    }
+
     this.http.getDataIncludeParams('EmployeeSkills/getEmployeesBySkill', params).subscribe({
       next: (res: any) => {
+        this.isloading = false;
+
         if (res?.success && Array.isArray(res.data)) {
           this.employeeList = res.data.map((emp: any) => ({
             ...emp,
             profileImage: this.getImageUrl(emp.profileImage)
           }));
+          this.noDataFound = this.employeeList.length === 0;
         } else {
           this.employeeList = [];
+          this.noDataFound = true;
         }
       },
       error: (err) => {
         console.error('Error fetching employees:', err);
+        this.isloading = false;
         this.employeeList = [];
+        this.noDataFound = true;
       }
     });
   }
+
 
   private getImageUrl(imagePath: string): string | null {
     if (!imagePath) {
@@ -373,8 +477,42 @@ export class SkillsetDashboardComponent {
     }
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
+  getMultiskills() {
+    this.loader = true;
+    this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
+      next: (response: any) => {
+        if (response?.success && Array.isArray(response.data)) {
+          this.multiSkillOptions = response.data.map((skill: any) => ({
+            label: skill.skillName,
+            value: skill.skillName
+          }));
+        } else {
+          this.multiSkillOptions = [];
+        }
+        this.loader = false;
+      },
+      error: (reason: any) => {
+        console.error('Error fetching skills:', reason);
+        this.loader = false;
+      }
+    });
+  }
 
-  clearAllFilters(): void { }
 
-  onSkillSelectionChange(): void { }
+  clearAllFilters(): void {
+    this.selectedStatus = [];
+    this.selectedSkills = [];
+    this.skilllevelGraph();
+    this.skillByDepartmentGraph()
+    this.getSkillSetTableData()
+    this.topSkillsGraph()
+
+  }
+
+  onSkillSelectionChange(): void {
+    this.skilllevelGraph()
+    this.skillByDepartmentGraph()
+    this.getSkillSetTableData()
+    this.topSkillsGraph()
+  }
 }

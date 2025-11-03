@@ -47,11 +47,13 @@ export class ClientTimesheetSummaryComponent {
   // Burn Down Data variables
   burndownData: any;
   burndownOptions: any;
+  projectSummeryData:any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService,private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.projectSummery();
     this.projectWiseResourceCountGraph();
     this.departmentWiseContributionGraph();
     this.projectTypeChart();
@@ -59,7 +61,28 @@ export class ClientTimesheetSummaryComponent {
     this.billableChart();
     this.burnDownChart();
   }
+ // Project wise Resource Count
+  projectSummery() {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
+      const clientID = params['id'];
+      if (!clientID) {
+        this.projectSummeryData = [];
+        return;
+      }
 
+      this.http.getData(`ProjectManagementGraph/client/project-summary/${clientID}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            console.log('API Response:', res);
+            this.projectSummeryData = Array.isArray(res?.data) ? res.data : [];
+          },
+          error: (err) => {
+            console.error('Error fetching project-wise resource count chart:', err);
+          }
+        });
+    });
+  }
   // Project wise Resource Count
   projectWiseResourceCountGraph() {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
@@ -131,22 +154,52 @@ export class ClientTimesheetSummaryComponent {
 
   // Department wise Contribution
   departmentWiseContributionGraph() {
-    this.departmentContributionData = {
-      labels: ['BA Team', 'Design Team', 'Development Team', 'Testing Team', 'DevOps Team', 'Sales Team'],
-      datasets: [
-        {
-          data: [40.2, 33, 44.5, 50, 50, 60],
-          backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-        }
-      ]
-    };
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
+      const clientid = params['id'];
+      if (!clientid) {
+        this.departmentContributionData = [];
+        return;
+      }
 
-    this.departmentContributionOptions = {
-      cutout: '75%',
-      plugins: {
-        legend: { position: 'right', labels: { usePointStyle: true } },
-      },
-    };
+      this.http.getData(`ProjectManagementGraph/client/deptwisecontribution/${clientid}`)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            const apiData = res?.data?.data || [];
+            if (!Array.isArray(apiData) || apiData.length === 0) {
+              this.departmentContributionData = [];
+              return;
+            }
+
+            // Extract chart data
+            const labels = apiData.map((item: any) => item.name);
+            const dataValues = apiData.map((item: any) => item.percentage);
+
+
+
+            this.departmentContributionData = {
+              labels: labels,
+              datasets: [
+                {
+                  data: dataValues,
+                  backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+                }
+              ]
+            };
+
+            this.departmentContributionOptions = {
+              cutout: '75%',
+              plugins: {
+                legend: { position: 'right', labels: { usePointStyle: true } },
+              },
+            };
+          },
+          error: (err) => {
+            console.error('Error fetching Role-wise hours:', err);
+            this.departmentContributionData = [];
+          }
+        });
+    });
   }
 
   // Project Type (Pie)

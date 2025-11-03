@@ -18,6 +18,7 @@ export interface SkillSummaryData {
 export interface SkillProficiencyCount {
   label: string;
   count: number;
+  color: string;
 }
 
 // Department-wise skill summary
@@ -31,9 +32,11 @@ export interface DepartmentSkillSummary {
 export interface DepartmentCount {
   label: string;
   count: number;
+  color: string
+  percentage: string;
 }
 
-// Dynamic key/value proficiency counts (e.g. Expert, Mid, Beginner)
+
 export interface SkillProficiencyCounts {
   [key: string]: number;
 }
@@ -42,13 +45,14 @@ export interface SkillProficiencyCounts {
 export interface TopSkill {
   skillName: string;
   employeeCount: number;
+   colorCode?: string;
 }
 
 // Skill summary for table or skill count chart
 export interface SkillSummary {
   skillName: string;
   skillCount: number;
-   proficiencyCounts: SkillProficiencyCounts;
+  proficiencyCounts: SkillProficiencyCounts;
 }
 
 // Chart dataset (used in PrimeNG p-chart or Chart.js)
@@ -56,6 +60,8 @@ export interface ChartDataset {
   label: string;
   data: number[];
   backgroundColor: string[];
+  barThickness?: number;
+  borderRadius?:number
 }
 
 // Chart data wrapper
@@ -73,7 +79,7 @@ export interface EmployeeSkill {
   subDepartmentName: string;
   skillName: string;
   proficiencyLevel: string;
- profileImage?: string;   
+  profileImage?: string;
   imageUrl?: string;
 }
 

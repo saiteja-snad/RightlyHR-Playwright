@@ -221,4 +221,9 @@ export const MODULE_INFOS = {
     Project_Timesheet_INFO: 'Monitor hours logged by your project team. Review submitted entries, approve timesheets, and maintain accurate records to keep projects on track and ensure accountability.',
     Inactive_Documents_Project: "Store and access inactive project-related documents in a single location. Upload key deliverables, reference materials, and signed files, keeping your team organized and ensuring everyone has the resources they need.",
     Inactive_CLIENT_Documents_INFO: "Store and access Inactive client-related documents in a single, secure location. Upload MSAs, NDAs, and other critical files, track signed copies, and ensure your team can quickly retrieve documents whenever needed for smooth operations.",
+
+    //Skillset Info
+        SKILLSET_MANAGEMENT_DASHBOARD_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+        SKILLSET_MANAGEMENT_DIRECTORY_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+
 }

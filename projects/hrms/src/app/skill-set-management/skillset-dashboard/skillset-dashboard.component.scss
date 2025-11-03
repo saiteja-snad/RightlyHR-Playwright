@@ -1,21 +1,25 @@
+/* --- Summary Card --- */
 .summary-card {
   padding: 1rem;
   border: 1px solid #DCE3E9;
   border-radius: 0.625rem;
   background-color: #FFF;
-
-  .summary-title {
-    font-size: 0.9rem;
-    color: #6b7280;
-  }
-
-  .summary-value {
-    font-size: var(--fontsize18);
-    font-weight: 700;
-    color: var(--primary-color);
-  }
+  transition: all 0.2s ease-in-out;
+  gap: 1rem;
 }
 
+.summary-card .summary-title {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.summary-card .summary-value {
+  font-size: var(--fontsize18);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* --- Chart Container Grid --- */
 .chart-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -23,19 +27,78 @@
   align-items: stretch;
 }
 
+/* --- Header --- */
 .graph-header {
   font-size: var(--fontsize16);
   font-weight: 700;
   color: var(--primary-color);
 }
 
-.pic-chart-content {
-  canvas {
-    width: 240px !important;
-    height: 240px !important;
-  }
+/* --- Skill Proficiency Pie Chart --- */
+.pic-chart-content canvas {
+  width: 260px !important;
+  height: 260px !important;
 }
 
+/* ✅ Chart + Legend Layout (horizontal like Image 2) */
+.skill-chart-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Left Chart Section */
+.skill-chart-left {
+  flex: 0 0 auto;
+  width: 260px;
+  height: 260px;
+}
+
+/* Right Legend Section */
+.skill-chart-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+  min-width: 180px;
+}
+
+/* Legend Items */
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: #444;
+  font-weight: 500;
+  gap: 0.5rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.legend-label {
+  flex: 1;
+  color: #555;
+  margin-left: 0.5rem;
+  text-transform: capitalize;
+}
+
+.legend-value {
+  font-weight: 700;
+  color: #000;
+  min-width: 24px;
+  text-align: right;
+}
+
+/* --- Chart Count Grid (for bottom aligned counts if needed) --- */
 .chart-counts-grid {
   display: grid;
   gap: 6px;
@@ -59,86 +122,16 @@
   font-size: 0.9rem;
 }
 
-.view-link {
-  color: var(--primary-color);
-  cursor: pointer;
-  text-decoration: underline;
-  font-weight: 500;
-}
-
-.view-link:hover {
-  color: var(--primary-color);
-}
-
-
+/* --- Profile Section --- */
 .profile-content {
   display: flex;
   flex-direction: row;
+  align-items: center;
   color: var(--primary-color);
-
-  .profile-image {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0px 0px 10px #0b3a8333;
-    object-fit: cover;
-  }
-
-  .name {
-    font-size: var(--fontsize16);
-    font-weight: 600;
-    text-transform: capitalize;
-  }
-
-  .sub-text {
-    font-size: var(--fontsize14);
-    font-weight: 400;
-  }
-
-  .department {
-    color: #909090 !important;
-  }
-
-  .project-status {
-    font-weight: 400;
-    font-size: 12px;
-    padding: 0.25rem 1rem;
-  }
-}
-
-.chart-scroll-container {
-  max-height: 450px;
-  overflow-y: auto;
-  overflow-x: auto;
-}
-
-/* --- Offcanvas Header --- */
-.offcanvas-header {
-  border-bottom: 1px solid #e5e7eb;
-  padding-bottom: 0.75rem;
-}
-
-.offcanvas-title {
-  font-weight: 700;
-  font-size: var(--fontsize18);
-  color: var(--primary-color);
-}
-
-/* --- Offcanvas Body --- */
-.offcanvas-body {
-  padding-top: 1rem;
-  overflow-y: auto;
-  max-height: 80vh;
-}
-
-/* --- Each Employee Card --- */
-.profile-content {
   background-color: #f9fafb;
   border-radius: 0.625rem;
   padding: 0.75rem 1rem;
   margin-bottom: 0.75rem;
-  align-items: center;
   gap: 1rem;
   transition: background-color 0.2s ease-in-out;
 }
@@ -147,13 +140,24 @@
   background-color: #f3f4f6;
 }
 
-/* --- Profile Info Section --- */
+.profile-image {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0px 0px 10px #0b3a8333;
+  object-fit: cover;
+}
+
 .profile-info {
   flex: 1;
 }
 
 .profile-info .name {
   color: #111827;
+  font-size: var(--fontsize16);
+  font-weight: 600;
+  text-transform: capitalize;
 }
 
 .profile-info .designation {
@@ -166,7 +170,7 @@
   font-size: 0.8rem;
 }
 
-/* --- Skill Level Styling --- */
+/* --- Skill Level Colors --- */
 .skill-level {
   font-weight: 400;
   font-size: var(--fontsize14);
@@ -185,7 +189,52 @@
   color: #f59e0b;
 }
 
-/* --- No Data Found Message --- */
+/* --- Pie Chart Center Text (disabled for image 2 layout) --- */
+.skill-chart-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto;
+}
+
+.skill-chart-center-text {
+  display: none;
+  /* hide center total like image 2 */
+}
+
+/* --- Proficiency Text Colors --- */
+.beginner-text {
+  color: #F8AF13 !important;
+  font-weight: 500;
+}
+
+.intermediate-text {
+  color: #9A00F3 !important;
+  font-weight: 500;
+}
+
+.expert-text {
+  color: #00A912 !important;
+  font-weight: 500;
+}
+
+/* --- Scroll & Misc Styles --- */
+.scrollable-chart {
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.view-link {
+  color: var(--primary-color);
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.view-link:hover {
+  color: var(--primary-color);
+}
+
 .no-data-text {
   text-align: center;
   color: #9ca3af;
@@ -193,7 +242,24 @@
   margin-top: 2rem;
 }
 
-/* --- Scrollable Offcanvas (for long employee lists) --- */
+/* --- Offcanvas Styles --- */
+.offcanvas-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.offcanvas-title {
+  font-weight: 700;
+  font-size: var(--fontsize18);
+  color: var(--primary-color);
+}
+
+.offcanvas-body {
+  padding-top: 1rem;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
 .offcanvas-body::-webkit-scrollbar {
   width: 6px;
 }
@@ -207,64 +273,55 @@
   background-color: #9ca3af;
 }
 
-/* --- Skill Level Chart Center Text --- */
-/* --- Skill Level Chart Center Text --- */
-.skill-chart-container {
-  position: relative;
-  width: 240px;
-  height: 240px;
-  margin: 0 auto;
+.top-skills {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F9FAFB 100%);
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.skill-chart-center-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  line-height: 1.1;
-}
-
-.skill-chart-count {
-  font-size: 2rem; // bold large number like reference
+.graph-header {
   font-weight: 700;
-  color: #000; // solid dark for readability
+  font-size: 1rem;
+  color: #1F2937;
 }
 
-.skill-chart-label {
-  margin-top: 4px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #6b7280; // subtle gray text
+.project-resource-graph canvas {
+  height: 250px !important;
 }
 
-/* --- Proficiency Level Colors --- */
-.beginner-text {
-  color: #F8AF13 !important;
-  /* orange-yellow */
-  font-weight: 500;
+//  Table chips styles 
+.custom-table-content {
+  height: calc(100dvh - 15rem) !important;
+  border-bottom-left-radius: 0rem !important;
+  border-bottom-right-radius: 0rem !important;
+
+  .p-chip {
+    border: 1px solid #D1D9E2 !important;
+    background: #F8FBFF !important;
+    font-weight: 400;
+    font-size: var(--fontsize14) !important;
+
+    .skill-name {
+      color: var(--primary-color) !important;
+    }
+
+    .skill-level {
+      color: #73809D !important;
+    }
+  }
 }
 
-.intermediate-text {
-  color: #9A00F3 !important;
-  /* purple */
-  font-weight: 500;
+.icon-circle {
+  background-color: #1e3a8a;
+  /* dark blue */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+
 }
-
-.expert-text {
-  color: #00A912 !important;
-  /* green */
-  font-weight: 500;
-}
-
-
-
-.cavas-grap {
-  box-sizing: border-box;
-  display: block;
-  height: 213px;
-  width: 554px;
+.custom-p-multiSelect-content {
+  min-width: 200px !important;
 }

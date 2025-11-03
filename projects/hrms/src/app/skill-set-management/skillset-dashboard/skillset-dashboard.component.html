@@ -1,111 +1,139 @@
-<div class="custom-main-component-container">
-    <!--Summary cards-->
-    <div class="cards-grid-container mb-3">
-        <div *ngFor="let card of summaryCards" class="summary-card">
-            <div class="summary-title mb-2">{{ card.title }}</div>
-            <div class="summary-value">{{ card.value }}</div>
-        </div>
+<div class="custom-main-component-container mt-3">
+    <div class="d-flex align-items-center gap-3"></div>
+    <button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button>
+
+    <div class="custom-p-select-content">
+        <p-select [options]="" [(ngModel)]="selectedStatus" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" showClear="true" placeholder="Select Status"
+            (onChange)="onCheckemployeeProficiency($event.value)" class="form-select custom-select">
+        </p-select>
+    </div>
+
+    <!-- Skills Multi select -->
+    <div class="custom-p-multiSelect-content">
+        <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Select Skills"
+            [maxSelectedLabels]="3" resetFilterOnHide="true" optionLabel="label" optionValue="value" display="chip"
+            class="form-select custom-select" (onChange)="onSkillSelectionChange()">
+        </p-multiselect>
     </div>
 
 
-    <!--Charts content-->
-    <div class="chart-container mb-3">
-        <div class="summary-card pic-chart-content">
-            <div class="graph-header mb-3">Skill Proficiency</div>
-            <div class="d-flex justify-content-center skill-chart-container">
-                <p-chart type="doughnut" [data]="skillLevelData" [options]="skillLevelOptions">
-                </p-chart>
-                <div class="skill-chart-center-text">
-                    <span class="skill-chart-count">{{ totalSkillCount }}</span>
-                    <p class="skill-chart-label mt-3">Total Skills</p>
-                </div>
+
+<!--Summary cards-->
+<div class="cards-grid-container mb-3">
+    <div *ngFor="let card of summaryCards" class="summary-card">
+        <div class="icon-circle">
+            <img src="/icons/Frame 199.png">
+        </div>
+        <div class="summary-title mb-2">{{ card.title }}</div>
+        <div class="summary-value">{{ card.value }}</div>
+    </div>
+</div>
+
+<!--Charts content-->
+<div class="chart-container mb-3">
+    <!-- Skill Proficiency chart -->
+    <div class="summary-card pic-chart-content">
+        <div class="graph-header mb-3">Skill Proficiency</div>
+        <div class="skill-chart-horizontal">
+            <!-- Pie Chart -->
+            <div class="skill-chart-left">
+                <p-chart type="pie" [data]="skillLevelData" [options]="skillLevelOptions"
+                    class="w-full md:w-[30rem]"></p-chart>
             </div>
-            <div class="chart-counts-grid mt-3">
-                <!-- Row 1: Counts -->
-                <div class="count-row">
-                    <div *ngFor="let item of skillProficiencyCounts" class="count-cell">
-                        {{ item.count }}
-                    </div>
-                </div>
-                <!-- Row 2: Labels -->
-                <div class="label-row">
-                    <div *ngFor="let item of skillProficiencyCounts" class="count-cell">
-                        {{ item.label }}
-                    </div>
+            <!-- Legend with Counts -->
+            <div class="skill-chart-right">
+                <div *ngFor="let item of skillProficiencyCounts" class="legend-item">
+                    <span class="legend-dot" [ngStyle]="{ backgroundColor: item.color }"></span>
+                    <span class="legend-label">{{ item.label }}:</span>
+                    <span class="legend-value">{{ item.count | number:'2.0' }}</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="summary-card pic-chart-content">
-            <div class="graph-header mb-3">Skill By Department</div>
-            <div class="skill-chart-container d-flex justify-content-center">
+    <!-- Top Skiils Chart -->
+    <div class="summary-card top-skills">
+        <div class="graph-header mb-4">Top 5 Skills</div>
+        <div class="chart-scroll-x-container scrollable-chart">
+            <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData" [options]="topSkillsOptions">
+            </p-chart>
+        </div>
+    </div>
+
+    <!-- skill By Department Chart -->
+    <div class="summary-card">
+        <div class="graph-header mb-3">Skills By Department</div>
+        <div class="skill-chart-horizontal">
+            <!-- Left: Doughnut Chart -->
+            <div class="skill-chart-left mb-5">
                 <p-chart type="doughnut" [data]="skillByDepartmentData" [options]="skillByDepartmentOptions">
                 </p-chart>
-
-                <div class="skill-chart-center-text">
-                    <span class="skill-chart-count">{{ totalDepartmentSkillCount }}</span>
-                    <p class="skill-chart-label mt-3">Total Unique Skills</p>
-                </div>
             </div>
-
-            <div class="chart-counts-grid mt-3">
-                <div class="count-row">
-                    <div *ngFor="let dept of deptCounts" class="count-cell">
-                        {{ dept.count }}
+            <!-- Right: Legend -->
+            <div class="skill-chart-right">
+                <div *ngFor="let dept of deptCounts" class="legend-item">
+                    <div class="legend-left">
+                        <span class="legend-dot" [ngStyle]="{ backgroundColor: dept.color }"></span>
+                        <span class="legend-label">{{ dept.label }}</span>
                     </div>
+                    <span class="legend-value">{{ dept.count | number:'2.0' }}</span>
                 </div>
-                <div class="label-row">
-                    <div *ngFor="let dept of deptCounts" class="count-cell">
-                        {{ dept.label }}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="summary-card">
-            <div class="graph-header mb-3">Top Skills</div>
-            <!-- Horizontal scroll -->
-            <div class="chart-scroll-x-container">
-                <p-chart type="bar" class="cavas-grap" [data]="topSkillsData" [options]="topSkillsOptions"></p-chart>
             </div>
         </div>
     </div>
-
-    <!--table content-->
-    <div class="summary-card p-3 mb-3">
-        @if (!noDataFound) {
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Skill Name</th>
-                        <th>Employee Count</th>
-                        <th>Proficiency (Expert/Intermediate/Beginner)</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (skill of skillSummaryList; track skill.skillName) {
-                    <tr>
-                        <td>{{ skill?.skillName }}</td>
-                        <td>{{ skill?.skillCount }}</td>
-                        <td>{{ getProficiencyText(skill.proficiencyCounts) }}</td>
-                        <td>
-                            <span class="view-link" (click)="openEnd(content, skill.skillName)">View Employees</span>
-
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        } @else {
-        <div class="d-flex justify-content-center align-items-center py-5">
-            <app-no-data-found />
-        </div>
-        }
-    </div>
-
 </div>
+
+<!--table content-->
+<div class="summary-card p-3 mb-3">
+    @if (!noDataFound) {
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Skill Name</th>
+                    <th>Employee Count</th>
+                    <th>Proficiency (Expert/Intermediate/Beginner)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (skill of skillSummaryList; track skill.skillName) {
+                <tr>
+                    <td>{{ skill?.skillName }}</td>
+                    <td>{{ skill?.skillCount }}</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <p-chip *ngFor="let key of getProficiencyKeys(skill.proficiencyCounts)">
+                                <div class="custom-chip-content">
+                                    <span class="skill-name me-1">{{ key }}</span>
+                                    <span class="skill-level">({{ skill.proficiencyCounts[key] }})</span>
+                                </div>
+                            </p-chip>
+                            @if (!skill.proficiencyCounts || getProficiencyKeys(skill.proficiencyCounts).length ===
+                            0) {
+                            <span>-</span>
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <span class="view-link" (click)="openEnd(content, skill.skillName)">View Employees</span>
+
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    } @else {
+    <div class="d-flex justify-content-center align-items-center py-5">
+        <app-no-data-found />
+    </div>
+    }
+</div>
+</div>
+
+<!-- view Details Content  -->
 <ng-template #content let-offcanvas>
     <div class="offcanvas-header">
         <h5 class="offcanvas-title">

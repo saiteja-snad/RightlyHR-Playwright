@@ -27,6 +27,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 export class TeamTimesheetsComponent {
   empdata = {} as any;
   loading = false;
+  totalhrs:any
   teamSummaryData: TimeTrackingData[] = [];
   activeEmplist = [] as any;
   dateHeaders: string[] = [];
@@ -120,7 +121,6 @@ export class TeamTimesheetsComponent {
 
   getteamsummary() {
 
-
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
 
@@ -139,7 +139,11 @@ export class TeamTimesheetsComponent {
       next: (res: any) => {
         this.loading = false
         if (res?.success) {
+
           this.teamSummaryData = res.data;
+          this.totalhrs=res?.data?.totalLoggedHHMM
+          console.log(this.totalhrs);
+          
           this.collectionSize = res.pagination.totalRecords;
 
           // ✅ Extract dates for header dynamically (use first record)

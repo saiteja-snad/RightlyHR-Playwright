@@ -93,3 +93,16 @@
     border-bottom-left-radius: 0rem !important;
     border-bottom-right-radius: 0rem !important;
 }
+
+.total-hrs {
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: var(--fontsize14);
+    cursor: pointer;
+}
+
+.total-duration {
+    font-size: var(--fontsize15) !important;
+    font-weight: 600;
+    color: var(--primary-color);
+}

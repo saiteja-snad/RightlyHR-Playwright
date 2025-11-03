@@ -61,7 +61,8 @@ import {
   CONTRACT_REQUEST_SUB_TABS,
   SETTINGS_AttendanceLock_TABS,
   ON_BEHALF_OF_WFH_TABS,
-  ON_BEHALF_OF
+  ON_BEHALF_OF,
+  TIME_SHEETS_TABS
 } from '../permission-route.constants';
 
 @Injectable({
@@ -414,7 +415,7 @@ export class AccessNavigationService {
           }
         }
 
-       
+
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
@@ -422,7 +423,7 @@ export class AccessNavigationService {
         if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
           return (route = 'time-off/global-permissions');
         }
-        
+
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
             if (
@@ -601,7 +602,7 @@ export class AccessNavigationService {
         break;
 
       case '/on-behalf-of':
-         if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
+        if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
           for (const item of ON_BEHALF_OF_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -616,8 +617,8 @@ export class AccessNavigationService {
             }
           }
         }
-      break;
-        
+        break;
+
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
           for (const item of ON_BEHALF_OF_WFH_TABS) {
@@ -710,6 +711,7 @@ export class AccessNavigationService {
           }
         }
         break;
+
       case '/project-management/clients/active':
         if (this.rbac.allowedToAccess('Clients.view')) {
           for (const item of CLIENTS_ROUTES) {
@@ -720,7 +722,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/project-management/clients/active':
+      case '/project-management/projects/active':
         if (this.rbac.allowedToAccess('Projects.view')) {
           for (const item of PROJECTS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -729,11 +731,19 @@ export class AccessNavigationService {
           }
         }
         break;
-      case '/project-management/time-sheet':
+
+      case '/project-management/timesheet':
+        
         if (this.rbac.allowedToAccess('Time Sheet.view')) {
-          return (route = '/project-management/time-sheet');
+          for (const item of TIME_SHEETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
+
+
 
       case '/personalinfo':
         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view ') || this.rbac.allowedToAccess('My Info Personal Tab.view')) {
@@ -1025,6 +1035,41 @@ export class AccessNavigationService {
         }
         break;
 
+             case '/project-management/clients/active':
+        if (this.rbac.allowedToAccess('Clients.view')) {
+          for (const item of CLIENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/project-management/projects/active':
+        if (this.rbac.allowedToAccess('Projects.view')) {
+          for (const item of PROJECTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/project-management/timesheet':
+      
+        if (this.rbac.allowedToAccess('Time Sheet.view')) {
+          for (const item of TIME_SHEETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+
+
+
+
       case '/time-off/pending-approvals/separation-request':
         if (this.rbac.allowedToAccess('Separation Request Tab.view')) {
           for (const item of SEPARATION_REQUEST_SUB_TABS) {
@@ -1059,7 +1104,7 @@ export class AccessNavigationService {
       //   break;
       //Attendance locking
       case '/settings/attendance-configuration':
-        if (this.rbac.allowedToAccess('Attendance Configuration Module.view' )) {
+        if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
 
           for (const item of SETTINGS_AttendanceLock_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -1335,7 +1380,7 @@ export class AccessNavigationService {
         }
         break;
 
-    
+
       case '/on-behalf-of':
         if (this.rbac.allowedToAccess('On Behalf Of.view')) {
           for (const item of ON_BEHALF_OF) {
@@ -1354,7 +1399,7 @@ export class AccessNavigationService {
             }
           }
         }
-      break;
+        break;
 
       case '/on-behalf-of/on-behalf-of-wfh':
         if (this.rbac.allowedToAccess('On Behalf Of WFH.view')) {
@@ -1558,7 +1603,7 @@ export class AccessNavigationService {
           if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
             return (route = '/time-off/pending-approvals/probation-request');
           }
-           if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
+          if (this.rbac.allowedToAccess('Time Sheet approval Tab.view')) {
             return (route = '/time-off/pending-approvals/time-sheets');
           }
 
@@ -1653,7 +1698,7 @@ export class AccessNavigationService {
           }
         }
         break;
-        case '/time-off/pending-approvals/contractors-request':
+      case '/time-off/pending-approvals/contractors-request':
         if (this.rbac.allowedToAccess('Contractor Details Tab.view')) {
           for (const item of CONTRACT_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

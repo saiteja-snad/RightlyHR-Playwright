@@ -67,7 +67,7 @@ export class TimesheetsSummaryViewComponent {
   // Project Type Data variables
   projectTypeData: any;
   projectTypeGraphData: any;
-  employeeId:any
+  employeeId: any
   projectTypeGraphOptions: any;
   // Estimated Vs ActualData variables
   estimatedVsActualData: any;
@@ -87,14 +87,14 @@ export class TimesheetsSummaryViewComponent {
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
- 
+
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
       if (resoureID) {
-           this.employeeId = parseInt(resoureID)
-           console.log(this.employeeId);
-           
+        this.employeeId = parseInt(resoureID)
+        console.log(this.employeeId);
+
         this.getProjectSummary(resoureID);
       }
     });
@@ -151,9 +151,7 @@ export class TimesheetsSummaryViewComponent {
 
   onSubmit() {
     // Check if form is valid (optional)
-    if (this.datepickerForm.invalid) {
-      return;
-    }
+
     // ✅ Trigger your existing API call
     this.page = 1; // Reset to first page on new filter apply
     const resoureID = this.datepickerForm.get('resourceId')?.value

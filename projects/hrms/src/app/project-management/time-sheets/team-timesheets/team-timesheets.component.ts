@@ -54,11 +54,7 @@ export class TeamTimesheetsComponent {
     this.setDefaultmounth();
     this.getAllEmployeeDetails();
     this.getResourceDetailsByManagerId();
-    this.route.queryParams.subscribe(params => {
-      this.routeResourceId = params['id']; // store route ID if exists
       this.getteamsummary(); // always call once
-    });
-
 
 
   }

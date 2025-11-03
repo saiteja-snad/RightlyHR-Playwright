@@ -57,7 +57,7 @@ export const SETTINGS_EMPLOYEE_FIELDS_TABS = [
   { route: '/settings/employee-fields/manage-dsts', permission: 'Manage DST Tab.view' },
   { route: '/settings/employee-fields/no-due-clearnce', permission: 'NoDue Clearance Tab.view' },
   { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' },
-{ route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
+  { route: '/settings/employee-fields/job/letter-acknowledgement', permission: 'Letter Acknoledgement.view' }
 
 ]
 
@@ -91,7 +91,7 @@ export const SETTINGS_ASSEST_CONFIGURATION_TABS = [
 ];
 // Attendance Locking
 export const SETTINGS_AttendanceLock_TABS = [
-  
+
   { route: '/settings/attendance-configuration/pending-for-submission', permission: 'Attendance Pending Tab.view' },
   { route: '/settings/attendance-configuration/published', permission: 'Attendance Published Tab.view' }
 ];
@@ -331,7 +331,7 @@ export const ATTENDANCE_ELIGIBILITY_CRITERIA_TABS = [
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types', permission: 'Attendance Regularization Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria', permission: 'Attendance Regularization Eligibility Tab.view' },
   { route: '/settings/timeoff-configurations/eligibility-criterias/remote-login-eligibility-criteria', permission: 'Remote Login Eligibility Tab.view' },
-    { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view'}
+  { route: '/settings/timeoff-configurations/eligibility-criterias/late-login-alert-configuration', permission: 'Late Login Alert Configuration Tab.view' }
 ]
 
 export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
@@ -341,7 +341,7 @@ export const SETTINGS_PROJECT_MANAGEMENT_TABS = [
   { route: '/settings/project-management-config/project-document-type', permission: 'Project Document Type.view' },
   { route: '/settings/project-management-config/letter-type', permission: 'Letter Configurations.view' },
   { route: '/settings/project-management-config/signature-authority', permission: 'Project Management Authority.view' },
-    { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
+  { route: '/settings/project-management-config/letter-frequency', permission: 'Letter Frequency Configurations.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
@@ -542,6 +542,7 @@ export const CLIENTS_ROUTES = [
   },
 ];
 
+
 export const PROJECTS_ROUTES = [
   {
     route: '/project-management/projects/active',
@@ -576,6 +577,11 @@ export const PROJECTS_ROUTES = [
     permission: 'Documents Tab.view'
   }
 ];
+
+export const TIME_SHEETS_TABS = [
+  { route: '/project-management/timesheet/mytimesheet', permission: 'My Time Sheet.view' },
+  { route: '/project-management/timesheet/teamtimesheet', permission: 'Team Time Sheet.view' },
+]
 
 export const ON_BEHALF_OF = [
   { route: '/on-behalf-of/on-behalf-of-wfh', permission: 'On Behalf Of WFH.view' },

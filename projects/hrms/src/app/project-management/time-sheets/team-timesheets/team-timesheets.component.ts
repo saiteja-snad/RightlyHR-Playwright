@@ -141,7 +141,7 @@ export class TeamTimesheetsComponent {
         if (res?.success) {
 
           this.teamSummaryData = res.data;
-          this.totalhrs=res?.data?.totalLoggedHHMM
+        this.totalhrs = res?.pagination?.meta?.totalLoggedHHMMAllEmployees || '00:00';
           console.log(this.totalhrs);
           
           this.collectionSize = res.pagination.totalRecords;

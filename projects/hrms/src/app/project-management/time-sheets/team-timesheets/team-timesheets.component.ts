@@ -111,6 +111,7 @@ export class TeamTimesheetsComponent {
     console.log(employeed);
 
     if (employeed === null) {
+      this.page = 1;
       this.datepickerForm.get('resourceId')?.setValue(null);
       this.getteamsummary();
     }

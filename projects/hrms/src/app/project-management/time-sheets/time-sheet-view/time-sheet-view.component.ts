@@ -772,6 +772,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         clearTimeout(this.autoSaveTimeout);
       }
       
+      
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         // Add small delay to prevent rapid successive calls

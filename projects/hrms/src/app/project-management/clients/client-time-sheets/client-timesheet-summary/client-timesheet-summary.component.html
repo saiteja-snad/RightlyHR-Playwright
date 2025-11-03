@@ -7,13 +7,13 @@
                     <div class="d-flex gap-2 align-items-center">                      
                         <div class="custom-p-select-content">
                             <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
-                                [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId" showClear="true"
+                                [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId" [showClear]="!!datepickerForm.get('projectId')?.value"
                                 placeholder="Please select project" class="form-select custom-select" (onChange)="onProjectChange($event)" ></p-select>
                         </div>
         
                         <div class="custom-p-select-content">
                             <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                                formControlName="status" placeholder="Please select status" showClear="true"
+                                formControlName="status" placeholder="Please select status"   [showClear]="!!datepickerForm.get('status')?.value"
                                 class="form-select custom-select"(onChange)="onStatusChange($event)"></p-select>
                         </div>                      
                     </div>
@@ -50,7 +50,7 @@
                 <div class="summary-header">Department wise Contribution</div>
                 <div class="custom-p-select-content">
                     <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" showClear="true"
+                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"  [showClear]="!!selectedDeptProjectId"
                         placeholder="Please select project" class="form-select custom-select" (onChange)="onDeptProjectChange($event)"></p-select>
                 </div>
             </div>

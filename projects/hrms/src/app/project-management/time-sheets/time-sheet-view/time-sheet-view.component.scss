@@ -138,10 +138,37 @@
     border-radius: 6px;
 }
 
+.draft {
+    border: 1px solid rgba(51, 151, 232, 1) !important;
+    border-radius: 6px;
+}
+
+.holiday {
+    border: 1px solid rgba(167, 0, 208, 1) !important;
+    border-radius: 6px;
+}
+
+.leave {
+    border: 1px solid rgba(242, 144, 0, 1) !important;
+    border-radius: 6px;
+}
+
 .circular-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+}
+
+.circle-holiday {
+    background-color: #A700D0;
+}
+
+.circle-leave {
+    background-color: #F29000;
+}
+
+.circle-blue {
+    background-color: #3397E8;
 }
 
 .circle-green {

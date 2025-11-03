@@ -25,8 +25,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
   selector: 'app-skill-directory-management',
   standalone: true,
   imports: [TabsModule, Chip, RouterModule, Select, DatePicker, CalendarModule, FormsModule, CommonModule, ProfileIconComponent,
-    DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule,NgbPopoverModule,
-        ModuleInformationComponent, TranslateModule],
+    DataLoaderContentComponent, MultiSelectModule, NoDataFoundComponent, PaginatorModule, NgbPopoverModule,
+    ModuleInformationComponent, TranslateModule],
   templateUrl: './skill-directory-management.component.html',
   styleUrl: './skill-directory-management.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -77,7 +77,7 @@ export class SkillDirectoryManagementComponent {
   routeToInfoMap!: { [key: string]: string };
 
   constructor(private http: HttpService, public formValidation: FormValidationService, private sanitizer: DomSanitizer,
-    private readonly modalService: NgbModal, private openmodalservice: OpenModalService,private router: Router) { }
+    private readonly modalService: NgbModal, private openmodalservice: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -121,7 +121,7 @@ export class SkillDirectoryManagementComponent {
       this.componentname = 'Skill Set Directory';
     }
   }
-  
+
   onCheckemployeeStatus(statusValue: any) {
     this.selectedStatus = !statusValue || statusValue === 'All Status' ? 'All Status' : statusValue;
     this.getEmployeeSkills();

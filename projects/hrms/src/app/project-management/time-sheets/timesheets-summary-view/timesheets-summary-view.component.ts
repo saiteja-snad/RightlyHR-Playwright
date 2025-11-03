@@ -168,12 +168,12 @@ export class TimesheetsSummaryViewComponent {
       next: (res: any) => {
         this.loading = false;
         const data: TimesheetSummaryResponse = res?.data;
-        this.projectTypeData = res?.data.graphSummary.projectWiseSummary;
-        this.estimatedVsActualData = res?.data.graphSummary.allocatedVsActualSummary;
-        this.progressBarData = res?.data.graphSummary.timesheetSummary;
-        this.approved = this.progressBarData.approved;
-        this.submitted = this.progressBarData.submitted;
-        this.rejected = this.progressBarData.rejected;
+        this.projectTypeData = res?.data?.graphSummary?.projectWiseSummary;
+        this.estimatedVsActualData = res?.data?.graphSummary?.allocatedVsActualSummary;
+        this.progressBarData = res?.data?.graphSummary?.timesheetSummary;
+        this.approved = this.progressBarData?.approved;
+        this.submitted = this.progressBarData?.submitted;
+        this.rejected = this.progressBarData?.rejected;
         // this.attendanceSummaryData = data?.dailyData ?? [];
         this.projectTypeChart();
         this.estimatedActualChart();

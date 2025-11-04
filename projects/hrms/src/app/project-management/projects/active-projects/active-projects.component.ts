@@ -56,9 +56,9 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
   effectiveDateValidRange: boolean = true; // effective between start & end
   effectiveAfterKickoffValid: boolean = true;
   resourcesData = [] as IResource[];
-   departmentlist = [] as any;
-
-  inactiveClientStatus: any
+  departmentlist = [] as any;
+  inactiveClientStatus: any;
+  
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
     private conformationPopup: OpenModalService, private route: ActivatedRoute, public rbac: RbacService) { }

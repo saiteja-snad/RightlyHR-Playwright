@@ -139,11 +139,11 @@ export class TimesheetsSummaryViewComponent {
 
     if (employeed) {
 
-      // this.getProjectSummary(employeed);
+    //  this.getProjectSummary(employeed);
       this.getEmployeeId(employeed);
     }
     else {
-      // this.getProjectSummary(this.employeeId);
+    //  this.getProjectSummary(this.employeeId);
       this.getEmployeeId(this.employeeId);
     }
   }
@@ -219,31 +219,31 @@ export class TimesheetsSummaryViewComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
-
+ 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
-
+ 
         const data: TimesheetSummaryResponse = res?.data || {};
         const graphSummary = res?.data?.graphSummary || {};
-
+ 
         this.totalhrs = res?.data?.totalLoggedHHMM || '00:00';
         this.projectTypeData = graphSummary?.projectWiseSummary || [];
         this.estimatedVsActualData = graphSummary?.allocatedVsActualSummary || [];
-
+ 
         const tsSummary = graphSummary?.timesheetSummary || {
           approved: '00:00',
           submitted: '00:00',
           rejected: '00:00'
         };
-
+ 
         this.approved = this.convertTimeToHours(tsSummary?.approved);
         this.submitted = this.convertTimeToHours(tsSummary?.submitted);
         this.rejected = this.convertTimeToHours(tsSummary?.rejected);
-
+ 
         // ✅ Percentages for bar visualization
         const total = this.approved + this.submitted + this.rejected;
-
+ 
         // avoid division by 0
         if (total > 0) {
           this.approvedPercent = (this.approved / total) * 100;
@@ -252,12 +252,12 @@ export class TimesheetsSummaryViewComponent {
         } else {
           this.approvedPercent = this.submittedPercent = this.rejectedPercent = 0;
         }
-
+ 
         // ✅ Display values in HH:mm format
         this.displayApproved = this.formatHoursToHHMM(this.approved);
         this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
         this.displayRejected = this.formatHoursToHHMM(this.rejected);
-
+ 
         // ✅ Handle empty data gracefully — reset charts if needed
         if (
           (!this.projectTypeData || this.projectTypeData.length === 0) &&
@@ -268,7 +268,7 @@ export class TimesheetsSummaryViewComponent {
           this.projectTypeChart();
           this.estimatedActualChart();
         }
-
+ 
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
           entries: item.entries ?? []
@@ -282,12 +282,14 @@ export class TimesheetsSummaryViewComponent {
       }
     });
   }
-
-
+ 
   resetCharts() {
     this.projectTypeGraphData = { labels: [], datasets: [] };
     this.estimatedVsActualGraphData = { labels: [], datasets: [] };
   }
+
+
+
   openModal(entries: TimesheetEntry[], content?: any) {
     this.selectedEntries = entries;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });

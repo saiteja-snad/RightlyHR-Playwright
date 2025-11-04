@@ -7,6 +7,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -44,6 +45,8 @@ export class ProjectTimesheetSummaryComponent {
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
   ];
+  // project name
+  projectName: any;
 
   constructor(private router: Router, public formValidation: FormValidationsService,
     private http: HttpService, private route: ActivatedRoute) { }
@@ -187,7 +190,7 @@ export class ProjectTimesheetSummaryComponent {
             const chartData = res.data.data;
             const labels = chartData.map((item: any) => item.name);
             const estimatedHours = chartData.map((item: any) => item.allocateHours);
-            const actualHours = chartData.map((item: any) => item.actualHours);
+            const actualHours = chartData.map((item: any) => (item.actualHours - item.overDueHours));
             const overdueHours = chartData.map((item: any) => item.overDue ? item.overDueHours : 0);
 
             this.estimatedVsActualData = {
@@ -353,6 +356,8 @@ export class ProjectTimesheetSummaryComponent {
             date: string;
             remainingHours: number;
           }
+
+          this.projectName = res?.data?.projectName;
 
           const idealLine: LineData[] = res?.data?.idealLine || [];
           const actualLine: LineData[] = res?.data?.actualLine || [];

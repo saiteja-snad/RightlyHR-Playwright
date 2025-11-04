@@ -15,8 +15,17 @@
                          <tr *ngFor="let roles of projectResourceSummaryData">
                             <td>{{roles.employeeName}}</td>
                             <td>{{roles.projectRole}}</td>
-                            <td>{{roles.totalAllocatedHours}}</td>
-                            <td>{{roles.totalLoggedHours}}</td>
+                            <td>
+                                <div class="progress-wrapper">
+                                    <div class="progress-bar" [ngStyle]="{
+                                                            width: roles.utilizationPercent + '%',
+                                                            backgroundColor: getProgressColor(roles.utilizationPercent)
+                                                          }"></div>
+                                </div>
+                                <!-- <span class="logged-hours">{{ roles.totalLoggedHours }}</span> -->
+                            </td>
+                            <!-- <td>{{roles.totalLoggedHours}}</td> -->
+                            <td>{{roles.totalLoggedHours}}/{{roles.totalAllocatedHours}}</td>
                             <td>{{roles.utilizationPercent}}</td>
                         </tr>
                     </tbody>

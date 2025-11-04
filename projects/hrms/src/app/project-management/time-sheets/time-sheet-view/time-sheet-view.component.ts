@@ -1532,8 +1532,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
  
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
-    console.log(control);
-    
+  
     const status = control?.getRawValue()?.approvalStatus;
     const blockReasons=control?.getRawValue()?.blockReason;
     return {

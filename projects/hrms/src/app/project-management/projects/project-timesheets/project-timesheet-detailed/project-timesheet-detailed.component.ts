@@ -43,15 +43,15 @@ export class ProjectTimesheetDetailedComponent {
         next: (res: any) => {
           console.log(res);
           const projectData = res?.data?.[0]?.project;
-        const clientData = res?.data?.[0]?.client;
+          const clientData = res?.data?.[0]?.client;
 
-        this.projectId = projectData?.projectId || null;
-        this.clientId = clientData?.clientId || null;
+          this.projectId = projectData?.projectId || null;
+          this.clientId = clientData?.clientId || null;
 
-        // ✅ Access nested resources inside project
-        this.projectEmployeeDetails = projectData?.resources || [];
+          // ✅ Access nested resources inside project
+          this.projectEmployeeDetails = projectData?.resources || [];
 
-        console.log('Resources:', this.projectEmployeeDetails);
+          console.log('Resources:', this.projectEmployeeDetails);
         },
         error: (err) => {
           console.error('Error fetching clients:', err);
@@ -60,8 +60,13 @@ export class ProjectTimesheetDetailedComponent {
     });
   }
 
-  navigateView(employeeId: number): void {
-   console.log(employeeId)
+  navigateView(employeeId: any): void {
+    const resourceData = {
+      employeeId: employeeId,
+      clientId: this.clientId,
+      projectId: this.projectId
+    };
+    localStorage.setItem('resourceData', JSON.stringify(resourceData))
     this.router.navigate(['/project-management/projects/details/timesheet/resource-summary'], {
       queryParams: {
         id: this.projectId,
@@ -70,5 +75,10 @@ export class ProjectTimesheetDetailedComponent {
     });
   }
 
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
 
 }

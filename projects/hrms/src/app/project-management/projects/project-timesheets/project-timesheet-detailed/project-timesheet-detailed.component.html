@@ -14,7 +14,7 @@
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
                     <td>
-                        <a class="project-name cursor" (click)="navigateView(project.employee)">
+                        <a class="project-name cursor" (click)="navigateView(project.employee.id)">
                             {{ project.employee?.name }}
                         </a>
                     </td>

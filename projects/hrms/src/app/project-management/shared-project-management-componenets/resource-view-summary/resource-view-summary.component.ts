@@ -28,24 +28,22 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 
 @Component({
   selector: 'app-resource-view-summary',
- imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule,
+  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule,
     ProjectManagementModuleInfoComponent, Select, NgbPopoverModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent,
     InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent, ModuleInformationComponent],
   templateUrl: './resource-view-summary.component.html',
   styleUrl: './resource-view-summary.component.scss'
 })
 export class ResourceViewSummaryComponent {
- empdata = {} as any;
+  empdata = {} as any;
+  resourceDataids = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
   activeEmplist = [] as any;
   dateHeaders: string[] = [];
   subscription!: Subscription;
   ranges: any;
   datepickerForm!: FormGroup;
-
   totalhrs: any
-
-
   attendanceSummaryData: DailyData[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedEntries: TimesheetEntry[] = [];
@@ -89,29 +87,33 @@ export class ResourceViewSummaryComponent {
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
-    this.createDatepickerForm();
-    this.route.queryParams.subscribe(params => {
-      const resoureID = params['id'];
-      if (resoureID) {
-        this.employeeId = parseInt(resoureID)
-        this.getProjectSummary(resoureID);
-        this.getEmployeeId(resoureID);
+    this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+    this.http.request$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(request => {
+        if (request && request.dateRange && request.resourceId) {
+          // ✅ Use BehaviorSubject data if available
+          console.log('Using BehaviorSubject request:', request);
 
-      }
-    });
+          this.resourceDataids = {
+            ...this.resourceDataids, // keep clientId & projectId from localStorage
+            employeeId: request.resourceId, // override employeeId if needed
+            dateRange: request.dateRange
+          };
+        } else {
+          // ✅ Fall back to localStorage
+          console.log('Using localStorage data:', this.resourceDataids);
+        }
+
+        this.getProjectSummary();
+      });
+
     this.setDefaultmounth();
-    this.getAllEmployeeDetails();
-    this.getResourceDetailsByManagerId();
     this.projectTypeChart();
     this.estimatedActualChart();
   }
 
-  createDatepickerForm() {
-    this.datepickerForm = this.fb.group({
-      dateRange: [null, Validators.required],
-      resourceId: [null]
-    });
-  }
+
 
   setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
@@ -121,113 +123,40 @@ export class ResourceViewSummaryComponent {
     });
   }
 
-  isShowtimesheetforteamRoute(): boolean {
-    const showPaths = [
-      '/project-management/timesheet/summary',
-    ];
-    return showPaths.some(path => this.router.url.startsWith(path));
-  }
-
-  isShowtimesheetformyRoute(): boolean {
-    const showPaths = [
-      '/project-management/timesheet/mysummary',
-    ];
-    return showPaths.some(path => this.router.url.startsWith(path));
-  }
-
-  onCheckemployee(employeed: any) {
-    console.log(employeed);
-
-    if (employeed) {
-
-      this.getProjectSummary(employeed);
-      this.getEmployeeId(employeed);
-    }
-    else {
-      this.getProjectSummary(this.employeeId);
-      this.getEmployeeId(this.employeeId);
-    }
-  }
-
-
-  getEmployeeId(employeeId: any) {
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.employename = data;
-
-      },
-      error: (reason) => {
-        console.log(reason)
-      },
-
-    });
-  }
-
-
-
-  getResourceDetailsByManagerId() {
-    const EmployeeId = this.empdata?.employeeId;
-    this.subscription = this.http.getData(`Timesheet/get-resources?employeeId=${EmployeeId}`).subscribe({
-      next: (res: any) => {
-        if (res?.success) {
-          this.resourcesList = res.data.filter((emp: IResourceDetail) => emp.id !== EmployeeId).map((emp: IResourceDetail) => ({
-            ...emp,
-            fullName: emp.fusionEmpId ? `${emp.fusionEmpId} - ${emp.name}` : emp.name,
-            key: 'team'
-          }));
-        }
-      },
-      error: (err: any) => console.error(err)
-    });
-  }
-
-  getAllEmployeeDetails() {
-    const EmployeeId = this.empdata?.employeeId;
-    const satus = ['Active', 'Trainee Active', 'Active Contract'];
-    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`).subscribe({
-      next: (res: any) => {
-        this.activeEmplist = res.filter((emp: any) => emp.employeeId !== EmployeeId).map((employee: any) => ({
-          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
-          value: employee.employeeId
-        }));
-      },
-    });
-  }
-
-  navigatetomy() {
-    this.router.navigate(['project-management/timesheet/mytimesheet']);
-  }
-
-  onSubmit() {
-    // Check if form is valid (optional)
-    const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId
-    this.getProjectSummary(resoureID);
-  }
   convertTimeToHours(time: string): number {
     if (!time) return 0;
     const [hours, minutes] = time.split(':').map(Number);
     return hours + minutes / 60; // e.g., "02:30" → 2.5
   }
   formatHoursToHHMM(hours: number): string {
-  const h = Math.floor(hours);
-  const m = Math.round((hours - h) * 60);
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-}
-  getProjectSummary(resoureID: any) {
-    const formValue = this.datepickerForm.value;
-    const [startDate, endDate] = formValue.dateRange || [];
-    const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
-    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
-    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
-    const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
+
+
+  getProjectSummary() {
+    const dateRange = this.resourceDataids?.dateRange || [];
+    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    const start = startDate
+      ? dayjs(startDate).format('YYYY-MM-DD')
+      : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate
+      ? dayjs(endDate).format('YYYY-MM-DD')
+      : dayjs().endOf('month').format('YYYY-MM-DD');
+    const { clientId, projectId, employeeId } = this.resourceDataids;
+    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=1&pageSize=10`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
         const data: TimesheetSummaryResponse = res?.data;
-        this.totalhrs = res?.data?.totalLoggedHHMM;
-        this.projectTypeData = res?.data?.graphSummary?.projectWiseSummary;
-        this.estimatedVsActualData = res?.data?.graphSummary?.allocatedVsActualSummary;
-
+        this.attendanceSummaryData = (data?.dailyData ?? []).map(item => ({
+          ...item,
+          entries: item.entries ?? []
+        }));
+        // this.totalhrs = data?.totalLoggedHHMM;
+        // this.projectTypeData = data?.graphSummary?.projectWiseSummary;
+        // this.estimatedVsActualData = data?.graphSummary?.allocatedVsActualSummary;
 
         const tsSummary = res?.data?.graphSummary?.timesheetSummary;
 
@@ -235,23 +164,19 @@ export class ResourceViewSummaryComponent {
         this.submitted = this.convertTimeToHours(tsSummary?.submitted);
         this.rejected = this.convertTimeToHours(tsSummary?.rejected);
 
-        // ✅ Percentages for bar visualization
         const total = this.approved + this.submitted + this.rejected || 1;
         this.approvedPercent = (this.approved / total) * 100;
         this.submittedPercent = (this.submitted / total) * 100;
         this.rejectedPercent = (this.rejected / total) * 100;
 
-        // ✅ Display values in HH:mm format
         this.displayApproved = this.formatHoursToHHMM(this.approved);
         this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
         this.displayRejected = this.formatHoursToHHMM(this.rejected);
-        // this.attendanceSummaryData = data?.dailyData ?? [];
+
         this.projectTypeChart();
         this.estimatedActualChart();
-        this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
-          ...item,
-          entries: item.entries ?? []
-        }));
+
+
       },
       error: err => {
         this.loading = false;
@@ -265,6 +190,7 @@ export class ResourceViewSummaryComponent {
       }
     });
   }
+
 
   openModal(entries: TimesheetEntry[], content?: any) {
     this.selectedEntries = entries;
@@ -421,9 +347,14 @@ export class ResourceViewSummaryComponent {
     };
   }
 
-  navigatetoteam() {
-    this.router.navigate(['project-management/timesheet/teamtimesheet']);
+
+  ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+
   }
+
+
 }
 
 

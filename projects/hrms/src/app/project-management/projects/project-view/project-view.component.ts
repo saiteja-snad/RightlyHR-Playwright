@@ -21,7 +21,7 @@ import { Select } from 'primeng/select';
 @Component({
   selector: 'app-project-view',
   imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule, TranslateModule,
-    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent,Select],
+    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss'
 })
@@ -39,23 +39,24 @@ export class ProjectViewComponent implements OnInit {
   projectsData: any[] = [];
   inactiveStatus: any;
 
-  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService, 
+  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private route: ActivatedRoute, public rbac: RbacService, private http: HttpService) { }
 
   ngOnInit() {
-  
+
     this.createContactForm();
     this.createDocumentForm();
     this.createDatepickerForm();
     // this.setDefaultRanges();
     // this.setDefaultWeek();
     this.datepickerFormdata();
-      this.setDefaultmounth()
+    this.setDefaultmounth()
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
         this.projectId = projectId;
         this.getProjects(projectId);
+        this.getAllresourcesData();
       }
     });
     this.enableResourceOnDateChange();
@@ -70,7 +71,7 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerForm.get('dateRange')?.reset();
     this.datepickerForm.get('resourceId')?.reset();
     this.http.setRequest(null);
-    this.http.setDateRange(null, null);
+    this.http.setDateRange(null, null, null);
   }
 
   createContactForm() {
@@ -103,14 +104,14 @@ export class ProjectViewComponent implements OnInit {
     });
   }
 
-  
-    setDefaultmounth() {
-      const startOfMonth = dayjs().startOf('month').toDate();
-      const endOfMonth = dayjs().endOf('month').toDate();
-      this.datepickerFormData.patchValue({
-        dateRange: [startOfMonth, endOfMonth]
-      });
-    }
+
+  setDefaultmounth() {
+    const startOfMonth = dayjs().startOf('month').toDate();
+    const endOfMonth = dayjs().endOf('month').toDate();
+    this.datepickerFormData.patchValue({
+      dateRange: [startOfMonth, endOfMonth]
+    });
+  }
 
   // Create a single contact form group
   createContactGroup(): FormGroup {
@@ -270,18 +271,18 @@ export class ProjectViewComponent implements OnInit {
   }
 
   onSubmit() {
-    this.getProjects(this.projectId.toString());
+
     const dateRangeArray = this.datepickerFormData.value.dateRange || [];
+    // const resourceID=this.datepickerFormData.get('resourceId')?.value?.id
     const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
-    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : startDate;
-    this.http.setDateRange(startDate, endDate);
-    // const request = {
-    //   dateRange: { startDate, endDate },
-    //   resourceId: this.datepickerFormData.value.resourceId,
-    //   clientId: this.clientsId,
-    //   projectId: this.projectId
-    // };
-    // this.http.setRequest(request);
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
+    // this.http.setDateRange(startDate, endDate,resourceID);
+    const request = {
+      dateRange: { startDate, endDate },
+      resourceId: this.datepickerFormData.value.resourceId,
+
+    };
+    this.http.setRequest(request);
   }
 
   navigationtoinactivedocuments() {

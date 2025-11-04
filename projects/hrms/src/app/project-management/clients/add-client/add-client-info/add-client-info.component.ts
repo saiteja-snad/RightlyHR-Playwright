@@ -40,6 +40,7 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
       industryType: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       logo: [null, Validators.required],
       clientAddress: ['', [Validators.required, this.formValidations.minCharactersValidator(5), this.formValidations.maxCharactersValidator(250)]],
+      color: ['#FFFFFF'],
       overtimeEligibility: [false],
       billable: [false],
       allowWeekendWork: [false]
@@ -133,7 +134,12 @@ export class AddClientInfoComponent implements OnInit, OnDestroy {
       billable: formValue.billable,
       weekendWorkAllowed: formValue.allowWeekendWork,
       createdBy: this.empinfo.employeeId,
-      updatedBy: this.empinfo.employeeId
+      updatedBy: this.empinfo.employeeId,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+    }
     };
   }
 

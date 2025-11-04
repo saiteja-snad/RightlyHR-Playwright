@@ -52,11 +52,13 @@ export class ProjectRoleComponent {
     this.AddForm = this.fb.group({
       Addprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       department: ['', Validators.required],
+      color: ['#FFFFFF'],
     });
 
     this.updateForm = this.fb.group({
       Updateprojectrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s][A-Za-z0-9\s-]*$/)]],
       Updatedepartment: [{value: '', disabled: true}, Validators.required],
+      UpdateColor: ['#FFFFFF'],
     });
     this.DepartmentList();
     this.getJobrole();
@@ -73,7 +75,8 @@ export class ProjectRoleComponent {
             entityname: item.entity?.entityName || '-',      // Department name
             entityReferenceId: item.entity?.entityReferenceId || item.entityReferenceId || 0, // Department ID
             entityType: item.entityType || 'department',    // Entity type
-            isActive: item.isActive
+            isActive: item.isActive,
+            color: item.meta?.graphData?.color ?? '#FFFFFF'
           }));
           this.sortDesignations();
         } else {
@@ -120,7 +123,12 @@ export class ProjectRoleComponent {
       entityType: 'department',
       entityReferenceId: Number(this.AddForm.value.department), // selected department id
       isActive: true,
-      createdBy: this.empinfo?.employeeId || 0 // fallback if user not found
+      createdBy: this.empinfo?.employeeId || 0, // fallback if user not found
+      meta: {
+      graphData: {
+        color : this.AddForm.value.color
+      }
+      }     
     };
 
     this.subscription = this.http.postdata('ProjectRoles', request).subscribe({
@@ -183,11 +191,15 @@ export class ProjectRoleComponent {
   //  UPDATE
   // Open Update popup
   openupdateDialog(jobrole: any) {
+     console.log(jobrole);
     this.selectedId = jobrole.id;
     this.updateForm.patchValue({
       Updateprojectrole: jobrole.projectrole,
       Updatedepartment: jobrole.entityReferenceId,
+      UpdateColor : jobrole.color
     });
+    console.log(this.updateForm.value);
+    
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
 
@@ -202,7 +214,12 @@ export class ProjectRoleComponent {
       entityReferenceId: Number(this.updateForm.value.Updatedepartment),
       isActive: true,
       // createdBy: this.empinfo?.employeeId || 0,
-      updatedBy: this.loggedinuser.employeeId || 0
+      updatedBy: this.loggedinuser.employeeId || 0,
+      meta: {
+      graphData: {
+        color : this.updateForm.value.UpdateColor
+      }
+      }   
     };
 
     this.subscription = this.http.putData(`ProjectRoles/${this.selectedId}`, payload).subscribe({
@@ -220,6 +237,7 @@ export class ProjectRoleComponent {
   }
   resetForm() {
     this.AddForm.reset();
+    this.AddForm.patchValue({ color: '#FFFFFF' });
     this.isEditMode = false;
     this.selectedId = null;
   }

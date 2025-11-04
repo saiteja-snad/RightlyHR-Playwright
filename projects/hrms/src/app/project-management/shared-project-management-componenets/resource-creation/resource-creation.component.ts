@@ -151,7 +151,8 @@ onRoleChange(selectedValue: any) {
       // allocatedFrequencyType: [null, Validators.required],
       overtimeEligible: [false],
       billable: [false],
-      allowweekendWork: [false]
+      allowweekendWork: [false],
+      color: ['#FFFFFF'],
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -294,6 +295,11 @@ onRoleChange(selectedValue: any) {
       status: "Active",
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+      }
     };
     this.http.postdata(`ProjectResource`, payload).subscribe({
       next: (res) => {

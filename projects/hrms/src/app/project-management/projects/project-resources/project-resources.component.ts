@@ -101,6 +101,7 @@ onRoleChange(selectedValue: any) {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
+      color : [''],
       resourceRole: [null,Validators.required]
     }, { validators: [this.DateValidator()] },);
   }
@@ -233,7 +234,8 @@ getJobrole() {
       billable: data.billable,
 
       allowweekendWork: data.weekendWorkAllowed,
-        resourceRole: selectedRole ? selectedRole.value : null
+        resourceRole: selectedRole ? selectedRole.value : null,
+      color : data?.meta?.graphData?.color
     });
   }
 
@@ -306,8 +308,8 @@ getJobrole() {
       return;
     }
     const formValue = this.updateResourceForm.value;
-       const projectRoleId = formValue.resourceRole.roleId;
-   const  projectDepartmentId =formValue.resourceRole.entityReferenceId;
+    const projectRoleId = formValue.resourceRole.roleId;
+    const projectDepartmentId = formValue.resourceRole.entityReferenceId;
     const payload = {
       entityType: "project",
       entityRefId: this.projectId,
@@ -322,8 +324,13 @@ getJobrole() {
       status: "Active",
       allocatedBy: this.empinfo.employeeId,
       //role: formValue.resourceRole,
-    projectRoleId: projectRoleId,
-    projectDepartmentId: projectDepartmentId,
+      projectRoleId: projectRoleId,
+      projectDepartmentId: projectDepartmentId,
+      meta: {
+        graphData: {
+          color: formValue.color
+        }
+      }
 
     };
     this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({

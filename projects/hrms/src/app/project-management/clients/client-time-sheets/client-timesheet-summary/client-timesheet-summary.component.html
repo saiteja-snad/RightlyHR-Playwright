@@ -1,127 +1,138 @@
 <div class="custom-main-component-container time-sheet-summary-container">
-    <div class="grid-display-row1 mb-3">
-        <div class="time-sheet-graph-card">
-            <form [formGroup]="datepickerForm">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="summary-header">Project Summary</div>
-                    <div class="d-flex gap-2 align-items-center">                      
-                        <div class="custom-p-select-content">
-                            <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId"
-                                [filter]="true" [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId" 
-                                [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project" 
-                                class="form-select custom-select" (onChange)="onProjectChange($event)" ></p-select>
+    <div class="row">
+        <div class="col-xxl-4 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <form [formGroup]="datepickerForm">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="summary-header">Project Summary</div>
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="custom-p-select-content">
+                                <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
+                                    [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
+                                    [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
+                                    class="form-select custom-select" (onChange)="onProjectChange($event)" />
+                            </div>
+
+                            <div class="custom-p-select-content">
+                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
+                                    formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
+                                    class="form-select custom-select" (onChange)="onStatusChange($event)" />
+                            </div>
                         </div>
-        
-                        <div class="custom-p-select-content">
-                            <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                                formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
-                                class="form-select custom-select"(onChange)="onStatusChange($event)"></p-select>
-                        </div>                      
+                    </div>
+                </form>
+
+                <div class="custom-table-content project-summary-table">
+                    <table class="w-100">
+                        <thead>
+                            <th>{{'Project Name'|translate}}</th>
+                            <th>{{'Total Hours'|translate}}</th>
+                            <th class="text-center">{{'Status'|translate}}</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <tr *ngFor="let roles of projectSummeryData">
+                                <td>{{roles.project.projectName}}</td>
+                                <td>{{roles.loggedHours}}/{{roles.allocatedHours}}hrs</td>
+                                <td class="text-center">
+                                    <span class="status-badge" [ngClass]="getStatusClass(roles.status)">
+                                        {{ roles.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-3">Project wise Resource Count</div>
+                <div class="project-resource-graph">
+                    <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-4 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="summary-header">Department wise Contribution</div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName"
+                            optionValue="projectId" [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
+                            [showClear]="!!selectedDeptProjectId" placeholder="Please select project" class="form-select custom-select"
+                            (onChange)="onDeptProjectChange($event)" />
                     </div>
                 </div>
-            </form>
-        
-            <div class="custom-table-content project-summary-table">
-                <table class="w-100">
-                    <thead>
-                        <th>{{'Project Name'|translate}}</th>
-                        <th>{{'Total Hours'|translate}}</th>
-                        <th class="text-center">{{'Status'|translate}}</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <tr *ngFor="let roles of projectSummeryData">
-                            <td>{{roles.project.projectName}}</td>
-                            <td>{{roles.loggedHours}}/{{roles.allocatedHours}}hrs</td>
-                            <td class="text-center">
-                                <span class="status-badge" [ngClass]="getStatusClass(roles.status)">
-                                    {{ roles.status }}
-                                </span>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <div class="time-sheet-graph-card">
-            <div class="summary-header mb-4">Project wise Resource Count</div>
-            <div class="project-resource-graph">
-                <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
-            </div>
-        </div>
 
-        <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="summary-header">Department wise Contribution</div>
-                <div class="custom-p-select-content">
-                    <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName" optionValue="projectId"
-                        [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"  [showClear]="!!selectedDeptProjectId"
-                        placeholder="Please select project" class="form-select custom-select" (onChange)="onDeptProjectChange($event)"></p-select>
+                <div class="circular-chart">
+                    <p-chart type="doughnut" [data]="departmentContributionData" [options]="departmentContributionOptions" />
                 </div>
             </div>
-
-            <div class="circular-chart">
-                <p-chart type="doughnut" [data]="departmentContributionData" [options]="departmentContributionOptions" />
-            </div>
         </div>
-    </div>
 
-    <div class="grid-display-row2 mb-3">
-        <div class="time-sheet-graph-card">
-            <div class="summary-header mb-2">Project Type</div>
-            <div class="circular-chart">
-                <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
+        <div class="col-xxl-4 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-2">Project Type</div>
+                <div class="circular-chart">
+                    <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
+                </div>
             </div>
         </div>
 
-        <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center pb-3">
-                <div class="summary-header">Estimated vs Actual Hours</div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
-                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                        <span class="legend-label">{{ item.label }}</span>
+        <div class="col-xxl-8 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center pb-3">
+                    <div class="summary-header">Estimated vs Actual Hours</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
+                            <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                            <span class="legend-label">{{ item.label }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-    
-            <div class="bar-chart">
-                <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
-            </div>
-        </div>
-    </div>
 
-     <div class="grid-display-row3 mb-3">
-        <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center pb-3">
-                <div class="summary-header">Billable vs Non-Billable Hours</div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
-                        <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
-                        <span class="legend-label">{{ item.label }}</span>
-                    </div>
+                <div class="bar-chart">
+                    <p-chart type="bar" [data]="estimatedVsActualData" [options]="estimatedVsActualOptions" />
                 </div>
             </div>
-            
-            <div class="burndown-chart">
-                <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
-            </div>
         </div>
-        
-        <div class="time-sheet-graph-card">
-            <div class="d-flex justify-content-between align-items-center pb-3">
-                <div class="summary-header">Project Burndown Chart</div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="d-flex align-items-center gap-1" *ngFor="let item of projectNames; let i = index">
-                        <span class="legend-circle" [ngStyle]="{ 'background-color': getColor(i) }"></span>
-                        <span class="legend-label">{{ item }}</span>
+
+        <div class="col-xxl-6 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center pb-3">
+                    <div class="summary-header">Billable vs Non-Billable Hours</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
+                            <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
+                            <span class="legend-label">{{ item.label }}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="burndown-chart">
-                <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+                <div class="burndown-chart">
+                    <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 mb-3">
+            <div class="time-sheet-graph-card">
+                <div class="d-flex justify-content-between align-items-center pb-3">
+                    <div class="summary-header">Project Burndown Chart</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center gap-1" *ngFor="let item of projectNames; let i = index">
+                            <span class="legend-circle" [ngStyle]="{ 'background-color': getColor(i) }"></span>
+                            <span class="legend-label">{{ item }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="burndown-chart">
+                    <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />
+                </div>
             </div>
         </div>
     </div>

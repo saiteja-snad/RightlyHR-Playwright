@@ -217,12 +217,6 @@ export class ClientTimesheetSummaryComponent {
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
 
-      // if (request?.projectId) {
-      //   queryParams.push(`projectId=${request.projectId}`);
-      // }
-      // if (request?.resourceId) {
-      //   queryParams.push(`resourceId=${request.resourceId}`);
-      // }
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
         queryParams.push(`startDate=${request.dateRange.startDate}`);
         queryParams.push(`endDate=${request.dateRange.endDate}`);
@@ -233,62 +227,57 @@ export class ClientTimesheetSummaryComponent {
         apiUrl += `?${queryParams.join('&')}`;
       }
 
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-
-            const data = res?.data || [];
-            if (!data.length) {
-              this.projectResourceData = {
-                labels: [],
-                datasets: []
-              };
-              return;
-            }
-
-            // Extract data from API response
-            const labels = data.map((item: any) => item.projectName);
-            const resourceCounts = data.map((item: any) => item.resourceCount);
-            // Assign chart data
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const data = res?.data || [];
+          if (!data.length) {
             this.projectResourceData = {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Resource Count',
-                  data: resourceCounts,
-                  backgroundColor: [
-                    '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
-                    '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
-                  ],
-                  barThickness: 10
-                }
-              ]
+              labels: [],
+              datasets: []
             };
-
-            // Chart options
-            this.projectResourceOptions = {
-              indexAxis: 'y', // Horizontal bar
-              plugins: {
-                legend: { display: false }
-              },
-              scales: {
-                x: {
-                  title: { display: true, text: 'Resource Count' },
-                  grid: { display: false }
-                },
-                y: {
-                  title: { display: true, text: 'Projects' },
-                  grid: { display: false }
-                }
-              }
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching project-wise resource count chart:', err);
+            return;
           }
-        });
+          // Extract data from API response
+          const labels = data.map((item: any) => item.projectName);
+          const resourceCounts = data.map((item: any) => item.resourceCount);
+          // Assign chart data
+          this.projectResourceData = {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Resource Count',
+                data: resourceCounts,
+                backgroundColor: [
+                  '#FDCC11', '#FF207F', '#187DF5', '#00A912', '#4533E3',
+                  '#FFA500', '#008080', '#9932CC', '#FF6347', '#4682B4'
+                ],
+                barThickness: 10
+              }
+            ]
+          };
+
+          // Chart options
+          this.projectResourceOptions = {
+            indexAxis: 'y', // Horizontal bar
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Resource Count' },
+                grid: { display: false }
+              },
+              y: {
+                title: { display: true, text: 'Projects' },
+                grid: { display: false }
+              }
+            }
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching project-wise resource count chart:', err);
+        }
+      });
     });
   }
 
@@ -325,44 +314,38 @@ export class ClientTimesheetSummaryComponent {
       if (queryParams.length > 0) {
         apiUrl += `?${queryParams.join('&')}`;
       }
-      this.http.getData(apiUrl)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            const apiData = res?.data?.data || [];
-            if (!Array.isArray(apiData) || apiData.length === 0) {
-              this.departmentContributionData = [];
-              return;
-            }
-
-            // Extract chart data
-            const labels = apiData.map((item: any) => item.name);
-            const dataValues = apiData.map((item: any) => item.percentage);
-
-
-
-            this.departmentContributionData = {
-              labels: labels,
-              datasets: [
-                {
-                  data: dataValues,
-                  backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
-                }
-              ]
-            };
-
-            this.departmentContributionOptions = {
-              cutout: '75%',
-              plugins: {
-                legend: { position: 'right', labels: { usePointStyle: true } },
-              },
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching Role-wise hours:', err);
+      this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          const apiData = res?.data?.data || [];
+          if (!Array.isArray(apiData) || apiData.length === 0) {
             this.departmentContributionData = [];
+            return;
           }
-        });
+          // Extract chart data
+          const labels = apiData.map((item: any) => item.name);
+          const dataValues = apiData.map((item: any) => item.percentage);
+          this.departmentContributionData = {
+            labels: labels,
+            datasets: [
+              {
+                data: dataValues,
+                backgroundColor: ['#FF6E06', '#EA267A', '#0F358A', '#22D235', '#25BBFF', '#1D79E6'],
+              }
+            ]
+          };
+
+          this.departmentContributionOptions = {
+            cutout: '75%',
+            plugins: {
+              legend: { position: 'right', labels: { usePointStyle: true } },
+            },
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching Role-wise hours:', err);
+          this.departmentContributionData = [];
+        }
+      });
     });
   }
 
@@ -374,10 +357,8 @@ export class ClientTimesheetSummaryComponent {
         this.projectTypeData = [];
         return;
       }
-
       // Base URL
       let apiUrl = `ProjectManagementGraph/client/project-type-summary/${clientID}`;
-
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -389,57 +370,56 @@ export class ClientTimesheetSummaryComponent {
         apiUrl += `?${queryParams.join('&')}`;
       }
       this.http.getData(apiUrl).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (res: any) => {
-            console.log('API Response:', res);
-            const data = res?.data || [];
-            if (!data.length) {
-              this.projectTypeData = { labels: [], datasets: [] };
-              return;
-            }
-            // Extract project type names and their counts
-            const labels = data.map((item: any) => item.projectType);
-            const counts = data.map((item: any) => item.projectTypeCount);
+        next: (res: any) => {
+          const data = res?.data || [];
+          if (!data.length) {
+            this.projectTypeData = { labels: [], datasets: [] };
+            return;
+          }
+          // Extract project type names and their counts
+          const labels = data.map((item: any) => item.projectType);
+          const counts = data.map((item: any) => item.projectTypeCount);
 
-            // Assign chart data dynamically
-            this.projectTypeData = {
-              labels: labels,
-              datasets: [
-                {
-                  data: counts,
-                  backgroundColor: [
-                    '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
-                    '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
-                  ],
-                  hoverBackgroundColor: [
-                    '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
-                  ]
-                }
-              ]
-            };
+          // Assign chart data dynamically
+          this.projectTypeData = {
+            labels: labels,
+            datasets: [
+              {
+                data: counts,
+                backgroundColor: [
+                  '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5',
+                  '#FF8A65', '#BA68C8', '#7986CB', '#AED581', '#F06292'
+                ],
+                hoverBackgroundColor: [
+                  '#FFE082', '#F06292', '#80CBC4', '#90CAF9', '#A5D6A7', '#5C6BC0'
+                ]
+              }
+            ]
+          };
 
-            // Chart options
-            this.projectTypeOptions = {
-              plugins: {
-                legend: {
-                  position: 'right',
-                  labels: { usePointStyle: true }
-                },
-                tooltip: {
-                  callbacks: {
-                    label: (context: any) => {
-                      const label = context.label || '';
-                      const value = context.parsed;
-                      return `${label}: ${value}`;
-                    }
+          // Chart options
+          this.projectTypeOptions = {
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: { usePointStyle: true }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context: any) => {
+                    const label = context.label || '';
+                    const value = context.parsed;
+                    return `${label}: ${value}`;
                   }
                 }
               }
-            };
-          },
-          error: (err) => {
-            console.error('Error fetching project type summary chart:', err);
-          }
-        });
+            }
+          };
+        },
+        error: (err) => {
+          console.error('Error fetching project type summary chart:', err);
+        }
+      });
     });
   }
 
@@ -655,20 +635,10 @@ export class ClientTimesheetSummaryComponent {
             return;
           }
 
-          const project = projectCharts[0];
-          // store all project names/options
+          // --- Store all project names ---
           this.projectNames = projectCharts.map((p: any) => p.projectName || `Project ${p.projectId}`);
-          // --- Group by Week ---
-          const idealLine = project.idealLine.map((item: any) => ({
-            date: new Date(item.date),
-            remainingHours: item.remainingHours
-          }));
-          const actualLine = project.actualLine.map((item: any) => ({
-            date: new Date(item.date),
-            remainingHours: item.remainingHours
-          }));
 
-          // Group by week (starting Monday)
+          // --- Function to group by week ---
           const groupByWeek = (line: any[]) => {
             const weeks: Record<string, number> = {};
             line.forEach((item) => {
@@ -684,34 +654,40 @@ export class ClientTimesheetSummaryComponent {
             return weeks;
           };
 
-          const idealByWeek = groupByWeek(idealLine);
-          const actualByWeek = groupByWeek(actualLine);
+          // --- Collect all labels and datasets dynamically ---
+          const allLabelsSet = new Set<string>();
+          const datasets: any[] = [];
 
-          const labels = Object.keys(idealByWeek);
-          const idealValues = Object.values(idealByWeek);
-          const actualValues = Object.values(actualByWeek);
+          // Predefined color palette (extendable)
+          const colors = [
+            '#42A5F5', '#E91E63', '#9C27B0', '#FF9800', '#4CAF50',
+            '#795548', '#009688', '#F44336', '#3F51B5', '#8BC34A'
+          ];
+
+          projectCharts.forEach((project: any, index: number) => {
+            const actualLine = project.actualLine.map((item: any) => ({
+              date: new Date(item.date),
+              remainingHours: item.remainingHours
+            }));
+
+            const actualByWeek = groupByWeek(actualLine);
+            Object.keys(actualByWeek).forEach(label => allLabelsSet.add(label));
+
+            datasets.push({
+              label: `${project.projectName || 'Project ' + project.projectId}`,
+              data: Object.values(actualByWeek),
+              borderColor: colors[index % colors.length],
+              borderWidth: 2,
+              fill: false,
+              tension: 0.3
+            });
+          });
+
+          const labels = Array.from(allLabelsSet);
 
           this.burndownData = {
             labels,
-            datasets: [
-              {
-                label: `${this.projectNames} - Ideal Line`,
-                data: idealValues,
-                borderColor: '#42A5F5',
-                borderWidth: 2,
-                borderDash: [5, 5],
-                fill: false,
-                tension: 0.3
-              },
-              {
-                label: `${this.projectNames} - Actual Line`,
-                data: actualValues,
-                borderColor: '#E91E63',
-                borderWidth: 2,
-                fill: false,
-                tension: 0.3
-              }
-            ]
+            datasets
           };
 
           this.burndownOptions = {

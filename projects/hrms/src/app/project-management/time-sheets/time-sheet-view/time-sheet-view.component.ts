@@ -76,7 +76,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   @ViewChild('deleteconformation', { static: true }) deleteconformation!: TemplateRef<any>;
   @ViewChild('employeeDropdown') employeeDropdown: any;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, 
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
     public authService: AuthService, public rbac: RbacService, private conformationPopup: OpenModalService, private router: Router) { }
 
   ngOnInit(): void {
@@ -149,9 +149,19 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const resourcestartdate = matchedResource?.startDate
       ? new Date(matchedResource.startDate)
       : null;
+    console.log(matchedResource);
+
+
+    const resourceenddate = matchedResource?.endDate
+      ? new Date(matchedResource.endDate)
+      : null;
 
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
+    }
+
+    if (resourceenddate) {
+      resourceenddate.setHours(0, 0, 0, 0);
     }
     if (entryDateObj) {
       entryDateObj.setHours(0, 0, 0, 0);
@@ -163,6 +173,12 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
         resourcestartdate && entryDateObj
           ? entryDateObj.getTime() >= resourcestartdate.getTime()
           : false;
+
+      isEffective =
+        resourceenddate && entryDateObj
+          ? entryDateObj.getTime() <= resourceenddate.getTime()
+          : false;
+
     } else {
       // No-client/no-project → always effective
       isEffective = true;
@@ -765,13 +781,13 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     }
 
     // Auto-save only on blur to prevent duplicate calls
-    if (formatted && event.type === 'blur' && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
+    if (formatted && (event.type === 'blur' || event.type === 'keyup') && !this.isDeleteModalOpen && !this.userClickedNo && !this.isModalOpen) {
       // Clear any existing timeout
       if (this.autoSaveTimeout) {
         clearTimeout(this.autoSaveTimeout);
       }
-      
-      
+
+
       // Don't auto-save if already processed or waiting for approval
       if (approvalStatus !== 'Processed' && approvalStatus !== 'Waiting for Approval') {
         // Add small delay to prevent rapid successive calls
@@ -835,6 +851,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Auto-save failed', err);
         this.conformationPopup.openErrorModal(err.error.message);
+        this.getTimeSheetEntriesbyEmployeeId(this.employeeId, this.formattedweakendStart);
       },
     });
   }
@@ -1476,10 +1493,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
   }
 
 
-  navigation(){
-     this.router.navigate(
+  navigation() {
+    this.router.navigate(
       ['project-management/timesheet/mysummary'],
-      { queryParams: { id:  this.loggedinuser?.employeeId } }
+      { queryParams: { id: this.loggedinuser?.employeeId } }
 
     );
   }
@@ -1529,20 +1546,20 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     const duration = form.get('duration')?.value;
     return !!duration; // Only checks duration now
   }
- 
+
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
-  
+
     const status = control?.getRawValue()?.approvalStatus;
-    const blockReasons=control?.getRawValue()?.blockReason;
+    const blockReasons = control?.getRawValue()?.blockReason;
     return {
       approved: status === 'Processed',
       rejected: status === 'Rejected',
       waiting: status === 'Waiting for Approval',
       draft: status === 'draft',
-      holiday:blockReasons==='Holiday',
+      holiday: blockReasons === 'Holiday',
       // weekend:blockReasons==='Weekend',
-      leave:blockReasons==='Leave'
+      leave: blockReasons === 'Leave'
     };
   }
 

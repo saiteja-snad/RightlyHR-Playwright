@@ -219,7 +219,7 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerForm = this.fb.group({
       dateRange: [null, Validators.required],
       resourceId: [{ value: null, disabled: true }],
-      projectName: [null],
+      // projectName: [null],
     });
   }
 

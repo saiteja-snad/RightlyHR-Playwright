@@ -42,7 +42,7 @@ export class ResourceViewSummaryComponent {
   dateHeaders: string[] = [];
   subscription!: Subscription;
   ranges: any;
-  datepickerForm!: FormGroup;
+
   totalhrs: any
   attendanceSummaryData: DailyData[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -91,37 +91,39 @@ export class ResourceViewSummaryComponent {
     this.http.request$
       .pipe(takeUntil(this.destroy$))
       .subscribe(request => {
-        if (request && request.dateRange && request.resourceId) {
+        if (request && request.dateRange || request?.resourceId) {
           // ✅ Use BehaviorSubject data if available
           console.log('Using BehaviorSubject request:', request);
 
           this.resourceDataids = {
             ...this.resourceDataids, // keep clientId & projectId from localStorage
-            employeeId: request.resourceId, // override employeeId if needed
+            employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
             dateRange: request.dateRange
           };
+          this.getProjectSummary();
         } else {
           // ✅ Fall back to localStorage
           console.log('Using localStorage data:', this.resourceDataids);
+          this.getProjectSummary();
         }
 
-        this.getProjectSummary();
-      });
 
-    this.setDefaultmounth();
+      });
+    this.getProjectSummary();
+
     this.projectTypeChart();
     this.estimatedActualChart();
   }
 
 
 
-  setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth]
-    });
-  }
+  // setDefaultmounth() {
+  //   const startOfMonth = dayjs().startOf('month').toDate();
+  //   const endOfMonth = dayjs().endOf('month').toDate();
+  //   this.datepickerForm.patchValue({
+  //     dateRange: [startOfMonth, endOfMonth]
+  //   });
+  // }
 
   convertTimeToHours(time: string): number {
     if (!time) return 0;
@@ -136,8 +138,8 @@ export class ResourceViewSummaryComponent {
 
 
   getProjectSummary() {
-    const dateRange = this.resourceDataids?.dateRange || [];
-    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+
+    const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate
       ? dayjs(startDate).format('YYYY-MM-DD')
       : dayjs().startOf('month').format('YYYY-MM-DD');

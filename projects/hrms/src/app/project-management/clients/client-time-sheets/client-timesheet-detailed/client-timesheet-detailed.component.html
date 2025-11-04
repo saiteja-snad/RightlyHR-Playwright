@@ -23,7 +23,11 @@
 
                                 <ng-template pTemplate="body" let-entry>
                                     <tr>
-                                        <td>{{ entry.employee.name }}</td>
+                                        <td>
+                                            <a class="project-name cursor" (click)="navigateView(project.project,entry.employee.id )">
+                                                {{ entry.employee.name}}
+                                            </a>
+                                        </td>
                                         <td>{{ entry.roleName }}</td>
                                         <td>{{ entry.startDate | date: 'yyyy-MM-dd' }}</td>
                                         <td>{{ entry.daysSpent }}</td>

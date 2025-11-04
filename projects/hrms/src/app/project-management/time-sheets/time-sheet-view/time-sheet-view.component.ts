@@ -16,14 +16,13 @@ import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component'
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { Select } from 'primeng/select';
 import { RbacService } from '../../../services/rbac.service';
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-time-sheet-view',
   imports: [ProjectManagementModuleInfoComponent, NgbDatepickerModule, FormsModule, ReactiveFormsModule,
-    NgbPopover, CommonModule, DatePicker, Select, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
+    NgbPopover, CommonModule, DatePicker, DateformatPipe, AccordionModule, InfoIconComponent, ConfirmationIconComponent,
     TranslateModule, DataLoaderContentComponent, TimesheetsTabsComponent],
   templateUrl: './time-sheet-view.component.html',
   styleUrl: './time-sheet-view.component.scss',
@@ -1533,12 +1532,18 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
  
   //based status colour
   getApprovalClass(control: AbstractControl | null): any {
+    console.log(control);
+    
     const status = control?.getRawValue()?.approvalStatus;
+    const blockReasons=control?.getRawValue()?.blockReason;
     return {
       approved: status === 'Processed',
       rejected: status === 'Rejected',
       waiting: status === 'Waiting for Approval',
       draft: status === 'draft',
+      holiday:blockReasons==='Holiday',
+      // weekend:blockReasons==='Weekend',
+      leave:blockReasons==='Leave'
     };
   }
 

@@ -15,13 +15,12 @@ import { RbacService } from '../../../services/rbac.service';
 import { HttpService } from '../../../services/http.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
-import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import dayjs, { Dayjs } from 'dayjs';
 @Component({
   selector: 'app-project-view',
   imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule, TranslateModule,
-    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent, Select],
+    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss'
 })
@@ -31,7 +30,7 @@ export class ProjectViewComponent implements OnInit {
   addContactForm!: FormGroup;
   addDocumentForm!: FormGroup;
   datepickerForm!: FormGroup;
-   datepickerFormData!: FormGroup;
+  datepickerFormData!: FormGroup;
   ranges: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   resourcesData = [] as IResource[];
@@ -39,8 +38,8 @@ export class ProjectViewComponent implements OnInit {
   projectsData: any[] = [];
   inactiveStatus: any;
 
-  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal,
-    public formValidation: FormValidationsService, private route: ActivatedRoute, public rbac: RbacService, private http: HttpService) { }
+  constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService, 
+    private route: ActivatedRoute, public rbac: RbacService, private http: HttpService) { }
 
   ngOnInit() {
     this.createContactForm();
@@ -48,7 +47,7 @@ export class ProjectViewComponent implements OnInit {
     this.createDatepickerForm();
     // this.setDefaultRanges();
     // this.setDefaultWeek();
-       this.datepickerFormdata();
+    this.datepickerFormdata();
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
@@ -68,7 +67,7 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerForm.get('dateRange')?.reset();
     this.datepickerForm.get('resourceId')?.reset();
     this.http.setRequest(null);
-    this.http.setDateRange(null,null);
+    this.http.setDateRange(null, null);
   }
 
   createContactForm() {
@@ -85,12 +84,12 @@ export class ProjectViewComponent implements OnInit {
       documentattachment: [null, Validators.required]
     });
   }
-   datepickerFormdata(){
-   this.datepickerFormData = this.fb.group({
+
+  datepickerFormdata() {
+    this.datepickerFormData = this.fb.group({
       dateRange: [null]
     });
-
-     // detect when user selects date range
+    // detect when user selects date range
     this.datepickerFormData.get('dateRange')?.valueChanges.subscribe(val => {
       if (val && val.length === 2) {
         const startDate = dayjs(val[0]).format('YYYY-MM-DDTHH:mm:ss');
@@ -99,7 +98,7 @@ export class ProjectViewComponent implements OnInit {
       }
     });
   }
-  
+
   // Create a single contact form group
   createContactGroup(): FormGroup {
     return this.fb.group({
@@ -141,6 +140,7 @@ export class ProjectViewComponent implements OnInit {
   //   const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
   //   return !!formValue.dateRange && !!formValue.resourceId;
   // }
+
   isFormCompletelyValid(): boolean {
     const formValue = this.datepickerFormData.getRawValue();
     return !!formValue.dateRange;
@@ -179,13 +179,11 @@ export class ProjectViewComponent implements OnInit {
         this.projectsData = Array.isArray(res?.data) ? res.data : [];
         if (this.projectsData?.length > 0) {
           const project = this.projectsData[0];
-          console.log(project)
-         this.datepickerForm.get('projectName')?.enable({ emitEvent: false });
-         this.datepickerForm.patchValue({
-           projectName: project?.projectName,
-         });
-         this.datepickerForm.get('projectName')?.disable({ emitEvent: false });
-
+          this.datepickerForm.get('projectName')?.enable({ emitEvent: false });
+          this.datepickerForm.patchValue({
+            projectName: project?.projectName,
+          });
+          this.datepickerForm.get('projectName')?.disable({ emitEvent: false });
           //  this.datepickerForm.get('projectName')?.disable();
           this.clientsId = project?.client?.clientId ?? null;
           this.inactiveStatus = (res?.data ?? []).some((p: any) =>
@@ -263,9 +261,7 @@ export class ProjectViewComponent implements OnInit {
     const dateRangeArray = this.datepickerFormData.value.dateRange || [];
     const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
     const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : startDate;
-
-       this.http.setDateRange(startDate, endDate);
-
+    this.http.setDateRange(startDate, endDate);
     // const request = {
     //   dateRange: { startDate, endDate },
     //   resourceId: this.datepickerFormData.value.resourceId,
@@ -273,9 +269,7 @@ export class ProjectViewComponent implements OnInit {
     //   projectId: this.projectId
     // };
     // this.http.setRequest(request);
-    
   }
-  
 
   navigationtoinactivedocuments() {
     this.router.navigate(

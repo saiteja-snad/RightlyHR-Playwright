@@ -222,7 +222,7 @@ getJobrole() {
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee?.workPhoneNumber ? `${data?.employee?.workPhoneCountryCode ?? ''} ${data?.employee?.workPhoneNumber ?? ''}` : '',
+      resourcePhone: data?.employee?.mobilePhoneNumber ? `${data?.employee?.mobilePhoneCountryCode ?? ''} ${data?.employee?.mobilePhoneNumber ?? ''}` : '',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
       projectName: this.projectsData[0]?.projectName,

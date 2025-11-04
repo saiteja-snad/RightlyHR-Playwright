@@ -145,7 +145,7 @@ export class ResourceViewSummaryComponent {
       ? dayjs(endDate).format('YYYY-MM-DD')
       : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
-    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=1&pageSize=10`;
+    const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;

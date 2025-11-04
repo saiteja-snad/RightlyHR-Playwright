@@ -159,7 +159,7 @@ onRoleChange(selectedValue: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = res?.data ?? [];
-         this.departmentIds = this.projectsDataDrown[0].departments?.map((d: any) => d.departmentId) || [];
+         this.departmentIds = this.projectsDataDrown[0]?.departments?.map((d: any) => d.departmentId) || [];
         this.addResourceForm.patchValue({
           projectName: this.projectsDataDrown[0]?.projectId,
           projectType: this.projectsDataDrown[0]?.projectType,

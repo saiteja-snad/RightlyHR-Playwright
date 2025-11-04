@@ -214,9 +214,8 @@ getJobrole() {
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
-  (r: any) => r.label === data.role
-);
-
+       (r: any) => r.value.roleId === data.projectRoleId
+    );
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,

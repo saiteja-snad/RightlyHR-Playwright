@@ -95,7 +95,24 @@ export class ClientTimesheetSummaryComponent {
       }
     });
   }
-  
+  getStatusClass(status: string): string {
+  switch (status) {
+    case 'On Track':
+      return 'on-track';
+    case 'Delayed':
+      return 'delayed';
+    case 'Progress':
+    case 'In Progress':
+      return 'progress';
+    case 'Not Started':
+      return 'not-started';
+    case 'Inactive/Closed':
+      return 'inactive';
+    default:
+      return '';
+  }
+}
+
   // get all project based on client for filter use
   getprojectbyid(clientID: any): void {
     this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -518,7 +535,7 @@ export class ClientTimesheetSummaryComponent {
         return;
       }
       // Base URL
-      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}`;
+      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}?groupBy=project`;
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -537,15 +554,20 @@ export class ClientTimesheetSummaryComponent {
             this.billableData = { labels: [], datasets: [] };
             return;
           }
-
-          // Utility to convert "HH:mm" to decimal hours
-          const convertToHours = (timeStr: string): number => {
+          // Utility to handle both "HH:mm" and decimal string formats
+          const convertToHours = (timeStr: string | number): number => {
             if (!timeStr) return 0;
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            return hours + minutes / 60;
+            const str = timeStr.toString();
+            if (str.includes(':')) {
+              const [hours, minutes] = str.split(':').map(Number);
+              return hours + minutes / 60;
+            }
+            return parseFloat(str); // directly convert decimal string to number
           };
 
-          // Extract dynamic labels and data
+          // Example usage
+          // const chartData = response.data.data;
+
           const labels = chartData.map((item: any) => item.name);
           const billable = chartData.map((item: any) => convertToHours(item.billableHours));
           const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));
@@ -631,8 +653,10 @@ export class ClientTimesheetSummaryComponent {
           }
 
           const project = projectCharts[0];
-          const projectName = project.projectName || 'Project';
-
+         // const projectName = project.projectName || 'Project';
+          // store all project names/options
+          const projectName = projectCharts.map((p: any) => p.projectName || `Project ${p.projectId}`);   
+           console.log("project name",projectName);
           // --- Group by Week ---
           const idealLine = project.idealLine.map((item: any) => ({
             date: new Date(item.date),

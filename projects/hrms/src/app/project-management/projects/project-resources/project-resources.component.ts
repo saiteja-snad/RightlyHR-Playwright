@@ -214,7 +214,7 @@ getJobrole() {
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
-  (r: any) => r.label === data.projectRoleName
+  (r: any) => r.label === data.role
 );
 
     this.ResourceId = data?.resourceId;
@@ -305,8 +305,8 @@ getJobrole() {
       return;
     }
     const formValue = this.updateResourceForm.value;
-       const projectRoleId = formValue.resourceRole.roleId;
-   const  projectDepartmentId =formValue.resourceRole.entityReferenceId;
+    const projectRoleId = formValue.resourceRole.roleId;
+    const  projectDepartmentId =formValue.resourceRole.entityReferenceId;
     const payload = {
       entityType: "project",
       entityRefId: this.projectId,

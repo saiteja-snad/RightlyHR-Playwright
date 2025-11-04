@@ -95,7 +95,24 @@ export class ClientTimesheetSummaryComponent {
       }
     });
   }
-  
+  getStatusClass(status: string): string {
+  switch (status) {
+    case 'On Track':
+      return 'on-track';
+    case 'Delayed':
+      return 'delayed';
+    case 'Progress':
+    case 'In Progress':
+      return 'progress';
+    case 'Not Started':
+      return 'not-started';
+    case 'Inactive/Closed':
+      return 'inactive';
+    default:
+      return '';
+  }
+}
+
   // get all project based on client for filter use
   getprojectbyid(clientID: any): void {
     this.http.getData(`Project?clientId=${clientID}&status=Active`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -631,8 +648,10 @@ export class ClientTimesheetSummaryComponent {
           }
 
           const project = projectCharts[0];
-          const projectName = project.projectName || 'Project';
-
+         // const projectName = project.projectName || 'Project';
+          // store all project names/options
+          const projectName = projectCharts.map((p: any) => p.projectName || `Project ${p.projectId}`);   
+           console.log("project name",projectName);
           // --- Group by Week ---
           const idealLine = project.idealLine.map((item: any) => ({
             date: new Date(item.date),

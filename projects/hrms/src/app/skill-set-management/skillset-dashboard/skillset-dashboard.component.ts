@@ -89,7 +89,7 @@ export class SkillsetDashboardComponent {
     this.initiateUpdateModuleInfo();
     this.getMultiskills();
   }
-  
+
 
   updateModuleInfo() {
     const url = this.router.url;
@@ -380,6 +380,7 @@ export class SkillsetDashboardComponent {
                 ticks: {
                   color: '#111827',
                   font: { size: 13, weight: '500' },
+                  lineHeight: 3,
                   autoSkip: false, // ensures all labels show even if wrapped
                 },
                 title: {
@@ -534,5 +535,5 @@ export class SkillsetDashboardComponent {
     this.getSkillSetTableData()
     this.topSkillsGraph()
   }
-  
+
 }

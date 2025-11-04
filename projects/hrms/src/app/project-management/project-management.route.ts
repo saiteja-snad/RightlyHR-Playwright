@@ -31,6 +31,7 @@ import { ProjectTimesheetDetailedComponent } from './projects/project-timesheets
 import { TimesheetsLayoutComponent } from './time-sheets/timesheets-layout/timesheets-layout.component';
 import { TeamTimesheetsComponent } from './time-sheets/team-timesheets/team-timesheets.component';
 import { TimesheetsSummaryViewComponent } from './time-sheets/timesheets-summary-view/timesheets-summary-view.component';
+import { ResourceViewSummaryComponent } from './shared-project-management-componenets/resource-view-summary/resource-view-summary.component';
 
 export default [
     { path: '', redirectTo: '/project-management/clients', pathMatch: 'full' },
@@ -93,6 +94,7 @@ export default [
                             { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
                             { path: 'summary', component: ProjectTimesheetSummaryComponent },
                             { path: 'detailed', component: ProjectTimesheetDetailedComponent },
+                            { path: 'resource-summary', component: ResourceViewSummaryComponent },
                         ],
                     },
                     { path: 'documents', component: ProjectDocumentsComponent },

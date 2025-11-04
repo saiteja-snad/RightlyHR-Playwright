@@ -17,10 +17,11 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { DatePicker } from 'primeng/datepicker';
 import dayjs, { Dayjs } from 'dayjs';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-project-view',
   imports: [ProjectManagementModuleInfoComponent, DatePicker, ProjectTabsComponent, RouterModule, TranslateModule,
-    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent],
+    CommonModule, ReactiveFormsModule, ProjectContactInfoCreationComponent,Select],
   templateUrl: './project-view.component.html',
   styleUrl: './project-view.component.scss'
 })
@@ -42,12 +43,14 @@ export class ProjectViewComponent implements OnInit {
     private route: ActivatedRoute, public rbac: RbacService, private http: HttpService) { }
 
   ngOnInit() {
+  
     this.createContactForm();
     this.createDocumentForm();
     this.createDatepickerForm();
     // this.setDefaultRanges();
     // this.setDefaultWeek();
     this.datepickerFormdata();
+      this.setDefaultmounth()
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
@@ -87,7 +90,8 @@ export class ProjectViewComponent implements OnInit {
 
   datepickerFormdata() {
     this.datepickerFormData = this.fb.group({
-      dateRange: [null]
+      dateRange: [null],
+      resourceId: [null]
     });
     // detect when user selects date range
     this.datepickerFormData.get('dateRange')?.valueChanges.subscribe(val => {
@@ -98,6 +102,15 @@ export class ProjectViewComponent implements OnInit {
       }
     });
   }
+
+  
+    setDefaultmounth() {
+      const startOfMonth = dayjs().startOf('month').toDate();
+      const endOfMonth = dayjs().endOf('month').toDate();
+      this.datepickerFormData.patchValue({
+        dateRange: [startOfMonth, endOfMonth]
+      });
+    }
 
   // Create a single contact form group
   createContactGroup(): FormGroup {

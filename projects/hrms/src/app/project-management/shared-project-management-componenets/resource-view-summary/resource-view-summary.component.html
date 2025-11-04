@@ -1,1 +1,71 @@
-<p>resource-view-summary works!</p>
+<div>
+
+    <div class="d-flex w-100 gap-3">
+        <div class="custom-table-content w-100">
+            @if (!loading) {
+            <table class="w-100">
+                <thead>
+                    <th class="text-center">{{'Date' | translate}}</th>
+                    <th class="text-center">{{'Logged Hours' | translate }}</th>
+                    <th class="text-center">{{'Summary' | translate}}</th>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
+
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
+        </div>
+
+        <div class="timesheet-graph-content p-3">
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-2">Timesheet Summary</div>
+                <div class="stacked-progress-container py-4">
+                    <!-- overlay color bar -->
+                    <div class="stacked-progress-overlay mb-3"
+                        [style.background]="'linear-gradient(to right, ' + 
+                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                            + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
+                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                    </div>
+
+                    <div class="progress-labels">
+                        <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
+                        <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted
+                            }}Hrs
+                        </div>
+                        <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="dashed-line my-3"></div>
+
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-2">Project Wise Hours Summary</div>
+                <div class="circular-chart">
+                    <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
+                </div>
+            </div>
+
+            <div class="dashed-line my-3"></div>
+
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-4">Allocated vs Actual Hours</div>
+                <div class="bar-chart">
+                    <p-chart type="bar" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

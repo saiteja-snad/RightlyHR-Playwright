@@ -140,18 +140,21 @@
                     <div class="summary-header mb-2">Timesheet Summary</div>
                     <div class="stacked-progress-container py-4">
                         <!-- overlay color bar -->
-                        <div class="stacked-progress-overlay mb-3"
-                            [style.background]="'linear-gradient(to right, ' + 
-                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                            + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
-                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                        <div class="stacked-progress-overlay mb-3" [style.background]="
+                   (approvedPercent + submittedPercent + rejectedPercent) === 0 
+                ? '#e0e0e0' 
+                : 'linear-gradient(to right, ' + 
+                    approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + 
+                    submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
+                    rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
                         </div>
 
                         <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved  }}Hrs</div>
-                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted  }}Hrs
+                            <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
+                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{
+                                displaySubmitted }}Hrs
                             </div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected  }}Hrs</div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
                         </div>
                     </div>
 

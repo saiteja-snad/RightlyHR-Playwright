@@ -38,7 +38,7 @@
       </button>
     </div>
     } 
-    @if(isActive('/project-management/projects/details/timesheet')){
+    @if(isActive('/project-management/projects/details/timesheet/resource-summary')){
     <form [formGroup]="datepickerFormData" (ngSubmit)="onSubmit()">
       <div class="d-flex gap-3 align-items-center">
         @if(isFilterApplied()) {
@@ -53,14 +53,14 @@
 
         <!-- <div>
           <input type="text" class="form-control custom-input" placeholder="Project Name" formControlName="projectName" />
-        </div>
+        </div> -->
 
         <div class="custom-p-select-content">
           <p-select [options]="resourcesData" [filter]="true" formControlName="resourceId" [resetFilterOnHide]="true"
             filterBy="name" optionLabel="name" optionValue="id" placeholder="Please select resource name"
             class="form-select custom-select">
           </p-select>
-        </div> -->
+        </div>
 
         <div>
           <button class="custom-btn btn-primary" type="submit" [disabled]="!isFormCompletelyValid()">Apply</button>

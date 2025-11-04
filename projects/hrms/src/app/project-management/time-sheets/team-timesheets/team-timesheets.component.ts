@@ -131,7 +131,7 @@ export class TeamTimesheetsComponent {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
 
-    const resourceId = formValue.resourceId ? `&resourceId=${formValue.resourceId}` : '';
+    const resourceId = formValue.resourceId ? `&employeeId=${formValue.resourceId}` : '';
     const start = startDate
       ? dayjs(startDate).format('YYYY-MM-DD')
       : dayjs().startOf('month').format('YYYY-MM-DD');
@@ -140,7 +140,7 @@ export class TeamTimesheetsComponent {
       ? dayjs(endDate).format('YYYY-MM-DD')
       : dayjs().endOf('month').format('YYYY-MM-DD');
 
-    const url = `Timesheet/teamsummary?startDate=${start}&endDate=${end}${resourceId}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
+    const url = `Timesheet/teamsummary?resourceId=${this.empdata?.employeeId}${resourceId}&startDate=${start}&endDate=${end}&pageNumber=${this.page}&pageSize=${this.pageSize}`;
     this.loading = true
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {

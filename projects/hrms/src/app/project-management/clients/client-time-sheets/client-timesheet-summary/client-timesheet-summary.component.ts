@@ -535,7 +535,7 @@ export class ClientTimesheetSummaryComponent {
         return;
       }
       // Base URL
-      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}`;
+      let apiUrl = `ProjectManagementGraph/client/billable-non-billable/${clientID}?groupBy=project`;
       // Prepare query parameters if BehaviorSubject data exists
       const queryParams: string[] = [];
       if (request?.dateRange?.startDate && request?.dateRange?.endDate) {
@@ -554,15 +554,20 @@ export class ClientTimesheetSummaryComponent {
             this.billableData = { labels: [], datasets: [] };
             return;
           }
-
-          // Utility to convert "HH:mm" to decimal hours
-          const convertToHours = (timeStr: string): number => {
+          // Utility to handle both "HH:mm" and decimal string formats
+          const convertToHours = (timeStr: string | number): number => {
             if (!timeStr) return 0;
-            const [hours, minutes] = timeStr.split(':').map(Number);
-            return hours + minutes / 60;
+            const str = timeStr.toString();
+            if (str.includes(':')) {
+              const [hours, minutes] = str.split(':').map(Number);
+              return hours + minutes / 60;
+            }
+            return parseFloat(str); // directly convert decimal string to number
           };
 
-          // Extract dynamic labels and data
+          // Example usage
+          // const chartData = response.data.data;
+
           const labels = chartData.map((item: any) => item.name);
           const billable = chartData.map((item: any) => convertToHours(item.billableHours));
           const nonBillable = chartData.map((item: any) => convertToHours(item.nonBillableHours));

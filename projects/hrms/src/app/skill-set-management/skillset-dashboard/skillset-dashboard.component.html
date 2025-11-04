@@ -12,6 +12,7 @@
 
         <div class="d-flex align-items-center gap-3">
             <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
+            
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
                     optionValue="value" placeholder="Select Proficiency" [showToggleAll]="true" [filter]="true" selectedItemsLabel="{2} items selected" 
@@ -71,8 +72,7 @@
         <div class="graph-card">
             <div class="graph-header mb-3">Top 5 Trending skills</div>
             <div class="bar-chart">
-                <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData"
-                    [options]="topSkillsOptions" />
+                <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData" [options]="topSkillsOptions" />
             </div>
         </div>
 

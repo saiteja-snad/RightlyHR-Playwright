@@ -57,6 +57,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 320px;
   gap: 1.5rem;
   flex-wrap: wrap;
 }
@@ -237,6 +238,7 @@
 
 .custom-p-multiSelect-content {
   min-width: 200px !important;
+  max-width: 300px !important;
 }
 
 .custom-table-content {
@@ -244,19 +246,25 @@
 }
 
 .clear-all-btn {
-    background: none;
-    border: none;
-    text-decoration: underline;
-    padding: 0;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 .clear-all-btn:focus {
-    outline: none;
+  outline: none;
 }
 
 .p-chart {
   overflow-x: auto;
+}
+
+.bar-chart {
+  canvas {
+    height: 320px !important;
+  }
 }

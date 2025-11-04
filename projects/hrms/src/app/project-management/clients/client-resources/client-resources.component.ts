@@ -83,7 +83,7 @@ export class ClientResourcesComponent {
     this.updateResourceForm = this.fb.group({
       resourceName: [null, Validators.required],
       resourceEmail: [null, Validators.required],
-      resourcePhone: [null, Validators.required],
+      resourcePhone: [null],
       designation: [null, Validators.required],
       projectName: [null, Validators.required],
       projectType: [null, Validators.required],
@@ -195,7 +195,11 @@ selectedEntityRefId: number = 0;
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee?.mobilePhoneNumber ? `${data?.employee?.mobilePhoneCountryCode ?? ''} ${data?.employee?.mobilePhoneNumber ?? ''}` : '',
+      resourcePhone:
+  data?.employee
+    ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+    : '-',
+
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours,
       projectName: data.project.projectId,
@@ -243,7 +247,10 @@ selectedEntityRefId: number = 0;
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}` : ''
+      resourcePhone: this.selectedEmployee
+  ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
+  : '-'
+
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
   }

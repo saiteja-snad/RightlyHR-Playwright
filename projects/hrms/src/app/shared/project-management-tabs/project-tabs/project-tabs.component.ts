@@ -48,9 +48,9 @@ export class ProjectTabsComponent {
   isDocumentTabActive(link: string): boolean {
     const currentUrl = this.router.url.split('?')[0]; // Remove query params
     // For Documents tab, check both documents and inactivedocuments routes
-    if (link === '/project-management/projects/details/documents') {
-      return currentUrl.includes('/project-management/projects/details/documents') ||
-        currentUrl.includes('/project-management/projects/details/inactivedocuments');
+    if (link === '/project-management/projects/details/timesheet/summary') {
+      return currentUrl.includes('/project-management/projects/details/timesheet/detailed') ||
+        currentUrl.includes('/project-management/projects/details/timesheet/summary');
     }
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');

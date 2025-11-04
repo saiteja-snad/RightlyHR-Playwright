@@ -56,6 +56,7 @@ export default [
                             { path: '', redirectTo: 'timesheet/summary', pathMatch: 'full' },
                             { path: 'summary', component: ClientTimesheetSummaryComponent },
                             { path: 'detailed', component: ClientTimesheetDetailedComponent },
+                              { path: 'resource-summary', component: ResourceViewSummaryComponent },
                         ],
                     },
                     { path: 'documents', component: ClientDocumentsComponent },

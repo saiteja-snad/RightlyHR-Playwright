@@ -29,34 +29,21 @@ export class BasicInfoComponent {
   isEditMode = false;
   selectedId: number | null = null;
   selectedDeleteRole: any = null;
-  @ViewChild('addpopup') addpopup: any;
   @ViewChild('updatepopup') updatepopup: any;
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('fieldConfigpopup') fieldConfigpopup: any;
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   fieldConfigForm!: FormGroup;
-  
+
   // Static data for the popup fields
-  fieldOptions = [
-    { name: 'First Name', value: 'firstName' },
-    { name: 'Last Name', value: 'lastName' },
-    { name: 'Email', value: 'email' },
-    { name: 'Phone Number', value: 'phoneNumber' },
-    { name: 'Department', value: 'department' }
-  ];
-  
+  fieldOptions = [] as any;
   approvalTypeOptions = [
-    { label: 'Employee', value: 'employee' },
-    { label: 'Role', value: 'role' }
+    { label: 'Employee', value: 'EMP' },
+    { label: 'Role', value: 'ROLE' }
   ];
-  
-  employeeOptions = [
-    { name: 'John Doe', id: 1 },
-    { name: 'Jane Smith', id: 2 },
-    { name: 'Mike Johnson', id: 3 },
-    { name: 'Sarah Wilson', id: 4 }
-  ];
+  activeEmplist = [];
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -77,7 +64,7 @@ export class BasicInfoComponent {
       Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
       updategradeId: ['', Validators.required],
     });
-    
+
     this.fieldConfigForm = this.fb.group({
       fieldNames: [[], Validators.required],
       approvalRequired: [false],
@@ -87,6 +74,8 @@ export class BasicInfoComponent {
     });
     this.getgradeid();
     this.getJobrole();
+    this.getBasicInfoFields();
+    this.getAllEmployeeDetails();
   }
 
   getJobrole() {
@@ -97,7 +86,6 @@ export class BasicInfoComponent {
         next: (data: any) => {
           this.loader = false;
           this.JobroleDetails = data;
-          this.sortDesignations();
         },
         error: (error: any) => {
           this.loader = false;
@@ -113,15 +101,36 @@ export class BasicInfoComponent {
       },
     });
   }
-  sortedDesignations: any[] = [];
-  sortDesignations() {
-    // Sort designations alphabetically based on the 'designation' field
-    this.sortedDesignations = this.JobroleDetails.sort((a: { designationName: number; }, b: { designationName: number; }) => {
-      if (a.designationName < b.designationName) return -1;
-      if (a.designationName > b.designationName) return 1;
-      return 0;
+
+  getBasicInfoFields() {
+    const params = 'Personal';
+    const param = 'Basic Info';
+    this.http.getDatabyentityvalueForFieldUpdate(`EmployeeApprovalFields/getApprovalFields`, params, param).subscribe({
+      next: (data: any) => {
+        if (data.data.length > 0) {
+          this.fieldOptions = data.data
+        } else {
+          console.log('No data found.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+      }
     });
   }
+
+  getAllEmployeeDetails() {
+    const status = ['Active', 'Trainee Active', 'Active Contract'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${status}`).subscribe({
+      next: (res: any) => {
+        this.activeEmplist = res.map((employee: any) => ({
+          label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
+          value: employee.employeeId
+        }));
+      },
+    });
+  }
+
   //ADD
   addjobrole(modal: any) {
     const request: jobRoleDATA = {
@@ -142,6 +151,37 @@ export class BasicInfoComponent {
         this.conformationPopup.openErrorModal(errorMessage);
       }
     });
+  }
+
+  // Method to save field configuration
+  saveFieldConfig(modal: any) {
+    if (this.fieldConfigForm.valid) {
+      const formValue = this.fieldConfigForm.value;
+      const selectedFields = formValue.fieldNames || [];
+
+      const request = {
+        columnNames: selectedFields,
+        moduleName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.moduleName : "Basic Info",
+        displayName: this.fieldOptions.length > 0 ? this.fieldOptions[0]?.tabName : "Personal",
+        requiresApproval: formValue.approvalRequired || false,
+        approvalType: formValue.approvalType || "",
+        approvalEntity: formValue.managerType || "",
+        approvalAuthority: formValue.selectedEmployee || 0,
+        createdBy: 0
+      };
+
+      this.subscription = this.http.postdata('EmployeeInfoApproval', request).subscribe({
+        next: () => {
+          modal.close();
+          this.conformationPopup.openSuccessModal('Field configuration saved successfully');
+          this.fieldConfigForm.reset();
+        },
+        error: (error: any) => {
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
+        }
+      });
+    }
   }
 
   close(modal: any) {
@@ -217,7 +257,7 @@ export class BasicInfoComponent {
     this.isEditMode = false;
     this.selectedId = null;
   }
-  
+
   // Method to open field configuration popup
   openFieldConfigDialog() {
     this.modalService.open(this.fieldConfigpopup, {
@@ -225,17 +265,7 @@ export class BasicInfoComponent {
       centered: true
     });
   }
-  
-  // Method to save field configuration
-  saveFieldConfig(modal: any) {
-    if (this.fieldConfigForm.valid) {
-      console.log('Field Configuration:', this.fieldConfigForm.value);
-      // Add your save logic here
-      modal.close();
-      this.conformationPopup.openSuccessModal('Field configuration saved successfully');
-      this.fieldConfigForm.reset();
-    }
-  }
+
 
   ngOnDestroy(): void {
     if (this.subscription) {

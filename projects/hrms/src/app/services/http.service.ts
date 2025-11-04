@@ -511,6 +511,11 @@ export class HttpService {
     return this.http.get(data_url);
   }
 
+  getDatabyentityvalueForFieldUpdate(url: string, _params?: any, _param?: any) {
+    const data_url = `${this.ApiUrl}${url}?tabName=${_params}&moduleName=${_param}`;
+    return this.http.get(data_url);
+  }
+
   getDatabypermissions(url: string, _params?: any, _param?: any, paramvalue?: string) {
     const data_url = `${this.ApiUrl}${url}?RaisedFor=${_params}&RequestedBy=${_param}&Status=${paramvalue}`;
     return this.http.get(data_url);

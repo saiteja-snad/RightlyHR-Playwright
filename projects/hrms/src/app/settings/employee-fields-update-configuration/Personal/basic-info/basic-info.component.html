@@ -125,75 +125,6 @@
   </form>
 </ng-template>
 
-<!-- addpopup -->
-<ng-template #addpopup let-modal>
-  <form autocomplete="off" [formGroup]="AddForm">
-    <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="custom-poup-header-content popup-header-border">
-        <div class="pt-2">
-          <p class="popup-heading mb-0">{{ 'Job Role' | translate }}</p>
-        </div>
-        <div>
-          <a (click)="close(modal); resetForm()">
-            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
-          </a>
-        </div>
-      </div>
-
-      <div class="custom-main-popup-content ">
-        <!-- Job Role Field -->
-        <div class="mb-3">
-          <label for="Addjobrole" class="form-label custom-label mb-2">
-            {{ 'Job Role' | translate }} <span class="error-msg">*</span>
-          </label>
-          <input type="text" class="form-control custom-input" formControlName="Addjobrole"
-            placeholder="Please enter job role"
-            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-            maxlength="101" />
-          <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg">
-            <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">
-              {{ 'Job Role is required' | translate }}
-            </div>
-          </div>
-          <div *ngIf="AddForm.get('Addjobrole')?.errors?.['pattern']" class="error-msg">
-            {{ 'Field cannot start with a space' | translate }}
-          </div>
-
-          <div *ngIf="AddForm.get('Addjobrole')?.errors?.['maxCharacters']" class="error-msg">
-            {{ 'Please limit your input to 100 characters' | translate }}
-          </div>
-        </div>
-
-        <!-- Grade Name Field -->
-        <div class="mb-3">
-          <label for="gradeId" class="form-label custom-label mb-2">
-            {{ 'Grade Name' | translate }} <span class="error-msg">*</span>
-          </label>
-          <div class="custom-p-select-content">
-            <p-select class="form-select custom-input" [options]="gradedetails" optionLabel="gradeName"
-              optionValue="gradeId" [filter]="true" [showClear]="false" formControlName="gradeId"
-              placeholder="{{'Please select grade name' | translate}}">
-            </p-select>
-          </div>
-          <div *ngIf="AddForm.get('gradeId')?.touched && AddForm.get('gradeId')?.invalid" class="error-msg">
-            <div *ngIf="AddForm.get('gradeId')?.errors?.['required']">{{'Grade Name is required'|translate}}</div>
-          </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
-            {{ 'Cancel' | translate }}
-          </button>
-          <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
-            {{ 'Add' | translate }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
-</ng-template>
-
 <!-- Field Configuration popup -->
 <ng-template #fieldConfigpopup let-modal>
   <form autocomplete="off" [formGroup]="fieldConfigForm">
@@ -216,9 +147,9 @@
             {{ 'Field Name' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-multiSelect-content">
-            <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="name"
-              optionValue="value" formControlName="fieldNames" placeholder="{{'Please select field names' | translate}}"
-              [filter]="true">
+            <p-multiSelect class="form-select custom-input" [options]="fieldOptions" optionLabel="fieldName"
+              optionValue="fieldName" formControlName="fieldNames"
+              placeholder="{{'Please select field names' | translate}}" [filter]="true">
             </p-multiSelect>
           </div>
           <div *ngIf="fieldConfigForm.get('fieldNames')?.touched && fieldConfigForm.get('fieldNames')?.invalid"
@@ -259,7 +190,7 @@
         </div>
 
         <!-- Employee Selection (when approval type is employee) -->
-        <div *ngIf="fieldConfigForm.get('approvalType')?.value === 'employee'">
+        <div *ngIf="fieldConfigForm.get('approvalType')?.value === 'ROLE'">
           <!-- RM/TM Radio Buttons -->
           <div class="mb-3">
             <label class="form-label custom-label mb-2">
@@ -289,12 +220,12 @@
         </div>
 
         <!-- Role Selection (when approval type is role) -->
-        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalType')?.value === 'role'">
+        <div class="mb-3" *ngIf="fieldConfigForm.get('approvalType')?.value === 'EMP'">
           <label class="form-label custom-label mb-2">
             {{ 'Select Employee' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select class="form-select custom-input" [options]="employeeOptions" optionLabel="name" optionValue="id"
+            <p-select class="form-select custom-input" [options]="activeEmplist" optionLabel="label" optionValue="value"
               formControlName="selectedEmployee" placeholder="{{'Please select employee' | translate}}" [filter]="true">
             </p-select>
           </div>

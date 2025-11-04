@@ -130,11 +130,11 @@ export class ClientResourcesComponent {
     });
   }
 
-  getJobrole(departmentId?: number,roleId?:number) {
-    if(!departmentId) return ;
-
-  this.subscription = this.http
-    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentId}`)
+  getJobrole(departmentIds?: number[],roleId?:number) {
+    if(!departmentIds) return ;
+    const departmentParam = departmentIds?.join(',') || '';
+    this.subscription = this.http
+    .getData(`ProjectRoles?isActive=true&departmentIds=${departmentParam}`)
     .subscribe({
       next: (response: any) => {
         // this.loader = false;
@@ -187,8 +187,8 @@ selectedEntityRefId: number = 0;
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     console.log(data);
-    this.getJobrole(data?.projectDepartmentId,data?.projectRoleId);
-    
+    const departmentIds = data?.project?.departments?.map((d: any) => d.departmentId) || [];
+    this.getJobrole(departmentIds, data?.projectRoleId);
     this.ResourceId = data?.resourceId;
     this.projectId = data?.project?.projectId;
     this.updateResourceForm.patchValue({

@@ -38,7 +38,7 @@
                         <th>Effective Date</th>
                         <th>Kickoff Date</th>
                         <th>Project Type</th>
-                        <th>Verticals</th>
+                        <!-- <th>Verticals</th> -->
                         <th>Status</th>
                         @if(( rbac.allowedToAccess('Project Details Tab.delete')) && inactiveClientStatus!=='inactive'){
                         <th class="text-center">{{"Action" | translate}}</th>
@@ -60,7 +60,7 @@
                                     <td>{{ project.effectiveDate | dateformat }}</td>
                                     <td>{{ project.kickoffDate | dateformat }}</td>
                                     <td>{{ project.projectType }}</td>
-                                    <td class="text-wrap department-list-view">{{ getDepartmentNames(project)  }}</td> 
+                                    <!-- <td class="text-wrap department-list-view">{{ getDepartmentNames(project)  }}</td>  -->
                                     <td>{{ project.status }}</td>
                                     @if((rbac.allowedToAccess('Project Details Tab.delete')) &&
                                     inactiveClientStatus!=='inactive'){

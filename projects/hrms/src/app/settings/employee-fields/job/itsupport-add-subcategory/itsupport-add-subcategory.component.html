@@ -12,7 +12,7 @@
             <thead>
                 <tr>
                     <th>{{'Category Name'|translate}}</th>
-                    <th>{{'Sub-Category Name'|translate}}</th>
+                    <th>{{'Sub Category Name'|translate}}</th>
                     <th *ngIf="rbac.allowedToAccess('IT Support Sub-Category.update')" class="text-center">{{'Action'|translate}}</th>
                 </tr>
             </thead>
@@ -62,7 +62,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
       <div class="custom-poup-header-content popup-header-border">
         <div class="pt-2">
-          <p class="popup-heading mb-0">{{ 'Sub-Category' | translate }}</p>
+          <p class="popup-heading mb-0">{{ 'Sub Category' | translate }}</p>
         </div>
         <div>
           <a (click)="modal.dismiss();subcategoryForm.reset()">
@@ -91,14 +91,14 @@
         <!-- sub category Name field -->
         <div class="mb-3">
           <label for="subCategoryname1" class="form-label custom-label mb-2">
-            {{ 'Sub-Category Name' | translate }} <span class="error-msg">*</span>
+            {{ 'Sub Category Name' | translate }} <span class="error-msg">*</span>
           </label>
-          <input type="text" class="form-control custom-input" formControlName="subCategoryname"
-            placeholder="Please enter sub-category name" maxlength="101"
+          <input type="text" class="form-control custom-input" formControlName="subCategoryname" [minlength]="2"
+            placeholder="Please enter sub category name" maxlength="101" (input)="formValidations.validateInput(subcategoryForm.get('subCategoryname'))"
             (keydown)="formValidations.restrictInitialSpace($event)" />
           <div *ngIf="subcategoryForm.get('subCategoryname')?.touched && subcategoryForm.get('subCategoryname')?.invalid" class="error-msg">
             <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['required']">
-              {{ 'Sub-Category Name is required' | translate }}
+              {{ 'Sub Category Name is required' | translate }}
             </div>
           </div>
           <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['maxCharacters']" class="error-msg">
@@ -108,7 +108,6 @@
             {{ 'Field cannot start with a space' | translate }}
           </div>
         </div>
-
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();subcategoryForm.reset()">
@@ -155,15 +154,15 @@
                 <!-- sub category Name field -->
                 <div class="mb-3">
                     <label for="subCategoryname1" class="form-label custom-label mb-2">
-                        {{ 'Sub-Category Name' | translate }} <span class="error-msg">*</span>
+                        {{ 'Sub Category Name' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="subCategoryname"
-                        placeholder="Please enter sub-category name" maxlength="101"
+                        placeholder="Please enter sub category name" maxlength="101" (input)="formValidations.validateInput(updateForm.get('subCategoryname'))"
                         (keydown)="formValidations.restrictInitialSpace($event)" />
                     <div *ngIf="subcategoryForm.get('subCategoryname')?.touched && subcategoryForm.get('subCategoryname')?.invalid"
                         class="error-msg">
                         <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['required']">
-                            {{ 'Sub-Category Name is required' | translate }}
+                            {{ 'Sub Category Name is required' | translate }}
                         </div>
                     </div>
                     <div *ngIf="subcategoryForm.get('subCategoryname')?.errors?.['maxCharacters']" class="error-msg">

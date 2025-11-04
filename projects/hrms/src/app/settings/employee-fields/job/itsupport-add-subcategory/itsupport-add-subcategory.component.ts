@@ -30,12 +30,12 @@ export class ItsupportAddSubcategoryComponent {
   selectedId: number | null = null;
   selectedDeleteDep: any = null;
   subscription!: Subscription;
-  selecteddetails={} as any;
+  selecteddetails = {} as any;
   loader = false;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -46,7 +46,7 @@ export class ItsupportAddSubcategoryComponent {
     this.subcategoryForm = this.fb.group({
       categoryId: ['', [Validators.required,]],
       subCategoryname: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
-      
+
     });
     this.updateForm = this.fb.group({
       categoryId: ['', [Validators.required,]],
@@ -63,7 +63,7 @@ export class ItsupportAddSubcategoryComponent {
     });
   }
   //get category details for dropdown
-    getcategoryName() {
+  getcategoryName() {
     this.loader = true;
     this.subscription = this.http.getData('entityAttributeValues/getv1?entity=ItSupport&attribute=Category').subscribe({
       next: (data: any) => {
@@ -73,7 +73,7 @@ export class ItsupportAddSubcategoryComponent {
       },
       error: (error: any) => {
         this.loader = false;
-        
+
       }
     });
   }
@@ -91,11 +91,11 @@ export class ItsupportAddSubcategoryComponent {
       },
       error: (error: any) => {
         this.loader = false;
-        
+
       }
     });
   }
- 
+
   //ADD
   addcategoryName() {
     console.log(this.subcategoryForm.value);
@@ -108,11 +108,12 @@ export class ItsupportAddSubcategoryComponent {
 
     this.subscription = this.http.postdata('entityAttributeValues', request).subscribe({
       next: () => {
-        
+
         this.getsubcategoryName();
-        this.conformationPopup.openSuccessModal('Sub-Category added successfully');
         this.modalService.dismissAll();
-        this.resetForm();
+        this.subcategoryForm.reset()
+        this.conformationPopup.openSuccessModal('Sub Category added successfully');
+
       },
       error: (error: any) => {
         const errorMessage = error.error?.Message;
@@ -121,64 +122,20 @@ export class ItsupportAddSubcategoryComponent {
     });
   }
   // UPDATE
-    updatecategoryName(modal: any) {
-      if (this.updateForm.valid && this.selectedId) {
-        const request: any = {
-          id:this.selectedId,
-          value: this.updateForm.value.subCategoryname.trim(),
-          meta: JSON.stringify(this.updateForm.value?.categoryId)
-        };
-  
-        this.subscription = this.http.postdata('entityAttributeValues/update', request).subscribe({
-          next: () => {
-            this.getsubcategoryName();
-            modal.close();
-            this.updateForm.reset();
-            this.conformationPopup.openSuccessModal('Category updated successfully');
-          },
-          error: (err: any) => {
-            const errorMessage = err.error?.Message;
-            this.conformationPopup.openErrorModal(errorMessage);
-          }
-        });
-      }
-    }
-    close(modal: any) {
-      modal.dismiss();
-      this.updateForm.reset();
-    }
-    openupdate(categoryNamelist: any) {
-      console.log(categoryNamelist);
-      const selectedCategory = this.categoryDetails.find(
-        (c: any) => c.id === categoryNamelist.meta?.id
-      );
-      this.selectedId = categoryNamelist.id;
-      this.subcategoryForm.reset();
-      this.updateForm.patchValue({
-        categoryId: selectedCategory ? selectedCategory : '',
-         subCategoryname: categoryNamelist.value });
-      this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
-    }
-    // DELETE
-    opendelete(categoryNamelist: any) {
-      this.subcategoryForm.reset();
-      this.selectedDeleteDep = categoryNamelist;
-      this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
-    }
-    onDelete(modal: any) {
-      if (!this.selectedDeleteDep) return;
-  
-      const deleteRequest: any = {
-        categoryName1: this.selectedDeleteDep.categoryName1,
-        isdeleted: "void",
-        sno: this.selectedDeleteDep.sno
+  updatecategoryName(modal: any) {
+    if (this.updateForm.valid && this.selectedId) {
+      const request: any = {
+        id: this.selectedId,
+        value: this.updateForm.value.subCategoryname.trim(),
+        meta: JSON.stringify(this.updateForm.value?.categoryId)
       };
-  
-      this.http.postdata('categoryName/UPDATER', deleteRequest).subscribe({
+
+      this.subscription = this.http.postdata('entityAttributeValues/update', request).subscribe({
         next: () => {
           this.getsubcategoryName();
           modal.close();
-          this.conformationPopup.openSuccessModal('Job type deleted successfully');
+          this.updateForm.reset();
+          this.conformationPopup.openSuccessModal('Sub Category updated successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.Message;
@@ -186,12 +143,57 @@ export class ItsupportAddSubcategoryComponent {
         }
       });
     }
-  
-    closeDelete(modal: any) {
-      modal.dismiss();
-      this.selectedDeleteDep = null;
-    }
-  
+  }
+  close(modal: any) {
+    modal.dismiss();
+    this.updateForm.reset();
+  }
+  openupdate(categoryNamelist: any) {
+    console.log(categoryNamelist);
+    const selectedCategory = this.categoryDetails.find(
+      (c: any) => c.id === categoryNamelist.meta?.id
+    );
+    this.selectedId = categoryNamelist.id;
+    this.subcategoryForm.reset();
+    this.updateForm.patchValue({
+      categoryId: selectedCategory ? selectedCategory : '',
+      subCategoryname: categoryNamelist.value
+    });
+    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+  }
+  // DELETE
+  opendelete(categoryNamelist: any) {
+    this.subcategoryForm.reset();
+    this.selectedDeleteDep = categoryNamelist;
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+  onDelete(modal: any) {
+    if (!this.selectedDeleteDep) return;
+
+    const deleteRequest: any = {
+      categoryName1: this.selectedDeleteDep.categoryName1,
+      isdeleted: "void",
+      sno: this.selectedDeleteDep.sno
+    };
+
+    this.http.postdata('categoryName/UPDATER', deleteRequest).subscribe({
+      next: () => {
+        this.getsubcategoryName();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Job type deleted successfully');
+      },
+      error: (err: any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+    this.selectedDeleteDep = null;
+  }
+
   resetForm() {
     this.subcategoryForm.reset();
     this.isEditMode = false;

@@ -133,6 +133,10 @@ export class SkillsetDashboardComponent {
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
   }
+  
+  close(modal: any) {
+    modal.close();
+  }
 
   getSkillSummary() {
     this.isloading = true;
@@ -142,9 +146,9 @@ export class SkillsetDashboardComponent {
         if (res?.data) {
           const summary = res.data;
           this.summaryCards = [
-            { title: 'Total Employees', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
-            { title: 'Committed Employees', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
-            { title: 'Available Employees', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
+            { title: 'Total Resources', value: summary.totalEmployees ?? 0, icons: './icons/Total Employee Count.png' },
+            { title: 'Committed Resources', value: summary.allocatedEmployees ?? 0, icons: './icons/Committed Employees Count.png' },
+            { title: 'Available Resources', value: summary.availableEmployees ?? 0, icons: './icons/Available Employees Count.png' },
             { title: 'Upcoming Available Resources', value: summary.nextMonthAvailableEmployees ?? 0, icons: './icons/Soon to be Available.png' }
           ];
         }

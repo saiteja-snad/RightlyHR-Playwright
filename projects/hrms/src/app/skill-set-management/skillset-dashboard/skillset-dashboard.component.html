@@ -154,9 +154,12 @@
     <div class="offcanvas-header">
         <p class="offcanvas-title">Employees with {{ selectedSkillName }} <span
                 *ngIf="employeeList?.length">({{employeeList.length }})</span></p>
-        <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+        <div>
+            <a (click)="close(offcanvas)">
+                <img src="icons/close.png" alt="Close Icon" class="close-icon">
+            </a>
+        </div>
     </div>
-
     <div class="offcanvas-body">
         <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
 

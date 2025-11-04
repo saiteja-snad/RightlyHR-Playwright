@@ -1,0 +1,109 @@
+.component-left-tabs-container {
+    height: calc(100dvh - 11.5rem) !important;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 11.5rem) !important;
+}
+
+.timesheet-graph-content {
+    width: 40rem !important;
+    height: calc(100dvh - 11.5rem) !important;
+    border-radius: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--white-color);
+    border: 1px solid #CCDAEC;
+}
+
+.time-sheet-graph-card {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1.52px solid #FFFFFF;
+    border-radius: 0.5rem;
+    background: linear-gradient(180deg, #FFFFFF 0%, #ECF0F4 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-header {
+    font-weight: 600;
+    font-size: var(--fontsize14);
+    color: var(--primary-color) !important;
+}
+
+.circular-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        height: 270px !important;
+    }
+}
+
+.bar-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    canvas {
+        width: 20rem !important;
+    }
+}
+
+.dashed-line {
+    width: 100%;
+    height: 1px;
+    border: 1px dashed #C9D3DD;
+}
+
+.stacked-progress-container {
+  position: relative;
+}
+
+.stacked-progress-overlay {
+    width: 100%;
+    height: 0.625rem;
+    border-radius: 1rem;
+}
+
+.progress-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.approved {
+   color:  rgba(0, 169, 18, 1) !important;
+
+}
+
+.rejected {
+    color:  rgba(234, 54, 44, 1) !important;
+ 
+}
+
+.waiting {
+    color:  rgba(252, 185, 16, 1) !important;
+}
+
+.total-hrs {
+    color: rgba(133, 137, 145, 1);
+    font-weight: 500;
+    font-size: var(--fontsize12);
+    cursor: pointer;
+}
+
+.total-duration {
+    font-size: var(--fontsize15) !important;
+    font-weight: 600;
+    color: var(--primary-color);
+}

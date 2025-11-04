@@ -1,23 +1,19 @@
-<div>
-
+<div class="custom-main-component-container">
     <div class="d-flex w-100 gap-3">
         <div class="custom-table-content w-100">
             @if (!loading) {
             <table class="w-100">
                 <thead>
                     <th class="text-center">{{'Date' | translate}}</th>
-                    <th >{{'Logged Hours' | translate }}</th>
+                    <th>{{'Logged Hours' | translate }}</th>
                     <th class="text-center">{{'Description' | translate}}</th>
                     <th>{{'Status' | translate }}</th>
                 </thead>
                 <tbody>
                     <ng-container *ngIf="(attendanceSummaryData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let row of attendanceSummaryData">
-
                             <td class="text-center">{{row.date | dateformat }}</td>
-
-                            <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM +
-                                ' Hrs'}}</td>
+                            <td>{{row.dailySummary.totalLoggedHours === "00:00:00" ? '-' : row.dailySummary.loggedHHMM + ' Hrs'}}</td>
                             <td class="text-center">
                                 <ng-container *ngIf="row.entries[0]?.summary; else noEntries">
                                     <a type="button" [ngbPopover]="description">
@@ -27,15 +23,11 @@
                                         <p class="mb-0">{{ row.entries[0]?.summary }}</p>
                                     </ng-template>
                                 </ng-container>
-                                <ng-template #noEntries>
-                                    -
-                                </ng-template>
+                                <ng-template #noEntries>-</ng-template>
                             </td>
                             <td [style.color]="row.dailySummary.colour"><b>
-                                    <span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status
-                                    }}</b>
+                                <span *ngIf="row.dailySummary.status !=='-'">●</span> {{row.dailySummary.status }}</b>
                             </td>
-
                         </tr>
                     </ng-container>
                     <ng-template #noDataTemplate>
@@ -53,38 +45,35 @@
 
         <div class="timesheet-graph-content p-3">
             <div class="time-sheet-graph-card">
-                <div class="summary-header mb-2">Timesheet Summary</div>
-                <div class="stacked-progress-container py-4">
-                    <!-- overlay color bar -->
-                    <div class="stacked-progress-overlay mb-3"
-                        [style.background]="'linear-gradient(to right, ' + 
-                            approvedColor + ' 0%, ' + approvedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
-                            + approvedPercent + '%, ' + submittedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + 
-                            rejectedColor + ' ' + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
-                    </div>
-
-                    <div class="progress-labels">
-                        <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
-                        <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted
-                            }}Hrs
-                        </div>
-                        <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="dashed-line my-3"></div>
-
-            <div class="time-sheet-graph-card">
                 <div class="summary-header mb-2">Project Wise Hours Summary</div>
                 <div class="circular-chart">
                     <p-chart type="pie" [data]="projectTypeGraphData" [options]="projectTypeGraphOptions" />
                 </div>
             </div>
-
+        
             <div class="dashed-line my-3"></div>
-
+        
+            <div class="time-sheet-graph-card">
+                <div class="summary-header mb-2">Timesheet Summary</div>
+                <div class="stacked-progress-container py-4">
+                    <!-- overlay color bar -->
+                    <div class="stacked-progress-overlay mb-3" [style.background]="'linear-gradient(to right, ' + approvedColor + ' 0%, ' + approvedColor + ' ' 
+                                + approvedPercent + '%, ' + submittedColor + ' ' + approvedPercent + '%, ' + submittedColor + ' ' 
+                                + (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' ' + 
+                                (approvedPercent + submittedPercent) + '%, ' + rejectedColor + ' 100%)'">
+                    </div>
+        
+                    <div class="progress-labels">
+                        <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved }}Hrs</div>
+                        <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted }}Hrs
+                        </div>
+                        <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected }}Hrs</div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="dashed-line my-3"></div>
+        
             <div class="time-sheet-graph-card">
                 <div class="summary-header mb-4">Allocated vs Actual Hours</div>
                 <div class="bar-chart">

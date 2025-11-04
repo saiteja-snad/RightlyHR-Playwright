@@ -175,7 +175,7 @@ export const MODULE_INFOS = {
     PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO: "The Family Members section enables employees to add and manage information about their family members, including Name, Relationship, Date of Birth, and Dependent status. Users can add new entries and perform actions such as edit or delete existing records.",
     PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO: "The Bank Info section allows employees to add and manage their bank accounts by providing Bank Name, Account Holder's Name, Account Number, IFSC Code, and uploading proof documents. Users can designate a primary bank account and perform actions like edit or delete records.",
     PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO: "The Visa Details section enables employees to add and manage visa information including Visa Type, Issue Date, Expiry Date, Issued Country, and Status. Users can add new visa records and perform actions such as edit or delete existing entries.",
-    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skill Set Directory section provides managers with an interactive view of employee skills across the organization, enabling quick identification of strengths and gaps.",
+    PERSONAL_MODULE_MY_SKILLS_MODULE_INFO: "The Skills section allows employees to add their technical and soft skills, showcasing their areas of expertise. This helps the organization easily identify and map employee competencies for project or role allocation.",
 
 
     //My info Job Module info 

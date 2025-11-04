@@ -427,11 +427,7 @@ export class ProjectTimesheetSummaryComponent {
           // Chart options
           this.burndownOptions = {
             plugins: {
-              legend: {
-                display: true,
-                position: 'top',
-                labels: { boxWidth: 12, color: '#333' },
-              },
+              legend: { display: false, },
               tooltip: { mode: 'index', intersect: false },
             },
             scales: {

@@ -17,10 +17,8 @@
                             <td>{{roles.projectRole}}</td>
                             <td>
                                 <div class="progress-wrapper">
-                                    <div class="progress-bar" [ngStyle]="{
-                                                            width: roles.utilizationPercent + '%',
-                                                            backgroundColor: getProgressColor(roles.utilizationPercent)
-                                                          }"></div>
+                                    <div class="progress-bar" [ngStyle]="{width: roles.utilizationPercent + '%', 
+                                    backgroundColor: getProgressColor(roles.utilizationPercent)}"></div>
                                 </div>
                                 <!-- <span class="logged-hours">{{ roles.totalLoggedHours }}</span> -->
                             </td>

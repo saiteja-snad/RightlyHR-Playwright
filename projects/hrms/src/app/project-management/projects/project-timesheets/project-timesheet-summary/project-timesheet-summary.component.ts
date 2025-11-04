@@ -7,7 +7,6 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { backgroundSize } from 'html2canvas/dist/types/css/property-descriptors/background-size';
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -56,9 +55,9 @@ export class ProjectTimesheetSummaryComponent {
         this.projectResourceSummary(dateRange.startDate, dateRange.endDate);
         this.roleWiseHoursGraph(dateRange.startDate, dateRange.endDate);
         this.createGaugeChart();
-        this.estimatedActualChart(dateRange.startDate,dateRange.endDate);
-        this.billableChart(dateRange.startDate,dateRange.endDate);
-        this.burnDownChart(dateRange.startDate,dateRange.endDate);
+        this.estimatedActualChart(dateRange.startDate, dateRange.endDate);
+        this.billableChart(dateRange.startDate, dateRange.endDate);
+        this.burnDownChart(dateRange.startDate, dateRange.endDate);
       } else {
         this.projectResourceSummary();
         this.roleWiseHoursGraph();
@@ -69,12 +68,14 @@ export class ProjectTimesheetSummaryComponent {
       }
     });
   }
+
   getProgressColor(utilization: number): string {
-  if (utilization >= 75) return '#22c55e'; // green
-  if (utilization >= 40) return '#facc15'; // yellow
-  if (utilization > 0) return '#ef4444';   // red
-  return '#e5e7eb'; // gray for 0%
-}
+    if (utilization >= 75) return '#22c55e'; // green
+    if (utilization >= 40) return '#facc15'; // yellow
+    if (utilization > 0) return '#ef4444';   // red
+    return '#e5e7eb'; // gray for 0%
+  }
+  
   projectResourceSummary(startDate?: string, endDate?: string): void {
     const fullPath = this.router.url;
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any; }) => {
@@ -169,7 +170,7 @@ export class ProjectTimesheetSummaryComponent {
         this.estimatedVsActualData = [];
         return;
       }
-       //  Get stored date range from HttpService
+      //  Get stored date range from HttpService
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
       const endDate = dateRange?.endDate ?? null;
@@ -255,6 +256,7 @@ export class ProjectTimesheetSummaryComponent {
         this.billableData = [];
         return;
       }
+
       //  Get stored date range from HttpService
       const dateRange = this.http.getCurrentDateRange();
       const startDate = dateRange?.startDate ?? null;
@@ -267,9 +269,9 @@ export class ProjectTimesheetSummaryComponent {
       }
 
       this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
-          next: (res: any) => {
-            // Correct extraction based on your actual structure
-            const apiData = res?.data?.data || res?.data || [];
+        next: (res: any) => {
+          // Correct extraction based on your actual structure
+          const apiData = res?.data?.data || res?.data || [];
           if (!Array.isArray(apiData) || apiData.length === 0) {
             console.warn('No valid billable data found:', apiData);
             this.billableData = [];
@@ -374,7 +376,8 @@ export class ProjectTimesheetSummaryComponent {
               const start = new Date(weekStart);
               const end = new Date(start);
               end.setDate(start.getDate() + 6);
-              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+              const label = `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}–${end.toLocaleDateString('en-US', 
+                { month: 'short', day: 'numeric' })}`;
               const avgHours = items.reduce((sum, i) => sum + i.remainingHours, 0) / items.length;
               weeks.push({ label, avgHours });
             });

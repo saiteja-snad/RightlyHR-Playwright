@@ -78,6 +78,12 @@ export class TimesheetsSummaryViewComponent {
   approvedColor = '#4CAF50';  // green
   submittedColor = '#FFC107'; // yellow
   rejectedColor = '#F44336';  // red
+  rejectedPercent!: number;
+  approvedPercent!: number;
+  submittedPercent!: number;
+  displayApproved!: string;
+  displaySubmitted!: string;
+  displayRejected!: string;
 
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute) { }
@@ -199,7 +205,16 @@ export class TimesheetsSummaryViewComponent {
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId
     this.getProjectSummary(resoureID);
   }
-
+  convertTimeToHours(time: string): number {
+    if (!time) return 0;
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours + minutes / 60; // e.g., "02:30" → 2.5
+  }
+  formatHoursToHHMM(hours: number): string {
+  const h = Math.floor(hours);
+  const m = Math.round((hours - h) * 60);
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
   getProjectSummary(resoureID: any) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
@@ -214,10 +229,24 @@ export class TimesheetsSummaryViewComponent {
         this.totalhrs = res?.data?.totalLoggedHHMM;
         this.projectTypeData = res?.data?.graphSummary?.projectWiseSummary;
         this.estimatedVsActualData = res?.data?.graphSummary?.allocatedVsActualSummary;
-        this.progressBarData = res?.data?.graphSummary?.timesheetSummary;
-        this.approved = this.progressBarData?.approved;
-        this.submitted = this.progressBarData?.submitted;
-        this.rejected = this.progressBarData?.rejected;
+
+
+        const tsSummary = res?.data?.graphSummary?.timesheetSummary;
+
+        this.approved = this.convertTimeToHours(tsSummary?.approved);
+        this.submitted = this.convertTimeToHours(tsSummary?.submitted);
+        this.rejected = this.convertTimeToHours(tsSummary?.rejected);
+
+        // ✅ Percentages for bar visualization
+        const total = this.approved + this.submitted + this.rejected || 1;
+        this.approvedPercent = (this.approved / total) * 100;
+        this.submittedPercent = (this.submitted / total) * 100;
+        this.rejectedPercent = (this.rejected / total) * 100;
+
+        // ✅ Display values in HH:mm format
+        this.displayApproved = this.formatHoursToHHMM(this.approved);
+        this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
+        this.displayRejected = this.formatHoursToHHMM(this.rejected);
         // this.attendanceSummaryData = data?.dailyData ?? [];
         this.projectTypeChart();
         this.estimatedActualChart();
@@ -244,63 +273,87 @@ export class TimesheetsSummaryViewComponent {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-  get total(): number {
-    return this.approved + this.submitted + this.rejected;
-  }
 
-  get approvedPercent(): number {
-    return (this.approved / this.total) * 100;
-  }
-
-  get submittedPercent(): number {
-    return (this.submitted / this.total) * 100;
-  }
-
-  get rejectedPercent(): number {
-    return (this.rejected / this.total) * 100;
-  }
 
   // Project Type (Pie)
   projectTypeChart() {
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
-    // Extract labels and data from API response
+
+    // Extract labels
     const labels = this.projectTypeData.map((item: any) => item.projectName);
-    const data = this.projectTypeData.map((item: any) => item.hours);
-    // Generate random colors for each project (optional)
+
+    // Convert "HH:mm" string → numeric hours for plotting
+    const data = this.projectTypeData.map((item: any) => {
+      const [hours, minutes] = item.hours.split(':').map(Number);
+      return hours + minutes / 60;
+    });
+
+    // Keep original HH:mm values for display
+    const originalTimes = this.projectTypeData.map((item: any) => item.hours);
+
+    // Chart colors
     const backgroundColors = [
-      '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6', '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
-    ].slice(0, this.projectTypeData.length); // adjust for number of items
-    // Assign chart data dynamically
+      '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
+      '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
+    ].slice(0, labels.length);
+
+    // Chart data
     this.projectTypeGraphData = {
-      labels: labels,
+      labels,
       datasets: [
         {
-          label: 'Project Hours',
-          data: data,
+          label: 'Project Hours (in hrs)',
+          data,
           backgroundColor: backgroundColors,
         },
       ],
     };
+
     // Chart options
     this.projectTypeGraphOptions = {
       plugins: {
         legend: {
           position: 'right',
-          labels: { usePointStyle: true }
+          labels: { usePointStyle: true },
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const index = context.dataIndex;
+              const timeString = originalTimes[index]; // e.g., "02:35"
+              return `${context.label}: ${timeString} hrs`;
+            },
+          },
         },
       },
+
     };
   }
+
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
-    // Extract project names and corresponding data
+
+    // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
-    const estimatedData = this.estimatedVsActualData.map((item: any) => item.estimatedHours);
-    const actualData = this.estimatedVsActualData.map((item: any) => item.actualHours);
-    const overdueData = this.estimatedVsActualData.map((item: any) => item.overDue);
-    // Create chart datasets
+
+    // Convert estimated hours to numbers (already numeric strings)
+    const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
+
+    // Convert "HH:mm" to numeric hours for actualHours
+    const actualData = this.estimatedVsActualData.map((item: any) => {
+      const [h, m] = item.actualHours.split(':').map(Number);
+      return h + (m / 60);
+    });
+
+    // Keep original HH:mm format for display
+    const actualDisplay = this.estimatedVsActualData.map((item: any) => item.actualHours);
+
+    // Convert overdue (may come as string)
+    const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
+
+    // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
       datasets: [
@@ -308,47 +361,68 @@ export class TimesheetsSummaryViewComponent {
           label: 'Estimated Hours',
           backgroundColor: '#1A237E',
           data: estimatedData,
-          stack: 'Estimated' // separate stack
+          stack: 'Estimated'
         },
         {
           label: 'Actual Hours',
           backgroundColor: '#90CAF9',
           data: actualData,
-          stack: 'ActualOverdue' // stacked with Overdue
+          stack: 'ActualOverdue'
         },
         {
           label: 'Over Due',
           backgroundColor: '#FF5252',
           data: overdueData,
-          stack: 'ActualOverdue' // stacked on top of Actual
+          stack: 'ActualOverdue'
         }
       ]
     };
+
     // Chart options
     this.estimatedVsActualGraphOptions = {
       responsive: true,
       plugins: {
         legend: {
-          display: false // hides the top "Resource Count" label
+          position: 'bottom',
+          labels: { usePointStyle: true }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const datasetLabel = context.dataset.label || '';
+              const index = context.dataIndex;
+
+              if (datasetLabel === 'Actual Hours') {
+                // show actualHours as HH:mm hrs
+                const timeStr = actualDisplay[index];
+                return `${datasetLabel}: ${timeStr} hrs`;
+              } else if (datasetLabel === 'Estimated Hours') {
+                return `${datasetLabel}: ${context.raw.toFixed(2)} hrs`;
+              } else {
+                return `${datasetLabel}: ${context.raw} hrs`;
+              }
+            }
+          }
         }
       },
       scales: {
         x: {
-          stacked: false, // Estimated shown separately from Actual+Overdue
+          stacked: false,
           grid: { display: false },
           title: { display: false }
         },
         y: {
-          stacked: true, // Actual + Overdue stacked vertically
+          stacked: true,
           beginAtZero: true,
           title: {
             display: true,
             text: 'Hours'
-          },
+          }
         }
       }
     };
   }
+
   navigatetoteam() {
     this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }

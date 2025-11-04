@@ -20,9 +20,9 @@
                 {{employename?.lastName}}</div>
 
 
-                <div>
-        <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
-    </div>
+            <div>
+                <app-module-info-icon placement="bottom" [ngbPopover]="popContent" />
+            </div>
         </div>
         <!-- <div>
             <app-project-management-module-info />
@@ -148,10 +148,10 @@
                         </div>
 
                         <div class="progress-labels">
-                            <div class="label" [style.color]="approvedColor">Approved: {{ approved }}Hrs</div>
-                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ submitted }}Hrs
+                            <div class="label" [style.color]="approvedColor">Approved: {{ displayApproved  }}Hrs</div>
+                            <div class="label" [style.color]="submittedColor">Submitted For Approval: {{ displaySubmitted  }}Hrs
                             </div>
-                            <div class="label" [style.color]="rejectedColor">Rejected: {{ rejected }}Hrs</div>
+                            <div class="label" [style.color]="rejectedColor">Rejected: {{ displayRejected  }}Hrs</div>
                         </div>
                     </div>
 

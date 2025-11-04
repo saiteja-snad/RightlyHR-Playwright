@@ -6,9 +6,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Subscription } from 'rxjs/internal/Subscription';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 import { IResourceDetail } from '../../../timesheetmodel';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import dayjs from 'dayjs';
 import { DatePicker } from 'primeng/datepicker';
 import { HttpService } from '../../../services/http.service';
@@ -23,17 +23,20 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { ChartModule } from 'primeng/chart';
 import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule,
-    ProjectManagementModuleInfoComponent, Select, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent,
-    InfoIconComponent, ProgressBarModule],
+    ProjectManagementModuleInfoComponent, Select, NgbPopoverModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent,
+    InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent, ModuleInformationComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class TimesheetsSummaryViewComponent {
+  moduleinfo: string = '';
   empdata = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
   activeEmplist = [] as any;
@@ -41,18 +44,10 @@ export class TimesheetsSummaryViewComponent {
   subscription!: Subscription;
   ranges: any;
   datepickerForm!: FormGroup;
-  page = 1;
-  pageSize = 10;
-  rows = 10;
-  collectionSize!: number;
+
   totalhrs: any
-  first = 0;
-  options = [
-    { label: 10, value: 10 },
-    { label: 15, value: 15 },
-    { label: 20, value: 20 },
-    { label: 25, value: 25 }
-  ];
+
+
   attendanceSummaryData: DailyData[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedEntries: TimesheetEntry[] = [];
@@ -74,6 +69,7 @@ export class TimesheetsSummaryViewComponent {
   estimatedVsActualData: any;
   estimatedVsActualGraphData: any;
   estimatedVsActualGraphOptions: any;
+  employename: any
   // progress bar variables
   progressBarData: any;
   approved = 0;
@@ -83,7 +79,7 @@ export class TimesheetsSummaryViewComponent {
   submittedColor = '#FFC107'; // yellow
   rejectedColor = '#F44336';  // red
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService,
+  constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -94,8 +90,9 @@ export class TimesheetsSummaryViewComponent {
       const resoureID = params['id'];
       if (resoureID) {
         this.employeeId = parseInt(resoureID)
-        console.log(this.employeeId);
         this.getProjectSummary(resoureID);
+        this.getEmployeeId(resoureID);
+
       }
     });
     this.setDefaultmounth();
@@ -119,6 +116,50 @@ export class TimesheetsSummaryViewComponent {
       dateRange: [startOfMonth, endOfMonth]
     });
   }
+
+  isShowtimesheetforteamRoute(): boolean {
+    const showPaths = [
+      '/project-management/timesheet/summary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  isShowtimesheetformyRoute(): boolean {
+    const showPaths = [
+      '/project-management/timesheet/mysummary',
+    ];
+    return showPaths.some(path => this.router.url.startsWith(path));
+  }
+
+  onCheckemployee(employeed: any) {
+    console.log(employeed);
+
+    if (employeed) {
+
+      this.getProjectSummary(employeed);
+      this.getEmployeeId(employeed);
+    }
+    else {
+      this.getProjectSummary(this.employeeId);
+      this.getEmployeeId(this.employeeId);
+    }
+  }
+
+
+  getEmployeeId(employeeId: any) {
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employename = data;
+
+      },
+      error: (reason) => {
+        console.log(reason)
+      },
+
+    });
+  }
+
+
 
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
@@ -149,12 +190,13 @@ export class TimesheetsSummaryViewComponent {
     });
   }
 
+  navigatetomy() {
+    this.router.navigate(['project-management/timesheet/mytimesheet']);
+  }
+
   onSubmit() {
     // Check if form is valid (optional)
-
-    // ✅ Trigger your existing API call
-    this.page = 1; // Reset to first page on new filter apply
-    const resoureID = this.datepickerForm.get('resourceId')?.value ||   this.employeeId
+    const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId
     this.getProjectSummary(resoureID);
   }
 
@@ -169,7 +211,7 @@ export class TimesheetsSummaryViewComponent {
       next: (res: any) => {
         this.loading = false;
         const data: TimesheetSummaryResponse = res?.data;
-        this.totalhrs= res?.data?.totalLoggedHHMM;
+        this.totalhrs = res?.data?.totalLoggedHHMM;
         this.projectTypeData = res?.data?.graphSummary?.projectWiseSummary;
         this.estimatedVsActualData = res?.data?.graphSummary?.allocatedVsActualSummary;
         this.progressBarData = res?.data?.graphSummary?.timesheetSummary;
@@ -306,5 +348,8 @@ export class TimesheetsSummaryViewComponent {
         }
       }
     };
+  }
+  navigatetoteam() {
+    this.router.navigate(['project-management/timesheet/teamtimesheet']);
   }
 }

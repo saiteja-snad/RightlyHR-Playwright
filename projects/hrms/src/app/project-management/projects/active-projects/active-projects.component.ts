@@ -110,6 +110,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDepartmentNames(project: Project): string {
+  if (!project.departments || project.departments.length === 0) {
+    return '-';
+  }
+  return project.departments.map(d => d.departmentName).join(', ');
+}
+
   getAuthorityList() {
     this.http.getData(`ProjectManagementAuthority?status=active&entity=Project`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

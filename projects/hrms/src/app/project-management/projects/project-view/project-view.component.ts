@@ -157,8 +157,7 @@ export class ProjectViewComponent implements OnInit {
       next: (res: any) => {
         this.projectsData = Array.isArray(res?.data) ? res.data : [];
         if (this.projectsData?.length > 0) {
-          const project = this.projectsData[0];
-          console.log(project)
+        const project = this.projectsData[0];
          this.datepickerForm.get('projectName')?.enable({ emitEvent: false });
          this.datepickerForm.patchValue({
            projectName: project?.projectName,

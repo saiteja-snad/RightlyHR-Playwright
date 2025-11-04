@@ -498,26 +498,28 @@ export class SkillsetDashboardComponent {
     }
     return `${environment.ApiUrl}EmployeeData/DownloadProfilePic?filename=${imagePath}`;
   }
-  getMultiskills() {
-    this.loader = true;
-    this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
-      next: (response: any) => {
-        if (response?.success && Array.isArray(response.data)) {
-          this.multiSkillOptions = response.data.map((skill: any) => ({
-            label: skill.skillName,
-            value: skill.skillName
-          }));
-        } else {
-          this.multiSkillOptions = [];
-        }
-        this.loader = false;
-      },
-      error: (reason: any) => {
-        console.error('Error fetching skills:', reason);
-        this.loader = false;
+
+
+getMultiskills() {
+  this.loader = true;
+  this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
+    next: (response: any) => {
+      if (response?.success && Array.isArray(response.data)) {
+        this.multiSkillOptions = response.data.map((skill: any) => ({
+          label: skill.skillName,
+          value: skill.skillName
+        }));
+      } else {
+        this.multiSkillOptions = [];
       }
-    });
-  }
+      this.loader = false;
+    },
+    error: (reason: any) => {
+      console.error('Error fetching skills:', reason);
+      this.loader = false;
+    }
+  });
+}
 
 
   clearAllFilters(): void {

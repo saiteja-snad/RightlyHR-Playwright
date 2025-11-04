@@ -14,7 +14,7 @@
             <div><button type="button" class="clear-all-btn" (click)="clearAllFilters()">Clear All</button></div>
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="EmpProficiency" [(ngModel)]="selectedStatus" optionLabel="label"
-                    optionValue="value" placeholder="Select Proficiency" [showToggleAll]="true" [filter]="true"
+                    optionValue="value" placeholder="Select Proficiency" [showToggleAll]="true" [filter]="true" selectedItemsLabel="{2} items selected" 
                     display="chip" [maxSelectedLabels]="3" resetFilterOnHide="true" class="form-select custom-select"
                     (onChange)="onCheckemployeeProficiency($event.value)">
                 </p-multiselect>
@@ -23,10 +23,12 @@
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Select Skills"
-                    [maxSelectedLabels]="3" resetFilterOnHide="true" optionLabel="label" optionValue="value"
-                    display="chip" class="form-select custom-select" (onChange)="onSkillSelectionChange()">
+                    optionLabel="label" optionValue="value" [showClear]="true" [maxSelectedLabels]="3"
+                    selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
+                    class="form-select custom-select" (onChange)="onSkillSelectionChange()">
                 </p-multiselect>
             </div>
+
         </div>
     </div>
 
@@ -40,7 +42,7 @@
                 <div class="summary-title mb-1">{{ card.title }}</div>
                 <div class="summary-value">{{ card.value }}</div>
             </div>
-            
+
         </div>
     </div>
 
@@ -149,7 +151,8 @@
 <!-- view Details Content  -->
 <ng-template #content let-offcanvas>
     <div class="offcanvas-header">
-        <p class="offcanvas-title">Employees with {{ selectedSkillName }} <span *ngIf="employeeList?.length">({{employeeList.length }})</span></p>
+        <p class="offcanvas-title">Employees with {{ selectedSkillName }} <span
+                *ngIf="employeeList?.length">({{employeeList.length }})</span></p>
         <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
     </div>
 

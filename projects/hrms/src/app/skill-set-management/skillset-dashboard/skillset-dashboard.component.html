@@ -151,15 +151,16 @@
 
 <!-- view Details Content  -->
 <ng-template #content let-offcanvas>
-    <div class="offcanvas-header">
-        <p class="offcanvas-title">Resources with {{ selectedSkillName }} <span
-                *ngIf="employeeList?.length">({{employeeList.length }})</span></p>
+    <div class="custom-offcanvas-header p-2">
+       <div class="custom-offcanvas-title text-capitalize">Resources with <b>{{ selectedSkillName }}</b> 
+        <span *ngIf="employeeList?.length">({{employeeList.length }})</span></div>
         <div>
             <a (click)="close(offcanvas)">
                 <img src="icons/close.png" alt="Close Icon" class="close-icon">
             </a>
         </div>
     </div>
+
     <div class="offcanvas-body">
         <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
 

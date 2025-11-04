@@ -138,15 +138,17 @@
 }
 
 // offcanvas stylings
-.offcanvas-header {
+.custom-offcanvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 0.75rem;
 }
 
-.offcanvas-title {
-  max-width: 180px;
+.custom-offcanvas-title {
   font-weight: 500;
-  font-size: var(--fontsize16);
+  font-size: var(--fontsize15);
   color: var(--primary-color);
 }
 

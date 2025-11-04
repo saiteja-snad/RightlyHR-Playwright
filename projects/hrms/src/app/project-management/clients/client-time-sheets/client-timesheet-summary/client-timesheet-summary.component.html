@@ -43,6 +43,7 @@
                 </table>
             </div>
         </div>
+        
         <div class="time-sheet-graph-card">
             <div class="summary-header mb-4">Project wise Resource Count</div>
             <div class="project-resource-graph">
@@ -107,9 +108,17 @@
                 <p-chart type="bar" [data]="billableData" [options]="billableOptions" />
             </div>
         </div>
-
+        
         <div class="time-sheet-graph-card">
-            <div class="summary-header mb-3">Project Burndown Chart</div>
+            <div class="d-flex justify-content-between align-items-center pb-3">
+                <div class="summary-header">Project Burndown Chart</div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-1" *ngFor="let item of projectNames; let i = index">
+                        <span class="legend-circle" [ngStyle]="{ 'background-color': getColor(i) }"></span>
+                        <span class="legend-label">{{ item }}</span>
+                    </div>
+                </div>
+            </div>
 
             <div class="burndown-chart">
                 <p-chart type="line" [data]="burndownData" [options]="burndownOptions" />

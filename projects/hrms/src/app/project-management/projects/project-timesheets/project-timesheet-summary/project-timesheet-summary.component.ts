@@ -7,6 +7,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { HttpService } from '../../../../services/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+
 @Component({
   selector: 'app-project-timesheet-summary',
   imports: [CommonModule, SelectModule, TranslateModule, ChartModule],
@@ -44,6 +45,8 @@ export class ProjectTimesheetSummaryComponent {
     { label: 'Billable', color: '#0F358A' },
     { label: 'Non-Billable', color: '#A2B5E2' },
   ];
+  // project name
+  projectName: any;
 
   constructor(private router: Router, public formValidation: FormValidationsService,
     private http: HttpService, private route: ActivatedRoute) { }
@@ -353,6 +356,8 @@ export class ProjectTimesheetSummaryComponent {
             date: string;
             remainingHours: number;
           }
+
+          this.projectName = res?.data?.projectName;
 
           const idealLine: LineData[] = res?.data?.idealLine || [];
           const actualLine: LineData[] = res?.data?.actualLine || [];

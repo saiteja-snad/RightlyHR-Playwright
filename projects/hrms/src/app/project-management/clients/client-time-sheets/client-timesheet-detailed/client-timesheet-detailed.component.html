@@ -1,1 +1,24 @@
-<p>client-timesheet-detailed works!</p>
+<div class="custom-component-right-content">
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Rolet</th>
+                    <th>Start Date</th>
+                    <th>Days Spent</th>
+                    <th>Logged Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let project of projectEmployeeDetails; let i = index">
+                    <td>{{project.employeeName}}</td>
+                    <td>{{project.projectRole}}</td>
+                    <td>Team</td>
+                    <td>{{project.utilizationPercent}}</td>
+                    <td>{{project.loggedHours}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

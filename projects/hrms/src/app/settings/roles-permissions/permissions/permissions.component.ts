@@ -331,7 +331,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       'Employee Info Certification Details',
       'Employee Info Compensation Details',
       'Draft Tab',
-      "Letter Acknowledgment Configuration"
+      "Letter Acknowledgment Configuration",
+      "Timesheet Locking Configuration Module"
     ];
     return (
       enabledTabs.includes(field) &&
@@ -395,6 +396,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Settings Timeoff Module',
     'Assets Management Configuration Module',
     'Dynamic Forms Module',
+    "Timesheet Locking Configuration Module"
   ];
   employeeFields = [
     'Personal Tab',
@@ -515,6 +517,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
+  //   TymesheetTypeFields = [
+  //   'Timesheet Locking Pending Tab',
+  //   'Timesheet Locking Published Tab'
+  // ];
   sidebarTabsFields = [
     'Dashboard',
     'My Info',

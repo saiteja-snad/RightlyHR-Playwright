@@ -68,6 +68,7 @@ import {
   ON_BEHALF_OF_REMOTELOGIN_TABS,
   EXTRA_HOURS_SUB_TABS,
   CARDS_SUB_TABS,
+  // SETTINGS_TIMESHEET_LOCKING_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -271,10 +272,17 @@ export class AccessNavigationService {
             }
           }
         }
+        
+        if (this.rbac.allowedToAccess('Timesheet Locking Configuration Module.view')) {
+          return '/settings/timesheet-locking-configuration';
+        }
+
         if (this.rbac.allowedToAccess('Attendance Configuration Module.view')) {
           return '/settings/attendance-configuration';
         }
         break;
+
+
 
       case '/policies':
         if (this.rbac.allowedToAccess('Policies.view')) {
@@ -1147,6 +1155,29 @@ export class AccessNavigationService {
           return (route = '/settings/attendance-configuration/published');
         }
         break;
+
+         //timesheet locking
+      // case '/settings/timesheet-locking-configuration':
+      //   if (this.rbac.allowedToAccess('Timesheet Locking Configuration Module.view' )) {
+
+      //     for (const item of SETTINGS_TIMESHEET_LOCKING_TABS) {
+      //       if (this.rbac.allowedToAccess(item.permission)) {
+      //         return item.route;
+      //       }
+      //     }
+      //   }
+      //   break;
+      // case '/settings/timesheet-locking-configuration/pending-for-submission':
+      //   if (this.rbac.allowedToAccess('Timesheet Locking Pending Tab.view')) {
+      //     return (route = '/settings/timesheet-locking-configuration/pending-for-submission');
+      //   }
+      //   break;
+      // case '/settings/timesheet-locking-configuration/published':
+      //   if (this.rbac.allowedToAccess('Timesheet Locking Published Tab.view')) {
+      //     return (route = '/settings/timesheet-locking-configuration/published');
+      //   }
+      //   break;
+        // assets
       case '/settings/assets-configuration/vendor-detiles':
         if (this.rbac.allowedToAccess('Vendor Details.view')) {
           return '/settings/assets-configuration/vendor-detiles';

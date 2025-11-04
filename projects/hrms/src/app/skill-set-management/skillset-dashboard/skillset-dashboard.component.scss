@@ -33,8 +33,7 @@
 
 .grid-display-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto;
+  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
   gap: 1rem;
   align-items: stretch;
 }
@@ -56,7 +55,8 @@
 .skill-chart-horizontal {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
+  min-width: 480px;
   height: 320px;
   gap: 1.5rem;
   flex-wrap: wrap;
@@ -72,8 +72,6 @@
 }
 
 .skill-proficiency-content {
-  justify-content: space-around !important;
-
   .skill-chart-right {
     max-width: 180px !important;
   }
@@ -146,6 +144,7 @@
 }
 
 .offcanvas-title {
+  max-width: 180px;
   font-weight: 500;
   font-size: var(--fontsize16);
   color: var(--primary-color);

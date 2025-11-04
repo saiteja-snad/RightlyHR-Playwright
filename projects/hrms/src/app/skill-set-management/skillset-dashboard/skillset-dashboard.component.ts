@@ -80,6 +80,7 @@ export class SkillsetDashboardComponent {
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.onCheckemployeeProficiency(this.selectedStatus);
+
     this.skilllevelGraph();
     this.skillByDepartmentGraph();
     this.topSkillsGraph();
@@ -88,6 +89,7 @@ export class SkillsetDashboardComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.getMultiskills();
+    this.selectedStatus = ['All Proficiencies'];
   }
 
 
@@ -126,6 +128,7 @@ export class SkillsetDashboardComponent {
     this.getSkillSetTableData()
     this.topSkillsGraph()
   }
+  
 
   getProficiencyKeys(proficiencyCounts: any): string[] {
     return proficiencyCounts ? Object.keys(proficiencyCounts) : [];
@@ -500,26 +503,26 @@ export class SkillsetDashboardComponent {
   }
 
 
-getMultiskills() {
-  this.loader = true;
-  this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
-    next: (response: any) => {
-      if (response?.success && Array.isArray(response.data)) {
-        this.multiSkillOptions = response.data.map((skill: any) => ({
-          label: skill.skillName,
-          value: skill.skillName
-        }));
-      } else {
-        this.multiSkillOptions = [];
+  getMultiskills() {
+    this.loader = true;
+    this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
+      next: (response: any) => {
+        if (response?.success && Array.isArray(response.data)) {
+          this.multiSkillOptions = response.data.map((skill: any) => ({
+            label: skill.skillName,
+            value: skill.skillName
+          }));
+        } else {
+          this.multiSkillOptions = [];
+        }
+        this.loader = false;
+      },
+      error: (reason: any) => {
+        console.error('Error fetching skills:', reason);
+        this.loader = false;
       }
-      this.loader = false;
-    },
-    error: (reason: any) => {
-      console.error('Error fetching skills:', reason);
-      this.loader = false;
-    }
-  });
-}
+    });
+  }
 
 
   clearAllFilters(): void {

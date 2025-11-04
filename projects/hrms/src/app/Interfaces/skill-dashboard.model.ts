@@ -82,5 +82,6 @@ export interface EmployeeSkill {
   proficiencyLevel: string;
   profileImage?: string;
   imageUrl?: string;
+  projectStatus:string;
 }
 

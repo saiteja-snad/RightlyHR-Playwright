@@ -272,3 +272,16 @@
   height: 2rem;
  margin-left:10rem;
 }
+.status-badge {
+  text-transform: capitalize;
+}
+
+.status-available {
+  color: #00A912;
+  font-size: var(--fontsize12);
+}
+
+.status-committed {
+  color: #E0A101;
+  font-size: var(--fontsize12);
+}

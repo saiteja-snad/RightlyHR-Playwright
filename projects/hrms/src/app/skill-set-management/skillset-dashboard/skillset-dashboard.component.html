@@ -72,7 +72,8 @@
         <div class="graph-card">
             <div class="graph-header mb-3">Top 5 Trending skills</div>
             <div class="bar-chart">
-                <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData" [options]="topSkillsOptions" />
+                <p-chart class="project-resource-graph" type="bar" [data]="topSkillsData"
+                    [options]="topSkillsOptions" />
             </div>
         </div>
 
@@ -151,7 +152,7 @@
 <!-- view Details Content  -->
 <ng-template #content let-offcanvas>
     <div class="offcanvas-header">
-        <p class="offcanvas-title">Employees with {{ selectedSkillName }} <span
+        <p class="offcanvas-title">Resources with {{ selectedSkillName }} <span
                 *ngIf="employeeList?.length">({{employeeList.length }})</span></p>
         <div>
             <a (click)="close(offcanvas)">
@@ -175,6 +176,9 @@
                 <div class="name">{{ emp.employeeName }}</div>
                 <div class="designation">{{ emp.departmentName || ' ' }}
                     <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span>
+                </div>
+                <div [ngClass]="getStatusClass(emp.projectStatus)">
+                    {{ emp.projectStatus || '-' }}
                 </div>
                 <div class="designation"
                     [ngClass]="{'beginner-text': emp.proficiencyLevel === 'Beginner',

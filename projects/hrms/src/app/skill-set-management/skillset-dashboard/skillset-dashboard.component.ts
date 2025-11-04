@@ -108,6 +108,14 @@ export class SkillsetDashboardComponent {
       this.updateModuleInfo();
     });
   }
+  
+  getStatusClass(status: string): string {
+    if (!status) return '';
+    const normalized = status.toLowerCase();
+    if (normalized === 'available') return 'status-available';
+    if (normalized === 'committed') return 'status-committed';
+    return '';
+  }
 
   ComponentnameDisplay() {
     if (this.router.url === '/skill-management/dashboard') {

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -13,27 +13,21 @@ import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.mo
 import dayjs from 'dayjs';
 import { ChartModule } from 'primeng/chart';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { ModuleInfoIconComponent } from '../../../icons/module-info-icon/module-info-icon.component';
 import { InfoIconComponent } from '../../../icons/info-icon/info-icon.component';
-import { ProjectManagementModuleInfoComponent } from '../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component';
-import { Select } from 'primeng/select';
-import { TimesheetsTabsComponent } from '../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component';
-import { DatePicker } from 'primeng/datepicker';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
-
 @Component({
   selector: 'app-resource-view-summary',
-  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule,
-    ProjectManagementModuleInfoComponent, Select, NgbPopoverModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent,
-    InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent, ModuleInformationComponent],
+  imports: [ReactiveFormsModule, ChartModule, TranslateModule, CommonModule, NgbPopoverModule, 
+    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule],
   templateUrl: './resource-view-summary.component.html',
-  styleUrl: './resource-view-summary.component.scss'
+  styleUrl: './resource-view-summary.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class ResourceViewSummaryComponent {
   empdata = {} as any;
   resourceDataids = {} as any;
@@ -81,39 +75,27 @@ export class ResourceViewSummaryComponent {
   displaySubmitted!: string;
   displayRejected!: string;
 
-  constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
-    public rbac: RbacService, private route: ActivatedRoute) { }
+  constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
-    this.http.request$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(request => {
-        if (request && request.dateRange && request.resourceId) {
-          // ✅ Use BehaviorSubject data if available
-          console.log('Using BehaviorSubject request:', request);
-
-          this.resourceDataids = {
-            ...this.resourceDataids, // keep clientId & projectId from localStorage
-            employeeId: request.resourceId, // override employeeId if needed
-            dateRange: request.dateRange
-          };
-        } else {
-          // ✅ Fall back to localStorage
-          console.log('Using localStorage data:', this.resourceDataids);
-        }
-
-        this.getProjectSummary();
-      });
-
+    this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
+      if (request && request.dateRange && request.resourceId) {
+        this.resourceDataids = {
+          ...this.resourceDataids, // keep clientId & projectId from localStorage
+          employeeId: request.resourceId, // override employeeId if needed
+          dateRange: request.dateRange
+        };
+      } else {
+        console.log('Using localStorage data:', this.resourceDataids);
+      }
+      this.getProjectSummary();
+    });
     this.setDefaultmounth();
     this.projectTypeChart();
     this.estimatedActualChart();
   }
-
-
 
   setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
@@ -128,22 +110,18 @@ export class ResourceViewSummaryComponent {
     const [hours, minutes] = time.split(':').map(Number);
     return hours + minutes / 60; // e.g., "02:30" → 2.5
   }
+
   formatHoursToHHMM(hours: number): string {
     const h = Math.floor(hours);
     const m = Math.round((hours - h) * 60);
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
   }
 
-
   getProjectSummary() {
     const dateRange = this.resourceDataids?.dateRange || [];
     const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
-    const start = startDate
-      ? dayjs(startDate).format('YYYY-MM-DD')
-      : dayjs().startOf('month').format('YYYY-MM-DD');
-    const end = endDate
-      ? dayjs(endDate).format('YYYY-MM-DD')
-      : dayjs().endOf('month').format('YYYY-MM-DD');
+    const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
+    const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
     const url = `Timesheet/timesheet-summary?clientId=${clientId}&projectId=${projectId}&resourceId=${employeeId}&startDate=${start}&endDate=${end}&page=1&pageSize=10`;
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
@@ -157,7 +135,6 @@ export class ResourceViewSummaryComponent {
         // this.totalhrs = data?.totalLoggedHHMM;
         // this.projectTypeData = data?.graphSummary?.projectWiseSummary;
         // this.estimatedVsActualData = data?.graphSummary?.allocatedVsActualSummary;
-
         const tsSummary = res?.data?.graphSummary?.timesheetSummary;
 
         this.approved = this.convertTimeToHours(tsSummary?.approved);
@@ -175,8 +152,6 @@ export class ResourceViewSummaryComponent {
 
         this.projectTypeChart();
         this.estimatedActualChart();
-
-
       },
       error: err => {
         this.loading = false;
@@ -191,13 +166,10 @@ export class ResourceViewSummaryComponent {
     });
   }
 
-
   openModal(entries: TimesheetEntry[], content?: any) {
     this.selectedEntries = entries;
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
-
-
 
   // Project Type (Pie)
   projectTypeChart() {
@@ -250,33 +222,25 @@ export class ResourceViewSummaryComponent {
           },
         },
       },
-
     };
   }
-
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
-
     // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
-
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
-
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
       const [h, m] = item.actualHours.split(':').map(Number);
       return h + (m / 60);
     });
-
     // Keep original HH:mm format for display
     const actualDisplay = this.estimatedVsActualData.map((item: any) => item.actualHours);
-
     // Convert overdue (may come as string)
     const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
-
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -315,7 +279,6 @@ export class ResourceViewSummaryComponent {
             label: (context: any) => {
               const datasetLabel = context.dataset.label || '';
               const index = context.dataIndex;
-
               if (datasetLabel === 'Actual Hours') {
                 // show actualHours as HH:mm hrs
                 const timeStr = actualDisplay[index];
@@ -347,14 +310,9 @@ export class ResourceViewSummaryComponent {
     };
   }
 
-
   ngOnDestroy() {
     this.destroy$.next(true);
     this.destroy$.complete();
 
   }
-
-
 }
-
-

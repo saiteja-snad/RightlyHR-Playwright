@@ -107,9 +107,8 @@ export class TeamTimesheetsComponent {
       },
     });
   }
-  onCheckemployee(employeed: any) {
-    console.log(employeed);
 
+  onCheckemployee(employeed: any) {
     if (employeed === null) {
       this.page = 1;
       this.datepickerForm.get('resourceId')?.setValue(null);

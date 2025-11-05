@@ -10,6 +10,7 @@
     <ng-template #maincontent>
         <div class="custom-table-content">
             <table class="w-100">
+                <thead>
                 <th>Phase / Milestone Name</th>
                 <th>Start Date</th>
                 <th>End Date</th>
@@ -22,11 +23,246 @@
                 && inactiveStatus !== 'inactive'){
                 <th class="text-center">{{"Action" | translate}}</th>
                 }
-            </table>
-            <tbody>
-
+                </thead>
+                <tbody>
+                <ng-container *ngIf="(phaseData?.length ?? 0) > 0; else noDataTemplate">
+                    <tr *ngFor="let data of phaseData">
+                        <td>{{ data.phaseName }}</td>
+                        <td>{{ data.startDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data.endDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data.kickoffDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data.effectiveDate | date:'dd-MMM-yyyy' }}</td>
+                        <td>{{ data.allocatedHours }}</td>
+                        <td>{{ data.pendingApprovalAuthority?.name }}</td>
+                        <td>{{ data.description }}</td>
+                                                    @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
+                            && inactiveStatus !== 'inactive'){
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(rbac.allowedToAccess('Resources Tab.update')){
+                                        <li>
+                                            <a class="dropdown-item" (click)="openModal(updateResourcemodal,'lg',data)">
+                                                <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                        }
+                                        <!-- @if(rbac.allowedToAccess('Resources Tab.delete')){
+                                        <li (click)="openModal(deleteconformation,'m',data)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-trash me-2"></i>Delete
+                                            </a>
+                                        </li>
+                                        } -->
+                                    </ul>
+                                </div>
+                            </td>
+                        }
+                    </tr>
+                </ng-container>
+                                <ng-template #noDataTemplate>
+                        <tr>
+                            <app-no-data-found />
+                        </tr>
+                </ng-template>
             </tbody>
+            </table>
         </div>
     </ng-template>
 
 </div>
+
+<ng-template #updateResourcemodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{'Update Resource' | translate}}</p>
+            </div>
+        </div>
+        <div class="custom-main-popup-content">
+                <form [formGroup]="updatePhaseForm" autocomplete="off" (ngSubmit)="udpatePhase()">
+            <div class="row">
+                <!-- Project Name -->
+                <div class="col-md-6 mb-3">
+                    <label for="phaseName" class="form-label custom-label mb-2">Phase / Milestone Name<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input" formControlName="phaseName" minlength="2"
+                        maxlength="101" placeholder="Please enter project name"
+                        (keydown)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+                    <div class="error-msg" *ngIf="updatePhaseForm.get('phaseName')?.touched">
+                        <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['required']">Project Name is required</div>
+                        <div *ngIf="updatePhaseForm.get('phaseName')?.errors?.['maxCharacters'] || 
+                        updatePhaseForm.get('phaseName')?.errors?.['minCharacters']">
+                            {{ 'Project Name must be between 2-100 characters' | translate }}
+                        </div>
+                    </div>
+                </div>
+
+                <!--Allocated hours-->
+                <div class="col-md-6 mb-3">
+                    <label for="projectType" class="form-label custom-label mb-2">Allocated Hours<span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="projectType" formControlName="allocatedHours"
+                        class="form-control custom-input" maxlength="5"
+                        (keydown)="formValidation.restrictAlphabets($event)"
+                        placeholder="Please enter allocated hours" />
+                    <div class="error-msg"
+                        *ngIf="updatePhaseForm.get('allocatedHours')?.touched && updatePhaseForm.get('allocatedHours')?.invalid">
+                        Allocated Hours is required</div>
+                    <!-- Error Messages -->
+                    <div class="error-msg"
+                        *ngIf="updatePhaseForm.get('allocatedHours')?.touched && updatePhaseForm.get('allocatedHours')?.errors?.['positiveInteger']">
+                        Allocated Hours must be a valid number</div>
+                </div>
+
+                <!-- Start Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="startDate" class="form-label custom-label mb-2">Start Date<span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
+                        class="form-control custom-input" />
+                    <div class="error-msg"
+                        *ngIf="updatePhaseForm.get('startDate')?.touched && updatePhaseForm.get('startDate')?.invalid">
+                        Start Date is required
+                    </div>
+                    <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
+                </div>
+
+                <!-- End Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="endDate" class="form-label custom-label mb-2">End Date <span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="endDate" formControlName="endDate" onkeypress="return false"
+                        [min]="minEffectiveDate" class="form-control custom-input" />
+                    <div class="error-msg"
+                        *ngIf="updatePhaseForm.get('endDate')?.touched && updatePhaseForm.get('endDate')?.invalid">
+                        End Date is required
+                    </div>
+                    <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
+                </div>
+
+                <!-- Kickoff Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="kickoffDate" class="form-label custom-label mb-2">Kickoff Date <span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="kickoffDate" formControlName="kickoffDate" onkeypress="return false"
+                        [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
+                    <div class="error-msg">
+                        <div
+                            *ngIf="updatePhaseForm.get('kickoffDate')?.touched && updatePhaseForm.get('kickoffDate')?.invalid">
+                            Kickoff Date is required</div>
+                        <div *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
+                        <div *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective Date
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Effective Date -->
+                <div class="col-md-6 mb-3">
+                    <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date <span
+                            class="text-danger">*</span></label>
+                    <input type="date" id="effectiveDate" formControlName="effectiveDate" onkeypress="return false"
+                        [min]="minEffectiveDate" [max]="maxEffectiveDate" class="form-control custom-input" />
+                    <div class="error-msg">
+                        <div
+                            *ngIf="updatePhaseForm.get('effectiveDate')?.touched && updatePhaseForm.get('effectiveDate')?.invalid">
+                            Effective Date is required
+                        </div>
+                        <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date
+                        </div>
+                        <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date
+                        </div>
+                    </div>
+                </div>
+
+                <!--Timesheet Approval Authority-->
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex gap-2">
+                        <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority'
+                            | translate}}
+                        </label>
+                        <div>
+
+                            <div>
+                                <a type="button" [ngbPopover]="description">
+                                    <app-info-icon />
+                                </a>
+                            </div>
+                            <ng-template #description>
+                                <p class="mb-0">{{ 'This field will be enabled after allocating resources to this project'}}</p>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityList" formControlName="approvalidAuthority" [filter]="true"
+                            [resetFilterOnHide]="true" filterBy="name" optionLabel="name" optionValue="value"
+                            placeholder="Please select timesheet approval authority"
+                            class="form-select custom-select"></p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="updatePhaseForm.get('approvalidAuthority')?.invalid && updatePhaseForm.get('approvalidAuthority')?.touched">
+                        Timesheet Approval Authority is required
+                    </div>
+                </div>
+
+                <!-- Project Description -->
+                <div class="col-md-6 mb-3">
+                    <label for="phaseDescription" class="form-label custom-label mb-2">Project Description</label>
+                    <textarea id="phaseDescription"
+                        (input)="formValidation.validateInput(updatePhaseForm.get('phaseDescription'))" maxlength="500"
+                        formControlName="phaseDescription" class="form-control custom-input"
+                        placeholder="Please enter project description"></textarea>
+                    <div class="textarea-count-text">{{ updatePhaseForm.get("phaseDescription")?.value?.length || 0}}/500
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="closepopup(confirmationpopup)">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="isFormInvalid || loading">
+                        @if (loading) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Add'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+
+            </div>
+        </form>
+            </div>
+    </div>
+</ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">{{'No'}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">{{'Yes'}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- <ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete this Resource?' | translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteResources()">{{'Yes' | translate}}</button>
+        </div>
+    </div>
+</ng-template> -->

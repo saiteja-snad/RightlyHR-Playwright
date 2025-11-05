@@ -814,4 +814,10 @@ notifyresource() {
     return this.http.get(url);
   }
 
+  phaseadded = new Subject<void>();
+  phaseDetailesadded$ = this.phaseadded.asObservable();
+  setnewPhaseDetails() {
+    this.phaseadded.next();
+  }
+
 }

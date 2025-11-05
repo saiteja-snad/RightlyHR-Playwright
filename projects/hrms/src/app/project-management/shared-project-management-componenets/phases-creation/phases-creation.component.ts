@@ -30,6 +30,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   effectiveAfterKickoffValid: boolean = true;
   authorityList: IProjectAuthority[] = [];
   loading = false;
+  projectId: any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private router: Router,
     public formValidation: FormValidationsService, private http: HttpService,
@@ -37,6 +38,7 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.createProjectForm();
+    this.getcontactbaedonRoute();
   }
 
   createProjectForm() {
@@ -46,7 +48,6 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
       endDate: [null, Validators.required],
       effectiveDate: [null, Validators.required],
       kickoffDate: [null, Validators.required],
-      projectType: [null, Validators.required],
       phaseDescription: [null, this.formValidation.maxCharactersValidator(501)],
       allocatedHours: [null, [Validators.required, this.formValidation.maxCharactersValidator(6)]],
       approvalidAuthority: [{ value: null, disabled: true }]
@@ -161,7 +162,62 @@ export class PhasesCreationComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
-  savePhase() { }
+  getcontactbaedonRoute(): void {
+    const fullPath = this.router.url;
+    if (fullPath.startsWith('/project-management/projects')) {
+      this.route.queryParams.subscribe(params => {
+        const projectId = params['id'];
+        if (projectId) {
+          this.projectId = parseInt(projectId);
+        }
+      });
+    }
+  }
+
+  savePhase() { 
+        if (this.addPhaseForm.invalid) {
+      this.addPhaseForm.markAllAsTouched();
+      return;
+    }
+    this.loading = true
+    
+    const formValue = this.addPhaseForm.value;
+    // Map form values to API payload
+    const payload = {
+      projectId: this.projectId,
+      phaseName: formValue.phaseName,
+      description: formValue.phaseDescription,
+      allocatedHours: formValue.allocatedHours,
+      startDate: formValue.startDate,
+      endDate: formValue.endDate,
+      effectiveDate: formValue.effectiveDate,
+      kickoffDate: formValue.kickoffDate,
+      timesheetApprovalAuthorityId: formValue.approvalidAuthority,  // adjust as per requirement
+      createdBy: parseInt(this.empinfo.employeeId),                   // get from logged-in user if needed
+      status: 'active',
+      updatedBy: parseInt(this.empinfo.employeeId),
+      // meta: {
+      // graphData: {
+      //   color: formValue.color
+      //   } 
+      // }
+    };
+    this.loading = true;
+    this.http.postdata('ProjectPhases/create', payload).subscribe({
+      next: (res) => {
+        this.close();
+        this.loading = false;
+        this.addPhaseForm.reset();
+        this.conformationPopup.openSuccessModal('Phase / Milestone created successfully');
+        this.http.setnewPhaseDetails();
+      },
+      error: (err) => {
+        console.error('Error creating project:', err);
+        this.conformationPopup.openErrorModal(err?.error?.message || 'Failed to create project');
+        this.loading = false;
+      }
+    });
+  }
 
   ngOnDestroy(): void {
 

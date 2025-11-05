@@ -37,5 +37,9 @@ export interface IResource {
     },
     createdAt: any,
     updatedAt: any
-    role: any
+    role: any,
+    phase : {
+        phaseId : number;
+        phaseName : string;
+    };
 }

@@ -20,6 +20,7 @@
                     <th>Phone Number</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Phase / Milestone Name</th>
                     @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                     && inactiveStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
@@ -36,6 +37,7 @@
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
+                            <td>{{ data?.phase?.phaseName || '-'}}</td>
                             @if((rbac.allowedToAccess('Resources Tab.update') || rbac.allowedToAccess('Resources Tab.delete'))
                             && inactiveStatus !== 'inactive'){
                             <td class="text-center">
@@ -86,6 +88,25 @@
         <div class="custom-main-popup-content">
             <form [formGroup]="updateResourceForm" autocomplete="off" (ngSubmit)="updateResources()">
                 <div class="row">
+
+                    <!--Phase/Milestone Name-->
+                    <div class="col-md-6 mb-3">
+                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
+                                filterBy="label" formControlName="resourcePhase" placeholder="Please select phase / milestone"
+                                class="form-select custom-select" (onChange)="onPhaseChange($event.value)">
+                            </p-select>
+                        </div>
+                        <div class="error-msg">
+                            <div
+                                *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
+                                Phase / Milestone Name is required
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Resource Name -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceName" class="form-label custom-label mb-2">Resource Name
@@ -141,6 +162,21 @@
                         <input type="text" id="projectType" formControlName="projectType" class="form-control custom-input"
                             placeholder="Enter project type" readonly />
                     </div>
+
+
+                                          <!-- Authority Name -->
+                <div class="col-md-6 mb-3">
+                    <label for="resourceName" class="form-label custom-label mb-2">Timesheet Approval Authority<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
+                            [showClear]="false" placeholder="Please select resource name" formControlName="resourceName"
+                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
+                        </p-select>
+                    </div>
+                    <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
+                    updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
+                </div>
 
                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">

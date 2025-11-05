@@ -152,6 +152,10 @@ export class ProjectViewComponent implements OnInit {
     this.modalService.open(ResourceCreationComponent, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
+  openPhaseModal() {
+    this.modalService.open(PhasesCreationComponent, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
   // isFormCompletelyValid(): boolean {
   //   const formValue = this.datepickerFormData.getRawValue(); // includes disabled controls
   //   return !!formValue.dateRange && !!formValue.resourceId;

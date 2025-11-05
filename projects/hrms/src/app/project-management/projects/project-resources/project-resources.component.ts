@@ -17,6 +17,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { ConfirmationIconComponent } from '../../../icons/confirmation-icon/confirmation-icon.component';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { IPhases } from '../../../Interfaces/project-management/phases.model';
 @Component({
   selector: 'app-project-resources',
   imports: [CommonModule, ConfirmationIconComponent, TranslateModule, ReactiveFormsModule, DateformatPipe,
@@ -50,6 +51,10 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
   inactiveStatus: any;
   loader: boolean | undefined;
   departmentIds: number[] = [];
+  phaseData = [] as IPhases[];
+  phaseDropdown: any[] = [];
+  selectedPhaseId : any;
+  resoucesDropDownData = [] as any[];
   constructor(private router: Router, private fb: FormBuilder, public rbac: RbacService, private modalService: NgbModal,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService, 
     public formValidation: FormValidationsService,) { }
@@ -66,6 +71,7 @@ export class ProjectResourcesComponent implements OnInit, OnDestroy {
         this.getResourceData(this.projectId);
       }
     });
+    this.getPhaseData();
     this.http.resourceDetailesadded$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.getResourceData(parseInt(this.projectId));
     });
@@ -86,6 +92,12 @@ onRoleChange(selectedValue: any) {
   }
 }
 
+  onPhaseChange(selectedValue: any) {
+    if (selectedValue) {
+      this.selectedPhaseId = selectedValue.value
+    }
+  }
+
   initializeForms() {
     this.updateResourceForm = this.fb.group({
       resourceName: [null, Validators.required],
@@ -102,7 +114,8 @@ onRoleChange(selectedValue: any) {
       billable: [false],
       allowweekendWork: [false],
       color : [''],
-      resourceRole: [null,Validators.required]
+      resourceRole: [null,Validators.required],
+      resourcePhase : [null, Validators.required]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -205,6 +218,13 @@ getJobrole() {
       next: (data: any) => {
         this.resourcesData = data.data;
         this.loading = false;
+
+        this.resoucesDropDownData = this.resourcesData
+        .filter(r => r.employee) // ensure employee exists
+        .map(r => ({
+          label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+          value: r.employee.id
+        }));
       },
       error: (reason: any) => {
         this.loading = false;
@@ -217,6 +237,9 @@ getJobrole() {
     const selectedRole = this.projectRoleDropdown.find(
        (r: any) => r.value.roleId === data.projectRoleId
     );
+    const selectedPhase = this.phaseDropdown.find(
+  (r: any) => r.value === data.phase.phaseId
+);
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
@@ -230,14 +253,15 @@ resourcePhone:
       resourceAllocationhrs: data.allocatedHours || null,
       projectName: this.projectsData[0]?.projectName,
       projectType: this.projectsData[0]?.projectType,
-      startDate: this.formatDateToLocal(data.startDate),
-        endDate: this.formatDateToLocal(data.endDate),
+      startDate: this.formatDateToLocal(data?.startDate),
+        endDate: this.formatDateToLocal(data?.endDate),
         // allocatedFrequencyType: data?.allocatedFrequencyType,
       billable: data.billable,
 
       allowweekendWork: data.weekendWorkAllowed,
         resourceRole: selectedRole ? selectedRole.value : null,
-      color : data?.meta?.graphData?.color
+      color : data?.meta?.graphData?.color,
+      resourcePhase : selectedPhase ? selectedPhase.value : null
     });
   }
 
@@ -327,6 +351,7 @@ resourcePhone:
       //role: formValue.resourceRole,
       projectRoleId: projectRoleId,
       projectDepartmentId: projectDepartmentId,
+      phaseId : this.selectedPhaseId,
       meta: {
         graphData: {
           color: formValue.color
@@ -417,6 +442,23 @@ resourcePhone:
   close() {
     this.modalService.dismissAll();
     // this.router.navigate(['/project-management/clients/active'])
+  }
+
+  getPhaseData() {
+    const params = {
+    projectId: this.projectId
+    };
+    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        this.phaseData = data.data;
+        this.phaseDropdown = this.phaseData.map(p => ({
+        label: p.phaseName,
+        value: p.phaseId
+      }));
+      },
+      error: (reason: any) => {
+      }
+    });
   }
 
   ngOnDestroy() {

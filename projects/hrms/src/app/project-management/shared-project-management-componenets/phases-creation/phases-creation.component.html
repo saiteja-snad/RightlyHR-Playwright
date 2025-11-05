@@ -1,7 +1,7 @@
 <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
         <div>
-            <p class="popup-heading mb-0">{{'Add Phase/Milestone' | translate}}</p>
+            <p class="popup-heading mb-0">{{'Add Phase / Milestone' | translate}}</p>
         </div>
     </div>
     <div class="custom-main-popup-content">
@@ -9,7 +9,7 @@
             <div class="row">
                 <!-- Project Name -->
                 <div class="col-md-6 mb-3">
-                    <label for="phaseName" class="form-label custom-label mb-2">Project Name<span
+                    <label for="phaseName" class="form-label custom-label mb-2">Phase / Milestone Name<span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="phaseName" minlength="2"
                         maxlength="101" placeholder="Please enter project name"
@@ -21,6 +21,23 @@
                             {{ 'Project Name must be between 2-100 characters' | translate }}
                         </div>
                     </div>
+                </div>
+
+                <!--Allocated hours-->
+                <div class="col-md-6 mb-3">
+                    <label for="projectType" class="form-label custom-label mb-2">Allocated Hours<span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="projectType" formControlName="allocatedHours"
+                        class="form-control custom-input" maxlength="5"
+                        (keydown)="formValidation.restrictAlphabets($event)"
+                        placeholder="Please enter allocated hours" />
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('allocatedHours')?.touched && addPhaseForm.get('allocatedHours')?.invalid">
+                        Allocated Hours is required</div>
+                    <!-- Error Messages -->
+                    <div class="error-msg"
+                        *ngIf="addPhaseForm.get('allocatedHours')?.touched && addPhaseForm.get('allocatedHours')?.errors?.['positiveInteger']">
+                        Allocated Hours must be a valid number</div>
                 </div>
 
                 <!-- Start Date -->
@@ -81,23 +98,6 @@
                         <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date
                         </div>
                     </div>
-                </div>
-
-                <!--Allocated hours-->
-                <div class="col-md-6 mb-3">
-                    <label for="projectType" class="form-label custom-label mb-2">Allocated Hours<span
-                            class="text-danger">*</span></label>
-                    <input type="text" id="projectType" formControlName="allocatedHours"
-                        class="form-control custom-input" maxlength="5"
-                        (keydown)="formValidation.restrictAlphabets($event)"
-                        placeholder="Please enter allocated hours" />
-                    <div class="error-msg"
-                        *ngIf="addPhaseForm.get('allocatedHours')?.touched && addPhaseForm.get('allocatedHours')?.invalid">
-                        Allocated Hours is required</div>
-                    <!-- Error Messages -->
-                    <div class="error-msg"
-                        *ngIf="addPhaseForm.get('allocatedHours')?.touched && addPhaseForm.get('allocatedHours')?.errors?.['positiveInteger']">
-                        Allocated Hours must be a valid number</div>
                 </div>
 
                 <!--Timesheet Approval Authority-->

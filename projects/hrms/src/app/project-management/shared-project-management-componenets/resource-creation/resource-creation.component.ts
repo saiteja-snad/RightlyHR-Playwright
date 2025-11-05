@@ -12,6 +12,8 @@ import { Project } from '../../../Interfaces/projects.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { IPhases } from '../../../Interfaces/project-management/phases.model';
+import { IResource } from '../../../Interfaces/project-management/resources.model';
 @Component({
   selector: 'app-resource-creation',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, SelectModule],
@@ -43,7 +45,12 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
   projectEndDate: any;
   loader: boolean | undefined;
   departmentIds: number[] = [];
-
+  phaseData = [] as IPhases[];
+  phaseDropdown: any[] = [];
+  selectedPhaseId : any;
+  resourcesData = [] as IResource[];
+  resoucesDropDownData = [] as any[];
+  selectedAuthorityId : any;
   constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationService,
     private http: HttpService, private route: ActivatedRoute, private conformationPopup: OpenModalService) { }
 
@@ -52,7 +59,7 @@ export class ResourceCreationComponent implements OnInit, OnDestroy {
     this.getAllActiveEmployees();
     this.createResourceForm();
     this.getdatabaedonRoute();
-
+    this.getPhaseData();
     this.DepartmentList();
     this.addResourceForm.get('startDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -110,6 +117,22 @@ onRoleChange(selectedValue: any) {
   }
 }
 
+  onPhaseChange(selectedValue: any) {
+    console.log(selectedValue);
+    
+    if (selectedValue) {
+      this.selectedPhaseId = selectedValue.value.value;
+      const projectId = selectedValue.value.projectId;
+      this.getResourceData(this.projectId,this.selectedPhaseId);
+      
+    }
+  }
+
+  onAuthorityChange(selectedValue: any){
+    if(selectedValue){
+      this.selectedAuthorityId = selectedValue.value.value;
+    }
+  }
 
   getdatabaedonRoute(): void {
     const fullPath = this.router.url;
@@ -118,7 +141,8 @@ onRoleChange(selectedValue: any) {
         const projectId = params['id'];
         if (projectId) {
           this.getProjects(projectId);
-          this.projectId = parseInt(projectId)
+          this.projectId = parseInt(projectId);
+          
         }
       });
     } else if (fullPath.startsWith('/project-management/clients')) {
@@ -153,6 +177,8 @@ onRoleChange(selectedValue: any) {
       billable: [false],
       allowweekendWork: [false],
       color: ['#FFFFFF'],
+      resourcePhase : [null, Validators.required],
+      resourceAuthority : [null]
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -247,6 +273,37 @@ onRoleChange(selectedValue: any) {
     });
   }
 
+
+  
+  getResourceData(projectId: number,phaseId:number) {
+
+    const params = {
+      status: 'Active',
+      entityType: 'project',
+      entityRefId: projectId,
+      phaseId:phaseId
+    };
+    this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+      next: (data: any) => {
+        this.resourcesData = data.data;
+        // 🔥 Build dropdown array
+      this.resoucesDropDownData = this.resourcesData
+        .filter(r => r.employee) // ensure employee exists
+        .map(r => ({
+          label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+          value: r.employee.id
+        }));
+
+        console.log(this.resoucesDropDownData);
+        
+      },
+      error: (reason: any) => {
+        console.error(reason);
+        
+      }
+    });
+  }
+
   onClickEmployee(event: any) {
     this.selectedEmployee = event.value;
     this.addResourceForm.patchValue({
@@ -278,6 +335,7 @@ onRoleChange(selectedValue: any) {
   }
 
   addResources() {
+    debugger
     if (this.addResourceForm.invalid) {
       this.addResourceForm.markAllAsTouched();
       return;
@@ -300,6 +358,8 @@ onRoleChange(selectedValue: any) {
       status: "Active",
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
+      phaseId : this.selectedPhaseId,
+      pendingApprovalAuthority : formValue.resourceAuthority.value,
       meta: {
       graphData: {
         color: formValue.color
@@ -403,6 +463,27 @@ onRoleChange(selectedValue: any) {
   close() {
     this.modalService.dismissAll();
     this.addResourceForm.reset();
+  }
+
+  getPhaseData() {
+    const params = {
+    projectId: this.projectId
+    };
+    this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
+      next: (data: any) => {
+        this.phaseData = data.data;
+        this.phaseDropdown = this.phaseData.map(p => ({
+        label: p.phaseName,
+        value: p.phaseId,
+        projectId:p.project.projectId,
+        clientId:p.project.clientId
+      }));
+        this.spinnerLoader = false;
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+      }
+    });
   }
   
   ngOnDestroy() {

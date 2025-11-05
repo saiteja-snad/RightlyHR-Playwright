@@ -45,7 +45,7 @@
 
         <div class="timesheet-graph-content p-3">
             <div class="summary-header mb-2">Allocated vs Actual Hours</div>
-            <div class="time-sheet-graph-card">
+            <div class="time-sheet-graph-card px-3 py-4">
                 <div class="circular-chart">
                     <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
                 </div>
@@ -73,8 +73,8 @@
             <div class="dashed-line my-3"></div>
 
             <div class="summary-header mb-2">Billable vs Non-Billable Hours</div>
-            <div class="time-sheet-graph-card">
-                <div class="bar-chart">
+            <div class="time-sheet-graph-card px-3 py-4">
+                <div class="circular-chart">
                     <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />
                 </div>
             </div>

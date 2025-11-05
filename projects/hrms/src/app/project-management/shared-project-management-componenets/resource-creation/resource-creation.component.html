@@ -9,23 +9,7 @@
         <form [formGroup]="addResourceForm" autocomplete="off" (ngSubmit)="addResources()">
             <div class="row">
 
-                <!--Phase/Milestone Name-->
-                <div class="col-md-6 mb-3">
-                    <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="phaseDropdown" optionLabel="label" [filter]="true" [resetFilterOnHide]="true"
-                            filterBy="label" formControlName="resourcePhase" placeholder="Please select phase / milestone"
-                            class="form-select custom-select" (onChange)="onPhaseChange($event)">
-                        </p-select>
-                    </div>
-                    <div class="error-msg">
-                        <div
-                            *ngIf=" addResourceForm.get('resourcePhase')?.touched && addResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                            Phase / Milestone Name is required
-                        </div>
-                    </div>
-                </div>
+ 
 
           
 
@@ -86,6 +70,18 @@
                     </div>
                 </div>
 
+                        <!-- Project Type -->
+                <div class="col-md-6 mb-3">
+                    <label for="projectType" class="form-label custom-label mb-2">Project Type<span
+                            class="text-danger">*</span></label>
+                    <input type="text" id="projectType" formControlName="projectType" class="form-control custom-input"
+                        placeholder="Project type" readonly />
+                    <!-- <div class="error-msg"
+                        *ngIf="addResourceForm.get('projectType')?.touched && addResourceForm.get('projectType')?.invalid">
+                        Project Type is required
+                    </div> -->
+                </div>
+
             <div class="col-md-6 mb-3">
                 <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
@@ -101,17 +97,25 @@
                 </div>
             </div>
 
-                <!-- Project Type -->
+                           <!--Phase/Milestone Name-->
                 <div class="col-md-6 mb-3">
-                    <label for="projectType" class="form-label custom-label mb-2">Project Type<span
+                    <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
                             class="text-danger">*</span></label>
-                    <input type="text" id="projectType" formControlName="projectType" class="form-control custom-input"
-                        placeholder="Project type" readonly />
-                    <!-- <div class="error-msg"
-                        *ngIf="addResourceForm.get('projectType')?.touched && addResourceForm.get('projectType')?.invalid">
-                        Project Type is required
-                    </div> -->
+                    <div class="custom-p-select-content">
+                        <p-select [options]="phaseDropdown" optionLabel="label" [filter]="true" [resetFilterOnHide]="true"
+                            filterBy="label" formControlName="resourcePhase" placeholder="Please select phase / milestone"
+                            class="form-select custom-select" (onChange)="onPhaseChange($event)">
+                        </p-select>
+                    </div>
+                    <div class="error-msg">
+                        <div
+                            *ngIf=" addResourceForm.get('resourcePhase')?.touched && addResourceForm.get('resourcePhase')?.errors?.['required'] ">
+                            Phase / Milestone Name is required
+                        </div>
+                    </div>
                 </div>
+
+        
 
                       <!-- Authority Name -->
                 <div class="col-md-6 mb-3">
@@ -120,7 +124,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
                             [showClear]="false" placeholder="Please select resource name" formControlName="resourceAuthority"
-                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true" (onChange)="onAuthorityChange($event.value)">
+                            class="custom-select w-100" resetFilterOnHide="true" (onChange)="onAuthorityChange($event.value)">
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="addResourceForm.get('resourceAuthority')?.touched && 

@@ -89,24 +89,6 @@
             <form [formGroup]="updateResourceForm" autocomplete="off" (ngSubmit)="updateResources()">
                 <div class="row">
 
-                    <!--Phase/Milestone Name-->
-                    <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
-                                class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
-                                filterBy="label" formControlName="resourcePhase" placeholder="Please select phase / milestone"
-                                class="form-select custom-select" (onChange)="onPhaseChange($event.value)">
-                            </p-select>
-                        </div>
-                        <div class="error-msg">
-                            <div
-                                *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
-                                Phase / Milestone Name is required
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Resource Name -->
                     <div class="col-md-6 mb-3">
                         <label for="resourceName" class="form-label custom-label mb-2">Resource Name
@@ -129,23 +111,6 @@
                             placeholder="Designation" readonly />
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value" [filter]="true"
-                                [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole" placeholder="Please select role"
-                                class="form-select custom-select" (onChange)="onRoleChange($event.value)">
-                            </p-select>
-                        </div>
-                        <div class="error-msg">
-                            <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
-                                Role is required</div>
-                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
-                            || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
-                                {{ 'Role must be between 2-50 characters characters' | translate }}</div>
-                        </div>
-                    </div>
-
                     <!-- Project Name -->
                     <div class="col-md-6 mb-3">
                         <label for="projectName" class="form-label custom-label mb-2">Project Name
@@ -163,20 +128,56 @@
                             placeholder="Enter project type" readonly />
                     </div>
 
-
-                                          <!-- Authority Name -->
-                <div class="col-md-6 mb-3">
-                    <label for="resourceName" class="form-label custom-label mb-2">Timesheet Approval Authority<span
-                            class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
-                            [showClear]="false" placeholder="Please select resource name" formControlName="resourceName"
-                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
-                        </p-select>
+                    <div class="col-md-6 mb-3">
+                        <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole" placeholder="Please select role"
+                                class="form-select custom-select" (onChange)="onRoleChange($event.value)">
+                            </p-select>
+                        </div>
+                        <div class="error-msg">
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
+                                Role is required</div>
+                            <div *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
+                            || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
+                                {{ 'Role must be between 2-50 characters characters' | translate }}</div>
+                        </div>
                     </div>
-                    <div class="error-msg" *ngIf="updateResourceForm.get('resourceName')?.touched && 
-                    updateResourceForm.get('resourceName')?.invalid">Resource Name is required</div>
-                </div>
+
+                    <!--Phase/Milestone Name-->
+                    <div class="col-md-6 mb-3">
+                        <label for="resourceRole" class="form-label custom-label mb-2">Phase / Milestone Name <span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="phaseDropdown" optionLabel="label" optionValue="value" [filter]="true" [resetFilterOnHide]="true"
+                                filterBy="label" formControlName="resourcePhase" placeholder="Please select phase / milestone"
+                                class="form-select custom-select" (onChange)="onPhaseChange($event)">
+                            </p-select>
+                        </div>
+                        <div class="error-msg">
+                            <div
+                                *ngIf=" updateResourceForm.get('resourcePhase')?.touched && updateResourceForm.get('resourcePhase')?.errors?.['required'] ">
+                                Phase / Milestone Name is required
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Authority Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="resourceAuthority" class="form-label custom-label mb-2">Timesheet Approval Authority<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="resoucesDropDownData" optionLabel="label" [filter]="true" filterBy="label"
+                                optionValue="value" [showClear]="false" placeholder="Please select resource name"
+                                formControlName="resourceAuthority" class="custom-select w-100" (onChange)="onClickEmployee($event)"
+                                resetFilterOnHide="true">
+                            </p-select>
+                        </div>
+                        <div class="error-msg" *ngIf="updateResourceForm.get('resourceAuthority')?.touched && 
+                                        updateResourceForm.get('resourceAuthority')?.invalid">Resource Name is required</div>
+                    </div>
 
                     <!-- Resource Email -->
                     <div class="col-md-6 mb-3">

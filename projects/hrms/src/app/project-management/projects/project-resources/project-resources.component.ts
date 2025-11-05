@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { from, Subject, Subscription, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IResource } from '../../../Interfaces/project-management/resources.model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
@@ -92,9 +92,21 @@ onRoleChange(selectedValue: any) {
   }
 }
 
+  // onPhaseChange(selectedValue: any) {
+  //   if (selectedValue) {
+  //     this.selectedPhaseId = selectedValue.value
+  //   }
+  // }
+
   onPhaseChange(selectedValue: any) {
+    debugger
+    console.log(selectedValue);
+    
     if (selectedValue) {
-      this.selectedPhaseId = selectedValue.value
+      this.selectedPhaseId = selectedValue.value;
+      const projectId = selectedValue.value.projectId;
+      this.getResourceData(this.projectId,this.selectedPhaseId);
+      
     }
   }
 
@@ -115,12 +127,13 @@ onRoleChange(selectedValue: any) {
       allowweekendWork: [false],
       color : [''],
       resourceRole: [null,Validators.required],
-      resourcePhase : [null, Validators.required]
+      resourcePhase : [null, Validators.required],
+      resourceAuthority : [null]
     }, { validators: [this.DateValidator()] },);
   }
 
-  projectStartDate!: Date;
-  projectEndDate!: Date;
+  projectStartDate!: string | null;
+  projectEndDate!: string | null;
   getProjects(projectId: string) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -128,8 +141,8 @@ onRoleChange(selectedValue: any) {
           this.departmentIds = this.projectsData[0]?.departments?.map((d: any) => d.departmentId) || [];
         const project = this.projectsData[0];
         if (project) {
-          this.projectStartDate = new Date(project.startDate);
-          this.projectEndDate = new Date(project.endDate);
+          this.projectStartDate = this.formatDateToLocal(project.startDate);
+          this.projectEndDate = this.formatDateToLocal(project.endDate);
           // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
           // this.updateResourceForm.updateValueAndValidity();
         }
@@ -207,27 +220,62 @@ getJobrole() {
     return workingDays;
   }
 
-  getResourceData(id: any) {
-    const projectId = id;
-    const params = {
+  // getResourceData(id: any) {
+  //   const projectId = id;
+  //   const params = {
+  //     status: 'Active',
+  //     entityType: 'project',
+  //     entityRefId: projectId,
+  //   };
+  //   this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
+  //     next: (data: any) => {
+  //       this.resourcesData = data.data;
+  //       this.loading = false;
+
+  //       this.resoucesDropDownData = this.resourcesData
+  //       .filter(r => r.employee) // ensure employee exists
+  //       .map(r => ({
+  //         label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+  //         value: r.employee.id
+  //       }));
+  //     },
+  //     error: (reason: any) => {
+  //       this.loading = false;
+  //     }
+  //   });
+  // }
+
+    getResourceData(projectId: number, phaseId?:number) {
+
+    const params : any = {
       status: 'Active',
       entityType: 'project',
-      entityRefId: projectId,
+      entityRefId: projectId
     };
+
+    if (phaseId) {
+    params.phaseId = phaseId;
+    }
+
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
-        this.resourcesData = data.data;
         this.loading = false;
-
-        this.resoucesDropDownData = this.resourcesData
+        this.resourcesData = data.data;
+        // 🔥 Build dropdown array
+      this.resoucesDropDownData = this.resourcesData
         .filter(r => r.employee) // ensure employee exists
         .map(r => ({
           label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
           value: r.employee.id
         }));
+
+        console.log(this.resoucesDropDownData);
+        
       },
       error: (reason: any) => {
         this.loading = false;
+        console.error(reason);
+        
       }
     });
   }
@@ -238,8 +286,11 @@ getJobrole() {
        (r: any) => r.value.roleId === data.projectRoleId
     );
     const selectedPhase = this.phaseDropdown.find(
-  (r: any) => r.value === data.phase.phaseId
-);
+  (r: any) => r.value === data?.phase?.phaseId
+    );
+    const selctedAuthority = this.resoucesDropDownData.find(
+      (r: any) => r.value === data?.pendingApprovalAuthority?.id
+    )
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
@@ -261,7 +312,8 @@ resourcePhone:
       allowweekendWork: data.weekendWorkAllowed,
         resourceRole: selectedRole ? selectedRole.value : null,
       color : data?.meta?.graphData?.color,
-      resourcePhase : selectedPhase ? selectedPhase.value : null
+      resourcePhase : selectedPhase ? selectedPhase.value : null,
+      resourceAuthority : selctedAuthority ? selctedAuthority.value : null
     });
   }
 
@@ -351,7 +403,8 @@ resourcePhone:
       //role: formValue.resourceRole,
       projectRoleId: projectRoleId,
       projectDepartmentId: projectDepartmentId,
-      phaseId : this.selectedPhaseId,
+      pendingApprovalAuthority : formValue.resourceAuthority.value,
+      phaseId : formValue.resourcePhase,
       meta: {
         graphData: {
           color: formValue.color
@@ -450,6 +503,7 @@ resourcePhone:
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
+        this.loading = false;
         this.phaseData = data.data;
         this.phaseDropdown = this.phaseData.map(p => ({
         label: p.phaseName,
@@ -457,6 +511,7 @@ resourcePhone:
       }));
       },
       error: (reason: any) => {
+        this.loading = false;
       }
     });
   }

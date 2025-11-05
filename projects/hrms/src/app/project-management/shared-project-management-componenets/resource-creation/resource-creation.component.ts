@@ -335,7 +335,6 @@ onRoleChange(selectedValue: any) {
   }
 
   addResources() {
-    debugger
     if (this.addResourceForm.invalid) {
       this.addResourceForm.markAllAsTouched();
       return;

@@ -42,4 +42,10 @@ export interface IResource {
         phaseId : number;
         phaseName : string;
     };
+    pendingApprovalAuthority : {
+        id : number;
+        fusionEmployeeId : string;
+        name : string;
+        workMail : string;
+    }
 }

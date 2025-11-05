@@ -37,7 +37,7 @@ export class ProjectViewComponent implements OnInit {
   clientsId!: any;
   projectsData: any[] = [];
   inactiveStatus: any;
-
+  datepickerFormDataforsummary!: FormGroup;
   constructor(private router: Router, private fb: FormBuilder, private modalService: NgbModal, public formValidation: FormValidationsService,
     private route: ActivatedRoute, public rbac: RbacService, private http: HttpService) { }
 
@@ -50,6 +50,7 @@ export class ProjectViewComponent implements OnInit {
     // this.setDefaultWeek();
     this.datepickerFormdata();
     this.setDefaultmounth()
+    this.datepickerforsummaryview()
     this.route.queryParams.subscribe(params => {
       const projectId = params['id'];
       if (projectId) {
@@ -77,7 +78,8 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerFormData.get('dateRange')?.reset();
     this.datepickerFormData.get('resourceId')?.reset();
     this.http.setRequest(null);
-    this.http.setDateRange(null, null, null);
+    this.http.setDateRange(null, null);
+    this.setDefaultmounth()
   }
 
   createContactForm() {
@@ -104,6 +106,14 @@ export class ProjectViewComponent implements OnInit {
 
   }
 
+  datepickerforsummaryview() {
+    this.datepickerFormDataforsummary = this.fb.group({
+      dateRange: [null],
+
+    });
+    // detect when user selects date range
+
+  }
 
   setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
@@ -268,13 +278,22 @@ export class ProjectViewComponent implements OnInit {
     // const resourceID=this.datepickerFormData.get('resourceId')?.value?.id
     const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
     const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
-    // this.http.setDateRange(startDate, endDate,resourceID);
+
     const request = {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerFormData.value.resourceId,
 
     };
     this.http.setRequest(request);
+  }
+
+
+  onSubmitforsummary() {
+    const dateRangeArray = this.datepickerFormDataforsummary.value.dateRange || [];
+    const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
+    this.http.setDateRange(startDate, endDate);
+
   }
 
   navigationtoinactivedocuments() {

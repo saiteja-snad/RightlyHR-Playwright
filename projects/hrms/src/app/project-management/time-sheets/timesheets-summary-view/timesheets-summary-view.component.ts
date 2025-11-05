@@ -205,6 +205,7 @@ export class TimesheetsSummaryViewComponent {
     // Check if form is valid (optional)
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId
     this.getProjectSummary(resoureID);
+    this.getEmployeeId(resoureID);
   }
 
   convertTimeToHours(time: string): number {

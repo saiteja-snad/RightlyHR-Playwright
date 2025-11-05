@@ -57,14 +57,14 @@ export class SkillsetDashboardComponent {
   totalDepartmentSkillCount: number = 0;
   searchQuery: string = '';
   selectedStatus: string[] = ['All Proficiencies'];
-  selectedSkills: string[] = [];
+  selectedSkills: string[] = ['All Skills'];
   MySkills: any[] = [];
   totalCount!: number;
   //moduleinfo
   moduleinfo: string = '';
   routeToInfoMap!: { [key: string]: string };
   componentname: string = '';
-
+  SearchTerm: string = '';
   EmpProficiency = [
     { label: 'All Proficiencies', value: 'All Proficiencies' },
     { label: 'Beginner', value: 'Beginner' },
@@ -174,7 +174,7 @@ export class SkillsetDashboardComponent {
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    if (this.selectedSkills?.length > 0) {
+    if (this.selectedSkills?.length > 0&& !this.selectedSkills.includes('All Skills')) {
       params.skills = this.selectedSkills.join(',');
     }
     this.http.getDataIncludeParams('EmployeeSkills/getSkillSummary', params).subscribe({
@@ -229,7 +229,7 @@ export class SkillsetDashboardComponent {
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    if (this.selectedSkills?.length > 0) {
+    if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills')) {
       params.skills = this.selectedSkills.join(',');
     }
 
@@ -303,7 +303,7 @@ export class SkillsetDashboardComponent {
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    if (this.selectedSkills?.length > 0) {
+    if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills')) {
       params.skills = this.selectedSkills.join(',');
     }
     this.http.getDataIncludeParams('EmployeeSkills/getMostCommonSkills', params).subscribe({
@@ -400,7 +400,7 @@ export class SkillsetDashboardComponent {
     if (this.selectedStatus && !this.selectedStatus.includes('All Proficiencies')) {
       params.proficiencies = this.selectedStatus.join(',');
     }
-    if (this.selectedSkills?.length > 0) {
+    if (this.selectedSkills?.length > 0 && !this.selectedSkills.includes('All Skills' )) {
       params.skills = this.selectedSkills.join(',');
     }
     this.http.getDataIncludeParams('EmployeeSkills/getSkillSummaryCountAsync', params).subscribe({
@@ -446,6 +446,7 @@ export class SkillsetDashboardComponent {
             profileImage: this.getImageUrl(emp.profileImage)
           }));
           this.noDataFound = this.employeeList.length === 0;
+          console.log(this.employeeList);
         } else {
           this.employeeList = [];
           this.noDataFound = true;
@@ -479,10 +480,13 @@ export class SkillsetDashboardComponent {
     this.subscription = this.http.getData(`EmployeeSkills/getDistinctEmployeeSkills`).subscribe({
       next: (response: any) => {
         if (response?.success && Array.isArray(response.data)) {
-          this.multiSkillOptions = response.data.map((skill: any) => ({
-            label: skill.skillName,
-            value: skill.skillName
-          }));
+          this.multiSkillOptions = [
+            { label: 'All Skills', value: 'All Skills' }, 
+            ...response.data.map((skill: any) => ({
+              label: skill.skillName,
+              value: skill.skillName,
+            })),
+          ];
         } else {
           this.multiSkillOptions = [];
         }
@@ -498,7 +502,7 @@ export class SkillsetDashboardComponent {
 
   clearAllFilters(): void {
     this.selectedStatus = ['All Proficiencies'];
-    this.selectedSkills = [];
+    this.selectedSkills = ['All Skills'];
     this.skilllevelGraph();
     this.skillByDepartmentGraph()
     this.getSkillSetTableData()

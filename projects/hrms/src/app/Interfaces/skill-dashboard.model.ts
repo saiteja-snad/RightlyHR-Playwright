@@ -83,5 +83,6 @@ export interface EmployeeSkill {
   profileImage?: string;
   imageUrl?: string;
   projectStatus:string;
+  jobRole?:string;
 }
 

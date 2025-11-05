@@ -107,15 +107,15 @@
                 <tr>
                     <th>Skill Name</th>
                     <th>Employee Count</th>
-                    <th>Proficiency (Expert/Intermediate/Beginner)</th>
-                    <th>Action</th>
+                    <th>Proficiency</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody>
                 @for (skill of skillSummaryList; track skill.skillName) {
                 <tr>
                     <td class="text-capitalize">{{ skill?.skillName }}</td>
-                    <td>{{ skill?.skillCount }}</td>
+                    <td> <a class="view-link" (click)="openEnd(content, skill.skillName)">{{ skill?.skillCount }}</a></td>
                     <td>
                         <div class="d-flex flex-wrap gap-2">
                             <p-chip *ngFor="let key of getProficiencyKeys(skill.proficiencyCounts)">
@@ -129,9 +129,9 @@
                             }
                         </div>
                     </td>
-                    <td>
+                    <!-- <td>
                         <a class="view-link" (click)="openEnd(content, skill.skillName)">View Employees</a>
-                    </td>
+                    </td> -->
                 </tr>
                 }
             </tbody>
@@ -163,29 +163,40 @@
 
     <div class="offcanvas-body">
         <div *ngIf="isloading" class="text-center py-3">Loading employees...</div>
-
-        <div *ngFor="let emp of employeeList" class="profile-content p-3 mb-3">
+         <!-- Search -->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search by Employee"
+            [(ngModel)]="SearchTerm" (input)="getViewSkillDetails()" />
+    </div>
+            
+        <div *ngFor="let emp of employeeList" class="profile-content mb-2">
             <div>
                 <ng-container *ngIf="emp.profileImage; else showProfileIcon">
                     <img [src]="emp.profileImage" alt="Profile Image" class="profile-image">
                 </ng-container>
                 <ng-template #showProfileIcon>
-                    <app-profile-icon [iconWidth]="'64'" [iconHeight]="'64'"></app-profile-icon>
+                    <app-profile-icon [iconWidth]="'32'" [iconHeight]="'32'"></app-profile-icon>
                 </ng-template>
             </div>
-            <div class="profile-info">
+            <div class="profile-info w-100">
                 <div class="name">{{ emp.employeeName }}</div>
-                <div class="designation">{{ emp.departmentName || ' ' }}
-                    <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span>
+                <div class="d-flex justify-content-between flex-wrap w-100">
+                    <div class="designation">{{ emp.jobRole || ' ' }}
+                        <!-- <span *ngIf="emp.subDepartmentName"> - {{ emp.subDepartmentName }}</span> -->
+                    </div>
+                    <!-- <div [ngClass]="getStatusClass(emp.projectStatus)">
+                                    {{ emp.projectStatus || '-' }}
+                                </div> -->
+                    <div class="designation"
+                        [ngClass]="{'beginner-text': emp.proficiencyLevel === 'Beginner',
+                                'intermediate-text': emp.proficiencyLevel === 'Intermediate','expert-text': emp.proficiencyLevel === 'Expert' }">
+                        {{ emp.proficiencyLevel }}
+                    </div>
                 </div>
-                <div [ngClass]="getStatusClass(emp.projectStatus)">
-                    {{ emp.projectStatus || '-' }}
-                </div>
-                <div class="designation"
-                    [ngClass]="{'beginner-text': emp.proficiencyLevel === 'Beginner',
-                'intermediate-text': emp.proficiencyLevel === 'Intermediate','expert-text': emp.proficiencyLevel === 'Expert' }">
-                    {{ emp.proficiencyLevel }}
-                </div>
+                
             </div>
         </div>
         <div *ngIf="!isloading && employeeList.length === 0" class="text-center text-muted py-3">

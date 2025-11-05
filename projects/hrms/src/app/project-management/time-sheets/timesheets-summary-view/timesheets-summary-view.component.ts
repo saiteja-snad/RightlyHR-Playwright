@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -26,6 +25,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 @Component({
   selector: 'app-timesheets-summary-view',
   imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
@@ -60,6 +60,7 @@ export class TimesheetsSummaryViewComponent {
   loading = false;
   resourcesList: IResourceDetail[] = [];
   // Project Type Data variables
+  projectTypeLabelData: any;
   projectTypeData: any;
   projectTypeGraphData: any;
   employeeId: any
@@ -83,7 +84,7 @@ export class TimesheetsSummaryViewComponent {
   displayApproved!: string;
   displaySubmitted!: string;
   displayRejected!: string;
-  ProjectwisehoursSummary='The Project-Wise hours summary widget represents a pie chart visualization of the hours logged across different assigned projects. It displays each project along with the total submitted hours, providing a clear graphical representation of effort distribution and helping managers analyse time allocation effectively. '
+  ProjectwisehoursSummary = 'The Project-Wise hours summary widget represents a pie chart visualization of the hours logged across different assigned projects. It displays each project along with the total submitted hours, providing a clear graphical representation of effort distribution and helping managers analyse time allocation effectively. '
   AllocatedActualhours = 'The Allocated and Actual Hours widget provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts. '
   TimesheetSummary = 'The Timesheet Summary widget provides a visual representation of timesheet data through a line diagram. It consolidates the total hours that are approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.  '
 
@@ -151,22 +152,19 @@ export class TimesheetsSummaryViewComponent {
         this.employename = data;
       },
       error: (reason) => {
-        console.log(reason)
+        console.log(reason);
       },
     });
   }
 
   updateModuleInfo() {
     const urlWithoutQuery = this.router.url.split('?')[0];
-
     this.routeToInfoMap = {
       '/project-management/timesheet/mysummary': MODULE_INFOS.My_Timesheet_Summary_view,
       '/project-management/timesheet/summary': MODULE_INFOS.Team_Timesheet_Summary_view
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
-
-
 
   getResourceDetailsByManagerId() {
     const EmployeeId = this.empdata?.employeeId;
@@ -227,7 +225,6 @@ export class TimesheetsSummaryViewComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
@@ -241,14 +238,11 @@ export class TimesheetsSummaryViewComponent {
           submitted: '00:00',
           rejected: '00:00'
         };
-
         this.approved = this.convertTimeToHours(tsSummary?.approved);
         this.submitted = this.convertTimeToHours(tsSummary?.submitted);
         this.rejected = this.convertTimeToHours(tsSummary?.rejected);
-
-        // ✅ Percentages for bar visualization
+        // Percentages for bar visualization
         const total = this.approved + this.submitted + this.rejected;
-
         // avoid division by 0
         if (total > 0) {
           this.approvedPercent = (this.approved / total) * 100;
@@ -310,6 +304,12 @@ export class TimesheetsSummaryViewComponent {
       '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
       '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
     ].slice(0, labels.length);
+    // Store for legend display (outside chart)
+    this.projectTypeLabelData = labels.map((label: string, index: number) => ({
+      label,
+      color: backgroundColors[index],
+      hours: originalTimes[index],
+    }));
     // Chart data
     this.projectTypeGraphData = {
       labels,
@@ -324,19 +324,7 @@ export class TimesheetsSummaryViewComponent {
     // Chart options
     this.projectTypeGraphOptions = {
       plugins: {
-        legend: {
-          position: 'right',
-          labels: { usePointStyle: true },
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const index = context.dataIndex;
-              const timeString = originalTimes[index]; // e.g., "02:35"
-              return `${context.label}: ${timeString} hrs`;
-            },
-          },
-        },
+        legend: {display: false },
       },
     };
   }
@@ -385,28 +373,7 @@ export class TimesheetsSummaryViewComponent {
     this.estimatedVsActualGraphOptions = {
       responsive: true,
       plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { usePointStyle: true }
-        },
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const datasetLabel = context.dataset.label || '';
-              const index = context.dataIndex;
-
-              if (datasetLabel === 'Actual Hours') {
-                // show actualHours as HH:mm hrs
-                const timeStr = actualDisplay[index];
-                return `${datasetLabel}: ${timeStr} hrs`;
-              } else if (datasetLabel === 'Estimated Hours') {
-                return `${datasetLabel}: ${context.raw.toFixed(2)} hrs`;
-              } else {
-                return `${datasetLabel}: ${context.raw} hrs`;
-              }
-            }
-          }
-        }
+        legend: { display:false, },
       },
       scales: {
         x: {

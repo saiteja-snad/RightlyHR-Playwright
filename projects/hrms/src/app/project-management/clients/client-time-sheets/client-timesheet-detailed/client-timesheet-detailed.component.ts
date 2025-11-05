@@ -61,8 +61,9 @@ export class ClientTimesheetDetailedComponent {
     this.router.navigate(['/project-management/clients/details/timesheet/resource-summary'], {
       queryParams: {
         id: parseInt(this.clientId),
-
       }
+    }).then(() => {
+      this.http.notifyresource(); 
     });
   }
 

@@ -79,7 +79,13 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
-
+    this.http.clickingonresource$.subscribe((triggered) => {
+      if (triggered) {
+        this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+        this.setDefaultmounth();
+        this.getResourcesByClient(this.resourceDataids?.projectId);
+      }
+    });
     this.createDocumentForm();
     this.getAllActiveEmployees();
     this.getEAV();

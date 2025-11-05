@@ -66,12 +66,12 @@ export class ProjectTimesheetDetailedComponent {
       clientId: this.clientId,
       projectId: this.projectId
     };
-    localStorage.setItem('resourceData', JSON.stringify(resourceData))
-    this.router.navigate(['/project-management/projects/details/timesheet/resource-summary'], {
-      queryParams: {
-        id: this.projectId,
+    localStorage.setItem('resourceData', JSON.stringify(resourceData));
 
-      }
+    this.router.navigate(['/project-management/projects/details/timesheet/resource-summary'], {
+      queryParams: { id: this.projectId }
+    }).then(() => {
+      this.http.notifyresource(); 
     });
   }
 

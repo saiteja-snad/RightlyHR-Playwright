@@ -45,9 +45,10 @@ export class ClientTimesheetTabsComponent {
         currentUrl === '/project-management/clients/details/timesheet/detailed';
     }
     
-    // For Detailed tab, only match detailed route
+    // For Detailed tab, match detailed route and resource-summary
     if (link === '/project-management/clients/details/timesheet/detailed') {
-      return currentUrl === '/project-management/clients/details/timesheet/detailed';
+      return currentUrl === '/project-management/clients/details/timesheet/detailed' ||
+        currentUrl === '/project-management/clients/details/timesheet/resource-summary';
     }
     
     // For Summary tab, only match summary route

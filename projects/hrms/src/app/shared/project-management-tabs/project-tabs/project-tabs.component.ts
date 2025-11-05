@@ -50,7 +50,8 @@ export class ProjectTabsComponent {
     // For Documents tab, check both documents and inactivedocuments routes
     if (link === '/project-management/projects/details/timesheet/summary') {
       return currentUrl.includes('/project-management/projects/details/timesheet/detailed') ||
-        currentUrl.includes('/project-management/projects/details/timesheet/summary');
+        currentUrl.includes('/project-management/projects/details/timesheet/summary')
+        || currentUrl.includes('/project-management/projects/details/timesheet/resource-summary');  
     }
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');

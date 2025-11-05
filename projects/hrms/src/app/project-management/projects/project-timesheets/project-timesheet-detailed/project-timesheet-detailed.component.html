@@ -12,11 +12,17 @@
             </thead>
             <tbody>
                 <tr *ngFor="let project of projectEmployeeDetails; let i = index">
-                    <td>{{project.employeeName}}</td>
-                    <td>{{project.projectRole}}</td>
-                    <td>Team</td>
-                    <td>{{project.utilizationPercent}}</td>
-                    <td>{{project.totalLoggedHours}}</td>
+                <tr *ngFor="let project of projectEmployeeDetails; let i = index">
+                    <td>
+                        <a class="project-name cursor" (click)="navigateView(project.employee.id)">
+                            {{ project.employee?.name }}
+                        </a>
+                    </td>
+                    <td>{{ project.roleName }}</td>
+                    <td>{{ project.startDate | dateformat }}</td>
+                    <td>{{ project.daysSpent || '-' }}</td>
+                    <td>{{ project.loggedHours || '0' }}</td>
+              
                 </tr>
             </tbody>
         </table>

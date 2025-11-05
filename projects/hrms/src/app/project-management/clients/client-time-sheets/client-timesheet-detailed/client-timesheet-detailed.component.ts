@@ -10,16 +10,18 @@ import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-client-timesheet-detailed',
-  imports: [CommonModule,AccordionModule, PaginatorModule, TranslateModule, TableModule],
+  imports: [CommonModule, AccordionModule, PaginatorModule, TranslateModule, TableModule],
   templateUrl: './client-timesheet-detailed.component.html',
   styleUrl: './client-timesheet-detailed.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ClientTimesheetDetailedComponent {
   projectDetails: any;
   resourceDetails: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
+  clientId: any;
+  projectId: any;
 
   constructor(public modalService: NgbModal, public readonly router: Router, private http: HttpService, private route: ActivatedRoute) { }
 
@@ -30,6 +32,7 @@ export class ClientTimesheetDetailedComponent {
   getResourceDetails(): void {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: { [x: string]: any }) => {
       const clientID = params['id'];
+      this.clientId = clientID;
       if (!clientID) {
         this.projectDetails = [];
         return;
@@ -47,4 +50,26 @@ export class ClientTimesheetDetailedComponent {
       });
     });
   }
+
+  navigateView(projectdata: any, employeeId: any): void {
+    const resourceData = {
+      employeeId: employeeId,
+      clientId: parseInt(this.clientId),
+      projectId: projectdata.projectId
+    };
+    localStorage.setItem('resourceData', JSON.stringify(resourceData))
+    this.router.navigate(['/project-management/clients/details/timesheet/resource-summary'], {
+      queryParams: {
+        id: parseInt(this.clientId),
+
+      }
+    });
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
+  }
+
 }

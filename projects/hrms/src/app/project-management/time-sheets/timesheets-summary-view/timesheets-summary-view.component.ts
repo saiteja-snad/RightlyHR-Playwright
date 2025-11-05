@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { ProjectManagementModuleInfoComponent } from "../../../shared/project-management-tabs/project-management-module-info/project-management-module-info.component";
+
 import { TimesheetsTabsComponent } from "../../../shared/project-management-tabs/timesheets-tabs/timesheets-tabs.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -25,11 +25,12 @@ import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component"
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ModuleInfoIconComponent } from "../../../icons/module-info-icon/module-info-icon.component";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-timesheets-summary-view',
-  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule,
-    ProjectManagementModuleInfoComponent, Select, NgbPopoverModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent,
-    InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent, ModuleInformationComponent],
+  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule, 
+    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent, 
+    ModuleInformationComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -37,6 +38,7 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 
 export class TimesheetsSummaryViewComponent {
   moduleinfo: string = '';
+  routeToInfoMap!: { [key: string]: string };
   empdata = {} as any;
   teamSummaryData: TimeTrackingData[] = [];
   activeEmplist = [] as any;
@@ -44,10 +46,7 @@ export class TimesheetsSummaryViewComponent {
   subscription!: Subscription;
   ranges: any;
   datepickerForm!: FormGroup;
-
   totalhrs: any
-
-
   attendanceSummaryData: DailyData[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedEntries: TimesheetEntry[] = [];
@@ -90,7 +89,7 @@ export class TimesheetsSummaryViewComponent {
 
   ngOnInit() {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-
+    this.updateModuleInfo()
     this.createDatepickerForm();
     this.route.queryParams.subscribe(params => {
       const resoureID = params['id'];
@@ -98,7 +97,6 @@ export class TimesheetsSummaryViewComponent {
         this.employeeId = parseInt(resoureID)
         this.getProjectSummary(resoureID);
         this.getEmployeeId(resoureID);
-
       }
     });
     this.setDefaultmounth();
@@ -124,45 +122,45 @@ export class TimesheetsSummaryViewComponent {
   }
 
   isShowtimesheetforteamRoute(): boolean {
-    const showPaths = [
-      '/project-management/timesheet/summary',
-    ];
+    const showPaths = ['/project-management/timesheet/summary'];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
   isShowtimesheetformyRoute(): boolean {
-    const showPaths = [
-      '/project-management/timesheet/mysummary',
-    ];
+    const showPaths = ['/project-management/timesheet/mysummary'];
     return showPaths.some(path => this.router.url.startsWith(path));
   }
 
   onCheckemployee(employeed: any) {
-    console.log(employeed);
-
     if (employeed) {
-
     //  this.getProjectSummary(employeed);
       this.getEmployeeId(employeed);
     }
     else {
-    //  this.getProjectSummary(this.employeeId);
+      //  this.getProjectSummary(this.employeeId);
       this.getEmployeeId(this.employeeId);
     }
   }
-
 
   getEmployeeId(employeeId: any) {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employename = data;
-
       },
       error: (reason) => {
         console.log(reason)
       },
-
     });
+  }
+
+  updateModuleInfo() {
+    const urlWithoutQuery = this.router.url.split('?')[0];
+
+    this.routeToInfoMap = {
+      '/project-management/timesheet/mysummary': MODULE_INFOS.My_Timesheet_Summary_view,
+      '/project-management/timesheet/summary': MODULE_INFOS.Team_Timesheet_Summary_view
+    };
+    this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
 
 
@@ -205,16 +203,19 @@ export class TimesheetsSummaryViewComponent {
     const resoureID = this.datepickerForm.get('resourceId')?.value || this.employeeId
     this.getProjectSummary(resoureID);
   }
+
   convertTimeToHours(time: string): number {
     if (!time) return 0;
     const [hours, minutes] = time.split(':').map(Number);
     return hours + minutes / 60; // e.g., "02:30" → 2.5
   }
+
   formatHoursToHHMM(hours: number): string {
-  const h = Math.floor(hours);
-  const m = Math.round((hours - h) * 60);
-  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-}
+    const h = Math.floor(hours);
+    const m = Math.round((hours - h) * 60);
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
+
   getProjectSummary(resoureID: any) {
     const formValue = this.datepickerForm.value;
     const [startDate, endDate] = formValue.dateRange || [];
@@ -222,31 +223,28 @@ export class TimesheetsSummaryViewComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const url = `Timesheet/detailemployeesummary?resourceId=${resoureID || formValue.resourceId}&startDate=${start}&endDate=${end}${resourceId}`;
- 
+
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.loading = false;
- 
         const data: TimesheetSummaryResponse = res?.data || {};
         const graphSummary = res?.data?.graphSummary || {};
- 
         this.totalhrs = res?.data?.totalLoggedHHMM || '00:00';
         this.projectTypeData = graphSummary?.projectWiseSummary || [];
         this.estimatedVsActualData = graphSummary?.allocatedVsActualSummary || [];
- 
         const tsSummary = graphSummary?.timesheetSummary || {
           approved: '00:00',
           submitted: '00:00',
           rejected: '00:00'
         };
- 
+
         this.approved = this.convertTimeToHours(tsSummary?.approved);
         this.submitted = this.convertTimeToHours(tsSummary?.submitted);
         this.rejected = this.convertTimeToHours(tsSummary?.rejected);
- 
+
         // ✅ Percentages for bar visualization
         const total = this.approved + this.submitted + this.rejected;
- 
+
         // avoid division by 0
         if (total > 0) {
           this.approvedPercent = (this.approved / total) * 100;
@@ -255,23 +253,18 @@ export class TimesheetsSummaryViewComponent {
         } else {
           this.approvedPercent = this.submittedPercent = this.rejectedPercent = 0;
         }
- 
-        // ✅ Display values in HH:mm format
+        // Display values in HH:mm format
         this.displayApproved = this.formatHoursToHHMM(this.approved);
         this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
         this.displayRejected = this.formatHoursToHHMM(this.rejected);
- 
-        // ✅ Handle empty data gracefully — reset charts if needed
-        if (
-          (!this.projectTypeData || this.projectTypeData.length === 0) &&
-          (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)
-        ) {
+        // Handle empty data gracefully — reset charts if needed
+        if ((!this.projectTypeData || this.projectTypeData.length === 0) &&
+          (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0)) {
           this.resetCharts();
         } else {
           this.projectTypeChart();
           this.estimatedActualChart();
         }
- 
         this.attendanceSummaryData = (data?.dailyData ?? []).map((item) => ({
           ...item,
           entries: item.entries ?? []
@@ -285,7 +278,7 @@ export class TimesheetsSummaryViewComponent {
       }
     });
   }
- 
+
   resetCharts() {
     this.projectTypeGraphData = { labels: [], datasets: [] };
     this.estimatedVsActualGraphData = { labels: [], datasets: [] };
@@ -296,30 +289,23 @@ export class TimesheetsSummaryViewComponent {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
-
-
   // Project Type (Pie)
   projectTypeChart() {
     if (!this.projectTypeData || this.projectTypeData.length === 0) return;
-
     // Extract labels
     const labels = this.projectTypeData.map((item: any) => item.projectName);
-
     // Convert "HH:mm" string → numeric hours for plotting
     const data = this.projectTypeData.map((item: any) => {
       const [hours, minutes] = item.hours.split(':').map(Number);
       return hours + minutes / 60;
     });
-
     // Keep original HH:mm values for display
     const originalTimes = this.projectTypeData.map((item: any) => item.hours);
-
     // Chart colors
     const backgroundColors = [
       '#FFD54F', '#E91E63', '#4DB6AC', '#64B5F6',
       '#81C784', '#3F51B5', '#FF8A65', '#BA68C8',
     ].slice(0, labels.length);
-
     // Chart data
     this.projectTypeGraphData = {
       labels,
@@ -331,7 +317,6 @@ export class TimesheetsSummaryViewComponent {
         },
       ],
     };
-
     // Chart options
     this.projectTypeGraphOptions = {
       plugins: {
@@ -349,33 +334,25 @@ export class TimesheetsSummaryViewComponent {
           },
         },
       },
-
     };
   }
-
 
   // Estimated vs Actual Hours (Grouped Bar)
   estimatedActualChart() {
     if (!this.estimatedVsActualData || this.estimatedVsActualData.length === 0) return;
-
     // Extract labels
     const labels = this.estimatedVsActualData.map((item: any) => item.projectName);
-
     // Convert estimated hours to numbers (already numeric strings)
     const estimatedData = this.estimatedVsActualData.map((item: any) => Number(item.estimatedHours) || 0);
-
     // Convert "HH:mm" to numeric hours for actualHours
     const actualData = this.estimatedVsActualData.map((item: any) => {
       const [h, m] = item.actualHours.split(':').map(Number);
       return h + (m / 60);
     });
-
     // Keep original HH:mm format for display
     const actualDisplay = this.estimatedVsActualData.map((item: any) => item.actualHours);
-
     // Convert overdue (may come as string)
     const overdueData = this.estimatedVsActualData.map((item: any) => Number(item.overDue) || 0);
-
     // Chart datasets
     this.estimatedVsActualGraphData = {
       labels: labels,
@@ -400,7 +377,6 @@ export class TimesheetsSummaryViewComponent {
         }
       ]
     };
-
     // Chart options
     this.estimatedVsActualGraphOptions = {
       responsive: true,

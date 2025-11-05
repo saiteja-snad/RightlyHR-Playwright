@@ -782,11 +782,11 @@ downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
   // DATE RANGE
- private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null } | null>(null);
+ private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null,resourceid:any } | null>(null);
 
-  // Set date range
-  setDateRange(startDate: string | null, endDate: string | null) {
-    this.dateRangeSubject.next({ startDate, endDate });
+  // Set date range 
+  setDateRange(startDate: string | null, endDate: string | null,resourceid:any) {
+    this.dateRangeSubject.next({ startDate, endDate ,resourceid});
   }
 
   // Get as observable (for subscription)

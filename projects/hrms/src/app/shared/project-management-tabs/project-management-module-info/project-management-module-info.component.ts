@@ -75,12 +75,19 @@ export class ProjectManagementModuleInfoComponent {
       '/project-management/projects/details/documents': MODULE_INFOS.Documents_Project,
       '/project-management/clients/details/documents': MODULE_INFOS.CLIENT_Documents_INFO,
       '/project-management/projects/details/resources': MODULE_INFOS.Resources_Project,
-      '/project-management/clients/details/timesheet/summary': MODULE_INFOS.CLIENT_Timesheet_INFO,
-      '/project-management/clients/details/timesheet/detailed': MODULE_INFOS.CLIENT_Timesheet_INFO,
-      '/project-management/projects/details/timesheet/summary': MODULE_INFOS.Project_Timesheet_INFO,
-      '/project-management/projects/details/timesheet/detailed': MODULE_INFOS.Project_Timesheet_INFO,
+      '/project-management/projects/details/timesheet/summary': MODULE_INFOS.PROJECT_Time_sheet_SUMMARY_VIEW,
+      '/project-management/projects/details/timesheet/detailed': MODULE_INFOS.PROJECT_Detalied_view,
       '/project-management/projects/details/inactivedocuments': MODULE_INFOS.Inactive_Documents_Project,
-      '/project-management/clients/details/inactivedocuments': MODULE_INFOS.Inactive_CLIENT_Documents_INFO
+      '/project-management/clients/details/inactivedocuments': MODULE_INFOS.Inactive_CLIENT_Documents_INFO,
+      '/project-management/timesheet/mytimesheet':MODULE_INFOS.My_Timesheet_MODULE_INFO,
+      '/project-management/timesheet/teamtimesheet':MODULE_INFOS. Team_Timesheet_MODULE_INFO,
+      '/project-management/timesheet/mysummary':MODULE_INFOS.My_Timesheet_Summary_view,
+      '/project-management/timesheet/summary':MODULE_INFOS.Team_Timesheet_Summary_view,
+      '/project-management/clients/details/timesheet/summary':MODULE_INFOS.CLIENT_Summary_view,
+      '/project-management/clients/details/timesheet/detailed':MODULE_INFOS.CLIENT_Detalied_view
+      
+
+
     };
     this.moduleinfo = this.routeToInfoMap[urlWithoutQuery] || '';
   }
@@ -142,7 +149,7 @@ export class ProjectManagementModuleInfoComponent {
       this.componentname = 'Documents';
     }
     else if (currentUrl === '/project-management/timesheet/mytimesheet') {
-      this.componentname = 'Timesheets';
+      this.componentname = 'My Timesheets';
     }
 
     else if (currentUrl === '/project-management/timesheet/teamtimesheet') {

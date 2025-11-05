@@ -24,9 +24,9 @@
             <!-- Skills Multi select -->
             <div class="custom-p-multiSelect-content">
                 <p-multiselect [options]="multiSkillOptions" [(ngModel)]="selectedSkills" placeholder="Select Skills"
-                    optionLabel="label" optionValue="value" [showClear]="true" [maxSelectedLabels]="3"
+                    optionLabel="label" optionValue="value"  [maxSelectedLabels]="3"
                     selectedItemsLabel="{3} items selected" [filter]="true" resetFilterOnHide="true"
-                    class="form-select custom-select" (onChange)="onSkillSelectionChange()">
+                    class="form-select custom-select" (onChange)="onSkillSelectionChange()" >
                 </p-multiselect>
             </div>
 

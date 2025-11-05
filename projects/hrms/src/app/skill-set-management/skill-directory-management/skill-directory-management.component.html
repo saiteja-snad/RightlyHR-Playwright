@@ -62,7 +62,7 @@
             <th>Employee Name</th>
             <th>Designation</th>
             <th>Skills</th>
-            <th class="text-center">Action</th>
+            <th class="text-center"></th>
           </tr>
         </thead>
         <tbody>
@@ -85,7 +85,10 @@
               </div>
             </td>
             <td class="text-center">
-              <div class="dropdown">
+              <a type="button" class="view-btn" (click)="openOffcanvas(employeeDetailOffcanvas, emp)">
+                <img src="/my-info-icons/View-Policy-icon.png" alt="Icon" class="doc-view-icon">
+              </a>
+              <!-- <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
@@ -96,7 +99,7 @@
                     </a>
                   </li>
                 </ul>
-              </div>
+              </div> -->
             </td>
           </tr>
           } @else {

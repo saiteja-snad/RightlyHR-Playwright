@@ -1,6 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../../services/http.service';
@@ -74,13 +73,13 @@ export class ResourceViewSummaryComponent {
   displaySubmitted!: string;
   displayRejected!: string;
   // billable vs non billable
+  billableVsNonBillableData: any;
   billableVsNonBillableGraphData: any;
   billableVsNonBillableGraphOptions: any;
   // graph Info
   allocatedVsActualInfo = "The Allocated and Actual Hours module provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts.";
   timesheetSummaryInfo = "The Timesheet Summary module provides a visual representation of timesheet data through a line diagram. It consolidates the total hours submitted, approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.";
   billableVsNonbillableInfo = "The Billable and Non-Billable Hours module provides a graphical representation comparing total billable hours with non-billable hours. This visual summary helps employees and managers analyze resource utilization, monitor project profitability, and maintain an effective balance between revenue-generating and internal activities.";
-
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 
@@ -138,7 +137,6 @@ export class ResourceViewSummaryComponent {
           entries: item.entries ?? []
         }));
         // this.totalhrs = data?.totalLoggedHHMM;
-        // this.estimatedVsActualData = data?.graphSummary?.allocatedVsActualSummary;
         const tsSummary = res?.data?.statusSummary;
 
         this.approved = this.convertTimeToHours(tsSummary?.approvedHours);
@@ -176,9 +174,7 @@ export class ResourceViewSummaryComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { projectId, employeeId } = this.resourceDataids;
-
     const url = `ProjectManagementGraph/project/allocated-vs-actual/${projectId}?employeeId=${employeeId}&groupBy=employee`;
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chart = res?.data?.chart;
@@ -186,23 +182,26 @@ export class ResourceViewSummaryComponent {
           this.estimatedVsActualGraphData = { labels: [], datasets: [] };
           return;
         }
-
         // Only show Allocated and Actual Hours
-        const labels = ['Allocated Hours', 'Actual Hours'];
+        const labels = ['Allocated', 'Actual'];
         const hours = [chart.allocated, chart.actual];
-
+        const colors = ['#EE7956', '#5A00D8'];
+        // Store legend data in the same variable you already use
+        this.estimatedVsActualData = labels.map((label, index) => ({
+          label: label,
+          value: hours[index],
+          color: colors[index]
+        }));
         // Assign Pie Chart Data
         this.estimatedVsActualGraphData = {
           labels,
           datasets: [
             {
               data: hours,
-              backgroundColor: ['#EE7956', '#5A00D8'], // Allocated / Actual
-              hoverBackgroundColor: ['#EE7956', '#5A00D8']
+              backgroundColor: colors,
             }
           ]
         };
-
         // Chart Options
         this.estimatedVsActualGraphOptions = {
           responsive: true,
@@ -225,16 +224,20 @@ export class ResourceViewSummaryComponent {
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
-
     const url = `ProjectManagementGraph/project/billable-non-billable/${projectId}?employeeId=${employeeId}&groupBy=emp`;
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         const chartData = res?.data?.chartData || [];
-
         // Extract labels and data
         const labels = chartData.map((item: any) => item.label);
         const hours = chartData.map((item: any) => item.hours);
+        const colors = ['#0F358A', '#A2B5E2'];
+        // Store legend data in the same variable you already use
+        this.billableVsNonBillableData = labels.map((label: string, index: number) => ({
+          label: label,
+          value: hours[index],
+          color: colors[index]
+        }));
 
         // Assign Pie Chart Data
         this.billableVsNonBillableGraphData = {
@@ -242,12 +245,10 @@ export class ResourceViewSummaryComponent {
           datasets: [
             {
               data: hours,
-              backgroundColor: ['#0F358A', '#A2B5E2'], // Billable / Non-Billable colors
-              hoverBackgroundColor: ['#0F358A', '#A2B5E2']
+              backgroundColor: colors,
             }
           ]
         };
-
         // Chart options
         this.billableVsNonBillableGraphOptions = {
           responsive: true,

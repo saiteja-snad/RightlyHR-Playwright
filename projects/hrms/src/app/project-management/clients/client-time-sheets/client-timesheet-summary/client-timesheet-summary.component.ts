@@ -348,7 +348,7 @@ export class ClientTimesheetSummaryComponent {
             ]
           };
           this.departmentContributionOptions = {
-            cutout: '75%',
+            cutout: '60%',
             plugins: {
               legend: { display: false }
             },

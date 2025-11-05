@@ -55,9 +55,23 @@
                 </div>
             </div>
 
-            <div class="time-sheet-graph-card px-3 py-4">
-                <div class="circular-chart">
-                    <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+            <div class="time-sheet-graph-card p-4">
+                <div class="rolewise-chart-grid gap-4">
+                    <div>
+                        <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
+                    </div>
+                    
+                    <div class="legends-view">
+                        <div class="row gap-0 mb-1" *ngFor="let item of estimatedVsActualData">
+                            <div class="col-md-9">
+                                <div class="d-flex align-items-center gap-1">
+                                    <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                    <div class="legend-name text-nowrap">{{ item.label }}</div>
+                                </div>
+                            </div>
+                            <div class="hrs-display text-nowrap col-md-3">{{ item.value }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         
@@ -103,10 +117,23 @@
                 </div>
             </div>
 
-            <div class="summary-header mb-2"></div>
-            <div class="time-sheet-graph-card px-3 py-4">
-                <div class="circular-chart">
-                    <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />
+            <div class="time-sheet-graph-card p-4">
+               <div class="rolewise-chart-grid gap-4">
+                    <div>
+                        <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />
+                    </div>
+                    
+                    <div class="legends-view">
+                        <div class="row gap-0 mb-1" *ngFor="let item of billableVsNonBillableData">
+                            <div class="col-md-9">
+                                <div class="d-flex align-items-center gap-1">
+                                    <div class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></div>
+                                    <div class="legend-name text-nowrap">{{ item.label }}</div>
+                                </div>
+                            </div>
+                            <div class="hrs-display text-nowrap col-md-3">{{ item.value }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -139,7 +139,6 @@ export class ProjectTimesheetSummaryComponent {
         next: (res: any) => {
           const apiData = res?.data?.data || [];
           this.roleWiseData = res?.data?.data || [];
-          console.log(this.roleWiseData)
           if (!Array.isArray(apiData) || apiData.length === 0) {
             this.roleWiseHoursData = [];
             return;
@@ -160,7 +159,7 @@ export class ProjectTimesheetSummaryComponent {
           };
           // Chart options
           this.roleWiseHoursOptions = {
-            cutout: '75%',
+            cutout: '60%',
             plugins: {
               legend: { display: false },
             },

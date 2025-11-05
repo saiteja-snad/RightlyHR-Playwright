@@ -110,6 +110,13 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDepartmentNames(project: Project): string {
+  if (!project.departments || project.departments.length === 0) {
+    return '-';
+  }
+  return project.departments.map(d => d.departmentName).join(', ');
+}
+
   getAuthorityList() {
     this.http.getData(`ProjectManagementAuthority?status=active&entity=Project`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -181,7 +188,8 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updatebillable: [false],
       updateallowweekendWork: [false],
       updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
-      approvalidAuthority: [{value:null,disabled:true}]
+      approvalidAuthority: [{value:null,disabled:true}],
+      updatecolor : ['']
     });
      this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
       this.StartndendDateValidation();
@@ -277,7 +285,7 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds, 
-
+      updatecolor : project.meta.graphData.color
     });
     // Store selected projectId for PUT request
     this.selectedProjectId = project.projectId;
@@ -315,7 +323,12 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
       status: 'Active',
       pendingApprovalAuthorityId: formValue.approvalidAuthority,
       departmentIds: departmentIds,
-      updatedBy: parseInt(this.empinfo.employeeId)
+      updatedBy: parseInt(this.empinfo.employeeId),
+      meta: {
+      graphData: {
+        color: formValue.updatecolor
+      }
+      }
     };
     this.loading = true;
     this.http.putData(`Project/${this.selectedProjectId}`, payload).subscribe({

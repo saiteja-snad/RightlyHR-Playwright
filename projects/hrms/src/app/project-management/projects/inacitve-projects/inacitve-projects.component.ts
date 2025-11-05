@@ -67,6 +67,14 @@ export class InacitveProjectsComponent implements OnInit, OnDestroy {
     );
   }
 
+
+  getDepartmentNames(project: Project): string {
+  if (!project.departments || project.departments.length === 0) {
+    return '-';
+  }
+  return project.departments.map(d => d.departmentName).join(', ');
+}
+
   getAllInactiveProjects() {
     this.loading = true;
     this.http.getData('Project?status=Inactive').pipe(takeUntil(this.destroy$)).subscribe({

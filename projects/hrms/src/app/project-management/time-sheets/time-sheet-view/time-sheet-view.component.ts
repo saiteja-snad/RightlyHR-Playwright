@@ -156,6 +156,10 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
       ? new Date(matchedResource.endDate)
       : null;
 
+    const resourceenddate = matchedResource?.endDate
+      ? new Date(matchedResource.endDate)
+      : null;
+
     if (resourcestartdate) {
       resourcestartdate.setHours(0, 0, 0, 0);
     }
@@ -166,6 +170,7 @@ export class TimeSheetViewComponent implements OnInit, OnDestroy {
     if (entryDateObj) {
       entryDateObj.setHours(0, 0, 0, 0);
     }
+
 
     let isEffective = false;
     if (matchedResource && !matchedResource?.isNoClientProject) {

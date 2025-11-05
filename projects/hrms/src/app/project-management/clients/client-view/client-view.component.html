@@ -96,6 +96,27 @@
             </div>
         </form>
         }
+
+          @if(isActive('/project-management/clients/details/timesheet/summary')){
+        <form [formGroup]="datepickerFormDataforsummary" (ngSubmit)="onSubmitforsummary()">
+            <div class="d-flex gap-3 align-items-center">
+                <!-- 
+                @if(isFilterApplied()) {
+                <button type="button" class="clear-all-btn" (click)="resetForm()">{{'Clear All' | translate}}</button>
+                } -->
+                <div class="custom-date-range-picker">
+                    <p-datepicker formControlName="dateRange" [placeholder]="'Please select date range'"
+                        selectionMode="range" [showIcon]="true" [readonlyInput]="true">
+                    </p-datepicker>
+                </div>
+
+     
+                <div>
+                    <button class="custom-btn btn-primary" type="submit">Apply</button>
+                </div>
+            </div>
+        </form>
+        }
     </div>
 
     <div class="main-content d-flex w-100 gap-3 w-100">

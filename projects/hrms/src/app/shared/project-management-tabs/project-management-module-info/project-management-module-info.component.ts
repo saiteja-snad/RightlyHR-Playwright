@@ -34,7 +34,7 @@ export class ProjectManagementModuleInfoComponent {
     this.initiateUpdateModuleInfo();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     const clientProjectId = localStorage.getItem('clientProjectId');
-    this.getEmployeeId(this.resourceDataids?.employeeId)
+
 
     if (clientProjectId) {
       this.getClientsData(clientProjectId);
@@ -60,16 +60,6 @@ export class ProjectManagementModuleInfoComponent {
     });
   }
 
-  getEmployeeId(employeeId: any) {
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.employename = data;
-      },
-      error: (reason) => {
-        console.log(reason)
-      },
-    });
-  }
 
   updateModuleInfo() {
     const urlWithoutQuery = this.router.url.split('?')[0];
@@ -176,10 +166,36 @@ export class ProjectManagementModuleInfoComponent {
     else if (currentUrl === '/project-management/timesheet/mysummary') {
       this.componentname = 'My Timesheet Summary';
     }
-       else if (currentUrl === '/project-management/projects/details/timesheet/resource-summary') {
-      this.componentname = this.employename?.firstName && this.employename?.middleName  && this.employename?.lastName;
+
+    else if (currentUrl === '/project-management/clients/details/timesheet/resource-summary' || '/project-management/projects/details/timesheet/resource-summary') {
+     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
+    const employeeId = this.resourceDataids?.employeeId;
+
+    if (employeeId) {
+      this.getEmployeeId(employeeId, currentUrl);
+    }
     }
   }
+
+getEmployeeId(employeeId: any, currentUrl: string) {
+  this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+    next: (data: any) => {
+      this.employename = data;
+
+      // ✅ Now that data is loaded, build full name
+      const fullName = `${this.employename.firstName || ''} ${this.employename.middleName || ''} ${this.employename.lastName || ''}`.trim();
+
+      if (currentUrl === '/project-management/projects/details/timesheet/resource-summary' ||
+          currentUrl === '/project-management/clients/details/timesheet/resource-summary') {
+        this.componentname = fullName;
+      }
+    },
+    error: (reason) => {
+      console.log(reason);
+    },
+  });
+}
+
 
   isShowClientRoute(): boolean {
     const showPaths = [
@@ -244,10 +260,13 @@ export class ProjectManagementModuleInfoComponent {
   navigatetodetaliedtoclicent() {
     const clientProjectId = localStorage.getItem('clientProjectId');
     this.router.navigate(['project-management/clients/details/timesheet/detailed'], { queryParams: { id: clientProjectId } });
+    localStorage.removeItem('clientProjectId');
+   
   }
 
   navigatetodetaliedtoproject() {
     this.router.navigate(['/project-management/projects/details/timesheet/detailed'], { queryParams: { id: this.resourceDataids?.projectId } });
+
   }
 
 

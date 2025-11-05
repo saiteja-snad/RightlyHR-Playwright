@@ -78,6 +78,7 @@ export class ProjectViewComponent implements OnInit {
     this.datepickerFormData.get('resourceId')?.reset();
     this.http.setRequest(null);
     this.http.setDateRange(null, null, null);
+     this.setDefaultmounth()
   }
 
   createContactForm() {

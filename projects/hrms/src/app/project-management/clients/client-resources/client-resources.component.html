@@ -19,28 +19,27 @@
                     <th>Role</th>
                     <th>Email</th>
                     <th>Phone Number</th>
-                    <th> Project Assigned</th>
+                    <th>Project Assigned</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client
-                    Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
+                    @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
                     <th class="text-center">{{"Action" | translate}}</th>
                     }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="(resourcesData?.length ?? 0) > 0; else noDataTemplate">
                         <tr *ngFor="let data of resourcesData">
-
                             <td>{{ data?.employee?.fusionEmployeeId || '-'}}</td>
                             <td>{{ data?.employee?.name || '-' }}</td>
                             <td>{{ data?.employee?.designation || '-' }}</td>
                             <td>{{ data?.role || '-' }}</td>
                             <td>{{ data?.employee?.workMail || '-' }}</td>
                             <td>{{ data?.employee?.mobilePhoneCountryCode || '-' }} {{ data?.employee?.mobilePhoneNumber ||'' }}</td>
-                            <td>{{data?.project?.projectName}}</td>
+                            <td>{{ data?.project?.projectName }}</td>
                             <td>{{ data?.startDate ? (data.startDate | dateformat) : '-' }}</td>
                             <td>{{ data?.endDate ? (data.endDate | dateformat) : '-' }}</td>
-                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) && this.inactiveClientStatus !== 'inactive'){
+                            @if((rbac.allowedToAccess('Client Resources.update') || rbac.allowedToAccess('Client Resources.delete')) &&
+                            this.inactiveClientStatus !== 'inactive'){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -116,19 +115,23 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="resourceRole" class="form-label custom-label mb-2">
-                            Role<span class="text-danger">*</span></label>
-                        <input type="text" formControlName="resourceRole" class="form-control custom-input"
-                            placeholder="Please enter role" (keydown)="formValidation.restrictInitialSpace($event)" />
+                        <label for="resourceRole" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="projectRoleDropdown" optionLabel="label" optionValue="value" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="label" formControlName="resourceRole" placeholder="Please select role"
+                                class="form-select custom-select" (onChange)="onRoleChange($event.value)">
+                            </p-select>
+                    
+                    
+                        </div>
                         <div class="error-msg">
                             <div
                                 *ngIf="updateResourceForm.get('resourceRole')?.touched && updateResourceForm.get('resourceRole')?.errors?.['required']">
                                 Role is required</div>
                             <div
-                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['maxlength'] 
-                            || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
-                                {{ 'Role must be between 250 characters' | translate }}
-                            </div>
+                                *ngIf="updateResourceForm.get('resourceRole')?.errors?.['maxCharacters'] || 
+                                                updateResourceForm.get('resourceRole')?.errors?.['maxlength'] || updateResourceForm.get('resourceRole')?.errors?.['minCharacters'] || updateResourceForm.get('resourceRole')?.errors?.['minlength']">
+                                {{ 'Role must be between 2-50 characters characters' | translate }}</div>
                         </div>
                     </div>
 
@@ -170,8 +173,7 @@
 
                     <!-- Phone Number -->
                     <div class="col-md-6 mb-3">
-                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number
-                            <span class="text-danger">*</span></label>
+                        <label for="resourcePhone" class="form-label custom-label mb-2">Phone Number</label>
                         <input type="text" id="resourcePhone" formControlName="resourcePhone"
                             class="form-control custom-input" placeholder="Please enter phone number" readonly />
                         <div class="error-msg" *ngIf="updateResourceForm.get('resourcePhone')?.touched && 

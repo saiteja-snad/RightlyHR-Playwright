@@ -90,7 +90,7 @@ onRoleChange(selectedValue: any) {
     this.updateResourceForm = this.fb.group({
       resourceName: [null, Validators.required],
       resourceEmail: [null, [Validators.required, Validators.email]],
-      resourcePhone: [null, Validators.required],
+      resourcePhone: [null],
       designation: [null, Validators.required],
       projectName: [null, Validators.required],
       projectType: [null, Validators.required],
@@ -101,6 +101,7 @@ onRoleChange(selectedValue: any) {
       overtimeEligible: [false],
       billable: [false],
       allowweekendWork: [false],
+      color : [''],
       resourceRole: [null,Validators.required]
     }, { validators: [this.DateValidator()] },);
   }
@@ -214,15 +215,17 @@ getJobrole() {
   openModal(content: any, size: any, data: any) {
     this.modalService.open(content, { centered: true, size: size, backdrop: 'static' });
     const selectedRole = this.projectRoleDropdown.find(
-  (r: any) => r.label === data.projectRoleName
-);
-
+       (r: any) => r.value.roleId === data.projectRoleId
+    );
     this.ResourceId = data?.resourceId;
     this.updateResourceForm.patchValue({
       resourceName: data?.employee?.id,
       resourceEmail: data?.employee?.workMail,
       overtimeEligible: data.overtimeEligibile,
-      resourcePhone: data?.employee?.workPhoneNumber ? `${data?.employee?.workPhoneCountryCode ?? ''} ${data?.employee?.workPhoneNumber ?? ''}` : '',
+resourcePhone:
+  data?.employee
+    ? `${data.employee.mobilePhoneCountryCode ?? ''} ${data.employee.mobilePhoneNumber ?? ''}`.trim() || '-'
+    : '-',
       designation: data?.employee?.designation,
       resourceAllocationhrs: data.allocatedHours || null,
       projectName: this.projectsData[0]?.projectName,
@@ -233,7 +236,8 @@ getJobrole() {
       billable: data.billable,
 
       allowweekendWork: data.weekendWorkAllowed,
-        resourceRole: selectedRole ? selectedRole.value : null
+        resourceRole: selectedRole ? selectedRole.value : null,
+      color : data?.meta?.graphData?.color
     });
   }
 
@@ -271,8 +275,7 @@ getJobrole() {
     this.selectedEmployee = this.employeeDetails.find(employeeId);
     this.updateResourceForm.patchValue({
       resourceEmail: this.selectedEmployee?.workMail,
-      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} 
-      ${this.selectedEmployee.contactnumber ?? ''}` : ''
+      resourcePhone: this.selectedEmployee ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-' : '-'
     });
     this.getJobdetails(this.selectedEmployee?.employeeId);
   }
@@ -306,8 +309,8 @@ getJobrole() {
       return;
     }
     const formValue = this.updateResourceForm.value;
-       const projectRoleId = formValue.resourceRole.roleId;
-   const  projectDepartmentId =formValue.resourceRole.entityReferenceId;
+    const projectRoleId = formValue.resourceRole.roleId;
+    const projectDepartmentId = formValue.resourceRole.entityReferenceId;
     const payload = {
       entityType: "project",
       entityRefId: this.projectId,
@@ -322,8 +325,13 @@ getJobrole() {
       status: "Active",
       allocatedBy: this.empinfo.employeeId,
       //role: formValue.resourceRole,
-    projectRoleId: projectRoleId,
-    projectDepartmentId: projectDepartmentId,
+      projectRoleId: projectRoleId,
+      projectDepartmentId: projectDepartmentId,
+      meta: {
+        graphData: {
+          color: formValue.color
+        }
+      }
 
     };
     this.http.putData(`ProjectResource/${this.ResourceId}`, payload).subscribe({

@@ -141,7 +141,7 @@ onRoleChange(selectedValue: any) {
       resourceRole: [null, [Validators.required, Validators.maxLength(50),
       Validators.minLength(2),
       ]],
-      resourcePhone: [null, Validators.required],
+      resourcePhone: [null],
       designation: [null, Validators.required],
       projectName: [{ value: null, disabled: true }, Validators.required],
       projectType: [null, Validators.required],
@@ -151,7 +151,8 @@ onRoleChange(selectedValue: any) {
       // allocatedFrequencyType: [null, Validators.required],
       overtimeEligible: [false],
       billable: [false],
-      allowweekendWork: [false]
+      allowweekendWork: [false],
+      color: ['#FFFFFF'],
     }, { validators: [this.DateValidator()] },);
   }
 
@@ -159,7 +160,7 @@ onRoleChange(selectedValue: any) {
     this.http.getData(`Project?projectId=${projectId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.projectsDataDrown = res?.data ?? [];
-         this.departmentIds = this.projectsDataDrown[0].departments?.map((d: any) => d.departmentId) || [];
+         this.departmentIds = this.projectsDataDrown[0]?.departments?.map((d: any) => d.departmentId) || [];
         this.addResourceForm.patchValue({
           projectName: this.projectsDataDrown[0]?.projectId,
           projectType: this.projectsDataDrown[0]?.projectType,
@@ -201,6 +202,7 @@ onRoleChange(selectedValue: any) {
       next: (res: any) => {
         const project = res?.data[0];
         if (project) {
+        this.departmentIds = project?.departments?.map((d: any) => d.departmentId) || [];
           this.projectId = project.projectId;
           this.addResourceForm.patchValue({
             projectType: project.projectType,
@@ -208,6 +210,7 @@ onRoleChange(selectedValue: any) {
             billable: project.isBillable,
             allowweekendWork: project.isWeekendWorkAllowed
           });
+          this.getJobrole();
         }
       },
       error: (err) => {
@@ -248,7 +251,10 @@ onRoleChange(selectedValue: any) {
     this.selectedEmployee = event.value;
     this.addResourceForm.patchValue({
       resourceEmail: this.selectedEmployee.workEmail,
-      resourcePhone: this.selectedEmployee.mobilePhoneCountryCode + " " + this.selectedEmployee.contactnumber,
+      resourcePhone: this.selectedEmployee
+  ? `${this.selectedEmployee.mobilePhoneCountryCode ?? ''} ${this.selectedEmployee.contactnumber ?? ''}`.trim() || '-'
+  : '-',
+
     });
     this.getJobdetails(this.selectedEmployee.employeeId);
   }
@@ -294,6 +300,11 @@ onRoleChange(selectedValue: any) {
       status: "Active",
       // role: formValue.resourceRole,
       allocatedBy: this.empinfo.employeeId,
+      meta: {
+      graphData: {
+        color: formValue.color
+      }
+      }
     };
     this.http.postdata(`ProjectResource`, payload).subscribe({
       next: (res) => {

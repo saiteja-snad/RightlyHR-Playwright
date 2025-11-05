@@ -32,6 +32,20 @@
     font-weight: 500;
     font-size: var(--fontsize13);
     color: #222222;
+
+    .popover-body {
+        padding: 0.325rem !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-size: var(--fontsize10);
+    }
 }
 
 .custom-p-select-content {

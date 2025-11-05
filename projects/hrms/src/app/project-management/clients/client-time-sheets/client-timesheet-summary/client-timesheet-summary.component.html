@@ -4,18 +4,31 @@
             <div class="time-sheet-graph-card">
                 <form [formGroup]="datepickerForm">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="summary-header">Project Summary</div>
+                        <div class="summary-header d-flex gap-2 mb-2">
+                            <div>Project Summary</div>
+                            <div>
+                                <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="resourceSummaryContent"
+                                    class="module-icon">
+                                <ng-template #resourceSummaryContent>
+                                    <div class="module-info-text">{{projectsummaryinfo}}</div>
+                                </ng-template>
+                            </div>
+                        </div>
+
                         <div class="d-flex gap-2 align-items-center">
                             <div class="custom-p-select-content">
-                                <p-select [options]="projectsDataDrown" optionLabel="projectName" optionValue="projectId" [filter]="true"
-                                    [resetFilterOnHide]="true" filterBy="projectName" formControlName="projectId"
-                                    [showClear]="!!datepickerForm.get('projectId')?.value" placeholder="Please select project"
-                                    class="form-select custom-select" (onChange)="onProjectChange($event)" />
+                                <p-select [options]="projectsDataDrown" optionLabel="projectName"
+                                    optionValue="projectId" [filter]="true" [resetFilterOnHide]="true"
+                                    filterBy="projectName" formControlName="projectId"
+                                    [showClear]="!!datepickerForm.get('projectId')?.value"
+                                    placeholder="Please select project" class="form-select custom-select"
+                                    (onChange)="onProjectChange($event)" />
                             </div>
 
                             <div class="custom-p-select-content">
-                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [filter]="false"
-                                    formControlName="status" placeholder="Please select status" [showClear]="!!datepickerForm.get('status')?.value"
+                                <p-select [options]="statusOptions" optionLabel="label" optionValue="value"
+                                    [filter]="false" formControlName="status" placeholder="Please select status"
+                                    [showClear]="!!datepickerForm.get('status')?.value"
                                     class="form-select custom-select" (onChange)="onStatusChange($event)" />
                             </div>
                         </div>
@@ -45,7 +58,17 @@
 
         <div class="col-xxl-4 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
-                <div class="summary-header mb-3">Project wise Resource Count</div>
+                <div class="summary-header d-flex gap-2 mb-2">
+                    <div>Project wise Resource Count</div>
+                    <div>
+                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="ProjectwiseResourceContent"
+                            class="module-icon">
+                        <ng-template #ProjectwiseResourceContent>
+                            <div class="module-info-text">{{ProjectwiseResourceCountInfo}}</div>
+                        </ng-template>
+                    </div>
+                </div>
+
                 <div class="project-resource-graph">
                     <p-chart type="bar" [data]="projectResourceData" [options]="projectResourceOptions" />
                 </div>
@@ -55,24 +78,43 @@
         <div class="col-xxl-4 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="summary-header">Department wise Contribution</div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Department wise Contribution</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="departmentwiseContributionContent"
+                                class="module-icon">
+                            <ng-template #departmentwiseContributionContent>
+                                <div class="module-info-text">{{DepartmentwiseContributionInfo}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
                     <div class="custom-p-select-content">
-                        <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId" optionLabel="projectName"
-                            optionValue="projectId" [filter]="true" [resetFilterOnHide]="true" filterBy="projectName"
-                            [showClear]="!!selectedDeptProjectId" placeholder="Please select project" class="form-select custom-select"
+                        <p-select [options]="projectsDataDrown" [(ngModel)]="selectedDeptProjectId"
+                            optionLabel="projectName" optionValue="projectId" [filter]="true" [resetFilterOnHide]="true"
+                            filterBy="projectName" [showClear]="!!selectedDeptProjectId"
+                            placeholder="Please select project" class="form-select custom-select"
                             (onChange)="onDeptProjectChange($event)" />
                     </div>
                 </div>
 
                 <div class="circular-chart">
-                    <p-chart type="doughnut" [data]="departmentContributionData" [options]="departmentContributionOptions" />
+                    <p-chart type="doughnut" [data]="departmentContributionData"
+                        [options]="departmentContributionOptions" />
                 </div>
             </div>
         </div>
 
         <div class="col-xxl-4 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
-                <div class="summary-header mb-2">Project Type</div>
+                <div class="summary-header d-flex gap-2 mb-2">
+                    <div>Project Type</div>
+                    <div>
+                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectTypedata" class="module-icon">
+                        <ng-template #projectTypedata>
+                            <div class="module-info-text">{{ProjectType}}</div>
+                        </ng-template>
+                    </div>
+                </div>
                 <div class="circular-chart">
                     <p-chart type="pie" [data]="projectTypeData" [options]="projectTypeOptions" />
                 </div>
@@ -82,7 +124,16 @@
         <div class="col-xxl-8 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
-                    <div class="summary-header">Estimated vs Actual Hours</div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Estimated vs Actual Hours</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="estimatedActualHoursdata"
+                                class="module-icon">
+                            <ng-template #estimatedActualHoursdata>
+                                <div class="module-info-text">{{EstimatedActualHours}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of estimatedlabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
@@ -100,7 +151,17 @@
         <div class="col-xxl-6 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
-                    <div class="summary-header">Billable vs Non-Billable Hours</div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                        <div>Billable vs Non-Billable Hours</div>
+                        <div>
+                            <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billablevsNonBillableHoursdata"
+                                class="module-icon">
+                            <ng-template #billablevsNonBillableHoursdata>
+                                <div class="module-info-text">{{BillablevsNonBillableHours}}</div>
+                            </ng-template>
+                        </div>
+                    </div>
+
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of billablelabels">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': item.color }"></span>
@@ -118,7 +179,15 @@
         <div class="col-xxl-6 col-xl-6 mb-3">
             <div class="time-sheet-graph-card">
                 <div class="d-flex justify-content-between align-items-center pb-3">
-                    <div class="summary-header">Project Burndown Chart</div>
+                    <div class="summary-header d-flex gap-2 mb-2">
+                    <div >Project Burndown Chart</div>
+                    <div>
+                        <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="projectBurndownChartdata" class="module-icon">
+                        <ng-template #projectBurndownChartdata>
+                            <div class="module-info-text">{{ProjectBurndownChart}}</div>
+                        </ng-template>
+                    </div>
+                    </div>
                     <div class="d-flex align-items-center gap-2">
                         <div class="d-flex align-items-center gap-1" *ngFor="let item of projectNames; let i = index">
                             <span class="legend-circle" [ngStyle]="{ 'background-color': getColor(i) }"></span>

@@ -51,6 +51,7 @@
             <th>Effective Date</th>
             <th>Kickoff Date</th>
             <th>Project Type</th>
+            <th>Verticals</th>
             <th>Status</th>
             @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete')) 
             && inactiveClientStatus !=='inactive' ){
@@ -68,6 +69,7 @@
                   <td>{{ project.effectiveDate | dateformat }}</td>
                   <td>{{ project.kickoffDate | dateformat }}</td>
                   <td>{{ project.projectType }}</td>
+                  <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td> 
                   <td>{{ project.status }}</td>
                   @if((rbac.allowedToAccess('Project Details Tab.update') || rbac.allowedToAccess('Project Details Tab.delete'))
                   && inactiveClientStatus !=='inactive' ){
@@ -283,6 +285,12 @@
             </div>
           </div>
           
+          </div>
+
+          <!--Color Picker-->
+          <div class="col-md-6 mb-3">
+            <label class="form-label custom-label">{{'Color' | translate}}</label>
+            <input type="color" class="form-control custom-input" formControlName="updatecolor" />
           </div>
 
            <!-- Project Description -->

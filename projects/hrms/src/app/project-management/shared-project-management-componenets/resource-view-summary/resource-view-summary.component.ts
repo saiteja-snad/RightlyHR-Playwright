@@ -88,7 +88,7 @@ export class ResourceViewSummaryComponent {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
     this.http.request$.pipe(takeUntil(this.destroy$)).subscribe(request => {
-      if (request && request.dateRange && request.resourceId) {
+      if (request) {
         this.resourceDataids = {
           ...this.resourceDataids, // keep clientId & projectId from localStorage
           employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed

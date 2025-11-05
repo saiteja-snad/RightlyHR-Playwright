@@ -57,6 +57,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   loading: boolean | undefined;
   clientsId!: any;
   inactiveClientStatus: any;
+  datepickerFormDataforsummary!: FormGroup;
   resourceDataids = {} as any;
 
   constructor(private fb: FormBuilder, private router: Router, private route: ActivatedRoute, private http: HttpService, private modalService: NgbModal,
@@ -87,6 +88,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       }
     });
     this.createDocumentForm();
+    this.datepickerforsummaryview();
     this.getAllActiveEmployees();
     this.getEAV();
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -96,6 +98,15 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         this.resetForm();
       }
     });
+  }
+
+  datepickerforsummaryview() {
+    this.datepickerFormDataforsummary = this.fb.group({
+      dateRange: [null],
+
+    });
+    // detect when user selects date range
+
   }
 
   // Create reactive form
@@ -478,6 +489,22 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     };
     this.http.setRequest(request);
     // Send `request` to API if needed
+  }
+
+
+  onSubmitforsummary() {
+    const dateRangeArray = this.datepickerFormDataforsummary.value.dateRange || [];
+    const startDate = dateRangeArray[0] ? dayjs(dateRangeArray[0]).format('YYYY-MM-DDTHH:mm:ss') : null;
+    const endDate = dateRangeArray[1] ? dayjs(dateRangeArray[1]).format('YYYY-MM-DDTHH:mm:ss') : null;
+       const request = {
+      dateRange: { startDate, endDate },
+      // resourceId: this.datepickerForm.value.resourceId,
+      // clientId: this.clientsId,
+      // projectId: this.projectId
+    };
+    this.http.setRequestclienttimesheet(request);
+    // Send `request` to API if needed
+
   }
 
   ngOnDestroy(): void {

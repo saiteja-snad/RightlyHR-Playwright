@@ -72,7 +72,8 @@ export class ClientTabsComponent {
 
       if (link === '/project-management/clients/details/timesheet/summary') {
       return currentUrl.includes('/project-management/clients/details/timesheet/detailed') ||
-        currentUrl.includes('/project-management/clients/details/timesheet/summary');
+        currentUrl.includes('/project-management/clients/details/timesheet/summary') ||
+        currentUrl.includes('/project-management/clients/details/timesheet/resource-summary'); 
     }
 
     // For other tabs, use exact match

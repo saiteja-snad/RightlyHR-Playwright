@@ -1207,7 +1207,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Client Timesheets',
     'Client Documents',
     'Client Detailed Tab',
-    'Client Detailed Tab'
+
   ];
     settingProjectManagementConfigFields = [
     'Project Type',

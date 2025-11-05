@@ -55,6 +55,12 @@ export class ProjectTimesheetTabsComponent {
         currentUrl.includes('/project-management/clients/details/inactiveprojects');
     }
 
+       // For Projects tab, check both projects and inactiveprojects routes
+    if (link === '/project-management/projects/details/timesheet/detailed') {
+      return currentUrl.includes('/project-management/projects/details/timesheet/resource-summary') ||
+       currentUrl.includes('/project-management/projects/details/timesheet/detailed');
+
+    }
     // For other tabs, use exact match
     return currentUrl === link || currentUrl.startsWith(link + '/');
   }

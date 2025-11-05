@@ -51,7 +51,7 @@ export class HttpService {
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
   compOffTriggerSignal = signal<boolean>(false);
-  cardsregisterSignal=signal<boolean>(false);
+  cardsregisterSignal = signal<boolean>(false);
   constructor(private http: HttpClient) {
     this.communicationService = new BehaviorSubject(null);
   }
@@ -59,14 +59,24 @@ export class HttpService {
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
+
   eventAddedSource = new Subject<void>();
   eventAdded$ = this.eventAddedSource.asObservable();
   // Function to notify that an event has been added
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
-//setting cards count
- private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
+
+  //state mangement
+private clickingonresourceSource = new BehaviorSubject<boolean>(false);
+clickingonresource$ = this.clickingonresourceSource.asObservable();
+
+notifyresource() {
+  this.clickingonresourceSource.next(true);
+}
+
+  //setting cards count
+  private CardcountsSource = new BehaviorSubject<{ [key: string]: number }>({});
   counts$ = this.CardcountsSource.asObservable();
   updateCount(counts: { [key: string]: number }) {
     this.CardcountsSource.next(counts);
@@ -519,8 +529,8 @@ export class HttpService {
   deleteData(url: string) {
     return this.http.delete(`${this.ApiUrl}${url}`);
   }
-//get card details
- getcardDetails(
+  //get card details
+  getcardDetails(
     url: string,
     pagenum: number,
     pagesize: number,
@@ -532,7 +542,7 @@ export class HttpService {
       .set('pageSize', pagesize.toString());
     if (searchparam) params = params.set('search', searchparam);
     if (status) params = params.set('status', status);
-    
+
     return this.http.get<any>(`${this.ApiUrl}${url}`, { params });
   }
   getDataWithQueryParams(url: string, queryParams: any) {
@@ -562,13 +572,13 @@ export class HttpService {
       responseType: 'blob', // Set response type to 'blob' to handle file download
     });
   }
-downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
-  const apiurl = `${this.ApiUrl}${url}`;
-  return this.http.get(apiurl, {
-    responseType: 'blob',
-    observe: 'response'  // 👈 allows access to headers
-  });
-}
+  downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
+    const apiurl = `${this.ApiUrl}${url}`;
+    return this.http.get(apiurl, {
+      responseType: 'blob',
+      observe: 'response'  // 👈 allows access to headers
+    });
+  }
 
   // PMS Form Submission
   // getReviewCycles(url:string, searchQuery: string, page: number, pageSize: number): Observable<any> {
@@ -705,7 +715,7 @@ downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
   getFilterWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
-  
+
   getFilterOnBehalfWFHDataByID(employeeId: number, params?: any) {
     return this.http.get(`${this.ApiUrl}Timeoff/getOnBehlfOfWorkFromHomeRequests/${employeeId}?year=${params}`);
   }
@@ -782,11 +792,11 @@ downloadTimesheetReport(url: string): Observable<HttpResponse<Blob>> {
     return this.http.delete(`${this.ApiUrl}${url}`, { body });
   }
   // DATE RANGE
- private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null,resourceid:any } | null>(null);
+  private dateRangeSubject = new BehaviorSubject<{ startDate: string | null; endDate: string | null, resourceid: any } | null>(null);
 
   // Set date range 
-  setDateRange(startDate: string | null, endDate: string | null,resourceid:any) {
-    this.dateRangeSubject.next({ startDate, endDate ,resourceid});
+  setDateRange(startDate: string | null, endDate: string | null, resourceid: any) {
+    this.dateRangeSubject.next({ startDate, endDate, resourceid });
   }
 
   // Get as observable (for subscription)

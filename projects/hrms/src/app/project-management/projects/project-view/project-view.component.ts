@@ -59,6 +59,13 @@ export class ProjectViewComponent implements OnInit {
         this.getAllresourcesData();
       }
     });
+
+    this.http.clickingonresource$.subscribe((triggered) => {
+      if (triggered) {
+        this.setDefaultmounth();
+        this.getAllresourcesData();
+      }
+    });
     this.enableResourceOnDateChange();
     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       if (this.router.url.includes('/project-management/projects/details/timesheet')) {
@@ -95,13 +102,7 @@ export class ProjectViewComponent implements OnInit {
       resourceId: [null]
     });
     // detect when user selects date range
-    this.datepickerFormData.get('dateRange')?.valueChanges.subscribe(val => {
-      if (val && val.length === 2) {
-        const startDate = dayjs(val[0]).format('YYYY-MM-DDTHH:mm:ss');
-        const endDate = dayjs(val[1]).format('YYYY-MM-DDTHH:mm:ss');
-        // this.dateRangeService.setDateRange(startDate, endDate);
-      }
-    });
+
   }
 
 

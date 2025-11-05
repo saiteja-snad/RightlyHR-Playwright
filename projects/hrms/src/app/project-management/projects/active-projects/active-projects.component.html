@@ -46,10 +46,10 @@
           <thead>
             <th>Client Name</th>
             <th>Project Name</th>
-            <th>Start Date</th>
+            <!-- <th>Start Date</th>
             <th>End Date</th>
             <th>Effective Date</th>
-            <th>Kickoff Date</th>
+            <th>Kickoff Date</th> -->
             <th>Project Type</th>
             <th>Verticals</th>
             <th>Status</th>
@@ -64,10 +64,10 @@
                 <tr *ngFor="let project of filteredProjects; let i = index">
                   <td>{{ project.client.clientName }}</td>
                   <td><a class="project-name cursor" (click)="navigateView(project.projectId)">{{ project.projectName}}</a></td>
-                  <td>{{ project.startDate | dateformat }}</td>
+                  <!-- <td>{{ project.startDate | dateformat }}</td>
                   <td>{{ project.endDate | dateformat }}</td>
                   <td>{{ project.effectiveDate | dateformat }}</td>
-                  <td>{{ project.kickoffDate | dateformat }}</td>
+                  <td>{{ project.kickoffDate | dateformat }}</td> -->
                   <td>{{ project.projectType }}</td>
                   <td class="text-wrap department-list-view">{{ getDepartmentNames(project) }}</td> 
                   <td>{{ project.status }}</td>
@@ -190,7 +190,7 @@
         </div>
 
           <!-- Start Date -->
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updatestartDate" class="form-label custom-label mb-2">Start Date<span
                 class="text-danger">*</span></label>
             <input type="date" id="updatestartDate" formControlName="updatestartDate"
@@ -200,10 +200,10 @@
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> Start Date must be before end Date</div>
             </div>
-          </div>
+          </div> -->
 
           <!-- End Date -->
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updateendDate" class="form-label custom-label mb-2">End Date<span
                 class="text-danger">*</span></label>
             <input type="date" id="updateendDate" [min]="minEffectiveDate" formControlName="updateendDate"
@@ -213,10 +213,10 @@
             <div *ngIf="!startndEndDateValid">
               <div class="error-msg"> End Date cannot be before start Date</div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Kickoff Date -->
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updatekickoffDate" class="form-label custom-label mb-2">Kickoff Date<span
                 class="text-danger">*</span></label>
             <input type="date" id="updatekickoffDate" formControlName="updatekickoffDate" [min]="minEffectiveDate"
@@ -226,10 +226,10 @@
             <div class="error-msg" *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
             <div class="error-msg" *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective
               Date</div>
-          </div>
+          </div> -->
 
           <!-- Effective Date -->
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updateeffectiveDate" class="form-label custom-label mb-2">Effective Date<span
                 class="text-danger">*</span></label>
             <input type="date" id="updateeffectiveDate" formControlName="updateeffectiveDate" [min]="minEffectiveDate"
@@ -240,9 +240,9 @@
               Date</div>
             <div class="error-msg" *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff
               Date</div>
-          </div>
+          </div> -->
 
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <label for="updateallocatedHours" class="form-label custom-label mb-2">Allocated Hours<span
                 class="text-danger">*</span></label>
             <input type="text" id="updateallocatedHours" formControlName="updateallocatedHours" [maxlength]="5"
@@ -251,9 +251,9 @@
               *ngIf="updateprojectform.get('updateallocatedHours')?.touched && updateprojectform.get('updateallocatedHours')?.invalid">
               Allocated Hours is required
             </div>
-          </div>
+          </div> -->
 
-          <div class="col-md-6 mb-3">
+          <!-- <div class="col-md-6 mb-3">
             <div class="d-flex gap-2">
               <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' |
                 translate}}
@@ -285,7 +285,7 @@
             </div>
           </div>
           
-          </div>
+          </div> -->
 
           <!--Color Picker-->
           <div class="col-md-6 mb-3">

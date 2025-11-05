@@ -65,7 +65,7 @@
         </div>
 
         <!-- Start Date -->
-        <div class="col-md-6 mb-3">
+        <!-- <div class="col-md-6 mb-3">
           <label for="startDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
           <input type="date" id="startDate" formControlName="startDate" onkeypress="return false"
             class="form-control custom-input" />
@@ -73,10 +73,10 @@
             Start Date is required
           </div>
           <div *ngIf="!startndEndDateValid" class="error-msg">Start Date cannot be after End Date</div>
-        </div>
+        </div> -->
 
         <!-- End Date -->
-        <div class="col-md-6 mb-3">
+        <!-- <div class="col-md-6 mb-3">
           <label for="endDate" class="form-label custom-label mb-2">End Date <span class="text-danger">*</span></label>
           <input type="date" id="endDate" formControlName="endDate" onkeypress="return false" [min]="minEffectiveDate"
             class="form-control custom-input" />
@@ -84,10 +84,10 @@
             End Date is required
           </div>
           <div *ngIf="!startndEndDateValid" class="error-msg">End Date cannot be before start Date</div>
-        </div>
+        </div> -->
 
         <!-- Kickoff Date -->
-        <div class="col-md-6 mb-3">
+        <!-- <div class="col-md-6 mb-3">
           <label for="kickoffDate" class="form-label custom-label mb-2">Kickoff Date <span
               class="text-danger">*</span></label>
           <input type="date" id="kickoffDate" formControlName="kickoffDate" onkeypress="return false"
@@ -98,10 +98,10 @@
             <div *ngIf="!kickoffDateValid">Kickoff Date must be between Start Date and End Date</div>
             <div *ngIf="!kickoffBeforeEffectiveValid">Kickoff Date must be on or before the Effective Date</div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Effective Date -->
-        <div class="col-md-6 mb-3">
+        <!-- <div class="col-md-6 mb-3">
           <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date <span
               class="text-danger">*</span></label>
           <input type="date" id="effectiveDate" formControlName="effectiveDate" onkeypress="return false"
@@ -113,25 +113,25 @@
             <div *ngIf="!effectiveDateValidRange">Effective Date must be between Start Date and End Date</div>
             <div *ngIf="!effectiveAfterKickoffValid">Effective Date must be on or after the Kickoff Date</div>
           </div>
-        </div>
+        </div> -->
 
-        <!--Allocated hours-->
+        <!--Allocated hours
         <div class="col-md-6 mb-3">
           <label for="projectType" class="form-label custom-label mb-2">Allocated Hours<span class="text-danger">*</span></label>
           <input type="text" id="projectType" formControlName="allocatedHours" class="form-control custom-input"
             maxlength="5" (keydown)="formValidation.restrictAlphabets($event)" placeholder="Please enter allocated hours" />
           <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.invalid">
             Allocated Hours is required</div>
-          <!-- Error Messages -->
-          <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.errors?.['positiveInteger']">
-            Allocated Hours must be a valid number</div>
+         Error Messages -->
+          <!-- <div class="error-msg" *ngIf="addprojectform.get('allocatedHours')?.touched && addprojectform.get('allocatedHours')?.errors?.['positiveInteger']">
+            Allocated Hours must be a valid number</div> -->
           <!-- <div *ngIf="addprojectform.get('allocatedHours')?.errors?.['minCharacters']" class="error-msg">
                 {{ 'Allocated Hours must be between 2–100 characters' | translate }}
-              </div> -->
-        </div>
+              </div> 
+        </div>-->
 
         <!--Timesheet Approval Authority-->
-        <div class="col-md-6 mb-3">
+        <!-- <div class="col-md-6 mb-3">
           <div class="d-flex gap-2">
             <label for="workLocation" class="form-label custom-label mb-2">{{'Timesheet Approval Authority' | translate}}
             </label>
@@ -156,7 +156,7 @@
             *ngIf="addprojectform.get('approvalidAuthority')?.invalid && addprojectform.get('approvalidAuthority')?.touched">
             Timesheet Approval Authority is required
           </div>
-        </div>
+        </div> -->
 
         <!--Color Picker-->
         <div class="col-md-6 mb-3">

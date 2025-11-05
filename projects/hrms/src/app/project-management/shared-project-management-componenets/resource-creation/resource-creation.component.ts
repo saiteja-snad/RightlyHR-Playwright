@@ -118,19 +118,33 @@ onRoleChange(selectedValue: any) {
   }
 }
 
-  onPhaseChange(selectedValue: any) {
-    console.log(selectedValue);
+onPhaseChange(selectedValue: any) {
+  if (selectedValue?.value) {
+    const phase = selectedValue.value;
+    console.log(phase);
     
-    if (selectedValue) {
-      this.selectedPhaseId = selectedValue.value.value;
-      const projectId = selectedValue.value.projectId;
-          // Reset approval authority
-    this.addResourceForm.patchValue({ resourceAuthority: null });
-    this.addResourceForm.get('resourceAuthority')?.disable();
-      this.getResourceData(this.projectId,this.selectedPhaseId);
-      
+    this.selectedPhaseId = phase.value ?? null;
+    this.projectStartDate = phase.startDate ?? null;
+    this.projectEndDate = phase.endDate ?? null;
+
+    // Update validators safely
+    this.addResourceForm.get('startDate')?.updateValueAndValidity();
+    this.addResourceForm.get('endDate')?.updateValueAndValidity();
+    console.log(this.projectStartDate,this.projectEndDate);
+    
+    // Reset approval authority safely
+    const resourceAuthorityControl = this.addResourceForm.get('resourceAuthority');
+    if (resourceAuthorityControl) {
+      resourceAuthorityControl.patchValue(null);
+      resourceAuthorityControl.disable();
+    }
+
+    if (this.projectId != null && this.selectedPhaseId != null) {
+      this.getResourceData(this.projectId, this.selectedPhaseId);
     }
   }
+}
+
 
   onAuthorityChange(selectedValue: any){
     if(selectedValue){
@@ -199,11 +213,7 @@ onRoleChange(selectedValue: any) {
           billable: this.projectsDataDrown[0]?.isBillable,
           allowweekendWork: this.projectsDataDrown[0]?.isWeekendWorkAllowed
         })
-        this.projectStartDate = this.projectsDataDrown[0]?.startDate;
-        this.projectEndDate = this.projectsDataDrown[0]?.endDate;
-        this.addResourceForm.get('startDate')?.updateValueAndValidity();
-        this.addResourceForm.get('startDate')?.updateValueAndValidity();
-            this.getJobrole();
+        this.getJobrole();
       },
       error: (err) => {
         console.error('Error fetching projects data:', err);
@@ -499,12 +509,14 @@ onRoleChange(selectedValue: any) {
     };
     this.subscription = this.http.getDataIncludeParams('ProjectPhases/list', params).subscribe({
       next: (data: any) => {
-        this.phaseData = data.data;
-        this.phaseDropdown = this.phaseData.map(p => ({
-        label: p.phaseName,
-        value: p.phaseId,
-        projectId:p.project.projectId,
-        clientId:p.project.clientId
+        this.phaseData = data?.data;
+        this.phaseDropdown = this.phaseData?.map(p => ({
+        label: p?.phaseName,
+        value: p?.phaseId,
+        projectId:p?.project?.projectId,
+        clientId:p?.project?.clientId,
+        startDate: p?.startDate,
+        endDate: p?.endDate,
       }));
         this.spinnerLoader = false;
       },

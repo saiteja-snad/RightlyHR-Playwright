@@ -175,8 +175,7 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, pendingApprovalId?:
         this.projectsDataDrown = res?.data ?? []; // Extract "data" array
              const project = this.projectsData[0];
             if (project) {
-          this.projectStartDate = new Date(project.startDate);
-          this.projectEndDate = new Date(project.endDate);
+         
           // this.updateResourceForm.setValidators(this.validateAllocationHours(project));
           // this.updateResourceForm.updateValueAndValidity();
         }
@@ -190,11 +189,17 @@ getResourceDataByPhaseId(projectId: number, phaseId: number, pendingApprovalId?:
 
 onPhaseChange(selectedValue: any) {
   if (selectedValue) {
-    this.selectedPhaseId = selectedValue.value.value; 
-    const projectId = selectedValue.value.projectId;
+    const phase = selectedValue.value;
+    this.selectedPhaseId = phase.value ?? null;
+    this.projectStartDate = new Date(phase.startDate) ?? null;
+    this.projectEndDate = new Date(phase.endDate) ?? null;
+
+    // this.projectStartDate = new Date(project.startDate);
+    // this.projectEndDate = new Date(project.endDate);
     // Reset approval authority
     this.updateResourceForm.patchValue({ resourceAuthority: null });
     this.updateResourceForm.get('resourceAuthority')?.disable();
+    
 
     this.getResourceDataByPhaseId(this.projectId, this.selectedPhaseId);
   }
@@ -243,10 +248,12 @@ onPhaseChange(selectedValue: any) {
       next: (data: any) => {
         this.phaseData = data.data;
         this.phaseDropdown = this.phaseData.map(p => ({
-        label: p.phaseName,
-        value: p.phaseId,
-        projectId:p.project.projectId,
-        clientId:p.project.clientId
+        label: p?.phaseName,
+        value: p?.phaseId,
+        projectId:p?.project?.projectId,
+        clientId:p?.project?.clientId,
+        startDate: p?.startDate,
+        endDate: p?.endDate,
       }));
 
       if(phaseId){
@@ -256,6 +263,8 @@ onPhaseChange(selectedValue: any) {
         this.updateResourceForm.patchValue({
           resourcePhase: selectedPhase ? selectedPhase : null
         });
+        this.projectStartDate = new Date(selectedPhase.startDate) ?? null;
+        this.projectEndDate = new Date(selectedPhase.endDate) ?? null;
 
         this.getResourceDataByPhaseId(this.projectId,phaseId,pendingApprovalId);
       }

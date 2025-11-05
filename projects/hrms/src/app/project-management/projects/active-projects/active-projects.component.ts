@@ -177,18 +177,18 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
     this.updateprojectform = this.fb.group({
       updateprojectName: [null, [Validators.required, this.formValidation.minCharactersValidator(2), this.formValidation.maxCharactersValidator(100)]],
       updateclientName: [null, Validators.required],
-      updatestartDate: [null, Validators.required],
-      updateendDate: [null, Validators.required],
-      updateeffectiveDate: [null, Validators.required],
-      updatekickoffDate: [null, Validators.required],
+      // updatestartDate: [null, Validators.required],
+      // updateendDate: [null, Validators.required],
+      // updateeffectiveDate: [null, Validators.required],
+      // updatekickoffDate: [null, Validators.required],
       updateprojectType: [null, Validators.required],
       updatedepartment: [[], Validators.required],
       updateprojectDescription: [null],
       updateovertimeEligible: [false],
       updatebillable: [false],
       updateallowweekendWork: [false],
-      updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
-      approvalidAuthority: [{value:null,disabled:true}],
+      // updateallocatedHours: [null, [Validators.required, Validators.min(1), this.formValidation.maxCharactersValidator(11)]],
+      // approvalidAuthority: [{value:null,disabled:true}],
       updatecolor : ['']
     });
      this.updateprojectform.get('updateendDate')?.valueChanges.subscribe(() => {
@@ -268,21 +268,21 @@ export class ActiveProjectsComponent implements OnInit, OnDestroy {
 
   openUpdateModal(modal: any, project: Project) {
     // this.getAuthorityList();
-    this.getResourceData(project.projectId,project);
+    // this.getResourceData(project.projectId,project);
      const selectedDepartmentIds = project.departments?.map((d: any) => d.departmentId) || [];
     // Patch form values
     this.updateprojectform.patchValue({
       updateprojectName: project.projectName,
       updateclientName: project.client?.clientId,  // ensure p-select has clientId
-      updatestartDate: this.formatDateToLocal(project.startDate),
-      updateendDate: this.formatDateToLocal(project.endDate),
-      updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
-      updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
+      // updatestartDate: this.formatDateToLocal(project.startDate),
+      // updateendDate: this.formatDateToLocal(project.endDate),
+      // updateeffectiveDate: this.formatDateToLocal(project.effectiveDate),
+      // updatekickoffDate: this.formatDateToLocal(project.kickoffDate),
       updateprojectType: project.projectType, // ensure p-select has id
       updateprojectDescription: project.description,
       updateovertimeEligible: project.isOvertimeEligibile,
       updatebillable: project.isBillable,
-      updateallocatedHours: project.allocatedHours,
+      // updateallocatedHours: project.allocatedHours,
       updateallowweekendWork: project.isWeekendWorkAllowed,
       updatedepartment: selectedDepartmentIds, 
       updatecolor : project.meta.graphData.color

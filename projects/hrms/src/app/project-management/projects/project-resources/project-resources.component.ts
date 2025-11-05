@@ -98,14 +98,11 @@ onRoleChange(selectedValue: any) {
   //   }
   // }
 
-  onPhaseChange(selectedValue: any) {
-    debugger
-    console.log(selectedValue);
-    
+  onPhaseChange(selectedValue: any) {   
     if (selectedValue) {
       this.selectedPhaseId = selectedValue.value;
       const projectId = selectedValue.value.projectId;
-      this.getResourceData(this.projectId,this.selectedPhaseId);
+      this.getResourceData(this.projectId,this.selectedPhaseId, true);
       
     }
   }
@@ -245,7 +242,7 @@ getJobrole() {
   //   });
   // }
 
-    getResourceData(projectId: number, phaseId?:number) {
+  getResourceData(projectId: number, phaseId?:number, isPopupCall: boolean = false) {
 
     const params : any = {
       status: 'Active',
@@ -260,16 +257,28 @@ getJobrole() {
     this.subscription = this.http.getDataIncludeParams('ProjectResource', params).subscribe({
       next: (data: any) => {
         this.loading = false;
-        this.resourcesData = data.data;
-        // 🔥 Build dropdown array
-      this.resoucesDropDownData = this.resourcesData
-        .filter(r => r.employee) // ensure employee exists
-        .map(r => ({
-          label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
-          value: r.employee.id
-        }));
+         if (isPopupCall) {
+        // ✅ DO NOT TOUCH TABLE DATA
+        const popupData = data.data ?? [];
 
-        console.log(this.resoucesDropDownData);
+        this.resoucesDropDownData = popupData
+          .filter((r : any) => r.employee)
+          .map((r : any) => ({
+            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+            value: r.employee.id
+          }));
+
+      } else {
+        // ✅ NORMAL CALL - UPDATE TABLE DATA
+        this.resourcesData = data.data ?? [];
+
+        this.resoucesDropDownData = this.resourcesData
+          .filter(r => r.employee)
+          .map(r => ({
+            label: `${r.employee.fusionEmployeeId} - ${r.employee.name}`,
+            value: r.employee.id
+          }));
+      }
         
       },
       error: (reason: any) => {

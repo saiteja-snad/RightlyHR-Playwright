@@ -105,19 +105,19 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Skill Name</th>
-                    <th>Employee Count</th>
-                    <th>Proficiency</th>
+                    <th class=" text-center">Skill Name</th>
+                    <th class=" text-center">Employee Count</th>
+                    <th class=" text-center">Proficiency</th>
                     <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody>
                 @for (skill of skillSummaryList; track skill.skillName) {
                 <tr>
-                    <td class="text-capitalize">{{ skill?.skillName }}</td>
-                    <td> <a class="view-link" (click)="openEnd(content, skill.skillName)">{{ skill?.skillCount }}</a></td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-2">
+                    <td class="text-capitalize text-center">{{ skill?.skillName }}</td>
+                    <td class=" text-center"> <a class="view-link" (click)="openEnd(content, skill.skillName)">{{ skill?.skillCount }}</a></td>
+                    <td class=" text-center">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center">
                             <p-chip *ngFor="let key of getProficiencyKeys(skill.proficiencyCounts)">
                                 <div class="custom-chip-content">
                                     <span class="skill-name me-1">{{ key }}</span>

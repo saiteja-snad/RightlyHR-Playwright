@@ -517,6 +517,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Attendance Pending Tab',
     'Attendance Published Tab'
   ];
+   Lockingsystemtabs = [
+    'Attendance Configuration Module',
+    'Timesheet Configuration Module'
+  ];
     TymesheetTypeFields = [
     'Timesheet Locking Pending Tab',
     'Timesheet Locking Published Tab'

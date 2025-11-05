@@ -8,6 +8,7 @@ export const permissionsData = [
   { fields: 'Project Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Attendance Configuration Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Timesheet Configuration Module', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Locking System Configuration Module', View: false, Update: false, Create: false, Delete: false },
 
   //Employee Field Tabs Sections
   { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
@@ -971,4 +972,5 @@ export const permissionsData = [
   { fields: 'Expenses All Employees List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expenses Team Manager List', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Expense Report - Export', View: false, Update: false, Create: false, Delete: false },
+
 ];

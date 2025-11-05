@@ -19,7 +19,6 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
-import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 @Component({
   selector: 'app-resource-view-summary',
   imports: [ReactiveFormsModule, ChartModule, TranslateModule, CommonModule, NgbPopoverModule, 
@@ -37,8 +36,7 @@ export class ResourceViewSummaryComponent {
   dateHeaders: string[] = [];
   subscription!: Subscription;
   ranges: any;
-  datepickerForm!: FormGroup;
-  totalhrs: any
+  totalhrs: any;
   attendanceSummaryData: DailyData[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   selectedEntries: TimesheetEntry[] = [];
@@ -54,7 +52,7 @@ export class ResourceViewSummaryComponent {
   // Project Type Data variables
   projectTypeData: any;
   projectTypeGraphData: any;
-  employeeId: any
+  employeeId: any;
   projectTypeGraphOptions: any;
   // Estimated Vs ActualData variables
   estimatedVsActualData: any;
@@ -88,24 +86,25 @@ export class ResourceViewSummaryComponent {
       if (request && request.dateRange && request.resourceId) {
         this.resourceDataids = {
           ...this.resourceDataids, // keep clientId & projectId from localStorage
-          employeeId: request.resourceId, // override employeeId if needed
+          employeeId: request.resourceId || this.resourceDataids.employeeId, // override employeeId if needed
           dateRange: request.dateRange
         };
       } else {
-        console.log('Using localStorage data:', this.resourceDataids);
+        this.getProjectSummary();
       }
       this.getProjectSummary();
     });
-    this.setDefaultmounth();
+    this.getProjectSummary();
+    // this.setDefaultmounth();
   }
 
-  setDefaultmounth() {
-    const startOfMonth = dayjs().startOf('month').toDate();
-    const endOfMonth = dayjs().endOf('month').toDate();
-    this.datepickerForm.patchValue({
-      dateRange: [startOfMonth, endOfMonth]
-    });
-  }
+  // setDefaultmounth() {
+  //   const startOfMonth = dayjs().startOf('month').toDate();
+  //   const endOfMonth = dayjs().endOf('month').toDate();
+  //   this.datepickerForm.patchValue({
+  //     dateRange: [startOfMonth, endOfMonth]
+  //   });
+  // }
 
   convertTimeToHours(time: string): number {
     if (!time) return 0;
@@ -120,8 +119,7 @@ export class ResourceViewSummaryComponent {
   }
 
   getProjectSummary() {
-    const dateRange = this.resourceDataids?.dateRange || [];
-    const [startDate, endDate] = Array.isArray(dateRange) ? dateRange : [];
+    const { startDate, endDate } = this.resourceDataids?.dateRange || {};
     const start = startDate ? dayjs(startDate).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD');
     const end = endDate ? dayjs(endDate).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD');
     const { clientId, projectId, employeeId } = this.resourceDataids;
@@ -135,7 +133,6 @@ export class ResourceViewSummaryComponent {
           entries: item.entries ?? []
         }));
         // this.totalhrs = data?.totalLoggedHHMM;
-        // this.projectTypeData = data?.graphSummary?.projectWiseSummary;
         // this.estimatedVsActualData = data?.graphSummary?.allocatedVsActualSummary;
         const tsSummary = res?.data?.statusSummary;
 
@@ -144,12 +141,6 @@ export class ResourceViewSummaryComponent {
         this.rejected = this.convertTimeToHours(tsSummary?.rejectedHours);
 
         const total = this.approved + this.submitted + this.rejected || 1;
-        this.approvedPercent = (this.approved / total) * 100;
-        this.submittedPercent = (this.submitted / total) * 100;
-        this.rejectedPercent = (this.rejected / total) * 100;
-
-        this.displayApproved = this.formatHoursToHHMM(this.approved);
-        this.displaySubmitted = this.formatHoursToHHMM(this.submitted);
         this.displayRejected = this.formatHoursToHHMM(this.rejected);
 
         this.estimatedActualChart();

@@ -1197,6 +1197,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Documents Tab',
     'Resources Tab',
     'Project Timesheets Tab',
+    'Project Detailed Tab'
   ];
   selectAllClientProjectManagementTabs = [
     'Client Information',
@@ -1205,6 +1206,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     'Client Resources',
     'Client Timesheets',
     'Client Documents',
+    'Client Detailed Tab',
     'Client Detailed Tab'
   ];
     settingProjectManagementConfigFields = [

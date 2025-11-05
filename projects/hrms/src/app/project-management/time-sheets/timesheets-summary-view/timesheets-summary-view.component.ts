@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Subscription } from 'rxjs/internal/Subscription';
 import { TimeTrackingData } from '../../../Interfaces/team-summary-time-sheet.model';
 import { IResourceDetail } from '../../../timesheetmodel';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopover, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import dayjs from 'dayjs';
@@ -28,8 +28,8 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-timesheets-summary-view',
-  imports: [TimesheetsTabsComponent, ReactiveFormsModule, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule, 
-    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent, 
+  imports: [TimesheetsTabsComponent, ReactiveFormsModule, NgbPopover, DatePicker, ChartModule, TranslateModule, CommonModule, Select, NgbPopoverModule,
+    NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent, InfoIconComponent, ProgressBarModule, ModuleInfoIconComponent,
     ModuleInformationComponent],
   templateUrl: './timesheets-summary-view.component.html',
   styleUrl: './timesheets-summary-view.component.scss',
@@ -83,6 +83,9 @@ export class TimesheetsSummaryViewComponent {
   displayApproved!: string;
   displaySubmitted!: string;
   displayRejected!: string;
+  ProjectwisehoursSummary='The Project-Wise hours summary widget represents a pie chart visualization of the hours logged across different assigned projects. It displays each project along with the total submitted hours, providing a clear graphical representation of effort distribution and helping managers analyse time allocation effectively. '
+  AllocatedActualhours = 'The Allocated and Actual Hours widget provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts. '
+  TimesheetSummary = 'The Timesheet Summary widget provides a visual representation of timesheet data through a line diagram. It consolidates the total hours that are approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.  '
 
   constructor(private fb: FormBuilder, private router: Router, private modalService: NgbModal, private http: HttpService,
     public rbac: RbacService, private route: ActivatedRoute) { }
@@ -133,7 +136,7 @@ export class TimesheetsSummaryViewComponent {
 
   onCheckemployee(employeed: any) {
     if (employeed) {
-    //  this.getProjectSummary(employeed);
+      //  this.getProjectSummary(employeed);
       this.getEmployeeId(employeed);
     }
     else {

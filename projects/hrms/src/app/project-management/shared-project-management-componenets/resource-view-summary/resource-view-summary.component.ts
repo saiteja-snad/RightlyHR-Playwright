@@ -76,6 +76,11 @@ export class ResourceViewSummaryComponent {
   // billable vs non billable
   billableVsNonBillableGraphData: any;
   billableVsNonBillableGraphOptions: any;
+  // graph Info
+  allocatedVsActualInfo = "The Allocated and Actual Hours module provides a graphical representation comparing the total allocated hours against the actual hours logged. This visual summary helps employees and managers quickly assess utilization, identify variances, and ensure that project time allocations align with actual work efforts.";
+  timesheetSummaryInfo = "The Timesheet Summary module provides a visual representation of timesheet data through a line diagram. It consolidates the total hours submitted, approved, rejected, and waiting for approval, offering a quick and clear overview of timesheet trends and approval statuses over time.";
+  billableVsNonbillableInfo = "The Billable and Non-Billable Hours module provides a graphical representation comparing total billable hours with non-billable hours. This visual summary helps employees and managers analyze resource utilization, monitor project profitability, and maintain an effective balance between revenue-generating and internal activities.";
+
 
   constructor(private modalService: NgbModal, private http: HttpService, public rbac: RbacService) { }
 

@@ -44,7 +44,17 @@
         </div>
 
         <div class="timesheet-graph-content p-3">
-            <div class="summary-header mb-2">Allocated vs Actual Hours</div>
+            <div class="summary-header d-flex gap-2 mb-2">
+                <div>Allocated vs Actual Hours</div>
+                <div>
+                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="allocatedVsActualContent" class="module-icon">
+                    <!--Module Information-->
+                    <ng-template #allocatedVsActualContent>
+                        <div class="module-info-text">{{allocatedVsActualInfo}}</div>
+                    </ng-template>
+                </div>
+            </div>
+
             <div class="time-sheet-graph-card px-3 py-4">
                 <div class="circular-chart">
                     <p-chart type="pie" [data]="estimatedVsActualGraphData" [options]="estimatedVsActualGraphOptions" />
@@ -53,7 +63,17 @@
         
             <div class="dashed-line my-3"></div>
 
-            <div class="summary-header mb-2">Timesheet Summary</div>
+            <div class="summary-header d-flex gap-2 mb-2">
+                <div>Timesheet Summary</div>
+                <div>
+                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="timesheetSummaryContent" class="module-icon">
+                    <!--Module Information-->
+                    <ng-template #timesheetSummaryContent>
+                        <div class="module-info-text">{{timesheetSummaryInfo}}</div>
+                    </ng-template>
+                </div>
+            </div>
+
             <div class="time-sheet-graph-card">
                 <div class="stacked-progress-container py-4">
                     <!-- overlay color bar -->
@@ -72,7 +92,18 @@
         
             <div class="dashed-line my-3"></div>
 
-            <div class="summary-header mb-2">Billable vs Non-Billable Hours</div>
+            <div class="summary-header d-flex gap-2 mb-2">
+                <div>Billable vs Non-Billable Hours</div>
+                <div>
+                    <img src="\icons\moduelicon.png" alt="Icon" [ngbPopover]="billableVsNonbillableContent" class="module-icon">
+                    <!--Module Information-->
+                    <ng-template #billableVsNonbillableContent>
+                        <div class="module-info-text">{{billableVsNonbillableInfo}}</div>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="summary-header mb-2"></div>
             <div class="time-sheet-graph-card px-3 py-4">
                 <div class="circular-chart">
                     <p-chart type="doughnut" [data]="billableVsNonBillableGraphData" [options]="billableVsNonBillableGraphOptions" />

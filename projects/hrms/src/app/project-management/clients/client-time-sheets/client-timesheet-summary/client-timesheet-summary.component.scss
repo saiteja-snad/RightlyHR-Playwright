@@ -32,6 +32,20 @@
     font-weight: 500;
     font-size: var(--fontsize12);
     color: #222222;
+
+    .popover-body {
+        padding: 0.325rem !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
+
+    .module-info-text {
+        font-size: var(--fontsize10);
+    }
 }
 
 .custom-p-select-content {
@@ -49,7 +63,8 @@
 .project-summary-table {
     height: 18rem !important;
 
-    th, td {
+    th,
+    td {
         padding: 0.75rem !important;
         font-size: var(--fontsize12) !important;
     }
@@ -96,7 +111,7 @@
     }
 }
 
-.project-resource-graph{
+.project-resource-graph {
     canvas {
         height: 302px !important;
     }
@@ -117,38 +132,38 @@
 }
 
 .status-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-  min-width: 80px;
-  text-transform: capitalize;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 80px;
+    text-transform: capitalize;
 }
 
 /* Status-specific colors */
 .on-track {
-  background-color: #e6f8ed;
-  color: #1a8f4b;
+    background-color: #e6f8ed;
+    color: #1a8f4b;
 }
 
 .delayed {
-  background-color: #fdeaea;
-  color: #d93025;
+    background-color: #fdeaea;
+    color: #d93025;
 }
 
 .progress {
-  background-color: #fff4e5;
-  color: #e67e22;
+    background-color: #fff4e5;
+    color: #e67e22;
 }
 
 .not-started {
-  background-color: #f1f1f1;
-  color: #555;
+    background-color: #f1f1f1;
+    color: #555;
 }
 
 .inactive {
-  background-color: #e0e0e0;
-  color: #333;
+    background-color: #e0e0e0;
+    color: #333;
 }

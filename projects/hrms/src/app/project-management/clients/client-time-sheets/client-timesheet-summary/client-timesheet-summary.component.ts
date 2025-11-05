@@ -8,9 +8,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Project } from '../../../../Interfaces/projects.model';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-client-timesheet-summary',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule],
+  imports: [CommonModule, SelectModule,NgbPopover, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule],
   templateUrl: './client-timesheet-summary.component.html',
   styleUrl: './client-timesheet-summary.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -59,6 +60,13 @@ export class ClientTimesheetSummaryComponent {
   // project name
   projectNames: any;
 
+  projectsummaryinfo = 'Displays an overview of all active, completed, and upcoming projects, helping track overall project distribution and current workload status'
+  ProjectwiseResourceCountInfo = "Represents the total number of employees assigned to each project, providing insight into resource allocation and team size per project "
+  DepartmentwiseContributionInfo = "Shows how different departments are contributing across projects, giving a visual understanding of departmental workload and involvement. "
+  ProjectType = 'Displays the distribution of projects based on their type (e.g., internal, client-based, or support), enabling quick analysis of project categories handled by the organization. '
+  EstimatedActualHours = 'Compares the estimated hours allocated for each project against the actual hours logged, helping to identify project efficiency and time variance. '
+  BillablevsNonBillableHours = 'Illustrates the proportion of hours that are billable versus non-billable across projects, offering a quick insight into profitability and resource utilization.  '
+  ProjectBurndownChart = 'Visualizes project progress over time by comparing planned work versus actual completion, helping track deadlines and performance trends. '
   constructor(private http: HttpService, private route: ActivatedRoute, private fb: FormBuilder) { }
 
   ngOnInit() {

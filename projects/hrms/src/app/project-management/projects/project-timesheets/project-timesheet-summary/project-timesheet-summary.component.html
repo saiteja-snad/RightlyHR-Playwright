@@ -82,8 +82,25 @@
                         </ng-template>
                     </div>
                 </div>
-                <div class="circular-chart">
-                    <p-chart type="pie" [data]="roleWiseHoursData" [options]="roleWiseHoursOptions" />
+                <div class="rolewise-chart-grid">
+                    <div>
+                        <p-chart type="pie" [data]="roleWiseHoursData" [options]="roleWiseHoursOptions" />
+                    </div>
+                    
+                    <div class="legends-view">
+                        <div class="row gap-0 mb-1" *ngFor="let item of roleWiseData">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center gap-1">
+                                    <div class="legend-circle" [ngStyle]="{ 'background-color': item.meta?.graphData?.color }"></div>
+                                    <div class="legend-name">{{ item.name }}</div>
+                                </div>
+                            </div>
+                            <div class="hrs-display text-nowrap col-md-4">
+                                <span class="actual">{{item.actualHours}}</span>/
+                                <span>{{item.allocateHours}}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -64,7 +64,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     private authService: AuthService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit() {
-
     const now = new Date();
     this.createDatepickerForm();
     this.resourceDataids = JSON.parse(localStorage.getItem('resourceData') || '{}');
@@ -75,8 +74,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       if (clientID) {
         this.clientid = clientID;
         this.getClientsData(clientID);
-        this.getprojectbyid(clientID)
-
+        this.getprojectbyid(clientID);
       }
     });
     this.currentDate = now.toISOString().split('T')[0];
@@ -117,6 +115,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       resourceId: [{ value: null }, Validators.required]
     });
   }
+
   setDefaultmounth() {
     const startOfMonth = dayjs().startOf('month').toDate();
     const endOfMonth = dayjs().endOf('month').toDate();
@@ -124,8 +123,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       dateRange: [startOfMonth, endOfMonth]
     });
   }
-
-
 
   getClientsData(clientID: any): void {
     this.http.getData(`Client/${clientID}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -246,6 +243,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       //  (formValue.resourceId && formValue.resourceId.length > 0)
     );
   }
+
   opencontactModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
@@ -452,8 +450,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     );
   }
 
-
-
   enableProjectAndResourceOnDateChange() {
     this.datepickerForm.get('dateRange')?.valueChanges.subscribe(value => {
       if (value && value[0] && value[1]) {
@@ -466,12 +462,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     });
   }
 
-
   get rangeKeys(): string[] {
     return this.ranges ? Object.keys(this.ranges) : [];
   }
-
-
 
   isFormCompletelyValid(): boolean {
     const formValue = this.datepickerForm.getRawValue(); // includes disabled controls
@@ -485,7 +478,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     const request = {
       dateRange: { startDate, endDate },
       resourceId: this.datepickerForm.value.resourceId,
-
     };
     this.http.setRequest(request);
     // Send `request` to API if needed
@@ -511,7 +503,6 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
       this.http.clearRequestclienttimesheet();
-
     }
   }
 }

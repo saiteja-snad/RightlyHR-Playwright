@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Project } from '../../../../Interfaces/projects.model';
+import { display } from 'html2canvas/dist/types/css/property-descriptors/display';
 @Component({
   selector: 'app-client-timesheet-summary',
   imports: [CommonModule, SelectModule, ReactiveFormsModule, TranslateModule, FormsModule, ChartModule],
@@ -264,12 +265,32 @@ export class ClientTimesheetSummaryComponent {
             },
             scales: {
               x: {
-                title: { display: true, text: 'Resource Count' },
-                grid: { display: false }
+                title: {
+                  display: true, text: 'Resource Count', color: '#505050',
+                  font: { size: 10, weight: 400 }
+                },
+                grid: { display: false },
+                ticks: {
+                  color: '#505050',
+                  font: {
+                    size: 10,
+                    weight: '400'
+                  }
+                },
               },
               y: {
-                title: { display: true, text: 'Projects' },
-                grid: { display: false }
+                title: {
+                  display: true, text: 'Projects', color: '#505050',
+                  font: { size: 10, weight: 400 },
+                },
+                grid: { display: false },
+                ticks: {
+                  color: '#505050',
+                  font: {
+                    size: 10,
+                    weight: '400'
+                  }
+                },
               }
             }
           };
@@ -337,7 +358,7 @@ export class ClientTimesheetSummaryComponent {
           this.departmentContributionOptions = {
             cutout: '75%',
             plugins: {
-              legend: { position: 'right', labels: { usePointStyle: true } },
+              legend: { display: false }
             },
           };
         },
@@ -401,18 +422,8 @@ export class ClientTimesheetSummaryComponent {
           this.projectTypeOptions = {
             plugins: {
               legend: {
-                position: 'right',
-                labels: { usePointStyle: true }
+                display: false,
               },
-              tooltip: {
-                callbacks: {
-                  label: (context: any) => {
-                    const label = context.label || '';
-                    const value = context.parsed;
-                    return `${label}: ${value}`;
-                  }
-                }
-              }
             }
           };
         },
